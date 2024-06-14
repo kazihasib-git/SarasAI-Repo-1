@@ -110,6 +110,20 @@ const Sidebar = () => {
             <span>Coaching Tools</span>
           </a>
         </li>
+        <Divider variant="middle" component="li" sx={{ backgroundColor: 'white', opacity: '0.3' }} />
+        <li className='nav-item'>
+          <a className={`nav-link ${activeLink === '/students' ? 'active' : 'collapsed'}`} href='/students' onClick={() => handleLinkClick('/students')}>
+            <i className='bi bi-people'></i>
+            <span>Students</span>
+          </a>
+        </li>
+        <Divider variant="middle" component="li" sx={{ backgroundColor: 'white', opacity: '0.3' }} />
+        <li className='nav-item'>
+          <a className={`nav-link ${activeLink === '/batches' ? 'active' : 'collapsed'}`} href='/batches' onClick={() => handleLinkClick('/batches')}>
+            <i className='bi bi-grid-3x3-gap'></i>
+            <span>Batches</span>
+          </a>
+        </li>
       </ul>
     </aside>
   );
