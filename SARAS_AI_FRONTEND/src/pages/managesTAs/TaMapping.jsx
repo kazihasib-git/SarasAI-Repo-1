@@ -50,7 +50,7 @@ const TaMapping = () => {
       cellClassName: "name-column--cell",
       renderCell: (params) => (
         <div>
-          {params.value} <Button onClick={() => handleOpen(params.row, 'students')}>View</Button>
+          {params.value} <Button sx={{ borderRadius: 20, border:1, borderColor: "#ff6f61", color: "#ff6f61", "&:hover": { backgroundColor: "#ff6f61", color: "#fff" } }} onClick={() => handleOpen(params.row, 'students')}>View</Button>
         </div>
       ),
     },
@@ -108,7 +108,7 @@ const TaMapping = () => {
         <Header />
         <Sidebar />
         <Box display={"flex"} justifyContent={"space-between"}>
-          <p style={{ fontSize: "22px", fontWeight: "700", justifyContent: "center", margin: 0 }}>TA Mapping</p>
+          <p style={{ fontSize: "40px",  justifyContent: "center", margin: 0, color:"#1A1E3D" }}>TA Mapping</p>
           <Box display={"flex"}>
             <Box
               display={"flex"}

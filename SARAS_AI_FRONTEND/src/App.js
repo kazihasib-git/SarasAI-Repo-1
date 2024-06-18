@@ -27,6 +27,14 @@ import TaMapping from './pages/managesTAs/TaMapping';
 import TaScheduling from './pages/managesTAs/TaScheduling';
 import Calendar from './components/Calender/indexCalender';
 import StudentPage from './pages/students/StudentPage';
+import MyProfile from './components/RoleRoute/CommonComponent/MyProfile';
+import CallRecords from './components/RoleRoute/CommonComponent/CallRecords';
+import Messages from './components/RoleRoute/CommonComponent/Messages';
+import CallRequest from './components/RoleRoute/CommonComponent/CallRequest';
+import ScheduledCalls from './components/RoleRoute/CommonComponent/ScheduledCalls';
+import MyCalender from './components/RoleRoute/CommonComponent/MyCalender';
+import Mystudents from './components/RoleRoute/CommonComponent/Mystudents';
+// import StudentList from './pages/Student/StudentList';
 const ROLES = {
   "Teaching": 2001,
   "Coaches": 1984,
@@ -48,27 +56,41 @@ function App() {
             <Route index element={<Dashboard />} />
             <Route path='dashboard' element={<Dashboard />} />
             <Route path="students" element={<StudentPage />} />
-          </Route>
-        </Route>
-
-        <Route element={<RequireAuth allowedRoles={[ROLES.Teaching]} />}>
-          <Route path='/' element={<Main page="Teaching Assistant" />}>
             <Route path='manage-ta' element={<ManagesTAs page="Manage TA" />} />
             <Route path='ta-mapping' element={<TaMapping page="TA Mapping" />} />
             <Route path='ta-availability' element={<TAAvailability page="TA Availability" />} />
             <Route path='ta-scheduling' element={<TaScheduling page="TA Scheduling" />} />
             <Route path='calendar' element={<Calendar page="Calendar" />} />
-          </Route>
-        </Route>
-
-        <Route element={<RequireAuth allowedRoles={[ROLES.Coaches]} />}>
-          <Route path='/' element={<Main page="Manage Coaches" />}>
             <Route path='manage-coaches' element={<ManageCoaches page="Manage Coaches" />} />
             <Route path='coach-mapping' element={<CoachMapping page="Coach Mapping" />} />
             <Route path='coach-template' element={<CoachTemplate page="Coach Template" />} />
             <Route path='coach-availability' element={<CoachAvialability page="Coach Availability" />} />
             <Route path='coach-scheduling' element={<CoachScheduling page="Coach Scheduling" />} />
+            {/* <Route path='/student-list' element={<StudentList page="Student" />} /> */}
           </Route>
+        </Route>
+
+        <Route element={<RequireAuth allowedRoles={[ROLES.Teaching]} />}>
+          <Route path='/' element={<Main page="Teaching Assistant" />}>
+          <Route path='my-profile' element={<MyProfile page="My Profile"/>} />
+          <Route path='my-student' element={<Mystudents page="My Students"/>} />
+          <Route path='my-calender' element={<MyCalender page="My Calender"/>} />
+          <Route path='schedule-calls' element={<ScheduledCalls page="Schedule Calls"/>} />
+          <Route path='call-requests' element={<CallRequest page="Call Request"/>} />
+          <Route path='messages' element={<Messages page="Messages"/>} />
+          <Route path='call-records' element={<CallRecords page="Call Records"/>} />
+          </Route>
+        </Route>
+
+        <Route element={<RequireAuth allowedRoles={[ROLES.Coaches]} />}>
+          <Route path='/' element={<Main page="Manage Coaches" />}>
+            
+          </Route>
+        </Route>
+
+        <Route element={<RequireAuth allowedRoles={[ROLES.Coaches]} />}>
+
+          
         </Route>
 
         {/* Missed */}

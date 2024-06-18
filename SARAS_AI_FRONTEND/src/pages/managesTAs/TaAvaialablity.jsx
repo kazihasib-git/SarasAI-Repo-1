@@ -1,8 +1,8 @@
 import React from 'react';
-import { Box, InputBase ,Link as MuiLink } from '@mui/material';
+import { Box, InputBase, Link as MuiLink } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { useTheme } from '@mui/material/styles';
-import Calendar from '../../components/Calender/indexCalender';
+// import Calendar from '../../components/Calender/indexCalender';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
 import { mockDataAvilable } from '../../fakeData/availableData';
@@ -38,7 +38,9 @@ const TaAvialablity = () => {
             cellClassName: 'name-column--cell',
             renderCell: (params) => (
                 <MuiLink component={Link} to="/calendar">
-                    Check
+                    <div>
+                        <p>check</p>
+                    </div>
                 </MuiLink>
             ),
         },

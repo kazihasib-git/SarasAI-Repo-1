@@ -6,7 +6,7 @@ function Main({ page }) {
   return (
     <main id='main' className='main'>
       {console.log("PAGE : ", page)}
-      <PageTitle page={page} />
+      {/* <PageTitle page={page} /> */}
       <Outlet />
     </main>
   );
