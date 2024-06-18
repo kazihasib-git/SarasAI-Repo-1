@@ -6,6 +6,8 @@ import Sidebar from "../../components/Sidebar/Sidebar";
 import { useState } from "react";
 import { OnOffSwitch } from '../../components/Switch';
 import editIcon from '../../assets/editIcon.png';
+import AddEditTA from '../../components/adminModule/tas/manageTAs/AddEditTA';
+import { useNavigate } from 'react-router-dom';
 const ManagesTAs = () => {
     // const theme = useTheme();
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,6 +22,11 @@ const ManagesTAs = () => {
         gender: '',
         qualification: '',
     });
+    const navigate = useNavigate()
+
+    const handleAddTa = () => {
+        navigate('createta')
+    }
 
     const handleOpenModal = () => {
         setIsModalOpen(true);
@@ -120,7 +127,7 @@ const ManagesTAs = () => {
                         >
                             <InputBase sx={{ ml: 2, flex: 1 }} placeholder="Search here ..." />
                         </Box>
-                        <Button variant="contained" onClick={handleOpenModal} style={{ backgroundColor: "#F56D3B", borderRadius: "30px" }}> <i style={{ marginRight: "5px" }} className="bi bi-plus-circle"></i> Create TA</Button>
+                        <Button variant="contained" onClick={handleAddTa} style={{ backgroundColor: "#F56D3B", borderRadius: "30px" }}> <i style={{ marginRight: "5px" }} className="bi bi-plus-circle"></i> Create TA</Button>
                     </Box>
                 </Box>
                 <Box m="20px 0 0 0" height={"70vh"} sx={{
@@ -191,7 +198,8 @@ const ManagesTAs = () => {
                         </Box>
                         <Button style={{ fontSize: "34px", padding: "0" }} onClick={handleCloseModal}>&times;</Button>
                     </Box>
-                    <form onSubmit={handleSubmitForm}>
+                    
+                    {/*<form onSubmit={handleSubmitForm}>
                         <input
                             type="file"
                             accept="image/*"
@@ -311,6 +319,8 @@ const ManagesTAs = () => {
                         </Box>
                         <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2, p: 1.5 }}>Submit</Button>
                     </form>
+                    */}
+                    <AddEditTA />
                 </Box>
             </Modal>
         </>

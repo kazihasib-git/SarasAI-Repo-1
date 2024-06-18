@@ -1,34 +1,32 @@
+import React from 'react'
+import { useGetBatchesQuery } from '../../redux/services/batches/batchesApi'
 import { Box, InputBase } from '@mui/material'
-import React, { useEffect, useMemo, useState } from 'react'
-import { studentDummyDatadata } from '../../fakeData/studentData'
-import { DataGrid } from '@mui/x-data-grid'
 import Header from '../Header/Header'
 import Sidebar from '../Sidebar/Sidebar'
-import { useGetStudentsQuery } from '../../redux/services/students/studentsApi' 
+import { DataGrid } from '@mui/x-data-grid'
+import { batchesDummyData } from "../../fakeData/batchesData"
 
-const Students = () => {
+const Batches = () => {
     /*
-    const { data : students, error, isLoading } = useGetStudentsQuery();
+    const { data : batches, error , isLoading } = useGetBatchesQuery()
 
     if(isLoading){
         return <div>Loading....</div>
     }
 
     if(error){
-        return <div> Error Loading students </div>
+        return <div>Error loading batches</div>
     }
-
     */
-
+   
     const columns = useMemo(() => [
-        { field: "id", headerName: "ID", flex: 1, cellClassName: "name-column--cell" },
-        { field: "name", headerName: "Name", flex: 1, cellClassName: "name-column--cell" },
-        { field: "user_id", headerName: "User Id", flex: 1, cellClassName: "name-column--cell" },
-        { field: "email", headerName: "Email", flex: 1, cellClassName: "name-column--cell" },
-        { field: "phone", headerName: "Phone Number", flex: 1, cellClassName: "name-column--cell" },
+        { field: "course_id", headerName: "ID", flex: 1, cellClassName: "name-column--cell" },
+        { field : "title", headerName : 'Title', flex: 1, cellClassName: "name-column--cell"},
+        { field : "description", headerName : 'Description', flex: 1, cellClassName: "name-column--cell"},
+        { field : "duration", headerName : 'Duration', flex: 1, cellClassName: "name-column--cell"},
+        { field : "level", headerName : 'Level', flex: 1, cellClassName: "name-column--cell"},
     ], []);
       
-
     return (
         <div>
             <Box m="40px">
@@ -79,14 +77,13 @@ const Students = () => {
                     }
                 }}>
                     <DataGrid
-                        rows={studentDummyDatadata}
+                        rows={batchesData}
                         columns={columns}
                     />
                 </Box>
             </Box>
-
         </div>
     )
 }
 
-export default Students
+export default Batches
