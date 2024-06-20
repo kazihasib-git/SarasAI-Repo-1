@@ -1,31 +1,26 @@
-import { Box, InputBase } from '@mui/material'
-import React, { useEffect, useMemo, useState } from 'react'
-import { studentDummyDatadata } from '../../fakeData/studentData'
-import { DataGrid } from '@mui/x-data-grid'
-import Header from '../Header/Header'
-import Sidebar from '../Sidebar/Sidebar'
-import { useGetStudentsQuery } from '../../redux/services/students/studentsApi' 
+import React from 'react'
+import { useGetCoursesQuery } from '../../redux/services/courses/coursesApi'
+import { coursesDummyData } from "../../fakeData/coursesData";
 
-const Students = () => {
+const Courses = () => {
     /*
-    const { data : students, error, isLoading } = useGetStudentsQuery();
+    const { data : courses , error , isLoading } = useGetCoursesQuery();
 
     if(isLoading){
         return <div>Loading....</div>
     }
 
     if(error){
-        return <div> Error Loading students </div>
+        return <div>Error in loading courses</div>
     }
-
     */
 
-    const columns = useMemo(() => [
-        { field: "id", headerName: "ID", flex: 1, cellClassName: "name-column--cell" },
-        { field: "name", headerName: "Name", flex: 1, cellClassName: "name-column--cell" },
-        { field: "user_id", headerName: "User Id", flex: 1, cellClassName: "name-column--cell" },
-        { field: "email", headerName: "Email", flex: 1, cellClassName: "name-column--cell" },
-        { field: "phone", headerName: "Phone Number", flex: 1, cellClassName: "name-column--cell" },
+     const columns = useMemo(() => [
+        { field: "course_id", headerName: "ID", flex: 1, cellClassName: "name-column--cell" },
+        { field: "title", headerName: "Title", flex: 1, cellClassName: "name-column--cell" },
+        { field: "description", headerName: "Description", flex: 1, cellClassName: "name-column--cell" },
+        { field: "duration", headerName: "Duration", flex: 1, cellClassName: "name-column--cell" },
+        { field: "level", headerName: "Level", flex: 1, cellClassName: "name-column--cell" },
     ], []);
       
 
@@ -79,7 +74,7 @@ const Students = () => {
                     }
                 }}>
                     <DataGrid
-                        rows={studentDummyDatadata}
+                        rows={coursesDummyData}
                         columns={columns}
                     />
                 </Box>
@@ -89,4 +84,4 @@ const Students = () => {
     )
 }
 
-export default Students
+export default Courses
