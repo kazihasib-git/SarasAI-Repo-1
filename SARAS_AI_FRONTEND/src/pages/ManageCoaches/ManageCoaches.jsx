@@ -6,6 +6,7 @@ import Sidebar from "../../components/Sidebar/Sidebar";
 import { useState } from "react";
 import { OnOffSwitch } from '../../components/Switch';
 import editIcon from '../../assets/editIcon.png';
+import { useNavigate } from 'react-router-dom';
 const ManageCoaches = () => {
     // const theme = useTheme();
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,6 +21,13 @@ const ManageCoaches = () => {
         gender: '',
         qualification: '',
     });
+    
+    const navigate = useNavigate()
+
+    const handleAddCoach = () => {
+        navigate('createcoach')
+    }
+
 
     const handleOpenModal = () => {
         setIsModalOpen(true);
@@ -120,7 +128,7 @@ const ManageCoaches = () => {
                         >
                             <InputBase sx={{ ml: 2, flex: 1 }} placeholder="Search here ..." />
                         </Box>
-                        <Button variant="contained" onClick={handleOpenModal} style={{ backgroundColor: "#F56D3B", borderRadius: "30px" }}> <i style={{ marginRight: "5px" }} className="bi bi-plus-circle"></i> Create Coach</Button>
+                        <Button variant="contained" onClick={handleAddCoach} style={{ backgroundColor: "#F56D3B", borderRadius: "30px" }}> <i style={{ marginRight: "5px" }} className="bi bi-plus-circle"></i> Create Coach</Button>
                     </Box>
                 </Box>
                 <Box m="20px 0 0 0" height={"70vh"} sx={{

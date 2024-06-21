@@ -102,7 +102,7 @@ const AssignBatches = ({ open, handleClose }) => {
                         </TextField>
                     </Grid>
                     <Grid item xs={12}>
-                        <Divider sx={{ mt: 2, mb: 2, color: '#C2C2E7' }} />
+                        <Divider sx={{ mt: 2, mb: 4, border: '1px solid #C2C2E7' }} />
                     </Grid>
                     <Grid item xs={12}>
                         <TextField

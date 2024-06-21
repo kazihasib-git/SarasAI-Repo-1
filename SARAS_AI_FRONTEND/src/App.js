@@ -20,7 +20,7 @@ import TAAvailability from './pages/managesTAs/TaAvaialablity'
 import ManageCoaches from './pages/ManageCoaches/ManageCoaches';
 import CoachMapping from './pages/ManageCoaches/CoachMapping';
 import CoachTemplate from './pages/ManageCoaches/CoachTemplate';
-import CoachAvialability from './pages/ManageCoaches/CoachAvialability';
+import CoachAvialability from './pages/managesTAs/CoachAvialability';
 import CoachScheduling from './pages/ManageCoaches/CoachScheduling';
 import AllRoutes from './components/AllRoutes/AllRoutes'
 import TaMapping from './pages/managesTAs/TaMapping';
@@ -30,6 +30,7 @@ import StudentPage from './pages/students/StudentPage';
 import AddEditTA from './components/adminModule/tas/manageTAs/AddEditTA';
 import CreateTAPage from './pages/managesTAs/CreateTAPage';
 import CreateCoachPage from './pages/ManageCoaches/CreateCoachPage';
+import CoachCalender from './pages/ManageCoaches/CoachCalender';
 const ROLES = {
   "Teaching": 2001,
   "Coaches": 1984,
@@ -51,8 +52,9 @@ function App() {
             <Route index element={<Dashboard />} />
             <Route path='dashboard' element={<Dashboard />} />
             <Route path="students" element={<StudentPage />} />
-            <Route path="createta" element={<CreateTAPage />} />
-            <Route path="createcoach" element={<CreateCoachPage />} />
+            <Route path="manage-ta/createta" element={<CreateTAPage />} />
+            <Route path="manage-coaches/createcoach" element={<CreateCoachPage />} />
+            <Route path='manage-coaches/tacalender' element={<CoachCalender />} />
           </Route>
         </Route>
 

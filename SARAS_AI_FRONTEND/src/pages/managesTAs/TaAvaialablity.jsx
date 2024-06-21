@@ -1,8 +1,7 @@
-import React from 'react';
-import { Box, InputBase ,Link as MuiLink } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, InputBase, Link as MuiLink } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { useTheme } from '@mui/material/styles';
-import Calendar from '../../components/Calender/indexCalender';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Header from '../../components/Header/Header';
 import { mockDataAvilable } from '../../fakeData/availableData';
@@ -10,6 +9,7 @@ import { Link } from 'react-router-dom';
 
 const TaAvialablity = () => {
     const theme = useTheme();
+    const [checkCalender, setCheckCalender] = useState(false);
 
     const columns = [
         { field: 'id', headerName: 'ID' },
@@ -37,7 +37,7 @@ const TaAvialablity = () => {
             flex: 1,
             cellClassName: 'name-column--cell',
             renderCell: (params) => (
-                <MuiLink component={Link} to="/calendar">
+                <MuiLink component={Link} to="/tacalender">
                     Check
                 </MuiLink>
             ),
