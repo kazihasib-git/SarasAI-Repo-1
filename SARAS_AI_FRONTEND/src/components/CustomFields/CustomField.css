@@ -1,0 +1,18 @@
+/* Override autofill background color */
+.MuiInputBase-input:-internal-autofill-selected {
+    background-color: white !important; /* Override with your desired background color */
+    color: inherit !important; /* Inherit the text color */
+}
+
+.custom-input-root {
+    background-color: white !important;
+    font-family: 'Nohemi', sans-serif;
+}
+
+.custom-input-focused {
+    background-color: white !important;
+}
+
+.custom-input-notchedOutline {
+    border-color: #D0D0EC !important;
+}

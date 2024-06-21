@@ -20,14 +20,13 @@ import TAAvailability from './pages/managesTAs/TaAvaialablity'
 import ManageCoaches from './pages/ManageCoaches/ManageCoaches';
 import CoachMapping from './pages/ManageCoaches/CoachMapping';
 import CoachTemplate from './pages/ManageCoaches/CoachTemplate';
-import CoachAvialability from './pages/ManageCoaches/CoachAvialability';
+import CoachAvialability from './pages/managesTAs/CoachAvialability';
 import CoachScheduling from './pages/ManageCoaches/CoachScheduling';
 import AllRoutes from './components/AllRoutes/AllRoutes'
 import TaMapping from './pages/managesTAs/TaMapping';
 import TaScheduling from './pages/managesTAs/TaScheduling';
 import Calendar from './components/Calender/indexCalender';
 import StudentPage from './pages/students/StudentPage';
-<<<<<<< HEAD
 import MyProfile from './components/RoleRoute/CommonComponent/MyProfile';
 import CallRecords from './components/RoleRoute/CommonComponent/CallRecords';
 import Messages from './components/RoleRoute/CommonComponent/Messages';
@@ -36,11 +35,10 @@ import ScheduledCalls from './components/RoleRoute/CommonComponent/ScheduledCall
 import MyCalender from './components/RoleRoute/CommonComponent/MyCalender';
 import Mystudents from './components/RoleRoute/CommonComponent/Mystudents';
 // import StudentList from './pages/Student/StudentList';
-=======
 import AddEditTA from './components/adminModule/tas/manageTAs/AddEditTA';
 import CreateTAPage from './pages/managesTAs/CreateTAPage';
 import CreateCoachPage from './pages/ManageCoaches/CreateCoachPage';
->>>>>>> 86b6dc80456c5b23652c225c339c38fab7250d86
+import CoachCalender from './pages/ManageCoaches/CoachCalender';
 const ROLES = {
   "Teaching": 2001,
   "Coaches": 1984,
@@ -62,16 +60,14 @@ function App() {
             <Route index element={<Dashboard />} />
             <Route path='dashboard' element={<Dashboard />} />
             <Route path="students" element={<StudentPage />} />
-<<<<<<< HEAD
-=======
-            <Route path="createta" element={<CreateTAPage />} />
-            <Route path="createcoach" element={<CreateCoachPage />} />
+            <Route path="manage-ta/createta" element={<CreateTAPage />} />
+            <Route path="manage-coaches/createcoach" element={<CreateCoachPage />} />
+            <Route path='manage-coaches/tacalender' element={<CoachCalender />} />
           </Route>
         </Route>
 
         <Route element={<RequireAuth allowedRoles={[ROLES.Teaching]} />}>
           <Route path='/' element={<Main page="Teaching Assistant" />}>
->>>>>>> 86b6dc80456c5b23652c225c339c38fab7250d86
             <Route path='manage-ta' element={<ManagesTAs page="Manage TA" />} />
             <Route path='ta-mapping' element={<TaMapping page="TA Mapping" />} />
             <Route path='ta-availability' element={<TAAvailability page="TA Availability" />} />
