@@ -1,17 +1,17 @@
 .table-container {
-    width: 90%;
+    /* width: 90%; */
     /* max-width: 1200px; */
     margin: auto;
-    margin-top: 20px;
+    /* margin-top: 20px; */
     text-align: left;
-    font-family: Arial, sans-serif;
+    font-family: "Nunito Sans", sans-serif;
     border-radius: 10px; /* Add border radius to the table container */
     overflow: hidden; /* Ensure the border radius applies to the entire table */
   }
   
   h2 {
     text-align: center;
-    margin-bottom: 20px;
+    /* margin-bottom: 20px; */
   }
   
   table {
@@ -23,14 +23,13 @@
   }
   
   thead {
-    background-color: #FFFF;
+    background-color: #FFF;
     position: relative; /* Ensure the pseudo-element is positioned relative to thead */
   }
   
   thead::after {
     content: "";
     position: absolute;
-    
     left: 30px; /* Space from the left */
     right: 30px; /* Space from the right */
     bottom: 0;
@@ -42,6 +41,7 @@
   
   thead th {
     padding: 12px; /* Apply padding to table headers */
+    font-size: 18px;
   }
   
   th, td {
@@ -51,10 +51,11 @@
   
   tbody tr {
     background-color: #ffffff;
+    font-size: 18px;
   }
   
   tbody tr:hover {
-    background-color: #f9f9f9; /* Optional: Add a hover effect for rows */
+    background-color: #F6F0F0; /* Optional: Add a hover effect for rows */
   }
   
   td {
@@ -79,6 +80,7 @@
     display: flex;
     justify-content: center;
     margin-top: 20px;
+    margin-bottom: 20px;
   }
   
   .pagination button {
@@ -93,6 +95,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.3s ease-in;
   }
   
   .pagination button.active {

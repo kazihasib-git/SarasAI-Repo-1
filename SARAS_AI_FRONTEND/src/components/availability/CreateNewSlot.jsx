@@ -1,9 +1,49 @@
-import CloseIcon from '@mui/icons-material/Close';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, MenuItem, TextField, Radio, FormControlLabel, FormControl, FormLabel, RadioGroup, Checkbox, FormGroup } from '@mui/material';
 import React, { useState } from 'react';
-import moment from 'moment-timezone';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import {
+    Grid,
+    Button,
+    FormControl,
+    RadioGroup,
+    FormControlLabel,
+    Radio,
+    FormGroup,
+    Checkbox,
+    MenuItem,
+} from '@mui/material';
+
+import CustomDateField from '../CustomFields/CustomDateField';
+import ReusableDialog from '../CustomFields/ReusableDialog';
+import { timeZones, validateTimeZone } from '../CustomFields/FormOptions';
+import CustomFormControl from '../CustomFields/CustomFromControl';
+
+const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = '#4E18A5', borderColor = '#FFFFFF', sx, ...props }) => {
+    return (
+        <Button
+            variant="contained"
+            onClick={onClick}
+            sx={{
+                backgroundColor: backgroundColor,
+                color: color,
+                fontWeight: '700',
+                fontSize: '16px',
+                borderRadius: '50px',
+                padding: "10px 20px",
+                border: `2px solid ${borderColor}`,
+                '&:hover': {
+                    backgroundColor: color,
+                    color: backgroundColor,
+                    borderColor: color,
+                },
+                ...sx
+            }}
+            {...props}
+        >
+            {children}
+        </Button>
+    );
+};
+
+
 
 const CreateNewSlot = ({ open, handleClose }) => {
     const [formDate, setFormDate] = useState(null);
@@ -12,7 +52,6 @@ const CreateNewSlot = ({ open, handleClose }) => {
     const [repeat, setRepeat] = useState('onetime');
     const [selectedDays, setSelectedDays] = useState([]);
 
-    const timeZones = moment.tz.names();
     const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
     const handleSubmit = () => {
@@ -29,194 +68,101 @@ const CreateNewSlot = ({ open, handleClose }) => {
         });
     };
 
-    return (
-        <Dialog
-            open={open}
-            onClose={handleClose}
-            maxWidth="sm"
-            fullWidth
-            sx={{
-                '& .MuiPaper-root': {
-                    borderRadius: '10px',
-                    padding: '20px',
-                    position: 'relative',
-                },
-                '@media (max-width: 600px)': {
-                    '& .MuiPaper-root': {
-                        padding: '10px',
-                    },
-                },
-            }}
-        >
-            <IconButton
-                onClick={handleClose}
-                sx={{
-                    color: '#F56D3B',
-                    position: 'absolute',
-                    top: 10,
-                    right: 10,
-                }}
-            >
-                <CloseIcon />
-            </IconButton>
-            <DialogTitle
-                sx={{
-                    font: 'Nodemi',
-                    fontWeight: '600',
-                    fontSize: '24px',
-                    color: '#1A1E3D',
-                    textAlign: 'center',
-                }}
-            >
-                Create New Slot
-            </DialogTitle>
-            <DialogContent sx={{ m: 2 }}>
-                <Grid container spacing={2} justifyContent="center">
-                    <Grid item xs={12} sm={6}>
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DatePicker
-                                label="From Date"
-                                inputFormat="dd/MM/yyyy"
-                                value={formDate}
-                                onChange={(date) => setFormDate(date)}
-                                renderInput={(params) => <TextField {...params} fullWidth />}
-                                sx={{
-                                    '& .MuiOutlinedInput-root': {
-                                        borderRadius: '50px',
-                                        padding: '10px 30px',
-                                        border: '1px solid #D0D0EC'
-                                    }
-                                }}
-                            />
-                        </LocalizationProvider>
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DatePicker
-                                label="To Date"
-                                inputFormat="dd/MM/yyyy"
-                                value={toDate}
-                                onChange={(date) => setToDate(date)}
-                                renderInput={(params) => <TextField {...params} fullWidth />}
-                                sx={{
-                                    '& .MuiOutlinedInput-root': {
-                                        borderRadius: '50px',
-                                        padding: '10px 30px',
-                                        border: '1px solid #D0D0EC'
-                                    }
-                                }}
-                            />
-                        </LocalizationProvider>
-                    </Grid>
-                    <Grid item xs={12} sm={12} md={6} justifyContent="center">
-                        <TextField
-                            select
-                            label="Select Timezone"
-                            value={timezone}
-                            onChange={(e) => setTimezone(e.target.value)}
-                            fullWidth
-                            sx={{
-                                '& .MuiOutlinedInput-root': {
-                                    borderRadius: '50px',
-                                    padding: '10px 30px',
-                                    border: '1px solid #D0D0EC'
-                                },
-                                '& .MuiPaper-root': {
-                                    width: '400%',  // Set the width to 100% of the popup menu
-                                    maxWidth: 'none'  // Ensure there's no max-width restricting the width
-                                }
-                            }}
-                        >
-                            {timeZones.map((option) => (
-                                <MenuItem key={option} value={option}>
-                                    {option}
-                                </MenuItem>
-                            ))}
-                        </TextField>
-                    </Grid>
+    const content = (
+        <>
+            <Grid container spacing={2} justifyContent="center" sx={{ pt: 3 }}>
+                <Grid item xs={12} sm={6} >
+                    <CustomDateField
+                        label="From Date"
+                        name="fromDate"
+                        value={formDate}
+                        onChange={(date) => setFormDate(date)}
+                    />
                 </Grid>
+                <Grid item xs={12} sm={6}>
+                    <CustomDateField
+                        label="To Date"
+                        name="toDate"
+                        value={toDate}
+                        onChange={(date) => setToDate(date)}
+                    />
+                </Grid>
+                <Grid item xs={12} sm={12} md={6}>
+                    <CustomFormControl
+                        label="Select Timezone"
+                        name="timezone"
+                        controlProps={{
+                            select: true,
+                            fullWidth: true,
+                            value: timezone,
+                            onChange: (e) => setTimezone(e.target.value),
+                        }}
+                        register={() => { }}
+                        validation={{ validate: validateTimeZone }}
+                        errors={{}}
+                        options={timeZones}
+                    />
+                </Grid>
+            </Grid>
+            <Grid container spacing={2} justifyContent="center">
+                <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
+                    <FormControl component="fieldset">
+                        <RadioGroup row value={repeat} onChange={(e) => setRepeat(e.target.value)} sx={{ justifyContent: 'center' }}>
+                            <FormControlLabel value="onetime" control={<Radio />} label="One-Time" />
+                            <FormControlLabel value="recurring" control={<Radio />} label="Recurring" />
+                        </RadioGroup>
+                    </FormControl>
+                </Grid>
+            </Grid>
+            {repeat === 'recurring' && (
                 <Grid container spacing={2} justifyContent="center">
-                    <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
+                    <Grid item xs={12}>
                         <FormControl component="fieldset">
-                            <RadioGroup
-                                row
-                                value={repeat}
-                                onChange={(e) => setRepeat(e.target.value)}
-                                sx={{ justifyContent: 'center' }}
-                            >
-                                <FormControlLabel value="onetime" control={<Radio />} label="One-Time" />
-                                <FormControlLabel value="recurring" control={<Radio />} label="Recurring" />
-                            </RadioGroup>
+                            <FormGroup row>
+                                {weekDays.map((day) => (
+                                    <FormControlLabel
+                                        key={day}
+                                        control={<Checkbox checked={selectedDays.includes(day)} onChange={() => handleDayChange(day)} name={day} />}
+                                        label={day}
+                                    />
+                                ))}
+                            </FormGroup>
                         </FormControl>
                     </Grid>
                 </Grid>
-                {repeat === 'recurring' && (
-                    <Grid container spacing={2} justifyContent="center">
-                        <Grid item xs={12}>
-                            <FormControl component="fieldset">
-                                <FormGroup row>
-                                    {weekDays.map((day) => (
-                                        <FormControlLabel
-                                            key={day}
-                                            control={
-                                                <Checkbox
-                                                    checked={selectedDays.includes(day)}
-                                                    onChange={() => handleDayChange(day)}
-                                                    name={day}
-                                                />
-                                            }
-                                            label={day}
-                                        />
-                                    ))}
-                                </FormGroup>
-                            </FormControl>
-                        </Grid>
-                    </Grid>
-                )}
-            </DialogContent>
-            <DialogActions sx={{ justifyContent: 'center', pb: 3 }}>
-                <Button
-                    onClick={handleSubmit}
-                    variant="contained"
-                    sx={{
-                        backgroundColor: 'white',
-                        color: '#F56D3B',
-                        border: '2px solid #F56D3B',
-                        borderRadius: '50px',
-                        textTransform: 'none',
-                        fontWeight: '700',
-                        fontSize: '16px',
-                        padding: '10px 20px',
-                        mx: 1,
-                        '&:hover': {
-                            backgroundColor: '#F56D3B',
-                            color: 'white',
-                        },
-                    }}
-                >
-                    Back
-                </Button>
-                <Button
-                    onClick={handleSubmit}
-                    variant="contained"
-                    sx={{
-                        backgroundColor: '#F56D3B',
-                        color: 'white',
-                        borderRadius: '50px',
-                        textTransform: 'none',
-                        padding: '10px 20px',
-                        fontWeight: '700',
-                        fontSize: '16px',
-                        mx: 1,
-                        '&:hover': {
-                            backgroundColor: '#E25A27',
-                        },
-                    }}
-                >
-                    Submit
-                </Button>
-            </DialogActions>
-        </Dialog>
+            )}
+        </>
+    );
+
+    const actions = (
+        <>
+            <CustomButton
+                onClick={handleSubmit}
+                backgroundColor='white'
+                color='#F56D3B'
+                borderColor='#F56D3B'
+            >
+                Back
+            </CustomButton>
+            <CustomButton
+                onClick={handleSubmit}
+                backgroundColor='#F56D3B'
+                color='white'
+                borderColor='#F56D3B'
+            >
+                Submit
+            </CustomButton>
+        </>
+    );
+
+    return (
+        <ReusableDialog
+            open={open}
+            handleClose={handleClose}
+            title="Create New Slot"
+            content={content}
+            actions={actions}
+        />
     );
 };
 

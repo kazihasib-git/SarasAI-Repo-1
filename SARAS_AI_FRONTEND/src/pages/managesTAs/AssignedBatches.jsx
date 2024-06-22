@@ -1,24 +1,30 @@
 import React, { useState } from "react";
 import { Button, IconButton, Switch, Pagination, Box } from "@mui/material";
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
-import CallMadeOutlinedIcon from '@mui/icons-material/CallMadeOutlined';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import { styled } from "@mui/material/styles";
 import './CommonComponent.css'
 import Header from "../../components/Header/Header";
 import Sidebar from "../../components/Sidebar/Sidebar";
-import { mockDataAvilable } from "../../fakeData/availableData";
+import { AssignedStudentData } from "../../fakeData/AssignedStudentData"
+import { useLocation, useNavigate } from 'react-router-dom';
+import { AssignedBatchesData } from "../../fakeData/AssignedBatchesData";
+import bin from '../../assets/bin.png';
 
-const CustomButton = styled(Button)(({ theme }) => ({
-    borderRadius: '20px',
+const CustomButton = styled(Button)(({ theme, active }) => ({
+    borderRadius: '50px',
     border: "1px solid #F56D3B",
-    color: "#F56D3B",
+    color: active ? '#fff' : "#F56D3B",
+    backgroundColor: active ? "#F56D3B" : "#FFF",
+    padding: '8px 16px',  // Add padding for horizontal and vertical spacing
+    margin: '0 8px',  
+
     '&:hover': {
-        backgroundColor: "#F56D3B",
-        color: '#fff',
-        borderColor: '#F56D3B',
+      backgroundColor: "#F56D3B",
+      color: '#fff',
+      borderColor: '#F56D3B',
     },
-}));
+  }));
 
 const AntSwitch = styled(Switch)(({ theme }) => ({
     width: 28,
@@ -72,6 +78,7 @@ const DynamicTable = ({ headers, initialData, title, actionButtons }) => {
     const itemsPerPage = 10;
     const totalPages = Math.ceil(data.length / itemsPerPage);
     const currentData = data.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+    const navigate = useNavigate();
 
     const handlePageChange = (event, pageNumber) => {
         setCurrentPage(pageNumber);
@@ -90,28 +97,33 @@ const DynamicTable = ({ headers, initialData, title, actionButtons }) => {
         console.log("Deleting item with id:", id);
     };
 
-    const handleView = (type, id) => {
-        // Implement view functionality here based on type ('students' or 'batches')
-        console.log(`Viewing ${type} for item with id:`, id);
-    };
-
-    const getColorForAvailability = (availability) => {
-        switch (availability) {
-            case 'Active':
-                return '#06DD0F';
-            case 'On Leave':
-                return '#F48606';
-            case 'Inactive':
-                return '#808080';
-            default:
-                return '#000000';
-        }
-    };
+    const handleNavigate = (path) => {
+        navigate(path);
+      };
 
     return (
         <div className="table-container">
+            <Box display="flex" justifyContent="space-between" alignItems="center" padding="16px">
+                <CustomButton onClick={() => navigate('/ta-mapping')}>
+                    <i className="bi bi-caret-left"></i> Back
+                </CustomButton>
+            </Box>
             <Box display={"flex"} justifyContent={"space-between"}>
                 <p style={{ fontSize: "44px", justifyContent: "center", marginBottom: '20px' }}>{title}</p>
+                <div className='inputBtnContainer'>
+                    <CustomButton
+                        onClick={() => handleNavigate('/active-students')}
+                        active={location.pathname === '/active-students'}
+                    >
+                        Assigned Student
+                    </CustomButton>
+                    <CustomButton
+                        onClick={() => handleNavigate('/active-batches')}
+                        active={location.pathname === '/active-batches'}
+                    >
+                        Assigned Batches
+                    </CustomButton>
+                </div>
             </Box>
             <table>
                 <thead>
@@ -127,28 +139,7 @@ const DynamicTable = ({ headers, initialData, title, actionButtons }) => {
                         <tr key={item.id}>
                             <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                             {Object.keys(item).map((key, idx) => {
-                                if (key === 'availability') {
-                                    return (
-                                        <td key={idx} style={{ color: getColorForAvailability(item[key]) }}>
-                                            {item[key]}
-                                        </td>
-                                    );
-                                } else if (key === 'calendar') {
-                                    return (
-                                        <td key={idx}>
-                                            {/* {item[key]}{" "} */}
-                                            <CustomButton
-                                                variant="outlined"
-                                                color="secondary"
-                                                endIcon={<CallMadeOutlinedIcon />}
-                                                onClick={() => handleView('Calendar', item.id)}
-                                            >
-                                                Check
-                                            </CustomButton>
-                                        </td>
-                                    );
-
-                                } else if (key !== 'id' && key !== 'isActive') {
+                                if (key !== 'id' && key !== 'isActive') {
                                     return <td key={idx}>{item[key]}</td>;
                                 }
                                 return null;
@@ -176,7 +167,7 @@ const DynamicTable = ({ headers, initialData, title, actionButtons }) => {
                                         if (button.type === 'delete') {
                                             return (
                                                 <IconButton key={idx} color="primary" onClick={() => handleDelete(item.id)}>
-                                                    <DeleteOutlineOutlinedIcon style={{ color: "#FF0000" }} />
+                                                    <img src={bin} alt="" style={{ width: "20px", height: "20px" }} />
                                                 </IconButton>
                                             );
                                         }
@@ -232,25 +223,34 @@ const DynamicTable = ({ headers, initialData, title, actionButtons }) => {
 };
 
 
-const headers = ["Sr. No.", "TA Name", "Username", "Availability", "Calendar"];
+const headers = ["Sr. No.", "Student Name", "Batch", "Actions"];
+const actionButtons = [
+    {
+        type: 'switch',
+    },
+    {
+        type: 'delete',
+        onClick: (id) => console.log(`Edit clicked for id ${id}`)
+    }
+];
 
 
-
-const TaAvialability = () => {
+const AssignBatches = () => {
     return (
         <>
             <Header />
             <Sidebar />
             <DynamicTable
                 headers={headers}
-                initialData={mockDataAvilable}
-                title="TA Avialability"
+                initialData={AssignedBatchesData}
+                title="Assign Batches"
+                actionButtons={actionButtons}
             />
         </>
     );
 };
 
-export default TaAvialability
+export default AssignBatches
 
 
 

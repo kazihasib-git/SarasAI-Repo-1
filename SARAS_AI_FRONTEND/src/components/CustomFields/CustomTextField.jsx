@@ -1,7 +1,7 @@
 import React from 'react';
 import { TextField } from '@mui/material';
-import './CustomField.css';
-const CustomTextField = ({ label, name, placeholder, register, validation, errors, type = "text", multiline = false, rows = 1 }) => {
+
+const CustomTextField = ({ label, name, placeholder, register = () => {}, validation = {}, errors = {}, type = "text", multiline = false, rows = 1, ...props }) => {
     const inputPropsStyle = multiline ? { borderRadius: '25px', padding: '25px 30px 18px 30px' } : { height: '60px', borderRadius: '50px', padding: '18px 30px' };
 
     return (
@@ -17,22 +17,16 @@ const CustomTextField = ({ label, name, placeholder, register, validation, error
             error={!!errors[name]}
             helperText={errors[name]?.message}
             variant="outlined"
-            InputProps={{ 
-                style: inputPropsStyle,
-                classes: {
-                    root: 'custom-input-root',
-                    focused: 'custom-input-focused',
-                    notchedOutline: 'custom-input-notchedOutline'
-                }
-            }}
+            InputProps={{ style: inputPropsStyle }}
             InputLabelProps={{ style: { margin: 0 } }}
             sx={{
-                '& .MuiInputLabel-root': {
-                    '&.Mui-focused': {
-                        color: 'rgb(245, 109, 59)', // Change label color on focus
-                    },
-                },
                 '& .MuiOutlinedInput-root': {
+                    '& fieldset': {
+                        borderColor: '#D0D0EC',
+                    },
+                    '&:hover fieldset': {
+                        borderColor: '#D0D0EC',
+                    },
                     '&.Mui-focused fieldset': {
                         borderColor: 'rgb(245, 109, 59)', // Change border color on focus
                     },
@@ -41,18 +35,15 @@ const CustomTextField = ({ label, name, placeholder, register, validation, error
                     },
                     '&.Mui-focused.Mui-filled': {
                         backgroundColor: 'transparent', // Override background color for autofill state
+                    }
+                },
+                '& .MuiInputLabel-root': {
+                    '&.Mui-focused': {
+                        color: 'rgb(245, 109, 59)', // Change label color on focus
                     },
                 },
-                '& .custom-input-root': {
-                    backgroundColor: 'white', // Set background color for the input field
-                },
-                '& .custom-input-focused': {
-                    backgroundColor: 'white', // Set background color when focused
-                },
-                '& .custom-input-notchedOutline': {
-                    borderColor: '#D0D0EC', // Set outline color
-                },
             }}
+            {...props} // Spread any additional props
         />
     );
 };

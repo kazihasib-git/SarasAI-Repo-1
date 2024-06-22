@@ -1,12 +1,12 @@
 import React from 'react';
-import { Dialog, DialogTitle, DialogActions, IconButton, Typography, Box, Button } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, IconButton, Button, Typography, Box } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
-const ReusableDialog = ({ open, handleClose, handleAssignStudents, handleAssignBatches, title }) => (
+const ReusableDialog = ({ open, handleClose, title, content, actions }) => (
   <Dialog
     open={open}
     onClose={handleClose}
-    maxWidth="md"
+    // maxWidth="md"
     fullWidth
     sx={{
       padding: '50px 0px 50px 0px',
@@ -40,7 +40,6 @@ const ReusableDialog = ({ open, handleClose, handleAssignStudents, handleAssignB
       <Typography
         variant="h6"
         sx={{
-          font: 'Nohemi',
           fontWeight: '600',
           fontSize: '25px',
           color: '#1A1E3D'
@@ -50,46 +49,13 @@ const ReusableDialog = ({ open, handleClose, handleAssignStudents, handleAssignB
       </Typography>
     </DialogTitle>
 
+    <DialogContent sx={{ m: 2 }}>
+      {content}
+    </DialogContent>
+
     <DialogActions sx={{ p: 2, justifyContent: 'center' }}>
       <Box display="flex" justifyContent="center" width="100%" gap={2}>
-        <Button
-          variant="contained"
-          onClick={handleAssignStudents}
-          sx={{
-            backgroundColor: '#F56D3B',
-            color: 'white',
-            borderRadius: '50px',
-            textTransform: 'none',
-            padding: '10px 20px',
-            fontWeight: '700',
-            fontSize: '16px',
-            '&:hover': {
-              backgroundColor: '#D4522A'
-            }
-          }}
-        >
-          Assign Students
-        </Button>
-        <Button
-          variant="outlined"
-          onClick={handleAssignBatches}
-          sx={{
-            backgroundColor: 'white',
-            color: '#F56D3B',
-            border: '2px solid #F56D3B',
-            borderRadius: '50px',
-            textTransform: 'none',
-            fontWeight: '700',
-            fontSize: '16px',
-            padding: '10px 20px',
-            '&:hover': {
-              backgroundColor: '#F56D3B',
-              color: 'white'
-            }
-          }}
-        >
-          Assign Batches
-        </Button>
+        {actions}
       </Box>
     </DialogActions>
   </Dialog>

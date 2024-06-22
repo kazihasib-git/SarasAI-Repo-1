@@ -1,17 +1,17 @@
 .table-container {
-    width: 90%;
+    /* width: 90%; */
     /* max-width: 1200px; */
     margin: auto;
     margin-top: 20px;
     text-align: left;
-    font-family: Arial, sans-serif;
+    font-family: "Nunito Sans", sans-serif;
     border-radius: 10px; /* Add border radius to the table container */
     overflow: hidden; /* Ensure the border radius applies to the entire table */
   }
   
   h2 {
     text-align: center;
-    margin-bottom: 20px;
+    /* margin-bottom: 20px; */
   }
   
   table {

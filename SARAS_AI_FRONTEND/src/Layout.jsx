@@ -4,7 +4,7 @@ import Main from './components/Main/Main';
 const Layout = () => {
     return (
         <>
-            <main className='App' style={{backgroundColor:'#ECECEC'}}>
+            <main className='App' style={{backgroundColor:'#F1F1FB'}}>
                 <Outlet />
                 {/* <Main/> */}
             </main>

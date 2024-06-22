@@ -92,7 +92,7 @@ const CoachSheduling = () => {
             variant='text'
             onClick={() => { handleEdit(params.row.id) }}
           >
-            <i class="bi bi-calendar"></i>
+            <i className="bi bi-calendar"></i>
             <small>Schedule</small>
           </Button>
         </Box>

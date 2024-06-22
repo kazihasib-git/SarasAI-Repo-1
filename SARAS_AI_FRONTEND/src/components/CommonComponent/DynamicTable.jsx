@@ -6,35 +6,62 @@ import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutl
 import { styled } from "@mui/material/styles";
 import './DynamicTable.css'
 import { useNavigate } from "react-router-dom";
+import editIcon from '../../assets/editIcon.png';
+import bin from '../../assets/bin.png';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+
 const CustomButton = styled(Button)(({ theme }) => ({
     borderRadius: '20px',
     border: "1px solid #F56D3B",
     color: "#F56D3B",
+    padding: '8px 16px',  // Add padding for horizontal and vertical spacing
+    margin: '0 8px',      // Add horizontal margin between buttons
     '&:hover': {
         backgroundColor: "#F56D3B",
         color: '#fff',
         borderColor: '#F56D3B',
     },
+    '&.active': {
+        backgroundColor: "#F56D3B",
+        color: '#fff',
+    },
 }));
 
+
+const CalenderButton = styled(Button)(({ theme }) => ({
+    borderRadius: '20px',
+    border: 'none',
+    color: '#F56D3B',
+    backgroundColor: '#FEEBE3',
+    transition: 'all 0.3s ease', // Corrected transition syntax
+    '&:hover': {
+        backgroundColor: '#FEEBE3',
+        color: '#F56D3B',
+        border: 'none', // Corrected border removal syntax
+    },
+    '&:focus': {
+        outline: 'none', // Remove default focus outline if desired
+    }
+}));;
+
 const AntSwitch = styled(Switch)(({ theme }) => ({
-    width: 28,
-    height: 16,
+    width: 36,  // adjust width as needed
+    height: 20,  // increased height
     padding: 0,
-    marginTop: 12,
+    marginTop: 5,
     display: 'flex',
     '&:active': {
         '& .MuiSwitch-thumb': {
-            width: 15,
+            width: 17,  // adjust width to keep thumb proportional
         },
         '& .MuiSwitch-switchBase.Mui-checked': {
-            transform: 'translateX(9px)',
+            transform: 'translateX(16px)',  // adjust translation to match increased height
         },
     },
     '& .MuiSwitch-switchBase': {
-        padding: 2,
+        padding: 3,  // increased padding for larger height
         '&.Mui-checked': {
-            transform: 'translateX(12px)',
+            transform: 'translateX(18px)',  // adjust translation to match increased height
             color: '#fff',
             '& + .MuiSwitch-track': {
                 opacity: 1,
@@ -44,15 +71,15 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
     },
     '& .MuiSwitch-thumb': {
         boxShadow: '0 2px 4px 0 rgb(0 35 11 / 20%)',
-        width: 12,
-        height: 12,
-        borderRadius: 6,
+        width: 14,  // increased width for larger thumb
+        height: 14,  // increased height for larger thumb
+        borderRadius: 7,  // adjusted to keep thumb circular
         transition: theme.transitions.create(['width'], {
             duration: 200,
         }),
     },
     '& .MuiSwitch-track': {
-        borderRadius: 16 / 2,
+        borderRadius: 20 / 2,  // adjusted to match new height
         opacity: 1,
         backgroundColor:
             theme.palette.mode === 'dark' ? 'rgba(255,255,255,.35)' : 'rgba(0,0,0,.25)',
@@ -60,7 +87,9 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
     },
 }));
 
-const DynamicTable = ({ headers, initialData, title, actionButtons }) => {
+
+
+const DynamicTable = ({ headers, initialData, actionButtons, componentButton }) => {
     const [data, setData] = useState(initialData.map(item => ({
         ...item,
         isActive: item.isActive !== undefined ? item.isActive : false,
@@ -70,7 +99,7 @@ const DynamicTable = ({ headers, initialData, title, actionButtons }) => {
     const totalPages = Math.ceil(data.length / itemsPerPage);
     const currentData = data.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
     const navigate = useNavigate();
-    
+
     const handlePageChange = (event, pageNumber) => {
         setCurrentPage(pageNumber);
     };
@@ -90,9 +119,9 @@ const DynamicTable = ({ headers, initialData, title, actionButtons }) => {
 
     const handleView = (type, id) => {
         if (type === 'students') {
-            navigate(`/active-students/${id}`);
+            navigate(`/active-students/`);
         } else if (type === 'batches') {
-            navigate(`/active-batches/${id}`);
+            navigate(`/active-batches/`);
         }
     };
 
@@ -111,9 +140,7 @@ const DynamicTable = ({ headers, initialData, title, actionButtons }) => {
 
     return (
         <div className="table-container">
-            <Box display={"flex"} justifyContent={"space-between"}>
-                <p style={{ fontSize: "44px", justifyContent: "center", marginBottom: '20px' }}>{title}</p>
-            </Box>
+
             <table>
                 <thead>
                     <tr>
@@ -200,17 +227,59 @@ const DynamicTable = ({ headers, initialData, title, actionButtons }) => {
                                         }
                                         if (button.type === 'edit') {
                                             return (
-                                                <IconButton key={idx} color="primary" onClick={() => button.onClick(item.id)}>
-                                                    <ModeEditOutlineOutlinedIcon />
+                                                <IconButton
+                                                    key={idx}
+                                                    color="primary"
+                                                    sx={{
+                                                        marginLeft: "10px",
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        color: '#F56D3B',
+                                                        backgroundColor: '#FEEBE3',
+                                                        gap: '4px',
+                                                        height: '30px',
+                                                        width: '70px',
+                                                        borderRadius: '15px',
+                                                        padding: '5px',
+                                                        '&:hover': {
+                                                            backgroundColor: 'rgba(245, 235, 227, 0.8)',
+                                                        },
+                                                        '& img': {
+                                                            height: '16px',  // adjust size as needed
+                                                            width: '16px',   // adjust size as needed
+                                                        },
+                                                        '& small': {
+                                                            lineHeight: '16px',  // match this with the image height for better alignment
+                                                        }
+                                                    }}
+                                                    onClick={() => button.onClick(item.id)}
+                                                >
+                                                    <img src={editIcon} alt="" />
+                                                    <small style={{ fontSize: "14px" }}>Edit</small>
                                                 </IconButton>
                                             );
                                         }
                                         if (button.type === 'delete') {
                                             return (
                                                 <IconButton key={idx} color="primary" onClick={() => handleDelete(item.id)}>
-                                                    <DeleteOutlineOutlinedIcon style={{ color: "#FF0000" }} />
+                                                    <img src={bin} alt="" style={{width:"20px", height:"20px"}} />
                                                 </IconButton>
                                             );
+                                        }
+                                        if (button.type === 'calender') {
+                                            return (
+                                                <CalenderButton
+                                                    variant="outlined"
+                                                    color="secondary"
+                                                    startIcon={<CalendarMonthIcon />}
+                                                    // onClick={() => handleView('Calendar', item.id)}
+                                                >
+                                                    Schedule
+                                                </CalenderButton>
+
+                                            );
+
                                         }
                                         return null;
                                     })}

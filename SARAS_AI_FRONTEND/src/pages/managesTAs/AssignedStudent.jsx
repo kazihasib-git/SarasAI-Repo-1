@@ -7,19 +7,25 @@ import './CommonComponent.css'
 import Header from "../../components/Header/Header";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import { AssignedStudentData } from "../../fakeData/AssignedStudentData"
-import { mockDataAvilable } from "../../fakeData/availableData";
-import { useNavigate } from "react-router-dom";
+import bin from '../../assets/bin.png';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 
-const CustomButton = styled(Button)({
-    backgroundColor: "#fff",
-    color: "#ff6f61",
-    border: "none",
+const CustomButton = styled(Button)(({ theme, active }) => ({
+    borderRadius: '50px',
+    border: "1px solid #F56D3B",
+    color: active ? '#fff' : "#F56D3B",
+    backgroundColor: active ? "#F56D3B" : "#FFF",
+    padding: '8px 16px',  // Add padding for horizontal and vertical spacing
+    margin: '0 8px',  
     '&:hover': {
-        backgroundColor: "#ff6f61",
-        color: "#fff",
+      backgroundColor: "#F56D3B",
+      color: '#fff',
+      borderColor: '#F56D3B',
     },
-})
+  }));
+
+
 
 const AntSwitch = styled(Switch)(({ theme }) => ({
     width: 28,
@@ -92,15 +98,33 @@ const DynamicTable = ({ headers, initialData, title, actionButtons }) => {
         console.log("Deleting item with id:", id);
     };
 
+    const handleNavigate = (path) => {
+        navigate(path);
+      };
+
     return (
         <div className="table-container">
            <Box display="flex" justifyContent="space-between" alignItems="center" padding="16px">
-                <CustomButton onClick={() => navigate(-1)}>
+                <CustomButton onClick={() =>navigate('/ta-mapping')}>
                     <i className="bi bi-caret-left"></i> Back
                 </CustomButton>
             </Box>
             <Box display={"flex"} justifyContent={"space-between"}>
                 <p style={{ fontSize: "44px", justifyContent: "center", marginBottom: '20px' }}>{title}</p>
+                <div className='inputBtnContainer'>
+                    <CustomButton
+                        onClick={() => handleNavigate('/active-students')}
+                        active={location.pathname === '/active-students'}
+                    >
+                        Assigned Student
+                    </CustomButton>
+                    <CustomButton
+                        onClick={() => handleNavigate('/active-batches')}
+                        active={location.pathname === '/active-batches'}
+                    >
+                        Assigned Batches
+                    </CustomButton>
+                </div>
             </Box>
             <table>
                 <thead>
@@ -144,7 +168,7 @@ const DynamicTable = ({ headers, initialData, title, actionButtons }) => {
                                         if (button.type === 'delete') {
                                             return (
                                                 <IconButton key={idx} color="primary" onClick={() => handleDelete(item.id)}>
-                                                    <DeleteOutlineOutlinedIcon style={{ color: "#FF0000" }} />
+                                                   <img src={bin} alt="" style={{width:"20px", height:"20px"}} />
                                                 </IconButton>
                                             );
                                         }
