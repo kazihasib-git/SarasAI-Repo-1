@@ -1,89 +1,169 @@
-import React from 'react'
-import { useGetBatchesQuery } from '../../redux/services/batches/batchesApi'
-import { Box, InputBase } from '@mui/material'
-import Header from '../Header/Header'
-import Sidebar from '../Sidebar/Sidebar'
-import { DataGrid } from '@mui/x-data-grid'
-import { batchesDummyData } from "../../fakeData/batchesData"
+import React, { useState, useEffect } from 'react';
+import { useGetBatchesQuery } from '../../redux/services/batches/batchesApi'; // Import your API hook
+import { Box } from '@mui/material';
+import Pagination from '@mui/material/Pagination';
+import { useNavigate } from 'react-router-dom';
+import Header from '../Header/Header';
+import Sidebar from '../Sidebar/Sidebar';
+import { batchDummyData } from '../../fakeData/batchesData';
+import { baseUrl } from '../../utils/baseURL';
 
 const Batches = () => {
-    /*
-    const { data : batches, error , isLoading } = useGetBatchesQuery()
+    const [input, setInput] = useState('');
+    const [batches, setBatches] = useState([]);
 
-    if(isLoading){
-        return <div>Loading....</div>
-    }
+    const handleChange = (value) => {
+        setInput(value);
+    };
 
-    if(error){
-        return <div>Error loading batches</div>
-    }
-    */
-   
-    const columns = useMemo(() => [
-        { field: "course_id", headerName: "ID", flex: 1, cellClassName: "name-column--cell" },
-        { field : "title", headerName : 'Title', flex: 1, cellClassName: "name-column--cell"},
-        { field : "description", headerName : 'Description', flex: 1, cellClassName: "name-column--cell"},
-        { field : "duration", headerName : 'Duration', flex: 1, cellClassName: "name-column--cell"},
-        { field : "level", headerName : 'Level', flex: 1, cellClassName: "name-column--cell"},
-    ], []);
-      
-    return (
-        <div>
-            <Box m="40px">
-                <Header />
-                <Sidebar />
-                <Box display={"flex"} justifyContent={"space-between"}>
-                    <p style={{ fontSize: "22px", fontWeight: "700", justifyContent: "center", margin: 0 }}>Students</p>
-                    <Box display={"flex"}>
-                        <Box
-                            display={"flex"}
-                            backgroundColor="#FFF"
-                            borderRadius={"30px"}
-                            width={"30vh"}
-                            marginRight={"10px"}
-                        >
-                            <InputBase sx={{ ml: 2, flex: 1 }} placeholder="Search here ..." />
-                        </Box>
-                    </Box>
-                </Box>
-                <Box m="20px 0 0 0" height={"70vh"} sx={{
-                    "& .MuiDataGrid-root": {
-                        border: "none",
-                    },
-                    "& .MuiDataGrid-cell": {
-                        borderBottom: "none"
-                    },
-                    "& .name-column--cell": {
-                        color: "#5F6383"
-                    },
-                    "& .MuiDataGrid-columnHeader": {
-                        backgroundColor: "#FFF",
-                        borderBottom: "none",
-                    },
-                    "& .MuiDataGrid-columnHeaderTitle": {
-                        color: "#1A1E3D",
-                        fontWeight: "600",
-                        fontSize: 16
-                    },
-                    "& .MuiDatGrid-virtualScroller": {
-                        backgroundColor: "#FFF"
-                    },
-                    "& .MuiDataGrid-footerContainer": {
-                        borderTop: "none",
-                        backgroundColor: "#FFF"
-                    },
-                    "& .MuiDataGrid-virtualScrollerContent": {
-                        backgroundColor: "#FFF"
-                    }
-                }}>
-                    <DataGrid
-                        rows={batchesData}
-                        columns={columns}
+    // Flag to use dummy data or API data
+    const useDummyData = true;
+
+    
+    const { data , error, isLoading } = useGetBatchesQuery();
+    
+// Just to check api is working or not
+    // --- Start --- 
+
+    const fetchData = async () => {
+       
+        try {
+          const response = await fetch(`${baseUrl}/admin/batches`, {
+            method: "GET",
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+  
+       
+          const result = await response.json();
+          console.log("RESULT : ", result)
+          
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        
+        } finally {
+        }
+      };
+
+    //  --- END ----
+    
+    useEffect( () => {
+        console.log("DATA : ",data)
+        // console.log("Error : ",error)
+        // console.log("Is Loading : ",isLoading)
+        fetchData()
+        const dataToUse = useDummyData ? batchDummyData : data;
+        // const dataToUse = batchDummyData
+        if (dataToUse) {
+            console.log("BATCH DATA : ", dataToUse)
+            const transformedData = dataToUse.map(item => ({
+                "Sr No.": item.srNo,
+                "Batch Name": item.batchName,
+                "Branch": item.branch
+            }));
+            setBatches(transformedData);
+        }
+    }, [useDummyData, data]);
+
+    // if (isLoading) {
+    //     return <div>Loading....</div>;
+    // }
+
+    const headers = ["Sr No.", "Batch Name", "Branch"];
+
+    const DynamicTable = ({ headers, initialData }) => {
+        console.log("INITIAL DATA : ", initialData)
+        const [data, setData] = useState(initialData.map(item => ({ ...item })));
+        const [currentPage, setCurrentPage] = useState(1);
+        const itemsPerPage = 10;
+        const totalPages = Math.ceil(data.length / itemsPerPage);
+        const currentData = data.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+        const handlePageChange = (event, pageNumber) => {
+            setCurrentPage(pageNumber);
+        };
+
+        return (
+            <div className="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            {headers.map((header, index) => (
+                                <th key={index}>{header}</th>
+                            ))}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {currentData.map((item, index) => (
+                            <tr key={index}>
+                                {headers.map((header, idx) => (
+                                    <td key={idx}>{item[header]}</td>
+                                ))}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+                <div className="pagination">
+                    <Pagination
+                        count={totalPages}
+                        page={currentPage}
+                        onChange={handlePageChange}
+                        variant="outlined"
+                        color="primary"
+                        sx={{
+                            width: '65vw',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            marginTop: '20px',
+                            '.MuiPaginationItem-root': {
+                                backgroundColor: '#fff',
+                                border: '1px solid #ddd',
+                                borderRadius: '50%',
+                                width: '40px',
+                                height: '40px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                transition: 'background-color 0.3s, transform 0.3s',
+                                '&:hover': {
+                                    backgroundColor: '#DFDFF4',
+                                    transform: 'scale(1.1)',
+                                },
+                                '&.Mui-selected': {
+                                    backgroundColor: '#F56D3B',
+                                    color: '#fff',
+                                },
+                                '&.Mui-disabled': {
+                                    backgroundColor: '#DFDFF4',
+                                    cursor: 'not-allowed',
+                                },
+                            },
+                        }}
                     />
-                </Box>
-            </Box>
-        </div>
-    )
-}
+                </div>
+            </div>
+        );
+    };
 
-export default Batches
+    return (
+        <>
+            <Header />
+            <Sidebar />
+            <Box display={"flex"} justifyContent={"space-between"} marginTop={3} alignItems={"center"}>
+                <p style={{ fontSize: "44px", justifyContent: "center" }}>Batches</p>
+                <div className='inputBtnContainer'>
+                    <div className="inputContainer">
+                        <input className="inputField" placeholder="Search Here ..." value={input} onChange={(e) => handleChange(e.target.value)} />
+                    </div>
+                </div>
+            </Box>
+            <DynamicTable
+                headers={headers}
+                initialData={batches}
+            />
+        </>
+    );
+};
+
+export default Batches;

@@ -6,7 +6,7 @@ export const studentsApi = createApi({
     baseQuery : fetchBaseQuery({ baseUrl }),
     endpoints : (builder) => ({
         getStudents : builder.query({
-            query : () => `/students`,
+            query : () => `/admin/students`,
         }),
     })
 })
