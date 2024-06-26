@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Button, IconButton, Switch, Pagination, Box } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Button, IconButton, Switch, Pagination, Box, Checkbox } from "@mui/material";
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import CallMadeOutlinedIcon from '@mui/icons-material/CallMadeOutlined';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
@@ -90,10 +90,22 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
 
 
 const DynamicTable = ({ headers, initialData, actionButtons, componentButton }) => {
+    console.log("initial Data in dynamic table", initialData)
     const [data, setData] = useState(initialData.map(item => ({
-        ...item,
-        isActive: item.isActive !== undefined ? item.isActive : false,
+    ...item,
+    isActive: item.isActive !== undefined ? item.isActive : false,
     })));
+    
+    useEffect(() => {
+        console.log("Initial Data updated:", initialData);
+        setData(initialData.map(item => ({
+            ...item,
+            isActive: item.isActive !== undefined ? item.isActive : false,
+        })));
+    }, [initialData]);
+
+
+    console.log("data inside dynamic table", data)
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
     const totalPages = Math.ceil(data.length / itemsPerPage);
@@ -103,6 +115,7 @@ const DynamicTable = ({ headers, initialData, actionButtons, componentButton }) 
     const handlePageChange = (event, pageNumber) => {
         setCurrentPage(pageNumber);
     };
+
 
     const handleToggle = (id) => {
         setData(prevData =>
@@ -263,7 +276,7 @@ const DynamicTable = ({ headers, initialData, actionButtons, componentButton }) 
                                         if (button.type === 'delete') {
                                             return (
                                                 <IconButton key={idx} color="primary" onClick={() => handleDelete(item.id)}>
-                                                    <img src={bin} alt="" style={{width:"20px", height:"20px"}} />
+                                                    <img src={bin} alt="" style={{ width: "20px", height: "20px" }} />
                                                 </IconButton>
                                             );
                                         }
@@ -273,14 +286,20 @@ const DynamicTable = ({ headers, initialData, actionButtons, componentButton }) 
                                                     variant="outlined"
                                                     color="secondary"
                                                     startIcon={<CalendarMonthIcon />}
-                                                    // onClick={() => handleView('Calendar', item.id)}
+                                                // onClick={() => handleView('Calendar', item.id)}
                                                 >
                                                     Schedule
                                                 </CalenderButton>
-
                                             );
-
                                         }
+                                        if (button.type === 'checkbox') {
+                                            return (
+                                                <Checkbox
+                                                    inputProps={{ 'aria-label': 'select all' }}
+                                                />
+                                            );
+                                        }
+
                                         return null;
                                     })}
                                 </td>
@@ -333,5 +352,4 @@ const DynamicTable = ({ headers, initialData, actionButtons, componentButton }) 
 };
 
 export default DynamicTable;
-
 

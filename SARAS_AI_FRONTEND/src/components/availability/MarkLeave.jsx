@@ -5,6 +5,9 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import CloseIcon from '@mui/icons-material/Close';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import CustomDateField from '../CustomFields/CustomDateField';
+import Slots from './Slots';
+import { openScheduledSlots, closeScheduledSlots, closeMarkLeave  } from '../../redux/features/taModule/taScheduling';
+import { useDispatch, useSelector } from 'react-redux';
 
 const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = '#4E18A5', borderColor = '#FFFFFF', sx, ...props }) => {
     return (
@@ -33,15 +36,20 @@ const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = 
     );
 };
 
-const MarkLeave = ({ open, handleClose }) => {
+const MarkLeave = () => {
+    const dispatch = useDispatch();
+    const { markLeaveOpen } = useSelector((state) => state.taScheduling)
     const [fromDate, setFromDate] = useState(null);
     const [toDate, setToDate] = useState(null);
+
+
     const handleSubmit = () => {
-        handleClose();
+        dispatch(openScheduledSlots());
+        dispatch(closeMarkLeave());
     };
 
     const content = (
-        <Grid container sx={{pt:3}} >
+        <Grid container sx={{ pt: 3 }} >
             <Grid item xs={12} sm={6}>
                 <CustomDateField
                     label="From Date"
@@ -58,25 +66,30 @@ const MarkLeave = ({ open, handleClose }) => {
             </Grid>
         </Grid>
     );
+
     const actions = (
         <CustomButton
             onClick={handleSubmit}
             backgroundColor='#F56D3B'
-            borderColor= '#F56D3B'
+            borderColor='#F56D3B'
             color='#FFFFFF'
         >
             Submit
         </CustomButton>
     );
 
+
     return (
-        <ReusableDialog
-            open={open}
-            handleClose={handleClose}
-            title="Mark Leave"
-            content={content}
-            actions={actions}
-        />
+        <>
+            <ReusableDialog
+                open={markLeaveOpen}
+                handleClose={() => dispatch(closeMarkLeave())}
+                title="Mark Leave"
+                content={content}
+                actions={actions}
+            />
+            
+        </>
     );
 };
 
