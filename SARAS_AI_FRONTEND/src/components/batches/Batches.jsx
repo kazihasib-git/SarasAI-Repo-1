@@ -59,7 +59,7 @@ const Batches = () => {
             console.log("BATCH DATA : ", dataToUse)
             const transformedData = dataToUse.map(item => ({
                 "Sr No.": item.srNo,
-                "Batch Name": item.batchName,
+                "Batch Name": item.name,
                 "Branch": item.branch
             }));
             setBatches(transformedData);

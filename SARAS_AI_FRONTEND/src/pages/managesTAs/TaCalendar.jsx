@@ -18,8 +18,8 @@ const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = 
                 fontWeight: '700',
                 fontSize: '16px',
                 borderRadius: '50px',
-                padding: "18px 25px",
-                border: `2px solid ${borderColor}`,
+                // padding: "18px 25px",
+                border: `1.5px solid ${borderColor}`,
                 '&:hover': {
                     backgroundColor: color,
                     color: backgroundColor,

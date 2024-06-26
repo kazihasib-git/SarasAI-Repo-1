@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, IconButton, Switch, Pagination, Box } from "@mui/material";
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import CallMadeOutlinedIcon from '@mui/icons-material/CallMadeOutlined';
@@ -90,10 +90,21 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
 
 
 const DynamicTable = ({ headers, initialData, actionButtons, componentButton }) => {
+    console.log("DAATA : ", initialData)
     const [data, setData] = useState(initialData.map(item => ({
         ...item,
         isActive: item.isActive !== undefined ? item.isActive : false,
     })));
+
+    useEffect(() => {
+        console.log("Initial Data updated:", initialData);
+        setData(initialData.map(item => ({
+            ...item,
+            isActive: item.isActive !== undefined ? item.isActive : false,
+        })));
+    }, [initialData]);
+
+    console.log("after set data : ", data)
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
     const totalPages = Math.ceil(data.length / itemsPerPage);
