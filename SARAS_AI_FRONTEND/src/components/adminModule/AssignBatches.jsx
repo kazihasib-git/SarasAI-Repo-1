@@ -75,14 +75,14 @@ const AssignBatches = ({ open, handleClose }) => {
                     textAlign: 'center',
                 }}
             >
-                Assign Batches to 'TA NAME'
+                Assign Batches
             </DialogTitle>
             <DialogContent sx={{ m: 0, p: 2 }}>
                 <Typography
                     variant='body1'
                     sx={{ fontFamily: 'Nohemi', fontWeight: '400', fontSize: '16px', color: '#5F6383', textAlign: 'center', mb: 2 }}
                 >
-                    Let's assign students to the TA.
+                    Let's assign students.
                 </Typography>
                 <Grid container spacing={2} justifyContent="center">
                     <Grid item xs={12} sm={6}>

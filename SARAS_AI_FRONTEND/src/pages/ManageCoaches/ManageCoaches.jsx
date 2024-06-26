@@ -25,7 +25,7 @@ const ManageCoaches = () => {
     const navigate = useNavigate()
 
     const handleAddCoach = () => {
-        navigate('createcoach')
+        navigate('/createcoach');
     }
 
 
@@ -128,7 +128,9 @@ const ManageCoaches = () => {
                         >
                             <InputBase sx={{ ml: 2, flex: 1 }} placeholder="Search here ..." />
                         </Box>
-                        <Button variant="contained" onClick={handleAddCoach} style={{ backgroundColor: "#F56D3B", borderRadius: "30px" }}> <i style={{ marginRight: "5px" }} className="bi bi-plus-circle"></i> Create Coach</Button>
+                        <Button variant="contained" onClick={handleAddCoach} style={{ backgroundColor: "#F56D3B", borderRadius: "30px" }}>
+                            <i style={{ marginRight: "5px" }} className="bi bi-plus-circle"></i> <span>Create Coach</span>
+                        </Button>
                     </Box>
                 </Box>
                 <Box m="20px 0 0 0" height={"70vh"} sx={{
