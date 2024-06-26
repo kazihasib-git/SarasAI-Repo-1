@@ -1,92 +1,144 @@
-import { Box, InputBase } from '@mui/material'
-import React, { useEffect, useMemo, useState } from 'react'
-import { studentDummyDatadata } from '../../fakeData/studentData'
-import { DataGrid } from '@mui/x-data-grid'
-import Header from '../Header/Header'
-import Sidebar from '../Sidebar/Sidebar'
-import { useGetStudentsQuery } from '../../redux/services/students/studentsApi' 
+import React, { useState, useEffect } from 'react';
+import { useGetStudentsQuery } from '../../redux/services/students/studentsApi'; // Import your API hook
+import { Box } from '@mui/material';
+import Pagination from '@mui/material/Pagination';
+import { useNavigate } from 'react-router-dom';
+import Header from '../Header/Header';
+import Sidebar from '../Sidebar/Sidebar';
+import { studentDummyDatadata } from '../../fakeData/studentData';
 
 const Students = () => {
-    /*
-    const { data : students, error, isLoading } = useGetStudentsQuery();
+    const [input, setInput] = useState('');
+    const [students, setStudents] = useState([]);
 
-    if(isLoading){
-        return <div>Loading....</div>
+    const handleChange = (value) => {
+        setInput(value);
+    };
+
+    
+
+    // Flag to use dummy data or API data
+    const useDummyData = true;
+
+    const { data: apiData, error, isLoading } = useGetStudentsQuery();
+
+    useEffect(() => {
+        console.log("DATA : ",apiData)
+        const dataToUse = useDummyData ? studentDummyDatadata : apiData;
+        if (dataToUse) {
+            const transformedData = dataToUse.map(item => ({
+                ID: item.id,
+                Name: item.name,
+                User: item.user_id,
+                Email: item.email,
+                'Phone Number': item.phone,
+            }));
+            setStudents(transformedData);
+        }
+    }, [apiData, useDummyData]);
+
+    if (isLoading) {
+        return <div>Loading....</div>;
     }
 
-    if(error){
-        return <div> Error Loading students </div>
-    }
+    // if (error && !useDummyData) {
+    //     return <div>Error Loading students</div>;
+    // }
 
-    */
+    const headers = ['ID',  'Name', 'User', 'Email', 'Phone Number'];
 
-    const columns = useMemo(() => [
-        { field: "id", headerName: "ID", flex: 1, cellClassName: "name-column--cell" },
-        { field: "name", headerName: "Name", flex: 1, cellClassName: "name-column--cell" },
-        { field: "user_id", headerName: "User Id", flex: 1, cellClassName: "name-column--cell" },
-        { field: "email", headerName: "Email", flex: 1, cellClassName: "name-column--cell" },
-        { field: "phone", headerName: "Phone Number", flex: 1, cellClassName: "name-column--cell" },
-    ], []);
-      
+    const DynamicTable = ({ headers, initialData }) => {
+        const [data, setData] = useState(initialData.map(item => ({ ...item })));
+        const [currentPage, setCurrentPage] = useState(1);
+        const itemsPerPage = 10;
+        const totalPages = Math.ceil(data.length / itemsPerPage);
+        const currentData = data.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+        const navigate = useNavigate();
+
+        const handlePageChange = (event, pageNumber) => {
+            setCurrentPage(pageNumber);
+        };
+
+        return (
+            <div className="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            {headers.map((header, index) => (
+                                <th key={index}>{header}</th>
+                            ))}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {currentData.map((item, index) => (
+                            <tr key={item.ID}>
+                                {headers.map((header, idx) => (
+                                    <td key={idx}>{item[header]}</td>
+                                ))}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+                <div className="pagination">
+                    <Pagination
+                        count={totalPages}
+                        page={currentPage}
+                        onChange={handlePageChange}
+                        variant="outlined"
+                        color="primary"
+                        sx={{
+                            width: '65vw',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            marginTop: '20px',
+                            '.MuiPaginationItem-root': {
+                                backgroundColor: '#fff',
+                                border: '1px solid #ddd',
+                                borderRadius: '50%',
+                                width: '40px',
+                                height: '40px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                transition: 'background-color 0.3s, transform 0.3s',
+                                '&:hover': {
+                                    backgroundColor: '#DFDFF4',
+                                    transform: 'scale(1.1)',
+                                },
+                                '&.Mui-selected': {
+                                    backgroundColor: '#F56D3B',
+                                    color: '#fff',
+                                },
+                                '&.Mui-disabled': {
+                                    backgroundColor: '#DFDFF4',
+                                    cursor: 'not-allowed',
+                                },
+                            },
+                        }}
+                    />
+                </div>
+            </div>
+        );
+    };
 
     return (
-        <div>
-            <Box m="40px">
-                <Header />
-                <Sidebar />
-                <Box display={"flex"} justifyContent={"space-between"}>
-                    <p style={{ fontSize: "22px", fontWeight: "700", justifyContent: "center", margin: 0 }}>Students</p>
-                    <Box display={"flex"}>
-                        <Box
-                            display={"flex"}
-                            backgroundColor="#FFF"
-                            borderRadius={"30px"}
-                            width={"30vh"}
-                            marginRight={"10px"}
-                        >
-                            <InputBase sx={{ ml: 2, flex: 1 }} placeholder="Search here ..." />
-                        </Box>
-                    </Box>
-                </Box>
-                <Box m="20px 0 0 0" height={"70vh"} sx={{
-                    "& .MuiDataGrid-root": {
-                        border: "none",
-                    },
-                    "& .MuiDataGrid-cell": {
-                        borderBottom: "none"
-                    },
-                    "& .name-column--cell": {
-                        color: "#5F6383"
-                    },
-                    "& .MuiDataGrid-columnHeader": {
-                        backgroundColor: "#FFF",
-                        borderBottom: "none",
-                    },
-                    "& .MuiDataGrid-columnHeaderTitle": {
-                        color: "#1A1E3D",
-                        fontWeight: "600",
-                        fontSize: 16
-                    },
-                    "& .MuiDatGrid-virtualScroller": {
-                        backgroundColor: "#FFF"
-                    },
-                    "& .MuiDataGrid-footerContainer": {
-                        borderTop: "none",
-                        backgroundColor: "#FFF"
-                    },
-                    "& .MuiDataGrid-virtualScrollerContent": {
-                        backgroundColor: "#FFF"
-                    }
-                }}>
-                    <DataGrid
-                        rows={studentDummyDatadata}
-                        columns={columns}
-                    />
-                </Box>
+        <>
+            <Header />
+            <Sidebar />
+            <Box display={"flex"} justifyContent={"space-between"} marginTop={3} alignItems={"center"}>
+                <p style={{ fontSize: "44px", justifyContent: "center" }}>Students</p>
+                <div className='inputBtnContainer'>
+                    <div className="inputContainer">
+                        <input className="inputField" placeholder="Search Here ..." value={input} onChange={(e) => handleChange(e.target.value)} />
+                    </div>
+                </div>
             </Box>
+            <DynamicTable
+                headers={headers}
+                initialData={students}
+            />
+        </>
+    );
+};
 
-        </div>
-    )
-}
-
-export default Students
+export default Students;

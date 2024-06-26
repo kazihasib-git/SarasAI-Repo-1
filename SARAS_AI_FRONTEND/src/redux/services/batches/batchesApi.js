@@ -6,7 +6,7 @@ export const batchesApi = createApi({
     baseQuery : fetchBaseQuery({ baseUrl }),
     endpoints : (builder) => ({
         getBatches : builder.query({
-            query : (id) => `/batches`,
+            query : () => `/admin/batches`,
         })
     })
 })
