@@ -8,7 +8,8 @@
     border-radius: 10px; /* Add border radius to the table container */
     overflow: hidden; /* Ensure the border radius applies to the entire table */
   }
-  
+
+
   h2 {
     text-align: center;
     /* margin-bottom: 20px; */
@@ -22,12 +23,12 @@
     overflow: hidden;
   }
   
-  thead {
+  .tableHead {
     background-color: #FFFF;
-    position: relative; /* Ensure the pseudo-element is positioned relative to thead */
+    position: relative; /* Ensure the pseudo-element is positioned relative to .tableHead */
   }
   
-  thead::after {
+  .tableHead::after {
     content: "";
     position: absolute;
     
@@ -40,7 +41,7 @@
 
  
   
-  thead th {
+  .tableHead th {
     padding: 12px; /* Apply padding to table headers */
   }
   
@@ -49,11 +50,11 @@
     vertical-align: middle;
   }
   
-  tbody tr {
+  .tableBody #tableRow {
     background-color: #ffffff;
   }
   
-  tbody tr:hover {
+  .tableBody #tableRow:hover {
     background-color: #f9f9f9; /* Optional: Add a hover effect for rows */
   }
   
@@ -109,11 +110,11 @@
     background-color: #f2f2f2;
   }
   
-  .custom-tbody tr:last-child td:first-child {
+  .custom-.tableBody #tableRow:last-child td:first-child {
     border-bottom-left-radius: 10px;
   }
   
-  .custom-tbody tr:last-child td:last-child {
+  .custom-.tableBody #tableRow:last-child td:last-child {
     border-bottom-right-radius: 10px;
   }
   

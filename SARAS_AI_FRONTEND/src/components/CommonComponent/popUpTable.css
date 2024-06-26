@@ -2,13 +2,16 @@
     /* width: 90%; */
     /* max-width: 1200px; */
     margin: auto;
-    /* margin-top: 20px; */
     text-align: left;
     font-family: "Nunito Sans", sans-serif;
     border-radius: 10px; /* Add border radius to the table container */
     overflow: hidden; /* Ensure the border radius applies to the entire table */
   }
   
+  .popUpModel{
+    background-color: #F1F1FB;
+  }
+
   h2 {
     text-align: center;
     /* margin-bottom: 20px; */
@@ -22,14 +25,15 @@
     overflow: hidden;
   }
   
-  .commonTableHead {
-    background-color: #FFF;
-    position: relative; /* Ensure the pseudo-element is positioned relative to .commonTableHead */
+  thead {
+
+    position: relative; /* Ensure the pseudo-element is positioned relative to thead */
   }
   
-  .commonTableHead::after {
+  thead::after {
     content: "";
     position: absolute;
+    
     left: 30px; /* Space from the left */
     right: 30px; /* Space from the right */
     bottom: 0;
@@ -39,9 +43,8 @@
 
  
   
-  .commonTableHead th {
+  thead th {
     padding: 12px; /* Apply padding to table headers */
-    font-size: 18px;
   }
   
   th, td {
@@ -49,14 +52,13 @@
     vertical-align: middle;
   }
   
-  .commonTableBody #commonTableRow {
-    background-color: #ffffff;
-    font-size: 18px;
+  .popUpBody #popUpRow {
+    background-color: #F1F1FB;
   }
   
-  .commonTableBody #commonTableRow:hover {
-    background-color: #F6F0F0; /* Optional: Add a hover effect for rows */
-  }
+  /* .popUpBody #popUpRow:hover {
+    background-color: #FFFFFF; /* Optional: Add a hover effect for rows */
+  /* } */
   
   td {
     /* border-bottom: 1px solid #C2C2E7; */
@@ -80,7 +82,6 @@
     display: flex;
     justify-content: center;
     margin-top: 20px;
-    margin-bottom: 20px;
   }
   
   .pagination button {
@@ -95,7 +96,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s ease-in;
   }
   
   .pagination button.active {
@@ -112,11 +112,11 @@
     background-color: #f2f2f2;
   }
   
-  .custom-.commonTableBody #commonTableRow:last-child td:first-child {
+  .custom-.popUpBody #popUpRow:last-child td:first-child {
     border-bottom-left-radius: 10px;
   }
   
-  .custom-.commonTableBody #commonTableRow:last-child td:last-child {
+  .custom-.popUpBody #popUpRow:last-child td:last-child {
     border-bottom-right-radius: 10px;
   }
   
