@@ -77,14 +77,14 @@ const AssignStudents = ({ open, handleClose }) => {
                     textAlign: 'center',
                 }}
             >
-                Assign Students to 'TA NAME'
+                Assign Students
             </DialogTitle>
             <DialogContent sx={{ m: 2 }}>
                 <Typography
                     variant='body1'
                     sx={{ font: 'Nohemi', fontWeight: '400', fontSize: '16px', color: '#5F6383', textAlign: 'center', mb: 2 }}
                 >
-                    Let's assign students to the TA.
+                    Let's assign students.
                 </Typography>
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>

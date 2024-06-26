@@ -71,7 +71,7 @@ function App() {
             <Route path='ta-calendar' element={<TaCalender page="Calendar" />} />
             {/* <Route path='calendar' element={<Calendar page="Calendar" />} /> */}
             <Route path='manage-coaches' element={<ManageCoaches page="Manage Coaches" />} />
-            <Route path="createcoach" element={<CreateCoachPage />} />
+            <Route path="createcoach" element={<CreateCoachPage page="Create Coach"/>} />
             <Route path='coach-mapping' element={<CoachMapping page="Coach Mapping" />} />
             <Route path='manage-coaches/tacalender' element={<CoachCalender />} />
             <Route path='coach-template' element={<CoachTemplate page="Coach Template" />} />
