@@ -14,8 +14,8 @@ export const getTA = createAsyncThunk("taModule/getTA", async () => {
 }
 );
 
-export const updateTA = createAsyncThunk("taModule/updateTA", async ({ id, data }) => {
-    const response = await axios.put(`${baseUrl}/admin/manage_tas/${id}}`, data);
+export const updateTA = createAsyncThunk("taModule/updateTA", async ({ id, formData }) => {
+    const response = await axios.put(`${baseUrl}/admin/manage_tas/${id}`, formData);
     return response.data;
 }
 )
@@ -111,6 +111,7 @@ export const taSlice = createSlice({
         builder.addCase(updateTA.fulfilled, (state, action) => {
             const index = state.tas.findIndex((ta) => ta.id === action.payload.id);
             state.tas[index] = action.payload;
+            state.loading = false;
         })
         builder.addCase(updateTA.rejected, (state, action) => {
             state.loading = false;

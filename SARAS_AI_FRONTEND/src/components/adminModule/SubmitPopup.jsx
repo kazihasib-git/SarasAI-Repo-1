@@ -34,8 +34,10 @@ const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = 
 
 const SubmitPopup = () => {
     const dispatch = useDispatch()
-    const { successPopup } = useSelector((state) => state.taModule)
+    const { tas, successPopup, error, loading } = useSelector((state) => state.taModule)
     
+    console.log("tas", tas[-1])
+
     const handleAssignBatches = () => {
         dispatch(closeSuccessPopup())
         dispatch(openAssignBatches())
