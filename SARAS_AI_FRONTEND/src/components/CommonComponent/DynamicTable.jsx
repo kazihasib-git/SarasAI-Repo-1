@@ -106,7 +106,7 @@ const DynamicTable = ({ headers, initialData, actionButtons }) => {
     const itemsPerPage = 10;
     const totalPages = Math.ceil(data.length / itemsPerPage);
     const currentData = data.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-
+    const navigate = useNavigate();
     const handlePageChange = (event, pageNumber) => {
         setCurrentPage(pageNumber);
     };
@@ -214,7 +214,7 @@ const DynamicTable = ({ headers, initialData, actionButtons }) => {
                             })}
                             {
                                 actionButtons && <td style={{ display: "flex", justifyContent: "center", verticalAlign: "middle" }}>
-                                    {actionButtons.map((button, idx) => {
+                                    {actionButtons?.map((button, idx) => {
                                         if (button.type === 'switch') {
                                             return (
                                                 <AntSwitch
@@ -267,17 +267,17 @@ const DynamicTable = ({ headers, initialData, actionButtons }) => {
                                                 </IconButton>
                                             );
                                         }
-                                        if (button.type === 'calendar') {
+                                        if (button.type === 'calender') {
                                             return (
-                                                <CustomButton
-                                                    key={idx}
+                                                <CalenderButton
                                                     variant="outlined"
                                                     color="secondary"
-                                                    endIcon={<CallMadeOutlinedIcon />}
-                                                    onClick={() => handleView('Calendar', item.id)}
+                                                    startIcon={<CalendarMonthIcon />}
+                                                    // onClick={() => handleView('Calendar', item.id)}
                                                 >
-                                                    Check
-                                                </CustomButton>
+                                                    Schedule
+                                                </CalenderButton>
+
                                             );
                                         }
                                         return null;
@@ -289,15 +289,42 @@ const DynamicTable = ({ headers, initialData, actionButtons }) => {
                 </tbody>
             </table>
             <div className="pagination">
-                {Array.from({ length: totalPages }, (_, index) => (
-                    <button
-                        key={index}
-                        onClick={(event) => handlePageChange(event, index + 1)}
-                        className={index + 1 === currentPage ? 'active' : ''}
-                    >
-                        {index + 1}
-                    </button>
-                ))}
+            <Pagination
+                    count={totalPages}
+                    page={currentPage}
+                    onChange={handlePageChange}
+                    variant="outlined"
+                    color="primary"
+                    sx={{
+                        width: '65vw',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        marginTop: '20px',
+                        '.MuiPaginationItem-root': {
+                            backgroundColor: '#fff',
+                            border: '1px solid #ddd',
+                            borderRadius: '50%',
+                            width: '40px',
+                            height: '40px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            transition: 'background-color 0.3s, transform 0.3s',
+                            '&:hover': {
+                                backgroundColor: '#DFDFF4',
+                                transform: 'scale(1.1)',
+                            },
+                            '&.Mui-selected': {
+                                backgroundColor: '#F56D3B',
+                                color: '#fff',
+                            },
+                            '&.Mui-disabled': {
+                                backgroundColor: '#DFDFF4',
+                                cursor: 'not-allowed',
+                            },
+                        },
+                    }}
+                />
             </div>
         </div>
     );

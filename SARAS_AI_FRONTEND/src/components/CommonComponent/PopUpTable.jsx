@@ -25,6 +25,7 @@ const PopUpTable = ({ headers, initialData, actionButtons }) => {
     const itemsPerPage = 10;
     const totalPages = Math.ceil(data.length / itemsPerPage);
     const currentData = data.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+    const navigate = useNavigate();
     return (
         <div className="table-container popUpModel">
             <table>

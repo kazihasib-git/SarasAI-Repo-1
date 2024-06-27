@@ -31,7 +31,7 @@ const AdminSidebar = () => {
           </a>
           <ul id='manage-tas-nav' className={`nav-content collapse ${activeLink.startsWith('/manage-') ? 'show' : ''}`} data-bs-parent="#sidebar-nav">
             <li>
-              <Link to={"/manage-ta"} className={activeLink === '/manage-ta' ? 'active' : ''} onClick={() => handleLinkClick('/manage-ta')}>
+              <Link to={"/ta-manage"} className={activeLink === '/ta-manage' ? 'active' : ''} onClick={() => handleLinkClick('/ta-manage')}>
                 <i className='bi bi-circle'></i>
                 <span>Manage TA</span>
               </Link>

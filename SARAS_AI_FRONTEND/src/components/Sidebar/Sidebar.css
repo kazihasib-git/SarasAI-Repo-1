@@ -28,6 +28,10 @@
     ;
 }
 
+.active-link {
+    color: #F56D3B !important;
+  }
+
 .sidebar::-webkit-scrollbar-thumb {
     background-color: #FFF;
 }

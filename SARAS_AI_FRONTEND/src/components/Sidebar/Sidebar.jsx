@@ -29,32 +29,44 @@ const Sidebar = () => {
           <a className={`nav-link ${activeLink.startsWith('/manage-') ? 'active' : 'collapsed'}`} data-bs-target='#manage-tas-nav' data-bs-toggle="collapse" href='#' onClick={() => handleLinkClick('/manage')}>
             {/* <i className='bi bi-menu-button-wide'></i>
              */}
-             <img src={dashboard} style={{width:'18px', height:'18px', marginRight:"10px"}} />
+            <img src={dashboard} style={{ width: '18px', height: '18px', marginRight: "10px" }} />
             <span>Teaching Assistant</span>
             <i className='bi bi-chevron-down ms-auto'></i>
           </a>
-          <ul id='manage-tas-nav' className={`nav-content collapse ${activeLink.startsWith('/manage-') ? 'show' : ''}`} data-bs-parent="#sidebar-nav">
+          <ul id='manage-tas-nav' className={`nav-content collapse ${activeLink.startsWith('/ta-') ? 'show' : ''}`} data-bs-parent="#sidebar-nav">
             <li>
-              <Link to={"/manage-ta"} className={activeLink === '/manage-ta' ? 'active' : ''} onClick={() => handleLinkClick('/manage-ta')}>
-          
+              <Link
+                to="/ta-manage"
+                className={activeLink === '/ta-manage' ? 'active-link' : ''}
+                onClick={() => handleLinkClick('/ta-manage')}
+              >
                 <span>Manage TA</span>
               </Link>
             </li>
             <li>
-              <Link to={"/ta-mapping"} className={activeLink === '/ta-mapping' ? 'active' : ''} onClick={() => handleLinkClick('/ta-mapping')}>
-         
+              <Link
+                to="/ta-mapping"
+                className={activeLink === '/ta-mapping' ? 'active-link' : ''}
+                onClick={() => handleLinkClick('/ta-mapping')}
+              >
                 <span>TA Mapping</span>
               </Link>
             </li>
             <li>
-              <Link to={"/ta-availability"} className={activeLink === '/ta-availability' ? 'active' : ''} onClick={() => handleLinkClick('/ta-availability')}>
-           
+              <Link
+                to="/ta-availability"
+                className={activeLink === '/ta-availability' ? 'active-link' : ''}
+                onClick={() => handleLinkClick('/ta-availability')}
+              >
                 <span>TA Availability</span>
               </Link>
             </li>
             <li>
-              <Link to={"/ta-scheduling"} className={activeLink === '/ta-scheduling' ? 'active' : ''} onClick={() => handleLinkClick('/ta-scheduling')}>
-            
+              <Link
+                to="/ta-scheduling"
+                className={activeLink === '/ta-scheduling' ? 'active-link' : ''}
+                onClick={() => handleLinkClick('/ta-scheduling')}
+              >
                 <span>TA Scheduling</span>
               </Link>
             </li>
@@ -63,7 +75,7 @@ const Sidebar = () => {
         <Divider variant="middle" component="li" sx={{ backgroundColor: 'white', opacity: '0.3' }} />
         <li className='nav-item'>
           <a className={`nav-link ${activeLink.startsWith('/coach-') ? 'active' : 'collapsed'}`} data-bs-target='#manage-coaches-nav' data-bs-toggle="collapse" href='#' onClick={() => handleLinkClick('/coach')}>
-            <img src={coaches} style={{width:'18px', height:'18px', marginRight:"10px"}} />
+            <img src={coaches} style={{ width: '18px', height: '18px', marginRight: "10px" }} />
             <span>Coaches</span>
             <i className='bi bi-chevron-down ms-auto'></i>
           </a>
@@ -110,7 +122,7 @@ const Sidebar = () => {
         <Divider variant="middle" component="li" sx={{ backgroundColor: 'white', opacity: '0.3' }} />
         <li className='nav-item'>
           <a className={`nav-link ${activeLink === '/tools' ? 'active' : 'collapsed'}`} href='#' onClick={() => handleLinkClick('/tools')}>
-            <img src={assistant} alt="" style={{width:"18px", height:"18px", marginRight:"10px"}} />
+            <img src={assistant} alt="" style={{ width: "18px", height: "18px", marginRight: "10px" }} />
             <span>Coaching Tools</span>
           </a>
         </li>

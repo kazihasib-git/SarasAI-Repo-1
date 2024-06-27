@@ -61,7 +61,7 @@ function App() {
             <Route index element={<Dashboard />} />
             <Route path='dashboard' element={<Dashboard />} />
             
-            <Route path='manage-ta' element={<ManagesTAs page="Manage TA" />} />
+            <Route path='ta-manage' element={<ManagesTAs page="Manage TA" />} />
             <Route path="createta" element={<CreateTAPage page="Create TA" />} />
             <Route path="AddEditTA" element={<AddEditTA page="Edit Ta" />} />
             <Route path='ta-mapping' element={<TaMapping page="TA Mapping" />} />
