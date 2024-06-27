@@ -10,7 +10,6 @@ const CustomDateField = ({ label, name, register, validation, errors, sx, ...pro
       label={label}
       InputLabelProps={{
         shrink: true, // This ensures the label is not overlapping with the input.
-        
       }}
       sx={{
         '& .MuiOutlinedInput-root': {

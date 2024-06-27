@@ -24,10 +24,11 @@ import {
   validateTimeZone,
 } from "../../../CustomFields/FormOptions";
 import CustomDateField from "../../../CustomFields/CustomDateField";
-import { closeSuccessPopup, createTA, openAssignBatches, openAssignStudents, openSuccessPopup } from "../../../../redux/features/taModule/taSlice";
+import { closeSuccessPopup, createTA, openAssignBatches, openAssignStudents, openSuccessPopup, updateTA } from "../../../../redux/features/taModule/taSlice";
 import SubmitPopup from "../../SubmitPopup";
+import dayjs from "dayjs";
 
-const AddEditTA = ({ data, edit }) => {
+const AddEditTA = ({ data }) => {
   const { register, handleSubmit, control, setValue, watch, formState: { errors }, } = useForm();
   const [selectedImage, setSelectedImage] = useState(null);
   const [taName, setTAName] = useState();
@@ -45,16 +46,19 @@ const AddEditTA = ({ data, edit }) => {
 
   useEffect(() => {
     if (data) {
+      const formattedDate = dayjs(dateOfBirth).format('YYYY-MM-DD HH:mm:ss');
       setValue("name", data.name);
-      setValue("username", data.username);
+      //setValue("username", data.username);
       setValue("password", data.password);
+      setValue("location", data.location);
       setValue("address", data.address);
-      setValue("pinCode", data.pinCode);
-      setValue("timezone", data.timezone);
+      setValue("pincode", data.pincode);
+      // setValue("time_zone", data.time_zone);
       setValue("gender", data.gender);
+      //setDateOfBirth(data.date_of_birth);
       setValue("date_of_birth", data.date_of_birth);
       setValue("highest_qualification", data.highest_qualification);
-      setValue("aboutMe", data.aboutMe);
+      setValue("about_me", data.about_me);
       setSelectedImage(data.avatar);
     }
   }, [data, setValue]);
@@ -66,7 +70,7 @@ const AddEditTA = ({ data, edit }) => {
 
   const handleAssignBatches = () => {
     //dispatch(closeSuccessPopup());
-    dispatch(() => openAssignBatches())
+    dispatch(openAssignBatches())
   };
 
   const handleClose = () => {
@@ -76,10 +80,13 @@ const AddEditTA = ({ data, edit }) => {
   const onSubmit = (formData) => {
     console.log("Data", formData);
     setTAName(formData.name)
-    
+    const formattedDate = dayjs(dateOfBirth).format('YYYY-MM-DD HH:mm:ss');
+    formData.date_of_birth = formattedDate;
+
     if (data) {
-      dispatch(updateTA({ id: data.id, ...formData }));
-      setEdit(false)
+      console.log("editing Id", data.id, "editing Data", formData);
+      dispatch(updateTA({ id: data.id, formData }));
+      dispatch(openSuccessPopup());
     } else {
       dispatch(createTA(formData));
       dispatch(openSuccessPopup());
@@ -87,7 +94,7 @@ const AddEditTA = ({ data, edit }) => {
   };
 
   const nameValue = watch("name", "");
-  const aboutMeValue = watch("aboutMe", "");
+  const aboutMeValue = watch("about_me", "");
 
   const actions = (
     <>
@@ -139,7 +146,7 @@ const AddEditTA = ({ data, edit }) => {
     <Box sx={{ p: 3 }}>
       <DialogActions>
         <Grid container alignItems="center">
-          {edit ? (
+          {data ? (
             <>
               <Grid item xs>
                 <Typography variant="h4" sx={{ mb: 4, font: "Nunito Sans" }}>Edit TA</Typography>
@@ -263,62 +270,68 @@ const AddEditTA = ({ data, edit }) => {
                 errors={errors}
               />
             </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <CustomTextField
-                label="Username"
-                name="username"
-                placeholder="Enter Username"
-                register={register}
-                validation={{
-                  required: "Username is required",
-                  minLength: {
-                    value: 3,
-                    message: "Username must be at least 3 characters long",
-                  },
-                  maxLength: {
-                    value: 20,
-                    message: "Username cannot exceed 20 characters",
-                  },
-                  pattern: {
-                    value: /^[A-Za-z0-9_]+$/,
-                    message:
-                      "Username can only contain letters, numbers, and underscores",
-                  },
-                }}
-                errors={errors}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <CustomTextField
-                label="Password"
-                name="password"
-                type="password"
-                placeholder="Enter Password"
-                register={register}
-                validation={{
-                  required: "Password is required",
-                  minLength: {
-                    value: 8,
-                    message: "Password must be at least 8 characters long",
-                  },
-                  maxLength: {
-                    value: 20,
-                    message: "Password cannot exceed 20 characters",
-                  },
-                  pattern: {
-                    value:
-                      /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$/,
-                    message:
-                      "Password must include at least one uppercase letter, one lowercase letter, one number, and one special character",
-                  },
-                }}
-                errors={errors}
-              />
-            </Grid>
+            {!data && (
+              <Grid item xs={12} sm={6} md={4}>
+                <CustomTextField
+                  label="Username"
+                  name="username"
+                  placeholder="Enter Username"
+                  register={register}
+                  validation={{
+                    required: "Username is required",
+                    minLength: {
+                      value: 3,
+                      message: "Username must be at least 3 characters long",
+                    },
+                    maxLength: {
+                      value: 20,
+                      message: "Username cannot exceed 20 characters",
+                    },
+                    pattern: {
+                      // value: /^[A-Za-z0-9_]+$/,
+                      message:
+                        "Username can only contain letters, numbers, and underscores",
+                    },
+                  }}
+                  errors={errors}
+                />
+              </Grid>
+            )}
+
+            {!data && (
+              <Grid item xs={12} sm={6} md={4}>
+                <CustomTextField
+                  label="Password"
+                  name="password"
+                  type="password"
+                  placeholder="Enter Password"
+                  register={register}
+                  validation={{
+                    required: "Password is required",
+                    minLength: {
+                      value: 8,
+                      message: "Password must be at least 8 characters long",
+                    },
+                    maxLength: {
+                      value: 20,
+                      message: "Password cannot exceed 20 characters",
+                    },
+                    pattern: {
+                      value:
+                        /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$/,
+                      message:
+                        "Password must include at least one uppercase letter, one lowercase letter, one number, and one special character",
+                    },
+                  }}
+                  errors={errors}
+                />
+              </Grid>
+            )}
+
             <Grid item xs={12} sm={6} md={4}>
               <CustomTextField
                 label="Address"
-                name="location"
+                name="address"
                 placeholder="Enter Address"
                 register={register}
                 validation={{
@@ -333,8 +346,24 @@ const AddEditTA = ({ data, edit }) => {
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <CustomTextField
+                label="Location"
+                name="location"
+                placeholder="Enter Location"
+                register={register}
+                validation={{
+                  required: "Location is required",
+                  maxLength: {
+                    value: 200,
+                    message: "Location must not exceed 200 characters",
+                  },
+                }}
+                errors={errors}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <CustomTextField
                 label="PIN Code"
-                name="pinCode"
+                name="pincode"
                 type="number"
                 placeholder="Enter PIN Code"
                 register={register}
@@ -356,16 +385,18 @@ const AddEditTA = ({ data, edit }) => {
                 errors={errors}
               />
             </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <CustomFormControl
-                label="Time Zone"
-                name="timezone"
-                register={register}
-                validation={{ validate: validateTimeZone }}
-                errors={errors}
-                options={timeZones}
-              />
-            </Grid>
+            {!data && (
+              <Grid item xs={12} sm={6} md={4}>
+                <CustomFormControl
+                  label="Time Zone"
+                  name="time_zone"
+                  register={register}
+                  validation={{ validate: validateTimeZone }}
+                  errors={errors}
+                  options={timeZones}
+                />
+              </Grid>
+            )}
             <Grid item xs={12} sm={6} md={4}>
               <CustomFormControl
                 label="Gender"
@@ -402,7 +433,7 @@ const AddEditTA = ({ data, edit }) => {
             <Grid item xs={12}>
               <CustomTextField
                 label="About Me"
-                name="aboutMe"
+                name="about_me"
                 placeholder="Enter About TA"
                 register={register}
                 validation={{ required: "About Me is required" }}
@@ -437,7 +468,7 @@ const AddEditTA = ({ data, edit }) => {
           title= {`${taName} successfully created.`}
           actions={actions}
         /> */}
-        { successPopup && <SubmitPopup />}
+        {successPopup && <SubmitPopup />}
         {assignStudentOpen && <AssignStudents />}
         {assignBatchOpen && <AssignBatches />}
       </Box>

@@ -9,32 +9,49 @@ import AddEditTA from "../../components/adminModule/tas/manageTAs/AddEditTA";
 import { useNavigate } from "react-router-dom";
 import DynamicTable from "../../components/CommonComponent/DynamicTable";
 import "./ManageTa.css";
-import { getTA, createTA, updateTA, openCreateTa, openEditTa, closeCreateTa } from "../../redux/features/taModule/taSlice";
+import {
+  getTA,
+  createTA,
+  updateTA,
+  openCreateTa,
+  openEditTa,
+  closeCreateTa,
+  closeEditTa,
+} from "../../redux/features/taModule/taSlice";
 import { useDispatch, useSelector } from "react-redux";
 import ReactTable, { Table } from "../../components/table/ReactTable";
 
-const headers = ["S. No.", "TA Name", "Username", "Location", "Time Zone", "Action"];
+const headers = [
+  "S. No.",
+  "TA Name",
+  "Username",
+  "Location",
+  "Time Zone",
+  "Action",
+];
 
 const ManageTA = () => {
   const dispatch = useDispatch();
   const { tas, loading, error, createTAOpen, editTAOpen } = useSelector((state) => state.taModule);
   const [tasData, setTasData] = useState([]);
+  const [editData, setEditData] = useState();
   const [searchQuery, setSearchQuery] = useState();
 
   useEffect(() => {
     dispatch(closeCreateTa());
+    dispatch(closeEditTa())
     dispatch(getTA());
   }, [dispatch]);
 
   useEffect(() => {
     if (tas.length > 0) {
       console.log("ta data inside useEffect ---- >", tas);
-      const transformData = tas.map(item => ({
-        id : item.id,
-        'TA Name': item.name,
+      const transformData = tas.map((item) => ({
+        id: item.id,
+        "TA Name": item.name,
         Username: item.username,
         Location: item.location,
-        'TimeZone': item.time_zone,
+        TimeZone: item.time_zone,
       }));
 
       setTasData(transformData);
@@ -44,23 +61,20 @@ const ManageTA = () => {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
-
   const handleEditTaClick = (row, taId) => {
     setIsEdit(true);
     //navigate('/createta')
-    console.log("row", row)
-    console.log("taId", taId)
+    console.log("row", row);
+    console.log("taId", taId);
     const dataToEdit = tas.filter((ta) => ta.id === taId);
     console.log("data to Edit in manage Ta", dataToEdit);
     setEditData(dataToEdit[0]);
     console.log("TA ID : ", taId);
   };
 
- 
-
   const actionButtons = [
     {
-      type: 'switch',
+      type: "switch",
     },
     {
       type: "edit",
@@ -75,24 +89,28 @@ const ManageTA = () => {
   };
 
   const handleEditTa = (id) => {
+    console.log("taId", id);
+    const dataToEdit = tas.filter((ta) => ta.id === id);
+    console.log("data to Edit in manage Ta", dataToEdit);
+    setEditData(dataToEdit[0]);
     dispatch(openEditTa());
-  }
+  };
 
-  const handleActivateTa = () => {
-    dispatch(updateTA({ id: data.id, is_Active: true }))
-  }
+  const handleActivateTa = (data) => {
+    data.is_Active = true;
+    dispatch(updateTA({ id: data.id,  is_Active :  data.is_Active }));
+  };
 
-  const handleDeactivateTa = () => {
-    dispatch(updateTA({ id: data.id, is_Active: false }))
-  }
+  const handleDeactivateTa = (data) => {
+    data.is_Active = false;
+    dispatch(updateTA({ id: data.id, is_Active: data.is_Active }));
+  };
 
   const handleChange = (value) => {
     setSearchQuery(value);
   };
 
-  const handleSearch = () => {
-
-  }
+  const handleSearch = () => { };
 
   return (
     <>
@@ -130,13 +148,11 @@ const ManageTA = () => {
             </div>
           ) : (
             <DynamicTable
-            headers={headers}
-            initialData={tasData}
-            actionButtons={actionButtons}
-        
-          />
-          )
-          }
+              headers={headers}
+              initialData={tasData}
+              actionButtons={actionButtons}
+            />
+          )}
           {/*
             <DynamicTable
               headers={headers}
@@ -148,9 +164,7 @@ const ManageTA = () => {
       )}
 
       {createTAOpen && <AddEditTA />}
-      {editTAOpen && <AddEditTA data={editData} edit={isEdit} />}
-      
-
+      {editTAOpen && <AddEditTA data={editData} />}
     </>
   );
 };
