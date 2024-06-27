@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Box,
   Button,
@@ -24,23 +24,18 @@ import {
   validateTimeZone,
 } from "../../../CustomFields/FormOptions";
 import CustomDateField from "../../../CustomFields/CustomDateField";
-import { createTA } from "../../../../redux/features/taModule/taSlice";
+import { closeSuccessPopup, createTA, openAssignBatches, openAssignStudents, openSuccessPopup } from "../../../../redux/features/taModule/taSlice";
+import SubmitPopup from "../../SubmitPopup";
 
 const AddEditTA = ({ data, edit }) => {
-  const {
-    register,
-    handleSubmit,
-    control,
-    setValue,
-    watch,
-    formState: { errors },
-  } = useForm();
+  const { register, handleSubmit, control, setValue, watch, formState: { errors }, } = useForm();
   const [selectedImage, setSelectedImage] = useState(null);
-  const [open, setOpen] = useState(false);
-  const [assignStudent, setAssignStudent] = useState(false);
-  const [assignBatch, setAssignBatch] = useState(false);
+  const [taName, setTAName] = useState();
+  // const [assignStudent, setAssignStudent] = useState(false);
+  // const [assignBatch, setAssignBatch] = useState(false);
 
   const dispatch = useDispatch();
+  const { tas, successPopup, assignStudentOpen, assignBatchOpen } = useSelector((state) => state.taModule);
 
   console.log("data to be edit", data)
 
@@ -61,27 +56,29 @@ const AddEditTA = ({ data, edit }) => {
   }, [data, setValue]);
 
   const handleAssignStudents = () => {
-    setAssignStudent(true);
+    // dispatch(closeSuccessPopup());
+    dispatch(openAssignStudents());
   };
 
   const handleAssignBatches = () => {
-    setAssignBatch(true);
+    //dispatch(closeSuccessPopup());
+    dispatch(() => openAssignBatches())
   };
 
   const handleClose = () => {
-    setOpen(false);
-    setAssignStudent(false);
-    setAssignBatch(false);
+    dispatch(closeSuccessPopup());
   };
 
   const onSubmit = (formData) => {
     console.log("Data", formData);
-    setOpen(true);
+    setTAName(formData.name)
+    
     if (data) {
       dispatch(updateTA({ id: data.id, ...formData }));
       setEdit(false)
     } else {
       dispatch(createTA(formData));
+      dispatch(openSuccessPopup());
     }
   };
 
@@ -130,6 +127,9 @@ const AddEditTA = ({ data, edit }) => {
       </Button>
     </>
   );
+
+  console.log("TA NAme", taName)
+  console.log("assignStudentOpen", assignStudentOpen)
 
   return (
     <Box sx={{ p: 3 }}>
@@ -314,7 +314,7 @@ const AddEditTA = ({ data, edit }) => {
             <Grid item xs={12} sm={6} md={4}>
               <CustomTextField
                 label="Address"
-                name="address"
+                name="location"
                 placeholder="Enter Address"
                 register={register}
                 validation={{
@@ -431,17 +431,15 @@ const AddEditTA = ({ data, edit }) => {
           </Button>
         </form>
 
-        <ReusableDialog
-          open={open}
-          handleClose={handleClose}
-          title="'TA' successfully created."
+        {/* <ReusableDialog
+          open={successPopup}
+          handleClose={() => dispatch(closeSuccessPopup())}
+          title= {`${taName} successfully created.`}
           actions={actions}
-        />
-
-        {assignStudent && (
-          <AssignStudents open={open} handleClose={handleClose} />
-        )}
-        {assignBatch && <AssignBatches open={open} handleClose={handleClose} />}
+        /> */}
+        { successPopup && <SubmitPopup />}
+        {assignStudentOpen && <AssignStudents />}
+        {assignBatchOpen && <AssignBatches />}
       </Box>
     </Box>
   );

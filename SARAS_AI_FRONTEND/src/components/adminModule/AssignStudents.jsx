@@ -33,12 +33,46 @@ const students = [
     { id: 1, name: 'Abhi', term: 'Term 4', batch: 'Batch 4' },
 ]
 
-import CloseIcon from '@mui/icons-material/Close';
+const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = '#4E18A5', borderColor = '#FFFFFF', sx, ...props }) => {
+    return (
+        <Button
+            variant="contained"
+            onClick={onClick}
+            sx={{
+                backgroundColor: backgroundColor,
+                color: color,
+                fontWeight: '700',
+                fontSize: '16px',
+                borderRadius: '50px',
+                padding: "10px 20px",
+                border: `2px solid ${borderColor}`,
+                '&:hover': {
+                    backgroundColor: color,
+                    color: backgroundColor,
+                    borderColor: color,
+                },
+                ...sx
+            }}
+            {...props}
+        >
+            {children}
+        </Button>
+    );
+};
 
-const AssignStudents = ({ open, handleClose }) => {
+import CloseIcon from '@mui/icons-material/Close';
+import { useDispatch, useSelector } from 'react-redux';
+import { closeAssignStudents, closeCreateTa, openSuccessPopup } from '../../redux/features/taModule/taSlice';
+import ReusableDialog from '../CustomFields/ReusableDialog';
+import CustomTextField from '../CustomFields/CustomTextField';
+import DynamicTable from '../CommonComponent/DynamicTable';
+
+const AssignStudents = () => {
+    const dispatch = useDispatch();
     const [selectedTerm, setSelectedTerm] = useState('')
     const [selectedBatch, setSelectedBatch] = useState('')
     const [selectedStudents, setSelectedStudents] = useState([]);
+    const { assignStudentOpen } = useSelector((state) => state.taModule);
 
     const academicTermOptions = ['1', '2', '3', '4', '5', '6', '7', '8'];
     const batchOptions = ['batch 1', 'batch 2', 'batch 3', 'batch 4', 'batch 5'];
@@ -50,131 +84,90 @@ const AssignStudents = ({ open, handleClose }) => {
     }
 
     const handleSubmit = () => {
-        console.log('selectedStudents', selectedStudents)
-        handleClose()
+        dispatch(closeCreateTa())
+        dispatch(openSuccessPopup());
     }
 
-    return (
-        <Dialog
-            open={open}
-            onClose={handleClose}
-            maxWidth="sm"
-            fullWidth
-            sx={{ borderRadius: '10px', color: '#FFFFFF' }}
-        >
-            <IconButton
-                onClick={handleClose}
-                sx={{ color: '#F56D3B', position: 'absolute', top: 10, right: 10 }}
-            >
-                <CloseIcon />
-            </IconButton>
-            <DialogTitle
-                sx={{
-                    font: 'Nohemi',
-                    fontWeight: '600',
-                    fontSize: '24px',
-                    color: '#1A1E3D',
-                    textAlign: 'center',
-                }}
-            >
-                Assign Students to 'TA NAME'
-            </DialogTitle>
-            <DialogContent sx={{ m: 2 }}>
-                <Typography
-                    variant='body1'
-                    sx={{ font: 'Nohemi', fontWeight: '400', fontSize: '16px', color: '#5F6383', textAlign: 'center', mb: 2 }}
-                >
-                    Let's assign students to the TA.
-                </Typography>
-                <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            select
-                            label="Academic Term"
-                            value={selectedTerm}
-                            onChange={(e) => setSelectedTerm(e.target.value)}
-                            fullWidth
-                            variant="outlined"
-                            sx={{ '& .MuiOutlinedInput-root': { borderRadius: '50px' } }}
-                            InputLabelProps={{ style: { margin: 0 } }}
-                        >
-                            {academicTermOptions.map((term) => (
-                                <MenuItem key={term} value={term}>{term}</MenuItem>
-                            ))}
-                        </TextField>
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            select
-                            label="Batch"
-                            value={selectedBatch}
-                            onChange={(e) => setSelectedBatch(e.target.value)}
-                            fullWidth
-                            variant="outlined"
-                            sx={{ '& .MuiOutlinedInput-root': { borderRadius: '50px' } }}
-                            InputLabelProps={{ style: { margin: 0 } }}
-                        >
-                            {batchOptions.map((batch) => (
-                                <MenuItem key={batch} value={batch}>{batch}</MenuItem>
-                            ))}
-                        </TextField>
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Divider sx={{ mt: 2, mb: 4, border: '1px solid #C2C2E7' }} />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            label="Search By Student Name"
-                            fullWidth
-                            variant="outlined"
-                            sx={{ '& .MuiOutlinedInput-root': { borderRadius: '50px' } }}
-                            InputLabelProps={{ style: { margin: 0 } }}
-                        />
-                    </Grid>
+    const headers = ['S. No.', 'Student Name', 'Academic Term', 'Batch', 'Select'];
+
+
+    const actionButtons = [
+        {
+            type: "checkbox",
+            //   onClick: (id) => {
+            //     handleEditTaClick(id);
+            //   },
+        },
+    ];
+
+    const content = (
+        <>
+            <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                    <CustomTextField
+                        select
+                        label="Academic Term"
+                        value={selectedTerm}
+                        onChange={(e) => setSelectedTerm(e.target.value)}
+                    >
+                        {academicTermOptions.map((term) => (
+                            <MenuItem key={term} value={term}>{term}</MenuItem>
+                        ))}
+                    </CustomTextField>
                 </Grid>
-                <TableContainer component={Paper} sx={{ borderRadius: '10px', mt: 3, backgroundColor: '#F1F1FB', border: '1px solid #E0E0F3', boxShadow: 1 }}>
-                    <Table>
-                        <TableHead sx={{ fontWeight : '500' , fontSize : '14px', color : '#1A1E3D'}}>
-                            <TableRow >
-                                <TableCell>S.No.</TableCell>
-                                <TableCell>Student Name</TableCell>
-                                <TableCell>Academic Term</TableCell>
-                                <TableCell>Batch</TableCell>
-                                <TableCell>Select</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {students.map((student, index) => (
-                                <TableRow key={student.id}>
-                                    <TableCell>{index + 1}</TableCell>
-                                    <TableCell>{student.name}</TableCell>
-                                    <TableCell>{student.term}</TableCell>
-                                    <TableCell>{student.batch}</TableCell>
-                                    <TableCell>
-                                        <Checkbox
-                                            checked={selectedStudents.includes(student.id)}
-                                            onChange={() => handleSelectStudent(student.id)}
-                                        />
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-                <Typography variant='subtitle1' gutterBottom sx={{ mt: 2, textAlign: 'center' }}>
-                    {selectedStudents.length} Student Selected
-                </Typography>
-            </DialogContent>
-            <DialogActions sx={{ justifyContent: 'center', pb: 3 }}>
-                <Button
-                    onClick={handleSubmit}
-                    variant="contained"
-                    sx={{ backgroundColor: '#F56D3B', borderRadius : '50px', color: '#FFFFFF', '&:hover': { backgroundColor: '#D4522A' } }}
-                >
-                    Submit
-                </Button>
-            </DialogActions>
-        </Dialog>
+                <Grid item xs={12} sm={6}>
+                    <CustomTextField
+                        select
+                        label="Batch"
+                        value={selectedBatch}
+                        onChange={(e) => setSelectedBatch(e.target.value)}
+                    >
+                        {batchOptions.map((batch) => (
+                            <MenuItem key={batch} value={batch}>{batch}</MenuItem>
+                        ))}
+                    </CustomTextField>
+                </Grid>
+                <Grid item xs={12}>
+                    <Divider sx={{ mt: 2, mb: 4, border: '1px solid #C2C2E7' }} />
+                </Grid>
+                <Grid item xs={12}>
+                    <CustomTextField
+                        label="Search By Student Name"
+                    />
+                </Grid>
+            </Grid>
+
+            <DynamicTable
+                headers={headers}
+                initialData={students}
+                actionButtons={actionButtons}
+            />
+
+            <Typography variant='subtitle1' gutterBottom sx={{ mt: 2, textAlign: 'center' }}>
+                {selectedStudents.length} Student Selected
+            </Typography>
+        </>
+    )
+
+    const actions = (
+        <CustomButton
+            onClick={handleSubmit}
+            backgroundColor='#F56D3B'
+            borderColor='#F56D3B'
+            color='#FFFFFF'
+        >
+            Submit
+        </CustomButton>
+    );
+
+    return (
+        <ReusableDialog
+            open={assignStudentOpen}
+            handleClose={() => dispatch(closeAssignStudents())}
+            title="Assign Students to TA Name"
+            content={content}
+            actions={actions}
+        />
     );
 };
 

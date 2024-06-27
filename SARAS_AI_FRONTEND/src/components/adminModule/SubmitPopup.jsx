@@ -1,99 +1,80 @@
 import { Box, Button, Dialog, DialogActions, DialogTitle, IconButton, Typography } from '@mui/material'
 import React from 'react'
 import CloseIcon from '@mui/icons-material/Close';
+import { useDispatch, useSelector } from 'react-redux';
+import { closeSuccessPopup, openAssignBatches, openAssignStudents, openSuccessPopup } from '../../redux/features/taModule/taSlice';
+import ReusableDialog from '../CustomFields/ReusableDialog';
 
-const SubmitPopup = ({ open, handleClose, handleAssignBatches, handleAssignStudents}) => {
+const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = '#4E18A5', borderColor = '#FFFFFF', sx, ...props }) => {
     return (
-        <Dialog
-                open={open}
-                onClose={handleClose}
-                maxWidth="md"
-                fullWidth
-                sx={{
-                    padding: '50px 0px 50px 0px',
-                    borderRadius: '10px',
-                    border: '2px solid #F56D38',
-                    color: '#FFFFFF'
-                }}
+        <Button
+            variant="contained"
+            onClick={onClick}
+            sx={{
+                backgroundColor: backgroundColor,
+                color: color,
+                fontWeight: '700',
+                fontSize: '16px',
+                borderRadius: '50px',
+                padding: "10px 20px",
+                border: `2px solid ${borderColor}`,
+                '&:hover': {
+                    backgroundColor: color,
+                    color: backgroundColor,
+                    borderColor: color,
+                },
+                ...sx
+            }}
+            {...props}
+        >
+            {children}
+        </Button>
+    );
+};
+
+const SubmitPopup = () => {
+    const dispatch = useDispatch()
+    const { successPopup } = useSelector((state) => state.taModule)
+    
+    const handleAssignBatches = () => {
+        dispatch(closeSuccessPopup())
+        dispatch(openAssignBatches())
+    }
+
+    const handleAssignStudents = () => {
+        dispatch(closeSuccessPopup())
+        dispatch(openAssignStudents());
+    }
+
+    const actions = (
+        <>
+            
+            <CustomButton
+                onClick={handleAssignStudents}
+                backgroundColor='#F56D3B'
+                color='white'
+                borderColor='#F56D3B'
             >
-                <IconButton
-                    onClick={handleClose}
-                    sx={{
-                        color: '#F56D3B',
-                        position: 'absolute',
-                        top: 10,
-                        right: 10
-                    }}
-                >
-                    <CloseIcon />
-                </IconButton>
+                Assign Students
+            </CustomButton>
+            <CustomButton
+                onClick={handleAssignBatches}
+                backgroundColor='white'
+                color='#F56D3B'
+                borderColor='#F56D3B'
+            >
+                Assign Batches
+            </CustomButton>
+        </>
+    );
 
-                <DialogTitle
-                    id="alert-dialog-title"
-                    sx={{
-                        m: 0,
-                        p: 2,
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center'
-                    }}
-                >
-                    <Typography
-                        variant="h6"
-                        sx={{
-                            font : 'Nohemi',
-                            fontWeight: '600',
-                            fontSize: '25px',
-                            color: '#1A1E3D'
-                        }}
-                    >
-                        'Coach' successfully created.
-                    </Typography>
-                </DialogTitle>
-
-                <DialogActions sx={{ p: 2, justifyContent: 'center' }}>
-                    <Box display="flex" justifyContent="center" width="100%" gap={2}>
-                        <Button
-                            variant="contained"
-                            onClick={handleAssignStudents}
-                            sx={{
-                                backgroundColor: '#F56D3B',
-                                color: 'white',
-                                borderRadius: '50px',
-                                textTransform: 'none',
-                                padding: '10px 20px',
-                                fontWeight: '700',
-                                fontSize: '16px',
-                                '&:hover': {
-                                    //backgroundColor: '#D4522A'
-                                }
-                            }}
-                        >
-                            Assign Students
-                        </Button>
-                        <Button
-                            variant="outlined"
-                            onClick={handleAssignBatches}
-                            sx={{
-                                backgroundColor: 'white',
-                                color: '#F56D3B',
-                                border: '2px solid #F56D3B',
-                                borderRadius: '50px',
-                                textTransform: 'none',
-                                fontWeight: '700',
-                                fontSize: '16px',
-                                padding: '10px 20px',
-                                '&:hover': {
-                                    //backgroundColor: '#F56D3B',
-                                    color: 'white'
-                                }
-                            }}
-                        >
-                            Assign Batches
-                        </Button>
-                    </Box>
-                </DialogActions>
-            </Dialog>
+    return (
+        <ReusableDialog
+            open={successPopup}
+            handleClose={() => dispatch(closeSuccessPopup())}
+            title="TA_Name successfully created."
+            actions={actions}
+        />
     )
 }
 

@@ -12,9 +12,11 @@ export const genders = [
 ];
 
 export const qualificationOptions = [
-  { value: 'highschool', label: 'High School' },
-  { value: 'bachelor', label: 'Bachelor\'s Degree' },
-  { value: 'master', label: 'Master\'s Degree' },
+  { value : 'Secondary_School', label : 'Seconday School'},
+  { value : 'Post Secondary School', label : 'Post Secondary School'},
+  { value : 'Bachelors Degree' , label : 'Bachelor\'s Degree' },
+  { value : 'Masters Degree', label : 'Master\'s Degree'},
+  { value : 'Doctorate', label : 'Doctorate'}
 ];
 
 export const validateTimeZone = (value) => {
