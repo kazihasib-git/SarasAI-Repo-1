@@ -133,6 +133,7 @@ function AddEditCoach() {
                                     <Button
                                         variant="contained"
                                         onClick={handleAssignStudents}
+                            
                                         sx={{
                                             backgroundColor: '#F56D3B',
                                             color: 'white',
@@ -344,8 +345,7 @@ function AddEditCoach() {
                                 validation={{ required: 'About Me is required' }}
                                 errors={errors}
                                 helperText={errors.aboutMe?.message}
-                                multiline
-                                rows={4}
+                    
                                 />
                         </Grid>
                     </Grid>

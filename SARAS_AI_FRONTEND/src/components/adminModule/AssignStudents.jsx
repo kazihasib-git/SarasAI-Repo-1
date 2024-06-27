@@ -66,6 +66,7 @@ import { closeAssignStudents, closeCreateTa, openSuccessPopup } from '../../redu
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import CustomTextField from '../CustomFields/CustomTextField';
 import DynamicTable from '../CommonComponent/DynamicTable';
+import PopUpTable from '../CommonComponent/PopUpTable';
 
 const AssignStudents = () => {
     const dispatch = useDispatch();
@@ -137,7 +138,7 @@ const AssignStudents = () => {
                 </Grid>
             </Grid>
 
-            <DynamicTable
+            <PopUpTable
                 headers={headers}
                 initialData={students}
                 actionButtons={actionButtons}

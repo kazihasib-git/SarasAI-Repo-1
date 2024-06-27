@@ -58,6 +58,7 @@ import { closeAssignBatches, closeCreateTa, openAssignBatches, openSuccessPopup 
 import CustomTextField from '../CustomFields/CustomTextField';
 import DynamicTable from '../CommonComponent/DynamicTable';
 import ReusableDialog from '../CustomFields/ReusableDialog';
+import PopUpTable from '../CommonComponent/PopUpTable';
 
 
 const students = [
@@ -122,7 +123,7 @@ const AssignBatches = () => {
                 </Grid>
             </Grid>
 
-            <DynamicTable
+            <PopUpTable
                 headers={headers}
                 initialData={students}
                 actionButtons={actionButtons}
