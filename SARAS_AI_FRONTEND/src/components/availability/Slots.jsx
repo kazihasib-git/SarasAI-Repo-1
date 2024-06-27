@@ -4,6 +4,7 @@ import ReusableDialog from '../CustomFields/ReusableDialog';
 import DynamicTable from '../CommonComponent/DynamicTable';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeScheduledSlots, openScheduledSession } from '../../redux/features/taModule/taScheduling';
+import PopUpTable from '../CommonComponent/PopUpTable';
 
 const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = '#4E18A5', borderColor = '#FFFFFF', sx, ...props }) => {
     return (
@@ -89,7 +90,7 @@ const Slots = () => {
       ];
 
     const table = (
-        <DynamicTable
+        <PopUpTable
             headers={headers}
             initialData={data}
             actionButtons={actionButtons}

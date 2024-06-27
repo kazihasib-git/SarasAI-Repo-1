@@ -39,6 +39,7 @@ import CoachCalender from './pages/ManageCoaches/CoachCalender';
 import CreateTAPage from './pages/managesTAs/CreateTAPage';
 import AssignedBatches from './pages/managesTAs/AssignedBatches';
 import TaCalender from './pages/managesTAs/TaCalendar';
+import BatchPage from './pages/batches/BatchPage';
 const ROLES = {
   "Teaching": 2001,
   "Coaches": 1984,
@@ -59,7 +60,7 @@ function App() {
           <Route path='/' element={<Main page="Dashboard" />}>
             <Route index element={<Dashboard />} />
             <Route path='dashboard' element={<Dashboard />} />
-            <Route path="students" element={<StudentPage />} />
+            
             <Route path='manage-ta' element={<ManagesTAs page="Manage TA" />} />
             <Route path="createta" element={<CreateTAPage page="Create TA" />} />
             <Route path="AddEditTA" element={<AddEditTA page="Edit Ta" />} />
@@ -71,12 +72,14 @@ function App() {
             <Route path='ta-calendar' element={<TaCalender page="Calendar" />} />
             {/* <Route path='calendar' element={<Calendar page="Calendar" />} /> */}
             <Route path='manage-coaches' element={<ManageCoaches page="Manage Coaches" />} />
-            <Route path="createcoach" element={<CreateCoachPage />} />
+            <Route path="createcoach" element={<CreateCoachPage page="Create Coach"/>} />
             <Route path='coach-mapping' element={<CoachMapping page="Coach Mapping" />} />
             <Route path='manage-coaches/tacalender' element={<CoachCalender />} />
             <Route path='coach-template' element={<CoachTemplate page="Coach Template" />} />
             <Route path='coach-availability' element={<CoachAvialability page="Coach Availability" />} />
             <Route path='coach-scheduling' element={<CoachScheduling page="Coach Scheduling" />} />
+            <Route path="students" element={<StudentPage />} />
+            <Route path="batches" element={<BatchPage />} />
             {/* <Route path='/student-list' element={<StudentList page="Student" />} /> */}
           </Route>
         </Route>

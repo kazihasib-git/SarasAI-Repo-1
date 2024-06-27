@@ -4,160 +4,40 @@ import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined
 import CallMadeOutlinedIcon from '@mui/icons-material/CallMadeOutlined';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import { styled } from "@mui/material/styles";
-import './DynamicTable.css'
+import './popUpTable.css'
 import { useNavigate } from "react-router-dom";
 import editIcon from '../../assets/editIcon.png';
 import bin from '../../assets/bin.png';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
-const CustomButton = styled(Button)(({ theme }) => ({
-    borderRadius: '20px',
-    border: "1px solid #F56D3B",
-    color: "#F56D3B",
-    padding: '8px 16px',  // Add padding for horizontal and vertical spacing
-    margin: '0 8px',      // Add horizontal margin between buttons
-    '&:hover': {
-        backgroundColor: "#F56D3B",
-        color: '#fff',
-        borderColor: '#F56D3B',
-    },
-    '&.active': {
-        backgroundColor: "#F56D3B",
-        color: '#fff',
-    },
-}));
-
-
-const CalenderButton = styled(Button)(({ theme }) => ({
-    borderRadius: '20px',
-    border: 'none',
-    color: '#F56D3B',
-    backgroundColor: '#FEEBE3',
-    transition: 'all 0.3s ease', // Corrected transition syntax
-    '&:hover': {
-        backgroundColor: '#FEEBE3',
-        color: '#F56D3B',
-        border: 'none', // Corrected border removal syntax
-    },
-    '&:focus': {
-        outline: 'none', // Remove default focus outline if desired
-    }
-}));;
-
-const AntSwitch = styled(Switch)(({ theme }) => ({
-    width: 36,  // adjust width as needed
-    height: 20,  // increased height
-    padding: 0,
-    marginTop: 5,
-    display: 'flex',
-    '&:active': {
-        '& .MuiSwitch-thumb': {
-            width: 17,  // adjust width to keep thumb proportional
-        },
-        '& .MuiSwitch-switchBase.Mui-checked': {
-            transform: 'translateX(16px)',  // adjust translation to match increased height
-        },
-    },
-    '& .MuiSwitch-switchBase': {
-        padding: 3,  // increased padding for larger height
-        '&.Mui-checked': {
-            transform: 'translateX(18px)',  // adjust translation to match increased height
-            color: '#fff',
-            '& + .MuiSwitch-track': {
-                opacity: 1,
-                backgroundColor: theme.palette.mode === 'dark' ? '#177ddc' : '#14D249',
-            },
-        },
-    },
-    '& .MuiSwitch-thumb': {
-        boxShadow: '0 2px 4px 0 rgb(0 35 11 / 20%)',
-        width: 14,  // increased width for larger thumb
-        height: 14,  // increased height for larger thumb
-        borderRadius: 7,  // adjusted to keep thumb circular
-        transition: theme.transitions.create(['width'], {
-            duration: 200,
-        }),
-    },
-    '& .MuiSwitch-track': {
-        borderRadius: 20 / 2,  // adjusted to match new height
-        opacity: 1,
-        backgroundColor:
-            theme.palette.mode === 'dark' ? 'rgba(255,255,255,.35)' : 'rgba(0,0,0,.25)',
-        boxSizing: 'border-box',
-    },
-}));
-
-
-
-const DynamicTable = ({ headers, initialData, actionButtons }) => {
+const PopUpTable = ({ headers, initialData, actionButtons }) => {
     const [data, setData] = useState(initialData.map(item => ({
         ...item,
-        isActive: item.isActive !== undefined ? item.isActive : false,
+        isSelected: item.isSelected !== undefined ? item.isSelected : false,
     })));
 
     useEffect(() => {
         setData(initialData.map(item => ({
             ...item,
-            isActive: item.isActive !== undefined ? item.isActive : false,
+            isSelected: item.isSelected !== undefined ? item.isSelected : false,
         })));
     }, [initialData]);
-
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
     const totalPages = Math.ceil(data.length / itemsPerPage);
     const currentData = data.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-
-    const handlePageChange = (event, pageNumber) => {
-        setCurrentPage(pageNumber);
-    };
-
-    const handleDelete = (id) => {
-        console.log("Deleting item with id:", id);
-    };
-
-    const handleView = (type, id) => {
-        if (type === 'students') {
-            navigate(`/active-students/`);
-        } else if (type === 'batches') {
-            navigate(`/active-batches/`);
-        }
-    };
-
-    const handleToggle = (id) => {
-        console.log("id : ", id)
-        setData(prevData =>
-            prevData.map(item =>
-                item.id === id ? { ...item, isActive: !item.isActive } : item
-            )
-        );
-    };
-
-    const getColorForAvailability = (availability) => {
-        switch (availability) {
-            case 'Active':
-                return '#06DD0F';
-            case 'On Leave':
-                return '#F48606';
-            case 'Inactive':
-                return '#808080';
-            default:
-                return '#000000';
-        }
-    };
-
     return (
-        <div className="table-container">
+        <div className="table-container popUpModel">
             <table>
-                <thead className="tableHead">
+                <thead>
                     <tr>
                         {headers.map((header, index) => (
                             <th key={index}>{header}</th>
                         ))}
                     </tr>
                 </thead>
-                <tbody className="tableBody">
+                <tbody className="popUpBody">
                     {currentData.map((item, index) => (
-                        <tr key={item.id} id="tableRow">
+                        <tr key={item.id} id="popUpRow">
                             <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                             {Object.keys(item).map((key, idx) => {
                                 if (key === 'activeStudents') {
@@ -207,7 +87,7 @@ const DynamicTable = ({ headers, initialData, actionButtons }) => {
                                             </CustomButton>
                                         </td>
                                     );
-                                } else if (key !== 'id' && key !== 'isActive') {
+                                } else if (key !== 'id' && key !== 'isSelected') {
                                     return <td key={idx}>{item[key]}</td>;
                                 }
                                 return null;
@@ -219,7 +99,7 @@ const DynamicTable = ({ headers, initialData, actionButtons }) => {
                                             return (
                                                 <AntSwitch
                                                     key={idx}
-                                                    checked={item.isActive}
+                                                    checked={item.isSelected}
                                                     onChange={() => handleToggle(item.id)}
                                                     inputProps={{ 'aria-label': 'ant design' }}
                                                 />
@@ -267,17 +147,17 @@ const DynamicTable = ({ headers, initialData, actionButtons }) => {
                                                 </IconButton>
                                             );
                                         }
-                                        if (button.type === 'calendar') {
+                                        if (button.type === 'checkbox') {
                                             return (
-                                                <CustomButton
+                                                <Checkbox
                                                     key={idx}
-                                                    variant="outlined"
-                                                    color="secondary"
-                                                    endIcon={<CallMadeOutlinedIcon />}
-                                                    onClick={() => handleView('Calendar', item.id)}
-                                                >
-                                                    Check
-                                                </CustomButton>
+                                                    sx={{
+                                                        '& .MuiSvgIcon-root': {
+                                                            color: '#C2C2E7', // Color for the tick
+                                                        },
+                                                    }}
+                                                    inputProps={{ 'aria-label': 'select all' }}
+                                                />
                                             );
                                         }
                                         return null;
@@ -288,21 +168,9 @@ const DynamicTable = ({ headers, initialData, actionButtons }) => {
                     ))}
                 </tbody>
             </table>
-            <div className="pagination">
-                {Array.from({ length: totalPages }, (_, index) => (
-                    <button
-                        key={index}
-                        onClick={(event) => handlePageChange(event, index + 1)}
-                        className={index + 1 === currentPage ? 'active' : ''}
-                    >
-                        {index + 1}
-                    </button>
-                ))}
-            </div>
+
         </div>
-    );
-};
+    )
+}
 
-
-export default DynamicTable;
-
+export default PopUpTable

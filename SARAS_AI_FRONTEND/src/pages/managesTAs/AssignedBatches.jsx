@@ -126,7 +126,7 @@ const DynamicTable = ({ headers, initialData, title, actionButtons }) => {
                 </div>
             </Box>
             <table>
-                <thead>
+                <thead className="commonTableHead">
                     <tr>
                         {headers.map((header, index) => (
                             <th key={index}>{header}</th>
@@ -134,9 +134,9 @@ const DynamicTable = ({ headers, initialData, title, actionButtons }) => {
                         {/* <th>Actions</th> Add an extra header for actions */}
                     </tr>
                 </thead>
-                <tbody>
+                <tbody className="commonTableBody">
                     {currentData.map((item, index) => (
-                        <tr key={item.id}>
+                        <tr key={item.id} id="commonTableRow">
                             <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                             {Object.keys(item).map((key, idx) => {
                                 if (key !== 'id' && key !== 'isActive') {

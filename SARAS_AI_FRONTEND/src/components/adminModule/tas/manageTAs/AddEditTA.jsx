@@ -34,6 +34,10 @@ const AddEditTA = ({ data, edit }) => {
   // const [assignStudent, setAssignStudent] = useState(false);
   // const [assignBatch, setAssignBatch] = useState(false);
 
+  const [open, setOpen] = useState(false);
+  const [assignStudent, setAssignStudent] = useState(false);
+  const [assignBatch, setAssignBatch] = useState(false);
+  const [dateOfBirth, setDateOfBirth] = useState(null);
   const dispatch = useDispatch();
   const { tas, successPopup, assignStudentOpen, assignBatchOpen } = useSelector((state) => state.taModule);
 
@@ -373,19 +377,15 @@ const AddEditTA = ({ data, edit }) => {
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
-              <Controller
-                name="date_of_birth"
-                control={control}
-                rules={{ required: "Date of birth is required" }}
-                render={({ field }) => (
-                  <CustomTextField
-                    id="date"
-                    label="Date of Birth"
-                    type="date"
-                    defaultValue="DD-MM-YY"
-                    {...field}
-                  />
-                )}
+              <CustomDateField
+                label="Date Of Birth"
+                value={dateOfBirth}
+                onChange={setDateOfBirth}
+                name="dateOfBirth"
+                register={register}
+                validation={{ required: 'Date of birth is required' }}
+                errors={errors}
+                sx={{ width: '100%' }}
               />
             </Grid>
 

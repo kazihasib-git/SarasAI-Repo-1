@@ -30,6 +30,7 @@ const ManageTA = () => {
     if (tas.length > 0) {
       console.log("ta data inside useEffect ---- >", tas);
       const transformData = tas.map(item => ({
+        id : item.id,
         'TA Name': item.name,
         Username: item.username,
         Location: item.location,
@@ -55,9 +56,11 @@ const ManageTA = () => {
     console.log("TA ID : ", taId);
   };
 
+ 
+
   const actionButtons = [
     {
-      type : "switch",
+      type: 'switch',
     },
     {
       type: "edit",
@@ -127,10 +130,11 @@ const ManageTA = () => {
             </div>
           ) : (
             <DynamicTable
-              headers={headers}
-              initialData={tasData}
-              actionButtons={actionButtons}
-            />
+            headers={headers}
+            initialData={tasData}
+            actionButtons={actionButtons}
+        
+          />
           )
           }
           {/*
