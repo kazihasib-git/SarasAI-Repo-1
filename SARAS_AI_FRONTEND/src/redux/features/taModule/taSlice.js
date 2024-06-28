@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { baseUrl } from "../../../utils/baseURL";
 
-export const createTA = createAsyncThunk("taModule/createTA", async (data) => {
+export const createTA = createAsyncThunk("/createTA", async (data) => {
     const response = await axios.post(`${baseUrl}/admin/manage_tas`, data);
     return response.data;
 }

@@ -4,6 +4,7 @@ import { Box, Button, DialogContent, Typography } from '@mui/material';
 import DynamicTable from '../CommonComponent/DynamicTable';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeScheduledSession, openCancelSession, openRescheduleSession } from '../../redux/features/taModule/taScheduling';
+import PopUpTable from '../CommonComponent/PopUpTable';
 
 const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = '#4E18A5', borderColor = '#FFFFFF', sx, ...props }) => {
     return (
@@ -67,7 +68,7 @@ const ScheduledSessions = () => {
                 </Typography>
             </DialogContent>
         ) : (
-            <DynamicTable
+            <PopUpTable
                 headers={headers}
                 initialData={dummyData}
                 actionButtons={actionButtons}
