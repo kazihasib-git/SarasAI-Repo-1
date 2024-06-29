@@ -4,6 +4,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeSuccessPopup, openAssignBatches, openAssignStudents, openSuccessPopup } from '../../redux/features/taModule/taSlice';
 import ReusableDialog from '../CustomFields/ReusableDialog';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = '#4E18A5', borderColor = '#FFFFFF', sx, ...props }) => {
     return (
@@ -34,7 +35,8 @@ const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = 
 
 const SubmitPopup = () => {
     const dispatch = useDispatch()
-    const { tas, successPopup, error, loading } = useSelector((state) => state.taModule)
+    const navigate = useNavigate()
+    const { tas, successPopup, error, loading, ta_name } = useSelector((state) => state.taModule)
     
     console.log("tas", tas[-1])
 
@@ -47,6 +49,11 @@ const SubmitPopup = () => {
         dispatch(closeSuccessPopup())
         dispatch(openAssignStudents());
     }
+
+    const handleCloseButton = () =>{
+        dispatch(closeSuccessPopup())
+        navigate("/ta-mapping")
+    } 
 
     const actions = (
         <>
@@ -73,8 +80,8 @@ const SubmitPopup = () => {
     return (
         <ReusableDialog
             open={successPopup}
-            handleClose={() => dispatch(closeSuccessPopup())}
-            title="TA_Name successfully created."
+            handleClose={() => handleCloseButton()}
+            title={`${ta_name} successfully created.`}
             actions={actions}
         />
     )

@@ -1,25 +1,18 @@
-import { Box, InputBase, Button, Switch, IconButton } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
+import { Box } from "@mui/material";
 import Header from "../../components/Header/Header";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import { useEffect, useState } from "react";
-import { OnOffSwitch } from "../../components/Switch";
-import editIcon from "../../assets/editIcon.png";
 import AddEditTA from "../../components/adminModule/tas/manageTAs/AddEditTA";
-import { useNavigate } from "react-router-dom";
 import DynamicTable from "../../components/CommonComponent/DynamicTable";
 import "./ManageTa.css";
 import {
   getTA,
-  createTA,
-  updateTA,
   openCreateTa,
   openEditTa,
   closeCreateTa,
   closeEditTa,
 } from "../../redux/features/taModule/taSlice";
 import { useDispatch, useSelector } from "react-redux";
-import ReactTable, { Table } from "../../components/table/ReactTable";
 
 const headers = [
   "S. No.",
@@ -35,42 +28,31 @@ const ManageTA = () => {
   const { tas, loading, error, createTAOpen, editTAOpen } = useSelector((state) => state.taModule);
   const [tasData, setTasData] = useState([]);
   const [editData, setEditData] = useState();
-  const [searchQuery, setSearchQuery] = useState();
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     dispatch(closeCreateTa());
-    dispatch(closeEditTa())
+    dispatch(closeEditTa());
     dispatch(getTA());
   }, [dispatch]);
 
   useEffect(() => {
     if (tas.length > 0) {
-      console.log("ta data inside useEffect ---- >", tas);
       const transformData = tas.map((item) => ({
         id: item.id,
         "TA Name": item.name,
         Username: item.username,
         Location: item.location,
-        TimeZone: item.time_zone,
+        'Time Zone': item.time_zone,
+        is_active: item.is_active,
       }));
 
       setTasData(transformData);
     }
   }, [tas]);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
-
-  const handleEditTaClick = (row, taId) => {
-    setIsEdit(true);
-    //navigate('/createta')
-    console.log("row", row);
-    console.log("taId", taId);
-    const dataToEdit = tas.filter((ta) => ta.id === taId);
-    console.log("data to Edit in manage Ta", dataToEdit);
-    setEditData(dataToEdit[0]);
-    console.log("TA ID : ", taId);
-  };
+  // if (loading) return <div>Loading...</div>;
+  // if (error) return <div>Error: {error}</div>;
 
   const actionButtons = [
     {
@@ -89,28 +71,23 @@ const ManageTA = () => {
   };
 
   const handleEditTa = (id) => {
-    console.log("taId", id);
-    const dataToEdit = tas.filter((ta) => ta.id === id);
-    console.log("data to Edit in manage Ta", dataToEdit);
-    setEditData(dataToEdit[0]);
+    const dataToEdit = tas.find((ta) => ta.id === id);
+    setEditData(dataToEdit);
     dispatch(openEditTa());
-  };
-
-  const handleActivateTa = (data) => {
-    data.is_Active = true;
-    dispatch(updateTA({ id: data.id,  is_Active :  data.is_Active }));
-  };
-
-  const handleDeactivateTa = (data) => {
-    data.is_Active = false;
-    dispatch(updateTA({ id: data.id, is_Active: data.is_Active }));
   };
 
   const handleChange = (value) => {
     setSearchQuery(value);
   };
 
-  const handleSearch = () => { };
+  // Filter tasData based on the search query
+  const filteredTasData = tasData?.filter((ta) =>
+    ta["TA Name"]?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    ta.Username?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    ta.Location?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    ta['Time Zone']?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+  
 
   return (
     <>
@@ -142,24 +119,18 @@ const ManageTA = () => {
               </button>
             </div>
           </Box>
-          {!tasData || tasData.length === 0 ? (
+          {!filteredTasData || filteredTasData.length === 0 ? (
             <div>
               <p>No Data Available</p>
             </div>
           ) : (
             <DynamicTable
               headers={headers}
-              initialData={tasData}
+              initialData={filteredTasData}
               actionButtons={actionButtons}
+              componentName={"MANAGETA"}
             />
           )}
-          {/*
-            <DynamicTable
-              headers={headers}
-              initialData={tasData}
-              actionButtons={actionButtons}
-            />
-            */}
         </>
       )}
 

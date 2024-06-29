@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./AddEdit.css";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Box,
@@ -9,14 +10,11 @@ import {
   Grid,
   DialogActions,
   Divider,
-  TextField,
 } from "@mui/material";
 import AssignStudents from "../../AssignStudents";
 import AssignBatches from "../../AssignBatches";
 import CustomFormControl from "../../../CustomFields/CustomFromControl";
 import CustomTextField from "../../../CustomFields/CustomTextField";
-import ReusableDialog from "../../../CustomFields/ReusableDialog";
-import AvatarInput from "../../../CustomFields/AvatarInput";
 import {
   timeZones,
   genders,
@@ -24,12 +22,32 @@ import {
   validateTimeZone,
 } from "../../../CustomFields/FormOptions";
 import CustomDateField from "../../../CustomFields/CustomDateField";
-import { closeSuccessPopup, createTA, openAssignBatches, openAssignStudents, openSuccessPopup, updateTA } from "../../../../redux/features/taModule/taSlice";
+import {
+  closeSuccessPopup,
+  createTA,
+  openAssignBatches,
+  openAssignStudents,
+  openSuccessPopup,
+  updateTA,
+  accessTaName,
+} from "../../../../redux/features/taModule/taSlice";
 import SubmitPopup from "../../SubmitPopup";
 import dayjs from "dayjs";
 
 const AddEditTA = ({ data }) => {
-  const { register, handleSubmit, control, setValue, watch, formState: { errors }, } = useForm();
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      gender: "", // Set to an empty string or one of the valid options like 'Male'
+    },
+  });
+
   const [selectedImage, setSelectedImage] = useState(null);
   const [taName, setTAName] = useState();
   // const [assignStudent, setAssignStudent] = useState(false);
@@ -40,13 +58,16 @@ const AddEditTA = ({ data }) => {
   const [assignBatch, setAssignBatch] = useState(false);
   const [dateOfBirth, setDateOfBirth] = useState(null);
   const dispatch = useDispatch();
-  const { tas, successPopup, assignStudentOpen, assignBatchOpen } = useSelector((state) => state.taModule);
+  const { tas, successPopup, assignStudentOpen, assignBatchOpen } = useSelector(
+    (state) => state.taModule
+  );
 
-  console.log("data to be edit", data)
+  console.log("data to be edit", data);
 
   useEffect(() => {
     if (data) {
-      const formattedDate = dayjs(dateOfBirth).format('YYYY-MM-DD HH:mm:ss');
+      const formattedDate = dayjs(dateOfBirth).format("YYYY-MM-DD HH:mm:ss");
+      console.log("DATE birth : ", data.date_of_birth);
       setValue("name", data.name);
       //setValue("username", data.username);
       setValue("password", data.password);
@@ -70,26 +91,34 @@ const AddEditTA = ({ data }) => {
 
   const handleAssignBatches = () => {
     //dispatch(closeSuccessPopup());
-    dispatch(openAssignBatches())
+    dispatch(openAssignBatches());
   };
 
   const handleClose = () => {
     dispatch(closeSuccessPopup());
   };
 
-  const onSubmit = (formData) => {
+  const onSubmit = async (formData) => {
     console.log("Data", formData);
-    setTAName(formData.name)
-    const formattedDate = dayjs(dateOfBirth).format('YYYY-MM-DD HH:mm:ss');
+    setTAName(formData.name);
+    const formattedDate = dayjs(dateOfBirth).format("YYYY-MM-DD HH:mm:ss");
     formData.date_of_birth = formattedDate;
 
     if (data) {
       console.log("editing Id", data.id, "editing Data", formData);
-      dispatch(updateTA({ id: data.id, formData }));
+      const updateRes = await dispatch(
+        updateTA({ id: data.id, data: formData })
+      ).unwrap();
+      // console.log("Updated : ", updateRes);
+      // console.log("Updated Name: ", updateRes.username);
       dispatch(openSuccessPopup());
+      dispatch(accessTaName(updateRes.username));
     } else {
-      dispatch(createTA(formData));
+      const createRes = await dispatch(createTA(formData)).unwrap();
+      console.log("Created : ", createRes);
+      console.log("Created Name: ", createRes.ta);
       dispatch(openSuccessPopup());
+      dispatch(accessTaName(createRes.ta));
     }
   };
 
@@ -139,8 +168,8 @@ const AddEditTA = ({ data }) => {
     </>
   );
 
-  console.log("TA NAme", taName)
-  console.log("assignStudentOpen", assignStudentOpen)
+  console.log("TA NAme", taName);
+  console.log("assignStudentOpen", assignStudentOpen);
 
   return (
     <Box sx={{ p: 3 }}>
@@ -149,7 +178,9 @@ const AddEditTA = ({ data }) => {
           {data ? (
             <>
               <Grid item xs>
-                <Typography variant="h4" sx={{ mb: 4, font: "Nunito Sans" }}>Edit TA</Typography>
+                <Typography variant="h4" sx={{ mb: 4, font: "Nunito Sans" }}>
+                  Edit TA
+                </Typography>
               </Grid>
               <Grid item>
                 <Box display="flex" justifyContent="center" gap={2}>
@@ -157,18 +188,18 @@ const AddEditTA = ({ data }) => {
                     variant="contained"
                     onClick={handleAssignStudents}
                     sx={{
-                      backgroundColor: '#F56D3B',
-                      color: 'white',
-                      height: '60px',
-                      width: '201px',
-                      borderRadius: '50px',
-                      textTransform: 'none',
-                      padding: '18px 30px',
-                      fontWeight: '700',
-                      fontSize: '16px',
-                      '&:hover': {
+                      backgroundColor: "#F56D3B",
+                      color: "white",
+                      height: "60px",
+                      width: "201px",
+                      borderRadius: "50px",
+                      textTransform: "none",
+                      padding: "18px 30px",
+                      fontWeight: "700",
+                      fontSize: "16px",
+                      "&:hover": {
                         //backgroundColor: '#D4522A'
-                      }
+                      },
                     }}
                   >
                     Assign Students
@@ -177,20 +208,20 @@ const AddEditTA = ({ data }) => {
                     variant="outlined"
                     onClick={handleAssignBatches}
                     sx={{
-                      backgroundColor: 'white',
-                      color: '#F56D3B',
-                      height: '60px',
-                      width: '194px',
-                      border: '2px solid #F56D3B',
-                      borderRadius: '50px',
-                      textTransform: 'none',
-                      fontWeight: '700',
-                      fontSize: '16px',
-                      padding: '18px 30px',
-                      '&:hover': {
+                      backgroundColor: "white",
+                      color: "#F56D3B",
+                      height: "60px",
+                      width: "194px",
+                      border: "2px solid #F56D3B",
+                      borderRadius: "50px",
+                      textTransform: "none",
+                      fontWeight: "700",
+                      fontSize: "16px",
+                      padding: "18px 30px",
+                      "&:hover": {
                         //backgroundColor: '#F56D3B',
                         //color: 'white'
-                      }
+                      },
                     }}
                   >
                     Assign Batches
@@ -200,7 +231,9 @@ const AddEditTA = ({ data }) => {
             </>
           ) : (
             <Grid item xs>
-              <Typography variant="h4" sx={{ mb: 4 }}>Create TA</Typography>
+              <Typography variant="h4" sx={{ mb: 4 }}>
+                Create TA
+              </Typography>
             </Grid>
           )}
         </Grid>
@@ -251,6 +284,7 @@ const AddEditTA = ({ data }) => {
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <Grid container spacing={6}>
             <Grid item xs={12} sm={6} md={4}>
+              {/* TA name */}
               <CustomTextField
                 label="TA Name"
                 name="name"
@@ -270,6 +304,7 @@ const AddEditTA = ({ data }) => {
                 errors={errors}
               />
             </Grid>
+
             {!data && (
               <Grid item xs={12} sm={6} md={4}>
                 <CustomTextField
@@ -385,7 +420,9 @@ const AddEditTA = ({ data }) => {
                 errors={errors}
               />
             </Grid>
-            {!data && (
+            {console.log("DATA : ", data)}
+
+            {data && (
               <Grid item xs={12} sm={6} md={4}>
                 <CustomFormControl
                   label="Time Zone"
@@ -410,13 +447,13 @@ const AddEditTA = ({ data }) => {
             <Grid item xs={12} sm={6} md={4}>
               <CustomDateField
                 label="Date Of Birth"
-                value={dateOfBirth}
+                value={data ? data.date_of_birth : dateOfBirth}
                 onChange={setDateOfBirth}
                 name="dateOfBirth"
                 register={register}
-                validation={{ required: 'Date of birth is required' }}
+                validation={{ required: "Date of birth is required" }}
                 errors={errors}
-                sx={{ width: '100%' }}
+                sx={{ width: "100%" }}
               />
             </Grid>
 
@@ -428,6 +465,22 @@ const AddEditTA = ({ data }) => {
                 validation={{ required: "Highest Qualification is required" }}
                 errors={errors}
                 options={qualificationOptions}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <CustomTextField
+                label="Email Address"
+                name="email"
+                placeholder="Enter Email Address"
+                register={register}
+                validation={{
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                    message: "Invalid email address",
+                  },
+                }}
+                errors={errors}
               />
             </Grid>
             <Grid item xs={12}>

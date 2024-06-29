@@ -39,7 +39,7 @@ const CustomTextField = ({ label, name, placeholder, register = () => {}, valida
                 },
                 '& .MuiInputLabel-root': {
                     '&.Mui-focused': {
-                        color: 'rgb(245, 109, 59)', // Change label color on focus
+                        color: '#1A1E3D', // Change label color on focus
                     },
                 },
             }}
