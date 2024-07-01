@@ -33,6 +33,7 @@ import {
 } from "../../../../redux/features/taModule/taSlice";
 import SubmitPopup from "../../SubmitPopup";
 import dayjs from "dayjs";
+import AvatarInput from "../../../CustomFields/AvatarInput";
 
 const AddEditTA = ({ data }) => {
   const {
