@@ -37,6 +37,8 @@ const Calendar = () => {
             });
         }
     };
+    
+    
 
     const handleEventClick = (selected) => {
         if (
@@ -56,6 +58,8 @@ const Calendar = () => {
         }).format(date);
     };
 
+    
+    
     return (
         <>
             <Header />

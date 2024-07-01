@@ -2,6 +2,8 @@ import { Box, DialogActions, Grid, Typography, Button } from '@mui/material'
 import React, { useState } from 'react'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import Calendar from '../../components/Calender/indexCalender';
+import CalendarNew from '../../components/Calender/IndexCalenderNew';
+import CalendarComponent from '../../components/Calender/BigCalendar';
 import MarkLeave from '../../components/availability/MarkLeave';
 import DeleteAllSlots from '../../components/availability/DeleteAllSlots';
 import CreateNewSlot from '../../components/availability/CreateNewSlot';
@@ -13,6 +15,7 @@ import ScheduledSessions from '../../components/availability/ScheduledSessions';
 import CancelSchedule from '../../components/availability/CancelSchedule';
 import ReasonForLeave from '../../components/availability/ReasonForLeave';
 import ReschedulingSession from '../../components/availability/ReschedulingSession';
+import { PickersInputBaseSectionsContainer } from '@mui/x-date-pickers/PickersTextField/PickersInputBase/PickersInputBase';
 
 const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = '#4E18A5', borderColor = '#FFFFFF', sx, ...props }) => {
     return (
@@ -130,7 +133,7 @@ const TaCalender
                         </Grid>
                     </Grid>
                 </DialogActions>
-                <Calendar />
+                <CalendarComponent/>
                 {sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} />}
                 {markLeaveOpen && <MarkLeave />}
                 {scheduledSlotsOpen && <Slots />}
