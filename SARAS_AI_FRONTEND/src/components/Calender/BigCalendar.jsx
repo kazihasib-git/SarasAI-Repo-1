@@ -5,7 +5,9 @@ import { Calendar, momentLocalizer, Views } from 'react-big-calendar';
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "moment/locale/en-gb";
 // import initialEvents from "./events";  // Import the events
-
+// import { tokens } from "../../theme";
+import Header from "../Header/Header";
+import Sidebar from "../Sidebar/Sidebar";
 moment.locale("en-GB");
 const localizer = momentLocalizer(moment);
 
@@ -53,7 +55,11 @@ const CalendarComponent = () => {
         }
       };
 
-  return (
+    return (
+      <>
+            <Header />
+            <Sidebar />
+      
     <div style={{ height: 700 }}>
       <Calendar
         localizer={localizer}
@@ -65,7 +71,8 @@ const CalendarComponent = () => {
         onSelectSlot={handleSelectSlot}
         onSelectEvent={handleSelectEvent}
       />
-    </div>
+            </div>
+            </>
   );
 };
 
