@@ -1,2 +1,7 @@
 // export const baseUrl = 'http://localhost.8080/api/'
-export const baseUrl = 'http://34.100.233.67:8080/api/v1'
+//  DEV environment
+// export const baseUrl = 'http://34.100.233.67:8080/api/v1'
+
+
+//  UAT environment
+export const baseUrl = 'http://34.93.159.123:8080/api/v1'
