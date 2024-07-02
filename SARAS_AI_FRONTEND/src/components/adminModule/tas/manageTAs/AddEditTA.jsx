@@ -38,16 +38,13 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 
 const AddEditTA = ({ data }) => {
-  const {
-    register,
-    handleSubmit,
-    control,
-    setValue,
-    watch,
-    formState: { errors },
-  } = useForm({
+
+  const { register, handleSubmit, control, setValue, watch, formState: { errors }, } = useForm({
     defaultValues: {
-      gender: "", // Set to an empty string or one of the valid options like 'Male'
+      gender: "",
+      time_zone: "",
+      highest_qualification: "",
+      date_of_birth: null,
     },
   });
 
@@ -56,9 +53,7 @@ const AddEditTA = ({ data }) => {
   const [dateOfBirth, setDateOfBirth] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState("");
   const dispatch = useDispatch();
-  const { tas, successPopup, assignStudentOpen, assignBatchOpen } = useSelector(
-    (state) => state.taModule
-  );
+  const { tas, successPopup, assignStudentOpen, assignBatchOpen } = useSelector((state) => state.taModule);
 
   console.log("data to be edit", data);
 
@@ -66,22 +61,41 @@ const AddEditTA = ({ data }) => {
     if (data) {
       const formattedDate = dayjs(dateOfBirth).format("YYYY-MM-DD HH:mm:ss");
       console.log("DATE birth : ", data.date_of_birth);
+
+      //convert base64 image to blob
+      if (data.profile_picture) {
+        const byteCharacters = atob(data.profile_picture);
+        console.log("byteCharacters", byteCharacters);
+        const byteNumbers = new Array(byteCharacters.length);
+        console.log("byteNumbers", byteNumbers);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        console.log("byteArray", byteArray);
+        const blob = new Blob([byteArray], { type: "image/jpeg" });
+        console.log("blob", blob);
+        setSelectedImage(blob);
+        //console.log("Selected Image", blob);
+      }
+
+
       setValue("name", data.name);
-      //setValue("username", data.username);
+      // setValue("short_description", data.short_description);
+      setValue("username", data.username);
       setValue("password", data.password);
       setValue("location", data.location);
       setValue("address", data.address);
       setValue("pincode", data.pincode);
-      // setValue("time_zone", data.time_zone);
+      setValue("time_zone", data.time_zone);
       setValue("gender", data.gender);
-      //setDateOfBirth(data.date_of_birth);
+      setValue("email", data.email);
       setValue("date_of_birth", data.date_of_birth);
       setValue("highest_qualification", data.highest_qualification);
       setValue("about_me", data.about_me);
-      setSelectedImage(data.avatar);
       setPhoneNumber(data.phone)
     }
-  }, [data, setValue]);
+  }, [data, setValue, setSelectedImage]);
 
   const handleAssignStudents = () => {
     // dispatch(closeSuccessPopup());
@@ -93,15 +107,26 @@ const AddEditTA = ({ data }) => {
     dispatch(openAssignBatches());
   };
 
-  const handleClose = () => {
-    dispatch(closeSuccessPopup());
-  };
+  // const handleClose = () => {
+  //   dispatch(closeSuccessPopup());
+  // };
 
   const onSubmit = async (formData) => {
     console.log("Data", formData);
     setTAName(formData.name);
     const formattedDate = dayjs(dateOfBirth).format("YYYY-MM-DD HH:mm:ss");
     formData.date_of_birth = formattedDate;
+    formData.phone = phoneNumber;
+
+    //convert selected image to base64
+    if (selectedImage instanceof Blob || selectedImage instanceof File) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        formData.profile_picture = reader.result;
+      };
+    }
+    console.log("Selected Image", selectedImage);
+    formData.profile_picture = selectedImage;
 
     if (data) {
       console.log("editing Id", data.id, "editing Data", formData);
@@ -124,51 +149,7 @@ const AddEditTA = ({ data }) => {
   const nameValue = watch("name", "");
   const aboutMeValue = watch("about_me", "");
 
-  const actions = (
-    <>
-      <Button
-        variant="contained"
-        onClick={handleAssignStudents}
-        sx={{
-          backgroundColor: "#F56D3B",
-          color: "white",
-          borderRadius: "50px",
-          textTransform: "none",
-          padding: "10px 20px",
-          fontWeight: "700",
-          fontSize: "16px",
-          "&:hover": {
-            backgroundColor: "#D4522A",
-          },
-        }}
-      >
-        Assign Students
-      </Button>
-      <Button
-        variant="outlined"
-        onClick={handleAssignBatches}
-        sx={{
-          backgroundColor: "white",
-          color: "#F56D3B",
-          border: "2px solid #F56D3B",
-          borderRadius: "50px",
-          textTransform: "none",
-          fontWeight: "700",
-          fontSize: "16px",
-          padding: "10px 20px",
-          "&:hover": {
-            backgroundColor: "#F56D3B",
-            color: "white",
-          },
-        }}
-      >
-        Assign Batches
-      </Button>
-    </>
-  );
-
-  console.log("TA NAme", taName);
-  console.log("assignStudentOpen", assignStudentOpen);
+  console.log("selected Image", selectedImage)
 
   return (
     <Box sx={{ p: 3 }}>
@@ -247,24 +228,26 @@ const AddEditTA = ({ data }) => {
           mx: "auto",
         }}
       >
-        <Box display="flex " alignItems="center" mb={4}>
-          <AvatarInput
-            selectedImage={selectedImage}
-            setSelectedImage={setSelectedImage}
-          />
-          <Box ml={4}>
-            <Typography
-              variant="h5"
-              sx={{
-                fontSize: "24px",
-                fontWeight: "600",
-                font: "Nunito Sans",
-                color: "#1A1E3D",
-              }}
-            >
-              {nameValue || "Name of the TA"}
-            </Typography>
-            <Typography
+        <form onSubmit={handleSubmit(onSubmit)} noValidate>
+          <Box display="flex " alignItems="center" mb={4}>
+            <AvatarInput
+              name="profile_picture"
+              selectedImage={selectedImage}
+              setSelectedImage={setSelectedImage}
+            />
+            <Box ml={4}>
+              <Typography
+                variant="h5"
+                sx={{
+                  fontSize: "24px",
+                  fontWeight: "600",
+                  font: "Nunito Sans",
+                  color: "#1A1E3D",
+                }}
+              >
+                {nameValue || "Name of the TA"}
+              </Typography>
+              <Typography
               variant="body2"
               sx={{
                 fontSize: "16px",
@@ -276,11 +259,22 @@ const AddEditTA = ({ data }) => {
             >
               {aboutMeValue || "Short Description"}
             </Typography>
+              {/* <CustomTextField
+                label="Short Description"
+                name="short_description"
+                placeholder="Enter About TA"
+                register={register}
+                validation={{ required: "About Me is required" }}
+                errors={errors}
+                multiline
+                rows={2}
+                sx={{ width: "400px" }}
+              /> */}
+            </Box>
           </Box>
-        </Box>
-        <Divider sx={{ mt: 2, mb: 4, border: "1px solid #C2C2E7" }} />
+          <Divider sx={{ mt: 2, mb: 4, border: "1px solid #C2C2E7" }} />
 
-        <form onSubmit={handleSubmit(onSubmit)} noValidate>
+
           <Grid container spacing={6}>
             <Grid item xs={12} sm={6} md={4}>
               {/* TA name */}
@@ -304,33 +298,32 @@ const AddEditTA = ({ data }) => {
               />
             </Grid>
 
-            {!data && (
-              <Grid item xs={12} sm={6} md={4}>
-                <CustomTextField
-                  label="Username"
-                  name="username"
-                  placeholder="Enter Username"
-                  register={register}
-                  validation={{
-                    required: "Username is required",
-                    minLength: {
-                      value: 3,
-                      message: "Username must be at least 3 characters long",
-                    },
-                    maxLength: {
-                      value: 20,
-                      message: "Username cannot exceed 20 characters",
-                    },
-                    pattern: {
-                      // value: /^[A-Za-z0-9_]+$/,
-                      message:
-                        "Username can only contain letters, numbers, and underscores",
-                    },
-                  }}
-                  errors={errors}
-                />
-              </Grid>
-            )}
+
+            <Grid item xs={12} sm={6} md={4}>
+              <CustomTextField
+                label="Username"
+                name="username"
+                placeholder="Enter Username"
+                register={register}
+                validation={{
+                  required: "Username is required",
+                  minLength: {
+                    value: 3,
+                    message: "Username must be at least 3 characters long",
+                  },
+                  maxLength: {
+                    value: 20,
+                    message: "Username cannot exceed 20 characters",
+                  },
+                  pattern: {
+                    // value: /^[A-Za-z0-9_]+$/,
+                    message:
+                      "Username can only contain letters, numbers, and underscores",
+                  },
+                }}
+                errors={errors}
+              />
+            </Grid>
 
             {!data && (
               <Grid item xs={12} sm={6} md={4}>
@@ -419,27 +412,26 @@ const AddEditTA = ({ data }) => {
                 errors={errors}
               />
             </Grid>
-            {console.log("DATA : ", data)}
+            {/* {console.log("DATA : ", data)} */}
 
-            {data && (
-              <Grid item xs={12} sm={6} md={4}>
-                <Controller
-                  name="time_zone"
-                  control={control}
-                  rules={{ required: "Time Zone is required" }}
-                  render={({ field }) => (
-                    <CustomFormControl
-                      label="Time Zone"
-                      name="time_zone"
-                      value={field.value}
-                      onChange={field.onChange}
-                      errors={errors}
-                      options={transformedTimeZones}
-                    />
-                  )}
-                />
-              </Grid>
-            )}
+            <Grid item xs={12} sm={6} md={4}>
+              <Controller
+                name="time_zone"
+                control={control}
+                rules={{ required: "Time Zone is required" }}
+                render={({ field }) => (
+                  <CustomFormControl
+                    label="Time Zone"
+                    name="time_zone"
+                    value={field.value}
+                    onChange={field.onChange}
+                    errors={errors}
+                    options={transformedTimeZones}
+                  />
+                )}
+              />
+            </Grid>
+
             <Grid item xs={12} sm={6} md={4}>
               <Controller
                 name="gender"
@@ -476,17 +468,21 @@ const AddEditTA = ({ data }) => {
                 control={control}
                 rules={{ required: "Highest Qualification is required" }}
                 render={({ field }) => (
-                  <CustomFormControl
-                    label="Highest Qualification"
-                    name="highest_qualification"
-                    value={field.value}
-                    onChange={field.onChange}
-                    errors={errors}
-                    options={qualificationOptions}
-                  />
+                  <>
+                    {console.log("DATA highest_qualification : ", field.value)}
+                    <CustomFormControl
+                      label="Highest Qualification"
+                      name="highest_qualification"
+                      value={field.value}
+                      onChange={field.onChange}
+                      errors={errors}
+                      options={qualificationOptions}
+                    />
+                  </>
                 )}
               />
             </Grid>
+
             <Grid item xs={12} sm={6} md={4}>
               <CustomTextField
                 label="Email Address"
@@ -505,6 +501,7 @@ const AddEditTA = ({ data }) => {
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <PhoneInput
+                name='phone'
                 country={"in"}
                 value={phoneNumber}
                 onChange={(phone) => setPhoneNumber(phone)}

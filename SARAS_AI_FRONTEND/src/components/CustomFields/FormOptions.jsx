@@ -48,10 +48,11 @@ export const genders = [
 ];
 
 export const qualificationOptions = [
-  { value: "Secondary_School", label: "Seconday School" },
+  { value: "Secondary School", label: "Seconday School" },
   { value: "Post Secondary School", label: "Post Secondary School" },
-  { value: "Bachelors Degree", label: "Bachelor's Degree" },
-  { value: "Masters Degree", label: "Master's Degree" },
+  { value : 'PhD in Computer Science', label: 'PhD in Computer Science' },
+  { value: "Bachelors Degree", label: "Bachelors Degree" },
+  { value: "Masters Degree", label: "Masters Degree" },
   { value: "Doctorate", label: "Doctorate" },
 ];
 
