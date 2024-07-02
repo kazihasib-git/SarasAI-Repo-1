@@ -1,17 +1,11 @@
-import React from "react";
-import {
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Typography,
-} from "@mui/material";
+import React from 'react';
+import { FormControl, InputLabel, Select, MenuItem, Typography } from '@mui/material';
 
 const CustomFormControl = ({
   label,
   name,
-  register,
-  validation,
+  value,
+  onChange,
   errors,
   options,
 }) => {
@@ -20,9 +14,9 @@ const CustomFormControl = ({
       <InputLabel
         style={{ margin: 0 }}
         sx={{
-          color: "#9A9DAD",
+          color: "#1A1E3D",
           "&.Mui-focused": {
-            color: "#1A1E3D", // Change label color on focus
+            color: "#9A9DAD", // Change label color on focus
           },
         }}
       >
@@ -31,12 +25,20 @@ const CustomFormControl = ({
       <Select
         label={label}
         name={name}
-        {...register(name, validation)}
+        value={value}
+        onChange={onChange}
         error={!!errors[name]}
+        MenuProps={{
+          PaperProps: {
+            style: {
+              maxHeight: 200, // Set max height to make it scrollable
+            },
+          },
+        }}
         sx={{
           borderRadius: "50px",
           height: "60px",
-          padding: "18px 30px",
+          padding: "18px 2px",
           "& .MuiOutlinedInput-notchedOutline": {
             borderColor: "#D0D0EC",
           },

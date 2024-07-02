@@ -1,46 +1,57 @@
-import React from 'react';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import CustomTextField from './CustomTextField'; // Adjust the path according to your file structure
-
-const CustomDateField = ({ label, name, register, validation, errors, sx, ...props }) => (
-  <LocalizationProvider dateAdapter={AdapterDayjs}>
-    <DatePicker
-      label={label}
-      InputLabelProps={{
-        shrink: true, // This ensures the label is not overlapping with the input.
-      }}
-      sx={{
-        '& .MuiOutlinedInput-root': {
-          borderRadius: '50px',
-          '& fieldset': {
-            borderColor: '#D0D0EC',
+import React from "react";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
+import CustomTextField from "./CustomTextField"; // Adjust the path according to your file structure
+import dayjs from "dayjs";
+const CustomDateField = ({
+  label,
+  name,
+  register,
+  validation,
+  errors,
+  value, // Ensure `value` is passed and used properly
+  onChange,
+  sx,
+  ...props
+}) => {
+  const dayjsValue = typeof value === "string" ? dayjs(value) : value;
+  return (
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      {console.log}
+      <DatePicker
+        label={label}
+        name={name} // Ensure `name` is passed if needed
+        value={dayjsValue} // Pass the date value received from props
+        onChange={onChange} // Handle onChange event to update the date value
+        InputLabelProps={{
+          shrink: true, // Ensure the label behaves correctly
+        }}
+        {...props}
+        sx={{
+          "& .MuiOutlinedInput-root": {
+            borderRadius: "50px",
+            "& fieldset": {
+              borderColor: "#D0D0EC",
+            },
+            "&:hover fieldset": {
+              borderColor: "#D0D0EC",
+            },
+            "&.Mui-focused fieldset": {
+              borderColor: "rgb(245, 109, 59)",
+            },
           },
-          '&:hover fieldset': {
-            borderColor: '#D0D0EC',
+          "& .MuiInputLabel-root": {
+            margin: 0,
+            color: '#1A1E3D',
+            '&.Mui-focused': {
+                color: '#1A1E3D', // Change label color on focus
+            },
           },
-          '&.Mui-focused fieldset': {
-            borderColor: 'rgb(245, 109, 59)', // Change border color on focus
-          },
-          '&.Mui-focused .MuiAutocomplete-input': {
-            backgroundColor: 'transparent', // Override background color for autofill state
-          },
-          '&.Mui-focused .MuiFilledInput-root': {
-            backgroundColor: 'transparent', // Override background color for autofill state
-          },
-        },
-        '& .MuiInputLabel-root': {
-          margin: 0, // Apply margin 0 to the label
-          '&.Mui-focused': {
-            color: 'rgb(245, 109, 59)', // Change label color on focus
-          },
-        },
-        ...sx
-      }}
-      {...props}
-    />
-  </LocalizationProvider>
-);
+          ...sx,
+        }}
+      />
+    </LocalizationProvider>
+  );
+};
 
 export default CustomDateField;

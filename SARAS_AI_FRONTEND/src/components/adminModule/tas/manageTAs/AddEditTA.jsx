@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./AddEdit.css";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,7 +16,7 @@ import AssignBatches from "../../AssignBatches";
 import CustomFormControl from "../../../CustomFields/CustomFromControl";
 import CustomTextField from "../../../CustomFields/CustomTextField";
 import {
-  timeZones,
+  transformedTimeZones,
   genders,
   qualificationOptions,
   validateTimeZone,
@@ -34,6 +34,8 @@ import {
 import SubmitPopup from "../../SubmitPopup";
 import dayjs from "dayjs";
 import AvatarInput from "../../../CustomFields/AvatarInput";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 
 const AddEditTA = ({ data }) => {
   const {
@@ -51,13 +53,8 @@ const AddEditTA = ({ data }) => {
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [taName, setTAName] = useState();
-  // const [assignStudent, setAssignStudent] = useState(false);
-  // const [assignBatch, setAssignBatch] = useState(false);
-
-  const [open, setOpen] = useState(false);
-  const [assignStudent, setAssignStudent] = useState(false);
-  const [assignBatch, setAssignBatch] = useState(false);
   const [dateOfBirth, setDateOfBirth] = useState(null);
+  const [phoneNumber, setPhoneNumber] = useState("");
   const dispatch = useDispatch();
   const { tas, successPopup, assignStudentOpen, assignBatchOpen } = useSelector(
     (state) => state.taModule
@@ -82,6 +79,7 @@ const AddEditTA = ({ data }) => {
       setValue("highest_qualification", data.highest_qualification);
       setValue("about_me", data.about_me);
       setSelectedImage(data.avatar);
+      setPhoneNumber(data.phone)
     }
   }, [data, setValue]);
 
@@ -425,24 +423,38 @@ const AddEditTA = ({ data }) => {
 
             {data && (
               <Grid item xs={12} sm={6} md={4}>
-                <CustomFormControl
-                  label="Time Zone"
+                <Controller
                   name="time_zone"
-                  register={register}
-                  validation={{ validate: validateTimeZone }}
-                  errors={errors}
-                  options={timeZones}
+                  control={control}
+                  rules={{ required: "Time Zone is required" }}
+                  render={({ field }) => (
+                    <CustomFormControl
+                      label="Time Zone"
+                      name="time_zone"
+                      value={field.value}
+                      onChange={field.onChange}
+                      errors={errors}
+                      options={transformedTimeZones}
+                    />
+                  )}
                 />
               </Grid>
             )}
             <Grid item xs={12} sm={6} md={4}>
-              <CustomFormControl
-                label="Gender"
+              <Controller
                 name="gender"
-                register={register}
-                validation={{ required: "Gender is required" }}
-                errors={errors}
-                options={genders}
+                control={control}
+                rules={{ required: "Gender is required" }}
+                render={({ field }) => (
+                  <CustomFormControl
+                    label="Gender"
+                    name="gender"
+                    value={field.value}
+                    onChange={field.onChange}
+                    errors={errors}
+                    options={genders}
+                  />
+                )}
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
@@ -459,13 +471,20 @@ const AddEditTA = ({ data }) => {
             </Grid>
 
             <Grid item xs={12} sm={6} md={4}>
-              <CustomFormControl
-                label="Highest Qualification"
+              <Controller
                 name="highest_qualification"
-                register={register}
-                validation={{ required: "Highest Qualification is required" }}
-                errors={errors}
-                options={qualificationOptions}
+                control={control}
+                rules={{ required: "Highest Qualification is required" }}
+                render={({ field }) => (
+                  <CustomFormControl
+                    label="Highest Qualification"
+                    name="highest_qualification"
+                    value={field.value}
+                    onChange={field.onChange}
+                    errors={errors}
+                    options={qualificationOptions}
+                  />
+                )}
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
@@ -482,6 +501,25 @@ const AddEditTA = ({ data }) => {
                   },
                 }}
                 errors={errors}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <PhoneInput
+                country={"in"}
+                value={phoneNumber}
+                onChange={(phone) => setPhoneNumber(phone)}
+                containerStyle={{ width: "100%" }}
+                inputStyle={{
+                  width: "100%",
+                  borderRadius: "50px",
+                  borderColor: "#D0D0EC",
+                  height: "60px",
+                }}
+                buttonStyle={{
+                  borderRadius: "50px 0 0 50px",
+                  height: "60px",
+                  paddingLeft: "10px",
+                }}
               />
             </Grid>
             <Grid item xs={12}>

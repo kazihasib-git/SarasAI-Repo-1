@@ -94,7 +94,7 @@ function App() {
             />
             {/* <Route path='calendar' element={<Calendar page="Calendar" />} /> */}
             <Route
-              path="manage-coaches"
+              path="coach-manage"
               element={<ManageCoaches page="Manage Coaches" />}
             />
             <Route
@@ -106,7 +106,7 @@ function App() {
               element={<CoachMapping page="Coach Mapping" />}
             />
             <Route
-              path="manage-coaches/tacalender"
+              path="coach-manage/tacalender"
               element={<CoachCalender />}
             />
             <Route

@@ -81,31 +81,31 @@ const Sidebar = () => {
           </a>
           <ul id='manage-coaches-nav' className={`nav-content collapse ${activeLink.startsWith('/coach-') ? 'show' : ''}`} data-bs-parent="#sidebar-nav">
             <li>
-              <Link to={"/manage-coaches"} className={activeLink === '/manage-coaches' ? 'active' : ''} onClick={() => handleLinkClick('/manage-coaches')}>
+              <Link to={"/coach-manage"} className={activeLink === '/coach-manage' ? 'active-link' : ''} onClick={() => handleLinkClick('/manage-coaches')}>
                 <i className='bi bi-circle'></i>
                 <span>Manage Coaches</span>
               </Link>
             </li>
             <li>
-              <Link to={"/coach-mapping"} className={activeLink === '/coach-mapping' ? 'active' : ''} onClick={() => handleLinkClick('/coach-mapping')}>
+              <Link to={"/coach-mapping"} className={activeLink === '/coach-mapping' ? 'active-link' : ''} onClick={() => handleLinkClick('/coach-mapping')}>
                 <i className='bi bi-circle'></i>
                 <span>Coach Mapping</span>
               </Link>
             </li>
             <li>
-              <Link to={"/coach-template"} className={activeLink === '/coach-template' ? 'active' : ''} onClick={() => handleLinkClick('/coach-template')}>
+              <Link to={"/coach-template"} className={activeLink === '/coach-template' ? 'active-link' : ''} onClick={() => handleLinkClick('/coach-template')}>
                 <i className='bi bi-circle'></i>
                 <span>Coach Template</span>
               </Link>
             </li>
             <li>
-              <Link to={"/coach-availability"} className={activeLink === '/coach-availability' ? 'active' : ''} onClick={() => handleLinkClick('/coach-availability')}>
+              <Link to={"/coach-availability"} className={activeLink === '/coach-availability' ? 'active-link' : ''} onClick={() => handleLinkClick('/coach-availability')}>
                 <i className='bi bi-circle'></i>
                 <span>Coach Availability</span>
               </Link>
             </li>
             <li>
-              <Link to={"/coach-scheduling"} className={activeLink === '/coach-scheduling' ? 'active' : ''} onClick={() => handleLinkClick('/coach-scheduling')}>
+              <Link to={"/coach-scheduling"} className={activeLink === '/coach-scheduling' ? 'active-link' : ''} onClick={() => handleLinkClick('/coach-scheduling')}>
                 <i className='bi bi-circle'></i>
                 <span>Coach Scheduling</span>
               </Link>

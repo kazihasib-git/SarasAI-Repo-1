@@ -36,8 +36,8 @@ const TaMapping = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (mockMappingDat && mockMappingDat.length > 0) {
-      const transformData = mockMappingDat.map((item, index) => ({
+    if (taMapping && taMapping.length > 0) {
+      const transformData = taMapping.map((item, index) => ({
         id: index + 1,
         name: item.name,
         Username: item.username,
@@ -64,16 +64,12 @@ const TaMapping = () => {
           TA Mapping
         </p>
       </Box>
-      {!loading && taMappingData.length > 0 ? (
-        <DynamicTable
-          headers={headers}
-          initialData={taMappingData}
-          actionButtons={actionButtons}
-          componentName={"TAMAPPING"}
-        />
-      ) : (
-        <p>Loading...</p>
-      )}
+      <DynamicTable
+        headers={headers}
+        initialData={taMappingData}
+        actionButtons={actionButtons}
+        componentName={"TAMAPPING"}
+      />
     </>
   );
 };

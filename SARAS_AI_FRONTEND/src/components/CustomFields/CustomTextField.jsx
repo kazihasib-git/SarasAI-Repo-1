@@ -2,7 +2,7 @@ import React from 'react';
 import { TextField } from '@mui/material';
 
 const CustomTextField = ({ label, name, placeholder, register = () => {}, validation = {}, errors = {}, type = "text", multiline = false, rows = 1, ...props }) => {
-    const inputPropsStyle = multiline ? { borderRadius: '25px', padding: '25px 30px 18px 30px' } : { height: '60px', borderRadius: '50px', padding: '18px 30px' };
+    const inputPropsStyle = multiline ? { borderRadius: '25px', padding: '25px 30px 18px 30px' } : { height: '60px', borderRadius: '50px', padding: '18px 2px' };
 
     return (
         <TextField
@@ -38,6 +38,7 @@ const CustomTextField = ({ label, name, placeholder, register = () => {}, valida
                     }
                 },
                 '& .MuiInputLabel-root': {
+                    color: '#9A9DAD',
                     '&.Mui-focused': {
                         color: '#1A1E3D', // Change label color on focus
                     },

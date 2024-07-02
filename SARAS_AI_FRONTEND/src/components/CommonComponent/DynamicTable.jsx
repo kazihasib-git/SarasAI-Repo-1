@@ -204,10 +204,10 @@ const DynamicTable = ({
           ) : (
             currentData.map((item, index) => (
               <tr key={item.id} id="tableRow">
-                {console.log("CUURENT : ", item)}
+                {/* {console.log("CUURENT : ", item)} */}
                 <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                 {Object.keys(item).map((key, idx) => {
-                  {console.log("KEY : ", key)}
+                  // {console.log("KEY : ", key)}
                   if (key === "Active_Students") {
                     return (
                       <td key={idx}>
