@@ -33,12 +33,15 @@ const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = 
     );
 };
 
-const SubmitPopup = () => {
+const SubmitPopup = ({componentname}) => {
     const dispatch = useDispatch()
     const navigate = useNavigate()
-    const { tas, successPopup, error, loading, ta_name } = useSelector((state) => state.taModule)
+    if(componentname){
+        console.log("componentname", componentname);
+    }
+    const {  successPopup, error, loading, ta_name } = useSelector((state) => state.coachModule)
     
-    console.log("tas", tas[-1])
+   
 
     const handleAssignBatches = () => {
         dispatch(closeSuccessPopup())

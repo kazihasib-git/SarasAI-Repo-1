@@ -6,6 +6,7 @@ import Sidebar from "../../components/Sidebar/Sidebar";
 import { useState } from "react";
 import { OnOffSwitch } from '../../components/Switch';
 import editIcon from '../../assets/editIcon.png';
+import DynamicTable from '../../components/CommonComponent/DynamicTable';
 
 const CoachSheduling = () => {
   const [open, setOpen] = useState(false);
@@ -15,10 +16,27 @@ const CoachSheduling = () => {
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
-
+  const actionButtons = [
+    {
+      type: "calendar",
+      text: "Schedule",
+      onClick: (rowData) => {
+        console.log("Schedule button clicked for row:", rowData);
+        handleEdit(rowData.id);
+      },
+    },
+  ];
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
+  const headers = [
+    "S. No.",
+    "COACH Name",
+    "Username",
+    "Active Students",
+    "Active Batches",
+    "Action",
+  ];
 
   const handleOpen = (row, type) => {
     setCurrentRow(row);
@@ -150,10 +168,17 @@ const CoachSheduling = () => {
             backgroundColor: "#FFF"
           }
         }}>
-          <DataGrid
+           <DynamicTable
+                        headers={headers}
+                        initialData={mockMappingDat}
+                        actionButtons={actionButtons}
+                        componentName={"MANAGECOACH"}
+                    />
+
+          {/* <DataGrid
             rows={mockMappingDat}
             columns={columns}
-          />
+          /> */}
         </Box>
       </Box>
 

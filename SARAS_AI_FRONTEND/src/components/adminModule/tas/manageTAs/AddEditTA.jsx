@@ -59,6 +59,7 @@ const AddEditTA = ({ data }) => {
 
   useEffect(() => {
     if (data) {
+      console.log("data",data);
       const formattedDate = dayjs(dateOfBirth).format("YYYY-MM-DD HH:mm:ss");
       console.log("DATE birth : ", data.date_of_birth);
 
@@ -110,7 +111,7 @@ const AddEditTA = ({ data }) => {
   // };
 
   const onSubmit = async (formData) => {
-    console.log("Data", formData);
+    console.log("Data formdata is", formData);
     setTAName(formData.name);
     const formattedDate = dayjs(dateOfBirth).format("YYYY-MM-DD HH:mm:ss");
     formData.date_of_birth = formattedDate;
@@ -229,7 +230,7 @@ const AddEditTA = ({ data }) => {
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <Box display="flex " alignItems="center" mb={4}>
             <AvatarInput
-              name="profile_picture"
+              name="x_picture"
               selectedImage={selectedImage}
               setSelectedImage={setSelectedImage}
             />
@@ -555,7 +556,7 @@ const AddEditTA = ({ data }) => {
           title= {`${taName} successfully created.`}
           actions={actions}
         /> */}
-        {successPopup && <SubmitPopup />}
+        {successPopup && <SubmitPopup componentname={"ADDEDITTA"} />}
         {assignStudentOpen && <AssignStudents />}
         {assignBatchOpen && <AssignBatches />}
       </Box>

@@ -6,6 +6,7 @@ import Sidebar from "../../components/Sidebar/Sidebar";
 import { useState } from "react";
 import { OnOffSwitch } from '../../components/Switch';
 import editIcon from '../../assets/editIcon.png';
+import DynamicTable from '../../components/CommonComponent/DynamicTable';
 
 const CoachMapping = () => {
   const [open, setOpen] = useState(false);
@@ -15,11 +16,23 @@ const CoachMapping = () => {
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
-
+  const headers = [
+    "S.NO.",
+    "COACH Name",
+    "Username",
+    "Active Students",
+    "Active Batches",
+    "Action",
+  ];
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
-
+  const actionButtons = [
+    {
+      type: "switch",
+    }
+  
+  ];
   const handleOpen = (row, type) => {
     setCurrentRow(row);
     setViewType(type);
@@ -152,10 +165,17 @@ const CoachMapping = () => {
             backgroundColor: "#FFF"
           }
         }}>
-          <DataGrid
+             { <DynamicTable
+                        headers={headers}
+                        initialData={mockMappingDat}
+                        actionButtons={actionButtons}
+                        componentName={"Coach Mapping"}
+                    />
+                   }
+          {/* <DataGrid
             rows={mockMappingDat}
             columns={columns}
-          />
+          /> */}
         </Box>
       </Box>
 
