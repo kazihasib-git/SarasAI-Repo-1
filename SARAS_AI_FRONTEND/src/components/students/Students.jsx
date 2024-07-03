@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../Header/Header';
 import Sidebar from '../Sidebar/Sidebar';
 import { studentDummyDatadata } from '../../fakeData/studentData';
+import DynamicTable from '../CommonComponent/DynamicTable';
 
 const Students = () => {
     const [input, setInput] = useState('');
@@ -14,8 +15,6 @@ const Students = () => {
     const handleChange = (value) => {
         setInput(value);
     };
-
-    
 
     // Flag to use dummy data or API data
     const useDummyData = true;
@@ -27,7 +26,7 @@ const Students = () => {
         const dataToUse = useDummyData ? studentDummyDatadata : apiData;
         if (dataToUse) {
             const transformedData = dataToUse.map(item => ({
-                ID: item.id,
+                id: item.id,
                 Name: item.name,
                 User: item.user_id,
                 Email: item.email,
@@ -47,80 +46,6 @@ const Students = () => {
 
     const headers = ['ID',  'Name', 'User', 'Email', 'Phone Number'];
 
-    const DynamicTable = ({ headers, initialData }) => {
-        const [data, setData] = useState(initialData.map(item => ({ ...item })));
-        const [currentPage, setCurrentPage] = useState(1);
-        const itemsPerPage = 10;
-        const totalPages = Math.ceil(data.length / itemsPerPage);
-        const currentData = data.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-        const navigate = useNavigate();
-
-        const handlePageChange = (event, pageNumber) => {
-            setCurrentPage(pageNumber);
-        };
-
-        return (
-            <div className="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            {headers.map((header, index) => (
-                                <th key={index}>{header}</th>
-                            ))}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {currentData.map((item, index) => (
-                            <tr key={item.ID}>
-                                {headers.map((header, idx) => (
-                                    <td key={idx}>{item[header]}</td>
-                                ))}
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-                <div className="pagination">
-                    <Pagination
-                        count={totalPages}
-                        page={currentPage}
-                        onChange={handlePageChange}
-                        variant="outlined"
-                        color="primary"
-                        sx={{
-                            width: '65vw',
-                            display: 'flex',
-                            justifyContent: 'center',
-                            marginTop: '20px',
-                            '.MuiPaginationItem-root': {
-                                backgroundColor: '#fff',
-                                border: '1px solid #ddd',
-                                borderRadius: '50%',
-                                width: '40px',
-                                height: '40px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                transition: 'background-color 0.3s, transform 0.3s',
-                                '&:hover': {
-                                    backgroundColor: '#DFDFF4',
-                                    transform: 'scale(1.1)',
-                                },
-                                '&.Mui-selected': {
-                                    backgroundColor: '#F56D3B',
-                                    color: '#fff',
-                                },
-                                '&.Mui-disabled': {
-                                    backgroundColor: '#DFDFF4',
-                                    cursor: 'not-allowed',
-                                },
-                            },
-                        }}
-                    />
-                </div>
-            </div>
-        );
-    };
-
     return (
         <>
             <Header />
@@ -136,6 +61,7 @@ const Students = () => {
             <DynamicTable
                 headers={headers}
                 initialData={students}
+                componentName={"STUDENTS"}
             />
         </>
     );
