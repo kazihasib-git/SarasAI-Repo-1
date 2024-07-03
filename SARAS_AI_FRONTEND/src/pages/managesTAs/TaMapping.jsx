@@ -38,7 +38,7 @@ const TaMapping = () => {
   useEffect(() => {
     if (taMapping && taMapping.length > 0) {
       const transformData = taMapping.map((item, index) => ({
-        id: index + 1,
+        id: item.id,
         name: item.name,
         Username: item.username,
         Active_Students: item.Active_Students,
