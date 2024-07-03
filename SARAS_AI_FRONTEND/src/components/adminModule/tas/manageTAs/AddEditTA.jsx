@@ -115,16 +115,22 @@ const AddEditTA = ({ data }) => {
     const formattedDate = dayjs(dateOfBirth).format("YYYY-MM-DD HH:mm:ss");
     formData.date_of_birth = formattedDate;
     formData.phone = phoneNumber;
+    const base64Data = selectedImage.replace(/^data:image\/(png|jpeg|jpg);base64,/, '');
+    formData.profile_picture = base64Data;
 
-    //convert selected image to base64
-    if (selectedImage instanceof Blob || selectedImage instanceof File) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        formData.profile_picture = reader.result;
-      };
-    }
-    console.log("Selected Image", selectedImage);
-    formData.profile_picture = selectedImage;
+    // //convert selected image to base64
+    // if (selectedImage instanceof Blob || selectedImage instanceof File) {
+    //   const reader = new FileReader();
+    //   reader.onloadend = () => {
+    //     console.log("reader.result", reader.result);
+    //     formData.profile_picture = reader.result;
+    //   };
+    //   reader.readAsDataURL(selectedImage);  // This line ensures the reader reads the Blob/File
+    // } else {
+    //   console.log("Selected Image", selectedImage);
+    //   formData.profile_picture = selectedImage;
+    // }
+
 
     if (data) {
       console.log("editing Id", data.id, "editing Data", formData);
@@ -246,17 +252,17 @@ const AddEditTA = ({ data }) => {
                 {nameValue || "Name of the TA"}
               </Typography>
               <Typography
-              variant="body2"
-              sx={{
-                fontSize: "16px",
-                fontWeight: "400",
-                mb: 4,
-                color: "#5F6383",
-                font: "Nunito Sans",
-              }}
-            >
-              {aboutMeValue || "Short Description"}
-            </Typography>
+                variant="body2"
+                sx={{
+                  fontSize: "16px",
+                  fontWeight: "400",
+                  mb: 4,
+                  color: "#5F6383",
+                  font: "Nunito Sans",
+                }}
+              >
+                {aboutMeValue || "Short Description"}
+              </Typography>
               {/* <CustomTextField
                 label="Short Description"
                 name="short_description"
