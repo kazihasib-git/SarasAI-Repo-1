@@ -1,10 +1,10 @@
 import React from 'react';
-import { Grid, Button, FormControl, RadioGroup, FormControlLabel, Radio, FormGroup, Checkbox, MenuItem } from '@mui/material';
+import { Grid, Button, FormControl, RadioGroup, FormControlLabel, Radio, FormGroup, Checkbox } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import CustomDateField from '../CustomFields/CustomDateField';
 import CustomTimeField from '../CustomFields/CustomTimeField'; // Assuming you have a CustomTimeField component
 import ReusableDialog from '../CustomFields/ReusableDialog';
-import { format } from 'date-fns';
+import { format, addDays, parseISO } from 'date-fns';
 import CustomTextField from '../CustomFields/CustomTextField';
 
 const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = '#4E18A5', borderColor = '#FFFFFF', sx, ...props }) => {
@@ -44,8 +44,28 @@ const CreateNewSlot = ({ open, handleClose, addEvent }) => {
             fromDate: format(new Date(`${data.date} ${data.fromTime}`), "yyyy-MM-dd HH:mm"),
             toDate: format(new Date(`${data.date} ${data.toTime}`), "yyyy-MM-dd HH:mm"),
         };
-        console.log(formattedData);
-        addEvent(data.title, formattedData.fromDate, formattedData.toDate);
+
+        if (data.repeat === 'recurring') {
+            // Create slots continuously for selected days until the end date
+            const selectedDays = Object.keys(data.selectedDays).filter(day => data.selectedDays[day]);
+
+            const startDate = new Date(formattedData.fromDate);
+            const endDate = parseISO(data.endDate);
+
+            let currentDate = startDate;
+            while (currentDate <= endDate) {
+                if (selectedDays.includes(currentDate.toLocaleDateString('en-US', { weekday: 'long' }))) {
+                    const newStart = format(new Date(`${currentDate.toDateString()} ${data.fromTime}`), "yyyy-MM-dd HH:mm");
+                    const newEnd = format(new Date(`${currentDate.toDateString()} ${data.toTime}`), "yyyy-MM-dd HH:mm");
+                    addEvent(data.title, newStart, newEnd);
+                }
+                currentDate = addDays(currentDate, 1);
+            }
+        } else {
+            // Handle one-time slot creation
+            addEvent(data.title, formattedData.fromDate, formattedData.toDate);
+        }
+
         handleClose();
     };
 
@@ -171,6 +191,24 @@ const CreateNewSlot = ({ open, handleClose, addEvent }) => {
                                 ))}
                             </FormGroup>
                         </FormControl>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Controller
+                            name="endDate"
+                            control={control}
+                            defaultValue=""
+                            rules={{ required: 'End Date is required' }}
+                            render={({ field }) => (
+                                <CustomDateField
+                                    label="End Date"
+                                    name="endDate"
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                    error={!!errors.endDate}
+                                    helperText={errors.endDate ? errors.endDate.message : ''}
+                                />
+                            )}
+                        />
                     </Grid>
                 </Grid>
             )}
