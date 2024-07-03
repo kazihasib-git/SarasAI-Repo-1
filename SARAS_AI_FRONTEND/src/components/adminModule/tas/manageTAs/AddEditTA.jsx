@@ -65,19 +65,17 @@ const AddEditTA = ({ data }) => {
       //convert base64 image to blob
       if (data.profile_picture) {
         const byteCharacters = atob(data.profile_picture);
-        console.log("byteCharacters", byteCharacters);
         const byteNumbers = new Array(byteCharacters.length);
-        console.log("byteNumbers", byteNumbers);
         for (let i = 0; i < byteCharacters.length; i++) {
-          byteNumbers[i] = byteCharacters.charCodeAt(i);
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
         }
         const byteArray = new Uint8Array(byteNumbers);
-        console.log("byteArray", byteArray);
         const blob = new Blob([byteArray], { type: "image/jpeg" });
-        console.log("blob", blob);
-        setSelectedImage(blob);
-        //console.log("Selected Image", blob);
-      }
+        const blobUrl = URL.createObjectURL(blob);
+
+        console.log('blobUrl', blobUrl);
+        setSelectedImage(blobUrl);
+    }
 
 
       setValue("name", data.name);

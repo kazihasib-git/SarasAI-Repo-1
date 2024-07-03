@@ -1,4 +1,5 @@
 export const timeZones = [
+  { country: "India", time_zone: "IST", utc_offset: -5.0 },
   { country: "Afghanistan", time_zone: "Asia/Kabul", utc_offset: 4.5 },
   { country: "Albania", time_zone: "Europe/Tirane", utc_offset: 1.0 },
   { country: "Algeria", time_zone: "Africa/Algiers", utc_offset: 1.0 },
