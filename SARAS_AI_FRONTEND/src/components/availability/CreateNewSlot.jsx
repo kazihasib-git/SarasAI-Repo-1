@@ -1,20 +1,11 @@
-import React, { useState } from 'react';
-import {
-    Grid,
-    Button,
-    FormControl,
-    RadioGroup,
-    FormControlLabel,
-    Radio,
-    FormGroup,
-    Checkbox,
-    MenuItem,
-} from '@mui/material';
-
+import React from 'react';
+import { Grid, Button, FormControl, RadioGroup, FormControlLabel, Radio, FormGroup, Checkbox, MenuItem } from '@mui/material';
+import { useForm, Controller } from 'react-hook-form';
 import CustomDateField from '../CustomFields/CustomDateField';
+import CustomTimeField from '../CustomFields/CustomTimeField'; // Assuming you have a CustomTimeField component
 import ReusableDialog from '../CustomFields/ReusableDialog';
-import { timeZones, validateTimeZone } from '../CustomFields/FormOptions';
-import CustomFormControl from '../CustomFields/CustomFromControl';
+import { format } from 'date-fns';
+import CustomTextField from '../CustomFields/CustomTextField';
 
 const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = '#4E18A5', borderColor = '#FFFFFF', sx, ...props }) => {
     return (
@@ -43,87 +34,139 @@ const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = 
     );
 };
 
+const CreateNewSlot = ({ open, handleClose, addEvent }) => {
+    const { control, handleSubmit, watch, formState: { errors } } = useForm();
 
-
-const CreateNewSlot = ({ open, handleClose }) => {
-    const [formDate, setFormDate] = useState(null);
-    const [toDate, setToDate] = useState(null);
-    const [timezone, setTimezone] = useState('');
-    const [repeat, setRepeat] = useState('onetime');
-    const [selectedDays, setSelectedDays] = useState([]);
-
-    const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-
-    const handleSubmit = () => {
+    const onSubmit = (data) => {
+        // Format the date and time inputs
+        const formattedData = {
+            ...data,
+            fromDate: format(new Date(`${data.date} ${data.fromTime}`), "yyyy-MM-dd HH:mm"),
+            toDate: format(new Date(`${data.date} ${data.toTime}`), "yyyy-MM-dd HH:mm"),
+        };
+        console.log(formattedData);
+        addEvent(data.title, formattedData.fromDate, formattedData.toDate);
         handleClose();
     };
 
-    const handleDayChange = (day) => {
-        setSelectedDays((prev) => {
-            if (prev.includes(day)) {
-                return prev.filter((d) => d !== day);
-            } else {
-                return [...prev, day];
-            }
-        });
-    };
+    const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
     const content = (
-        <>
+        <form id="createForm" onSubmit={handleSubmit(onSubmit)}>
             <Grid container spacing={2} justifyContent="center" sx={{ pt: 3 }}>
-                <Grid item xs={12} sm={6} >
-                    <CustomDateField
-                        label="From Date"
-                        name="fromDate"
-                        value={formDate}
-                        onChange={(date) => setFormDate(date)}
+                <Grid item xs={12}>
+                    <Controller
+                        name="title"
+                        control={control}
+                        defaultValue=""
+                        rules={{ required: 'Title is required' }}
+                        render={({ field }) => (
+                            <CustomTextField
+                                label="Title"
+                                name="title"
+                                value={field.value}
+                                onChange={field.onChange}
+                                error={!!errors.title}
+                                helperText={errors.title ? errors.title.message : ''}
+                            />
+                        )}
+                    />
+                </Grid>
+                <Grid item xs={12}>
+                    <Controller
+                        name="date"
+                        control={control}
+                        defaultValue=""
+                        rules={{ required: 'Date is required' }}
+                        render={({ field }) => (
+                            <CustomDateField
+                                label="Date"
+                                name="date"
+                                value={field.value}
+                                onChange={field.onChange}
+                                error={!!errors.date}
+                                helperText={errors.date ? errors.date.message : ''}
+                            />
+                        )}
                     />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <CustomDateField
-                        label="To Date"
-                        name="toDate"
-                        value={toDate}
-                        onChange={(date) => setToDate(date)}
+                    <Controller
+                        name="fromTime"
+                        control={control}
+                        defaultValue=""
+                        rules={{ required: 'From Time is required' }}
+                        render={({ field }) => (
+                            <CustomTimeField
+                                label="From Time"
+                                name="fromTime"
+                                value={field.value}
+                                onChange={field.onChange}
+                                error={!!errors.fromTime}
+                                helperText={errors.fromTime ? errors.fromTime.message : ''}
+                            />
+                        )}
                     />
                 </Grid>
-                <Grid item xs={12} sm={12} md={6}>
-                    <CustomFormControl
-                        label="Select Timezone"
-                        name="timezone"
-                        controlProps={{
-                            select: true,
-                            fullWidth: true,
-                            value: timezone,
-                            onChange: (e) => setTimezone(e.target.value),
-                        }}
-                        register={() => { }}
-                        validation={{ validate: validateTimeZone }}
-                        errors={{}}
-                        options={timeZones}
+                <Grid item xs={12} sm={6}>
+                    <Controller
+                        name="toTime"
+                        control={control}
+                        defaultValue=""
+                        rules={{ required: 'To Time is required' }}
+                        render={({ field }) => (
+                            <CustomTimeField
+                                label="To Time"
+                                name="toTime"
+                                value={field.value}
+                                onChange={field.onChange}
+                                error={!!errors.toTime}
+                                helperText={errors.toTime ? errors.toTime.message : ''}
+                            />
+                        )}
                     />
                 </Grid>
             </Grid>
             <Grid container spacing={2} justifyContent="center">
                 <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
                     <FormControl component="fieldset">
-                        <RadioGroup row value={repeat} onChange={(e) => setRepeat(e.target.value)} sx={{ justifyContent: 'center' }}>
-                            <FormControlLabel value="onetime" control={<Radio />} label="One-Time" />
-                            <FormControlLabel value="recurring" control={<Radio />} label="Recurring" />
-                        </RadioGroup>
+                        <Controller
+                            name="repeat"
+                            control={control}
+                            defaultValue="onetime"
+                            render={({ field }) => (
+                                <RadioGroup row value={field.value} onChange={field.onChange}>
+                                    <FormControlLabel value="onetime" control={<Radio />} label="One-Time" />
+                                    <FormControlLabel value="recurring" control={<Radio />} label="Recurring" />
+                                </RadioGroup>
+                            )}
+                        />
                     </FormControl>
                 </Grid>
             </Grid>
-            {repeat === 'recurring' && (
+            {watch('repeat') === 'recurring' && (
                 <Grid container spacing={2} justifyContent="center">
                     <Grid item xs={12}>
                         <FormControl component="fieldset">
                             <FormGroup row>
                                 {weekDays.map((day) => (
-                                    <FormControlLabel
+                                    <Controller
                                         key={day}
-                                        control={<Checkbox checked={selectedDays.includes(day)} onChange={() => handleDayChange(day)} name={day} />}
-                                        label={day}
+                                        name={`selectedDays.${day}`}
+                                        control={control}
+                                        defaultValue={false}
+                                        render={({ field }) => (
+                                            <FormControlLabel
+                                                control={
+                                                    <Checkbox
+                                                        checked={field.value}
+                                                        onChange={(e) => field.onChange(e.target.checked)}
+                                                        name={day}
+                                                    />
+                                                }
+                                                label={day}
+                                            />
+                                        )}
                                     />
                                 ))}
                             </FormGroup>
@@ -131,25 +174,15 @@ const CreateNewSlot = ({ open, handleClose }) => {
                     </Grid>
                 </Grid>
             )}
-        </>
+        </form>
     );
 
     const actions = (
         <>
-            <CustomButton
-                onClick={handleSubmit}
-                backgroundColor='white'
-                color='#F56D3B'
-                borderColor='#F56D3B'
-            >
+            <CustomButton onClick={handleClose} backgroundColor="white" color="#F56D3B" borderColor="#F56D3B">
                 Back
             </CustomButton>
-            <CustomButton
-                onClick={handleSubmit}
-                backgroundColor='#F56D3B'
-                color='white'
-                borderColor='#F56D3B'
-            >
+            <CustomButton type="submit" form="createForm" backgroundColor="#F56D3B" color="white" borderColor="#F56D3B">
                 Submit
             </CustomButton>
         </>
@@ -160,8 +193,8 @@ const CreateNewSlot = ({ open, handleClose }) => {
             open={open}
             handleClose={handleClose}
             title="Create New Slot"
-            content={content}
             actions={actions}
+            content={content}
         />
     );
 };
