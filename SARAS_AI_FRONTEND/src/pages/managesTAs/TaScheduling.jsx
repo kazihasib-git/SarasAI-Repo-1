@@ -9,11 +9,15 @@ import editIcon from '../../assets/editIcon.png';
 import { useNavigate } from 'react-router-dom';
 import DynamicTable from '../../components/CommonComponent/DynamicTable';
 import { useDispatch, useSelector } from 'react-redux';
-import { showTASchedule } from '../../redux/features/taModule/taSlice';
+import { showTASchedule } from '../../redux/features/taModule/taScheduling';
+import Schedule from '../../components/availability/Schedule';
+import AssignStudents from '../../components/adminModule/AssignStudents';
+import AssignBatches from '../../components/adminModule/AssignBatches';
 
 const TaScheduling = () => {
   const dispatch = useDispatch();
-  const { taSchedule, loading } = useSelector((state) => state.taModule);
+  const { assignStudentOpen, assignBatchOpen, loading } = useSelector((state) => state.taModule);
+  const { taSchedule, scheduleSessionOpen } = useSelector((state) => state.taScheduling);
   const [taScheduleData, setTaScheduleData] = useState([]);
 
   useEffect(() => {
@@ -35,14 +39,13 @@ const TaScheduling = () => {
     }
   }, [taSchedule]);
 
-  const headers = ["S. No.", "TA Name", "Username", "Active Students", "Active Batches", "Calender"];
+  const headers = ["S. No.", "TA Name", "Username", "Active Students", "Active Batches", "Action"];
 
   const actionButtons = [
     {
       type: 'calendar',
     }
   ];
-
 
   return (
     <>
@@ -56,6 +59,9 @@ const TaScheduling = () => {
         initialData={taScheduleData}
         actionButtons={actionButtons}
       />
+      {scheduleSessionOpen && <Schedule />}
+      {assignStudentOpen && <AssignStudents />}
+      {assignBatchOpen && <AssignBatches />}
     </>
   );
 }

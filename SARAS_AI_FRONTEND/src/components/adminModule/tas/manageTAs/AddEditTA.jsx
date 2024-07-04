@@ -55,13 +55,11 @@ const AddEditTA = ({ data }) => {
   });
 
   const [selectedImage, setSelectedImage] = useState(null);
-  const [taName, setTAName] = useState();
+  //const [taName, setTAName] = useState();
   const [dateOfBirth, setDateOfBirth] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState("");
   const dispatch = useDispatch();
-  const { tas, successPopup, assignStudentOpen, assignBatchOpen } = useSelector(
-    (state) => state.taModule
-  );
+  const { tas,ta_name, successPopup, assignStudentOpen, assignBatchOpen } = useSelector((state) => state.taModule);
 
   // console.log("data to be edit", data);
 
@@ -99,6 +97,7 @@ const AddEditTA = ({ data }) => {
       setValue("highest_qualification", data.highest_qualification);
       setValue("about_me", data.about_me);
       setPhoneNumber(data.phone);
+      dispatch(accessTaName(data));
     }
   }, [data, setValue, setSelectedImage]);
 
@@ -165,6 +164,8 @@ const AddEditTA = ({ data }) => {
   const aboutMeValue = watch("about_me", "");
 
   // console.log("selected Image", selectedImage)
+
+  console.log("taNameeeee :", ta_name)
 
   return (
     <Box sx={{ p: 3 }}>
