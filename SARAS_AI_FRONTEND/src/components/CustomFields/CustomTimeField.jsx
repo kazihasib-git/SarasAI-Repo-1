@@ -1,47 +1,60 @@
-import React from 'react';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import CustomTextField from './CustomTextField'; // Adjust the path according to your file structure
-import dayjs from 'dayjs';
-const CustomTimeField = ({ label, name, register, validation, errors, sx, ...props }) => (
-  <LocalizationProvider dateAdapter={AdapterDayjs}>
-    <TimePicker
-      label={label}
-      InputLabelProps={{
-        shrink: true, // This ensures the label is not overlapping with the input.
-      }}
-      sx={{
-        '& .MuiOutlinedInput-root': {
-          borderRadius: '50px',
-          '& fieldset': {
-            borderColor: '#D0D0EC',
+import React from "react";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers"; // Import TimePicker instead of DateTimePicker
+import moment from "moment";
+
+const CustomTimeField = ({
+  label,
+  name,
+  value,
+  onChange,
+  sx,
+  ...props
+}) => {
+  const momentValue = value ? moment(value, "YYYY-MM-DDTHH:mm") : null; // Adjust parsing format based on input
+
+  const handleTimeChange = (date) => {
+    onChange(date.format("HH:mm")); // Update onChange to only pass time
+  };
+
+  return (
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <TimePicker
+        label={label}
+        name={name}
+        value={momentValue}
+        onChange={handleTimeChange}
+        inputFormat="HH:mm" // Specify the desired time format
+        InputLabelProps={{
+          shrink: true,
+        }}
+        {...props}
+        sx={{
+          "& .MuiOutlinedInput-root": {
+            borderRadius: "50px",
+            "& fieldset": {
+              borderColor: "#D0D0EC",
+            },
+            "&:hover fieldset": {
+              borderColor: "#D0D0EC",
+            },
+            "&.Mui-focused fieldset": {
+              borderColor: "rgb(245, 109, 59)",
+            },
           },
-          '&:hover fieldset': {
-            borderColor: '#D0D0EC',
+          "& .MuiInputLabel-root": {
+            margin: 0,
+            color: '#1A1E3D',
+            '&.Mui-focused': {
+                color: '#1A1E3D',
+            },
           },
-          '&.Mui-focused fieldset': {
-            borderColor: 'rgb(245, 109, 59)', // Change border color on focus
-          },
-          '&.Mui-focused .MuiAutocomplete-input': {
-            backgroundColor: 'transparent', // Override background color for autofill state
-          },
-          '&.Mui-focused .MuiFilledInput-root': {
-            backgroundColor: 'transparent', // Override background color for autofill state
-          },
-        },
-        '& .MuiInputLabel-root': {
-          margin: 0, // Apply margin 0 to the label
-          color: '#9A9DAD',
-          '&.Mui-focused': {
-            color: '#1A1E3D', // Change label color on focus
-          },
-        },
-        ...sx
-      }}
-      {...props}
-    />
-  </LocalizationProvider>
-);
+          ...sx,
+        }}
+      />
+    </LocalizationProvider>
+  );
+};
 
 export default CustomTimeField;
+

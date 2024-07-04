@@ -10,7 +10,7 @@ const PopUpTable = ({
   initialData,
   actionButtons,
   onRowClick,
-  selectedStudents,
+  selectedBox = [],
 }) => {
   const [data, setData] = useState(initialData ?? []);
 
@@ -19,6 +19,7 @@ const PopUpTable = ({
   }, [initialData]);
 
   const handleCheckboxChange = (id) => {
+    console.log("ID : ", id)
     onRowClick(id);
   };
 
@@ -29,6 +30,7 @@ const PopUpTable = ({
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+  console.log("CURRENT : ", currentData)
 
   return (
     <div className="table-container popUpModel">
@@ -43,11 +45,12 @@ const PopUpTable = ({
         <tbody className="popUpBody">
           {currentData.map((item, index) => (
             <tr key={item["S. No."] ?? index} id="popUpRow">
+              {console.log("HANDLE DATA : ", item)}
               {headers.map((header, idx) => (
                 <td key={idx}>
                   {header === "Select" ? (
                     <Checkbox
-                      checked={selectedStudents.includes(item["S. No."])}
+                      checked={selectedBox.includes(item["S. No."])}
                       onChange={() => handleCheckboxChange(item["S. No."])}
                       sx={{
                         "& .MuiSvgIcon-root": {
@@ -57,7 +60,7 @@ const PopUpTable = ({
                       inputProps={{ "aria-label": "select all" }}
                     />
                   ) : (
-                    item[header]
+                    item[header] ?? "N/A"
                   )}
                 </td>
               ))}

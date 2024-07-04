@@ -1,7 +1,7 @@
 import { Button, Grid } from '@mui/material';
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { closeReasonForLeave } from '../../redux/features/taModule/taScheduling';
+import { closeReasonForLeave } from '../../redux/features/taModule/taAvialability';
 import CustomTextField from '../CustomFields/CustomTextField';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 
@@ -35,7 +35,7 @@ const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = 
 const ReasonForLeave = () => {
 
     const dispatch = useDispatch()
-    const { reasonForLeaveOpen } = useSelector((state) => state.taScheduling)
+    const { reasonForLeaveOpen } = useSelector((state) => state.taAvialability)
 
     const handleSubmit = () => {
         dispatch(closeReasonForLeave())

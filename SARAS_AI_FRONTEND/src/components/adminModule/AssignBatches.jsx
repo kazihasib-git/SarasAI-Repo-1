@@ -55,10 +55,10 @@ const AssignBatches = () => {
     taID,
     batchMapping = [],
     loading,
-    } = useSelector((state) => state.taModule);
+  } = useSelector((state) => state.taModule);
   const [selectedBatch, setSelectedBatch] = useState("");
-  const [filteredStudents, setFilteredStudents] = useState([]);
-  const [selectedStudents, setSelectedStudents] = useState([]);
+  const [filteredBatches, setFilteredBatches] = useState([]);
+  const [selectedBatches, setSelectedBatches] = useState([]);
 
   useEffect(() => {
     if (assignBatchOpen) {
@@ -69,57 +69,62 @@ const AssignBatches = () => {
   useEffect(() => {
     if (batchMapping) {
       const transformedData = batchMapping.map((batch) => ({
-        "S. No.": batch.Student_id,
-        "batch Name": batch.student_name,
-        "Academic Term": batch.academic_term,
-        Batch: batch.batch_name || NA,
-        Select: batch.is_actives ? 0 : 1,
+        "S. No.": batch.id,
+        "Batch Name": batch.name,
+        Branch: batch.branch,
+        "Academic Term": batch.academic_term || "N/A",
+        Batch: batch.children
+          ? batch.children.map((child) => child.name).join(", ")
+          : batch.name,
+        Select: batch.is_active ? "Active" : "Inactive",
+        batch_id: batch.id,
       }));
 
-      if (selectedBatch) {
-        setFilteredStudents(
-          transformedData.filter((batch) =>
-            batch.Batch.toLowerCase().includes(selectedBatch.toLowerCase())
-          )
-        );
-      } else {
-        setFilteredStudents(transformedData);
-      }
-    }
-  }, [selectedBatch, batchMapping]);
+      // Filter by selected batch
+      const filtered = transformedData.filter(
+        (batch) =>
+          batch["Batch"] &&
+          batch["Batch"].toLowerCase().includes(selectedBatch.toLowerCase())
+      );
 
-  const handleSelectStudent = (id) => {
-    setSelectedStudents((prev) =>
+      setFilteredBatches(filtered);
+    }
+  }, [batchMapping, selectedBatch]);
+
+  const batchOptions = [
+    ...new Set(
+      batchMapping.flatMap((batch) => [
+        batch.name,
+        ...batch.children.map((child) => child.name),
+      ])
+    ),
+  ];
+
+  const handleSelectBatch = (id) => {
+    console.log("IDDD : ", id)
+    setSelectedBatches((prev) =>
       prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id]
     );
   };
 
-  const handleSubmit = (batches) => {
-    if (batches === "AssignBatches") {
-      dispatch(getTA()).then((taData) => {
-        const data = {
-          ta_id: taID,
-          batchs: selectedStudents.map((id) => ({ Id: id.toString() })),
-        };
-        dispatch(postAssignBatches({ id: taData.student_id, data }));
-      });
-    }
+  const handleSubmit = () => {
+    const data = {
+      ta_id: taID,
+      batches: selectedBatches.map((id) => ({ id: id.toString() })),
+    };
+    dispatch(postAssignBatches({ id: taID, data })).then(() => {
+      dispatch(openSuccessPopup());
+    });
     dispatch(closeAssignBatches());
-    dispatch(openSuccessPopup());
   };
 
   const headers = [
     "S. No.",
-    "batch Name",
+    "Batch Name",
+    "Branch",
     "Academic Term",
     "Batch",
     "Select",
-  ];
-
-  const batchOptions = [
-    ...new Set(
-      batchMapping?.map((batch) => batch.batch_name)
-    ),
   ];
 
   const content = (
@@ -153,9 +158,9 @@ const AssignBatches = () => {
 
       <PopUpTable
         headers={headers}
-        initialData={filteredStudents}
-        onRowClick={handleSelectStudent}
-        selectedStudents={selectedStudents}
+        initialData={filteredBatches}
+        onRowClick={handleSelectBatch}
+        selectedBox={selectedBatches}
       />
 
       <Typography
@@ -163,20 +168,22 @@ const AssignBatches = () => {
         gutterBottom
         sx={{ mt: 2, textAlign: "center" }}
       >
-        {selectedStudents.length} batch(s) Selected
+        {selectedBatches.length} batch(es) Selected
       </Typography>
     </>
   );
 
   const actions = (
-    <CustomButton
-      onClick={() => handleSubmit("AssignBatches")}
-      backgroundColor="#F56D3B"
-      borderColor="#F56D3B"
-      color="#FFFFFF"
+    <Button
+      onClick={handleSubmit}
+      style={{
+        backgroundColor: "#F56D3B",
+        borderColor: "#F56D3B",
+        color: "#FFFFFF",
+      }}
     >
       Submit
-    </CustomButton>
+    </Button>
   );
 
   if (loading) {

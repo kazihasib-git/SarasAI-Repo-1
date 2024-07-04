@@ -6,12 +6,16 @@ import { styled } from "@mui/material/styles";
 import "./CommonComponent.css";
 import Header from "../../components/Header/Header";
 import Sidebar from "../../components/Sidebar/Sidebar";
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { AssignedBatchesData } from "../../fakeData/AssignedBatchesData";
 import bin from "../../assets/bin.png";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteAssignedBatch, getAssignBatches, toggleAssignBatchStatus } from "../../redux/features/taModule/taSlice";
+import {
+  deleteAssignedBatch,
+  getAssignBatches,
+  toggleAssignBatchStatus,
+} from "../../redux/features/taModule/taSlice";
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
   borderRadius: "50px",
@@ -79,7 +83,7 @@ const DynamicTable = ({
   title,
   actionButtons,
   ta_id,
-  dispatch
+  dispatch,
 }) => {
   const [data, setData] = useState(
     initialData.map((item) => ({
@@ -110,8 +114,7 @@ const DynamicTable = ({
     setCurrentPage(pageNumber);
   };
 
-  const handleToggle = (id) => {
-
+  const handleToggle = async (id) => {
     console.log("id : ", id);
     const updatedData = data.map((item) =>
       item.id === id
@@ -122,13 +125,24 @@ const DynamicTable = ({
 
     const toggledItem = updatedData.find((item) => item.id === id);
     const requestData = { is_active: toggledItem.is_active };
-    dispatch(toggleAssignBatchStatus({ id, data: requestData }));
+    try {
+      await dispatch(toggleAssignBatchStatus({ id, data: requestData }));
+    } catch (error) {
+      // Revert state if the API call fails
+      setData(
+        data.map((item) =>
+          item.id === id
+            ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
+            : item
+        )
+      );
+    }
   };
 
   const handleDelete = (id) => {
     // Implement delete functionality here
     console.log("Deleting item with id:", id);
-    dispatch(deleteAssignedBatch({id}))
+    dispatch(deleteAssignedBatch({ id }));
   };
 
   const handleNavigate = (path) => {
@@ -144,7 +158,10 @@ const DynamicTable = ({
             className="bi bi-caret-left"
             onClick={() => navigate("/ta-mapping")}
           ></i> */}
-          <ArrowBackIosIcon style={{fontSize:"25px", marginBottom:'17px'}}  onClick={() => navigate("/ta-mapping")} />
+          <ArrowBackIosIcon
+            style={{ fontSize: "25px", marginBottom: "17px" }}
+            onClick={() => navigate("/ta-mapping")}
+          />
           <p
             style={{
               fontSize: "44px",

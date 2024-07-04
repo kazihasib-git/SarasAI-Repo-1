@@ -8,7 +8,7 @@ import MarkLeave from '../../components/availability/MarkLeave';
 import DeleteAllSlots from '../../components/availability/DeleteAllSlots';
 import CreateNewSlot from '../../components/availability/CreateNewSlot';
 import ScheduleSession from '../../components/availability/ScheduleSession';
-import { openMarkLeave, closeMarkLeave } from '../../redux/features/taModule/taScheduling';
+import { openMarkLeave, closeMarkLeave } from '../../redux/features/taModule/taAvialability';
 import { useDispatch, useSelector } from 'react-redux';
 import Slots from '../../components/availability/Slots';
 import ScheduledSessions from '../../components/availability/ScheduledSessions';
@@ -16,6 +16,8 @@ import CancelSchedule from '../../components/availability/CancelSchedule';
 import ReasonForLeave from '../../components/availability/ReasonForLeave';
 import ReschedulingSession from '../../components/availability/ReschedulingSession';
 import { PickersInputBaseSectionsContainer } from '@mui/x-date-pickers/PickersTextField/PickersInputBase/PickersInputBase';
+import NewCal from '../../components/Calender/IndexCalenderNew';
+import { add } from 'date-fns';
 
 const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = '#4E18A5', borderColor = '#FFFFFF', sx, ...props }) => {
     return (
@@ -57,8 +59,24 @@ const TaCalender
             cancelSessionOpen,
             reasonForLeaveOpen,
             resheduleSessionOpen,
-        }  = useSelector((state) => state.taScheduling);
-
+        } = useSelector((state) => state.taAvialability);
+        //calendar
+        const [eventsList, setEventsList] = useState([]);
+        const addEvent = (title, startDateTime, endDateTime) => {
+            const newStart = new Date(startDateTime);
+            const newEnd = new Date(endDateTime);
+            setEventsList(prev => [...prev, { title, start: newStart, end: newEnd }]);
+        };
+        // const handleSelectEvent = event => {
+        //     if (window.confirm(`Are you sure you want to delete the event '${event.title}'?`)) {
+        //         setEventsList(prev => {
+        //             const updatedEvents = prev.filter(e => e.start !== event.start || e.end !== event.end || e.title !== event.title);
+        //             return updatedEvents;
+        //           });
+        //     }
+        //   };
+    
+    
         const handleScheduleNewSession = () => {
             console.log("Pressed")
             setSheduleNewSession(true)
@@ -76,10 +94,10 @@ const TaCalender
             setCreateNewSlot(true)
         }
 
-        console.log("markLeaveOpen", markLeaveOpen);
-        console.log("scheduledSlotsOpen", scheduledSlotsOpen)
-        console.log("scheduledSessionOpen", scheduledSessionOpen)
-        console.log("cancelSessionOpen", cancelSessionOpen)
+        // console.log("markLeaveOpen", markLeaveOpen);
+        // console.log("scheduledSlotsOpen", scheduledSlotsOpen)
+        // console.log("scheduledSessionOpen", scheduledSessionOpen)
+        // console.log("cancelSessionOpen", cancelSessionOpen)
 
         return (
             <Box sx={{ backgroundColor: '#f8f9fa', p: 3 }}>
@@ -124,7 +142,7 @@ const TaCalender
                                     color='#FFFFFF'
                                     backgroundColor='#F56D3B'
                                     borderColor='#F56D3B'
-                                    onClick={handleCreateNewSlot}
+                                    onClick={setCreateNewSlot}
                                 >
                                     {/* <AddCircleOutlineIcon /> */}
                                     Create New Slot
@@ -133,7 +151,7 @@ const TaCalender
                         </Grid>
                     </Grid>
                 </DialogActions>
-                <CalendarComponent/>
+                <CalendarComponent eventsList={eventsList} addEvent={addEvent} /*handleSelectEvent={handleSelectEvent}*/ />
                 {sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} />}
                 {markLeaveOpen && <MarkLeave />}
                 {scheduledSlotsOpen && <Slots />}
@@ -142,7 +160,7 @@ const TaCalender
                 {reasonForLeaveOpen && <ReasonForLeave /> }
                 {resheduleSessionOpen && <ReschedulingSession /> }
                 {deleteFutureSlots && <DeleteAllSlots open={deleteFutureSlots} handleClose={() => setDeleteFutureSlots(false)} />}
-                {createNewSlot && <CreateNewSlot open={createNewSlot} handleClose={() => setCreateNewSlot(false)} />}
+                {createNewSlot && <CreateNewSlot open={createNewSlot} handleClose={() => setCreateNewSlot(false)} addEvent={addEvent}/>}
             </Box>
         )
     }

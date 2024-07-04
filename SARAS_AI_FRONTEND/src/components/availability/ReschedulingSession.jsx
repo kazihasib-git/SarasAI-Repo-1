@@ -6,7 +6,7 @@ import ReactTable from '../table/ReactTable';
 import CustomTimeField from '../CustomFields/CustomTimeField';
 import DynamicTable from '../CommonComponent/DynamicTable';
 import { useDispatch, useSelector } from 'react-redux';
-import { closeRescheduleSession, openReasonForLeave } from '../../redux/features/taModule/taScheduling';
+import { closeRescheduleSession, openReasonForLeave } from '../../redux/features/taModule/taAvialability';
 import CustomTextField from '../CustomFields/CustomTextField';
 import PopUpTable from '../CommonComponent/PopUpTable';
 
@@ -41,7 +41,7 @@ const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = 
 const ReschedulingSession = () => {
 
     const dispatch = useDispatch()
-    const { resheduleSessionOpen } = useSelector((state) => state.taScheduling);
+    const { resheduleSessionOpen } = useSelector((state) => state.taAvialability);
     
     const headers = ['S. No.', 'Slots Available', 'Select All'];
 

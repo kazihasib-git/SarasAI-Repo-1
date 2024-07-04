@@ -47,91 +47,13 @@ export const getStudentBatchMapping = createAsyncThunk(
     );
     console.log("Response : ", response);
     return response.data;
-    // return [
-    //   {
-    //     student_id: 1,
-    //     student_name: "John Doe",
-    //     academic_term: "2024",
-    //     email: "john.doe2@example.com",
-    //     phone: "1234567890",
-    //     is_active: 1,
-    //     batches: [
-    //       {
-    //         batch_id: 13,
-    //         batch_name: "SARA",
-    //         branch: "abcd",
-    //         is_active: 1,
-    //       },
-    //       {
-    //         batch_id: 14,
-    //         batch_name: "Ai Course",
-    //         branch: "gbtrghm",
-    //         is_active: 1,
-    //       },
-    //     ],
-    //   },
-    //   {
-    //     student_id: 2,
-    //     student_name: "John Doe",
-    //     academic_term: "2023",
-    //     email: "john.doe@example.com",
-    //     phone: "1234567890",
-    //     is_active: 1,
-    //     batches: [
-    //       {
-    //         batch_id: 13,
-    //         batch_name: "SARA",
-    //         branch: "abcd",
-    //         is_active: 1,
-    //       },
-    //       {
-    //         batch_id: 14,
-    //         batch_name: "Ai Course",
-    //         branch: "gbtrghm",
-    //         is_active: 1,
-    //       },
-    //     ],
-    //   },
-    //   {
-    //     student_id: 3,
-    //     student_name: "John Doe",
-    //     academic_term: "2023",
-    //     email: "john.doe1@example.com",
-    //     phone: "1234567890",
-    //     is_active: 1,
-    //     batches: [
-    //       {
-    //         batch_id: 1,
-    //         batch_name: "Saras Institute",
-    //         branch: "abcd",
-    //         is_active: 1,
-    //       },
-    //     ],
-    //   },
-    //   {
-    //     student_id: 4,
-    //     student_name: "John Doe",
-    //     academic_term: "2024",
-    //     email: "john.does@example.com",
-    //     phone: "1234567890",
-    //     is_active: 1,
-    //     batches: [
-    //       {
-    //         batch_id: 12,
-    //         batch_name: "Saras USA",
-    //         branch: "gbtrghm",
-    //         is_active: 1,
-    //       },
-    //     ],
-    //   },
-    // ];
   }
 );
 
 export const getBatchMapping = createAsyncThunk(
   "taModule/getBatchMapping",
   async () => {
-    const response = await axios.get(`${baseUrl}/admin/student-batch-mapping/`);
+    const response = await axios.get(`${baseUrl}/admin/batches`);
     console.log("Response : ", response);
     return response.data;
     // return [
@@ -178,7 +100,7 @@ export const getBatchMapping = createAsyncThunk(
 export const showTAMapping = createAsyncThunk(
   "taModule/showTAMapping",
   async () => {
-    const response = await axios.get(`${baseUrl}/admin/TAMapping/show`);
+    const response = await axios.get(`${baseUrl}/admin/TAMapping/TAswithActiveStudentnBatches`);
     return response.data;
     // return [
     //   {
@@ -220,37 +142,9 @@ export const getAssignBatches = createAsyncThunk(
   "taModule/getAssignBatches",
   async (id) => {
     const response = await axios.get(
-      `${baseUrl}/admin/TAMapping/${id}/AssignBatchs`
+      `${baseUrl}/admin/TAMapping/${id}/AssignBatches`
     );
     return response.data;
-    // return [
-    //   {
-    //     id: 1,
-    //     ta: {
-    //       id: 2,
-    //       name: "amish123",
-    //     },
-    //     batch: {
-    //       id: 14,
-    //       name: "Ai Course",
-    //       branch: "gbtrghm",
-    //     },
-    //     is_active: 1,
-    //   },
-    //   {
-    //     id: 2,
-    //     ta: {
-    //       id: 2,
-    //       name: "amish123",
-    //     },
-    //     batch: {
-    //       id: 13,
-    //       name: "SARA",
-    //       branch: "abcd",
-    //     },
-    //     is_active: 1,
-    //   },
-    // ];
   }
 );
 export const toggleAssignStudentStatus = createAsyncThunk(
@@ -279,7 +173,7 @@ export const postAssignStudents = createAsyncThunk(
   "taModule/postAssignStudents",
   async ({ id, data }) => {
     const response = await axios.post(
-      `${baseUrl}/admin/TAMapping/${id}/AssignStudents`,
+      `${baseUrl}/admin/TAMapping/AssignStudents`,
       data
     );
     return response.data;
@@ -290,7 +184,7 @@ export const postAssignBatches = createAsyncThunk(
   "taModule/postAssignBatches",
   async ({ id, data }) => {
     const response = await axios.post(
-      `${baseUrl}/admin/TAMapping/${id}/AssignBatchs`,
+      `${baseUrl}/admin/TAMapping/AssignBatches`,
       data
     );
     return response.data;
@@ -300,8 +194,9 @@ export const postAssignBatches = createAsyncThunk(
 export const deleteAssignedStudent = createAsyncThunk(
   "taModule/deleteAssignedStudent",
   async (id) => {
-    const response = await axios.get(
-      `${baseUrl}/admin/TAMapping/${id}/deleteStudent`
+    console.log("ID to delete STUDENT : ", id)
+    const response = await axios.delete(
+      `${baseUrl}/admin/TAMapping/${id.id}/deleteStudent`
     );
     return response.data;
   }
@@ -310,8 +205,9 @@ export const deleteAssignedStudent = createAsyncThunk(
 export const deleteAssignedBatch = createAsyncThunk(
   "taModule/deleteAssignedBatch",
   async (id) => {
-    const response = await axios.get(
-      `${baseUrl}/admin/TAMapping/${id}/deleteBatch`
+    console.log("ID to delete BATCH : ", id)
+    const response = await axios.delete(
+      `${baseUrl}/admin/TAMapping/${id.id}/deleteBatch`
     );
     return response.data;
   }
@@ -320,346 +216,16 @@ export const deleteAssignedBatch = createAsyncThunk(
 export const showTASchedule = createAsyncThunk(
   "taModule/showTaSchedule",
   async () => {
-    // const response = await axios.get(`${baseUrl}/admin/taschedules`);
-    // return response.data;
-    return {
-      status: true,
-      status_code: 200,
-      message: "Schedules retrieved successfully.",
-      data: [
-        {
-          ta_data: {
-            id: 2,
-            name: "Vashu Verma",
-            username: "vashu-verma-ta-ocb6t",
-          },
-          Active_Batches: 0,
-          Active_Students: 0,
-        },
-        {
-          ta_data: {
-            id: 3,
-            name: "Ashish",
-            username: "ashish-ta-ivwme",
-          },
-          Active_Batches: 0,
-          Active_Students: 0,
-        },
-        {
-          ta_data: {
-            id: 4,
-            name: "Rahul",
-            username: "rahul-ta-uss1i",
-          },
-          Active_Batches: 0,
-          Active_Students: 0,
-        },
-        {
-          ta_data: {
-            id: 5,
-            name: "Yash",
-            username: "yash-ta-fje9e",
-          },
-          Active_Batches: 0,
-          Active_Students: 0,
-        },
-        {
-          ta_data: {
-            id: 6,
-            name: "Hello",
-            username: "hello-ta-qrcnz",
-          },
-          Active_Batches: 0,
-          Active_Students: 0,
-        },
-        {
-          ta_data: {
-            id: 7,
-            name: "rashi",
-            username: "rashi-ta-pxbeq",
-          },
-          Active_Batches: 0,
-          Active_Students: 0,
-        },
-        {
-          ta_data: {
-            id: 8,
-            name: "Vashu Dev singh Verma",
-            username: "vashu-dev-singh-verma-ta-ag6nf",
-          },
-          Active_Batches: 0,
-          Active_Students: 0,
-        },
-        {
-          ta_data: {
-            id: 9,
-            name: "dixit",
-            username: "dixit-ta-ljoks",
-          },
-          Active_Batches: 0,
-          Active_Students: 0,
-        },
-        {
-          ta_data: {
-            id: 10,
-            name: "dixita",
-            username: "dixita-ta-wh4yj",
-          },
-          Active_Batches: 0,
-          Active_Students: 0,
-        },
-        {
-          ta_data: {
-            id: 11,
-            name: "Jack",
-            username: "jack-ta-jg40u",
-          },
-          Active_Batches: 0,
-          Active_Students: 0,
-        },
-        {
-          ta_data: {
-            id: 12,
-            name: "Vashu Dev singh Verma",
-            username: "vashu-dev-singh-verma-ta-ze0s9",
-          },
-          Active_Batches: 0,
-          Active_Students: 0,
-        },
-        {
-          ta_data: {
-            id: 13,
-            name: "JAck",
-            username: "jack-ta-5ikuq",
-          },
-          Active_Batches: 0,
-          Active_Students: 0,
-        },
-        {
-          ta_data: {
-            id: 14,
-            name: "Vashu",
-            username: "vashu-ta-b0hhg",
-          },
-          Active_Batches: 0,
-          Active_Students: 0,
-        },
-        {
-          ta_data: {
-            id: 15,
-            name: "Vashu",
-            username: "vashu-ta-dlhtd",
-          },
-          Active_Batches: 0,
-          Active_Students: 0,
-        },
-        {
-          ta_data: {
-            id: 16,
-            name: "Vashu Dev singh Verma",
-            username: "vashu-dev-singh-verma-ta-6hs8z",
-          },
-          Active_Batches: 0,
-          Active_Students: 0,
-        },
-        {
-          ta_data: {
-            id: 17,
-            name: "Vashu",
-            username: "vashu-ta-zgslv",
-          },
-          Active_Batches: 0,
-          Active_Students: 0,
-        },
-        {
-          ta_data: {
-            id: 18,
-            name: "TAVASHU",
-            username: "tavashu-ta-mk7x0",
-          },
-          Active_Batches: 0,
-          Active_Students: 0,
-        },
-        {
-          ta_data: {
-            id: 19,
-            name: "Dev",
-            username: "dev-ta-xgtnv",
-          },
-          Active_Batches: 0,
-          Active_Students: 0,
-        },
-        {
-          ta_data: {
-            id: 20,
-            name: "Dev",
-            username: "dev-ta-1t6ru",
-          },
-          Active_Batches: 0,
-          Active_Students: 0,
-        },
-        {
-          ta_data: {
-            id: 21,
-            name: "Jack",
-            username: "jack-ta-sexx7",
-          },
-          Active_Batches: 0,
-          Active_Students: 0,
-        },
-        {
-          ta_data: {
-            id: 22,
-            name: "Vashu",
-            username: "vashu-ta-io998",
-          },
-          Active_Batches: 0,
-          Active_Students: 0,
-        },
-        {
-          ta_data: {
-            id: 23,
-            name: "Vashu",
-            username: "vashu-ta-bth0m",
-          },
-          Active_Batches: 0,
-          Active_Students: 0,
-        },
-        {
-          ta_data: {
-            id: 24,
-            name: "Vashu",
-            username: "vashu-ta-0q5ub",
-          },
-          Active_Batches: 0,
-          Active_Students: 0,
-        },
-        {
-          ta_data: {
-            id: 25,
-            name: "JAck",
-            username: "jack-ta-j10vb",
-          },
-          Active_Batches: 0,
-          Active_Students: 0,
-        },
-        {
-          ta_data: {
-            id: 26,
-            name: "JAck",
-            username: "jack-ta-wgrhp",
-          },
-          Active_Batches: 0,
-          Active_Students: 0,
-        },
-        {
-          ta_data: {
-            id: 27,
-            name: "Jack",
-            username: "jack-ta-vd5qk",
-          },
-          Active_Batches: 0,
-          Active_Students: 0,
-        },
-        {
-          ta_data: {
-            id: 28,
-            name: "JAck",
-            username: "jack-ta-1yfcr",
-          },
-          Active_Batches: 0,
-          Active_Students: 0,
-        },
-        {
-          ta_data: {
-            id: 29,
-            name: "JAck",
-            username: "jack-ta-odsc3",
-          },
-          Active_Batches: 0,
-          Active_Students: 0,
-        },
-        {
-          ta_data: {
-            id: 30,
-            name: "TestingTa",
-            username: "testingta-ta-jnrxs",
-          },
-          Active_Batches: 0,
-          Active_Students: 0,
-        },
-        {
-          ta_data: {
-            id: 31,
-            name: "TestingTa",
-            username: "testingta-ta-qi5dd",
-          },
-          Active_Batches: 0,
-          Active_Students: 0,
-        },
-        {
-          ta_data: {
-            id: 32,
-            name: "TEsting",
-            username: "testing-ta-ttw8l",
-          },
-          Active_Batches: 0,
-          Active_Students: 0,
-        },
-        {
-          ta_data: {
-            id: 33,
-            name: "JAck",
-            username: "jack-ta-cdkvx",
-          },
-          Active_Batches: 0,
-          Active_Students: 0,
-        },
-        {
-          ta_data: {
-            id: 34,
-            name: "Hello",
-            username: "hello-ta-bao4y",
-          },
-          Active_Batches: 0,
-          Active_Students: 0,
-        },
-        {
-          ta_data: {
-            id: 35,
-            name: "Hello",
-            username: "hello-ta-dbd4z",
-          },
-          Active_Batches: 0,
-          Active_Students: 0,
-        },
-        {
-          ta_data: {
-            id: 36,
-            name: "JAck",
-            username: "jack-ta-qx89j",
-          },
-          Active_Batches: 0,
-          Active_Students: 0,
-        },
-        {
-          ta_data: {
-            id: 37,
-            name: "Jack",
-            username: "jack-ta-qexfu",
-          },
-          Active_Batches: 0,
-          Active_Students: 0,
-        },
-      ],
-    };
+    const response = await axios.get(`${baseUrl}/admin/taschedules`);
+    return response.data;
+   
   }
 );
 
 const initialState = {
   tas: [],
-  studentBatchMapping: null,
-  batchMapping: null,
+  studentBatchMapping: [],
+  batchMapping: [],
   taMapping: null,
   taSchedule: null,
   assignedStudents: [],
