@@ -54,6 +54,7 @@ const AssignStudents = () => {
   const [searchName, setSearchName] = useState(""); // State for search input
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [filteredStudents, setFilteredStudents] = useState([]);
+  
   const { assignStudentOpen, ta_name, taID, studentBatchMapping } = useSelector(
     (state) => state.taModule
   );
@@ -66,8 +67,9 @@ const AssignStudents = () => {
 
   useEffect(() => {
     if (studentBatchMapping) {
+      console.log("STUDENT BATCH MAPPING : ", studentBatchMapping)
       const transformedData = studentBatchMapping.map((student, index) => ({
-        "S. No.": index + 1,
+        "S. No.": student.student_id,
         "Student Name": student.student_name,
         "Academic Term": student.academic_term,
         Batch: student.batches.map(batch => batch.batch_name).join(", ") || "N/A",
@@ -86,16 +88,22 @@ const AssignStudents = () => {
     }
   }, [studentBatchMapping, selectedBatch, searchName]);
 
-  const batchOptions = [
-    ...new Set(
-      studentBatchMapping.flatMap((student) => student.batches.map(batch => batch.batch_name))
-    ),
-  ];
-  const academicTermOptions = [
-    ...new Set(
-      studentBatchMapping.map((student) => student.academic_term)
-    ),
-  ];
+  // Ensure studentBatchMapping is not null or undefined before using flatMap
+  const batchOptions = studentBatchMapping
+    ? [
+        ...new Set(
+          studentBatchMapping.flatMap((student) => student.batches.map(batch => batch.batch_name))
+        ),
+      ]
+    : [];
+
+  const academicTermOptions = studentBatchMapping
+    ? [
+        ...new Set(
+          studentBatchMapping.map((student) => student.academic_term)
+        ),
+      ]
+    : [];
 
   const handleSelectStudent = (id) => {
     setSelectedStudents((prev) =>

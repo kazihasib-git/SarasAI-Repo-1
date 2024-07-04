@@ -77,7 +77,7 @@ const Schedule = () => {
     };
 
     const dispatch = useDispatch()
-    const { } = useSelector((state) => state.taScheduling);
+    const { } = useSelector((state) => state.taAvialability);
 
     const content = (
         <>

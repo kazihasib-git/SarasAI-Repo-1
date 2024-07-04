@@ -3,7 +3,7 @@ import ReusableDialog from '../CustomFields/ReusableDialog'
 import { Box, Button, DialogContent, Typography } from '@mui/material';
 import DynamicTable from '../CommonComponent/DynamicTable';
 import { useDispatch, useSelector } from 'react-redux';
-import { closeScheduledSession, openCancelSession, openRescheduleSession } from '../../redux/features/taModule/taScheduling';
+import { closeScheduledSession, openCancelSession, openRescheduleSession } from '../../redux/features/taModule/taAvialability';
 import PopUpTable from '../CommonComponent/PopUpTable';
 
 const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = '#4E18A5', borderColor = '#FFFFFF', sx, ...props }) => {
@@ -36,7 +36,7 @@ const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = 
 
 const ScheduledSessions = () => {
     const dispatch = useDispatch();
-    const { scheduledSessionOpen } = useSelector((state) => state.taScheduling);
+    const { scheduledSessionOpen } = useSelector((state) => state.taAvialability);
 
     const actionButtons = [
         {
