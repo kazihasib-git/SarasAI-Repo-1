@@ -69,8 +69,8 @@ const AssignStudents = () => {
       const transformedData = studentBatchMapping.map((student, index) => ({
         "S. No.": index + 1,
         "Student Name": student.student_name,
-        "Academic Term": "Term Info",
-        Batch: student.batches[0]?.batch_name || "N/A",
+        "Academic Term": student.academic_term,
+        Batch: student.batches.map(batch => batch.batch_name).join(", ") || "N/A",
         Select: student.is_active ? "Active" : "Inactive",
         student_id: student.student_id,
         is_active: student.is_active,
@@ -79,22 +79,21 @@ const AssignStudents = () => {
       // Filter by selected batch and search name
       const filtered = transformedData.filter((student) => 
         student["Student Name"].toLowerCase().includes(searchName.toLowerCase()) &&
-        (!selectedBatch || student.Batch === selectedBatch)
+        (!selectedBatch || student.Batch.includes(selectedBatch))
       );
 
       setFilteredStudents(filtered);
     }
   }, [studentBatchMapping, selectedBatch, searchName]);
 
-
   const batchOptions = [
     ...new Set(
-      studentBatchMapping?.map((student) => student.batches[0]?.batch_name)
+      studentBatchMapping.flatMap((student) => student.batches.map(batch => batch.batch_name))
     ),
   ];
   const academicTermOptions = [
     ...new Set(
-      studentBatchMapping?.map((student) => student.academic_term)
+      studentBatchMapping.map((student) => student.academic_term)
     ),
   ];
 
@@ -104,27 +103,19 @@ const AssignStudents = () => {
     );
   };
 
-  const handleSubmit = (batches) => {
-    if (batches === "AssignStudent") {
-      dispatch(getTA()).then((taData) => {
-        const data = {
-          ta_id: taID,
-          student: selectedStudents.map((id) => ({ Id: id.toString() })),
-        };
-        dispatch(postAssignStudents({ id: taData.student_id, data }));
+  const handleSubmit = () => {
+    const data = {
+      ta_id: taID,
+      student: selectedStudents.map((id) => ({ id: id.toString() })),
+    };
+    dispatch(postAssignStudents({ id: taID, data }))
+      .then(() => {
+        dispatch(openSuccessPopup());
       });
-    }
     dispatch(closeAssignStudents());
-    dispatch(openSuccessPopup());
   };
 
-  const headers = [
-    "S. No.",
-    "Student Name",
-    "Academic Term",
-    "Batch",
-    "Select",
-  ];
+  const headers = ["S. No.", "Student Name", "Academic Term", "Batch", "Select"];
 
   const content = (
     <>
@@ -176,7 +167,7 @@ const AssignStudents = () => {
         headers={headers}
         initialData={filteredStudents}
         onRowClick={handleSelectStudent}
-        selectedStudents={selectedStudents}
+        selectedBox={selectedStudents}
       />
 
       <Typography
@@ -190,14 +181,12 @@ const AssignStudents = () => {
   );
 
   const actions = (
-    <CustomButton
-      onClick={() => handleSubmit("AssignStudent")}
-      backgroundColor="#F56D3B"
-      borderColor="#F56D3B"
-      color="#FFFFFF"
+    <Button
+      onClick={handleSubmit}
+      style={{ backgroundColor: "#F56D3B", borderColor: "#F56D3B", color: "#FFFFFF" }}
     >
       Submit
-    </CustomButton>
+    </Button>
   );
 
   return (
@@ -210,6 +199,7 @@ const AssignStudents = () => {
     />
   );
 };
+
 
 
 export default AssignStudents;

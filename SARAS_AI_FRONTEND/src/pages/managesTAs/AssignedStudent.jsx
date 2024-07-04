@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, IconButton, Switch, Pagination, Box } from "@mui/material";
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
 import { styled } from "@mui/material/styles";
 import "./CommonComponent.css";
@@ -10,7 +10,11 @@ import { AssignedStudentData } from "../../fakeData/AssignedStudentData";
 import bin from "../../assets/bin.png";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
-import { getAssignStudents, toggleAssignStudentStatus, deleteAssignedStudent } from "../../redux/features/taModule/taSlice";
+import {
+  getAssignStudents,
+  toggleAssignStudentStatus,
+  deleteAssignedStudent,
+} from "../../redux/features/taModule/taSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
@@ -78,9 +82,9 @@ const DynamicTable = ({
   title,
   actionButtons,
   ta_id,
-  dispatch
+  dispatch,
 }) => {
-  console.log("INITAL DATA : ", initialData);
+  // console.log("INITAL DATA : ", initialData);
   const [data, setData] = useState(
     initialData.map((item) => ({
       ...item,
@@ -111,7 +115,6 @@ const DynamicTable = ({
   };
 
   const handleToggle = (id) => {
-
     console.log("id : ", id);
     const updatedData = data.map((item) =>
       item.id === id
@@ -128,7 +131,7 @@ const DynamicTable = ({
   const handleDelete = (id) => {
     // Implement delete functionality here
     console.log("Deleting item with id:", id);
-    dispatch(deleteAssignedStudent({id}))
+    dispatch(deleteAssignedStudent({ id }));
   };
 
   const handleNavigate = (path) => {
@@ -139,7 +142,10 @@ const DynamicTable = ({
     <div className="table-container">
       <Box display={"flex"} justifyContent={"space-between"}>
         <Box display="flex" alignItems="center" padding="16px">
-        <ArrowBackIosIcon style={{fontSize:"25px", marginBottom:'17px'}}  onClick={() => navigate("/ta-mapping")} />
+          <ArrowBackIosIcon
+            style={{ fontSize: "25px", marginBottom: "17px" }}
+            onClick={() => navigate("/ta-mapping")}
+          />
 
           <p
             style={{
@@ -311,13 +317,25 @@ const AssignedStudent = () => {
 
   useEffect(() => {
     if (assignedStudents && assignedStudents.length > 0) {
-      const transformData = assignedStudents.map((item, index) => ({
-        id: item.student.id,
-        student_name: item.student.name,
-        Acedimic_term: item.student.academic_term,
-        Batch: item.batch.name || "N/A", // Handle null batch names
-        is_active: item.is_active === 1, // Convert 1/0 to true/false
-      }));
+      const transformData = assignedStudents.map((item) => {
+        const studentName = item.student
+          ? item.student.name
+          : "Unknown Student";
+        const academicTerm = item.student ? item.student.academic_term : "N/A";
+        const batchName =
+          item.student.batches && item.student.batches.length > 0
+            ? item.student.batches[0].batch_name
+            : "N/A";
+        const isActive = item.is_active === 1;
+
+        return {
+          id: item.student ? item.student.id : null,
+          student_name: studentName,
+          Acedimic_term: academicTerm,
+          Batch: batchName,
+          is_active: isActive,
+        };
+      });
 
       setTaAssignStudentData(transformData);
     }

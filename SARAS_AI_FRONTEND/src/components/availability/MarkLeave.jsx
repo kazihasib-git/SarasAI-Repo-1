@@ -44,6 +44,8 @@ const MarkLeave = () => {
 
 
     const handleSubmit = () => {
+        console.log("FROM DATA : ", fromDate)
+        console.log("TO date : ", toDate)
         dispatch(openScheduledSlots());
         dispatch(closeMarkLeave());
     };

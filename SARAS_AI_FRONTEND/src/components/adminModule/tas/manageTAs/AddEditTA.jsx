@@ -38,8 +38,14 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 
 const AddEditTA = ({ data }) => {
-
-  const { register, handleSubmit, control, setValue, watch, formState: { errors }, } = useForm({
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm({
     defaultValues: {
       gender: "",
       time_zone: "",
@@ -53,9 +59,11 @@ const AddEditTA = ({ data }) => {
   const [dateOfBirth, setDateOfBirth] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState("");
   const dispatch = useDispatch();
-  const { tas, successPopup, assignStudentOpen, assignBatchOpen } = useSelector((state) => state.taModule);
+  const { tas, successPopup, assignStudentOpen, assignBatchOpen } = useSelector(
+    (state) => state.taModule
+  );
 
-  console.log("data to be edit", data);
+  // console.log("data to be edit", data);
 
   useEffect(() => {
     if (data) {
@@ -68,16 +76,15 @@ const AddEditTA = ({ data }) => {
         const byteCharacters = atob(data.profile_picture);
         const byteNumbers = new Array(byteCharacters.length);
         for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
         }
         const byteArray = new Uint8Array(byteNumbers);
         const blob = new Blob([byteArray], { type: "image/jpeg" });
         const blobUrl = URL.createObjectURL(blob);
 
-        console.log('blobUrl', blobUrl);
+        console.log("blobUrl", blobUrl);
         setSelectedImage(blobUrl);
-    }
-
+      }
 
       setValue("name", data.name);
       // setValue("short_description", data.short_description);
@@ -92,7 +99,7 @@ const AddEditTA = ({ data }) => {
       setValue("date_of_birth", data.date_of_birth);
       setValue("highest_qualification", data.highest_qualification);
       setValue("about_me", data.about_me);
-      setPhoneNumber(data.phone)
+      setPhoneNumber(data.phone);
     }
   }, [data, setValue, setSelectedImage]);
 
@@ -111,24 +118,34 @@ const AddEditTA = ({ data }) => {
   // };
 
   const onSubmit = async (formData) => {
-    console.log("Data formdata is", formData);
+    // console.log("Data", formData);
     setTAName(formData.name);
     const formattedDate = dayjs(dateOfBirth).format("YYYY-MM-DD HH:mm:ss");
     formData.date_of_birth = formattedDate;
     formData.phone = phoneNumber;
-
-    //convert selected image to base64
-    if (selectedImage instanceof Blob || selectedImage instanceof File) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        formData.profile_picture = reader.result;
-      };
+    if (selectedImage) {
+      const base64Data = selectedImage?.replace(
+        /^data:image\/(png|jpeg|jpg);base64,/,
+        ""
+      );
+      formData.profile_picture = base64Data;
     }
-    console.log("Selected Image", selectedImage);
-    formData.profile_picture = selectedImage;
+
+    // //convert selected image to base64
+    // if (selectedImage instanceof Blob || selectedImage instanceof File) {
+    //   const reader = new FileReader();
+    //   reader.onloadend = () => {
+    //     console.log("reader.result", reader.result);
+    //     formData.profile_picture = reader.result;
+    //   };
+    //   reader.readAsDataURL(selectedImage);  // This line ensures the reader reads the Blob/File
+    // } else {
+    //   console.log("Selected Image", selectedImage);
+    //   formData.profile_picture = selectedImage;
+    // }
 
     if (data) {
-      console.log("editing Id", data.id, "editing Data", formData);
+      // console.log("editing Id", data.id, "editing Data", formData);
       const updateRes = await dispatch(
         updateTA({ id: data.id, data: formData })
       ).unwrap();
@@ -138,8 +155,8 @@ const AddEditTA = ({ data }) => {
       dispatch(accessTaName(updateRes.username));
     } else {
       const createRes = await dispatch(createTA(formData)).unwrap();
-      console.log("Created : ", createRes);
-      console.log("Created Name: ", createRes.ta);
+      // console.log("Created : ", createRes);
+      // console.log("Created Name: ", createRes.ta);
       dispatch(openSuccessPopup());
       dispatch(accessTaName(createRes.ta));
     }
@@ -148,7 +165,7 @@ const AddEditTA = ({ data }) => {
   const nameValue = watch("name", "");
   const aboutMeValue = watch("about_me", "");
 
-  console.log("selected Image", selectedImage)
+  // console.log("selected Image", selectedImage)
 
   return (
     <Box sx={{ p: 3 }}>
@@ -247,17 +264,17 @@ const AddEditTA = ({ data }) => {
                 {nameValue || "Name of the TA"}
               </Typography>
               <Typography
-              variant="body2"
-              sx={{
-                fontSize: "16px",
-                fontWeight: "400",
-                mb: 4,
-                color: "#5F6383",
-                font: "Nunito Sans",
-              }}
-            >
-              {aboutMeValue || "Short Description"}
-            </Typography>
+                variant="body2"
+                sx={{
+                  fontSize: "16px",
+                  fontWeight: "400",
+                  mb: 4,
+                  color: "#5F6383",
+                  font: "Nunito Sans",
+                }}
+              >
+                {aboutMeValue || "Short Description"}
+              </Typography>
               {/* <CustomTextField
                 label="Short Description"
                 name="short_description"
@@ -272,7 +289,6 @@ const AddEditTA = ({ data }) => {
             </Box>
           </Box>
           <Divider sx={{ mt: 2, mb: 4, border: "1px solid #C2C2E7" }} />
-
 
           <Grid container spacing={6}>
             <Grid item xs={12} sm={6} md={4}>
@@ -296,7 +312,6 @@ const AddEditTA = ({ data }) => {
                 errors={errors}
               />
             </Grid>
-
 
             <Grid item xs={12} sm={6} md={4}>
               <CustomTextField
@@ -500,7 +515,7 @@ const AddEditTA = ({ data }) => {
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <PhoneInput
-                name='phone'
+                name="phone"
                 country={"in"}
                 value={phoneNumber}
                 onChange={(phone) => setPhoneNumber(phone)}
