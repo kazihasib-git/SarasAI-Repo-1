@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@mui/material';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import DynamicTable from '../CommonComponent/DynamicTable';
 import { useDispatch, useSelector } from 'react-redux';
-import { closeScheduledSlots, openScheduledSession } from '../../redux/features/taModule/taScheduling';
+import { closeScheduledSlots, openScheduledSession } from '../../redux/features/taModule/taAvialability';
 import PopUpTable from '../CommonComponent/PopUpTable';
 
 const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = '#4E18A5', borderColor = '#FFFFFF', sx, ...props }) => {
@@ -33,92 +33,70 @@ const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = 
     );
 };
 
-const headers = ['S.No', 'Date', 'Slot Time', 'Select All'];
+
 
 const Slots = () => {
-    const dispatch  = useDispatch()
-    const { scheduledSlotsOpen } = useSelector((state) => state.taScheduling);
-    const [open, setOpen] = useState(false);
-    const [selectAll, setSelectAll] = useState();
-    const [data, setData] = useState([
-        { id: 1, date: '2023-06-25', slotTime: '10:00 AM - 11:00 AM', isSelected: false },
-        { id: 2, date: '2023-06-26', slotTime: '11:00 AM - 12:00 PM', isSelected: false },
-        // Add more data as needed
-    ]);
-
-    const handleSelectAll = () => {
-        const newSelectAll = !selectAll;
-        setSelectAll(newSelectAll);
-        setData(prevData =>
-            prevData.map(item => ({
-                ...item,
-                isSelected: newSelectAll,
-            }))
-        );
-    };
-
+    const dispatch = useDispatch();
+    const taAvialability = useSelector((state) => state.taAvialability);
+    const { scheduledSlotsData = [], scheduledSlotsOpen = false } = taAvialability || {};
+    const [selectedSlots, setSelectedSlots] = useState([]);
+    const [data, setData] = useState([]);
+  
+    useEffect(() => {
+      const formattedData = scheduledSlotsData.map((slot) => ({
+        "S. No.": slot.id,
+        Date: slot.slot_date,
+        "Slot Time": `${slot.from_time} - ${slot.to_time}`, // Adjust according to your data structure
+        Select: selectedSlots.includes(slot.id),
+      }));
+      setData(formattedData);
+    }, [scheduledSlotsData, selectedSlots]);
+  
     const handleSelect = (id) => {
-        setData(prevData =>
-            prevData.map(item =>
-                item.id === id ? { ...item, isSelected: !item.isSelected } : item
-            )
-        );
+      setSelectedSlots((prev) =>
+        prev.includes(id) ? prev.filter((slotId) => slotId !== id) : [...prev, id]
+      );
     };
-
+  
     const handleSubmit = () => {
-        // Handle submit logic here
-        console.log("Submitting selected slots:", data.filter(item => item.isSelected));
-        dispatch(closeScheduledSlots());
-        dispatch(openScheduledSession());
+      console.log("Submitting selected slots:", selectedSlots);
+      dispatch(closeScheduledSlots());
+      dispatch(openScheduledSession());
     };
-
-    const handleOpen = () => {
-        setOpen(true);
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-    };
-
-    const actionButtons = [
-        {
-          type: "checkbox",
-        //   onClick: (id) => {
-        //     handleEditTaClick(id);
-        //   },
-        },
-      ];
-
+  
+    const headers = ["S. No.", "Date", "Slot Time", "Select"];
+  
     const table = (
-        <PopUpTable
-            headers={headers}
-            initialData={data}
-            actionButtons={actionButtons}
-        />
+      <PopUpTable
+        headers={headers}
+        initialData={data}
+        onRowClick={handleSelect}
+        selectedBox={selectedSlots}
+      />
     );
-
+  
     const actions = (
-        <CustomButton
-            onClick={handleSubmit}
-            backgroundColor='#F56D3B'
-            borderColor='#F56D3B'
-            color='#FFFFFF'
-        >
-            Submit
-        </CustomButton>
+      <CustomButton
+        onClick={handleSubmit}
+        backgroundColor="#F56D3B"
+        borderColor="#F56D3B"
+        color="#FFFFFF"
+      >
+        Submit
+      </CustomButton>
     );
-
+  
     return (
-        <>
-            <ReusableDialog
-                open={scheduledSlotsOpen}
-                handleClose={() => dispatch(closeScheduledSlots())}
-                title="Slots"
-                content={table}
-                actions={actions}
-            />
-        </>
+      <ReusableDialog
+        open={scheduledSlotsOpen}
+        handleClose={() => dispatch(closeScheduledSlots())}
+        title="Slots"
+        content={table}
+        actions={actions}
+      />
     );
-};
+  };
+  
+
 
 export default Slots;

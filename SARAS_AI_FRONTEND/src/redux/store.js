@@ -5,12 +5,14 @@ import { batchesApi } from './services/batches/batchesApi';
 import { coursesApi } from './services/courses/coursesApi';
 import taReducer from './features/taModule/taSlice';
 import taSchedulingReducer from './features/taModule/taScheduling';
+import taAvailabilityReducer from './features/taModule/taAvialability';
 
 const store = configureStore({
 
     reducer: {
         taModule: taReducer,
         taScheduling : taSchedulingReducer,
+        taAvialability : taAvailabilityReducer,
         [studentsApi.reducerPath]: studentsApi.reducer,
         [batchesApi.reducerPath]: batchesApi.reducer,
         [coursesApi.reducerPath]: coursesApi.reducer,

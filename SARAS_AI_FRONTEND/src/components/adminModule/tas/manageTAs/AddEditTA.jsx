@@ -482,7 +482,7 @@ const AddEditTA = ({ data }) => {
                 rules={{ required: "Highest Qualification is required" }}
                 render={({ field }) => (
                   <>
-                    {console.log("DATA highest_qualification : ", field.value)}
+                    {/* {console.log("DATA highest_qualification : ", field.value)} */}
                     <CustomFormControl
                       label="Highest Qualification"
                       name="highest_qualification"
