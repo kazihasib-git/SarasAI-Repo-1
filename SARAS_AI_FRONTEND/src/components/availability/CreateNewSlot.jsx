@@ -7,6 +7,10 @@ import ReusableDialog from '../CustomFields/ReusableDialog';
 import { format, addDays, parseISO } from 'date-fns';
 import CustomTextField from '../CustomFields/CustomTextField';
 
+import { transformedTimeZones } from '../CustomFields/FormOptions';
+import CustomFormControl from '../CustomFields/CustomFromControl';
+ 
+
 const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = '#4E18A5', borderColor = '#FFFFFF', sx, ...props }) => {
     return (
         <Button
@@ -35,7 +39,14 @@ const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = 
 };
 
 const CreateNewSlot = ({ open, handleClose, addEvent }) => {
-    const { control, handleSubmit, watch, formState: { errors } } = useForm();
+    const { control, handleSubmit, watch, formState: { errors } } = useForm({
+        defaultValues: {
+          gender: "",
+          time_zone: "",
+          highest_qualification: "",
+          date_of_birth: null,
+        },
+      });
 
     const onSubmit = (data) => {
         // Format the date and time inputs
@@ -46,15 +57,16 @@ const CreateNewSlot = ({ open, handleClose, addEvent }) => {
         };
 
         if (data.repeat === 'recurring') {
-            // Create slots continuously for selected days until the end date
-            const selectedDays = Object.keys(data.selectedDays).filter(day => data.selectedDays[day]);
+            // Convert selected days to 0,1 form
+            const selectedDaysBinary = weekDays.map(day => (data.selectedDays[day] ? 1 : 0));
 
+            // Create slots continuously for selected days until the end date
             const startDate = new Date(formattedData.fromDate);
             const endDate = parseISO(data.endDate);
 
             let currentDate = startDate;
             while (currentDate <= endDate) {
-                if (selectedDays.includes(currentDate.toLocaleDateString('en-US', { weekday: 'long' }))) {
+                if (selectedDaysBinary[currentDate.getDay()] === 1) {
                     const newStart = format(new Date(`${currentDate.toDateString()} ${data.fromTime}`), "yyyy-MM-dd HH:mm");
                     const newEnd = format(new Date(`${currentDate.toDateString()} ${data.toTime}`), "yyyy-MM-dd HH:mm");
                     addEvent(data.title, newStart, newEnd);
@@ -69,7 +81,7 @@ const CreateNewSlot = ({ open, handleClose, addEvent }) => {
         handleClose();
     };
 
-    const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
     const content = (
         <form id="createForm" onSubmit={handleSubmit(onSubmit)}>
@@ -142,6 +154,24 @@ const CreateNewSlot = ({ open, handleClose, addEvent }) => {
                                 onChange={field.onChange}
                                 error={!!errors.toTime}
                                 helperText={errors.toTime ? errors.toTime.message : ''}
+                            />
+                        )}
+                    />
+                </Grid>
+                {/* Add the Time Zone form control */}
+                <Grid item xs={12} sm={6} md={4}>
+                    <Controller
+                        name="time_zone"
+                        control={control}
+                        rules={{ required: "Time Zone is required" }}
+                        render={({ field }) => (
+                            <CustomFormControl
+                                label="Time Zone"
+                                name="time_zone"
+                                value={field.value}
+                                onChange={field.onChange}
+                                errors={errors}
+                                options={transformedTimeZones}
                             />
                         )}
                     />
