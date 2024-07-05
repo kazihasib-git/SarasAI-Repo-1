@@ -8,7 +8,7 @@ import MarkLeave from '../../components/availability/MarkLeave';
 import DeleteAllSlots from '../../components/availability/DeleteAllSlots';
 import CreateNewSlot from '../../components/availability/CreateNewSlot';
 import ScheduleSession from '../../components/availability/ScheduleSession';
-import { openMarkLeave, closeMarkLeave } from '../../redux/features/taModule/taScheduling';
+import { openMarkLeave, closeMarkLeave } from '../../redux/features/taModule/taAvialability';
 import { useDispatch, useSelector } from 'react-redux';
 import Slots from '../../components/availability/Slots';
 import ScheduledSessions from '../../components/availability/ScheduledSessions';
@@ -59,7 +59,7 @@ const TaCalender
             cancelSessionOpen,
             reasonForLeaveOpen,
             resheduleSessionOpen,
-        } = useSelector((state) => state.taScheduling);
+        } = useSelector((state) => state.taAvialability);
         //calendar
         const [eventsList, setEventsList] = useState([]);
         const addEvent = (title, startDateTime, endDateTime) => {
@@ -94,10 +94,10 @@ const TaCalender
             setCreateNewSlot(true)
         }
 
-        console.log("markLeaveOpen", markLeaveOpen);
-        console.log("scheduledSlotsOpen", scheduledSlotsOpen)
-        console.log("scheduledSessionOpen", scheduledSessionOpen)
-        console.log("cancelSessionOpen", cancelSessionOpen)
+        // console.log("markLeaveOpen", markLeaveOpen);
+        // console.log("scheduledSlotsOpen", scheduledSlotsOpen)
+        // console.log("scheduledSessionOpen", scheduledSessionOpen)
+        // console.log("cancelSessionOpen", cancelSessionOpen)
 
         return (
             <Box sx={{ backgroundColor: '#f8f9fa', p: 3 }}>

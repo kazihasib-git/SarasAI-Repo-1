@@ -2,7 +2,7 @@ import React from 'react'
 import ReusableDialog from '../CustomFields/ReusableDialog'
 import { Box, Button, DialogContent, DialogTitle, Typography } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
-import { closeCancelSession, closeReasonForLeave, openReasonForLeave, openScheduledSession } from '../../redux/features/taModule/taScheduling'
+import { closeCancelSession, closeReasonForLeave, openReasonForLeave, openScheduledSession } from '../../redux/features/taModule/taAvialability'
 
 const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = '#4E18A5', borderColor = '#FFFFFF', sx, ...props }) => {
     return (
@@ -33,7 +33,7 @@ const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = 
 
 const CancelSchedule = () => {
     const dispatch = useDispatch()
-    const { cancelSessionOpen } = useSelector((state) => state.taScheduling)
+    const { cancelSessionOpen } = useSelector((state) => state.taAvialability)
 
     const actions = (
         <Box>
