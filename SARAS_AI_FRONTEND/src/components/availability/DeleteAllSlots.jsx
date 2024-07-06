@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, DialogContent, DialogContentText, Grid, TextField } from '@mui/material';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import CustomTextField from '../CustomFields/CustomTextField';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteFutureSlots } from '../../redux/features/taModule/taAvialability';
 const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = '#4E18A5', borderColor = '#FFFFFF', sx, ...props }) => {
     return (
         <Button
@@ -31,10 +32,20 @@ const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = 
 };
 
 
-const DeleteAllSlots = ({ open, handleClose }) => {
+const DeleteAllSlots = ({ open, handleClose ,id , name}) => {
+    const dispatch = useDispatch()
     const handleSubmit = () => {
+        console.log("TA ID : ", id)
+        console.log("TA NAME : ", name)
+        dispatch(deleteFutureSlots({id}))
         handleClose();
     };
+
+    useEffect(() => {
+        if (!open) {
+          setReason('');
+        }
+      }, [open]);
 
     const content = (
         <>

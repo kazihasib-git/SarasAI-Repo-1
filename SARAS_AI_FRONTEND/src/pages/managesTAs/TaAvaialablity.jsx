@@ -92,12 +92,12 @@ const DynamicTable = ({ headers, initialData, title, actionButtons }) => {
         console.log("Deleting item with id:", id);
     };
 
-    const handleView = (type, id) => {
+    const handleView = (type, id, taName) => {
      
         // Implement view functionality here based on type ('students' or 'batches')
 
         console.log(`Viewing ${type} for item with id:`, id);
-        navigate('/ta-calendar')
+        navigate(`/ta-calendar/${taName}/${id}`)
     };
 
     const getColorForAvailability = (availability) => {
@@ -130,6 +130,7 @@ const DynamicTable = ({ headers, initialData, title, actionButtons }) => {
                 <tbody className="commonTableBody">
                     {currentData.map((item, index) => (
                         <tr key={item.id} id="commonTableRow">
+                            {/* {console.log("ITEM : ", item)} */}
                             <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                             {Object.keys(item).map((key, idx) => {
                                 if (key === 'availability') {
@@ -146,7 +147,7 @@ const DynamicTable = ({ headers, initialData, title, actionButtons }) => {
                                                 variant="outlined"
                                                 color="secondary"
                                                 endIcon={<CallMadeOutlinedIcon />}
-                                                onClick={() => handleView('Calendar', item.id)}
+                                                onClick={() => handleView('Calendar', item.id, item.taName)}
                                             >
                                                 Check
                                             </CustomButton>

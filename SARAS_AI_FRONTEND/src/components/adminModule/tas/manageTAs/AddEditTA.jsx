@@ -55,13 +55,11 @@ const AddEditTA = ({ data }) => {
   });
 
   const [selectedImage, setSelectedImage] = useState(null);
-  const [taName, setTAName] = useState();
+  //const [taName, setTAName] = useState();
   const [dateOfBirth, setDateOfBirth] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState("");
   const dispatch = useDispatch();
-  const { tas, successPopup, assignStudentOpen, assignBatchOpen } = useSelector(
-    (state) => state.taModule
-  );
+  const { tas,ta_name, successPopup, assignStudentOpen, assignBatchOpen } = useSelector((state) => state.taModule);
 
   // console.log("data to be edit", data);
 
@@ -69,7 +67,7 @@ const AddEditTA = ({ data }) => {
     if (data) {
       const formattedDate = dayjs(dateOfBirth).format("YYYY-MM-DD HH:mm:ss");
       console.log("DATE birth : ", data.date_of_birth);
-
+      dispatch(accessTaName(data))
       //convert base64 image to blob
       if (data.profile_picture) {
         const byteCharacters = atob(data.profile_picture);
@@ -99,6 +97,7 @@ const AddEditTA = ({ data }) => {
       setValue("highest_qualification", data.highest_qualification);
       setValue("about_me", data.about_me);
       setPhoneNumber(data.phone);
+      dispatch(accessTaName(data));
     }
   }, [data, setValue, setSelectedImage]);
 
@@ -130,18 +129,7 @@ const AddEditTA = ({ data }) => {
       formData.profile_picture = base64Data;
     }
 
-    // //convert selected image to base64
-    // if (selectedImage instanceof Blob || selectedImage instanceof File) {
-    //   const reader = new FileReader();
-    //   reader.onloadend = () => {
-    //     console.log("reader.result", reader.result);
-    //     formData.profile_picture = reader.result;
-    //   };
-    //   reader.readAsDataURL(selectedImage);  // This line ensures the reader reads the Blob/File
-    // } else {
-    //   console.log("Selected Image", selectedImage);
-    //   formData.profile_picture = selectedImage;
-    // }
+
 
     if (data) {
       // console.log("editing Id", data.id, "editing Data", formData);
@@ -165,6 +153,8 @@ const AddEditTA = ({ data }) => {
   const aboutMeValue = watch("about_me", "");
 
   // console.log("selected Image", selectedImage)
+
+  console.log("taNameeeee :", ta_name)
 
   return (
     <Box sx={{ p: 3 }}>

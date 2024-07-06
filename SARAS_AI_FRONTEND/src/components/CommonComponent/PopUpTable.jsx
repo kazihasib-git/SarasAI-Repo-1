@@ -1,17 +1,62 @@
 import React, { useEffect, useState } from "react";
-import { IconButton, Checkbox } from "@mui/material";
+import { IconButton, Checkbox, Button } from "@mui/material";
 import "./popUpTable.css";
 import { useNavigate } from "react-router-dom";
 import editIcon from "../../assets/editIcon.png";
 import bin from "../../assets/bin.png";
 
-const PopUpTable = ({
-  headers,
-  initialData,
-  actionButtons,
-  onRowClick,
-  selectedBox = [],
-}) => {
+const CustomButton = ({ onClick, children, variant = 'contained', color = '#FFFFFF', backgroundColor = '#4E18A5', borderColor = '#FFFFFF', sx, ...props }) => {
+  const variantStyles = {
+    contained: {
+      backgroundColor: backgroundColor,
+      color: color,
+      border: `2px solid ${borderColor}`,
+      '&:hover': {
+        backgroundColor: color,
+        color: backgroundColor,
+        borderColor: borderColor,
+      },
+    },
+    outlined: {
+      backgroundColor: 'transparent',
+      color: '#F56D38',
+      border: '2px solid #F56D38',
+      '&:hover': {
+        backgroundColor: '#F56D38',
+        color: '#FFFFFF',
+      },
+    },
+    text: {
+      backgroundColor: 'transparent',
+      color: '#F56D38',
+      '&:hover': {
+        backgroundColor: '#F56D38',
+        color: '#FFFFFF',
+      },
+    },
+  };
+
+  return (
+    <Button
+      onClick={onClick}
+      variant={variant}
+      sx={{
+        ...variantStyles[variant],
+        fontWeight: '700',
+        fontSize: '16px',
+        borderRadius: '50px',
+        padding: '10px 20px',
+        ...sx,
+      }}
+      {...props}
+    >
+      {children}
+    </Button>
+  );
+};
+
+
+const PopUpTable = ({ headers, initialData, onRowClick, selectedBox = [] ,onViewClick, onRescheduleClick, onCancelClick}) => {
   const [data, setData] = useState(initialData ?? []);
 
   useEffect(() => {
@@ -19,7 +64,6 @@ const PopUpTable = ({
   }, [initialData]);
 
   const handleCheckboxChange = (id) => {
-    console.log("ID : ", id)
     onRowClick(id);
   };
 
@@ -30,7 +74,6 @@ const PopUpTable = ({
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
-  console.log("CURRENT : ", currentData)
 
   return (
     <div className="table-container popUpModel">
@@ -45,7 +88,6 @@ const PopUpTable = ({
         <tbody className="popUpBody">
           {currentData.map((item, index) => (
             <tr key={item["S. No."] ?? index} id="popUpRow">
-              {console.log("HANDLE DATA : ", item)}
               {headers.map((header, idx) => (
                 <td key={idx}>
                   {header === "Select" ? (
@@ -59,6 +101,42 @@ const PopUpTable = ({
                       }}
                       inputProps={{ "aria-label": "select all" }}
                     />
+                  ) : header === "Actions" ? (
+                    <div>
+                      <CustomButton
+                        backgroundColor="#F56D38"
+                        color="#FFFFFF"
+                        borderColor="#F56D38"
+                        variant="contained"
+                        onClick={() => onCancelClick(item)}
+                      >
+                        Cancel
+                      </CustomButton>
+                      <div
+                        style={{
+                          textDecoration: "underline",
+                          cursor: "pointer",
+                          marginTop: "4px",
+                          color: "#F56D3B",
+                        }}
+                        onClick={() => onRescheduleClick(item)}
+                      >
+                        Reschedule
+                      </div>
+                    </div>
+                  ) : header === "Students" ? (
+                    <>
+                      {item.Students}
+                      <CustomButton
+                        variant="outlined"
+                        backgroundColor="#FFFFFF"
+                        borderColor="#F56D38"
+                        color="#F56D38"
+                        onClick={() => onViewClick(item.StudentList)}
+                      >
+                        View
+                      </CustomButton>
+                    </>
                   ) : (
                     item[header] ?? "N/A"
                   )}
@@ -71,6 +149,5 @@ const PopUpTable = ({
     </div>
   );
 };
-
 
 export default PopUpTable;

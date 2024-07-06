@@ -7,19 +7,13 @@ import {
   Box,
   Checkbox,
 } from "@mui/material";
-import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import CallMadeOutlinedIcon from "@mui/icons-material/CallMadeOutlined";
-import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
 import { styled } from "@mui/material/styles";
-import "./DynamicTable.css";
-import { useNavigate } from "react-router-dom";
-import editIcon from "../../assets/editIcon.png";
-import bin from "../../assets/bin.png";
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { useDispatch } from "react-redux";
-import { updateTA } from "../../redux/features/taModule/taSlice";
-import { openScheduleSession } from "../../redux/features/taModule/taScheduling";
-
+import editIcon from "../../../../assets/editIcon.png";
+import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye } from "@fortawesome/free-solid-svg-icons";
 const CustomButton = styled(Button)(({ theme }) => ({
   borderRadius: "20px",
   border: "1px solid #F56D3B",
@@ -34,22 +28,6 @@ const CustomButton = styled(Button)(({ theme }) => ({
   "&.active": {
     backgroundColor: "#F56D3B",
     color: "#fff",
-  },
-}));
-
-const CalenderButton = styled(Button)(({ theme }) => ({
-  borderRadius: "20px",
-  border: "none",
-  color: "#F56D3B",
-  backgroundColor: "#FEEBE3",
-  transition: "all 0.3s ease", // Corrected transition syntax
-  "&:hover": {
-    backgroundColor: "#FEEBE3",
-    color: "#F56D3B",
-    border: "none", // Corrected border removal syntax
-  },
-  "&:focus": {
-    outline: "none", // Remove default focus outline if desired
   },
 }));
 
@@ -98,7 +76,7 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
   },
 }));
 
-const DynamicTable = ({
+const TemplateModuleTable = ({
   headers,
   initialData,
   actionButtons,
@@ -134,29 +112,7 @@ const DynamicTable = ({
     setCurrentPage(pageNumber);
   };
 
-  const handleDelete = (id) => {
-    console.log("Deleting item with id:", id);
-  };
-
-  const handleView = (type, id) => {
-    // console.log("ID handleview : ", id);
-    if (type === "students") {
-      navigate(`/active-students/${id}`); // Append id as a parameter
-    } else if (type === "batches") {
-      navigate(`/active-batches/${id}`); // Append id as a parameter
-    }
-  };
-
-  const handlePopup = (id ,name) => {
-    console.log("ID handlePopup : ", id, name);
-    const data = {
-      id, name
-    }
-    dispatch(openScheduleSession(data));
-  }
-
   const handleToggle = (id) => {
-    console.log("id : ", id);
     const updatedData = data.map((item) =>
       item.id === id
         ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
@@ -181,18 +137,6 @@ const DynamicTable = ({
     }
   };
 
-  const getColorForAvailability = (availability) => {
-    switch (availability) {
-      case "Active":
-        return "#06DD0F";
-      case "On Leave":
-        return "#F48606";
-      case "Inactive":
-        return "#808080";
-      default:
-        return "#000000";
-    }
-  };
   return (
     <div className="tableContainer">
       <table>
@@ -203,7 +147,7 @@ const DynamicTable = ({
             ))}
           </tr>
         </thead>
-        <tbody className="tableBody">
+        <tbody className="tableBody" >
           {currentData.length === 0 ? (
             <tr>
               <td colSpan={headers.length} style={{ textAlign: "center" }}>
@@ -213,48 +157,47 @@ const DynamicTable = ({
           ) : (
             currentData.map((item, index) => (
               <tr key={item.id} id="tableRow">
-                {/* {console.log("CUURENT : ", item)} */}
                 <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                 {Object.keys(item).map((key, idx) => {
-                  // {console.log("KEY : ", key)}
-                  if (key === "Active_Students") {
-                    return (
-                      <td key={idx}>
-                        {item[key]}{" "}
-                        <CustomButton
-                          variant="outlined"
-                          color="secondary"
-                          endIcon={<CallMadeOutlinedIcon />}
-                          onClick={() => handleView("students", item.id)}
+                  if (key === "Activity" || key === "Prerequisites") {
+                    const value = item[key];
+                    if (
+                      value === "Link Activity" ||
+                      value === "Prerequisites"
+                    ) {
+                      return (
+                        <td
+                          key={idx}
+                          style={{
+                            borderRadius: "50px",
+                            backgroundColor: "#FEEBE3",
+                            color: "#F56D3B",
+                            padding: "8px",
+                            textAlign: "center",
+                          }}
                         >
-                          View
-                        </CustomButton>
-                      </td>
-                    );
-                  } else if (key === "Active_Batches") {
-                    return (
-                      <td key={idx}>
-                        {item[key]}{" "}
-                        <CustomButton
-                          variant="outlined"
-                          color="secondary"
-                          endIcon={<CallMadeOutlinedIcon />}
-                          onClick={() => handleView("batches", item.id)}
-                        >
-                          View
-                        </CustomButton>
-                      </td>
-                    );
+                          {value}
+                        </td>
+                      );
+                    } else if (key === "Activity" && value === "Video Name") {
+                      return (
+                        <td key={idx}>
+                          {value}
+                          <FontAwesomeIcon
+                            icon={faEye}
+                            style={{ marginLeft: "10px" }}
+                          />
+                        </td>
+                      );
+                    } else return <td key={idx}> {value}</td> ;
                   } else if (key !== "id" && key !== "is_active") {
-                    // Check if item[key] is an object, and handle accordingly
                     if (typeof item[key] === "object" && item[key] !== null) {
-                      // Render a string representation or a relevant property of the object
                       return <td key={idx}>{JSON.stringify(item[key])}</td>;
                     } else {
                       return <td key={idx}>{item[key]}</td>;
                     }
                   }
-                  return null; // Ensure all paths return a value
+                  return null;
                 })}
 
                 {actionButtons && (
@@ -297,11 +240,11 @@ const DynamicTable = ({
                                 backgroundColor: "rgba(245, 235, 227, 0.8)",
                               },
                               "& img": {
-                                height: "16px", // adjust size as needed
-                                width: "16px", // adjust size as needed
+                                height: "16px",
+                                width: "16px",
                               },
                               "& small": {
-                                lineHeight: "16px", // match this with the image height for better alignment
+                                lineHeight: "16px",
                               },
                             }}
                             onClick={() => button.onClick(item.id)}
@@ -311,35 +254,7 @@ const DynamicTable = ({
                           </IconButton>
                         );
                       }
-                      if (button.type === "delete") {
-                        return (
-                          <IconButton
-                            key={idx}
-                            color="primary"
-                            onClick={() => handleDelete(item.id)}
-                          >
-                            <img
-                              src={bin}
-                              alt=""
-                              style={{ width: "20px", height: "20px" }}
-                            />
-                          </IconButton>
-                        );
-                      }
-                      if (button.type === "calendar") {
-                        return (
-                          <CalenderButton
-                            key={idx}
-                            variant="outlined"
-                            color="secondary"
-                            startIcon={<CalendarMonthIcon />}
-                            onClick={() => handlePopup(item.id , item.name)}
-                          >
-                            Schedule
-                          </CalenderButton>
-                        );
-                      }
-                      return null; // Handle unexpected button types gracefully
+                      return null;
                     })}
                   </td>
                 )}
@@ -390,4 +305,4 @@ const DynamicTable = ({
   );
 };
 
-export default DynamicTable;
+export default TemplateModuleTable;
