@@ -18,6 +18,7 @@ import ReschedulingSession from '../../components/availability/ReschedulingSessi
 import { PickersInputBaseSectionsContainer } from '@mui/x-date-pickers/PickersTextField/PickersInputBase/PickersInputBase';
 import NewCal from '../../components/Calender/IndexCalenderNew';
 import { add } from 'date-fns';
+import { useParams } from 'react-router-dom';
 
 const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = '#4E18A5', borderColor = '#FFFFFF', sx, ...props }) => {
     return (
@@ -49,6 +50,7 @@ const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = 
 const TaCalender
     = () => {
         const dispatch = useDispatch();
+        const {id , name} = useParams()
         const [sheduleNewSession, setSheduleNewSession] = useState(false)
         const [deleteFutureSlots, setDeleteFutureSlots] = useState(false)
         const [createNewSlot, setCreateNewSlot] = useState(false)
@@ -105,7 +107,7 @@ const TaCalender
                     <Grid container alignItems="center">
                         <Grid item xs>
                             <Typography variant='h4' sx={{ mb: 4 }}>
-                                Ta Name
+                               {name}
                             </Typography>
                         </Grid>
                         <Grid item>
@@ -153,14 +155,14 @@ const TaCalender
                 </DialogActions>
                 <CalendarComponent eventsList={eventsList} addEvent={addEvent} /*handleSelectEvent={handleSelectEvent}*/ />
                 {sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} />}
-                {markLeaveOpen && <MarkLeave />}
-                {scheduledSlotsOpen && <Slots />}
-                {scheduledSessionOpen && <ScheduledSessions /> }
-                {cancelSessionOpen && <CancelSchedule />}
-                {reasonForLeaveOpen && <ReasonForLeave /> }
-                {resheduleSessionOpen && <ReschedulingSession /> }
-                {deleteFutureSlots && <DeleteAllSlots open={deleteFutureSlots} handleClose={() => setDeleteFutureSlots(false)} />}
-                {createNewSlot && <CreateNewSlot open={createNewSlot} handleClose={() => setCreateNewSlot(false)} addEvent={addEvent}/>}
+                {markLeaveOpen && <MarkLeave id={id} name={name} />}
+                {scheduledSlotsOpen && <Slots  id={id} name={name}/>}
+                {scheduledSessionOpen && <ScheduledSessions id={id} name={name}/> }
+                {cancelSessionOpen && <CancelSchedule id={id} name={name}/>}
+                {reasonForLeaveOpen && <ReasonForLeave id={id} name={name}/> }
+                {resheduleSessionOpen && <ReschedulingSession id={id} name={name} /> }
+                {deleteFutureSlots && <DeleteAllSlots open={deleteFutureSlots} handleClose={() => setDeleteFutureSlots(false)} id={id} name={name} />}
+                {createNewSlot && <CreateNewSlot open={createNewSlot} handleClose={() => setCreateNewSlot(false)} addEvent={addEvent} id={id} name={name} />}
             </Box>
         )
     }

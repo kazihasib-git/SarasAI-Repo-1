@@ -16,7 +16,7 @@ import ManagesTAs from "./pages/managesTAs/ManagesTAs";
 import TAAvailability from "./pages/managesTAs/TaAvaialablity";
 import ManageCoaches from "./pages/ManageCoaches/ManageCoaches";
 import CoachMapping from "./pages/ManageCoaches/CoachMapping";
-import CoachTemplate from "./pages/ManageCoaches/CoachTemplate";
+import CoachTemplate from "./pages/ManageCoaches/CoachingTemplate/CoachTemplate";
 import CoachAvialability from "./pages/managesTAs/CoachAvialability";
 import CoachScheduling from "./pages/ManageCoaches/CoachScheduling";
 import AllRoutes from "./components/AllRoutes/AllRoutes";
@@ -41,6 +41,8 @@ import CreateTAPage from "./pages/managesTAs/CreateTAPage";
 import AssignedBatches from "./pages/managesTAs/AssignedBatches";
 import TaCalender from "./pages/managesTAs/TaCalendar";
 import BatchPage from "./pages/batches/BatchPage";
+import CreateTemplate from "./pages/ManageCoaches/CoachingTemplate/CreateTemplate";
+import TemplateName from "./pages/ManageCoaches/CoachingTemplate/TemplateName";
 const ROLES = {
   Teaching: 2001,
   Coaches: 1984,
@@ -89,7 +91,7 @@ function App() {
               element={<TaScheduling page="TA Scheduling" />}
             />
             <Route
-              path="ta-calendar"
+              path="ta-calendar/:name/:id"
               element={<TaCalender page="Calendar" />}
             />
             {/* <Route path='calendar' element={<Calendar page="Calendar" />} /> */}
@@ -112,6 +114,15 @@ function App() {
             <Route
               path="coach-template"
               element={<CoachTemplate page="Coach Template" />}
+            />
+
+            <Route
+              path="create-template"
+              element={<CreateTemplate page="Create Template" />}
+            />
+            <Route
+              path="template-name"
+              element={<TemplateName page="Template Name" />}
             />
             <Route
               path="coach-availability"

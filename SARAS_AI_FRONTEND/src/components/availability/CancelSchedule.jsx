@@ -33,8 +33,8 @@ const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = 
 
 const CancelSchedule = () => {
     const dispatch = useDispatch()
-    const { cancelSessionOpen } = useSelector((state) => state.taAvialability)
-
+    const { cancelSessionOpen ,schduldeCancelData } = useSelector((state) => state.taAvialability)
+    console.log("schduldeCancelData : ",schduldeCancelData)
     const actions = (
         <Box>
         <CustomButton
@@ -68,12 +68,12 @@ const CancelSchedule = () => {
         <>
             <DialogTitle>
                 {/* `'${Batch_Info} - ${Week_Info}'` */}
-                Batch_Info - Week_Info
+               {schduldeCancelData["Session Name"]}
             </DialogTitle>
-            <DialogContent>
+            <DialogContent style={{display:'flex', justifyContent:"center"}}>
                 <Typography>
                     {/* `scheduled for ${date} from ${from_time} to ${to_fime}` */}
-                    Scheduled for Date from from_time to to_time ?
+                    Scheduled for Date from {schduldeCancelData.Time} ?
                 </Typography>
             </DialogContent>
         </>

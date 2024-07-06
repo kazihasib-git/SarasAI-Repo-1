@@ -78,6 +78,12 @@ const AssignBatches = () => {
         batch_id: batch.id,
       }));
 
+      // Initialize selected batches with active ones
+      const activeBatches = batchMapping
+        .filter((batch) => batch.is_active === 1)
+        .map((batch) => batch.id);
+      setSelectedBatches(activeBatches);
+
       // Filter by selected batch
       const filtered = transformedData.filter(
         (batch) =>
@@ -99,7 +105,7 @@ const AssignBatches = () => {
   ];
 
   const handleSelectBatch = (id) => {
-    console.log("IDDD : ", id)
+    console.log("IDDD : ", id);
     setSelectedBatches((prev) =>
       prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id]
     );
@@ -133,7 +139,7 @@ const AssignBatches = () => {
   const content = (
     <>
       <Grid container spacing={2} justifyContent="center">
-        <Grid item xs={12} sm={6}>
+        <Grid item sm={6}>
           <CustomTextField
             select
             label="Batch"
@@ -148,9 +154,9 @@ const AssignBatches = () => {
           </CustomTextField>
         </Grid>
         <Grid item xs={12}>
-          <Divider sx={{ mt: 2, mb: 4, border: "1px solid #C2C2E7" }} />
+          <Divider sx={{ border: "1px solid #C2C2E7" }} />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} mb={2}>
           <CustomTextField
             label="Search By Batches"
             value={selectedBatch}

@@ -68,16 +68,23 @@ const AssignStudents = () => {
 
   useEffect(() => {
     if (studentBatchMapping) {
-      console.log("STUDENT BATCH MAPPING : ", studentBatchMapping)
+      console.log("STUDENT BATCH MAPPING : ", studentBatchMapping);
       const transformedData = studentBatchMapping.map((student, index) => ({
         "S. No.": student.student_id,
         "Student Name": student.student_name,
         "Academic Term": student.academic_term,
-        Batch: student.batches.map(batch => batch.batch_name).join(", ") || "N/A",
+        Batch:
+          student.batches.map((batch) => batch.batch_name).join(", ") || "N/A",
         Select: student.is_active ? "Active" : "Inactive",
         student_id: student.student_id,
         is_active: student.is_active,
       }));
+
+      // Set pre-selected students based on is_active status
+      const preSelectedStudents = transformedData
+        .filter((student) => student.is_active)
+        .map((student) => student.student_id);
+      setSelectedStudents(preSelectedStudents);
 
       // Filter by selected batch and search name
       const filtered = transformedData.filter((student) =>
@@ -129,12 +136,18 @@ const AssignStudents = () => {
     dispatch(closeAssignStudents());
   };
 
-  const headers = ["S. No.", "Student Name", "Academic Term", "Batch", "Select"];
+  const headers = [
+    "S. No.",
+    "Student Name",
+    "Academic Term",
+    "Batch",
+    "Select",
+  ];
 
   const content = (
     <>
       <Grid container spacing={2}>
-        <Grid item xs={12} sm={6}>
+        <Grid item  sm={6}>
           <CustomTextField
             select
             label="Academic Term"
@@ -165,10 +178,10 @@ const AssignStudents = () => {
         </Grid>
 
         <Grid item xs={12}>
-          <Divider sx={{ mt: 2, mb: 4, border: "1px solid #C2C2E7" }} />
+          <Divider sx={{ border: "1px solid #C2C2E7" }} />
         </Grid>
 
-        <Grid item xs={12}>
+        <Grid item xs={12} marginBottom={2}>
           <CustomTextField
             label="Search By Student Name"
             value={searchName}
@@ -197,7 +210,11 @@ const AssignStudents = () => {
   const actions = (
     <Button
       onClick={handleSubmit}
-      style={{ backgroundColor: "#F56D3B", borderColor: "#F56D3B", color: "#FFFFFF" }}
+      style={{
+        backgroundColor: "#F56D3B",
+        borderColor: "#F56D3B",
+        color: "#FFFFFF",
+      }}
     >
       Submit
     </Button>
@@ -217,7 +234,5 @@ const AssignStudents = () => {
     />
   );
 };
-
-
 
 export default AssignStudents;

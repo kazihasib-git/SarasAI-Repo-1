@@ -67,7 +67,7 @@ const AddEditTA = ({ data }) => {
     if (data) {
       const formattedDate = dayjs(dateOfBirth).format("YYYY-MM-DD HH:mm:ss");
       console.log("DATE birth : ", data.date_of_birth);
-
+      dispatch(accessTaName(data))
       //convert base64 image to blob
       if (data.profile_picture) {
         const byteCharacters = atob(data.profile_picture);
@@ -129,18 +129,7 @@ const AddEditTA = ({ data }) => {
       formData.profile_picture = base64Data;
     }
 
-    // //convert selected image to base64
-    // if (selectedImage instanceof Blob || selectedImage instanceof File) {
-    //   const reader = new FileReader();
-    //   reader.onloadend = () => {
-    //     console.log("reader.result", reader.result);
-    //     formData.profile_picture = reader.result;
-    //   };
-    //   reader.readAsDataURL(selectedImage);  // This line ensures the reader reads the Blob/File
-    // } else {
-    //   console.log("Selected Image", selectedImage);
-    //   formData.profile_picture = selectedImage;
-    // }
+
 
     if (data) {
       // console.log("editing Id", data.id, "editing Data", formData);

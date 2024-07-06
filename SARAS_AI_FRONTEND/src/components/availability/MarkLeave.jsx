@@ -82,7 +82,16 @@ const MarkLeave = () => {
   };
 
   const content = (
-    <Grid container sx={{ pt: 3 }}>
+    <Grid
+      container
+      sx={{
+        pt: 3,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        textAlign: "center", // Add this line if needed
+      }}
+    >
       <Grid item xs={12} sm={6}>
         <CustomDateField
           label="From Date"

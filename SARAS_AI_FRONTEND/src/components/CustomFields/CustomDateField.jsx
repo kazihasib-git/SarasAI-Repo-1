@@ -18,7 +18,7 @@ const CustomDateField = ({
   };
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
+    <LocalizationProvider  dateAdapter={AdapterDayjs}>
       <DatePicker
         label={label}
         name={name}
@@ -32,6 +32,7 @@ const CustomDateField = ({
         sx={{
           "& .MuiOutlinedInput-root": {
             borderRadius: "50px",
+            
             "& fieldset": {
               borderColor: "#D0D0EC",
             },
