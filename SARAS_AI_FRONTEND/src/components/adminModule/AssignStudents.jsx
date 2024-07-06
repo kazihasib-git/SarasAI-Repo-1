@@ -11,6 +11,7 @@ import {
 import CustomTextField from "../CustomFields/CustomTextField";
 import ReusableDialog from "../CustomFields/ReusableDialog";
 import PopUpTable from "../CommonComponent/PopUpTable";
+import { openScheduleSession } from "../../redux/features/taModule/taScheduling";
 
 const CustomButton = ({
   onClick,
@@ -54,10 +55,10 @@ const AssignStudents = () => {
   const [searchName, setSearchName] = useState(""); // State for search input
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [filteredStudents, setFilteredStudents] = useState([]);
-  
-  const { assignStudentOpen, ta_name, taID, studentBatchMapping } = useSelector(
-    (state) => state.taModule
-  );
+
+  const { assignStudentOpen, ta_name, taID, studentBatchMapping } = useSelector((state) => state.taModule);
+
+  const { taName,  taID  : taId } = useSelector((state) => state.taScheduling);
 
   useEffect(() => {
     if (assignStudentOpen) {
@@ -79,7 +80,7 @@ const AssignStudents = () => {
       }));
 
       // Filter by selected batch and search name
-      const filtered = transformedData.filter((student) => 
+      const filtered = transformedData.filter((student) =>
         student["Student Name"].toLowerCase().includes(searchName.toLowerCase()) &&
         (!selectedBatch || student.Batch.includes(selectedBatch))
       );
@@ -91,18 +92,18 @@ const AssignStudents = () => {
   // Ensure studentBatchMapping is not null or undefined before using flatMap
   const batchOptions = studentBatchMapping
     ? [
-        ...new Set(
-          studentBatchMapping.flatMap((student) => student.batches.map(batch => batch.batch_name))
-        ),
-      ]
+      ...new Set(
+        studentBatchMapping.flatMap((student) => student.batches.map(batch => batch.batch_name))
+      ),
+    ]
     : [];
 
   const academicTermOptions = studentBatchMapping
     ? [
-        ...new Set(
-          studentBatchMapping.map((student) => student.academic_term)
-        ),
-      ]
+      ...new Set(
+        studentBatchMapping.map((student) => student.academic_term)
+      ),
+    ]
     : [];
 
   const handleSelectStudent = (id) => {
@@ -113,11 +114,16 @@ const AssignStudents = () => {
 
   const handleSubmit = () => {
     const data = {
-      ta_id: taID,
+      ta_id: taID ? taID : taId,
       student: selectedStudents.map((id) => ({ id: id.toString() })),
     };
-    dispatch(postAssignStudents({ id: taID, data }))
+    dispatch(postAssignStudents({ id: taID ? taID : taId, data }))
       .then(() => {
+        // Open Schedule Session
+        if(taId){
+          dispatch(openScheduleSession({ id: taId, name: taName , student : selectedStudents.map((id) => ({ id: id.toString() })) }));
+        }
+        // Open Success Popup
         dispatch(openSuccessPopup());
       });
     dispatch(closeAssignStudents());
@@ -197,11 +203,15 @@ const AssignStudents = () => {
     </Button>
   );
 
+  console.log('ta_name:', ta_name, 'taName:', taName)
+
+  const assignedTA = ta_name || taName;
+
   return (
     <ReusableDialog
       open={assignStudentOpen}
       handleClose={() => dispatch(closeAssignStudents())}
-      title={`Assign Students to ${ta_name}`}
+      title={`Assign Students to ${assignedTA}`}
       content={content}
       actions={actions}
     />

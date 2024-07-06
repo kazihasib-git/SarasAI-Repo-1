@@ -11,6 +11,7 @@ const store = configureStore({
 
     reducer: {
         taModule: taReducer,
+        taAvailability : taAvailabilityReducer,
         taScheduling : taSchedulingReducer,
         taAvialability : taAvailabilityReducer,
         [studentsApi.reducerPath]: studentsApi.reducer,

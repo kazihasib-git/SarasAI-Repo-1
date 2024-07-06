@@ -11,6 +11,7 @@ import {
 import CustomTextField from "../CustomFields/CustomTextField";
 import ReusableDialog from "../CustomFields/ReusableDialog";
 import PopUpTable from "../CommonComponent/PopUpTable";
+import { openScheduleSession } from "../../redux/features/taModule/taScheduling";
 
 const CustomButton = ({
   onClick,
@@ -49,13 +50,10 @@ const CustomButton = ({
 
 const AssignBatches = () => {
   const dispatch = useDispatch();
-  const {
-    assignBatchOpen,
-    ta_name,
-    taID,
-    batchMapping = [],
-    loading,
-  } = useSelector((state) => state.taModule);
+  const { assignBatchOpen, ta_name, taID, batchMapping = [], loading, } = useSelector((state) => state.taModule);
+
+  const { taName, taID: taId } = useSelector((state) => state.taScheduling);
+
   const [selectedBatch, setSelectedBatch] = useState("");
   const [filteredBatches, setFilteredBatches] = useState([]);
   const [selectedBatches, setSelectedBatches] = useState([]);
@@ -109,10 +107,15 @@ const AssignBatches = () => {
 
   const handleSubmit = () => {
     const data = {
-      ta_id: taID,
+      ta_id: taID ? taID : taId,
       batches: selectedBatches.map((id) => ({ id: id.toString() })),
     };
-    dispatch(postAssignBatches({ id: taID, data })).then(() => {
+    dispatch(postAssignBatches({ id: taID ? taID : taId, data })).then(() => {
+      if (taId) {
+        if (taId) {
+          dispatch(openScheduleSession({ id: taId, name: taName, batches: selectedBatches.map((id) => ({ id: id.toString() })) }));
+        }
+      }
       dispatch(openSuccessPopup());
     });
     dispatch(closeAssignBatches());
@@ -190,11 +193,13 @@ const AssignBatches = () => {
     return <div>Loading...</div>;
   }
 
+  const assignedTA = ta_name || taName;
+
   return (
     <ReusableDialog
       open={assignBatchOpen}
       handleClose={() => dispatch(closeAssignBatches())}
-      title={`Assign Batches to ${ta_name}`}
+      title={`Assign Batches to ${assignedTA}`}
       content={content}
       actions={actions}
     />

@@ -147,6 +147,7 @@ export const getAssignBatches = createAsyncThunk(
     return response.data;
   }
 );
+
 export const toggleAssignStudentStatus = createAsyncThunk(
   "taModule/toggleAssignStudentStatus",
   async ({ id, studentId }) => {
@@ -286,6 +287,13 @@ export const taSlice = createSlice({
     },
     closeAssignBatches(state) {
       state.assignBatchOpen = false;
+    },
+
+    handleSelectedStudents(state, action) {
+      state.selectedStudents = action.payload;
+    },
+    handleSelectedBatches(state, action) {
+      state.selectedBatches = action.payload;
     },
   },
   extraReducers: (builder) => {
