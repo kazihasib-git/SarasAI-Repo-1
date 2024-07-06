@@ -8,9 +8,10 @@ import CustomDateField from '../CustomFields/CustomDateField';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import CustomFormControl from '../CustomFields/CustomFromControl';
 import { timeZones, transformedTimeZones, validateTimeZone } from '../CustomFields/FormOptions';
-import { closeScheduleSession } from '../../redux/features/taModule/taScheduling';
+import { closeScheduleSession, createTASchedule, getTaAvailableSlotsFromDate } from '../../redux/features/taModule/taScheduling';
 import { openAssignBatches, openAssignStudents } from '../../redux/features/taModule/taSlice';
 import { getSlots } from '../../redux/features/taModule/taAvialability';
+import { useForm } from 'react-hook-form';
 
 const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = '#4E18A5', borderColor = '#FFFFFF', sx, ...props }) => {
     return (
@@ -39,17 +40,8 @@ const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = 
     );
 };
 
-//const headers = ['S. No.', 'Session Name', 'Date', 'Time', 'Students', 'Actions']
-const headers = ['S. No.', 'Slot Date', 'From Time', 'To Time', 'Actions'];
-
-// const dummyData =[];
-const dummyData = [
-    { id: 1, sessionName: 'Math 101', date: '2023-06-25', time: '10:00 AM', students: 30, actions: 'View' },
-    { id: 2, sessionName: 'Physics 201', date: '2023-06-26', time: '11:00 AM', students: 25, actions: 'View' },
-    { id: 3, sessionName: 'Chemistry 301', date: '2023-06-27', time: '12:00 PM', students: 20, actions: 'View' },
-    { id: 4, sessionName: 'Biology 401', date: '2023-06-28', time: '01:00 PM', students: 15, actions: 'View' },
-    { id: 5, sessionName: 'English 101', date: '2023-06-29', time: '02:00 PM', students: 10, actions: 'View' }
-];
+const headers = ['S. No.', 'Slot Date', 'From Time', 'To Time', 'Select'];
+const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
 const actionButtons = [
     {
@@ -58,21 +50,39 @@ const actionButtons = [
 ];
 
 const Schedule = () => {
-    const [formDate, setFormDate] = useState(null);
+    const [fromDate, setFromDate] = useState(null);
     const [toDate, setToDate] = useState(null);
+    const [fromTime, setFromTime] = useState(null);
+    const [toTime, setToTime] = useState(null);
     const [timezone, setTimezone] = useState('');
     const [repeat, setRepeat] = useState('onetime');
     const [selectedDays, setSelectedDays] = useState([]);
     const [taSlotData, setTaSlotData] = useState([{}]);
+    const [selectedSlot, setSelectedSlot] = useState([{}]);
+
     const dispatch = useDispatch()
-    const { scheduleSessionOpen, taID, taName } = useSelector((state) => state.taScheduling);
-    const { scheduledSlotsData } = useSelector((state) => state.taAvialability);
+    const { scheduleSessionOpen, taID, taName, students, batches, taAvailableSlots } = useSelector((state) => state.taScheduling);
+    const { register, handleSubmit, formState: { errors } } = useForm();
 
-    const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    useEffect(() => {
+        if (fromDate) {
+            dispatch(getTaAvailableSlotsFromDate({ admin_user_id: taID, date: fromDate }));
+        }
+    }, [fromDate]);
 
-    const handleSubmit = () => {
-        dispatch(closeScheduleSession())
-    };
+    useEffect(() => {
+        if (taAvailableSlots && taAvailableSlots.length > 0) {
+            const transformData = taAvailableSlots.map((item) => ({
+                "S. No.": item.id,
+                "Slot Date": item.slot_date,
+                "From Time": item.from_time,
+                "To Time": item.to_time,
+                //'Time Zone': item.timezone,
+            }));
+            setTaSlotData(transformData);
+        }
+    }, [taAvailableSlots]);
+
 
     const handleDayChange = (day) => {
         setSelectedDays((prev) => {
@@ -84,42 +94,56 @@ const Schedule = () => {
         });
     };
 
-    useEffect(() => {
-        fetchAvailableSlots();
-    }, [formDate]);
-
-    const fetchAvailableSlots = () => {
-        dispatch(getSlots({ admin_user_id: taID, start_date: formDate, end_date: "2024-07-20" }));
+    const handleSelectSlots = (id) => {
+        console.log("ID : ", id)
+        setSelectedSlot((prev) => {
+            if (prev.includes(id)) {
+                return prev.filter((sid) => sid !== id);
+            } else {
+                return [...prev, id];
+                //return id;
+            }
+        });
     }
 
-    console.log("taSlots : ", scheduledSlotsData)
-
-    useEffect(() => {
-        if (scheduledSlotsData && scheduledSlotsData.length > 0) {
-            const transformData = scheduledSlotsData.map((item) => ({
-                id: item.id,
-                "Slot Date": item.slot_date,
-                "From Time": item.from_time,
-                "To Time": item.to_time,
-                //'Time Zone': item.timezone,
-            }));
-
-            setTaSlotData(transformData);
-        }
-    }, [scheduledSlotsData]);
-
-
     const handleAssignStudents = () => {
-        dispatch(closeScheduleSession())
+        // dispatch(closeScheduleSession())
         dispatch(openAssignStudents());
     }
 
     const handleAssignBatches = () => {
-        dispatch(closeScheduleSession())
+        // dispatch(closeScheduleSession())
         dispatch(openAssignBatches());
     }
 
-    console.log("taSlotData : ", taSlotData)
+    const onSubmit = async (formData) => {
+        console.log("formData : ", formData)
+        const studentId = students.map((student) => student.id)
+        const batchId = batches.map((batch) => batch.id)
+        console.log("students Id : ", studentId)
+        console.log("batch Id : ", batchId)
+        console.log("selected Daysss : ", selectedDays)
+        console.log("selected Slot : ", selectedSlot, selectedSlot[1])
+
+        formData.start_time = fromTime;
+        formData.end_time = toTime;
+        formData.timezone = timezone;
+        formData.repeat = repeat;
+        formData.schedule_date = fromDate;
+        formData.end_date = toDate;
+        formData.admin_user_id = taID;
+        //formData.slot_id = selectedSlot[1];
+        formData.slot_id = 2;
+        formData.event_status = "scheduled";
+        formData.weeks = selectedDays;
+        formData.timezone = "IST";
+        formData.studentId = studentId;
+        formData.batchId = batchId;
+
+        dispatch(createTASchedule({ ...formData }))
+        dispatch(closeScheduleSession())
+    };
+
 
     const content = (
         <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%', width: '100%' }}>
@@ -144,7 +168,7 @@ const Schedule = () => {
                                 },
                             }}
                         >
-                            Assign Students
+                            Students
                         </Button>
                         <Button
                             variant="outlined"
@@ -166,130 +190,193 @@ const Schedule = () => {
                                 },
                             }}
                         >
-                            Assign Batches
+                            Batches
                         </Button>
                     </Box>
                 </Grid>
-
-                <Grid item xs={12} sm={6} display="flex" justifyContent="center">
-                    <CustomDateField
-                        label="From Date"
-                        name="fromDate"
-                        value={formDate}
-                        onChange={(date) => setFormDate(date)}
-                    />
-                </Grid>
-
-                {formDate && (
-                    <>
-                        {dummyData.length === 0 ? (
-                            <Grid item xs={12} display="flex" justifyContent="center">
-                                <DialogContent>
-                                    No Slot Available
-                                </DialogContent>
+    
+                <form onSubmit={handleSubmit(onSubmit)} noValidate>
+                    <Box display="flex" justifyContent="center" m={4}>
+                        <Grid container spacing={3} justifyContent="center">
+                            <Grid item xs={12} sm={6} display="flex" justifyContent="center">
+                                <CustomDateField
+                                    label="From Date"
+                                    value={fromDate}
+                                    onChange={setFromDate}
+                                    name="schedule_date"
+                                    register={register}
+                                    validation={{ required: 'From Date is required' }}
+                                    sx={{ width: '100%' }}
+                                />
                             </Grid>
-                        ) : (
-                            <>
-                                <Grid item xs={12} display="flex" justifyContent="center">
-                                    <PopUpTable
-                                        headers={headers}
-                                        initialData={taSlotData}
-                                        actionButtons={actionButtons}
-                                    />
-                                </Grid>
-
-                                <Grid container spacing={3} sx={{ pt: 3 }} justifyContent="center">
-                                    <Grid item xs={12} sm={6} display="flex" justifyContent="center">
-                                        <CustomTimeField label="From Time" />
-                                    </Grid>
-                                    <Grid item xs={12} sm={6} display="flex" justifyContent="center">
-                                        <CustomTimeField label="End Time" />
-                                    </Grid>
-                                    <Grid item xs={12} sm={12} md={6} display="flex" justifyContent="center">
-                                        <CustomFormControl
-                                            label="Select Timezone"
-                                            name="timezone"
-                                            controlProps={{
-                                                select: true,
-                                                fullWidth: true,
-                                                value: timezone,
-                                                onChange: (e) => setTimezone(e.target.value),
-                                            }}
-                                            register={() => { }}
-                                            validation={{ validate: validateTimeZone }}
-                                            errors={{}}
-                                            options={transformedTimeZones}
-                                        />
-                                    </Grid>
-                                </Grid>
-
-                                <Grid container spacing={3} justifyContent="center" sx={{ pt: 3 }}>
-                                    <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
-                                        <FormControl component="fieldset">
-                                            <RadioGroup
-                                                row
-                                                value={repeat}
-                                                onChange={(e) => setRepeat(e.target.value)}
-                                                sx={{ justifyContent: 'center' }}
-                                            >
-                                                <FormControlLabel
-                                                    value="onetime"
-                                                    control={<Radio />}
-                                                    label="One-Time"
-                                                />
-                                                <FormControlLabel
-                                                    value="recurring"
-                                                    control={<Radio />}
-                                                    label="Recurring"
-                                                />
-                                            </RadioGroup>
-                                        </FormControl>
-                                    </Grid>
-                                </Grid>
-
-                                {repeat === 'recurring' && (
-                                    <Grid container spacing={3} justifyContent="center" sx={{ pt: 3 }}>
-                                        <Grid item xs={12}>
-                                            <FormControl component="fieldset">
-                                                <FormGroup row>
-                                                    {weekDays.map((day) => (
-                                                        <FormControlLabel
-                                                            key={day}
-                                                            control={
-                                                                <Checkbox
-                                                                    checked={selectedDays.includes(day)}
-                                                                    onChange={() => handleDayChange(day)}
-                                                                    name={day}
-                                                                />
-                                                            }
-                                                            label={day}
-                                                        />
-                                                    ))}
-                                                </FormGroup>
-                                            </FormControl>
+    
+                            {fromDate && (
+                                <>
+                                    {taSlotData.length === 0 ? (
+                                        <Grid item xs={12} display="flex" justifyContent="center">
+                                            <DialogContent>No Slot Available</DialogContent>
                                         </Grid>
-                                    </Grid>
-                                )}
-                            </>
-                        )}
-                    </>
-                )}
-                {repeat === 'recurring' && (
-                    <Grid item xs={12} sm={6} display="flex" justifyContent="center">
-                        <CustomDateField
-                            label="To Date"
-                            name="toDate"
-                            value={toDate}
-                            onChange={(date) => setToDate(date)}
-                        />
-                    </Grid>
-                )}
+                                    ) : (
+                                        <>
+                                            <Grid item xs={12} display="flex" justifyContent="center">
+                                                <PopUpTable
+                                                    headers={headers}
+                                                    initialData={taSlotData}
+                                                    onRowClick={handleSelectSlots}
+                                                    selectedBox={selectedSlot}
+                                                />
+                                            </Grid>
+    
+                                            <Grid container spacing={3} sx={{ pt: 3 }} justifyContent="center">
+                                                <Grid item xs={12} display="flex" justifyContent="center">
+                                                    <CustomTextField
+                                                        label="Meeting Name"
+                                                        name="meeting_name"
+                                                        placeholder="Enter Meeting Name"
+                                                        register={register}
+                                                        validation={{ required: 'Meeting Name is required' }}
+                                                        errors={errors}
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={12} display="flex" justifyContent="center">
+                                                    <CustomTextField
+                                                        label="Meeting URL"
+                                                        name="meeting_url"
+                                                        placeholder="Enter Meeting URL"
+                                                        register={register}
+                                                        validation={{ required: 'Meeting URL is required' }}
+                                                        errors={errors}
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={12} sm={6} display="flex" justifyContent="center">
+                                                    <CustomTimeField
+                                                        label="From Time"
+                                                        name="start_time"
+                                                        value={fromTime}
+                                                        onChange={setFromTime}
+                                                        validation={{ required: 'From Time is required' }}
+                                                        errors={errors}
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={12} sm={6} display="flex" justifyContent="center">
+                                                    <CustomTimeField
+                                                        label="End Time"
+                                                        name="end_time"
+                                                        value={toTime}
+                                                        onChange={setToTime}
+                                                        validation={{ required: 'End Time is required' }}
+                                                        errors={errors}
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={12} sm={6} display="flex" justifyContent="center">
+                                                    <CustomFormControl
+                                                        label="Select Timezone"
+                                                        name="timezone"
+                                                        value={timezone}
+                                                        controlProps={{
+                                                            select: true,
+                                                            fullWidth: true,
+                                                            value: timezone,
+                                                            onChange: (e) => setTimezone(e.target.value),
+                                                        }}
+                                                        register={register}
+                                                        validation={{ validate: validateTimeZone }}
+                                                        errors={errors}
+                                                        options={transformedTimeZones}
+                                                    />
+                                                </Grid>
+                                            </Grid>
+    
+                                            <Grid container spacing={3} justifyContent="center" sx={{ pt: 3 }}>
+                                                <Grid item xs={12} display="flex" justifyContent="center">
+                                                    <FormControl component="fieldset">
+                                                        <RadioGroup
+                                                            row
+                                                            value={repeat}
+                                                            onChange={(e) => setRepeat(e.target.value)}
+                                                            sx={{ justifyContent: 'center' }}
+                                                        >
+                                                            <FormControlLabel
+                                                                value="onetime"
+                                                                control={<Radio />}
+                                                                label="One-Time"
+                                                            />
+                                                            <FormControlLabel
+                                                                value="recurring"
+                                                                control={<Radio />}
+                                                                label="Recurring"
+                                                            />
+                                                        </RadioGroup>
+                                                    </FormControl>
+                                                </Grid>
+                                            </Grid>
+    
+                                            {repeat === 'recurring' && (
+                                                <>
+                                                    <Grid container spacing={3} justifyContent="center" sx={{ pt: 3 }}>
+                                                        <Grid item xs={12}>
+                                                            <FormControl component="fieldset">
+                                                                <FormGroup row>
+                                                                    {weekDays.map((day) => (
+                                                                        <FormControlLabel
+                                                                            key={day}
+                                                                            control={
+                                                                                <Checkbox
+                                                                                    checked={selectedDays.includes(day)}
+                                                                                    onChange={() => handleDayChange(day)}
+                                                                                    name={day}
+                                                                                />
+                                                                            }
+                                                                            label={day}
+                                                                        />
+                                                                    ))}
+                                                                </FormGroup>
+                                                            </FormControl>
+                                                        </Grid>
+                                                    </Grid>
+                                                    <Grid item xs={12} sm={6} display="flex" justifyContent="center">
+                                                        <CustomDateField
+                                                            label="To Date"
+                                                            value={toDate}
+                                                            onChange={setToDate}
+                                                            name="end_date"
+                                                            register={register}
+                                                            validation={{ required: 'To Date is required' }}
+                                                            sx={{ width: '100%' }}
+                                                        />
+                                                    </Grid>
+                                                </>
+                                            )}
+                                            <Grid item xs={12} display="flex" justifyContent="center">
+                                                <Button
+                                                    type="submit"
+                                                    variant="contained"
+                                                    style={{
+                                                        borderRadius: "50px",
+                                                        padding: "18px 30px",
+                                                        marginTop: 30,
+                                                        backgroundColor: "#F56D3B",
+                                                        height: "60px",
+                                                        width: "121px",
+                                                        fontSize: "16px",
+                                                        fontWeight: "700px",
+                                                        text: "#FFFFFF",
+                                                    }}
+                                                >
+                                                    Submit
+                                                </Button>
+                                            </Grid>
+                                        </>
+                                    )}
+                                </>
+                            )}
+                        </Grid>
+                    </Box>
+                </form>
             </Grid>
         </Box>
     );
-
-
-
+    
 
     const actions = (
         <CustomButton
@@ -308,7 +395,7 @@ const Schedule = () => {
             handleClose={() => dispatch(closeScheduleSession())}
             title={`Schedule Session for ${taName}`}
             content={content}
-            actions={actions}
+        // actions={actions}
         />
     )
 }

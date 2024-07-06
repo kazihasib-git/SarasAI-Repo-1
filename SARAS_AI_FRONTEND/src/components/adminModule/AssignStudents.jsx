@@ -121,7 +121,7 @@ const AssignStudents = () => {
       .then(() => {
         // Open Schedule Session
         if(taId){
-          dispatch(openScheduleSession({ id: taId, name: taName }));
+          dispatch(openScheduleSession({ id: taId, name: taName , student : selectedStudents.map((id) => ({ id: id.toString() })) }));
         }
         // Open Success Popup
         dispatch(openSuccessPopup());

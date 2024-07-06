@@ -31,8 +31,10 @@ const TaScheduling = () => {
         id: item.ta_data.id,
         name: item.ta_data.name,
         Username: item.ta_data.username,
-        Active_Students: item.Active_Students,
-        Active_Batches: item.Active_Batches,
+        Active_Students: item.students,
+        Active_Batches: item.batches,
+        // Active_Students: item.Active_Students,
+        // Active_Batches: item.Active_Batches,
       }));
 
       setTaScheduleData(transformData);

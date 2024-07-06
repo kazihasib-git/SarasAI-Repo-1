@@ -50,15 +50,9 @@ const CustomButton = ({
 
 const AssignBatches = () => {
   const dispatch = useDispatch();
-  const {
-    assignBatchOpen,
-    ta_name,
-    taID,
-    batchMapping = [],
-    loading,
-    } = useSelector((state) => state.taModule);
+  const { assignBatchOpen, ta_name, taID, batchMapping = [], loading, } = useSelector((state) => state.taModule);
 
-  const { taName, taID : taId } = useSelector((state) => state.taScheduling);
+  const { taName, taID: taId } = useSelector((state) => state.taScheduling);
 
   const [selectedBatch, setSelectedBatch] = useState("");
   const [filteredBatches, setFilteredBatches] = useState([]);
@@ -117,8 +111,10 @@ const AssignBatches = () => {
       batches: selectedBatches.map((id) => ({ id: id.toString() })),
     };
     dispatch(postAssignBatches({ id: taID ? taID : taId, data })).then(() => {
-      if(taId){
-        dispatch(openScheduleSession({ id: taId, name: taName }))
+      if (taId) {
+        if (taId) {
+          dispatch(openScheduleSession({ id: taId, name: taName, batches: selectedBatches.map((id) => ({ id: id.toString() })) }));
+        }
       }
       dispatch(openSuccessPopup());
     });
