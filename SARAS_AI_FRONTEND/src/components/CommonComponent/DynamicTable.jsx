@@ -144,10 +144,12 @@ const DynamicTable = ({
       navigate(`/active-students/${id}`); // Append id as a parameter
     } else if (type === "batches") {
       navigate(`/active-batches/${id}`); // Append id as a parameter
+    } else if (type === "view report") {
+      navigate(`/view-report/${id}`); // Append id as a parameter
     }
   };
 
-  const handlePopup = (id ,name) => {
+  const handlePopup = (id, name) => {
     console.log("ID handlePopup : ", id, name);
     const data = {
       id, name
@@ -333,10 +335,24 @@ const DynamicTable = ({
                             variant="outlined"
                             color="secondary"
                             startIcon={<CalendarMonthIcon />}
-                            onClick={() => handlePopup(item.id , item.name)}
+                            onClick={() => handlePopup(item.id, item.name)}
                           >
                             Schedule
                           </CalenderButton>
+                        );
+                      }
+
+                      if (button.type === "view") {
+                        return (
+                          <CustomButton
+                            key={idx}
+                            variant="outlined"
+                            color="secondary"
+                            endIcon={<CallMadeOutlinedIcon />}
+                            onClick={() => handleView("view report", item.id)}
+                          >
+                            View
+                          </CustomButton>
                         );
                       }
                       return null; // Handle unexpected button types gracefully

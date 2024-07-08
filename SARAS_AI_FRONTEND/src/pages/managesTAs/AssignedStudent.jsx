@@ -114,7 +114,7 @@ const DynamicTable = ({
     setCurrentPage(pageNumber);
   };
 
-  const handleToggle = (id) => {
+  const handleToggle = async (id) => {
     console.log("id : ", id);
     const updatedData = data.map((item) =>
       item.id === id
@@ -125,13 +125,15 @@ const DynamicTable = ({
 
     const toggledItem = updatedData.find((item) => item.id === id);
     const requestData = { is_active: toggledItem.is_active };
-    dispatch(toggleAssignStudentStatus({ id, data: requestData }));
+    await dispatch(toggleAssignStudentStatus({ id, data: requestData }));
+    await dispatch(getAssignStudents(ta_id));
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = (id, ta_id) => {
     // Implement delete functionality here
     console.log("Deleting item with id:", id);
     dispatch(deleteAssignedStudent({ id }));
+    dispatch(getAssignStudents(ta_id));
   };
 
   const handleNavigate = (path) => {
@@ -204,7 +206,7 @@ const DynamicTable = ({
                         <AntSwitch
                           key={idx}
                           checked={item.is_active}
-                          onChange={() => handleToggle(item.id)}
+                          onChange={() => handleToggle(item.id, ta_id)}
                           inputProps={{ "aria-label": "ant design" }}
                         />
                       );
@@ -225,7 +227,7 @@ const DynamicTable = ({
                         <IconButton
                           key={idx}
                           color="primary"
-                          onClick={() => handleDelete(item.id)}
+                          onClick={() => handleDelete(item.id, ta_id)}
                         >
                           <img
                             src={bin}
@@ -329,7 +331,8 @@ const AssignedStudent = () => {
         const isActive = item.is_active === 1;
 
         return {
-          id: item.student ? item.student.id : null,
+          id: item.id, 
+          // item.student ? item.student.id : null,
           student_name: studentName,
           Acedimic_term: academicTerm,
           Batch: batchName,
@@ -340,6 +343,8 @@ const AssignedStudent = () => {
       setTaAssignStudentData(transformData);
     }
   }, [assignedStudents]);
+
+  
 
   return (
     <>

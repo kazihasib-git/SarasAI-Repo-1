@@ -253,6 +253,17 @@ export const getScheduleSession = createAsyncThunk(
   }
 );
 
+export const fetchAvailableSlots = createAsyncThunk(
+  "taAvialability/fetchAvailableSlots",
+  async (data) => {
+    // console.log("ID : ", id);
+    const response = await axios.post(
+      `${baseUrl}/admin/coach-slots/getTACoachSlotForADate`, data
+    );
+    return response.data;
+  }
+);
+
 export const deleteFutureSlots = createAsyncThunk(
   "taAvialability/deleteFutureSlots",
   async (id) => {
@@ -269,6 +280,7 @@ const initialState = {
   scheduledSlotsOpen: false,
   scheduledSlotsData: [], // Ensure this is correctly named and initialized
   scheduledSessionData: [], // Ensure this is correctly named and initialized
+  availableSlotsData:[],
   scheduledSessionOpen: false,
   cancelSessionOpen: false,
   resheduleSessionOpen: false,
@@ -344,6 +356,18 @@ export const taAvailabilitySlice = createSlice({
       state.scheduledSessionData = action.payload?.data;
     });
     builder.addCase(getScheduleSession.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message;
+    });
+
+    builder.addCase(fetchAvailableSlots.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(fetchAvailableSlots.fulfilled, (state, action) => {
+      state.loading = false;
+      state.availableSlotsData = action.payload?.data;
+    });
+    builder.addCase(fetchAvailableSlots.rejected, (state, action) => {
       state.loading = false;
       state.error = action.error.message;
     });

@@ -332,6 +332,7 @@ export const taSlice = createSlice({
       const index = state.tas.findIndex((ta) => ta.id === action.payload.id);
       if (index !== -1) {
         state.tas[index] = action.payload;
+        console.log("PAYLOAD ACTION : ", action.payload)
       }
     });
     builder.addCase(updateTA.rejected, (state, action) => {

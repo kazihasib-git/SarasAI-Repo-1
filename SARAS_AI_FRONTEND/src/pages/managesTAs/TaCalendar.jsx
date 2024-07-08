@@ -107,7 +107,7 @@ const TaCalender
                     <Grid container alignItems="center">
                         <Grid item xs>
                             <Typography variant='h4' sx={{ mb: 4 }}>
-                               {name}
+                               {name} Calender 
                             </Typography>
                         </Grid>
                         <Grid item>

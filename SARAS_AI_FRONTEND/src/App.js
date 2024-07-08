@@ -1,6 +1,14 @@
 import "./App.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
+import './assets/fonts/Nohemi-Bold.ttf';
+import './assets/fonts/Nohemi-ExtraLight.ttf';
+import './assets/fonts/Nohemi-Light.ttf';
+import './assets/fonts/Nohemi-Medium.ttf';
+import './assets/fonts/Nohemi-Regular.ttf';
+import './assets/fonts/Nohemi-SemiBold.ttf'
+
+
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
@@ -43,6 +51,7 @@ import TaCalender from "./pages/managesTAs/TaCalendar";
 import BatchPage from "./pages/batches/BatchPage";
 import CreateTemplate from "./pages/ManageCoaches/CoachingTemplate/CreateTemplate";
 import TemplateName from "./pages/ManageCoaches/CoachingTemplate/TemplateName";
+import WheelOfLife from "./pages/coachingTools/wheelOfLife/WheelOfLife";
 const ROLES = {
   Teaching: 2001,
   Coaches: 1984,
@@ -135,6 +144,7 @@ function App() {
             <Route path="students" element={<StudentPage />} />
             <Route path="batches" element={<BatchPage />} />
             {/* <Route path='/student-list' element={<StudentList page="Student" />} /> */}
+            <Route path="coaching-tools" element={<WheelOfLife />} />
           </Route>
         </Route>
 

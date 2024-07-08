@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import ReusableDialog from "../CustomFields/ReusableDialog";
 import CustomDateField from "../CustomFields/CustomDateField";
 import { Button, DialogContent, Grid } from "@mui/material";
@@ -8,6 +8,7 @@ import DynamicTable from "../CommonComponent/DynamicTable";
 import { useDispatch, useSelector } from "react-redux";
 import {
   closeRescheduleSession,
+  fetchAvailableSlots,
   openReasonForLeave,
 } from "../../redux/features/taModule/taAvialability";
 import CustomTextField from "../CustomFields/CustomTextField";
@@ -50,24 +51,43 @@ const CustomButton = ({
 
 const ReschedulingSession = () => {
   const dispatch = useDispatch();
-  const { resheduleSessionOpen } = useSelector((state) => state.taAvialability);
+  const { resheduleSessionOpen, availableSlotsData } = useSelector(
+    (state) => state.taAvailability
+  );
   const [selectDate, setselectDate] = useState(null);
+  const [transformedSlotsData, setTransformedSlotsData] = useState([]);
   const headers = ["S. No.", "Slots Available", "Select All"];
 
-//   const dummyData = [
-//     { id: 1, slotsAvailable: "9:00 AM - 10:00 AM", isSelected: false },
-//     { id: 2, slotsAvailable: "10:00 AM - 11:00 AM", isSelected: false },
-//     { id: 3, slotsAvailable: "11:00 AM - 12:00 PM", isSelected: false },
-//     { id: 4, slotsAvailable: "12:00 PM - 1:00 PM", isSelected: false },
-//     { id: 5, slotsAvailable: "1:00 PM - 2:00 PM", isSelected: false },
-//     { id: 6, slotsAvailable: "2:00 PM - 3:00 PM", isSelected: false },
-//     { id: 7, slotsAvailable: "3:00 PM - 4:00 PM", isSelected: false },
-//   ];
+  useEffect(() => {
+    if (selectDate) {
+      console.log("Fetching slots for date:", selectDate);
+      const data = {
+        admin_user_id: 73,
+        date: selectDate,
+      };
+      dispatch(fetchAvailableSlots(data));
+    }
+  }, [selectDate, dispatch]);
 
-    const dummyData = []
+  useEffect(() => {
+    if (availableSlotsData.length > 0) {
+      const transformData = availableSlotsData.map((slot, index) => ({
+        id: slot.id,
+        "Slots Available": `${slot.from_time} - ${slot.to_time}`,
+        // isSelected: false,
+      }));
+
+      setTransformedSlotsData(transformData);
+    }
+  }, [availableSlotsData]);
+
+  const handleDateChange = (date) => {
+    console.log("Date selected:", date);
+    setselectDate(date);
+  };
 
   const handleSubmit = () => {
-    console.log("*** Submiting REschedule Session....");
+    console.log("*** Submitting Reschedule Session....");
     dispatch(closeRescheduleSession());
     dispatch(openReasonForLeave());
   };
@@ -75,34 +95,36 @@ const ReschedulingSession = () => {
   const actionButtons = [
     {
       type: "checkbox",
-      //   onClick: (id) => {
-      //     handleEditTaClick(id);
-      //   },
     },
   ];
 
   const content = (
     <>
-      <Grid item xs={12} sm={6}  mb={2} pt={"16px"}>
+      <Grid item xs={12} sm={6} mb={2} pt={"16px"}>
         <CustomDateField
           label="SelectDate"
           value={selectDate}
-          onChange={setselectDate}
+          onChange={handleDateChange}
           name="dateOfBirth"
-          //  register={register}
-          //  validation={{ required: "Date of birth is required" }}
-          //  errors={errors}
           sx={{ width: "100%" }}
         />
       </Grid>
 
-      {dummyData.length === 0 ? (
-        <DialogContent sx={{ display:"flex", justifyContent:"center", alignItems:"center" }}>No Slot Available</DialogContent>
+      {availableSlotsData.length === 0 ? (
+        <DialogContent
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          No Slot Available
+        </DialogContent>
       ) : (
         <>
           <PopUpTable
             headers={headers}
-            initialData={dummyData}
+            initialData={transformedSlotsData}
             actionButtons={actionButtons}
           />
           <Grid
@@ -112,7 +134,7 @@ const ReschedulingSession = () => {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              textAlign: "center", // Add this line if needed
+              textAlign: "center",
             }}
           >
             <Grid item xs={12} sm={6}>

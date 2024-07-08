@@ -27,7 +27,7 @@ export const getTaAvailableSlotsFromDate = createAsyncThunk(
 )
 
 const initialState = {
-    taAvailableSlots : [],
+    taAvailableSlots: [],
     taSchedule: [],
     loading: false,
     error: null,
@@ -35,10 +35,10 @@ const initialState = {
     studentBatchMappingLoading: false,
     studentBatchMappingError: null,
     scheduleSessionOpen: false,
-    students : [],
-    batches : [],
-    taID : null,
-    taName : null,
+    students: [],
+    batches: [],
+    taID: null,
+    taName: null,
 };
 
 const taScheduling = createSlice({
@@ -49,10 +49,10 @@ const taScheduling = createSlice({
             console.log("Open Action : ", action.payload)
             state.taID = action.payload.id;
             state.taName = action.payload.name;
-            if(action.payload.student) {
+            if (action.payload.student) {
                 state.students = action.payload.student;
             }
-            if(action.payload.batches) {
+            if (action.payload.batches) {
                 state.batches = action.payload.batches;
             }
             state.scheduleSessionOpen = true;
@@ -65,8 +65,11 @@ const taScheduling = createSlice({
             state.batches = [];
             state.scheduleSessionOpen = false;
         },
+        clearAvailableSlots(state) {
+            state.taAvailableSlots = [];
+        },
     },
-    extraReducers : (builder) => {
+    extraReducers: (builder) => {
         // Show TA Schedule
         builder.addCase(showTASchedule.pending, (state) => {
             state.loading = true;
