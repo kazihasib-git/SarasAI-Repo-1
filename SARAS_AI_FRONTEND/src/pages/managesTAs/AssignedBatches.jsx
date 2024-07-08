@@ -114,7 +114,7 @@ const DynamicTable = ({
     setCurrentPage(pageNumber);
   };
 
-  const handleToggle = async (id) => {
+  const handleToggle = async (id, ta_id) => {
     console.log("id : ", id);
     const updatedData = data.map((item) =>
       item.id === id
@@ -127,6 +127,7 @@ const DynamicTable = ({
     const requestData = { is_active: toggledItem.is_active };
     try {
       await dispatch(toggleAssignBatchStatus({ id, data: requestData }));
+      await dispatch(getAssignBatches(ta_id));
     } catch (error) {
       // Revert state if the API call fails
       setData(
@@ -139,10 +140,11 @@ const DynamicTable = ({
     }
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = (id, ta_id) => {
     // Implement delete functionality here
     console.log("Deleting item with id:", id);
     dispatch(deleteAssignedBatch({ id }));
+    dispatch(getAssignBatches(ta_id));
   };
 
   const handleNavigate = (path) => {
@@ -219,7 +221,7 @@ const DynamicTable = ({
                         <AntSwitch
                           key={idx}
                           checked={item.is_active}
-                          onChange={() => handleToggle(item.id)}
+                          onChange={() => handleToggle(item.id, ta_id)}
                           inputProps={{ "aria-label": "ant design" }}
                         />
                       );
@@ -240,7 +242,7 @@ const DynamicTable = ({
                         <IconButton
                           key={idx}
                           color="primary"
-                          onClick={() => handleDelete(item.id)}
+                          onClick={() => handleDelete(item.id, ta_id)}
                         >
                           <img
                             src={bin}

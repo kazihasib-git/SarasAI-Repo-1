@@ -43,6 +43,7 @@ import TaCalender from "./pages/managesTAs/TaCalendar";
 import BatchPage from "./pages/batches/BatchPage";
 import CreateTemplate from "./pages/ManageCoaches/CoachingTemplate/CreateTemplate";
 import TemplateName from "./pages/ManageCoaches/CoachingTemplate/TemplateName";
+import WheelOfLife from "./pages/coachingTools/wheelOfLife/WheelOfLife";
 const ROLES = {
   Teaching: 2001,
   Coaches: 1984,
@@ -135,6 +136,7 @@ function App() {
             <Route path="students" element={<StudentPage />} />
             <Route path="batches" element={<BatchPage />} />
             {/* <Route path='/student-list' element={<StudentList page="Student" />} /> */}
+            <Route path="coaching-tools" element={<WheelOfLife />} />
           </Route>
         </Route>
 

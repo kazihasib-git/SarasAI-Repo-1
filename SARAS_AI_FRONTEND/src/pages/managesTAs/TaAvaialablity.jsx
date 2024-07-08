@@ -251,7 +251,7 @@ const TaAvialability = () => {
             <DynamicTable
                 headers={headers}
                 initialData={mockDataAvilable}
-                title="TA Avialability"
+                title="TA Availability"
             />
         </>
     );

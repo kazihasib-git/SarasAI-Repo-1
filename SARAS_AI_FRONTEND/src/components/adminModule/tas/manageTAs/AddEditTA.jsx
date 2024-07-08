@@ -117,7 +117,6 @@ const AddEditTA = ({ data }) => {
 
   const onSubmit = async (formData) => {
     // console.log("Data", formData);
-    setTAName(formData.name);
     const formattedDate = dayjs(dateOfBirth).format("YYYY-MM-DD HH:mm:ss");
     formData.date_of_birth = formattedDate;
     formData.phone = phoneNumber;

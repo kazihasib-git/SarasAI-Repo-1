@@ -132,8 +132,8 @@ const Schedule = () => {
         formData.schedule_date = fromDate;
         formData.end_date = toDate;
         formData.admin_user_id = taID;
-        //formData.slot_id = selectedSlot[1];
-        formData.slot_id = 2;
+        formData.slot_id = selectedSlot[1];
+        // formData.slot_id = 2;
         formData.event_status = "scheduled";
         formData.weeks = selectedDays;
         formData.timezone = "IST";
