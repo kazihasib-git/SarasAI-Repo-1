@@ -5,8 +5,9 @@ import Header from "../../components/Header/Header";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import { useEffect , useState } from "react";
 import { OnOffSwitch } from '../../components/Switch';
+import AddEditCoach from '../../components/adminModule/coaches/manageCoaches/AddEditCoach';
 import editIcon from '../../assets/editIcon.png';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'; 
 import DynamicTable from '../../components/CommonComponent/DynamicTable';
 import CreateCoachPage from './CreateCoachPage';
 import { useDispatch, useSelector } from "react-redux";
@@ -33,11 +34,14 @@ const ManageCoaches = () => {
     // State variables
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedCoachData, setSelectedCoachData] = useState(null);
-    const [tasData, setTasData] = useState([]);
+    const [coachesData, setCoachesData] = useState([]);
     const [isAddEditCoachOpen, setIsAddEditCoachOpen] = useState(false);
     const [formValues, setFormValues] = useState({});
+    const [editData, setEditData] = useState();
     const [openSnackbar, setOpenSnackbar] = useState(false);
+    const { coaches , loading, error, createCoachOpen, editCoachOpen } = useSelector((state) => state.coachModule);
 
+console.log("coachess " , coaches);
     // Fetch coach data on component mount
     useEffect(() => {
         dispatch(closeCreateCoach());
@@ -48,15 +52,48 @@ const ManageCoaches = () => {
     // Action buttons for the DynamicTable
     const actionButtons = [
         {
-            type: "switch",
+          type: "switch",
+        },
+        {
+          type: "edit",
+          onClick: (id) => {
+            handleEditCoaches(id);
+          },
+        },
+      ];
+      useEffect(() => {
+        if (coaches.length > 0) {
+          const transformData = coaches.map((item) => ({
+            id: item.id,
+            "TA Name": item.name,
+            Username: item.username,
+            Location: item.location,
+            'Time Zone': item.time_zone,
+            is_active: item.is_active,
+          }));
+    
+          setCoachesData(transformData);
         }
-    ];
-
+      }, [coaches]);
     // Handlers
+    const handleAddTa = () => {
+        dispatch(openCreateCoach());
+      };
+    
+    const handleEditCoaches = (id) => {
+        console.log("coachesssss", coaches);
+        console.log("id", id);
+        const coachData = coaches.find((ta) => ta.id === id);
+        
+        console.log("coachData" , coachData);
+        setSelectedCoachData(coachData);
+        setEditData(coachData);
+        dispatch(openEditCoach());
+      };
     const handleAddCoach = () => {
         navigate('/createcoach');
     };
-
+    console.log("EditData" , editCoachOpen);
     const handleEdit = (id) => {
         const coachData = tasData.find(ta => ta.id === id);
         setSelectedCoachData(coachData);
@@ -106,9 +143,12 @@ const ManageCoaches = () => {
     const handleCloseSnackbar = () => {
         setOpenSnackbar(false);
     };
+ // Filter tasData based on the search query
+
 
     return (
         <>
+        {!createCoachOpen && !editCoachOpen && (
             <Box m="40px">
                 <Header />
                 <Sidebar />
@@ -161,20 +201,23 @@ const ManageCoaches = () => {
                 }}>
                     <DynamicTable
                         headers={headers}
-                        initialData={mockManageAvailable}
+                        initialData={coachesData}
                         actionButtons={actionButtons}
                         componentName={"MANAGECOACH"}
                     />
-                    {isAddEditCoachOpen && <AddEditCoach data={selectedCoachData} onClose={handleCloseAddEditCoach} />}
+             
                 </Box>
             </Box>
-
+        )}
+           {createCoachOpen && <AddEditCoach/>}
+                    {editCoachOpen  && <AddEditCoach data={editData}/> }
             {/* Snackbar for success message */}
             <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
                 <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
                     Form submitted successfully!
                 </Alert>
-            </Snackbar>
+         </Snackbar>
+    
         </>
     );
 }

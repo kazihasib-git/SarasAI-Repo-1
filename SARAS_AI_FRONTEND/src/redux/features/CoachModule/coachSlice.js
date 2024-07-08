@@ -44,6 +44,13 @@ export const deleteCoach = createAsyncThunk(
     return id;
   }
 );
+export const showCAMapping = createAsyncThunk(
+  "coachModule/showCAMapping",
+  async () => {
+    const response = await axios.get(`${baseUrl}/admin/CAMapping/CAswithActiveStudentnBatches`);
+    return response.data;
+  }
+);
 
 const initialState = {
   coaches: [],
@@ -166,7 +173,22 @@ export const coachSlice= createSlice({
       state.loading = false;
       state.error = action.payload || action.error.message;
     });
+     // Show CA Mapping
+     builder.addCase(showCAMapping.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(showCAMapping.fulfilled, (state, action) => {
+      console.log("action " , action.payload);
+      state.loading = false;
+      state.coachMapping = action.payload;
+    });
+    builder.addCase(showCAMapping.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload || action.error.message;
+    });
   },
+
+  
 });
 
 

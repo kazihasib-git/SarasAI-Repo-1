@@ -33,13 +33,13 @@ import CustomFormControl from "../../../CustomFields/CustomFromControl";
 import CustomDateField from "../../../CustomFields/CustomDateField";
 import AvatarInput from "../../../CustomFields/AvatarInput";
 import {
-
   genders,
   qualificationOptions,
-  validateTimeZone,
   transformedTimeZones
 } from "../../../CustomFields/FormOptions";
 import ReusableDialog from "../../../CustomFields/ReusableDialog";
+import Header from "../../../Header/Header";
+import Sidebar from "../../../Sidebar/Sidebar";
 
 function AddEditCoach({ data }) {
   const {
@@ -47,12 +47,17 @@ function AddEditCoach({ data }) {
     handleSubmit,
     control,
     setValue,
+    watch,
     formState: { errors },
   } = useForm({
     defaultValues: {
-      gender: "", // Set to an empty string or one of the valid options like 'Male'
+      gender: "",
+      time_zone: "",
+      highest_qualification: "",
+      date_of_birth: null,
     },
   });
+  
   const [selectedImage, setSelectedImage] = useState(null);
   const [open, setOpen] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -62,8 +67,47 @@ function AddEditCoach({ data }) {
   const dispatch = useDispatch();
   const [dateOfBirth, setDateOfBirth] = useState(null);
   const [taName, setTAName] = useState();
-  // const {  successPopup, assignStudentOpen, assignBatchOpen } = useSelector((state) => state.coachModule);
+  const {  successPopup, assignStudentOpen, assignBatchOpen } = useSelector((state) => state.coachModule);
 
+  useEffect(() => {
+    if (data) {
+      console.log("data",data);
+      const formattedDate = dayjs(dateOfBirth).format("YYYY-MM-DD HH:mm:ss");
+      console.log("DATE birth : ", data.date_of_birth);
+
+      //convert base64 image to blob
+      if (data.profile_picture) {
+        const byteCharacters = atob(data.profile_picture);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: "image/jpeg" });
+        const blobUrl = URL.createObjectURL(blob);
+
+        console.log("blobUrl", blobUrl);
+        setSelectedImage(blobUrl);
+      }
+
+      setValue("name", data.name);
+      // setValue("short_description", data.short_description);
+      setValue("username", data.username);
+      setValue("password", data.password);
+      setValue("location", data.location);
+      setValue("address", data.address);
+      setValue("pincode", data.pincode);
+      setValue("time_zone", data.time_zone);
+      setValue("gender", data.gender);
+      setValue("email", data.email);
+      setValue("date_of_birth", data.date_of_birth);
+      setDateOfBirth(data.date_of_birth);
+      setValue("highest_qualification", data.highest_qualification);
+      setValue("about_me", data.about_me);
+      setPhoneNumber(data.phone);
+
+    }
+  }, [data, setValue, setSelectedImage]);
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     const reader = new FileReader();
@@ -169,6 +213,9 @@ function AddEditCoach({ data }) {
   );
 
   return (
+  <>
+  <Header/>
+  <Sidebar/>
     <Box sx={{ bgcolor: "#f8f9fa", p: 3 }}>
       <DialogActions sx={{ p: 2 }}>
         <Grid container alignItems="center">
@@ -568,14 +615,14 @@ function AddEditCoach({ data }) {
           title="'Coach' successfully created."
           actions={actions}
         /> */}
-        {/* {successPopup && <SubmitPopup componentname={"ADDITCOACH"} />} */}
+        {successPopup && <SubmitPopup componentname={"ADDITCOACH"} />}
        
-        {assignStudent && (
-          <AssignStudents open={open} handleClose={handleClose} />
-        )}
-        {assignBatch && <AssignBatches open={open} handleClose={handleClose} />}
+       
+        {assignStudentOpen && <AssignStudents />}
+        {assignBatchOpen && <AssignBatches />}
       </Box>
     </Box>
+  </>
   );
 }
 
