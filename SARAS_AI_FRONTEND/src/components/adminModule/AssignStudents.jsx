@@ -80,14 +80,13 @@ const AssignStudents = () => {
         is_active: student.is_active,
       }));
 
-      /*
+      
       // Set pre-selected students based on is_active status
-      const preSelectedStudents = transformedData
-        .filter((student) => student.is_active)
-        .map((student) => student.student_id);
-      setSelectedStudents(preSelectedStudents);
-      */
-     
+      // const preSelectedStudents = transformedData
+      //   .filter((student) => student.is_active)
+      //   .map((student) => student.student_id);
+      // setSelectedStudents(preSelectedStudents);
+
       // Filter by selected batch and search name
       const filtered = transformedData.filter((student) =>
         student["Student Name"].toLowerCase().includes(searchName.toLowerCase()) &&

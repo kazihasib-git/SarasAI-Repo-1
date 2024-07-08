@@ -38,7 +38,7 @@ const SubmitPopup = () => {
     const navigate = useNavigate()
     const { tas, successPopup, error, loading, ta_name } = useSelector((state) => state.taModule)
     
-    console.log("tas", tas)
+    console.log("TA_Name : ", ta_name)
 
     const handleAssignBatches = () => {
         dispatch(closeSuccessPopup())

@@ -116,13 +116,13 @@ const DynamicTable = ({ headers, initialData, title, actionButtons }) => {
     return (
         <div className="table-container">
             <Box display={"flex"} justifyContent={"space-between"}>
-                <p style={{ fontSize: "44px", justifyContent: "center", marginBottom: '20px' }}>{title}</p>
+                <p style={{ fontSize: "44px", justifyContent: "center", marginBottom: '20px' , fontFamily:"ExtraLight", letterSpacing:"0.8px" }}>{title}</p>
             </Box>
             <table>
                 <thead className="commonTableHead">
                     <tr>
                         {headers.map((header, index) => (
-                            <th key={index}>{header}</th>
+                            <th style={{fontFamily:"Medium", letterSpacing:"0.8px"}} key={index}>{header}</th>
                         ))}
                         {/* <th>Actions</th> Add an extra header for actions */}
                     </tr>
@@ -131,17 +131,17 @@ const DynamicTable = ({ headers, initialData, title, actionButtons }) => {
                     {currentData.map((item, index) => (
                         <tr key={item.id} id="commonTableRow">
                             {/* {console.log("ITEM : ", item)} */}
-                            <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                            <td style={{fontFamily:"Regular", letterSpacing:"0.8px"}}>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                             {Object.keys(item).map((key, idx) => {
                                 if (key === 'availability') {
                                     return (
-                                        <td key={idx} style={{ color: getColorForAvailability(item[key]) }}>
+                                        <td key={idx} style={{ color: getColorForAvailability(item[key]) ,fontFamily:"Regular", letterSpacing:"0.8px" }}>
                                             {item[key]}
                                         </td>
                                     );
                                 } else if (key === 'calendar') {
                                     return (
-                                        <td key={idx}>
+                                        <td key={idx} style={{fontFamily:"Regular", letterSpacing:"0.8px"}}>
                                             {/* {item[key]}{" "} */}
                                             <CustomButton
                                                 variant="outlined"
@@ -155,12 +155,12 @@ const DynamicTable = ({ headers, initialData, title, actionButtons }) => {
                                     );
 
                                 } else if (key !== 'id' && key !== 'isActive') {
-                                    return <td key={idx}>{item[key]}</td>;
+                                    return <td style={{fontFamily:"Regular", letterSpacing:"0.8px"}} key={idx}>{item[key]}</td>;
                                 }
                                 return null;
                             })}
                             {
-                                actionButtons && <td style={{ display: "flex", justifyContent: "center", verticalAlign: "middle" }}>
+                                actionButtons && <td style={{ display: "flex", justifyContent: "center", verticalAlign: "middle", fontFamily:"Regular", letterSpacing:"0.8px"}}>
                                     {actionButtons?.map((button, idx) => {
                                         if (button.type === 'switch') {
                                             return (

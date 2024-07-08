@@ -78,13 +78,12 @@ const AssignBatches = () => {
         */
       }));
 
-      /*
+      
       // Initialize selected batches with active ones
-      const activeBatches = batchMapping
-        .filter((batch) => batch.is_active === 1)
-        .map((batch) => batch.id);
-      setSelectedBatches(activeBatches);
-      */
+      // const activeBatches = batchMapping
+      //   .filter((batch) => batch.is_active === 1)
+      //   .map((batch) => batch.id);
+      // setSelectedBatches(activeBatches);
 
       // Filter by selected batch
       const filtered = transformedData.filter(

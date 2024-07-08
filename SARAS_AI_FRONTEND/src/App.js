@@ -1,6 +1,14 @@
 import "./App.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
+import './assets/fonts/Nohemi-Bold.ttf';
+import './assets/fonts/Nohemi-ExtraLight.ttf';
+import './assets/fonts/Nohemi-Light.ttf';
+import './assets/fonts/Nohemi-Medium.ttf';
+import './assets/fonts/Nohemi-Regular.ttf';
+import './assets/fonts/Nohemi-SemiBold.ttf'
+
+
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
