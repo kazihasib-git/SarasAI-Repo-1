@@ -47,7 +47,118 @@ export const deleteCoach = createAsyncThunk(
 export const showCAMapping = createAsyncThunk(
   "coachModule/showCAMapping",
   async () => {
-    const response = await axios.get(`${baseUrl}/admin/CAMapping/CAswithActiveStudentnBatches`);
+    // const response = await axios.get(`${baseUrl}/admin/CoachMapping/CoachswithActiveStudentnBatches`);
+    // return response.data;
+    return{
+    
+      data: [
+        {
+          id: 5,
+          name: "sample coach2",
+          username: "xyz-coach2",
+          is_active: 1,
+          Active_Batches: 2,
+          Active_Students: 3
+        },
+        {
+          id: 6,
+          name: "sample coach3",
+          username: "xyz-coach3",
+          is_active: 1,
+          Active_Batches: 1,
+          Active_Students: 10
+        },
+        {
+          id: 7,
+          name: "sample coach4",
+          username: "xyz-coach4",
+          is_active: 0,
+          Active_Batches: 0,
+          Active_Students: 0
+        },
+        {
+          id: 8,
+          name: "sample coach5",
+          username: "xyz-coach5",
+          is_active: 1,
+          Active_Batches: 3,
+          Active_Students: 15
+        },
+        {
+          id: 9,
+          name: "sample coach6",
+          username: "xyz-coach6",
+          is_active: 1,
+          Active_Batches: 2,
+          Active_Students: 8
+        },
+        {
+          id: 10,
+          name: "sample coach7",
+          username: "xyz-coach7",
+          is_active: 0,
+          Active_Batches: 0,
+          Active_Students: 0
+        },
+        {
+          id: 11,
+          name: "sample coach8",
+          username: "xyz-coach8",
+          is_active: 1,
+          Active_Batches: 4,
+          Active_Students: 20
+        },
+        {
+          id: 12,
+          name: "sample coach9",
+          username: "xyz-coach9",
+          is_active: 1,
+          Active_Batches: 1,
+          Active_Students: 5
+        },
+        {
+          id: 13,
+          name: "sample coach10",
+          username: "xyz-coach10",
+          is_active: 1,
+          Active_Batches: 2,
+          Active_Students: 6
+        },
+        {
+          id: 14,
+          name: "sample coach11",
+          username: "xyz-coach11",
+          is_active: 1,
+          Active_Batches: 3,
+          Active_Students: 12
+        },
+        {
+          id: 15,
+          name: "sample coach12",
+          username: "xyz-coach12",
+          is_active: 0,
+          Active_Batches: 0,
+          Active_Students: 0
+        }
+      ]
+    };
+  }
+);
+export const getCoachAssignStudents = createAsyncThunk(
+  "coachModule/getCoachAssignStudents",
+  async (id) => {
+    const response = await axios.get(
+      `${baseUrl}/admin/CoachMapping/${id}/AssignStudents`
+    );
+    return response.data;
+  }
+);
+export const getCoachAssignBatches = createAsyncThunk(
+  "coachModule/getCoachAssignBatches",
+  async (id) => {
+    const response = await axios.get(
+      `${baseUrl}/admin/CoachMapping/${id}/AssignBatches`
+    );
     return response.data;
   }
 );
@@ -173,6 +284,32 @@ export const coachSlice= createSlice({
       state.loading = false;
       state.error = action.payload || action.error.message;
     });
+    // Get Assigned Students
+    builder.addCase(getCoachAssignStudents.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(getCoachAssignStudents.fulfilled, (state, action) => {
+      state.loading = false;
+      state.assignedStudents = action.payload;
+    });
+    builder.addCase(getCoachAssignStudents.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload || action.error.message;
+    });
+    
+     // Get Assigned Batches
+     builder.addCase(getCoachAssignBatches.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(getCoachAssignBatches.fulfilled, (state, action) => {
+      state.loading = false;
+      state.assignedBatches = action.payload;
+    });
+    builder.addCase(getCoachAssignBatches.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload || action.error.message;
+    });
+
      // Show CA Mapping
      builder.addCase(showCAMapping.pending, (state) => {
       state.loading = true;
@@ -180,7 +317,7 @@ export const coachSlice= createSlice({
     builder.addCase(showCAMapping.fulfilled, (state, action) => {
       console.log("action " , action.payload);
       state.loading = false;
-      state.coachMapping = action.payload;
+      state.coachMapping = action.payload?.data;
     });
     builder.addCase(showCAMapping.rejected, (state, action) => {
       state.loading = false;

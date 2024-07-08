@@ -23,7 +23,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import { PhotoCamera } from "@mui/icons-material";
 import AssignStudents from "../../AssignStudents";
-import AssignBatches from "../../AssignBatches";
+import AssignCoachBatches from "../../../../pages/ManageCoaches/AssignedCoachBatches";
 import dayjs from "dayjs";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
@@ -619,7 +619,7 @@ function AddEditCoach({ data }) {
        
        
         {assignStudentOpen && <AssignStudents />}
-        {assignBatchOpen && <AssignBatches />}
+        {assignBatchOpen && <AssignCoachBatches />}
       </Box>
     </Box>
   </>

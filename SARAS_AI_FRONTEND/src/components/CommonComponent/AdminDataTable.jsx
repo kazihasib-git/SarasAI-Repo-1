@@ -3,7 +3,7 @@ import { Button, IconButton, Switch, Pagination, Box } from "@mui/material";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
 import { styled } from "@mui/material/styles";
-import "./CommonComponent.css";
+
 import Header from "../../components/Header/Header";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
@@ -11,20 +11,14 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { AssignedBatchesData } from "../../fakeData/AssignedBatchesData";
 import bin from "../../assets/bin.png";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  deleteAssignedBatch,
-  getAssignBatches,
-  toggleAssignBatchStatus,
-} from "../../redux/features/taModule/taSlice";
-import AdminDataTable from "../../components/CommonComponent/AdminDataTable";
+
 const CustomButton = styled(Button)(({ theme, active }) => ({
   borderRadius: "50px",
   border: "1px solid #F56D3B",
   color: active ? "#fff" : "#F56D3B",
   backgroundColor: active ? "#F56D3B" : "#FFF",
-  padding: "8px 16px", // Add padding for horizontal and vertical spacing
+  padding: "8px 16px",
   margin: "0 8px",
-
   "&:hover": {
     backgroundColor: "#F56D3B",
     color: "#fff",
@@ -77,7 +71,7 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
   },
 }));
 
-const DynamicTable = ({
+const AdminDataTable = ({
   headers,
   initialData,
   title,
@@ -85,7 +79,9 @@ const DynamicTable = ({
   ta_id,
   dispatch,
 }) => {
+    console.log("initial data", initialData)
   const [data, setData] = useState(
+    
     initialData.map((item) => ({
       ...item,
       is_active: item.is_active !== undefined ? item.is_active : 0,
@@ -105,8 +101,8 @@ const DynamicTable = ({
   const itemsPerPage = 10;
   const totalPages = Math.ceil(data.length / itemsPerPage);
   const currentData = data.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+      (currentPage - 1) * itemsPerPage,
+      currentPage * itemsPerPage
   );
   const navigate = useNavigate();
 
@@ -114,8 +110,7 @@ const DynamicTable = ({
     setCurrentPage(pageNumber);
   };
 
-  const handleToggle = async (id) => {
-    console.log("id : ", id);
+  const handleToggle = (id) => {
     const updatedData = data.map((item) =>
       item.id === id
         ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
@@ -125,24 +120,11 @@ const DynamicTable = ({
 
     const toggledItem = updatedData.find((item) => item.id === id);
     const requestData = { is_active: toggledItem.is_active };
-    try {
-      await dispatch(toggleAssignBatchStatus({ id, data: requestData }));
-    } catch (error) {
-      // Revert state if the API call fails
-      setData(
-        data.map((item) =>
-          item.id === id
-            ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
-            : item
-        )
-      );
-    }
+    dispatch(toggleAssignStudentStatus({ id, data: requestData }));
   };
 
   const handleDelete = (id) => {
-    // Implement delete functionality here
-    console.log("Deleting item with id:", id);
-    dispatch(deleteAssignedBatch({ id }));
+    dispatch(deleteAssignedStudent({ id }));
   };
 
   const handleNavigate = (path) => {
@@ -153,15 +135,11 @@ const DynamicTable = ({
     <div className="table-container">
       <Box display={"flex"} justifyContent={"space-between"}>
         <Box display="flex" alignItems="center" padding="16px">
-          {/* <i
-            style={{ fontSize: "25px" }}
-            className="bi bi-caret-left"
-            onClick={() => navigate("/ta-mapping")}
-          ></i> */}
           <ArrowBackIosIcon
             style={{ fontSize: "25px", marginBottom: "17px" }}
             onClick={() => navigate("/ta-mapping")}
           />
+
           <p
             style={{
               fontSize: "44px",
@@ -192,7 +170,6 @@ const DynamicTable = ({
             {headers.map((header, index) => (
               <th key={index}>{header}</th>
             ))}
-            {/* <th>Actions</th> Add an extra header for actions */}
           </tr>
         </thead>
         <tbody className="commonTableBody">
@@ -300,57 +277,4 @@ const DynamicTable = ({
   );
 };
 
-const headers = ["Sr. No.", "Student Name", "Batch", "Actions"];
-const actionButtons = [
-  {
-    type: "switch",
-  },
-  {
-    type: "delete",
-    onClick: (id) => console.log(`Edit clicked for id ${id}`),
-  },
-];
-
-const AssignBatches = () => {
-  const { id } = useParams();
-  console.log("ID : ", id);
-  const dispatch = useDispatch();
-  const { assignedBatches, loading } = useSelector((state) => state.taModule);
-  const [taAssignBatchesData, setTaAssignBatchesData] = useState([]);
-
-  useEffect(() => {
-    if (id) {
-      dispatch(getAssignBatches(id));
-    }
-  }, [dispatch, id]);
-
-  useEffect(() => {
-    if (assignedBatches && assignedBatches.length > 0) {
-      const transformData = assignedBatches.map((item, index) => ({
-        id: item.id,
-        ta_name: item.ta.name,
-        batch_name: item.batch.name,
-        is_active: item.is_active,
-      }));
-
-      setTaAssignBatchesData(transformData);
-    }
-  }, [assignedBatches]);
-
-  return (
-    <>
-      <Header />
-      <Sidebar />
-      <AdminDataTable
-        headers={headers}
-        initialData={taAssignBatchesData}
-        title="Assign Batches"
-        actionButtons={actionButtons}
-        ta_id={id}
-        dispatch={dispatch}
-      />
-    </>
-  );
-};
-
-export default AssignBatches;
+export default AdminDataTable;

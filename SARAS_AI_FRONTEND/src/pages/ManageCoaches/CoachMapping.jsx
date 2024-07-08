@@ -51,12 +51,16 @@ console.log("camapping" , coachMapping);
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
-  const actionButtons = [
-    {
-      type: "switch",
-    }
-  
-  ];
+ 
+const actionButtons = [
+  // {
+  //   type: "switch",
+  // },
+  {
+    type: "delete",
+    onClick: (id) => console.log(`Delete clicked for id ${id}`),
+  },
+];
   const handleOpen = (row, type) => {
     setCurrentRow(row);
     setViewType(type);
