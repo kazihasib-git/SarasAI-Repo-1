@@ -11,6 +11,7 @@ import {
 import CustomTextField from "../CustomFields/CustomTextField";
 import ReusableDialog from "../CustomFields/ReusableDialog";
 import PopUpTable from "../CommonComponent/PopUpTable";
+import { openScheduleSession } from "../../redux/features/taModule/taScheduling";
 
 const CustomButton = ({
   onClick,
@@ -49,13 +50,10 @@ const CustomButton = ({
 
 const AssignBatches = () => {
   const dispatch = useDispatch();
-  const {
-    assignBatchOpen,
-    ta_name,
-    taID,
-    batchMapping = [],
-    loading,
-  } = useSelector((state) => state.taModule);
+  const { assignBatchOpen, ta_name, taID, batchMapping = [], loading, } = useSelector((state) => state.taModule);
+
+  const { taName, taID: taId } = useSelector((state) => state.taScheduling);
+
   const [selectedBatch, setSelectedBatch] = useState("");
   const [filteredBatches, setFilteredBatches] = useState([]);
   const [selectedBatches, setSelectedBatches] = useState([]);
@@ -72,19 +70,26 @@ const AssignBatches = () => {
         "S. No.": batch.id,
         "Batch Name": batch.name,
         Branch: batch.branch,
-        "Academic Term": batch.academic_term || "N/A",
-        Batch: batch.children
-          ? batch.children.map((child) => child.name).join(", ")
-          : batch.name,
         Select: batch.is_active ? "Active" : "Inactive",
         batch_id: batch.id,
+        //"Academic Term": batch.academic_term || "N/A",
+        /*
+        Batch: batch.children ? batch.children.map((child) => child.name).join(", ") batch.name,
+        */
       }));
+
+      
+      // Initialize selected batches with active ones
+      // const activeBatches = batchMapping
+      //   .filter((batch) => batch.is_active === 1)
+      //   .map((batch) => batch.id);
+      // setSelectedBatches(activeBatches);
 
       // Filter by selected batch
       const filtered = transformedData.filter(
         (batch) =>
-          batch["Batch"] &&
-          batch["Batch"].toLowerCase().includes(selectedBatch.toLowerCase())
+          batch["Branch"] &&
+          batch["Branch"].toLowerCase().includes(selectedBatch.toLowerCase())
       );
 
       setFilteredBatches(filtered);
@@ -101,7 +106,7 @@ const AssignBatches = () => {
   ];
 
   const handleSelectBatch = (id) => {
-    console.log("IDDD : ", id)
+    console.log("IDDD : ", id);
     setSelectedBatches((prev) =>
       prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id]
     );
@@ -109,10 +114,15 @@ const AssignBatches = () => {
 
   const handleSubmit = () => {
     const data = {
-      ta_id: taID,
+      ta_id: taID ? taID : taId,
       batches: selectedBatches.map((id) => ({ id: id.toString() })),
     };
-    dispatch(postAssignBatches({ id: taID, data })).then(() => {
+    dispatch(postAssignBatches({ id: taID ? taID : taId, data })).then(() => {
+      if (taId) {
+        if (taId) {
+          dispatch(openScheduleSession({ id: taId, name: taName, batches: selectedBatches.map((id) => ({ id: id.toString() })) }));
+        }
+      }
       dispatch(openSuccessPopup());
     });
     dispatch(closeAssignBatches());
@@ -122,18 +132,18 @@ const AssignBatches = () => {
     "S. No.",
     "Batch Name",
     "Branch",
-    "Academic Term",
-    "Batch",
+    //"Academic Term",
+    //"Batch",
     "Select",
   ];
 
   const content = (
     <>
       <Grid container spacing={2} justifyContent="center">
-        <Grid item xs={12} sm={6}>
+        <Grid item sm={6}>
           <CustomTextField
             select
-            label="Batch"
+            label="Branch"
             value={selectedBatch}
             onChange={(e) => setSelectedBatch(e.target.value)}
           >
@@ -145,11 +155,11 @@ const AssignBatches = () => {
           </CustomTextField>
         </Grid>
         <Grid item xs={12}>
-          <Divider sx={{ mt: 2, mb: 4, border: "1px solid #C2C2E7" }} />
+          <Divider sx={{ border: "1px solid #C2C2E7" }} />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} mb={2}>
           <CustomTextField
-            label="Search By Batches"
+            label="Search By Batch Name"
             value={selectedBatch}
             onChange={(e) => setSelectedBatch(e.target.value)}
           />
@@ -190,11 +200,13 @@ const AssignBatches = () => {
     return <div>Loading...</div>;
   }
 
+  const assignedTA = ta_name || taName;
+
   return (
     <ReusableDialog
       open={assignBatchOpen}
       handleClose={() => dispatch(closeAssignBatches())}
-      title={`Assign Batches to ${ta_name}`}
+      title={`Assign Batches to ${assignedTA}`}
       content={content}
       actions={actions}
     />

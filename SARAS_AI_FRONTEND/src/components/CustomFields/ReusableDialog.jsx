@@ -6,7 +6,7 @@ const ReusableDialog = ({ open, handleClose, title, content, actions }) => (
   <Dialog
     open={open}
     onClose={handleClose}
-    // maxWidth="md"
+    maxWidth="md"
     fullWidth
     sx={{
       padding: '50px 0px 50px 0px',
@@ -31,7 +31,8 @@ const ReusableDialog = ({ open, handleClose, title, content, actions }) => (
       id="alert-dialog-title"
       sx={{
         m: 0,
-        p: 2,
+        // p: 2,
+        paddingTop:"16px",
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center'

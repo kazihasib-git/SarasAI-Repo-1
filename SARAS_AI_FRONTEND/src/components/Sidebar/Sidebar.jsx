@@ -24,7 +24,7 @@ const Sidebar = () => {
             onClick={() => handleLinkClick("/dashboard")}
           >
             <i className="bi bi-grid"></i>
-            <span>Dashboard</span>
+            <span className="SideHeader">Dashboard</span>
           </Link>
         </li>
         <Divider
@@ -48,7 +48,7 @@ const Sidebar = () => {
               src={dashboard}
               style={{ width: "18px", height: "18px", marginRight: "10px" }}
             />
-            <span>Teaching Assistant</span>
+            <span  className="SideHeader">Teaching Assistant</span>
             <i className="bi bi-chevron-down ms-auto"></i>
           </a>
           <ul
@@ -64,7 +64,7 @@ const Sidebar = () => {
                 className={activeLink === "/ta-manage" ? "active-link" : ""}
                 onClick={() => handleLinkClick("/ta-manage")}
               >
-                <span>Manage TA</span>
+                <span className="SideSubHeading">Manage TA</span>
               </Link>
             </li>
             <li>
@@ -73,7 +73,7 @@ const Sidebar = () => {
                 className={activeLink === "/ta-mapping" ? "active-link" : ""}
                 onClick={() => handleLinkClick("/ta-mapping")}
               >
-                <span>TA Mapping</span>
+                <span className="SideSubHeading">TA Mapping</span>
               </Link>
             </li>
             <li>
@@ -84,7 +84,7 @@ const Sidebar = () => {
                 }
                 onClick={() => handleLinkClick("/ta-availability")}
               >
-                <span>TA Availability</span>
+                <span className="SideSubHeading">TA Availability</span>
               </Link>
             </li>
             <li>
@@ -93,7 +93,7 @@ const Sidebar = () => {
                 className={activeLink === "/ta-scheduling" ? "active-link" : ""}
                 onClick={() => handleLinkClick("/ta-scheduling")}
               >
-                <span>TA Scheduling</span>
+                <span className="SideSubHeading">TA Scheduling</span>
               </Link>
             </li>
           </ul>
@@ -117,7 +117,7 @@ const Sidebar = () => {
               src={coaches}
               style={{ width: "18px", height: "18px", marginRight: "10px" }}
             />
-            <span>Coaches</span>
+            <span  className="SideHeader" >Coaches</span>
             <i className="bi bi-chevron-down ms-auto"></i>
           </a>
           <ul
@@ -133,7 +133,7 @@ const Sidebar = () => {
                 className={activeLink === "/coach-manage" ? "active-link" : ""}
                 onClick={() => handleLinkClick("/manage-coaches")}
               >
-                <span>Manage Coaches</span>
+                <span className="SideSubHeading">Manage Coaches</span>
               </Link>
             </li>
             <li>
@@ -142,7 +142,7 @@ const Sidebar = () => {
                 className={activeLink === "/coach-mapping" ? "active-link" : ""}
                 onClick={() => handleLinkClick("/coach-mapping")}
               >
-                <span>Coach Mapping</span>
+                <span className="SideSubHeading">Coach Mapping</span>
               </Link>
             </li>
             <li>
@@ -153,7 +153,7 @@ const Sidebar = () => {
                 }
                 onClick={() => handleLinkClick("/coach-template")}
               >
-                <span>Coach Template</span>
+                <span className="SideSubHeading">Coach Template</span>
               </Link>
             </li>
             <li>
@@ -164,7 +164,7 @@ const Sidebar = () => {
                 }
                 onClick={() => handleLinkClick("/coach-availability")}
               >
-                <span>Coach Availability</span>
+                <span className="SideSubHeading">Coach Availability</span>
               </Link>
             </li>
             <li>
@@ -175,7 +175,7 @@ const Sidebar = () => {
                 }
                 onClick={() => handleLinkClick("/coach-scheduling")}
               >
-                <span>Coach Scheduling</span>
+                <span className="SideSubHeading">Coach Scheduling</span>
               </Link>
             </li>
           </ul>
@@ -209,7 +209,7 @@ const Sidebar = () => {
               alt=""
               style={{ width: "18px", height: "18px", marginRight: "10px" }}
             />
-            <span>Coaching Tools</span>
+            <span  className="SideHeader" >Coaching Tools</span>
           </a>
         </li>
         <Divider variant="middle" component="li" sx={{ backgroundColor: "white", opacity: "0.3" }} />
@@ -222,7 +222,7 @@ const Sidebar = () => {
             onClick={() => handleLinkClick("/students")}
           >
             <i className="bi bi-people"></i>
-            <span>Students</span>
+            <span  className="SideHeader">Students</span>
           </Link>
         </li>
         <Divider
@@ -239,7 +239,7 @@ const Sidebar = () => {
             onClick={() => handleLinkClick("/batches")}
           >
             <i className="bi bi-grid-3x3-gap"></i>
-            <span>Batches</span>
+            <span  className="SideHeader">Batches</span>
           </Link>
         </li>
       </ul>

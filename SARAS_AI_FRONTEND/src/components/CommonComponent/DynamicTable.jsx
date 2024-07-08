@@ -18,6 +18,7 @@ import bin from "../../assets/bin.png";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { useDispatch } from "react-redux";
 import { updateTA } from "../../redux/features/taModule/taSlice";
+import { openScheduleSession } from "../../redux/features/taModule/taScheduling";
 
 const CustomButton = styled(Button)(({ theme }) => ({
   borderRadius: "20px",
@@ -143,8 +144,18 @@ const DynamicTable = ({
       navigate(`/active-students/${id}`); // Append id as a parameter
     } else if (type === "batches") {
       navigate(`/active-batches/${id}`); // Append id as a parameter
+    } else if (type === "view report") {
+      navigate(`/view-report/${id}`); // Append id as a parameter
     }
   };
+
+  const handlePopup = (id, name) => {
+    console.log("ID handlePopup : ", id, name);
+    const data = {
+      id, name
+    }
+    dispatch(openScheduleSession(data));
+  }
 
   const handleToggle = (id) => {
     console.log("id : ", id);
@@ -324,9 +335,24 @@ const DynamicTable = ({
                             variant="outlined"
                             color="secondary"
                             startIcon={<CalendarMonthIcon />}
+                            onClick={() => handlePopup(item.id, item.name)}
                           >
                             Schedule
                           </CalenderButton>
+                        );
+                      }
+
+                      if (button.type === "view") {
+                        return (
+                          <CustomButton
+                            key={idx}
+                            variant="outlined"
+                            color="secondary"
+                            endIcon={<CallMadeOutlinedIcon />}
+                            onClick={() => handleView("view report", item.id)}
+                          >
+                            View
+                          </CustomButton>
                         );
                       }
                       return null; // Handle unexpected button types gracefully

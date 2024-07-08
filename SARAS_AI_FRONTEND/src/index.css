@@ -1,11 +1,33 @@
-
-@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
-
-
-code {
-  font-family: "Nunito Sans", sans-serif;
+@font-face {
+  font-family: "Regular";
+  src: url("./assets/fonts/Nohemi-Regular.ttf") format("truetype");
 }
+
+@font-face {
+  font-family: "Medium";
+  src: url("./assets/fonts/Nohemi-Medium.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Light";
+  src: url("./assets/fonts/Nohemi-Light.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "ExtraLight";
+  src: url("./assets/fonts/Nohemi-ExtraLight.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Bold";
+  src: url("./assets/fonts/Nohemi-Bold.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "SemiBold";
+  src: url("./assets/fonts/Nohemi-SemiBold.ttf") format("truetype");
+}
+
 
 
 
@@ -13,34 +35,34 @@ html,
 body,
 #root,
 .app,
-.content{
+.content {
   height: 100%;
   width: 100%;
   font-family: "Nunito Sans", sans-serif;
-  background-color: #F1F1FB;
+  background-color: #f1f1fb;
 }
 
-.app{
+.app {
   display: flex;
   position: relative;
 }
 
-::-webkit-scrollbar{
+::-webkit-scrollbar {
   width: 10px;
 }
 
 /* track */
 
-::-webkit-scrollbar-track{
+::-webkit-scrollbar-track {
   background: #e0e0e0;
 }
 
 /* Handle */
-::-webkit-scrollbar-thumb{
+::-webkit-scrollbar-thumb {
   background: #888;
 }
 
 /* Handle on hover */
-::-webkit-scroll:hover{
+::-webkit-scroll:hover {
   background: #555;
 }

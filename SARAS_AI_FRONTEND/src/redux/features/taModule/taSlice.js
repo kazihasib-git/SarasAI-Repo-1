@@ -147,6 +147,7 @@ export const getAssignBatches = createAsyncThunk(
     return response.data;
   }
 );
+
 export const toggleAssignStudentStatus = createAsyncThunk(
   "taModule/toggleAssignStudentStatus",
   async ({ id, studentId }) => {
@@ -287,6 +288,13 @@ export const taSlice = createSlice({
     closeAssignBatches(state) {
       state.assignBatchOpen = false;
     },
+
+    handleSelectedStudents(state, action) {
+      state.selectedStudents = action.payload;
+    },
+    handleSelectedBatches(state, action) {
+      state.selectedBatches = action.payload;
+    },
   },
   extraReducers: (builder) => {
     // Create TA
@@ -324,6 +332,7 @@ export const taSlice = createSlice({
       const index = state.tas.findIndex((ta) => ta.id === action.payload.id);
       if (index !== -1) {
         state.tas[index] = action.payload;
+        console.log("PAYLOAD ACTION : ", action.payload)
       }
     });
     builder.addCase(updateTA.rejected, (state, action) => {

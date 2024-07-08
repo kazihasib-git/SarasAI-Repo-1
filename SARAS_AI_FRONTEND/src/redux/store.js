@@ -6,13 +6,16 @@ import { coursesApi } from './services/courses/coursesApi';
 import taReducer from './features/taModule/taSlice';
 import taSchedulingReducer from './features/taModule/taScheduling';
 import taAvailabilityReducer from './features/taModule/taAvialability';
+import coachTemplateReducer from './features/CoachModule/CoachTemplateSlice';
 
 const store = configureStore({
 
     reducer: {
         taModule: taReducer,
+        taAvailability : taAvailabilityReducer,
         taScheduling : taSchedulingReducer,
         taAvialability : taAvailabilityReducer,
+        coachTemplate : coachTemplateReducer,
         [studentsApi.reducerPath]: studentsApi.reducer,
         [batchesApi.reducerPath]: batchesApi.reducer,
         [coursesApi.reducerPath]: coursesApi.reducer,

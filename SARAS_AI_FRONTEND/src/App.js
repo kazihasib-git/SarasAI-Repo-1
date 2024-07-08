@@ -1,6 +1,14 @@
 import "./App.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
+import './assets/fonts/Nohemi-Bold.ttf';
+import './assets/fonts/Nohemi-ExtraLight.ttf';
+import './assets/fonts/Nohemi-Light.ttf';
+import './assets/fonts/Nohemi-Medium.ttf';
+import './assets/fonts/Nohemi-Regular.ttf';
+import './assets/fonts/Nohemi-SemiBold.ttf'
+
+
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
@@ -16,7 +24,7 @@ import ManagesTAs from "./pages/managesTAs/ManagesTAs";
 import TAAvailability from "./pages/managesTAs/TaAvaialablity";
 import ManageCoaches from "./pages/ManageCoaches/ManageCoaches";
 import CoachMapping from "./pages/ManageCoaches/CoachMapping";
-import CoachTemplate from "./pages/ManageCoaches/CoachTemplate";
+import CoachTemplate from "./pages/ManageCoaches/CoachingTemplate/CoachTemplate";
 import CoachAvialability from "./pages/managesTAs/CoachAvialability";
 import CoachScheduling from "./pages/ManageCoaches/CoachScheduling";
 import AllRoutes from "./components/AllRoutes/AllRoutes";
@@ -41,6 +49,9 @@ import CreateTAPage from "./pages/managesTAs/CreateTAPage";
 import AssignedBatches from "./pages/managesTAs/AssignedBatches";
 import TaCalender from "./pages/managesTAs/TaCalendar";
 import BatchPage from "./pages/batches/BatchPage";
+import CreateTemplate from "./pages/ManageCoaches/CoachingTemplate/CreateTemplate";
+import TemplateName from "./pages/ManageCoaches/CoachingTemplate/TemplateName";
+import WheelOfLife from "./pages/coachingTools/wheelOfLife/WheelOfLife";
 const ROLES = {
   Teaching: 2001,
   Coaches: 1984,
@@ -89,7 +100,7 @@ function App() {
               element={<TaScheduling page="TA Scheduling" />}
             />
             <Route
-              path="ta-calendar"
+              path="ta-calendar/:name/:id"
               element={<TaCalender page="Calendar" />}
             />
             {/* <Route path='calendar' element={<Calendar page="Calendar" />} /> */}
@@ -113,6 +124,15 @@ function App() {
               path="coach-template"
               element={<CoachTemplate page="Coach Template" />}
             />
+
+            <Route
+              path="create-template"
+              element={<CreateTemplate page="Create Template" />}
+            />
+            <Route
+              path="template-name"
+              element={<TemplateName page="Template Name" />}
+            />
             <Route
               path="coach-availability"
               element={<CoachAvialability page="Coach Availability" />}
@@ -124,6 +144,7 @@ function App() {
             <Route path="students" element={<StudentPage />} />
             <Route path="batches" element={<BatchPage />} />
             {/* <Route path='/student-list' element={<StudentList page="Student" />} /> */}
+            <Route path="coaching-tools" element={<WheelOfLife />} />
           </Route>
         </Route>
 

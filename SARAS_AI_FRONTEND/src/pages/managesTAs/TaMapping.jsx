@@ -59,6 +59,7 @@ const TaMapping = () => {
             fontSize: "44px",
             justifyContent: "center",
             marginBottom: "20px",
+            fontFamily:"ExtraLight"
           }}
         >
           TA Mapping

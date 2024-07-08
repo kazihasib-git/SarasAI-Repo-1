@@ -2,106 +2,118 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { baseUrl } from "../../../utils/baseURL";
 
-/*
-export const createTA = createAsyncThunk(
-    "taModule/createTA",
-    async (data) => {
-        const response = await axios.post(`${baseUrl}/admin/manage_tas`, data);
+export const showTASchedule = createAsyncThunk(
+    "taScheduling/showTaSchedule",
+    async () => {
+        const response = await axios.get(`${baseUrl}/admin/taschedules`);
         return response.data;
     }
 );
 
-*/
+export const createTASchedule = createAsyncThunk(
+    "taScheduling/createTASchedule",
+    async (data) => {
+        const response = await axios.post(`${baseUrl}/admin/taschedules`, data);
+        return response.data;
+    }
+)
+
+export const getTaAvailableSlotsFromDate = createAsyncThunk(
+    'taScheduling/getTaAvailableSlotsFromDate',
+    async (data) => {
+        const response = await axios.post(`${baseUrl}/admin/coach-slots/getTACoachSlotForADate`, data);
+        return response.data;
+    }
+)
 
 const initialState = {
-    //scheduleSessionOpen : false,
-    markLeaveOpen : false,
-    scheduledSlotsOpen : false,
-    scheduledSessionOpen : false,
-    cancelSessionOpen : false,
-    resheduleSessionOpen : false,
-    reasonForLeaveOpen : false,
-    deleteFutureSlotOpen : false,
-    scheduleNewSession : false,
-    createNewSlotOpen : false,
-}
+    taAvailableSlots: [],
+    taSchedule: [],
+    loading: false,
+    error: null,
+    studentBatchMapping: [],
+    studentBatchMappingLoading: false,
+    studentBatchMappingError: null,
+    scheduleSessionOpen: false,
+    students: [],
+    batches: [],
+    taID: null,
+    taName: null,
+};
 
-
-
-
-export const taSchedulingSlice = createSlice({
+const taScheduling = createSlice({
     name: "taScheduling",
-    initialState, 
+    initialState,
     reducers: {
-        openMarkLeave(state) {
-            state.markLeaveOpen = true;
+        openScheduleSession(state, action) {
+            console.log("Open Action : ", action.payload)
+            state.taID = action.payload.id;
+            state.taName = action.payload.name;
+            if (action.payload.student) {
+                state.students = action.payload.student;
+            }
+            if (action.payload.batches) {
+                state.batches = action.payload.batches;
+            }
+            state.scheduleSessionOpen = true;
         },
-        closeMarkLeave(state) {
-            state.markLeaveOpen = false;
+        closeScheduleSession(state, action) {
+            console.log("Close Action : ", action.payload)
+            state.taID = null;
+            state.taName = null;
+            state.students = [];
+            state.batches = [];
+            state.scheduleSessionOpen = false;
         },
-        openScheduledSlots(state) {
-            state.scheduledSlotsOpen = true;
+        clearAvailableSlots(state) {
+            state.taAvailableSlots = [];
         },
-        closeScheduledSlots(state){
-            state.scheduledSlotsOpen = false;
-        },
-        openScheduledSession(state){
-            state.scheduledSessionOpen = true;
-        },
-        closeScheduledSession(state){
-            state.scheduledSessionOpen = false;
-        },
-        openCancelSession(state){
-            state.cancelSessionOpen = true;
-        },
-        closeCancelSession(state){
-            state.cancelSessionOpen = false;
-        },
-        openReasonForLeave(state){
-            state.reasonForLeaveOpen = true;
-        },
-        closeReasonForLeave(state){
-            state.reasonForLeaveOpen = false;
-        },
-        openRescheduleSession(state){
-            state.resheduleSessionOpen = true;
-        },
-        closeRescheduleSession(state){
-            state.resheduleSessionOpen = false;
-        }
     },
     extraReducers: (builder) => {
-        //Create TA
-        /*
-        builder.addCase(createTA.pending, (state) => {
+        // Show TA Schedule
+        builder.addCase(showTASchedule.pending, (state) => {
             state.loading = true;
         });
-        builder.addCase(createTA.fulfilled, (state, action) => {
+        builder.addCase(showTASchedule.fulfilled, (state, action) => {
             state.loading = false;
-            state.tas = action.payload;
+            state.taSchedule = action.payload.data;
         });
-        builder.addCase(createTA.rejected, (state, action) => {
+        builder.addCase(showTASchedule.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
         });
-        */
-    }
+
+        // Create TA Schedule
+        builder.addCase(createTASchedule.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(createTASchedule.fulfilled, (state, action) => {
+            state.loading = false;
+            state.taSchedule = action.payload.data;
+        });
+        builder.addCase(createTASchedule.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+        });
+
+        // Get TA Available Slots From Date
+        builder.addCase(getTaAvailableSlotsFromDate.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(getTaAvailableSlotsFromDate.fulfilled, (state, action) => {
+            state.loading = false;
+            state.taAvailableSlots = action.payload.data;
+        });
+        builder.addCase(getTaAvailableSlotsFromDate.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+        });
+    },
 });
 
+export const {
+    openScheduleSession,
+    closeScheduleSession,
+} = taScheduling.actions
 
-export const {  
-    openMarkLeave,
-    closeMarkLeave,
-    openScheduledSlots,
-    closeScheduledSlots, 
-    openScheduledSession,
-    closeScheduledSession,
-    openCancelSession,
-    closeCancelSession,
-    openReasonForLeave,
-    closeReasonForLeave,
-    openRescheduleSession,
-    closeRescheduleSession,
-} = taSchedulingSlice.actions;
-
-export default taSchedulingSlice.reducer;
+export default taScheduling.reducer

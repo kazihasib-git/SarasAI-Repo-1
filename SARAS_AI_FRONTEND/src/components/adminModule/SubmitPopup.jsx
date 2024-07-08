@@ -2,7 +2,7 @@ import { Box, Button, Dialog, DialogActions, DialogTitle, IconButton, Typography
 import React from 'react'
 import CloseIcon from '@mui/icons-material/Close';
 import { useDispatch, useSelector } from 'react-redux';
-import { closeSuccessPopup, openAssignBatches, openAssignStudents, openSuccessPopup } from '../../redux/features/taModule/taSlice';
+import { closeCreateTa, closeEditTa, closeSuccessPopup, openAssignBatches, openAssignStudents, openSuccessPopup } from '../../redux/features/taModule/taSlice';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import { Navigate, useNavigate } from 'react-router-dom';
 
@@ -38,7 +38,7 @@ const SubmitPopup = () => {
     const navigate = useNavigate()
     const { tas, successPopup, error, loading, ta_name } = useSelector((state) => state.taModule)
     
-    console.log("tas", tas)
+    console.log("TA_Name : ", ta_name)
 
     const handleAssignBatches = () => {
         dispatch(closeSuccessPopup())
@@ -52,12 +52,13 @@ const SubmitPopup = () => {
 
     const handleCloseButton = () =>{
         dispatch(closeSuccessPopup())
+        dispatch(closeCreateTa())
+        dispatch(closeEditTa())
         navigate("/ta-mapping")
     } 
 
     const actions = (
-        <>
-            
+        <>  
             <CustomButton
                 onClick={handleAssignStudents}
                 backgroundColor='#F56D3B'
