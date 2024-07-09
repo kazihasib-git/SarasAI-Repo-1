@@ -42,7 +42,8 @@ import Mystudents from "./components/RoleRoute/CommonComponent/Mystudents";
 import AssignedStudent from "./pages/managesTAs/AssignedStudent";
 // import StudentList from './pages/Student/StudentList';
 import AddEditTA from "./components/adminModule/tas/manageTAs/AddEditTA";
-
+import AssignCoachBatches from "./pages/ManageCoaches/AssignedCoachBatches";
+import AssignCoachStudent from "./pages/ManageCoaches/AssignedCoachStudent";
 import CreateCoachPage from "./pages/ManageCoaches/CreateCoachPage";
 import CoachCalender from "./pages/ManageCoaches/CoachCalender";
 import CreateTAPage from "./pages/managesTAs/CreateTAPage";
@@ -90,6 +91,14 @@ function App() {
             <Route
               path="/active-batches/:id"
               element={<AssignedBatches page="Assigned Batches" />}
+            />
+            <Route
+              path="/active-Coach-batches/:id"
+              element={<AssignCoachBatches page="Assigned Coach Batches"/>}
+            />
+            <Route
+              path="/active-Coach-students/:id"
+              element={<AssignCoachStudent page="Assigned Coach Student" />}
             />
             <Route
               path="ta-availability"

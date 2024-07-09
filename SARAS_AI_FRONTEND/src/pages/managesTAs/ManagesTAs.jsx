@@ -75,6 +75,7 @@ const ManageTA = () => {
     setEditData(dataToEdit);
     dispatch(openEditTa());
   };
+ console.log("Editta isisisi", editData)
 
   const handleChange = (value) => {
     setSearchQuery(value);

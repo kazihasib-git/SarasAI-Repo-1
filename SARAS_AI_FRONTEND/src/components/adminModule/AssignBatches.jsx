@@ -50,13 +50,13 @@ const CustomButton = ({
 
 const AssignBatches = () => {
   const dispatch = useDispatch();
-  const { assignBatchOpen, ta_name, taID, batchMapping = [], loading, } = useSelector((state) => state.taModule);
-
+  const { assignBatchOpen, ta_name, taID, batchMapping = [], loading } = useSelector((state) => state.taModule);
   const { taName, taID: taId } = useSelector((state) => state.taScheduling);
 
-  const [selectedBatch, setSelectedBatch] = useState("");
+  const [selectedBatch, setSelectedBatch] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedBranch, setSelectedBranch] = useState("");
   const [filteredBatches, setFilteredBatches] = useState([]);
-  const [selectedBatches, setSelectedBatches] = useState([]);
 
   useEffect(() => {
     if (assignBatchOpen) {
@@ -72,42 +72,25 @@ const AssignBatches = () => {
         Branch: batch.branch,
         Select: batch.is_active ? "Active" : "Inactive",
         batch_id: batch.id,
-        //"Academic Term": batch.academic_term || "N/A",
-        /*
-        Batch: batch.children ? batch.children.map((child) => child.name).join(", ") batch.name,
-        */
       }));
 
-      
-      // Initialize selected batches with active ones
-      // const activeBatches = batchMapping
-      //   .filter((batch) => batch.is_active === 1)
-      //   .map((batch) => batch.id);
-      // setSelectedBatches(activeBatches);
-
-      // Filter by selected batch
-      const filtered = transformedData.filter(
-        (batch) =>
-          batch["Branch"] &&
-          batch["Branch"].toLowerCase().includes(selectedBatch.toLowerCase())
-      );
+      // Filter by selected branch and search query
+      const filtered = transformedData.filter((batch) => {
+        const matchesBranch = selectedBranch ? batch.Branch === selectedBranch : true;
+        const matchesQuery = searchQuery ? batch["Batch Name"].toLowerCase().includes(searchQuery.toLowerCase()) : true;
+        return matchesBranch && matchesQuery;
+      });
 
       setFilteredBatches(filtered);
     }
-  }, [batchMapping, selectedBatch]);
+  }, [batchMapping, selectedBranch, searchQuery]);
 
   const batchOptions = [
-    ...new Set(
-      batchMapping.flatMap((batch) => [
-        batch.name,
-        ...batch.children.map((child) => child.name),
-      ])
-    ),
+    ...new Set(batchMapping.map((batch) => batch.branch)),
   ];
 
   const handleSelectBatch = (id) => {
-    console.log("IDDD : ", id);
-    setSelectedBatches((prev) =>
+    setSelectedBatch((prev) =>
       prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id]
     );
   };
@@ -115,13 +98,11 @@ const AssignBatches = () => {
   const handleSubmit = () => {
     const data = {
       ta_id: taID ? taID : taId,
-      batches: selectedBatches.map((id) => ({ id: id.toString() })),
+      batches: selectedBatch.map((id) => ({ id: id.toString() })),
     };
     dispatch(postAssignBatches({ id: taID ? taID : taId, data })).then(() => {
       if (taId) {
-        if (taId) {
-          dispatch(openScheduleSession({ id: taId, name: taName, batches: selectedBatches.map((id) => ({ id: id.toString() })) }));
-        }
+        dispatch(openScheduleSession({ id: taId, name: taName, batches: selectedBatch.map((id) => ({ id: id.toString() })) }));
       }
       dispatch(openSuccessPopup());
     });
@@ -132,8 +113,6 @@ const AssignBatches = () => {
     "S. No.",
     "Batch Name",
     "Branch",
-    //"Academic Term",
-    //"Batch",
     "Select",
   ];
 
@@ -144,12 +123,12 @@ const AssignBatches = () => {
           <CustomTextField
             select
             label="Branch"
-            value={selectedBatch}
-            onChange={(e) => setSelectedBatch(e.target.value)}
+            value={selectedBranch}
+            onChange={(e) => setSelectedBranch(e.target.value)}
           >
-            {batchOptions.map((batch) => (
-              <MenuItem key={batch} value={batch}>
-                {batch}
+            {batchOptions.map((branch) => (
+              <MenuItem key={branch} value={branch}>
+                {branch}
               </MenuItem>
             ))}
           </CustomTextField>
@@ -160,31 +139,30 @@ const AssignBatches = () => {
         <Grid item xs={12} mb={2}>
           <CustomTextField
             label="Search By Batch Name"
-            value={selectedBatch}
-            onChange={(e) => setSelectedBatch(e.target.value)}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
         </Grid>
       </Grid>
-
       <PopUpTable
         headers={headers}
         initialData={filteredBatches}
         onRowClick={handleSelectBatch}
-        selectedBox={selectedBatches}
+        selectedBox={selectedBatch}
+        itemsPerPage={4}
       />
-
       <Typography
         variant="subtitle1"
         gutterBottom
         sx={{ mt: 2, textAlign: "center" }}
       >
-        {selectedBatches.length} batch(es) Selected
+        {selectedBatch.length} batch(es) Selected
       </Typography>
     </>
   );
 
   const actions = (
-    <Button
+    <CustomButton
       onClick={handleSubmit}
       style={{
         backgroundColor: "#F56D3B",
@@ -193,7 +171,7 @@ const AssignBatches = () => {
       }}
     >
       Submit
-    </Button>
+    </CustomButton>
   );
 
   if (loading) {

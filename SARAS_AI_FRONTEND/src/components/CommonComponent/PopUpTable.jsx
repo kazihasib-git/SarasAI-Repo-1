@@ -56,9 +56,9 @@ const CustomButton = ({ onClick, children, variant = 'contained', color = '#FFFF
 };
 
 
-const PopUpTable = ({ headers, initialData, onRowClick, selectedBox = [] ,onViewClick, onRescheduleClick, onCancelClick}) => {
+const PopUpTable = ({ headers, initialData, onRowClick, selectedBox = [] ,onViewClick, onRescheduleClick, onCancelClick, itemsPerPage = 4}) => {
   const [data, setData] = useState(initialData ?? []);
-
+  // console.log("INTIAL DATA : ", data)
   useEffect(() => {
     setData(initialData ?? []);
   }, [initialData]);
@@ -68,7 +68,6 @@ const PopUpTable = ({ headers, initialData, onRowClick, selectedBox = [] ,onView
   };
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
   const totalPages = Math.ceil(data.length / itemsPerPage);
   const currentData = data.slice(
     (currentPage - 1) * itemsPerPage,
@@ -88,6 +87,7 @@ const PopUpTable = ({ headers, initialData, onRowClick, selectedBox = [] ,onView
         <tbody className="popUpBody">
           {currentData.map((item, index) => (
             <tr key={item["S. No."] ?? index} id="popUpRow">
+              {/* {console.log("DATA : ",item)} */}
               {headers.map((header, idx) => (
                 <td key={idx}>
                   {header === "Select" ? (
