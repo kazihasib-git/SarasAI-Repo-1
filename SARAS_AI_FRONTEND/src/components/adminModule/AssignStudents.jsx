@@ -13,6 +13,13 @@ import ReusableDialog from "../CustomFields/ReusableDialog";
 import PopUpTable from "../CommonComponent/PopUpTable";
 import { openScheduleSession } from "../../redux/features/taModule/taScheduling";
 
+import {
+  closeCoachAssignStudents,
+  openCoachSuccessPopup,
+  getCoachStudentBatchMapping,
+  // postAssignStudents,
+} from "../../redux/features/CoachModule/coachSlice";
+
 const CustomButton = ({
   onClick,
   children,
@@ -48,7 +55,7 @@ const CustomButton = ({
   );
 };
 
-const AssignStudents = () => {
+const AssignStudents = (componentname) => {
   const dispatch = useDispatch();
   const [selectedTerm, setSelectedTerm] = useState("");
   const [selectedBatch, setSelectedBatch] = useState("");
@@ -56,45 +63,127 @@ const AssignStudents = () => {
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [filteredStudents, setFilteredStudents] = useState([]);
 
-  const { assignStudentOpen, ta_name, taID, studentBatchMapping } = useSelector((state) => state.taModule);
+  let stateModuleKey;
+  let nameKey;
 
-  const { taName,  taID  : taId , taTimezone } = useSelector((state) => state.taScheduling);
+  switch (componentname) {
+    case "ADDITCOACH":
+      stateModuleKey = "coachModule";
+      nameKey = "coach_name";
+      break;
+    case "ADDEDITTA":
+      stateModuleKey = "taModule";
+      nameKey = "ta_name";
+      break;
+    default:
+      stateModuleKey = null;
+      nameKey = null;
+      break;
+  }
+
+  const {
+    assignStudentOpen,
+    assignCoachStudentOpen,
+    assignCoachBatchOpen,
+    ta_name,
+    coach_name,
+    taID,
+    coachID,
+    studentBatchMapping,
+    coachMapping,
+  } =
+    useSelector((state) => (stateModuleKey ? state[stateModuleKey] : {})) || {};
+  const { taName, taID: taId } = useSelector((state) => state.taScheduling);
 
   useEffect(() => {
-    if (assignStudentOpen) {
-      dispatch(getStudentBatchMapping());
+    if (assignStudentOpen || assignCoachStudentOpen) {
+      if (stateModuleKey == "coachModule") {
+        dispatch(getCoachStudentBatchMapping());
+      } else {
+        dispatch(getStudentBatchMapping());
+      }
     }
   }, [assignStudentOpen, dispatch]);
 
   useEffect(() => {
-    if (studentBatchMapping) {
-      const transformedData = studentBatchMapping.map((student) => ({
-        "S. No.": student.student_id,
-        "Student Name": student.student_name,
-        "Academic Term": student.academic_term,
-        Batch: student.batches.map((batch) => batch.batch_name).join(", ") || "N/A",
-        Select: student.is_active ? "Active" : "Inactive",
-        student_id: student.student_id,
-        is_active: student.is_active,
-      }));
+    if (componentname == "ADDEDITTA") {
+      if (studentBatchMapping) {
+        const transformedData = studentBatchMapping.map((student) => ({
+          "S. No.": student.student_id,
+          "Student Name": student.student_name,
+          "Academic Term": student.academic_term,
+          Batch:
+            student.batches.map((batch) => batch.batch_name).join(", ") ||
+            "N/A",
+          Select: student.is_active ? "Active" : "Inactive",
+          student_id: student.student_id,
+          is_active: student.is_active,
+        }));
 
-      const filtered = transformedData.filter((student) => {
-        const matchesTerm = selectedTerm ? student["Academic Term"] === selectedTerm : true;
-        const matchesBatch = selectedBatch ? student.Batch.includes(selectedBatch) : true;
-        const matchesName = searchName ? student["Student Name"].toLowerCase().includes(searchName.toLowerCase()) : true;
-        return matchesTerm && matchesBatch && matchesName;
-      });
+        const filtered = transformedData.filter((student) => {
+          const matchesTerm = selectedTerm
+            ? student["Academic Term"] === selectedTerm
+            : true;
+          const matchesBatch = selectedBatch
+            ? student.Batch.includes(selectedBatch)
+            : true;
+          const matchesName = searchName
+            ? student["Student Name"]
+                .toLowerCase()
+                .includes(searchName.toLowerCase())
+            : true;
+          return matchesTerm && matchesBatch && matchesName;
+        });
 
-      setFilteredStudents(filtered);
+        setFilteredStudents(filtered);
+      }
+      else{
+        if (coachMapping) {
+          const transformedData = coachMapping.map((student) => ({
+            "S. No.": student.student_id,
+            "Student Name": student.student_name,
+            "Academic Term": student.academic_term,
+            Batch:
+              student.batches.map((batch) => batch.batch_name).join(", ") || "N/A",
+            Select: student.is_active ? "Active" : "Inactive",
+            student_id: student.student_id,
+            is_active: student.is_active,
+          }));
+    
+          const filtered = transformedData.filter((student) => {
+            const matchesTerm = selectedTerm
+              ? student["Academic Term"] === selectedTerm
+              : true;
+            const matchesBatch = selectedBatch
+              ? student.Batch.includes(selectedBatch)
+              : true;
+            const matchesName = searchName
+              ? student["Student Name"]
+                  .toLowerCase()
+                  .includes(searchName.toLowerCase())
+              : true;
+            return matchesTerm && matchesBatch && matchesName;
+          });
+    
+          setFilteredStudents(filtered);
+        }
+      }
     }
   }, [studentBatchMapping, selectedTerm, selectedBatch, searchName]);
 
   const batchOptions = studentBatchMapping
-    ? [...new Set(
-        studentBatchMapping
-          .filter((student) => !selectedTerm || student.academic_term === selectedTerm)
-          .flatMap((student) => student.batches.map((batch) => batch.batch_name))
-      )]
+    ? [
+        ...new Set(
+          studentBatchMapping
+            .filter(
+              (student) =>
+                !selectedTerm || student.academic_term === selectedTerm
+            )
+            .flatMap((student) =>
+              student.batches.map((batch) => batch.batch_name)
+            )
+        ),
+      ]
     : [];
 
   const academicTermOptions = studentBatchMapping
@@ -112,14 +201,18 @@ const AssignStudents = () => {
       ta_id: taID ? taID : taId,
       student: selectedStudents.map((id) => ({ id: id.toString() })),
     };
-    dispatch(postAssignStudents({ id: taID ? taID : taId, data }))
-      .then(() => {
-        // Open Schedule Session
-        if(taId){
-          dispatch(openScheduleSession({ id: taId, name: taName , timezone : taTimezone ,student : selectedStudents.map((id) => ({ id: id.toString() })) }));
-        }
-        dispatch(openSuccessPopup());
-      });
+    dispatch(postAssignStudents({ id: taID ? taID : taId, data })).then(() => {
+      if (taId) {
+        dispatch(
+          openScheduleSession({
+            id: taId,
+            name: taName,
+            student: selectedStudents.map((id) => ({ id: id.toString() })),
+          })
+        );
+      }
+      dispatch(openSuccessPopup());
+    });
     dispatch(closeAssignStudents());
   };
 

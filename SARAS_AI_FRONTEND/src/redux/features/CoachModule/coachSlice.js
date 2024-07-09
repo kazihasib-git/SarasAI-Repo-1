@@ -44,104 +44,104 @@ export const deleteCoach = createAsyncThunk(
     return id;
   }
 );
-export const showCAMapping = createAsyncThunk(
-  "coachModule/showCAMapping",
+export const getCoachStudentBatchMapping = createAsyncThunk(
+  "coachModule/getCoachStudentBatchMapping",
   async () => {
-    // const response = await axios.get(`${baseUrl}/admin/CoachMapping/CoachswithActiveStudentnBatches`);
-    // return response.data;
-    return{
+    const response = await axios.get(`${baseUrl}/admin/CoachMapping/CoachswithActiveStudentnBatches`);
+    return response.data;
+    // return{
     
-      data: [
-        {
-          id: 5,
-          name: "sample coach2",
-          username: "xyz-coach2",
-          is_active: 1,
-          Active_Batches: 2,
-          Active_Students: 3
-        },
-        {
-          id: 6,
-          name: "sample coach3",
-          username: "xyz-coach3",
-          is_active: 1,
-          Active_Batches: 1,
-          Active_Students: 10
-        },
-        {
-          id: 7,
-          name: "sample coach4",
-          username: "xyz-coach4",
-          is_active: 0,
-          Active_Batches: 0,
-          Active_Students: 0
-        },
-        {
-          id: 8,
-          name: "sample coach5",
-          username: "xyz-coach5",
-          is_active: 1,
-          Active_Batches: 3,
-          Active_Students: 15
-        },
-        {
-          id: 9,
-          name: "sample coach6",
-          username: "xyz-coach6",
-          is_active: 1,
-          Active_Batches: 2,
-          Active_Students: 8
-        },
-        {
-          id: 10,
-          name: "sample coach7",
-          username: "xyz-coach7",
-          is_active: 0,
-          Active_Batches: 0,
-          Active_Students: 0
-        },
-        {
-          id: 11,
-          name: "sample coach8",
-          username: "xyz-coach8",
-          is_active: 1,
-          Active_Batches: 4,
-          Active_Students: 20
-        },
-        {
-          id: 12,
-          name: "sample coach9",
-          username: "xyz-coach9",
-          is_active: 1,
-          Active_Batches: 1,
-          Active_Students: 5
-        },
-        {
-          id: 13,
-          name: "sample coach10",
-          username: "xyz-coach10",
-          is_active: 1,
-          Active_Batches: 2,
-          Active_Students: 6
-        },
-        {
-          id: 14,
-          name: "sample coach11",
-          username: "xyz-coach11",
-          is_active: 1,
-          Active_Batches: 3,
-          Active_Students: 12
-        },
-        {
-          id: 15,
-          name: "sample coach12",
-          username: "xyz-coach12",
-          is_active: 0,
-          Active_Batches: 0,
-          Active_Students: 0
-        }
-      ]
-    };
+    //   data: [
+    //     {
+    //       id: 5,
+    //       name: "sample coach2",
+    //       username: "xyz-coach2",
+    //       is_active: 1,
+    //       Active_Batches: 2,
+    //       Active_Students: 3
+    //     },
+    //     {
+    //       id: 6,
+    //       name: "sample coach3",
+    //       username: "xyz-coach3",
+    //       is_active: 1,
+    //       Active_Batches: 1,
+    //       Active_Students: 10
+    //     },
+    //     {
+    //       id: 7,
+    //       name: "sample coach4",
+    //       username: "xyz-coach4",
+    //       is_active: 0,
+    //       Active_Batches: 0,
+    //       Active_Students: 0
+    //     },
+    //     {
+    //       id: 8,
+    //       name: "sample coach5",
+    //       username: "xyz-coach5",
+    //       is_active: 1,
+    //       Active_Batches: 3,
+    //       Active_Students: 15
+    //     },
+    //     {
+    //       id: 9,
+    //       name: "sample coach6",
+    //       username: "xyz-coach6",
+    //       is_active: 1,
+    //       Active_Batches: 2,
+    //       Active_Students: 8
+    //     },
+    //     {
+    //       id: 10,
+    //       name: "sample coach7",
+    //       username: "xyz-coach7",
+    //       is_active: 0,
+    //       Active_Batches: 0,
+    //       Active_Students: 0
+    //     },
+    //     {
+    //       id: 11,
+    //       name: "sample coach8",
+    //       username: "xyz-coach8",
+    //       is_active: 1,
+    //       Active_Batches: 4,
+    //       Active_Students: 20
+    //     },
+    //     {
+    //       id: 12,
+    //       name: "sample coach9",
+    //       username: "xyz-coach9",
+    //       is_active: 1,
+    //       Active_Batches: 1,
+    //       Active_Students: 5
+    //     },
+    //     {
+    //       id: 13,
+    //       name: "sample coach10",
+    //       username: "xyz-coach10",
+    //       is_active: 1,
+    //       Active_Batches: 2,
+    //       Active_Students: 6
+    //     },
+    //     {
+    //       id: 14,
+    //       name: "sample coach11",
+    //       username: "xyz-coach11",
+    //       is_active: 1,
+    //       Active_Batches: 3,
+    //       Active_Students: 12
+    //     },
+    //     {
+    //       id: 15,
+    //       name: "sample coach12",
+    //       username: "xyz-coach12",
+    //       is_active: 0,
+    //       Active_Batches: 0,
+    //       Active_Students: 0
+    //     }
+    //   ]
+    // };
   }
 );
 export const getCoachAssignStudents = createAsyncThunk(
@@ -163,9 +163,54 @@ export const getCoachAssignBatches = createAsyncThunk(
   }
 );
 
+export const postCoachAssignStudents = createAsyncThunk(
+  "coachModule/postCoachAssignStudents",
+  async ({ id, data }) => {
+    const response = await axios.post(
+      `${baseUrl}/admin/CoachMapping/AssignStudents`,
+      data
+    );
+    return response.data;
+  }
+);
+
+export const postCoachAssignBatches = createAsyncThunk(
+  "coachModule/postCoachAssignBatches",
+  async ({ id, data }) => {
+    const response = await axios.post(
+      `${baseUrl}/admin/CoachMapping/AssignBatches`,
+      data
+    );
+    return response.data;
+  }
+);
+
+export const deleteCoachAssignedStudent = createAsyncThunk(
+  "coachModule/deleteCoachAssignedStudent",
+  async (id) => {
+    console.log("ID to delete STUDENT : ", id)
+    const response = await axios.delete(
+      `${baseUrl}/admin/CoachMapping/${id.id}/deleteStudent`
+    );
+    return response.data;
+  }
+);
+
+export const deleteCoachAssignedBatch = createAsyncThunk(
+  "coachModule/deleteCoachAssignedBatch",
+  async (id) => {
+    // console.log("ID to delete BATCH : ", id)
+    const response = await axios.delete(
+      `${baseUrl}/admin/CoachMapping/${id.id}/deleteBatch`
+    );
+    return response.data;
+  }
+);
+
+
 const initialState = {
   coaches: [],
-  studentBatchMapping: null,
+  // coachStudentBatchMapping: null,
   batchMapping: null,
   coachMapping: null,
   coachSchedule: null,
@@ -176,9 +221,9 @@ const initialState = {
   createCoachOpen: false,
   editCoachOpen: false,
   selectedCoach: null,
-  successPopup: false,
-  assignStudentOpen: false,
-  assignBatchOpen: false,
+  coachSuccessPopup: false,
+  assignCoachStudentOpen: false,
+  assignCoachBatchOpen: false,
   coach_name: null,
   coachID: null,
 };
@@ -210,23 +255,23 @@ export const coachSlice= createSlice({
       state.editCoachOpen = false;
     },
 
-    openSuccessPopup(state) {
-      state.successPopup = true;
+    openCoachSuccessPopup(state) {
+      state.coachSuccessPopup = true;
     },
-    closeSuccessPopup(state) {
-      state.successPopup = false;
+    closeCloseSuccessPopup(state) {
+      state.coachSuccessPopup = false;
     },
-    openAssignStudents(state) {
-      state.assignStudentOpen = true;
+    openCoachAssignStudents(state) {
+      state.assignCoachStudentOpen = true;
     },
-    closeAssignStudents(state) {
-      state.assignStudentOpen = false;
+    closeCoachAssignStudents(state) {
+      state.assignCoachStudentOpen = false;
     },
-    openAssignBatches(state) {
-      state.assignBatchOpen = true;
+    openCoachAssignBatches(state) {
+      state.assignCoachBatchOpen = true;
     },
-    closeAssignBatches(state) {
-      state.assignBatchOpen = false;
+    closeCoachAssignBatches(state) {
+      state.assignCoachBatchOpen = false;
     },
   },
   extraReducers: (builder) => {
@@ -284,6 +329,7 @@ export const coachSlice= createSlice({
       state.loading = false;
       state.error = action.payload || action.error.message;
     });
+
     // Get Assigned Students
     builder.addCase(getCoachAssignStudents.pending, (state) => {
       state.loading = true;
@@ -310,16 +356,68 @@ export const coachSlice= createSlice({
       state.error = action.payload || action.error.message;
     });
 
-     // Show CA Mapping
-     builder.addCase(showCAMapping.pending, (state) => {
+    // delete assigned Students
+    builder.addCase(deleteCoachAssignedStudent.pending, (state) => {
       state.loading = true;
     });
-    builder.addCase(showCAMapping.fulfilled, (state, action) => {
+    builder.addCase(deleteCoachAssignedStudent.fulfilled, (state, action) => {
+      state.loading = false;
+      // state.assignedStudents = action.payload;
+    });
+    builder.addCase(deleteCoachAssignedStudent.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload || action.error.message;
+    });
+
+     // delete assigned Batches
+     builder.addCase(deleteCoachAssignedBatch.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(deleteCoachAssignedBatch.fulfilled, (state, action) => {
+      state.loading = false;
+      // state.assignedStudents = action.payload;
+    });
+    builder.addCase(deleteCoachAssignedBatch.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload || action.error.message;
+    });
+
+     // Show CA Mapping
+     builder.addCase(getCoachStudentBatchMapping.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(getCoachStudentBatchMapping.fulfilled, (state, action) => {
       console.log("action " , action.payload);
       state.loading = false;
       state.coachMapping = action.payload?.data;
     });
-    builder.addCase(showCAMapping.rejected, (state, action) => {
+    builder.addCase(getCoachStudentBatchMapping.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload || action.error.message;
+    });
+
+     // Post Assign Students
+     builder.addCase(postCoachAssignStudents.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(postCoachAssignStudents.fulfilled, (state, action) => {
+      state.loading = false;
+      state.assignedStudents = action.payload;
+    });
+    builder.addCase(postCoachAssignStudents.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload || action.error.message;
+    });
+
+    // Post Assign Batches
+    builder.addCase(postCoachAssignBatches.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(postCoachAssignBatches.fulfilled, (state, action) => {
+      state.loading = false;
+      state.assignedBatches = action.payload;
+    });
+    builder.addCase(postCoachAssignBatches.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload || action.error.message;
     });
@@ -335,13 +433,13 @@ export const {
     openEditCoach,
     closeEditCoach,
     setSelectedCoach,
-    openSuccessPopup,
+    openCoachSuccessPopup,
     accessCoachName,
-    closeSuccessPopup,
-    openAssignStudents,
-    closeAssignStudents,
-    openAssignBatches,
-    closeAssignBatches,
+    closeCloseSuccessPopup,
+    openCoachAssignStudents,
+    closeCoachAssignStudents,
+    openCoachAssignBatches,
+    closeCoachAssignBatches,
   } = coachSlice.actions;
   
   export default coachSlice.reducer;

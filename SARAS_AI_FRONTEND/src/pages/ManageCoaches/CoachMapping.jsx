@@ -7,7 +7,7 @@ import { useState , useEffect } from "react";
 import { OnOffSwitch } from '../../components/Switch';
 import editIcon from '../../assets/editIcon.png';
 import DynamicTable from '../../components/CommonComponent/DynamicTable';
-import { showCAMapping } from '../../redux/features/CoachModule/coachSlice';
+import { getCoachStudentBatchMapping } from '../../redux/features/CoachModule/coachSlice';
 import { useDispatch, useSelector } from "react-redux";
 
 const CoachMapping = () => {
@@ -22,7 +22,7 @@ console.log("camapping" , coachMapping);
     setIsModalOpen(true);
   };
   useEffect(() => {
-    dispatch(showCAMapping());
+    dispatch(getCoachStudentBatchMapping());
   }, [dispatch]);
 
   useEffect(() => {
