@@ -52,7 +52,7 @@ const AssignStudents = () => {
   const dispatch = useDispatch();
   const [selectedTerm, setSelectedTerm] = useState("");
   const [selectedBatch, setSelectedBatch] = useState("");
-  const [searchName, setSearchName] = useState(""); // State for search input
+  const [searchName, setSearchName] = useState("");
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [filteredStudents, setFilteredStudents] = useState([]);
 
@@ -68,50 +68,37 @@ const AssignStudents = () => {
 
   useEffect(() => {
     if (studentBatchMapping) {
-      console.log("STUDENT BATCH MAPPING : ", studentBatchMapping);
-      const transformedData = studentBatchMapping.map((student, index) => ({
+      const transformedData = studentBatchMapping.map((student) => ({
         "S. No.": student.student_id,
         "Student Name": student.student_name,
         "Academic Term": student.academic_term,
-        Batch:
-          student.batches.map((batch) => batch.batch_name).join(", ") || "N/A",
+        Batch: student.batches.map((batch) => batch.batch_name).join(", ") || "N/A",
         Select: student.is_active ? "Active" : "Inactive",
         student_id: student.student_id,
         is_active: student.is_active,
       }));
 
-      
-      // Set pre-selected students based on is_active status
-      // const preSelectedStudents = transformedData
-      //   .filter((student) => student.is_active)
-      //   .map((student) => student.student_id);
-      // setSelectedStudents(preSelectedStudents);
-
-      // Filter by selected batch and search name
-      const filtered = transformedData.filter((student) =>
-        student["Student Name"].toLowerCase().includes(searchName.toLowerCase()) &&
-        (!selectedBatch || student.Batch.includes(selectedBatch))
-      );
+      const filtered = transformedData.filter((student) => {
+        const matchesTerm = selectedTerm ? student["Academic Term"] === selectedTerm : true;
+        const matchesBatch = selectedBatch ? student.Batch.includes(selectedBatch) : true;
+        const matchesName = searchName ? student["Student Name"].toLowerCase().includes(searchName.toLowerCase()) : true;
+        return matchesTerm && matchesBatch && matchesName;
+      });
 
       setFilteredStudents(filtered);
     }
-  }, [studentBatchMapping, selectedBatch, searchName]);
+  }, [studentBatchMapping, selectedTerm, selectedBatch, searchName]);
 
-  // Ensure studentBatchMapping is not null or undefined before using flatMap
   const batchOptions = studentBatchMapping
-    ? [
-      ...new Set(
-        studentBatchMapping.flatMap((student) => student.batches.map(batch => batch.batch_name))
-      ),
-    ]
+    ? [...new Set(
+        studentBatchMapping
+          .filter((student) => !selectedTerm || student.academic_term === selectedTerm)
+          .flatMap((student) => student.batches.map((batch) => batch.batch_name))
+      )]
     : [];
 
   const academicTermOptions = studentBatchMapping
-    ? [
-      ...new Set(
-        studentBatchMapping.map((student) => student.academic_term)
-      ),
-    ]
+    ? [...new Set(studentBatchMapping.map((student) => student.academic_term))]
     : [];
 
   const handleSelectStudent = (id) => {
@@ -131,7 +118,6 @@ const AssignStudents = () => {
         if(taId){
           dispatch(openScheduleSession({ id: taId, name: taName , timezone : taTimezone ,student : selectedStudents.map((id) => ({ id: id.toString() })) }));
         }
-        // Open Success Popup
         dispatch(openSuccessPopup());
       });
     dispatch(closeAssignStudents());
@@ -148,7 +134,7 @@ const AssignStudents = () => {
   const content = (
     <>
       <Grid container spacing={2}>
-        <Grid item  sm={6}>
+        <Grid item sm={6}>
           <CustomTextField
             select
             label="Academic Term"
@@ -162,7 +148,6 @@ const AssignStudents = () => {
             ))}
           </CustomTextField>
         </Grid>
-
         <Grid item xs={12} sm={6}>
           <CustomTextField
             select
@@ -177,11 +162,9 @@ const AssignStudents = () => {
             ))}
           </CustomTextField>
         </Grid>
-
         <Grid item xs={12}>
           <Divider sx={{ border: "1px solid #C2C2E7" }} />
         </Grid>
-
         <Grid item xs={12} marginBottom={2}>
           <CustomTextField
             label="Search By Student Name"
@@ -190,14 +173,12 @@ const AssignStudents = () => {
           />
         </Grid>
       </Grid>
-
       <PopUpTable
         headers={headers}
         initialData={filteredStudents}
         onRowClick={handleSelectStudent}
         selectedBox={selectedStudents}
       />
-
       <Typography
         variant="subtitle1"
         gutterBottom
@@ -220,8 +201,6 @@ const AssignStudents = () => {
       Submit
     </CustomButton>
   );
-
-  console.log('ta_name:', ta_name, 'taName:', taName)
 
   const assignedTA = ta_name || taName;
 

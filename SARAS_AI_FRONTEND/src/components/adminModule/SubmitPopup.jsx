@@ -33,13 +33,35 @@ const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = 
     );
 };
 
-const SubmitPopup = () => {
+const SubmitPopup = ({componentname}) => {
     const dispatch = useDispatch()
     const navigate = useNavigate()
-    const { tas, successPopup, error, loading, ta_name } = useSelector((state) => state.taModule)
+    if (componentname) {
+        // console.log("componentname", componentname);
+    }
     
-    console.log("TA_Name : ", ta_name)
-
+    let stateModuleKey;
+    let nameKey;
+    
+    switch (componentname) {
+        case "ADDITCOACH":
+            stateModuleKey = "coachModule";
+            nameKey = "coach_name";
+            break;
+        case "ADDEDITTA":
+            stateModuleKey = "taModule";
+            nameKey = "ta_name";
+            break;
+        default:
+            stateModuleKey = null;
+            nameKey = null;
+            break;
+    }
+    
+    const { successPopup, error, loading, ta_name, coach_name} = useSelector((state) => stateModuleKey ? state[stateModuleKey] : {}) || {};
+    
+    const displayName = nameKey === "ta_name" ? ta_name : coach_name;
+    
     const handleAssignBatches = () => {
         dispatch(closeSuccessPopup())
         dispatch(openAssignBatches())
@@ -82,7 +104,7 @@ const SubmitPopup = () => {
         <ReusableDialog
             open={successPopup}
             handleClose={() => handleCloseButton()}
-            title={`${ta_name} successfully created.`}
+            title={`${displayName} successfully created.`}
             actions={actions}
         />
     )

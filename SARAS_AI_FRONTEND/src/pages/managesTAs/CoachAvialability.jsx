@@ -3,20 +3,19 @@ import { DataGrid } from "@mui/x-data-grid";
 import { mockDataAvilable } from "../../fakeData/availableData";
 import Header from "../../components/Header/Header";
 import Sidebar from "../../components/Sidebar/Sidebar";
+import {DynamicTable} from '../../pages/managesTAs/TaAvaialablity';
 
 const CoachAvialablity = () => {
     const theme = useTheme();
+  
+    const headers = [
+        "S. No.",
+        "COACH Name",
+        "Username",
+        "Current Availability",
+        "Action",
+      ];
 
-    const columns = [
-        { field: "id", headerName: "ID" },
-        {
-            field: "taName", headerName: "TA Name", flex: 1, cellClassName: "name-column--cell"
-
-        },
-        { field: "username", headerName: "User Name", flex: 1, cellClassName: "name-column--cell" },
-        { field: "availability", headerName: "Availability", flex: 1, cellClassName: "name-column--cell" },
-        { field: "calendar", headerName: "Calendar", flex: 1, cellClassName: "name-column--cell" }
-    ]
 
     return (
         <>
@@ -24,7 +23,7 @@ const CoachAvialablity = () => {
                 <Header />
                 <Sidebar />
                 <Box display={"flex"} justifyContent={"space-between"} >
-                    <p style={{ fontSize: "22px", fontWeight: "700", justifyContent:"center" , margin:0 }}>Coach Avialablity</p>
+                    <p style={{ fontSize: "22px", fontWeight: "700", justifyContent:"center" , margin:0 }}>Coach Availability</p>
                     {/* <Box> */}
                         <Box
                             display={"flex"}
@@ -66,10 +65,16 @@ const CoachAvialablity = () => {
                         backgroundColor: "#FFF"
                     }
                 }}>
-                    <DataGrid
+                    <DynamicTable
+                        headers={headers}
+                        initialData={mockDataAvilable}
+                        
+                        componentName={"Coach Avialability"}
+                    />
+                    {/* <DataGrid
                         rows={mockDataAvilable}
                         columns={columns}
-                    />
+                    /> */}
                 </Box>
             </Box>
         </>

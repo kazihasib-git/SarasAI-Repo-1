@@ -1,5 +1,6 @@
 export const timeZones = [
   { country: "India", time_zone: "IST", utc_offset: -5.0 },
+  { country: "Greenland", time_zone: "UTC", utc_offset: -5.0 },
   { country: "Afghanistan", time_zone: "Asia/Kabul", utc_offset: 4.5 },
   { country: "Albania", time_zone: "Europe/Tirane", utc_offset: 1.0 },
   { country: "Algeria", time_zone: "Africa/Algiers", utc_offset: 1.0 },
@@ -49,11 +50,11 @@ export const genders = [
 ];
 
 export const qualificationOptions = [
-  { value: "Secondary School", label: "Seconday School" },
+  { value: "Secondary School", label: "Secondary School" },
   { value: "Post Secondary School", label: "Post Secondary School" },
-  { value : 'PhD in Computer Science', label: 'PhD in Computer Science' },
-  { value: "Bachelors Degree", label: "Bachelors Degree" },
-  { value: "Masters Degree", label: "Masters Degree" },
+  { value : 'PHD in Computer Science', label: 'PHD in Computer Science' },
+  { value: "Bachelor's Degree", label: "Bachelor's Degree" },
+  { value: "Master's Degree", label: "Master's Degree" },
   { value: "Doctorate", label: "Doctorate" },
 ];
 

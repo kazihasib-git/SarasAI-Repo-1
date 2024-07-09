@@ -52,11 +52,12 @@ const AssignBatches = () => {
   const dispatch = useDispatch();
   const { assignBatchOpen, ta_name, taID, batchMapping = [], loading, } = useSelector((state) => state.taModule);
 
-  const { taName, taID: taId, taTimezone } = useSelector((state) => state.taScheduling);
+  const { taName, taID: taId } = useSelector((state) => state.taScheduling);
 
-  const [selectedBatch, setSelectedBatch] = useState("");
+  const [selectedBatch, setSelectedBatch] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedBranch, setSelectedBranch] = useState("");
   const [filteredBatches, setFilteredBatches] = useState([]);
-  const [selectedBatches, setSelectedBatches] = useState([]);
 
   useEffect(() => {
     if (assignBatchOpen) {
@@ -78,7 +79,7 @@ const AssignBatches = () => {
         */
       }));
 
-
+      
       // Initialize selected batches with active ones
       // const activeBatches = batchMapping
       //   .filter((batch) => batch.is_active === 1)
@@ -94,20 +95,14 @@ const AssignBatches = () => {
 
       setFilteredBatches(filtered);
     }
-  }, [batchMapping, selectedBatch]);
+  }, [batchMapping, selectedBranch, searchQuery]);
 
   const batchOptions = [
-    ...new Set(
-      batchMapping.flatMap((batch) => [
-        batch.name,
-        ...batch.children.map((child) => child.name),
-      ])
-    ),
+    ...new Set(batchMapping.map((batch) => batch.branch)),
   ];
 
   const handleSelectBatch = (id) => {
-    console.log("IDDD : ", id);
-    setSelectedBatches((prev) =>
+    setSelectedBatch((prev) =>
       prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id]
     );
   };
@@ -115,12 +110,12 @@ const AssignBatches = () => {
   const handleSubmit = () => {
     const data = {
       ta_id: taID ? taID : taId,
-      batches: selectedBatches.map((id) => ({ id: id.toString() })),
+      batches: selectedBatch.map((id) => ({ id: id.toString() })),
     };
     dispatch(postAssignBatches({ id: taID ? taID : taId, data })).then(() => {
       if (taId) {
         if (taId) {
-          dispatch(openScheduleSession({ id: taId, name: taName, timezone: taTimezone, batches: selectedBatches.map((id) => ({ id: id.toString() })) }));
+          dispatch(openScheduleSession({ id: taId, name: taName, batches: selectedBatches.map((id) => ({ id: id.toString() })) }));
         }
       }
       dispatch(openSuccessPopup());
@@ -132,8 +127,6 @@ const AssignBatches = () => {
     "S. No.",
     "Batch Name",
     "Branch",
-    //"Academic Term",
-    //"Batch",
     "Select",
   ];
 
@@ -144,12 +137,12 @@ const AssignBatches = () => {
           <CustomTextField
             select
             label="Branch"
-            value={selectedBatch}
-            onChange={(e) => setSelectedBatch(e.target.value)}
+            value={selectedBranch}
+            onChange={(e) => setSelectedBranch(e.target.value)}
           >
-            {batchOptions.map((batch) => (
-              <MenuItem key={batch} value={batch}>
-                {batch}
+            {batchOptions.map((branch) => (
+              <MenuItem key={branch} value={branch}>
+                {branch}
               </MenuItem>
             ))}
           </CustomTextField>
@@ -160,25 +153,24 @@ const AssignBatches = () => {
         <Grid item xs={12} mb={2}>
           <CustomTextField
             label="Search By Batch Name"
-            value={selectedBatch}
-            onChange={(e) => setSelectedBatch(e.target.value)}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
         </Grid>
       </Grid>
-
       <PopUpTable
         headers={headers}
         initialData={filteredBatches}
         onRowClick={handleSelectBatch}
-        selectedBox={selectedBatches}
+        selectedBox={selectedBatch}
+        itemsPerPage={4}
       />
-
       <Typography
         variant="subtitle1"
         gutterBottom
         sx={{ mt: 2, textAlign: "center" }}
       >
-        {selectedBatches.length} batch(es) Selected
+        {selectedBatch.length} batch(es) Selected
       </Typography>
     </>
   );

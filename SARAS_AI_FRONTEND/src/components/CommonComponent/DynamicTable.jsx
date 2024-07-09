@@ -129,7 +129,7 @@ const DynamicTable = ({
   );
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+// console.log("componentName", componentName);
   const handlePageChange = (event, pageNumber) => {
     setCurrentPage(pageNumber);
   };
@@ -140,6 +140,8 @@ const DynamicTable = ({
 
   const handleView = (type, id) => {
     // console.log("ID handleview : ", id);
+    console.log("component name is",componentName);
+    if(componentName=== "TAMAPPING"){
     if (type === "students") {
       navigate(`/active-students/${id}`); // Append id as a parameter
     } else if (type === "batches") {
@@ -147,6 +149,13 @@ const DynamicTable = ({
     } else if (type === "view report") {
       navigate(`/view-report/${id}`); // Append id as a parameter
     }
+  }else{
+    if (type === "students") {
+      navigate(`/active-Coach-students/${id}`); // Append id as a parameter
+    } else if (type === "batches") {
+      navigate(`/active-Coach-batches/${id}`); // Append id as a parameter
+    }
+  }
   };
 
   const handlePopup = (id, name, timezone) => {
