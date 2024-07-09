@@ -51,7 +51,7 @@ const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = 
 const TaCalender
     = () => {
         const dispatch = useDispatch();
-        //const {id , name} = useParams()
+        const {id , name} = useParams()
         const [sheduleNewSession, setSheduleNewSession] = useState(false)
         const [deleteFutureSlots, setDeleteFutureSlots] = useState(false)
         const [createNewSlot, setCreateNewSlot] = useState(false)

@@ -54,10 +54,9 @@ const AssignBatches = () => {
 
   const { taName, taID: taId, taTimezone } = useSelector((state) => state.taScheduling);
 
-  const [selectedBatch, setSelectedBatch] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedBranch, setSelectedBranch] = useState("");
+  const [selectedBatch, setSelectedBatch] = useState("");
   const [filteredBatches, setFilteredBatches] = useState([]);
+  const [selectedBatches, setSelectedBatches] = useState([]);
 
   useEffect(() => {
     if (assignBatchOpen) {
@@ -84,14 +83,20 @@ const AssignBatches = () => {
 
       setFilteredBatches(filtered);
     }
-  }, [batchMapping, selectedBranch, searchQuery]);
+  }, [batchMapping, selectedBatch]);
 
   const batchOptions = [
-    ...new Set(batchMapping.map((batch) => batch.branch)),
+    ...new Set(
+      batchMapping.flatMap((batch) => [
+        batch.name,
+        ...batch.children.map((child) => child.name),
+      ])
+    ),
   ];
 
   const handleSelectBatch = (id) => {
-    setSelectedBatch((prev) =>
+    console.log("IDDD : ", id);
+    setSelectedBatches((prev) =>
       prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id]
     );
   };
@@ -99,7 +104,7 @@ const AssignBatches = () => {
   const handleSubmit = () => {
     const data = {
       ta_id: taID ? taID : taId,
-      batches: selectedBatch.map((id) => ({ id: id.toString() })),
+      batches: selectedBatches.map((id) => ({ id: id.toString() })),
     };
     dispatch(postAssignBatches({ id: taID ? taID : taId, data })).then(() => {
       if (taId) {
@@ -116,6 +121,8 @@ const AssignBatches = () => {
     "S. No.",
     "Batch Name",
     "Branch",
+    //"Academic Term",
+    //"Batch",
     "Select",
   ];
 
@@ -126,12 +133,12 @@ const AssignBatches = () => {
           <CustomTextField
             select
             label="Branch"
-            value={selectedBranch}
-            onChange={(e) => setSelectedBranch(e.target.value)}
+            value={selectedBatch}
+            onChange={(e) => setSelectedBatch(e.target.value)}
           >
-            {batchOptions.map((branch) => (
-              <MenuItem key={branch} value={branch}>
-                {branch}
+            {batchOptions.map((batch) => (
+              <MenuItem key={batch} value={batch}>
+                {batch}
               </MenuItem>
             ))}
           </CustomTextField>
@@ -142,24 +149,25 @@ const AssignBatches = () => {
         <Grid item xs={12} mb={2}>
           <CustomTextField
             label="Search By Batch Name"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            value={selectedBatch}
+            onChange={(e) => setSelectedBatch(e.target.value)}
           />
         </Grid>
       </Grid>
+
       <PopUpTable
         headers={headers}
         initialData={filteredBatches}
         onRowClick={handleSelectBatch}
-        selectedBox={selectedBatch}
-        itemsPerPage={4}
+        selectedBox={selectedBatches}
       />
+
       <Typography
         variant="subtitle1"
         gutterBottom
         sx={{ mt: 2, textAlign: "center" }}
       >
-        {selectedBatch.length} batch(es) Selected
+        {selectedBatches.length} batch(es) Selected
       </Typography>
     </>
   );

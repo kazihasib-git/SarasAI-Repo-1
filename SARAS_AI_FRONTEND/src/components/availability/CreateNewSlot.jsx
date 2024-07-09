@@ -9,7 +9,9 @@ import CustomTextField from '../CustomFields/CustomTextField';
 
 import { transformedTimeZones } from '../CustomFields/FormOptions';
 import CustomFormControl from '../CustomFields/CustomFromControl';
- 
+import { useSelector } from 'react-redux';
+import CustomTimeZoneForm from '../CustomFields/CustomTimeZoneForm';
+
 
 const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = '#4E18A5', borderColor = '#FFFFFF', sx, ...props }) => {
     return (
@@ -41,12 +43,14 @@ const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = 
 const CreateNewSlot = ({ open, handleClose, addEvent }) => {
     const { control, handleSubmit, watch, formState: { errors } } = useForm({
         defaultValues: {
-          gender: "",
-          time_zone: "",
-          highest_qualification: "",
-          date_of_birth: null,
+            gender: "",
+            time_zone: "",
+            highest_qualification: "",
+            date_of_birth: null,
         },
-      });
+    });
+
+    const { timezones } = useSelector((state) => state.timezone);
 
     const onSubmit = (data) => {
         // Format the date and time inputs
@@ -127,16 +131,18 @@ const CreateNewSlot = ({ open, handleClose, addEvent }) => {
                         name="time_zone"
                         control={control}
                         rules={{ required: "Time Zone is required" }}
-                        render={({ field }) => (
-                            <CustomFormControl
-                                label="Time Zone"
-                                name="time_zone"
-                                value={field.value}
-                                onChange={field.onChange}
-                                errors={errors}
-                                options={transformedTimeZones}
-                            />
-                        )}
+                        render={({ field }) => {
+                            return (
+                                <CustomTimeZoneForm
+                                    label="Time Zone"
+                                    name="time_zone"
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                    errors={errors}
+                                    options={timezones}
+                                />
+                            );
+                        }}
                     />
                 </Grid>
                 <Grid item xs={12} sm={6} md={4}>
@@ -176,7 +182,7 @@ const CreateNewSlot = ({ open, handleClose, addEvent }) => {
                     />
                 </Grid>
                 {/* Add the Time Zone form control */}
-                
+
             </Grid>
             <Grid container spacing={2} justifyContent="center">
                 <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
