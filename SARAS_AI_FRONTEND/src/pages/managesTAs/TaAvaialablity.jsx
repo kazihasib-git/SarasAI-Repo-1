@@ -257,7 +257,9 @@ const TaAvialability = () => {
     );
 };
 
-export default TaAvialability
+export { DynamicTable }; 
+export default TaAvialability; 
+
 
 
 

@@ -15,32 +15,28 @@ const Batches = () => {
     setInput(value);
   };
 
-  // Flag to use dummy data or API data
-  const useDummyData = true;
+  const useDummyData = false;
 
   const { data, error, isLoading } = useGetBatchesQuery();
 
   useEffect(() => {
-    console.log("DATA : ", data);
     const dataToUse = useDummyData ? batchDummyData : data;
-    // const dataToUse = batchDummyData
     if (dataToUse) {
-      console.log("BATCH DATA : ", dataToUse);
       const transformedData = dataToUse.map((item) => ({
         id: item.srNo,
         "Batch Name": item.name,
         Branch: item.branch,
-   
       }));
       setBatches(transformedData);
     }
   }, [useDummyData, data]);
 
-  // if (isLoading) {
-  //     return <div>Loading....</div>;
-  // }
-
   const headers = ["Sr No.", "Batch Name", "Branch"];
+
+  // Filter batches based on the search input
+  const filteredBatches = batches.filter(batch => 
+    batch["Batch Name"].toLowerCase().includes(input.toLowerCase())
+  );
 
   return (
     <>
@@ -66,8 +62,7 @@ const Batches = () => {
       </Box>
       <DynamicTable
         headers={headers}
-        initialData={batches}
-        // actionButtons={[]}
+        initialData={filteredBatches}
         componentName={"BATCHES"}
       />
     </>
