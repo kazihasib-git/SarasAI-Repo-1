@@ -58,7 +58,7 @@ const AssignStudents = () => {
 
   const { assignStudentOpen, ta_name, taID, studentBatchMapping } = useSelector((state) => state.taModule);
 
-  const { taName,  taID  : taId } = useSelector((state) => state.taScheduling);
+  const { taName,  taID  : taId , taTimezone } = useSelector((state) => state.taScheduling);
 
   useEffect(() => {
     if (assignStudentOpen) {
@@ -129,7 +129,7 @@ const AssignStudents = () => {
       .then(() => {
         // Open Schedule Session
         if(taId){
-          dispatch(openScheduleSession({ id: taId, name: taName , student : selectedStudents.map((id) => ({ id: id.toString() })) }));
+          dispatch(openScheduleSession({ id: taId, name: taName , timezone : taTimezone ,student : selectedStudents.map((id) => ({ id: id.toString() })) }));
         }
         // Open Success Popup
         dispatch(openSuccessPopup());
@@ -209,7 +209,7 @@ const AssignStudents = () => {
   );
 
   const actions = (
-    <Button
+    <CustomButton
       onClick={handleSubmit}
       style={{
         backgroundColor: "#F56D3B",
@@ -218,7 +218,7 @@ const AssignStudents = () => {
       }}
     >
       Submit
-    </Button>
+    </CustomButton>
   );
 
   console.log('ta_name:', ta_name, 'taName:', taName)

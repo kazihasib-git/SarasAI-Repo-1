@@ -149,10 +149,10 @@ const DynamicTable = ({
     }
   };
 
-  const handlePopup = (id, name) => {
-    console.log("ID handlePopup : ", id, name);
+  const handlePopup = (id, name, timezone) => {
+    console.log("ID handlePopup : ", id, name, timezone);
     const data = {
-      id, name
+      id, name, timezone
     }
     dispatch(openScheduleSession(data));
   }
@@ -201,7 +201,7 @@ const DynamicTable = ({
         <thead className="tableHead">
           <tr>
             {headers.map((header, index) => (
-              <th key={index}>{header}</th>
+              header !== "timezone" && <th key={index}>{header}</th>
             ))}
           </tr>
         </thead>
@@ -247,7 +247,7 @@ const DynamicTable = ({
                         </CustomButton>
                       </td>
                     );
-                  } else if (key !== "id" && key !== "is_active") {
+                  } else if (key !== "id" && key !== "is_active" && key !== "timezone") {
                     // Check if item[key] is an object, and handle accordingly
                     if (typeof item[key] === "object" && item[key] !== null) {
                       // Render a string representation or a relevant property of the object
@@ -335,7 +335,7 @@ const DynamicTable = ({
                             variant="outlined"
                             color="secondary"
                             startIcon={<CalendarMonthIcon />}
-                            onClick={() => handlePopup(item.id, item.name)}
+                            onClick={() => handlePopup(item.id, item.name, item.timezone)}
                           >
                             Schedule
                           </CalenderButton>

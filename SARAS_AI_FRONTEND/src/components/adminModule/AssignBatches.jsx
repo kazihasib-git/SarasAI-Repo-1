@@ -52,7 +52,7 @@ const AssignBatches = () => {
   const dispatch = useDispatch();
   const { assignBatchOpen, ta_name, taID, batchMapping = [], loading, } = useSelector((state) => state.taModule);
 
-  const { taName, taID: taId } = useSelector((state) => state.taScheduling);
+  const { taName, taID: taId, taTimezone } = useSelector((state) => state.taScheduling);
 
   const [selectedBatch, setSelectedBatch] = useState("");
   const [filteredBatches, setFilteredBatches] = useState([]);
@@ -78,7 +78,7 @@ const AssignBatches = () => {
         */
       }));
 
-      
+
       // Initialize selected batches with active ones
       // const activeBatches = batchMapping
       //   .filter((batch) => batch.is_active === 1)
@@ -120,7 +120,7 @@ const AssignBatches = () => {
     dispatch(postAssignBatches({ id: taID ? taID : taId, data })).then(() => {
       if (taId) {
         if (taId) {
-          dispatch(openScheduleSession({ id: taId, name: taName, batches: selectedBatches.map((id) => ({ id: id.toString() })) }));
+          dispatch(openScheduleSession({ id: taId, name: taName, timezone: taTimezone, batches: selectedBatches.map((id) => ({ id: id.toString() })) }));
         }
       }
       dispatch(openSuccessPopup());
@@ -184,7 +184,7 @@ const AssignBatches = () => {
   );
 
   const actions = (
-    <Button
+    <CustomButton
       onClick={handleSubmit}
       style={{
         backgroundColor: "#F56D3B",
@@ -193,7 +193,7 @@ const AssignBatches = () => {
       }}
     >
       Submit
-    </Button>
+    </CustomButton>
   );
 
   if (loading) {
