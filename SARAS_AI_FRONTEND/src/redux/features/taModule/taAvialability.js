@@ -2,6 +2,17 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { baseUrl } from "../../../utils/baseURL";
 
+
+// Get Today Available Ta
+export const getTodayTaAvailability = createAsyncThunk(
+  "taAvialability/getTodayTaAvailability",
+  async () => {
+    const response = await axios.get(`${baseUrl}/admin/TA-availability/get-today-available-ta`);
+    return response.data;
+  }
+);
+
+
 export const getSlots = createAsyncThunk(
   "taAvialability/getSlots",
   async (data) => {
@@ -276,6 +287,7 @@ export const deleteFutureSlots = createAsyncThunk(
 );
 
 const initialState = {
+  todaysAvailableTa: [],
   markLeaveOpen: false,
   scheduledSlotsOpen: false,
   scheduledSlotsData: [], // Ensure this is correctly named and initialized
@@ -336,6 +348,21 @@ export const taAvailabilitySlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+
+    // Get Today Available Ta
+    builder.addCase(getTodayTaAvailability.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(getTodayTaAvailability.fulfilled, (state, action) => {
+      state.loading = false;
+      state.todaysAvailableTa = action.payload?.data;
+    });
+    builder.addCase(getTodayTaAvailability.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message;
+    });
+
+    // Get Slots
     builder.addCase(getSlots.pending, (state) => {
       state.loading = true;
     });

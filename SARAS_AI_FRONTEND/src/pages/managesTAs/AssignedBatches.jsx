@@ -343,7 +343,7 @@ const AssignBatches = () => {
     <>
       <Header />
       <Sidebar />
-      <AdminDataTable
+      <DynamicTable
         headers={headers}
         initialData={taAssignBatchesData}
         title="Assigned Batches"
