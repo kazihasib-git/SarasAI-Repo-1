@@ -40,6 +40,8 @@ import {
 import ReusableDialog from "../../../CustomFields/ReusableDialog";
 import Header from "../../../Header/Header";
 import Sidebar from "../../../Sidebar/Sidebar";
+import { getTimezone } from "../../../../redux/features/timezone/timezoneSlice";
+import CustomTimeZoneForm from "../../../CustomFields/CustomTimeZoneForm";
 
 function AddEditCoach({ data }) {
   const {
@@ -68,7 +70,8 @@ function AddEditCoach({ data }) {
   const [dateOfBirth, setDateOfBirth] = useState(null);
   const [taName, setTAName] = useState();
   const {  successPopup, assignStudentOpen, assignBatchOpen } = useSelector((state) => state.coachModule);
-
+  const { timezones } = useSelector((state) => state.timezone);
+  
   useEffect(() => {
     if (data) {
       console.log("data",data);
@@ -108,6 +111,12 @@ function AddEditCoach({ data }) {
 
     }
   }, [data, setValue, setSelectedImage]);
+
+  useEffect(() => {
+    dispatch(getTimezone())
+  }, [dispatch])
+
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     const reader = new FileReader();
@@ -212,6 +221,10 @@ function AddEditCoach({ data }) {
     </>
   );
 
+
+  const nameValue = watch("name", "");
+  const aboutMeValue = watch("about_me", "");
+
   return (
   <>
   <Header/>
@@ -311,7 +324,7 @@ function AddEditCoach({ data }) {
                 color: "#1A1E3D",
               }}
             >
-              Name of the Coach
+             {nameValue || "Name of the Coach"}
             </Typography>
             <Typography
               variant="body2"
@@ -323,7 +336,7 @@ function AddEditCoach({ data }) {
                 font: "Nohemi",
               }}
             >
-              Short Description
+              {aboutMeValue || "Short Description"}
             </Typography>
           </Box>
         </Box>
@@ -475,16 +488,18 @@ function AddEditCoach({ data }) {
                 name="time_zone"
                 control={control}
                 rules={{ required: "Time Zone is required" }}
-                render={({ field }) => (
-                  <CustomFormControl
-                    label="Time Zone"
-                    name="time_zone"
-                    value={field.value}
-                    onChange={field.onChange}
-                    errors={errors}
-                    options={transformedTimeZones}
-                  />
-                )}
+                render={({ field }) => {
+                  return (
+                    <CustomTimeZoneForm
+                      label="Time Zone"
+                      name="time_zone"
+                      value={field.value}
+                      onChange={field.onChange}
+                      errors={errors}
+                      options={timezones}
+                    />
+                  );
+                }}
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4}>

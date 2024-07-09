@@ -57,7 +57,8 @@ const AssignStudents = () => {
   const [filteredStudents, setFilteredStudents] = useState([]);
 
   const { assignStudentOpen, ta_name, taID, studentBatchMapping } = useSelector((state) => state.taModule);
-  const { taName, taID: taId } = useSelector((state) => state.taScheduling);
+
+  const { taName,  taID  : taId , taTimezone } = useSelector((state) => state.taScheduling);
 
   useEffect(() => {
     if (assignStudentOpen) {
@@ -113,8 +114,9 @@ const AssignStudents = () => {
     };
     dispatch(postAssignStudents({ id: taID ? taID : taId, data }))
       .then(() => {
-        if (taId) {
-          dispatch(openScheduleSession({ id: taId, name: taName, student: selectedStudents.map((id) => ({ id: id.toString() })) }));
+        // Open Schedule Session
+        if(taId){
+          dispatch(openScheduleSession({ id: taId, name: taName , timezone : taTimezone ,student : selectedStudents.map((id) => ({ id: id.toString() })) }));
         }
         dispatch(openSuccessPopup());
       });

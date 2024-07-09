@@ -13,35 +13,39 @@ import { showTASchedule } from '../../redux/features/taModule/taScheduling';
 import Schedule from '../../components/availability/Schedule';
 import AssignStudents from '../../components/adminModule/AssignStudents';
 import AssignBatches from '../../components/adminModule/AssignBatches';
+import { showTAMapping } from '../../redux/features/taModule/taSlice';
 
 const TaScheduling = () => {
   const dispatch = useDispatch();
   const { assignStudentOpen, assignBatchOpen, loading } = useSelector((state) => state.taModule);
   const { taSchedule, scheduleSessionOpen } = useSelector((state) => state.taScheduling);
+  const { taMapping } = useSelector((state) => state.taModule);
+
   const [taScheduleData, setTaScheduleData] = useState([]);
 
   useEffect(() => {
-    dispatch(showTASchedule());
+    dispatch(showTAMapping());
   }, [dispatch]);
 
   useEffect(() => {
-    console.log("TASCHEDULE : ", taSchedule)
-    if (taSchedule && taSchedule.length > 0) {
-      const transformData = taSchedule.map((item, index) => ({
-        id: item.ta_data.id,
-        name: item.ta_data.name,
-        Username: item.ta_data.username,
-        Active_Students: item.students,
-        Active_Batches: item.batches,
+    console.log("TASCHEDULE : ", taMapping)
+    if (taMapping && taMapping.length > 0) {
+      const transformData = taMapping.map((item, index) => ({
+        id: item.id,
+        name: item.name,
+        Username: item.username,
+        Active_Students: item.Active_Batches,
+        Active_Batches: item.Active_Students,
         // Active_Students: item.Active_Students,
         // Active_Batches: item.Active_Batches,
+        timezone : item.time_zone,
       }));
 
       setTaScheduleData(transformData);
     }
-  }, [taSchedule]);
+  }, [taMapping]);
 
-  const headers = ["S. No.", "TA Name", "Username", "Active Students", "Active Batches", "Action"];
+  const headers = ["S. No.", "TA Name", "Username", "Active Students", "Active Batches","timezone","Action"];
 
   const actionButtons = [
     {
