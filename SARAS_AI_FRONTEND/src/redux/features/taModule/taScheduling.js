@@ -10,6 +10,14 @@ export const showTASchedule = createAsyncThunk(
     }
 );
 
+export const getTAScheduledSessions = createAsyncThunk(
+    "taScheduling/getTAScheduledSessions",
+    async ({ id, data}) => {
+        const response = await axios.post(`${baseUrl}/admin/taschedules/${id}`, data);
+        return response.data;
+    }
+);
+
 export const createTASchedule = createAsyncThunk(
     "taScheduling/createTASchedule",
     async (data) => {
@@ -28,6 +36,7 @@ export const getTaAvailableSlotsFromDate = createAsyncThunk(
 
 const initialState = {
     taAvailableSlots: [],
+    taScheduledSessions : [],
     taSchedule: [],
     loading: false,
     error: null,
@@ -39,6 +48,7 @@ const initialState = {
     batches: [],
     taID: null,
     taName: null,
+    taTimezone : null,
 };
 
 const taScheduling = createSlice({
@@ -49,6 +59,7 @@ const taScheduling = createSlice({
             console.log("Open Action : ", action.payload)
             state.taID = action.payload.id;
             state.taName = action.payload.name;
+            state.taTimezone = action.payload.timezone;
             if (action.payload.student) {
                 state.students = action.payload.student;
             }
@@ -61,6 +72,7 @@ const taScheduling = createSlice({
             console.log("Close Action : ", action.payload)
             state.taID = null;
             state.taName = null;
+            state.taTimezone = null;
             state.students = [];
             state.batches = [];
             state.scheduleSessionOpen = false;
@@ -83,13 +95,26 @@ const taScheduling = createSlice({
             state.error = action.error.message;
         });
 
+        // Get TA Scheduled Sessions
+        builder.addCase(getTAScheduledSessions.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(getTAScheduledSessions.fulfilled, (state, action) => {
+            state.loading = false;
+            state.taScheduledSessions = action.payload.data;
+        });
+        builder.addCase(getTAScheduledSessions.rejected, (state, action) => { 
+            state.loading = false;
+            state.error = action.error.message;
+        });
+
         // Create TA Schedule
         builder.addCase(createTASchedule.pending, (state) => {
             state.loading = true;
         });
         builder.addCase(createTASchedule.fulfilled, (state, action) => {
             state.loading = false;
-            state.taSchedule = action.payload.data;
+            state.taScheduledSessions = action.payload.data;
         });
         builder.addCase(createTASchedule.rejected, (state, action) => {
             state.loading = false;

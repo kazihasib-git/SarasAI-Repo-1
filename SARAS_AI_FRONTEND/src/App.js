@@ -53,6 +53,8 @@ import BatchPage from "./pages/batches/BatchPage";
 import CreateTemplate from "./pages/ManageCoaches/CoachingTemplate/CreateTemplate";
 import TemplateName from "./pages/ManageCoaches/CoachingTemplate/TemplateName";
 import WheelOfLife from "./pages/coachingTools/wheelOfLife/WheelOfLife";
+import WOLCategories from "./components/coachingTools/wheelOfLife/WOLCategories";
+import WOLInstructions from "./components/coachingTools/wheelOfLife/WOLInstructions";
 const ROLES = {
   Teaching: 2001,
   Coaches: 1984,
@@ -153,7 +155,9 @@ function App() {
             <Route path="students" element={<StudentPage />} />
             <Route path="batches" element={<BatchPage />} />
             {/* <Route path='/student-list' element={<StudentList page="Student" />} /> */}
-            <Route path="coaching-tools" element={<WheelOfLife />} />
+            <Route path="wheel-of-life" element={<WheelOfLife />} />
+            <Route path="wolCategories" element={<WOLCategories />} />
+            <Route path="wolInstructions" element={<WOLInstructions />} />
           </Route>
         </Route>
 
