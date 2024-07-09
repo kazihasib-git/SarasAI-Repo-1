@@ -86,7 +86,7 @@ const CreateNewSlot = ({ open, handleClose, addEvent }) => {
     const content = (
         <form id="createForm" onSubmit={handleSubmit(onSubmit)}>
             <Grid container spacing={2} justifyContent="center" sx={{ pt: 3 }}>
-                <Grid item xs={12}>
+                <Grid item xs={12} sm={6} md={4}>
                     <Controller
                         name="title"
                         control={control}
@@ -104,7 +104,7 @@ const CreateNewSlot = ({ open, handleClose, addEvent }) => {
                         )}
                     />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} sm={6} md={4}>
                     <Controller
                         name="date"
                         control={control}
@@ -122,7 +122,24 @@ const CreateNewSlot = ({ open, handleClose, addEvent }) => {
                         )}
                     />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={6} md={4}>
+                    <Controller
+                        name="time_zone"
+                        control={control}
+                        rules={{ required: "Time Zone is required" }}
+                        render={({ field }) => (
+                            <CustomFormControl
+                                label="Time Zone"
+                                name="time_zone"
+                                value={field.value}
+                                onChange={field.onChange}
+                                errors={errors}
+                                options={transformedTimeZones}
+                            />
+                        )}
+                    />
+                </Grid>
+                <Grid item xs={12} sm={6} md={4}>
                     <Controller
                         name="fromTime"
                         control={control}
@@ -140,7 +157,7 @@ const CreateNewSlot = ({ open, handleClose, addEvent }) => {
                         )}
                     />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={6} md={4}>
                     <Controller
                         name="toTime"
                         control={control}
@@ -159,23 +176,7 @@ const CreateNewSlot = ({ open, handleClose, addEvent }) => {
                     />
                 </Grid>
                 {/* Add the Time Zone form control */}
-                <Grid item xs={12} sm={6} md={4}>
-                    <Controller
-                        name="time_zone"
-                        control={control}
-                        rules={{ required: "Time Zone is required" }}
-                        render={({ field }) => (
-                            <CustomFormControl
-                                label="Time Zone"
-                                name="time_zone"
-                                value={field.value}
-                                onChange={field.onChange}
-                                errors={errors}
-                                options={transformedTimeZones}
-                            />
-                        )}
-                    />
-                </Grid>
+                
             </Grid>
             <Grid container spacing={2} justifyContent="center">
                 <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>

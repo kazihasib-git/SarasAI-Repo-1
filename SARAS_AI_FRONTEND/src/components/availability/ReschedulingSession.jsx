@@ -54,9 +54,10 @@ const ReschedulingSession = () => {
   const { resheduleSessionOpen, availableSlotsData } = useSelector(
     (state) => state.taAvailability
   );
-  const [selectDate, setselectDate] = useState(null);
+  const [selectDate, setSelectDate] = useState(null);
+  const [selectedSlots, setSelectedSlots] = useState([]);
   const [transformedSlotsData, setTransformedSlotsData] = useState([]);
-  const headers = ["S. No.", "Slots Available", "Select All"];
+  const headers = ["S. No.", "Slots Available", "Select"];
 
   useEffect(() => {
     if (selectDate) {
@@ -72,18 +73,26 @@ const ReschedulingSession = () => {
   useEffect(() => {
     if (availableSlotsData.length > 0) {
       const transformData = availableSlotsData.map((slot, index) => ({
-        id: slot.id,
+        "S. No.": index + 1,
         "Slots Available": `${slot.from_time} - ${slot.to_time}`,
-        // isSelected: false,
+        id: slot.id,
       }));
-
       setTransformedSlotsData(transformData);
+    } else {
+      setTransformedSlotsData([]);
     }
   }, [availableSlotsData]);
 
   const handleDateChange = (date) => {
     console.log("Date selected:", date);
-    setselectDate(date);
+    setSelectDate(date);
+    setSelectedSlots([]); // Clear selected slots when date changes
+  };
+
+  const handleSelectSlot = (id) => {
+    setSelectedSlots((prev) =>
+      prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id]
+    );
   };
 
   const handleSubmit = () => {
@@ -92,25 +101,19 @@ const ReschedulingSession = () => {
     dispatch(openReasonForLeave());
   };
 
-  const actionButtons = [
-    {
-      type: "checkbox",
-    },
-  ];
-
   const content = (
     <>
       <Grid item xs={12} sm={6} mb={2} pt={"16px"}>
         <CustomDateField
-          label="SelectDate"
+          label="Select Date"
           value={selectDate}
           onChange={handleDateChange}
-          name="dateOfBirth"
+          name="selectDate"
           sx={{ width: "100%" }}
         />
       </Grid>
 
-      {availableSlotsData.length === 0 ? (
+      {selectDate && transformedSlotsData.length === 0 ? (
         <DialogContent
           sx={{
             display: "flex",
@@ -118,33 +121,36 @@ const ReschedulingSession = () => {
             alignItems: "center",
           }}
         >
-          No Slot Available
+          No Slots Available
         </DialogContent>
       ) : (
-        <>
-          <PopUpTable
-            headers={headers}
-            initialData={transformedSlotsData}
-            actionButtons={actionButtons}
-          />
-          <Grid
-            container
-            sx={{
-              pt: 3,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              textAlign: "center",
-            }}
-          >
-            <Grid item xs={12} sm={6}>
-              <CustomTimeField label="From Time" />
+        selectDate && (
+          <>
+            <PopUpTable
+              headers={headers}
+              initialData={transformedSlotsData}
+              onRowClick={handleSelectSlot}
+              itemsPerPage={4}
+            />
+            <Grid
+              container
+              sx={{
+                pt: 3,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                textAlign: "center",
+              }}
+            >
+              <Grid item xs={12} sm={6}>
+                <CustomTimeField label="From Time" />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <CustomTimeField label="End Time" />
+              </Grid>
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomDateField label="End Time" />
-            </Grid>
-          </Grid>
-        </>
+          </>
+        )
       )}
     </>
   );

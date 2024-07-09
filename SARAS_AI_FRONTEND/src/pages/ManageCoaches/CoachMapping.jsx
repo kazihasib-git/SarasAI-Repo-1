@@ -3,23 +3,64 @@ import { DataGrid } from "@mui/x-data-grid";
 import { mockMappingDat } from '../../fakeData/mappingData';
 import Header from "../../components/Header/Header";
 import Sidebar from "../../components/Sidebar/Sidebar";
-import { useState } from "react";
+import { useState , useEffect } from "react";
 import { OnOffSwitch } from '../../components/Switch';
 import editIcon from '../../assets/editIcon.png';
+import DynamicTable from '../../components/CommonComponent/DynamicTable';
+import { showCAMapping } from '../../redux/features/CoachModule/coachSlice';
+import { useDispatch, useSelector } from "react-redux";
 
 const CoachMapping = () => {
+  const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [currentRow, setCurrentRow] = useState(null);
   const [viewType, setViewType] = useState('');
-
+  const { coachMapping, loading } = useSelector((state) => state.coachModule);
+  const [caMappingData, setcaMappingData] = useState([]);
+console.log("camapping" , coachMapping);
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
+  useEffect(() => {
+    dispatch(showCAMapping());
+  }, [dispatch]);
 
+  useEffect(() => {
+    if (coachMapping && coachMapping.length > 0) {
+      const transformData = coachMapping.map((item, index) => ({
+        
+        id: item.id,
+        name: item.name,
+        Username: item.username,
+        Active_Students: item.Active_Students,
+        Active_Batches: item.Active_Batches,
+      }));
+
+      setcaMappingData(transformData);
+    }
+  }, [coachMapping]);
+
+  const headers = [
+    "S.NO.",
+    "COACH Name",
+    "Username",
+    "Active Students",
+    "Active Batches",
+    "Action",
+  ];
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
-
+ 
+const actionButtons = [
+  // {
+  //   type: "switch",
+  // },
+  {
+    type: "delete",
+    onClick: (id) => console.log(`Delete clicked for id ${id}`),
+  },
+];
   const handleOpen = (row, type) => {
     setCurrentRow(row);
     setViewType(type);
@@ -152,10 +193,17 @@ const CoachMapping = () => {
             backgroundColor: "#FFF"
           }
         }}>
-          <DataGrid
+             { <DynamicTable
+                        headers={headers}
+                        initialData={caMappingData}
+                        actionButtons={actionButtons}
+                        componentName={"Coach Mapping"}
+                    />
+                   }
+          {/* <DataGrid
             rows={mockMappingDat}
             columns={columns}
-          />
+          /> */}
         </Box>
       </Box>
 
