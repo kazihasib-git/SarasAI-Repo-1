@@ -1,29 +1,23 @@
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogTitle,
-  IconButton,
-  Typography,
-} from "@mui/material";
 import React from "react";
-import CloseIcon from "@mui/icons-material/Close";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import ReusableDialog from "../CustomFields/ReusableDialog";
+// import CustomButton from "../CustomFields/CustomButton";
 import {
   closeCreateTa,
   closeEditTa,
   closeSuccessPopup,
   openAssignBatches,
   openAssignStudents,
-  openSuccessPopup,
 } from "../../redux/features/taModule/taSlice";
-import ReusableDialog from "../CustomFields/ReusableDialog";
-import { Navigate, useNavigate } from "react-router-dom";
 import {
   openCoachAssignBatches,
   openCoachAssignStudents,
+  closeCoachSuccessPopup,
+  closeEditCoach,
+  closeCreateCoach,
 } from "../../redux/features/CoachModule/coachSlice";
+import { Button } from "@mui/material";
 
 const CustomButton = ({
   onClick,
@@ -63,25 +57,42 @@ const CustomButton = ({
 const SubmitPopup = ({ componentname }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  if (componentname) {
-    console.log("componentname", componentname);
-  }
 
-  let stateModuleKey;
-  let nameKey;
+  let stateModuleKey,
+    nameKey,
+    closeSuccessPopupAction,
+    closeCreateAction,
+    closeEditAction,
+    openAssignBatchesAction,
+    openAssignStudentsAction;
 
   switch (componentname) {
     case "ADDITCOACH":
       stateModuleKey = "coachModule";
       nameKey = "coach_name";
+      closeSuccessPopupAction = closeCoachSuccessPopup;
+      closeCreateAction = closeCreateCoach;
+      closeEditAction = closeEditCoach;
+      openAssignBatchesAction = openCoachAssignBatches;
+      openAssignStudentsAction = openCoachAssignStudents;
       break;
     case "ADDEDITTA":
       stateModuleKey = "taModule";
       nameKey = "ta_name";
+      closeSuccessPopupAction = closeSuccessPopup;
+      closeCreateAction = closeCreateTa;
+      closeEditAction = closeEditTa;
+      openAssignBatchesAction = openAssignBatches;
+      openAssignStudentsAction = openAssignStudents;
       break;
     default:
       stateModuleKey = null;
       nameKey = null;
+      closeSuccessPopupAction = null;
+      closeCreateAction = null;
+      closeEditAction = null;
+      openAssignBatchesAction = null;
+      openAssignStudentsAction = null;
       break;
   }
 
@@ -98,28 +109,20 @@ const SubmitPopup = ({ componentname }) => {
   const displayName = nameKey === "ta_name" ? ta_name : coach_name;
 
   const handleAssignBatches = () => {
-    dispatch(closeSuccessPopup());
-    if (componentname == "ADDITCOACH") {
-      dispatch(openCoachAssignBatches());
-    } else {
-      dispatch(openAssignBatches());
-    }
+    dispatch(closeSuccessPopupAction());
+    dispatch(openAssignBatchesAction());
   };
 
   const handleAssignStudents = () => {
-    dispatch(closeSuccessPopup());
-    if (componentname == "ADDITCOACH") {
-      dispatch(openCoachAssignStudents());
-    } else {
-      dispatch(openAssignStudents());
-    }
+    dispatch(closeSuccessPopupAction());
+    dispatch(openAssignStudentsAction());
   };
 
   const handleCloseButton = () => {
-    dispatch(closeSuccessPopup());
-    dispatch(closeCreateTa());
-    dispatch(closeEditTa());
-    if (componentname == "ADDITCOACH") {
+    dispatch(closeSuccessPopupAction());
+    dispatch(closeCreateAction());
+    dispatch(closeEditAction());
+    if (componentname === "ADDITCOACH") {
       navigate("/coach-mapping");
     } else {
       navigate("/ta-mapping");
@@ -149,8 +152,8 @@ const SubmitPopup = ({ componentname }) => {
 
   return (
     <ReusableDialog
-      open={stateModuleKey == "coachModule" ? coachSuccessPopup : successPopup}
-      handleClose={() => handleCloseButton()}
+      open={stateModuleKey === "coachModule" ? coachSuccessPopup : successPopup}
+      handleClose={handleCloseButton}
       title={`${displayName} successfully created.`}
       actions={actions}
     />

@@ -42,6 +42,7 @@ import Header from "../../../Header/Header";
 import Sidebar from "../../../Sidebar/Sidebar";
 import { getTimezone } from "../../../../redux/features/timezone/timezoneSlice";
 import CustomTimeZoneForm from "../../../CustomFields/CustomTimeZoneForm";
+import AssignBatches from "../../AssignBatches";
 
 function AddEditCoach({ data }) {
   const {
@@ -587,7 +588,7 @@ function AddEditCoach({ data }) {
             <AssignStudents componentname={"ADDITCOACH"} />
           )}
           {assignCoachBatchOpen && (
-            <AssignCoachBatches componentname={"ADDITCOACH"} />
+            <AssignBatches componentname={"ADDITCOACH"} />
           )}
         </Box>
       </Box>

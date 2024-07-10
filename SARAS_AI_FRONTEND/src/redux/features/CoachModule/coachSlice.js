@@ -44,104 +44,33 @@ export const deleteCoach = createAsyncThunk(
     return id;
   }
 );
+
 export const getCoachStudentBatchMapping = createAsyncThunk(
   "coachModule/getCoachStudentBatchMapping",
   async () => {
-    const response = await axios.get(`${baseUrl}/admin/CoachMapping/CoachswithActiveStudentnBatches`);
+    const response = await axios.get(
+      `${baseUrl}/admin/student-batch-mapping/getAllStudentWithBatches`
+    );
     return response.data;
-    // return{
-    
-    //   data: [
-    //     {
-    //       id: 5,
-    //       name: "sample coach2",
-    //       username: "xyz-coach2",
-    //       is_active: 1,
-    //       Active_Batches: 2,
-    //       Active_Students: 3
-    //     },
-    //     {
-    //       id: 6,
-    //       name: "sample coach3",
-    //       username: "xyz-coach3",
-    //       is_active: 1,
-    //       Active_Batches: 1,
-    //       Active_Students: 10
-    //     },
-    //     {
-    //       id: 7,
-    //       name: "sample coach4",
-    //       username: "xyz-coach4",
-    //       is_active: 0,
-    //       Active_Batches: 0,
-    //       Active_Students: 0
-    //     },
-    //     {
-    //       id: 8,
-    //       name: "sample coach5",
-    //       username: "xyz-coach5",
-    //       is_active: 1,
-    //       Active_Batches: 3,
-    //       Active_Students: 15
-    //     },
-    //     {
-    //       id: 9,
-    //       name: "sample coach6",
-    //       username: "xyz-coach6",
-    //       is_active: 1,
-    //       Active_Batches: 2,
-    //       Active_Students: 8
-    //     },
-    //     {
-    //       id: 10,
-    //       name: "sample coach7",
-    //       username: "xyz-coach7",
-    //       is_active: 0,
-    //       Active_Batches: 0,
-    //       Active_Students: 0
-    //     },
-    //     {
-    //       id: 11,
-    //       name: "sample coach8",
-    //       username: "xyz-coach8",
-    //       is_active: 1,
-    //       Active_Batches: 4,
-    //       Active_Students: 20
-    //     },
-    //     {
-    //       id: 12,
-    //       name: "sample coach9",
-    //       username: "xyz-coach9",
-    //       is_active: 1,
-    //       Active_Batches: 1,
-    //       Active_Students: 5
-    //     },
-    //     {
-    //       id: 13,
-    //       name: "sample coach10",
-    //       username: "xyz-coach10",
-    //       is_active: 1,
-    //       Active_Batches: 2,
-    //       Active_Students: 6
-    //     },
-    //     {
-    //       id: 14,
-    //       name: "sample coach11",
-    //       username: "xyz-coach11",
-    //       is_active: 1,
-    //       Active_Batches: 3,
-    //       Active_Students: 12
-    //     },
-    //     {
-    //       id: 15,
-    //       name: "sample coach12",
-    //       username: "xyz-coach12",
-    //       is_active: 0,
-    //       Active_Batches: 0,
-    //       Active_Students: 0
-    //     }
-    //   ]
-    // };
+  }
+);
+
+export const getCoachBatchMapping = createAsyncThunk(
+  "coachModule/getCoachBatchMapping",
+  async () => {
+    const response = await axios.get(`${baseUrl}/admin/batches`);
+    console.log("Response : ", response);
+    return response.data;
+  }
+);
+
+export const showCoachMapping = createAsyncThunk(
+  "coachModule/showCoachMapping",
+  async () => {
+    const response = await axios.get(
+      `${baseUrl}/admin/CoachMapping/CoachswithActiveStudentnBatches`
+    );
+    return response.data;
   }
 );
 export const getCoachAssignStudents = createAsyncThunk(
@@ -185,10 +114,32 @@ export const postCoachAssignBatches = createAsyncThunk(
   }
 );
 
+export const toggleCoachAssignStudentStatus = createAsyncThunk(
+  "coachModule/toggleCoachAssignStudentStatus",
+  async ({ id, studentId }) => {
+    const response = await axios.put(
+      `${baseUrl}/admin/CoachMapping/${id}/ActiveDeactiveAssignStudent`,
+      { student_id: studentId }
+    );
+    return response.data;
+  }
+);
+
+export const toggleCoachAssignBatchStatus = createAsyncThunk(
+  "coachModule/toggleCoachAssignBatchStatus",
+  async ({ id, batchId }) => {
+    const response = await axios.put(
+      `${baseUrl}/admin/CoachMapping/${id}/ActiveDeactiveAssignBatch`,
+      { batch_id: batchId }
+    );
+    return response.data;
+  }
+);
+
 export const deleteCoachAssignedStudent = createAsyncThunk(
   "coachModule/deleteCoachAssignedStudent",
   async (id) => {
-    console.log("ID to delete STUDENT : ", id)
+    console.log("ID to delete STUDENT : ", id);
     const response = await axios.delete(
       `${baseUrl}/admin/CoachMapping/${id.id}/deleteStudent`
     );
@@ -207,11 +158,10 @@ export const deleteCoachAssignedBatch = createAsyncThunk(
   }
 );
 
-
 const initialState = {
   coaches: [],
-  // coachStudentBatchMapping: null,
-  batchMapping: null,
+  coachStudentBatchMapping: [],
+  coachBatchMapping: null,
   coachMapping: null,
   coachSchedule: null,
   assignedStudents: [],
@@ -228,18 +178,18 @@ const initialState = {
   coachID: null,
 };
 
-export const coachSlice= createSlice({
+export const coachSlice = createSlice({
   name: "coachModule",
   initialState,
   reducers: {
     accessCoachName(state, action) {
-    //   console.log("ACTION : ", action);
-    //   console.log("ACTION PAYLOAD : ", action.payload);
+      //   console.log("ACTION : ", action);
+      //   console.log("ACTION PAYLOAD : ", action.payload);
       state.coach_name = action.payload.name;
       state.coachID = action.payload.id;
     },
     setSelectedCoach(state, action) {
-    //   console.log("ACTION : ", action);
+      //   console.log("ACTION : ", action);
       state.selectedCoach = action.payload;
     },
     openCreateCoach(state) {
@@ -258,7 +208,7 @@ export const coachSlice= createSlice({
     openCoachSuccessPopup(state) {
       state.coachSuccessPopup = true;
     },
-    closeCloseSuccessPopup(state) {
+    closeCoachSuccessPopup(state) {
       state.coachSuccessPopup = false;
     },
     openCoachAssignStudents(state) {
@@ -307,7 +257,9 @@ export const coachSlice= createSlice({
     });
     builder.addCase(updateCoach.fulfilled, (state, action) => {
       state.loading = false;
-      const index = state.coaches.findIndex((coach) => coach.id === action.payload.id);
+      const index = state.coaches.findIndex(
+        (coach) => coach.id === action.payload.id
+      );
       if (index !== -1) {
         state.coaches[index] = action.payload;
       }
@@ -323,7 +275,9 @@ export const coachSlice= createSlice({
     });
     builder.addCase(deleteCoach.fulfilled, (state, action) => {
       state.loading = false;
-      state.coaches = state.coaches.filter((coach) => coach.id !== action.payload);
+      state.coaches = state.coaches.filter(
+        (coach) => coach.id !== action.payload
+      );
     });
     builder.addCase(deleteCoach.rejected, (state, action) => {
       state.loading = false;
@@ -342,9 +296,9 @@ export const coachSlice= createSlice({
       state.loading = false;
       state.error = action.payload || action.error.message;
     });
-    
-     // Get Assigned Batches
-     builder.addCase(getCoachAssignBatches.pending, (state) => {
+
+    // Get Assigned Batches
+    builder.addCase(getCoachAssignBatches.pending, (state) => {
       state.loading = true;
     });
     builder.addCase(getCoachAssignBatches.fulfilled, (state, action) => {
@@ -369,8 +323,8 @@ export const coachSlice= createSlice({
       state.error = action.payload || action.error.message;
     });
 
-     // delete assigned Batches
-     builder.addCase(deleteCoachAssignedBatch.pending, (state) => {
+    // delete assigned Batches
+    builder.addCase(deleteCoachAssignedBatch.pending, (state) => {
       state.loading = true;
     });
     builder.addCase(deleteCoachAssignedBatch.fulfilled, (state, action) => {
@@ -382,22 +336,51 @@ export const coachSlice= createSlice({
       state.error = action.payload || action.error.message;
     });
 
-     // Show CA Mapping
-     builder.addCase(getCoachStudentBatchMapping.pending, (state) => {
+    // Show CA Mapping
+    builder.addCase(showCoachMapping.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(showCoachMapping.fulfilled, (state, action) => {
+      console.log("Coach mapping action ", action.payload);
+      state.loading = false;
+      state.coachMapping = action.payload;
+    });
+    builder.addCase(showCoachMapping.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload || action.error.message;
+    });
+
+    // get all students
+    builder.addCase(getCoachStudentBatchMapping.pending, (state) => {
       state.loading = true;
     });
     builder.addCase(getCoachStudentBatchMapping.fulfilled, (state, action) => {
-      console.log("action " , action.payload);
+      console.log("action ", action.payload);
       state.loading = false;
-      state.coachMapping = action.payload?.data;
+      state.coachStudentBatchMapping = action.payload;
     });
     builder.addCase(getCoachStudentBatchMapping.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload || action.error.message;
     });
 
-     // Post Assign Students
-     builder.addCase(postCoachAssignStudents.pending, (state) => {
+    // get All batches
+
+    builder.addCase(getCoachBatchMapping.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(getCoachBatchMapping.fulfilled, (state, action) => {
+      state.loading = false;
+      // console.log("MAPPING PAYLOAD :", action.payload )
+      state.coachBatchMapping = action.payload;
+    });
+    builder.addCase(getCoachBatchMapping.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload || action.error.message;
+    });
+
+    // Post Assign Students
+    builder.addCase(postCoachAssignStudents.pending, (state) => {
       state.loading = true;
     });
     builder.addCase(postCoachAssignStudents.fulfilled, (state, action) => {
@@ -421,25 +404,64 @@ export const coachSlice= createSlice({
       state.loading = false;
       state.error = action.payload || action.error.message;
     });
-  },
 
-  
+    // Toggle Assign Student Status
+    builder.addCase(toggleCoachAssignStudentStatus.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(
+      toggleCoachAssignStudentStatus.fulfilled,
+      (state, action) => {
+        state.loading = false;
+        const updatedStudents = state.assignedStudents.map((student) =>
+          student.id === action.payload.id
+            ? { ...student, is_active: action.payload.is_active }
+            : student
+        );
+        state.assignedStudents = updatedStudents;
+      }
+    );
+    builder.addCase(
+      toggleCoachAssignStudentStatus.rejected,
+      (state, action) => {
+        state.loading = false;
+        state.error = action.payload || action.error.message;
+      }
+    );
+
+    // Toggle Assign Batch Status
+    builder.addCase(toggleCoachAssignBatchStatus.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(toggleCoachAssignBatchStatus.fulfilled, (state, action) => {
+      state.loading = false;
+      const updatedBatches = state.assignedBatches.map((batch) =>
+        batch.id === action.payload.id
+          ? { ...batch, is_active: action.payload.is_active }
+          : batch
+      );
+      state.assignedBatches = updatedBatches;
+    });
+    builder.addCase(toggleCoachAssignBatchStatus.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload || action.error.message;
+    });
+  },
 });
 
-
 export const {
-    openCreateCoach,
-    closeCreateCoach,
-    openEditCoach,
-    closeEditCoach,
-    setSelectedCoach,
-    openCoachSuccessPopup,
-    accessCoachName,
-    closeCloseSuccessPopup,
-    openCoachAssignStudents,
-    closeCoachAssignStudents,
-    openCoachAssignBatches,
-    closeCoachAssignBatches,
-  } = coachSlice.actions;
-  
-  export default coachSlice.reducer;
+  openCreateCoach,
+  closeCreateCoach,
+  openEditCoach,
+  closeEditCoach,
+  setSelectedCoach,
+  openCoachSuccessPopup,
+  accessCoachName,
+  closeCoachSuccessPopup,
+  openCoachAssignStudents,
+  closeCoachAssignStudents,
+  openCoachAssignBatches,
+  closeCoachAssignBatches,
+} = coachSlice.actions;
+
+export default coachSlice.reducer;

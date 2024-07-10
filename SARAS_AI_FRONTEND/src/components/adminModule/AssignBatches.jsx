@@ -8,6 +8,15 @@ import {
   getTA,
   postAssignBatches,
 } from "../../redux/features/taModule/taSlice";
+
+import {
+  closeCoachAssignBatches,
+  openCoachSuccessPopup,
+  getCoachStudentBatchMapping,
+  postCoachAssignBatches,
+  getCoachBatchMapping,
+} from "../../redux/features/CoachModule/coachSlice";
+
 import CustomTextField from "../CustomFields/CustomTextField";
 import ReusableDialog from "../CustomFields/ReusableDialog";
 import PopUpTable from "../CommonComponent/PopUpTable";
@@ -48,24 +57,78 @@ const CustomButton = ({
   );
 };
 
-const AssignBatches = () => {
+const AssignBatches = ({ componentname }) => {
   const dispatch = useDispatch();
-  const { assignBatchOpen, ta_name, taID, batchMapping = [], loading, } = useSelector((state) => state.taModule);
-
-  const { taName, taID: taId, taTimezone } = useSelector((state) => state.taScheduling);
-
-  const [selectedBatch, setSelectedBatch] = useState("");
+  const [selectedBatch, setSelectedBatch] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedBranch, setSelectedBranch] = useState("");
   const [filteredBatches, setFilteredBatches] = useState([]);
-  const [selectedBatches, setSelectedBatches] = useState([]);
+
+  let stateModuleKey,
+    nameKey,
+    assignBatchOpenKey,
+    batchMappingKey,
+    closeDialogAction,
+    openSuccessAction,
+    getBatchMappingAction,
+    postAssignAction;
+
+  switch (componentname) {
+    case "ADDITCOACH":
+      stateModuleKey = "coachModule";
+      nameKey = "coach_name";
+      assignBatchOpenKey = "assignCoachBatchOpen";
+      batchMappingKey = "coachBatchMapping";
+      closeDialogAction = closeCoachAssignBatches;
+      openSuccessAction = openCoachSuccessPopup;
+      getBatchMappingAction = getCoachBatchMapping;
+      postAssignAction = postCoachAssignBatches;
+      break;
+    case "ADDEDITTA":
+      stateModuleKey = "taModule";
+      nameKey = "ta_name";
+      assignBatchOpenKey = "assignBatchOpen";
+      batchMappingKey = "batchMapping";
+      closeDialogAction = closeAssignBatches;
+      openSuccessAction = openSuccessPopup;
+      getBatchMappingAction = getBatchMapping;
+      postAssignAction = postAssignBatches;
+      break;
+    default:
+      stateModuleKey = null;
+      assignBatchOpenKey = null;
+      nameKey = null;
+      batchMappingKey = null;
+      closeDialogAction = null;
+      openSuccessAction = null;
+      getBatchMappingAction = null;
+      postAssignAction = null;
+      break;
+  }
+
+  const stateSelector = useSelector((state) =>
+    stateModuleKey ? state[stateModuleKey] : {}
+  );
+  const { taName, taID: taId } = useSelector((state) => state.taScheduling);
+
+  const {
+    [assignBatchOpenKey]: assignBatchOpen,
+    [nameKey]: assignedTAName,
+    taID,
+    coachID,
+    [batchMappingKey]: batchMapping,
+    loading,
+  } = stateSelector || {};
 
   useEffect(() => {
-    if (assignBatchOpen) {
-      dispatch(getBatchMapping());
+    if (stateModuleKey && assignBatchOpen) {
+      dispatch(getBatchMappingAction());
     }
-  }, [assignBatchOpen, dispatch]);
+  }, [assignBatchOpen, dispatch, getBatchMappingAction]);
 
   useEffect(() => {
     if (batchMapping) {
+      console.log("BATCHMAPPING : ", batchMapping)
       const transformedData = batchMapping.map((batch) => ({
         "S. No.": batch.id,
         "Batch Name": batch.name,
@@ -74,57 +137,54 @@ const AssignBatches = () => {
         batch_id: batch.id,
       }));
 
-      // Filter by selected branch and search query
       const filtered = transformedData.filter((batch) => {
-        const matchesBranch = selectedBranch ? batch.Branch === selectedBranch : true;
-        const matchesQuery = searchQuery ? batch["Batch Name"].toLowerCase().includes(searchQuery.toLowerCase()) : true;
+        const matchesBranch = selectedBranch
+          ? batch.Branch === selectedBranch
+          : true;
+        const matchesQuery = searchQuery
+          ? batch["Batch Name"]
+              .toLowerCase()
+              .includes(searchQuery.toLowerCase())
+          : true;
         return matchesBranch && matchesQuery;
       });
 
       setFilteredBatches(filtered);
     }
-  }, [batchMapping, selectedBatch]);
+  }, [batchMapping, selectedBranch, searchQuery]);
 
-  const batchOptions = [
-    ...new Set(
-      batchMapping.flatMap((batch) => [
-        batch.name,
-        ...batch.children.map((child) => child.name),
-      ])
-    ),
-  ];
+  const batchOptions = batchMapping
+    ? [...new Set(batchMapping.map((batch) => batch.branch))]
+    : [];
 
   const handleSelectBatch = (id) => {
-    console.log("IDDD : ", id);
-    setSelectedBatches((prev) =>
+    setSelectedBatch((prev) =>
       prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id]
     );
   };
 
   const handleSubmit = () => {
+    const id = componentname === "ADDITCOACH" ? coachID : taID ? taID : taId;
     const data = {
-      ta_id: taID ? taID : taId,
-      batches: selectedBatches.map((id) => ({ id: id.toString() })),
+      [componentname === "ADDITCOACH" ? "Coach_id" : "ta_id"]: id,
+      batches: selectedBatch.map((id) => ({ id: id.toString() })),
     };
-    dispatch(postAssignBatches({ id: taID ? taID : taId, data })).then(() => {
+    dispatch(postAssignAction({ id: taID ? taID : taId, data })).then(() => {
       if (taId) {
-        if (taId) {
-          dispatch(openScheduleSession({ id: taId, name: taName, timezone: taTimezone, batches: selectedBatches.map((id) => ({ id: id.toString() })) }));
-        }
+        dispatch(
+          openScheduleSession({
+            id: taId,
+            name: taName,
+            batches: selectedBatch.map((id) => ({ id: id.toString() })),
+          })
+        );
       }
-      dispatch(openSuccessPopup());
+      dispatch(openSuccessAction());
     });
-    dispatch(closeAssignBatches());
+    dispatch(closeDialogAction());
   };
 
-  const headers = [
-    "S. No.",
-    "Batch Name",
-    "Branch",
-    //"Academic Term",
-    //"Batch",
-    "Select",
-  ];
+  const headers = ["S. No.", "Batch Name", "Branch", "Select"];
 
   const content = (
     <>
@@ -133,12 +193,12 @@ const AssignBatches = () => {
           <CustomTextField
             select
             label="Branch"
-            value={selectedBatch}
-            onChange={(e) => setSelectedBatch(e.target.value)}
+            value={selectedBranch}
+            onChange={(e) => setSelectedBranch(e.target.value)}
           >
-            {batchOptions.map((batch) => (
-              <MenuItem key={batch} value={batch}>
-                {batch}
+            {batchOptions.map((branch) => (
+              <MenuItem key={branch} value={branch}>
+                {branch}
               </MenuItem>
             ))}
           </CustomTextField>
@@ -149,31 +209,29 @@ const AssignBatches = () => {
         <Grid item xs={12} mb={2}>
           <CustomTextField
             label="Search By Batch Name"
-            value={selectedBatch}
-            onChange={(e) => setSelectedBatch(e.target.value)}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
         </Grid>
       </Grid>
-
       <PopUpTable
         headers={headers}
         initialData={filteredBatches}
         onRowClick={handleSelectBatch}
-        selectedBox={selectedBatches}
+        selectedBox={selectedBatch}
       />
-
       <Typography
         variant="subtitle1"
         gutterBottom
         sx={{ mt: 2, textAlign: "center" }}
       >
-        {selectedBatches.length} batch(es) Selected
+        {selectedBatch.length} batch(es) Selected
       </Typography>
     </>
   );
 
   const actions = (
-    <CustomButton
+    <Button
       onClick={handleSubmit}
       style={{
         backgroundColor: "#F56D3B",
@@ -182,19 +240,19 @@ const AssignBatches = () => {
       }}
     >
       Submit
-    </CustomButton>
+    </Button>
   );
 
   if (loading) {
     return <div>Loading...</div>;
   }
 
-  const assignedTA = ta_name || taName;
+  const assignedTA = assignedTAName || taName;
 
   return (
     <ReusableDialog
       open={assignBatchOpen}
-      handleClose={() => dispatch(closeAssignBatches())}
+      handleClose={() => dispatch(closeDialogAction())}
       title={`Assign Batches to ${assignedTA}`}
       content={content}
       actions={actions}
