@@ -17,7 +17,7 @@ import {
   closeCoachAssignStudents,
   openCoachSuccessPopup,
   getCoachStudentBatchMapping,
-  // postAssignStudents,
+  postCoachAssignStudents,
 } from "../../redux/features/CoachModule/coachSlice";
 
 const CustomButton = ({
@@ -55,7 +55,7 @@ const CustomButton = ({
   );
 };
 
-const AssignStudents = (componentname) => {
+const AssignStudents = ({ componentname }) => {
   const dispatch = useDispatch();
   const [selectedTerm, setSelectedTerm] = useState("");
   const [selectedBatch, setSelectedBatch] = useState("");
@@ -63,111 +63,78 @@ const AssignStudents = (componentname) => {
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [filteredStudents, setFilteredStudents] = useState([]);
 
-  let stateModuleKey;
-  let nameKey;
+  let stateModuleKey, nameKey, assignStudentOpenKey, assignMappingKey, closeDialogAction, openSuccessAction, getBatchMappingAction, postAssignAction;
 
   switch (componentname) {
     case "ADDITCOACH":
       stateModuleKey = "coachModule";
       nameKey = "coach_name";
+      assignStudentOpenKey = "assignCoachStudentOpen";
+      assignMappingKey = "coachStudentBatchMapping";
+      closeDialogAction = closeCoachAssignStudents;
+      openSuccessAction = openCoachSuccessPopup;
+      getBatchMappingAction = getCoachStudentBatchMapping;
+      postAssignAction = postCoachAssignStudents;
       break;
     case "ADDEDITTA":
       stateModuleKey = "taModule";
       nameKey = "ta_name";
+      assignStudentOpenKey = "assignStudentOpen";
+      assignMappingKey = "studentBatchMapping";
+      closeDialogAction = closeAssignStudents;
+      openSuccessAction = openSuccessPopup;
+      getBatchMappingAction = getStudentBatchMapping;
+      postAssignAction = postAssignStudents;
       break;
     default:
       stateModuleKey = null;
       nameKey = null;
+      assignStudentOpenKey = null;
+      assignMappingKey = null;
+      closeDialogAction = null;
+      openSuccessAction = null;
+      getBatchMappingAction = null;
+      postAssignAction = null;
       break;
   }
 
-  const {
-    assignStudentOpen,
-    assignCoachStudentOpen,
-    assignCoachBatchOpen,
-    ta_name,
-    coach_name,
-    taID,
-    coachID,
-    studentBatchMapping,
-    coachMapping,
-  } =
-    useSelector((state) => (stateModuleKey ? state[stateModuleKey] : {})) || {};
+  const stateSelector = useSelector((state) => (stateModuleKey ? state[stateModuleKey] : {}));
   const { taName, taID: taId } = useSelector((state) => state.taScheduling);
 
+  const {
+    [assignStudentOpenKey]: assignStudentOpen,
+    [nameKey]: assignedTAName,
+    taID,
+    coachID,
+    [assignMappingKey]: studentBatchMapping,
+  } = stateSelector || {};
+
   useEffect(() => {
-    if (assignStudentOpen || assignCoachStudentOpen) {
-      if (stateModuleKey == "coachModule") {
-        dispatch(getCoachStudentBatchMapping());
-      } else {
-        dispatch(getStudentBatchMapping());
-      }
+    if (stateModuleKey && assignStudentOpen) {
+      dispatch(getBatchMappingAction());
     }
-  }, [assignStudentOpen, dispatch]);
+  }, [assignStudentOpen, dispatch, getBatchMappingAction]);
 
   useEffect(() => {
-    if (componentname == "ADDEDITTA") {
-      if (studentBatchMapping) {
-        const transformedData = studentBatchMapping.map((student) => ({
-          "S. No.": student.student_id,
-          "Student Name": student.student_name,
-          "Academic Term": student.academic_term,
-          Batch:
-            student.batches.map((batch) => batch.batch_name).join(", ") ||
-            "N/A",
-          Select: student.is_active ? "Active" : "Inactive",
-          student_id: student.student_id,
-          is_active: student.is_active,
-        }));
+    if (studentBatchMapping) {
+      const transformedData = studentBatchMapping.map((student) => ({
+        "S. No.": student.student_id,
+        "Student Name": student.student_name,
+        "Academic Term": student.academic_term,
+        Batch: student.batches.map((batch) => batch.batch_name).join(", ") || "N/A",
+        Select: student.is_active ? "Active" : "Inactive",
+        student_id: student.student_id,
+        is_active: student.is_active,
+      }));
 
-        const filtered = transformedData.filter((student) => {
-          const matchesTerm = selectedTerm
-            ? student["Academic Term"] === selectedTerm
-            : true;
-          const matchesBatch = selectedBatch
-            ? student.Batch.includes(selectedBatch)
-            : true;
-          const matchesName = searchName
-            ? student["Student Name"]
-                .toLowerCase()
-                .includes(searchName.toLowerCase())
-            : true;
-          return matchesTerm && matchesBatch && matchesName;
-        });
+      const filtered = transformedData.filter((student) => {
+        const matchesTerm = selectedTerm ? student["Academic Term"] === selectedTerm : true;
+        const matchesBatch = selectedBatch ? student.Batch.includes(selectedBatch) : true;
+        const matchesName = searchName ? student["Student Name"].toLowerCase().includes(searchName.toLowerCase()) : true;
+        return matchesTerm && matchesBatch && matchesName;
+      });
 
-        setFilteredStudents(filtered);
-      }
-      else{
-        if (coachMapping) {
-          const transformedData = coachMapping.map((student) => ({
-            "S. No.": student.student_id,
-            "Student Name": student.student_name,
-            "Academic Term": student.academic_term,
-            Batch:
-              student.batches.map((batch) => batch.batch_name).join(", ") || "N/A",
-            Select: student.is_active ? "Active" : "Inactive",
-            student_id: student.student_id,
-            is_active: student.is_active,
-          }));
-    
-          const filtered = transformedData.filter((student) => {
-            const matchesTerm = selectedTerm
-              ? student["Academic Term"] === selectedTerm
-              : true;
-            const matchesBatch = selectedBatch
-              ? student.Batch.includes(selectedBatch)
-              : true;
-            const matchesName = searchName
-              ? student["Student Name"]
-                  .toLowerCase()
-                  .includes(searchName.toLowerCase())
-              : true;
-            return matchesTerm && matchesBatch && matchesName;
-          });
-    
-          setFilteredStudents(filtered);
-        }
-      }
+      setFilteredStudents(filtered);
     }
   }, [studentBatchMapping, selectedTerm, selectedBatch, searchName]);
 
@@ -175,13 +142,8 @@ const AssignStudents = (componentname) => {
     ? [
         ...new Set(
           studentBatchMapping
-            .filter(
-              (student) =>
-                !selectedTerm || student.academic_term === selectedTerm
-            )
-            .flatMap((student) =>
-              student.batches.map((batch) => batch.batch_name)
-            )
+            .filter((student) => !selectedTerm || student.academic_term === selectedTerm)
+            .flatMap((student) => student.batches.map((batch) => batch.batch_name))
         ),
       ]
     : [];
@@ -191,17 +153,16 @@ const AssignStudents = (componentname) => {
     : [];
 
   const handleSelectStudent = (id) => {
-    setSelectedStudents((prev) =>
-      prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id]
-    );
+    setSelectedStudents((prev) => (prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id]));
   };
 
   const handleSubmit = () => {
+    const id = componentname === "ADDITCOACH" ? coachID : taID ? taID : taId;
     const data = {
-      ta_id: taID ? taID : taId,
+      [componentname === "ADDITCOACH" ? "Coach_id" : "ta_id"]: id,
       student: selectedStudents.map((id) => ({ id: id.toString() })),
     };
-    dispatch(postAssignStudents({ id: taID ? taID : taId, data })).then(() => {
+    dispatch(postAssignAction({ id: taID ? taID : taId, data })).then(() => {
       if (taId) {
         dispatch(
           openScheduleSession({
@@ -211,18 +172,12 @@ const AssignStudents = (componentname) => {
           })
         );
       }
-      dispatch(openSuccessPopup());
+      dispatch(openSuccessAction());
     });
-    dispatch(closeAssignStudents());
+    dispatch(closeDialogAction());
   };
 
-  const headers = [
-    "S. No.",
-    "Student Name",
-    "Academic Term",
-    "Batch",
-    "Select",
-  ];
+  const headers = ["S. No.", "Student Name", "Academic Term", "Batch", "Select"];
 
   const content = (
     <>
@@ -272,11 +227,7 @@ const AssignStudents = (componentname) => {
         onRowClick={handleSelectStudent}
         selectedBox={selectedStudents}
       />
-      <Typography
-        variant="subtitle1"
-        gutterBottom
-        sx={{ mt: 2, textAlign: "center" }}
-      >
+      <Typography variant="subtitle1" gutterBottom sx={{ mt: 2, textAlign: "center" }}>
         {selectedStudents.length} Student(s) Selected
       </Typography>
     </>
@@ -295,17 +246,19 @@ const AssignStudents = (componentname) => {
     </CustomButton>
   );
 
-  const assignedTA = ta_name || taName;
+  const assignedTA = assignedTAName || taName;
 
   return (
     <ReusableDialog
       open={assignStudentOpen}
-      handleClose={() => dispatch(closeAssignStudents())}
+      handleClose={() => dispatch(closeDialogAction())}
       title={`Assign Students to ${assignedTA}`}
       content={content}
       actions={actions}
     />
   );
 };
+
+
 
 export default AssignStudents;
