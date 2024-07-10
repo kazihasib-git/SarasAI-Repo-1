@@ -42,7 +42,7 @@ console.log("camapping" , coachMapping);
 
   const headers = [
     "S.NO.",
-    "COACH Name",
+    "Coach Name",
     "Username",
     "Active Students",
     "Active Batches",
@@ -148,19 +148,21 @@ const actionButtons = [
       <Box m="40px">
         <Header />
         <Sidebar />
-        <Box display={"flex"} justifyContent={"space-between"}>
-          <p style={{ fontSize: "22px", fontWeight: "700", justifyContent: "center", margin: 0 }}>Coach Mapping</p>
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+          <p style={{ fontSize: "44px", justifyContent: "center",fontFamily: "ExtraLight"}}>Coach Mapping</p>
           <Box display={"flex"}>
             <Box
               display={"flex"}
               backgroundColor="#FFF"
               borderRadius={"30px"}
-              width={"30vh"}
+              width={"20vw"}
+              height={"5vh"}
+              marginBottom={"15px"}
               marginRight={"10px"}
             >
               <InputBase sx={{ ml: 2, flex: 1 }} placeholder="Search here ..." />
             </Box>
-            <Button variant="contained" onClick={handleOpenModal} style={{ backgroundColor: "#F56D3B", borderRadius: "30px" }}> <i style={{ marginRight: "5px" }} className="bi bi-plus-circle"></i> Create Mapping</Button>
+            {/* <Button variant="contained" onClick={handleOpenModal} style={{ backgroundColor: "#F56D3B", borderRadius: "30px" }}> <i style={{ marginRight: "5px" }} className="bi bi-plus-circle"></i> Create Mapping</Button> */}
           </Box>
         </Box>
         <Box m="20px 0 0 0" height={"70vh"} sx={{

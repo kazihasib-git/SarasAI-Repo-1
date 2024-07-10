@@ -3,14 +3,16 @@ import { DataGrid } from "@mui/x-data-grid";
 import { mockDataAvilable } from "../../fakeData/availableData";
 import Header from "../../components/Header/Header";
 import Sidebar from "../../components/Sidebar/Sidebar";
-import {DynamicTable} from '../../pages/managesTAs/TaAvaialablity';
+//import {DynamicTable} from '../../pages/managesTAs/TaAvaialablity';
+import DynamicTable from '../../components/CommonComponent/DynamicTable';
+
 
 const CoachAvialablity = () => {
     const theme = useTheme();
   
     const headers = [
         "S. No.",
-        "COACH Name",
+        "Coach Name",
         "Username",
         "Current Availability",
         "Action",
@@ -22,18 +24,23 @@ const CoachAvialablity = () => {
             <Box m="40px">
                 <Header />
                 <Sidebar />
-                <Box display={"flex"} justifyContent={"space-between"} >
-                    <p style={{ fontSize: "22px", fontWeight: "700", justifyContent:"center" , margin:0 }}>Coach Availability</p>
-                    {/* <Box> */}
+                <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} >
+                    <p style={{ fontSize: "44px", justifyContent: "center",fontFamily: "ExtraLight"}}>Coach Availability</p>
+                    <Box display={"flex"}>
                         <Box
-                            display={"flex"}
-                            backgroundColor="#FFF"
-                            borderRadius={"30px"}
-                            width={"30vh"}
+                             display={"flex"}
+                             backgroundColor="#FFF"
+                             borderRadius={"30px"}
+                             width={"20vw"}
+                             height={"5vh"}
+                             marginBottom={"15px"}
+                             marginRight={"10px"}
                         >
-                            <InputBase sx={{ ml: 2, flex: 1 }} placeholder="Search here ..." />
+                            <InputBase sx={{ ml: 2, flex: 1}} placeholder="Search here ..." />
+                     
                         </Box>
-                    {/* </Box> */}
+
+                    </Box>
                 </Box>
                 <Box m="20px 0 0 0" height={"70vh"} sx={{
                     "& .MuiDataGrid-root": {
@@ -82,3 +89,4 @@ const CoachAvialablity = () => {
 }
 
 export default CoachAvialablity;
+

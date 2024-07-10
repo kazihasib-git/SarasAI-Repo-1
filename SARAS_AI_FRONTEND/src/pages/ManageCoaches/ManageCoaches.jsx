@@ -114,7 +114,7 @@ console.log("coachess " , coaches);
 
     const headers = [
         "S. No.",
-        "COACH Name",
+        "Coach Name",
         "Username",
         "Location",
         "Time Zone",
@@ -152,8 +152,8 @@ console.log("coachess " , coaches);
             <Box m="40px">
                 <Header />
                 <Sidebar />
-                <Box display={"flex"} justifyContent={"space-between"}>
-                    <p style={{ fontSize: "22px", fontWeight: "700", justifyContent: "center", margin: 0 }}>Manage Coach</p>
+                <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                    <p style={{ fontSize: "44px", justifyContent: "center",fontFamily: "ExtraLight"}}>Manage Coach</p>
                     <Box display={"flex"}>
                         <Box
                             display={"flex"}
@@ -162,7 +162,7 @@ console.log("coachess " , coaches);
                             width={"30vh"}
                             marginRight={"10px"}
                         >
-                            <InputBase sx={{ ml: 2, flex: 1 }} placeholder="Search here ..." />
+                            <InputBase sx={{m1:2,flex:1 ,marginLeft:5}} placeholder="Search here ..." />
                         </Box>
                         <Button variant="contained" onClick={handleAddCoach} style={{ backgroundColor: "#F56D3B", borderRadius: "30px" }}>
                             <i style={{ marginRight: "5px" }} className="bi bi-plus-circle"></i> <span>Create Coach</span>
