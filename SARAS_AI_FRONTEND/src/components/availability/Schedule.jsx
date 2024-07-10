@@ -41,7 +41,7 @@ const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = 
 };
 
 const headers = ['S. No.', 'Slot Date', 'From Time', 'To Time', 'Select'];
-const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const weekDays = ['Sunday','Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 const actionButtons = [
     {
@@ -61,7 +61,7 @@ const Schedule = () => {
     const [selectedSlot, setSelectedSlot] = useState([{}]);
 
     const dispatch = useDispatch()
-    const { scheduleSessionOpen, taID, taName, students, batches, taAvailableSlots } = useSelector((state) => state.taScheduling);
+    const { scheduleSessionOpen, taID, taName, taTimezone, students, batches, taAvailableSlots } = useSelector((state) => state.taScheduling);
     const { register, handleSubmit, formState: { errors } } = useForm();
 
     useEffect(() => {
@@ -125,17 +125,29 @@ const Schedule = () => {
         console.log("selected Daysss : ", selectedDays)
         console.log("selected Slot : ", selectedSlot, selectedSlot[1])
 
+        let weeksArray = Array(7).fill(0);
+        if(repeat === 'recurring') {
+            selectedDays.forEach((day) => {
+                const index = weekDays.indexOf(day);
+                weeksArray[index] = 1;
+            });
+        }else if(repeat === 'onetime') {
+            const index = new Date(fromDate).getDay();
+            weeksArray[index] = 1;
+        }
+
+        console.log("weeksArray : ", weeksArray)
+
         formData.start_time = fromTime;
         formData.end_time = toTime;
         formData.timezone = timezone;
-        formData.repeat = repeat;
         formData.schedule_date = fromDate;
-        formData.end_date = toDate;
+        formData.end_date = repeat === 'recurring' ? toDate : fromDate;
         formData.admin_user_id = taID;
-        //formData.slot_id = selectedSlot[1];
-        formData.slot_id = 2;
+        formData.slot_id = selectedSlot[1];
+        // formData.slot_id = 2;
         formData.event_status = "scheduled";
-        formData.weeks = selectedDays;
+        formData.weeks = weeksArray;
         formData.timezone = "IST";
         formData.studentId = studentId;
         formData.batchId = batchId;
@@ -272,7 +284,7 @@ const Schedule = () => {
                                                     <CustomFormControl
                                                         label="Select Timezone"
                                                         name="timezone"
-                                                        value={timezone}
+                                                        value={taTimezone}
                                                         controlProps={{
                                                             select: true,
                                                             fullWidth: true,

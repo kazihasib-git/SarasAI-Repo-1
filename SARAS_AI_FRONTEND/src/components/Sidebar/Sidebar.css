@@ -15,6 +15,18 @@
     background-color: #4E18A5;
 }
 
+.SideHeader{
+    font-family: "SemiBold";
+    font-size: 16px;
+    letter-spacing: 1px;
+}
+
+.SideSubHeading{
+    font-family: "Regular";
+    font-size: 16px;
+    letter-spacing: 1px;
+}
+
 @media (max-width: 1199px) {
     .sidebar {
         left: -300px;

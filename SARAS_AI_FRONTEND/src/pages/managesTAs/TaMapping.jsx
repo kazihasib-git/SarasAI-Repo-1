@@ -30,6 +30,7 @@ const TaMapping = () => {
   const dispatch = useDispatch();
   const { taMapping, loading } = useSelector((state) => state.taModule);
   const [taMappingData, setTaMappingData] = useState([]);
+  console.log("tamapping " ,taMapping);
 
   useEffect(() => {
     dispatch(showTAMapping());
@@ -59,6 +60,7 @@ const TaMapping = () => {
             fontSize: "44px",
             justifyContent: "center",
             marginBottom: "20px",
+            fontFamily:"ExtraLight"
           }}
         >
           TA Mapping

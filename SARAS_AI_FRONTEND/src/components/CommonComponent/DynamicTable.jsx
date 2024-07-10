@@ -129,7 +129,7 @@ const DynamicTable = ({
   );
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+  // console.log("componentName", componentName);
   const handlePageChange = (event, pageNumber) => {
     setCurrentPage(pageNumber);
   };
@@ -138,19 +138,39 @@ const DynamicTable = ({
     console.log("Deleting item with id:", id);
   };
 
+  const handleCalender = (type, id, taName) => {
+
+    //         // Implement view functionality here based on type ('students' or 'batches')
+
+    //         console.log(`Viewing ${type} for item with id:`, id);
+    navigate(`/ta-calendar/${taName}/${id}`)
+  };
+
+
   const handleView = (type, id) => {
     // console.log("ID handleview : ", id);
-    if (type === "students") {
-      navigate(`/active-students/${id}`); // Append id as a parameter
-    } else if (type === "batches") {
-      navigate(`/active-batches/${id}`); // Append id as a parameter
+    console.log("component name is", componentName);
+    if (componentName === "TAMAPPING") {
+      if (type === "students") {
+        navigate(`/active-students/${id}`); // Append id as a parameter
+      } else if (type === "batches") {
+        navigate(`/active-batches/${id}`); // Append id as a parameter
+      } else if (type === "view report") {
+        navigate(`/view-report/${id}`); // Append id as a parameter
+      }
+    } else {
+      if (type === "students") {
+        navigate(`/active-Coach-students/${id}`); // Append id as a parameter
+      } else if (type === "batches") {
+        navigate(`/active-Coach-batches/${id}`); // Append id as a parameter
+      }
     }
   };
 
-  const handlePopup = (id ,name) => {
-    console.log("ID handlePopup : ", id, name);
+  const handlePopup = (id, name, timezone) => {
+    console.log("ID handlePopup : ", id, name, timezone);
     const data = {
-      id, name
+      id, name, timezone
     }
     dispatch(openScheduleSession(data));
   }
@@ -183,9 +203,9 @@ const DynamicTable = ({
 
   const getColorForAvailability = (availability) => {
     switch (availability) {
-      case "Active":
+      case "available":
         return "#06DD0F";
-      case "On Leave":
+      case "on leave":
         return "#F48606";
       case "Inactive":
         return "#808080";
@@ -199,7 +219,7 @@ const DynamicTable = ({
         <thead className="tableHead">
           <tr>
             {headers.map((header, index) => (
-              <th key={index}>{header}</th>
+              header !== "timezone" && <th key={index}>{header}</th>
             ))}
           </tr>
         </thead>
@@ -217,7 +237,13 @@ const DynamicTable = ({
                 <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                 {Object.keys(item).map((key, idx) => {
                   // {console.log("KEY : ", key)}
-                  if (key === "Active_Students") {
+                  if (key === 'Availability') {
+                    return (
+                      <td key={idx} style={{ color: getColorForAvailability(item[key]), fontFamily: "Regular", letterSpacing: "0.8px" }}>
+                        {item[key]}
+                      </td>
+                    );
+                  } else if (key === "Active_Students") {
                     return (
                       <td key={idx}>
                         {item[key]}{" "}
@@ -245,7 +271,7 @@ const DynamicTable = ({
                         </CustomButton>
                       </td>
                     );
-                  } else if (key !== "id" && key !== "is_active") {
+                  } else if (key !== "id" && key !== "is_active" && key !== "timezone") {
                     // Check if item[key] is an object, and handle accordingly
                     if (typeof item[key] === "object" && item[key] !== null) {
                       // Render a string representation or a relevant property of the object
@@ -333,10 +359,40 @@ const DynamicTable = ({
                             variant="outlined"
                             color="secondary"
                             startIcon={<CalendarMonthIcon />}
-                            onClick={() => handlePopup(item.id , item.name)}
+                            onClick={() => handlePopup(item.id, item.name, item.timezone)}
                           >
                             Schedule
                           </CalenderButton>
+                        );
+                      }
+                      if (button.type === "calender") {
+                        return (
+                          <td key={idx}>
+                            {/* {item[key]}{" "} */}
+                            <CustomButton
+                              variant="outlined"
+                              color="secondary"
+                              endIcon={<CallMadeOutlinedIcon />}
+                              onClick={() => handleCalender('Calendar', item.id, item.taName)}
+                            >
+                              Check
+                            </CustomButton>
+                          </td>
+                        )
+
+                      }
+
+                      if (button.type === "view") {
+                        return (
+                          <CustomButton
+                            key={idx}
+                            variant="outlined"
+                            color="secondary"
+                            endIcon={<CallMadeOutlinedIcon />}
+                            onClick={() => handleView("view report", item.id)}
+                          >
+                            View
+                          </CustomButton>
                         );
                       }
                       return null; // Handle unexpected button types gracefully

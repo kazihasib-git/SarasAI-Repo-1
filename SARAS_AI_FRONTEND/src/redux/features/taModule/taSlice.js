@@ -248,13 +248,13 @@ export const taSlice = createSlice({
   initialState,
   reducers: {
     accessTaName(state, action) {
-      console.log("ACTION : ", action);
-      console.log("ACTION PAYLOAD : ", action.payload);
+      // console.log("ACTION : ", action);
+      // console.log("ACTION PAYLOAD : ", action.payload);
       state.ta_name = action.payload.name;
       state.taID = action.payload.id;
     },
     setSelectedTA(state, action) {
-      console.log("ACTION : ", action);
+      // console.log("ACTION : ", action);
       state.selectedTA = action.payload;
     },
     openCreateTa(state) {
@@ -332,6 +332,7 @@ export const taSlice = createSlice({
       const index = state.tas.findIndex((ta) => ta.id === action.payload.id);
       if (index !== -1) {
         state.tas[index] = action.payload;
+        // console.log("PAYLOAD ACTION : ", action.payload)
       }
     });
     builder.addCase(updateTA.rejected, (state, action) => {
@@ -384,7 +385,7 @@ export const taSlice = createSlice({
       state.loading = true;
     });
     builder.addCase(showTAMapping.fulfilled, (state, action) => {
-      console.log("TAMAPPING : ", action.payload);
+      // console.log("TAMAPPING : ", action.payload);
       state.loading = false;
       state.taMapping = action.payload;
     });

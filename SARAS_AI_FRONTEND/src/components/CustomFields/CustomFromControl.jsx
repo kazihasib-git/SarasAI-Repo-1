@@ -9,7 +9,7 @@ const CustomFormControl = ({
   errors,
   options,
 }) => {
-  // console.log("label", label , name , value ) 
+  console.log("label", label , name , value, options ) 
   return (
     <FormControl variant="outlined" fullWidth>
       <InputLabel
@@ -50,7 +50,7 @@ const CustomFormControl = ({
             borderColor: "rgb(245, 109, 59)", // Change border color on focus
           },
         }}
-      >
+      > 
         {options.map((option) => (
           <MenuItem key={option.value} value={option.value}>
             {option.label}

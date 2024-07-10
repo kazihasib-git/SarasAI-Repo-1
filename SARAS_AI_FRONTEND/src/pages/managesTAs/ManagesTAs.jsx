@@ -75,6 +75,7 @@ const ManageTA = () => {
     setEditData(dataToEdit);
     dispatch(openEditTa());
   };
+ console.log("Editta isisisi", editData)
 
   const handleChange = (value) => {
     setSearchQuery(value);
@@ -101,7 +102,7 @@ const ManageTA = () => {
             marginTop={3}
             alignItems={"center"}
           >
-            <p style={{ fontSize: "44px", justifyContent: "center" }}>
+            <p  style={{ fontSize: "44px", justifyContent: "center", fontFamily:"ExtraLight" }}>
               Manage TAs
             </p>
             <div className="inputBtnContainer">

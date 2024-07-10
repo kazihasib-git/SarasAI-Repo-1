@@ -43,11 +43,14 @@
   
   .tableHead th {
     padding: 12px; /* Apply padding to table headers */
+    font-family: "Medium";
+    letter-spacing: 0.8px;
   }
   
   th, td {
     text-align: center;
     vertical-align: middle;
+    
   }
   
   .tableBody #tableRow {
@@ -62,6 +65,9 @@
     /* border-bottom: 1px solid #C2C2E7; */
     /* border-bottom-width: 90%; */
     padding: 10px;
+    font-family: "Light";
+    letter-spacing: 0.8px;
+    font-size: 16px;
   }
  
   

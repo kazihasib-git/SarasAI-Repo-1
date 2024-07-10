@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import ReusableDialog from "../CustomFields/ReusableDialog";
 import CustomDateField from "../CustomFields/CustomDateField";
 import { Button, DialogContent, Grid } from "@mui/material";
@@ -8,6 +8,7 @@ import DynamicTable from "../CommonComponent/DynamicTable";
 import { useDispatch, useSelector } from "react-redux";
 import {
   closeRescheduleSession,
+  fetchAvailableSlots,
   openReasonForLeave,
 } from "../../redux/features/taModule/taAvialability";
 import CustomTextField from "../CustomFields/CustomTextField";
@@ -50,79 +51,106 @@ const CustomButton = ({
 
 const ReschedulingSession = () => {
   const dispatch = useDispatch();
-  const { resheduleSessionOpen } = useSelector((state) => state.taAvialability);
-  const [selectDate, setselectDate] = useState(null);
-  const headers = ["S. No.", "Slots Available", "Select All"];
+  const { resheduleSessionOpen, availableSlotsData } = useSelector(
+    (state) => state.taAvailability
+  );
+  const [selectDate, setSelectDate] = useState(null);
+  const [selectedSlots, setSelectedSlots] = useState([]);
+  const [transformedSlotsData, setTransformedSlotsData] = useState([]);
+  const headers = ["S. No.", "Slots Available", "Select"];
 
-//   const dummyData = [
-//     { id: 1, slotsAvailable: "9:00 AM - 10:00 AM", isSelected: false },
-//     { id: 2, slotsAvailable: "10:00 AM - 11:00 AM", isSelected: false },
-//     { id: 3, slotsAvailable: "11:00 AM - 12:00 PM", isSelected: false },
-//     { id: 4, slotsAvailable: "12:00 PM - 1:00 PM", isSelected: false },
-//     { id: 5, slotsAvailable: "1:00 PM - 2:00 PM", isSelected: false },
-//     { id: 6, slotsAvailable: "2:00 PM - 3:00 PM", isSelected: false },
-//     { id: 7, slotsAvailable: "3:00 PM - 4:00 PM", isSelected: false },
-//   ];
+  useEffect(() => {
+    if (selectDate) {
+      console.log("Fetching slots for date:", selectDate);
+      const data = {
+        admin_user_id: 73,
+        date: selectDate,
+      };
+      dispatch(fetchAvailableSlots(data));
+    }
+  }, [selectDate, dispatch]);
 
-    const dummyData = []
+  useEffect(() => {
+    if (availableSlotsData.length > 0) {
+      const transformData = availableSlotsData.map((slot, index) => ({
+        "S. No.": index + 1,
+        "Slots Available": `${slot.from_time} - ${slot.to_time}`,
+        id: slot.id,
+      }));
+      setTransformedSlotsData(transformData);
+    } else {
+      setTransformedSlotsData([]);
+    }
+  }, [availableSlotsData]);
+
+  const handleDateChange = (date) => {
+    console.log("Date selected:", date);
+    setSelectDate(date);
+    setSelectedSlots([]); // Clear selected slots when date changes
+  };
+
+  const handleSelectSlot = (id) => {
+    setSelectedSlots((prev) =>
+      prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id]
+    );
+  };
 
   const handleSubmit = () => {
-    console.log("*** Submiting REschedule Session....");
+    console.log("*** Submitting Reschedule Session....");
     dispatch(closeRescheduleSession());
     dispatch(openReasonForLeave());
   };
 
-  const actionButtons = [
-    {
-      type: "checkbox",
-      //   onClick: (id) => {
-      //     handleEditTaClick(id);
-      //   },
-    },
-  ];
-
   const content = (
     <>
-      <Grid item xs={12} sm={6}  mb={2} pt={"16px"}>
+      <Grid item xs={12} sm={6} mb={2} pt={"16px"}>
         <CustomDateField
-          label="SelectDate"
+          label="Select Date"
           value={selectDate}
-          onChange={setselectDate}
-          name="dateOfBirth"
-          //  register={register}
-          //  validation={{ required: "Date of birth is required" }}
-          //  errors={errors}
+          onChange={handleDateChange}
+          name="selectDate"
           sx={{ width: "100%" }}
         />
       </Grid>
 
-      {dummyData.length === 0 ? (
-        <DialogContent sx={{ display:"flex", justifyContent:"center", alignItems:"center" }}>No Slot Available</DialogContent>
+      {selectDate && transformedSlotsData.length === 0 ? (
+        <DialogContent
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          No Slots Available
+        </DialogContent>
       ) : (
-        <>
-          <PopUpTable
-            headers={headers}
-            initialData={dummyData}
-            actionButtons={actionButtons}
-          />
-          <Grid
-            container
-            sx={{
-              pt: 3,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              textAlign: "center", // Add this line if needed
-            }}
-          >
-            <Grid item xs={12} sm={6}>
-              <CustomTimeField label="From Time" />
+        selectDate && (
+          <>
+            <PopUpTable
+              headers={headers}
+              initialData={transformedSlotsData}
+              onRowClick={handleSelectSlot}
+              itemsPerPage={4}
+            />
+            <Grid
+              container
+              sx={{
+                pt: 3,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                textAlign: "center",
+              }}
+            >
+              <Grid item xs={12} sm={6}>
+                <CustomTimeField label="From Time" />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <CustomTimeField label="End Time" />
+              </Grid>
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <CustomDateField label="End Time" />
-            </Grid>
-          </Grid>
-        </>
+          </>
+        )
       )}
     </>
   );

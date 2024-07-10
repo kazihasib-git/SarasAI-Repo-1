@@ -13,7 +13,9 @@ import { transformedTimeZones } from '../CustomFields/FormOptions';
 import CustomFormControl from '../CustomFields/CustomFromControl';
 import { useDispatch, useSelector } from "react-redux";
 import {createNewSlotsOpen,openScheduledSlots, createSlots,closeCreateNewSlots, openCreateNewSlots, getSlots} from "../../redux/features/taModule/taAvialability"
- 
+import { useSelector } from 'react-redux';
+import CustomTimeZoneForm from '../CustomFields/CustomTimeZoneForm';
+
 
 const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = '#4E18A5', borderColor = '#FFFFFF', sx, ...props }) => {
     return (
@@ -50,15 +52,17 @@ const CreateNewSlot = ({ open, handleClose, addEvent }) => {
     console.log("new slot data:" ,slotEventData);
     const { control, handleSubmit, watch, formState: { errors } } = useForm({
         defaultValues: {
-        title: "",
-        date: "",
-        fromTime: "",
+          title: "",
+          date: "",
+          fromTime: "",
         toTime: "",
-        repeat: "onetime",
+          repeat: "onetime",
         selectedDays: {},
         endDate: "",
         },
-      });
+    });
+
+    const { timezones } = useSelector((state) => state.timezone);
 
     const onSubmit = (data) => {
         // Format the date and time inputs
@@ -140,7 +144,7 @@ const CreateNewSlot = ({ open, handleClose, addEvent }) => {
     const content = (
         <form id="createForm" onSubmit={handleSubmit(onSubmit)}>
             <Grid container spacing={2} justifyContent="center" sx={{ pt: 3 }}>
-                <Grid item xs={12}>
+                <Grid item xs={12} sm={6} md={4}>
                     <Controller
                         name="title"
                         control={control}
@@ -158,7 +162,7 @@ const CreateNewSlot = ({ open, handleClose, addEvent }) => {
                         )}
                     />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} sm={6} md={4}>
                     <Controller
                         name="date"
                         control={control}
@@ -176,7 +180,26 @@ const CreateNewSlot = ({ open, handleClose, addEvent }) => {
                         )}
                     />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={6} md={4}>
+                    <Controller
+                        name="time_zone"
+                        control={control}
+                        rules={{ required: "Time Zone is required" }}
+                        render={({ field }) => {
+                            return (
+                                <CustomTimeZoneForm
+                                    label="Time Zone"
+                                    name="time_zone"
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                    errors={errors}
+                                    options={timezones}
+                                />
+                            );
+                        }}
+                    />
+                </Grid>
+                <Grid item xs={12} sm={6} md={4}>
                     <Controller
                         name="fromTime"
                         control={control}
@@ -194,7 +217,7 @@ const CreateNewSlot = ({ open, handleClose, addEvent }) => {
                         )}
                     />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={6} md={4}>
                     <Controller
                         name="toTime"
                         control={control}
@@ -213,23 +236,7 @@ const CreateNewSlot = ({ open, handleClose, addEvent }) => {
                     />
                 </Grid>
                 {/* Add the Time Zone form control */}
-                <Grid item xs={12} sm={6} md={4}>
-                    <Controller
-                        name="time_zone"
-                        control={control}
-                        rules={{ required: "Time Zone is required" }}
-                        render={({ field }) => (
-                            <CustomFormControl
-                                label="Time Zone"
-                                name="time_zone"
-                                value={field.value}
-                                onChange={field.onChange}
-                                errors={errors}
-                                options={transformedTimeZones}
-                            />
-                        )}
-                    />
-                </Grid>
+
             </Grid>
             <Grid container spacing={2} justifyContent="center">
                 <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>

@@ -2,6 +2,17 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { baseUrl } from "../../../utils/baseURL";
 
+
+// Get Today Available Ta
+export const getTodayTaAvailability = createAsyncThunk(
+  "taAvialability/getTodayTaAvailability",
+  async () => {
+    const response = await axios.get(`${baseUrl}/admin/TA-availability/get-today-available-ta`);
+    return response.data;
+  }
+);
+
+
 export const getSlots = createAsyncThunk(
   "taAvialability/getSlots",
   async (data) => {
@@ -289,6 +300,17 @@ export const getScheduleSession = createAsyncThunk(
   }
 );
 
+export const fetchAvailableSlots = createAsyncThunk(
+  "taAvialability/fetchAvailableSlots",
+  async (data) => {
+    // console.log("ID : ", id);
+    const response = await axios.post(
+      `${baseUrl}/admin/coach-slots/getTACoachSlotForADate`, data
+    );
+    return response.data;
+  }
+);
+
 export const deleteFutureSlots = createAsyncThunk(
   "taAvialability/deleteFutureSlots",
   async (id) => {
@@ -301,12 +323,14 @@ export const deleteFutureSlots = createAsyncThunk(
 );
 
 const initialState = {
+  todaysAvailableTa: [],
   markLeaveOpen: false,
   scheduledSlotsOpen: false,
   slotData: [],
   scheduleData:[],
   scheduledSlotsData: [], // Ensure this is correctly named and initialized
   scheduledSessionData: [], // Ensure this is correctly named and initialized
+  availableSlotsData:[],
   scheduledSessionOpen: false,
   cancelSessionOpen: false,
   resheduleSessionOpen: false,
@@ -390,6 +414,21 @@ export const taAvailabilitySlice = createSlice({
       state.loading = false;
       state.error = action.error.message;
     });
+
+    // Get Today Available Ta
+    builder.addCase(getTodayTaAvailability.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(getTodayTaAvailability.fulfilled, (state, action) => {
+      state.loading = false;
+      state.todaysAvailableTa = action.payload?.data;
+    });
+    builder.addCase(getTodayTaAvailability.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message;
+    });
+
+    // Get Slots
     builder.addCase(getSlots.pending, (state) => {
       state.loading = true;
     });
@@ -422,6 +461,18 @@ export const taAvailabilitySlice = createSlice({
       state.scheduledSessionData = action.payload?.data;
     });
     builder.addCase(getScheduleSession.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message;
+    });
+
+    builder.addCase(fetchAvailableSlots.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(fetchAvailableSlots.fulfilled, (state, action) => {
+      state.loading = false;
+      state.availableSlotsData = action.payload?.data;
+    });
+    builder.addCase(fetchAvailableSlots.rejected, (state, action) => {
       state.loading = false;
       state.error = action.error.message;
     });

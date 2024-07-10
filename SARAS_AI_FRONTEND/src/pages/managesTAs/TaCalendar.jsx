@@ -19,6 +19,7 @@ import { PickersInputBaseSectionsContainer } from '@mui/x-date-pickers/PickersTe
 import NewCal from '../../components/Calender/IndexCalenderNew';
 import { add } from 'date-fns';
 import { useParams } from 'react-router-dom';
+import { getTAScheduledSessions } from '../../redux/features/taModule/taScheduling';
 import moment from 'moment';
 
 const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = '#4E18A5', borderColor = '#FFFFFF', sx, ...props }) => {
@@ -66,6 +67,8 @@ const TaCalender
             reasonForLeaveOpen,
             resheduleSessionOpen,
         } = useSelector((state) => state.taAvialability);
+
+        const { taScheduledSessions } = useSelector((state) => state.taScheduling);
         //calendar
         const [eventsList, setEventsList] = useState([]);
         const addEvent = (title, startDateTime, endDateTime) => {
@@ -81,6 +84,35 @@ const TaCalender
         //           });
         //     }
         //   };
+
+        useEffect(() => {
+
+            // Get the current date
+            const currentDate = new Date();
+    
+            // Get the start date of the current month
+            const start_date = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    
+            // Get the end date of the current month
+            const end_date = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+    
+            // Format dates as DD/MM/YYYY
+            const formatDate = (date) => {
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+                const year = date.getFullYear();
+                return `${day}/${month}/${year}`;
+            };
+    
+            const formattedStartDate = formatDate(start_date);
+            const formattedEndDate = formatDate(end_date);
+    
+            // Dispatch the action with the formatted dates
+            dispatch(getTAScheduledSessions({ id : 2, data: { start_date: formattedStartDate, end_date: formattedEndDate } }));
+        }, []);
+    
+
+        console.log("taScheduledSessions", taScheduledSessions)
         useEffect(() => {
             dispatch(getSlots());
         }, [slotEventData])
@@ -141,7 +173,7 @@ const TaCalender
                     <Grid container alignItems="center">
                         <Grid item xs>
                             <Typography variant='h4' sx={{ mb: 4 }}>
-                               {name}
+                               {name} Calender 
                             </Typography>
                         </Grid>
                         <Grid item>

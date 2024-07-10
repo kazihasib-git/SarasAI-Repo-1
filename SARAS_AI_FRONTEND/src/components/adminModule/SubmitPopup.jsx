@@ -2,7 +2,7 @@ import { Box, Button, Dialog, DialogActions, DialogTitle, IconButton, Typography
 import React from 'react'
 import CloseIcon from '@mui/icons-material/Close';
 import { useDispatch, useSelector } from 'react-redux';
-import { closeSuccessPopup, openAssignBatches, openAssignStudents, openSuccessPopup } from '../../redux/features/taModule/taSlice';
+import { closeCreateTa, closeEditTa, closeSuccessPopup, openAssignBatches, openAssignStudents, openSuccessPopup } from '../../redux/features/taModule/taSlice';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import { Navigate, useNavigate } from 'react-router-dom';
 
@@ -33,13 +33,35 @@ const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = 
     );
 };
 
-const SubmitPopup = () => {
+const SubmitPopup = ({componentname}) => {
     const dispatch = useDispatch()
     const navigate = useNavigate()
-    const { tas, successPopup, error, loading, ta_name } = useSelector((state) => state.taModule)
+    if (componentname) {
+        // console.log("componentname", componentname);
+    }
     
-    console.log("tas", tas)
-
+    let stateModuleKey;
+    let nameKey;
+    
+    switch (componentname) {
+        case "ADDITCOACH":
+            stateModuleKey = "coachModule";
+            nameKey = "coach_name";
+            break;
+        case "ADDEDITTA":
+            stateModuleKey = "taModule";
+            nameKey = "ta_name";
+            break;
+        default:
+            stateModuleKey = null;
+            nameKey = null;
+            break;
+    }
+    
+    const { successPopup, error, loading, ta_name, coach_name} = useSelector((state) => stateModuleKey ? state[stateModuleKey] : {}) || {};
+    
+    const displayName = nameKey === "ta_name" ? ta_name : coach_name;
+    
     const handleAssignBatches = () => {
         dispatch(closeSuccessPopup())
         dispatch(openAssignBatches())
@@ -52,12 +74,13 @@ const SubmitPopup = () => {
 
     const handleCloseButton = () =>{
         dispatch(closeSuccessPopup())
+        dispatch(closeCreateTa())
+        dispatch(closeEditTa())
         navigate("/ta-mapping")
     } 
 
     const actions = (
-        <>
-            
+        <>  
             <CustomButton
                 onClick={handleAssignStudents}
                 backgroundColor='#F56D3B'
@@ -81,7 +104,7 @@ const SubmitPopup = () => {
         <ReusableDialog
             open={successPopup}
             handleClose={() => handleCloseButton()}
-            title={`${ta_name} successfully created.`}
+            title={`${displayName} successfully created.`}
             actions={actions}
         />
     )

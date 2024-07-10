@@ -1,6 +1,14 @@
 import "./App.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
+import './assets/fonts/Nohemi-Bold.ttf';
+import './assets/fonts/Nohemi-ExtraLight.ttf';
+import './assets/fonts/Nohemi-Light.ttf';
+import './assets/fonts/Nohemi-Medium.ttf';
+import './assets/fonts/Nohemi-Regular.ttf';
+import './assets/fonts/Nohemi-SemiBold.ttf'
+
+
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
@@ -34,7 +42,8 @@ import Mystudents from "./components/RoleRoute/CommonComponent/Mystudents";
 import AssignedStudent from "./pages/managesTAs/AssignedStudent";
 // import StudentList from './pages/Student/StudentList';
 import AddEditTA from "./components/adminModule/tas/manageTAs/AddEditTA";
-
+import AssignCoachBatches from "./pages/ManageCoaches/AssignedCoachBatches";
+import AssignCoachStudent from "./pages/ManageCoaches/AssignedCoachStudent";
 import CreateCoachPage from "./pages/ManageCoaches/CreateCoachPage";
 import CoachCalender from "./pages/ManageCoaches/CoachCalender";
 import CreateTAPage from "./pages/managesTAs/CreateTAPage";
@@ -43,6 +52,9 @@ import TaCalender from "./pages/managesTAs/TaCalendar";
 import BatchPage from "./pages/batches/BatchPage";
 import CreateTemplate from "./pages/ManageCoaches/CoachingTemplate/CreateTemplate";
 import TemplateName from "./pages/ManageCoaches/CoachingTemplate/TemplateName";
+import WheelOfLife from "./pages/coachingTools/wheelOfLife/WheelOfLife";
+import WOLCategories from "./components/coachingTools/wheelOfLife/WOLCategories";
+import WOLInstructions from "./components/coachingTools/wheelOfLife/WOLInstructions";
 const ROLES = {
   Teaching: 2001,
   Coaches: 1984,
@@ -81,6 +93,14 @@ function App() {
             <Route
               path="/active-batches/:id"
               element={<AssignedBatches page="Assigned Batches" />}
+            />
+            <Route
+              path="/active-Coach-batches/:id"
+              element={<AssignCoachBatches page="Assigned Coach Batches"/>}
+            />
+            <Route
+              path="/active-Coach-students/:id"
+              element={<AssignCoachStudent page="Assigned Coach Student" />}
             />
             <Route
               path="ta-availability"
@@ -135,6 +155,9 @@ function App() {
             <Route path="students" element={<StudentPage />} />
             <Route path="batches" element={<BatchPage />} />
             {/* <Route path='/student-list' element={<StudentList page="Student" />} /> */}
+            <Route path="wheel-of-life" element={<WheelOfLife />} />
+            <Route path="wolCategories" element={<WOLCategories />} />
+            <Route path="wolInstructions" element={<WOLInstructions />} />
           </Route>
         </Route>
 
