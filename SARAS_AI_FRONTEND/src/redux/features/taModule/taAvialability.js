@@ -12,6 +12,42 @@ export const getSlots = createAsyncThunk(
     return response.data;
   }
 );
+const apiUrl = '{{url}}/{{base}}';
+export const fetchTAScheduleById = createAsyncThunk(
+  'taAvialability/fetchTAScheduleById',
+  async (id, thunkAPI) => {
+    try {
+      const response = await axios.get(`${apiUrl}/admin/taschedules/${id}`);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
+export const fetchCoachSlots = createAsyncThunk(
+  "taAvialability/fetchCoachSlots",
+  async () => {
+    try {
+      const response = await axios.get(`${baseUrl}/admin/coach-slots/7`);
+      return response.data;
+    } catch (error) {
+      throw Error(error.response.data.message || error.message);
+    }
+  }
+);
+
+export const createSlots = createAsyncThunk(
+  "taAvialability/createSlots",
+  async (data) => {
+    console.log("Data being sent:", data);
+    const response = await axios.post(
+      `${baseUrl}/admin/coach-slots`,
+      data
+    );
+    return response.data;
+  }
+);
 
 export const getScheduleSession = createAsyncThunk(
   "taAvialability/getScheduleSession",
@@ -267,6 +303,8 @@ export const deleteFutureSlots = createAsyncThunk(
 const initialState = {
   markLeaveOpen: false,
   scheduledSlotsOpen: false,
+  slotData: [],
+  scheduleData:[],
   scheduledSlotsData: [], // Ensure this is correctly named and initialized
   scheduledSessionData: [], // Ensure this is correctly named and initialized
   scheduledSessionOpen: false,
@@ -303,6 +341,12 @@ export const taAvailabilitySlice = createSlice({
     closeScheduledSession(state) {
       state.scheduledSessionOpen = false;
     },
+    openCreateNewSlots(state) {
+      state.createNewSlotOpen = true;
+    },
+    closeCreateNewSlots(state) {
+      state.createNewSlotOpen = false;
+    },
     openCancelSession(state, action) {
       state.cancelSessionOpen = true;
       state.schduldeCancelData = action.payload
@@ -324,6 +368,28 @@ export const taAvailabilitySlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    builder.addCase(fetchTAScheduleById.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(fetchTAScheduleById.fulfilled, (state, action) => {
+      state.loading = false;
+      state.scheduleData = action.payload;
+    });
+    builder.addCase(fetchTAScheduleById.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message;
+    });
+    builder.addCase(fetchCoachSlots.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(fetchCoachSlots.fulfilled, (state, action) => {
+      state.loading = false;
+      state.slotData = action.payload; // Update state with fetched data
+    });
+    builder.addCase(fetchCoachSlots.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message;
+    });
     builder.addCase(getSlots.pending, (state) => {
       state.loading = true;
     });
@@ -332,6 +398,18 @@ export const taAvailabilitySlice = createSlice({
       state.scheduledSlotsData = action.payload?.data;
     });
     builder.addCase(getSlots.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message;
+    });
+
+    builder.addCase(createSlots.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(createSlots.fulfilled, (state, action) => {
+      state.loading = false;
+      state.slotEventData = action.payload?.data;
+    });
+    builder.addCase(createSlots.rejected, (state, action) => {
       state.loading = false;
       state.error = action.error.message;
     });
@@ -360,12 +438,14 @@ export const taAvailabilitySlice = createSlice({
     });
   },
 });
-
+export const selectTAScheduleData = (state) => state.taAvailability.scheduleData;
 export const {
   openMarkLeave,
   closeMarkLeave,
   openScheduledSlots,
   closeScheduledSlots,
+  openCreateNewSlots,
+  closeCreateNewSlots,
   openScheduledSession,
   closeScheduledSession,
   openCancelSession,

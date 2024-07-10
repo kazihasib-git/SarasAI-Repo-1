@@ -6,9 +6,13 @@ import CustomTimeField from '../CustomFields/CustomTimeField'; // Assuming you h
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import { format, addDays, parseISO } from 'date-fns';
 import CustomTextField from '../CustomFields/CustomTextField';
+import { useState } from 'react';
+
 
 import { transformedTimeZones } from '../CustomFields/FormOptions';
 import CustomFormControl from '../CustomFields/CustomFromControl';
+import { useDispatch, useSelector } from "react-redux";
+import {createNewSlotsOpen,openScheduledSlots, createSlots,closeCreateNewSlots, openCreateNewSlots, getSlots} from "../../redux/features/taModule/taAvialability"
  
 
 const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = '#4E18A5', borderColor = '#FFFFFF', sx, ...props }) => {
@@ -39,12 +43,20 @@ const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = 
 };
 
 const CreateNewSlot = ({ open, handleClose, addEvent }) => {
+    const dispatch = useDispatch();
+    const { createNewSlotsOpen,slotEventData } = useSelector((state) => state.taAvialability);
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
+    console.log("new slot data:" ,slotEventData);
     const { control, handleSubmit, watch, formState: { errors } } = useForm({
         defaultValues: {
-          gender: "",
-          time_zone: "",
-          highest_qualification: "",
-          date_of_birth: null,
+        title: "",
+        date: "",
+        fromTime: "",
+        toTime: "",
+        repeat: "onetime",
+        selectedDays: {},
+        endDate: "",
         },
       });
 
@@ -52,6 +64,7 @@ const CreateNewSlot = ({ open, handleClose, addEvent }) => {
         // Format the date and time inputs
         const formattedData = {
             ...data,
+            
             fromDate: format(new Date(`${data.date} ${data.fromTime}`), "yyyy-MM-dd HH:mm"),
             toDate: format(new Date(`${data.date} ${data.toTime}`), "yyyy-MM-dd HH:mm"),
         };
@@ -65,6 +78,24 @@ const CreateNewSlot = ({ open, handleClose, addEvent }) => {
             const endDate = parseISO(data.endDate);
 
             let currentDate = startDate;
+            dispatch(createSlots({
+                // title: data.title,
+                admin_user_id: 2,
+                slot_date: format(startDate,"yyyy-MM-dd"),
+                from_time: format(new Date(`${currentDate.toDateString()} ${data.fromTime}`), "HH:mm:ss"),
+                to_time: format(new Date(`${currentDate.toDateString()} ${data.toTime}`), "HH:mm:ss"),
+                timezone: 'IST',
+                end_date: format(endDate,"yyyy-MM-dd"),
+                weeks: selectedDaysBinary
+            }))
+            .unwrap()
+            .then(() => {
+              dispatch(closeCreateNewSlots());
+              
+            })
+            .catch((error) => {
+              console.error("Failed:", error);
+            });
             while (currentDate <= endDate) {
                 if (selectedDaysBinary[currentDate.getDay()] === 1) {
                     const newStart = format(new Date(`${currentDate.toDateString()} ${data.fromTime}`), "yyyy-MM-dd HH:mm");
@@ -73,11 +104,34 @@ const CreateNewSlot = ({ open, handleClose, addEvent }) => {
                 }
                 currentDate = addDays(currentDate, 1);
             }
-        } else {
+        }
+        else {
             // Handle one-time slot creation
             addEvent(data.title, formattedData.fromDate, formattedData.toDate);
+            const startDate = new Date(formattedData.fromDate);
+            let currentDate = startDate;
+            const selectedDayIndex = startDate.getDay(); // Get the index of the selected day
+            const selectedDaysBinary = weekDays.map((day, index) => (index === selectedDayIndex ? 1 : 0));
+            
+            dispatch(createSlots({
+                // title: data.title,
+                admin_user_id: 2,
+                slot_date: format(startDate,"yyyy-MM-dd"),
+                from_time: format(new Date(`${currentDate.toDateString()} ${data.fromTime}`), "HH:mm:ss"),
+                to_time: format(new Date(`${currentDate.toDateString()} ${data.toTime}`), "HH:mm:ss"),
+                timezone: 'IST',
+                end_date: format(startDate,"yyyy-MM-dd"),
+                weeks: selectedDaysBinary
+            })).unwrap()
+            .then(() => {
+            dispatch(closeCreateNewSlots());
+            dispatch(getSlots());
+            })
+            .catch((error) => {
+            console.error("Failed:", error);
+            });
         }
-
+        
         handleClose();
     };
 
@@ -259,7 +313,7 @@ const CreateNewSlot = ({ open, handleClose, addEvent }) => {
     return (
         <ReusableDialog
             open={open}
-            handleClose={handleClose}
+            handleClose={() => dispatch(closeCreateNewSlots)}
             title="Create New Slot"
             actions={actions}
             content={content}

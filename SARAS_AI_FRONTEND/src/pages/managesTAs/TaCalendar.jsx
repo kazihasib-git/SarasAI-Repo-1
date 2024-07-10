@@ -1,5 +1,5 @@
 import { Box, DialogActions, Grid, Typography, Button } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import Calendar from '../../components/Calender/indexCalender';
 import CalendarNew from '../../components/Calender/IndexCalenderNew';
@@ -8,7 +8,7 @@ import MarkLeave from '../../components/availability/MarkLeave';
 import DeleteAllSlots from '../../components/availability/DeleteAllSlots';
 import CreateNewSlot from '../../components/availability/CreateNewSlot';
 import ScheduleSession from '../../components/availability/ScheduleSession';
-import { openMarkLeave, closeMarkLeave } from '../../redux/features/taModule/taAvialability';
+import { openMarkLeave, closeMarkLeave, getSlots, fetchCoachSlots, fetchTAScheduleById,selectTAScheduleData} from '../../redux/features/taModule/taAvialability';
 import { useDispatch, useSelector } from 'react-redux';
 import Slots from '../../components/availability/Slots';
 import ScheduledSessions from '../../components/availability/ScheduledSessions';
@@ -19,6 +19,7 @@ import { PickersInputBaseSectionsContainer } from '@mui/x-date-pickers/PickersTe
 import NewCal from '../../components/Calender/IndexCalenderNew';
 import { add } from 'date-fns';
 import { useParams } from 'react-router-dom';
+import moment from 'moment';
 
 const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = '#4E18A5', borderColor = '#FFFFFF', sx, ...props }) => {
     return (
@@ -50,7 +51,10 @@ const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = 
 const TaCalender
     = () => {
         const dispatch = useDispatch();
-        const {id , name} = useParams()
+        const { id, name } = useParams();
+        const { createNewSlotsOpen, slotEventData, slotData } = useSelector((state) => state.taAvialability);
+        const scheduleData = useSelector(selectTAScheduleData);
+        const slots = useSelector((state) => state.taAvialability.scheduledSlotsData);
         const [sheduleNewSession, setSheduleNewSession] = useState(false)
         const [deleteFutureSlots, setDeleteFutureSlots] = useState(false)
         const [createNewSlot, setCreateNewSlot] = useState(false)
@@ -77,12 +81,25 @@ const TaCalender
         //           });
         //     }
         //   };
-    
-    
+        useEffect(() => {
+            dispatch(getSlots());
+        }, [slotEventData])
+        useEffect(() => {
+            dispatch(fetchCoachSlots());
+        }, [dispatch]);
+        useEffect(() => {
+            dispatch(getSlots());
+        }, [dispatch])
+        useEffect(() => {
+            dispatch(fetchTAScheduleById(2)); // Replace `2` with the actual ID you need
+        }, [dispatch]);
         const handleScheduleNewSession = () => {
             console.log("Pressed")
             setSheduleNewSession(true)
         }
+        
+        
+        
 
         const handleMarkLeave = () => {
             dispatch(openMarkLeave());
@@ -92,7 +109,7 @@ const TaCalender
             setDeleteFutureSlots(true)
         }
 
-        const handleCreateNewSlot = () => {
+        const handleCreateNewSlot= () => {
             setCreateNewSlot(true)
         }
 
@@ -101,6 +118,23 @@ const TaCalender
         // console.log("scheduledSessionOpen", scheduledSessionOpen)
         // console.log("cancelSessionOpen", cancelSessionOpen)
 
+        // const timeSlots = [
+        // {
+        //     start: moment("2024-07-10 09:00", "YYYY-MM-DD HH:mm").toDate(), 
+        //     end: moment("2024-07-10 10:00", "YYYY-MM-DD HH:mm").toDate()
+        // },
+        // {
+        //     start: moment("2024-07-11 14:00", "YYYY-MM-DD HH:mm").toDate(), 
+        //     end: moment("2024-07-11 15:00", "YYYY-MM-DD HH:mm").toDate()
+        // },
+        // {
+        //     start: moment("2024-07-12 11:30", "YYYY-MM-DD HH:mm").toDate(), 
+        //     end: moment("2024-07-12 12:30", "YYYY-MM-DD HH:mm").toDate()
+        // }
+        // ];
+       
+        
+        console.log("scheduleData:",scheduleData);
         return (
             <Box sx={{ backgroundColor: '#f8f9fa', p: 3 }}>
                 <DialogActions sx={{ p: 2 }}>
@@ -144,7 +178,7 @@ const TaCalender
                                     color='#FFFFFF'
                                     backgroundColor='#F56D3B'
                                     borderColor='#F56D3B'
-                                    onClick={setCreateNewSlot}
+                                    onClick={handleCreateNewSlot}
                                 >
                                     {/* <AddCircleOutlineIcon /> */}
                                     Create New Slot
@@ -153,7 +187,7 @@ const TaCalender
                         </Grid>
                     </Grid>
                 </DialogActions>
-                <CalendarComponent eventsList={eventsList} addEvent={addEvent} /*handleSelectEvent={handleSelectEvent}*/ />
+                <CalendarComponent eventsList={scheduleData} addEvent={addEvent} slotData={slotData}/*handleSelectEvent={handleSelectEvent}*/ />
                 {sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} />}
                 {markLeaveOpen && <MarkLeave id={id} name={name} />}
                 {scheduledSlotsOpen && <Slots  id={id} name={name}/>}
