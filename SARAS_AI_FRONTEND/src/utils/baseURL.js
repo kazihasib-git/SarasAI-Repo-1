@@ -8,3 +8,4 @@ export const baseUrl = 'http://34.100.233.67:8080/api/v1'
 
 //  UAT environment
 // export const baseUrl = 'http://34.93.159.123:8080/api/v1'
+//export const baseUrl = process.env.REACT_APP_BASE_URL_UAT
