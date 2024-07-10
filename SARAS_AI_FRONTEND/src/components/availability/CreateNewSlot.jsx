@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Grid, Button, FormControl, RadioGroup, FormControlLabel, Radio, FormGroup, Checkbox } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import CustomDateField from '../CustomFields/CustomDateField';
@@ -13,8 +13,8 @@ import { transformedTimeZones } from '../CustomFields/FormOptions';
 import CustomFormControl from '../CustomFields/CustomFromControl';
 import { useDispatch, useSelector } from "react-redux";
 import {createNewSlotsOpen,openScheduledSlots, createSlots,closeCreateNewSlots, openCreateNewSlots, getSlots} from "../../redux/features/taModule/taAvialability"
-import { useSelector } from 'react-redux';
 import CustomTimeZoneForm from '../CustomFields/CustomTimeZoneForm';
+import { getTimezone } from '../../redux/features/timezone/timezoneSlice';
 
 
 const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = '#4E18A5', borderColor = '#FFFFFF', sx, ...props }) => {
@@ -61,8 +61,13 @@ const CreateNewSlot = ({ open, handleClose, addEvent }) => {
         endDate: "",
         },
     });
-
     const { timezones } = useSelector((state) => state.timezone);
+ 
+    useEffect(() => {
+        dispatch(getTimezone())
+    }, {})
+ 
+    console.log("timezone", timezones);
 
     const onSubmit = (data) => {
         // Format the date and time inputs
@@ -119,7 +124,7 @@ const CreateNewSlot = ({ open, handleClose, addEvent }) => {
             
             dispatch(createSlots({
                 // title: data.title,
-                admin_user_id: 2,
+                admin_user_id: id,
                 slot_date: format(startDate,"yyyy-MM-dd"),
                 from_time: format(new Date(`${currentDate.toDateString()} ${data.fromTime}`), "HH:mm:ss"),
                 to_time: format(new Date(`${currentDate.toDateString()} ${data.toTime}`), "HH:mm:ss"),
@@ -129,7 +134,9 @@ const CreateNewSlot = ({ open, handleClose, addEvent }) => {
             })).unwrap()
             .then(() => {
             dispatch(closeCreateNewSlots());
-            dispatch(getSlots());
+            // dispatch(getSlots());
+            dispatch(fetchCoachSlots(id));
+            dispatch(fetchTAScheduleById(id));
             })
             .catch((error) => {
             console.error("Failed:", error);

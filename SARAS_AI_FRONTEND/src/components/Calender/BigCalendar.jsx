@@ -1,5 +1,5 @@
 // CalendarComponent.jsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import moment from "moment";
 import { Calendar, momentLocalizer, Views } from 'react-big-calendar';
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -20,7 +20,6 @@ const myEventsList = [
     title: "test",
     start: new Date(currentYear, 6, 9, 10, 0), // July 21st, currentYear at 13:45
     end: new Date(currentYear, 6, 9, 12, 15),   // July 25th, currentYear at 14:00
-    isSlot: false
   },
   
 ];
@@ -40,16 +39,28 @@ const CalendarComponent = ({ eventsList, addEvent,slotData /*,handleSelectEvent*
   //   // setEventsList(prev => [...prev, { title, start: newStart, end: newEnd }]);
   //   addEvent(title, newStart, newEnd); 
   // };
+  const [myEventsList, setMyEventsList] = useState([]);
+
+  useEffect(() => {
+    if (eventsList && eventsList.length > 0) {
+      const transformedEvents = eventsList.map(event => ({
+        title: event.meeting_name,
+        start: new Date(event.date.split(" ")[0] + 'T' + event.start_time),
+        end: new Date(event.date.split(" ")[0] + 'T' + event.end_time),
+      }));
+      setMyEventsList(transformedEvents);
+    }
+  }, [eventsList]);
 
   const showSessionPopUp = () => {
     console.log("clicked");
   };
-
+  console.log("event list:",eventsList);
   const eventStyleGetter = (event) => {
-    const backgroundColor = event.isSlot ? 'green' : 'green';
+    
     return {
       style: {
-        backgroundColor,
+        backgroundColor:"green",
         opacity: 1,
         borderRadius: '5px',
         color: 'white',
@@ -63,7 +74,6 @@ const CalendarComponent = ({ eventsList, addEvent,slotData /*,handleSelectEvent*
   const slotPropGetter = (date) => {
     if (slotData) {
       // Iterate over each slot object in slotData
-      
       for (let i = 0; i < slotData.data.length; i++) {
         
         const slot = slotData.data[i];
@@ -102,7 +112,7 @@ const CalendarComponent = ({ eventsList, addEvent,slotData /*,handleSelectEvent*
           eventPropGetter={eventStyleGetter}
           slotPropGetter={slotPropGetter}
           onSelectEvent={showSessionPopUp}
-          step={60}
+          step={30}
           selectable
         />
       </div>

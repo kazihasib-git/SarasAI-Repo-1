@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { baseUrl } from "../../../utils/baseURL";
 
-
 // Get Today Available Ta
 export const getTodayTaAvailability = createAsyncThunk(
   "taAvialability/getTodayTaAvailability",
@@ -12,7 +11,7 @@ export const getTodayTaAvailability = createAsyncThunk(
   }
 );
 
-
+//get slots for ta from date to end date
 export const getSlots = createAsyncThunk(
   "taAvialability/getSlots",
   async (data) => {
@@ -23,24 +22,22 @@ export const getSlots = createAsyncThunk(
     return response.data;
   }
 );
-const apiUrl = '{{url}}/{{base}}';
+
+//for fetching sessions of ta for calendar
 export const fetchTAScheduleById = createAsyncThunk(
   'taAvialability/fetchTAScheduleById',
-  async (id, thunkAPI) => {
-    try {
-      const response = await axios.get(`${apiUrl}/admin/taschedules/${id}`);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
+  async (id) => {
+    const response = await axios.get(`${baseUrl}/admin/taschedules/${id}`);
+    return response.data;
   }
 );
 
+//for fetching slots of ta for calendar
 export const fetchCoachSlots = createAsyncThunk(
   "taAvialability/fetchCoachSlots",
-  async () => {
+  async (id) => {
     try {
-      const response = await axios.get(`${baseUrl}/admin/coach-slots/7`);
+      const response = await axios.get(`${baseUrl}/admin/coach-slots/${id}`);
       return response.data;
     } catch (error) {
       throw Error(error.response.data.message || error.message);
@@ -327,10 +324,10 @@ const initialState = {
   markLeaveOpen: false,
   scheduledSlotsOpen: false,
   slotData: [],
-  scheduleData:[],
+  scheduleData: [],
   scheduledSlotsData: [], // Ensure this is correctly named and initialized
   scheduledSessionData: [], // Ensure this is correctly named and initialized
-  availableSlotsData:[],
+  availableSlotsData: [],
   scheduledSessionOpen: false,
   cancelSessionOpen: false,
   resheduleSessionOpen: false,
@@ -340,7 +337,7 @@ const initialState = {
   createNewSlotOpen: false,
   loading: false,
   error: null,
-  schduldeCancelData:null
+  schduldeCancelData: null
 };
 
 export const taAvailabilitySlice = createSlice({
@@ -392,6 +389,7 @@ export const taAvailabilitySlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    //for sessions ta for calendar
     builder.addCase(fetchTAScheduleById.pending, (state) => {
       state.loading = true;
     });
@@ -403,6 +401,8 @@ export const taAvailabilitySlice = createSlice({
       state.loading = false;
       state.error = action.error.message;
     });
+    
+    //for slots of ta for calendar
     builder.addCase(fetchCoachSlots.pending, (state) => {
       state.loading = true;
     });
@@ -489,7 +489,7 @@ export const taAvailabilitySlice = createSlice({
     });
   },
 });
-export const selectTAScheduleData = (state) => state.taAvailability.scheduleData;
+
 export const {
   openMarkLeave,
   closeMarkLeave,

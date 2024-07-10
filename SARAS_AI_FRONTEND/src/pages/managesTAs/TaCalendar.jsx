@@ -53,9 +53,7 @@ const TaCalender
     = () => {
         const dispatch = useDispatch();
         const { id, name } = useParams();
-        const { createNewSlotsOpen, slotEventData, slotData } = useSelector((state) => state.taAvialability);
-        const scheduleData = useSelector(selectTAScheduleData);
-        const slots = useSelector((state) => state.taAvialability.scheduledSlotsData);
+        const { createNewSlotsOpen, slotEventData, slotData,scheduleData} = useSelector((state) => state.taAvialability);
         const [sheduleNewSession, setSheduleNewSession] = useState(false)
         const [deleteFutureSlots, setDeleteFutureSlots] = useState(false)
         const [createNewSlot, setCreateNewSlot] = useState(false)
@@ -113,18 +111,19 @@ const TaCalender
     
 
         console.log("taScheduledSessions", taScheduledSessions)
+        // useEffect(() => {
+        //     dispatch(getSlots());
+        // }, [slotEventData])
+
         useEffect(() => {
-            dispatch(getSlots());
-        }, [slotEventData])
-        useEffect(() => {
-            dispatch(fetchCoachSlots());
+            dispatch(fetchCoachSlots(id));
+            dispatch(fetchTAScheduleById(id));
         }, [dispatch]);
-        useEffect(() => {
-            dispatch(getSlots());
-        }, [dispatch])
-        useEffect(() => {
-            dispatch(fetchTAScheduleById(2)); // Replace `2` with the actual ID you need
-        }, [dispatch]);
+
+        // useEffect(() => {
+        //     ); // Replace `2` with the actual ID you need
+        // }, [dispatch]);
+
         const handleScheduleNewSession = () => {
             console.log("Pressed")
             setSheduleNewSession(true)
@@ -166,7 +165,7 @@ const TaCalender
         // ];
        
         
-        console.log("scheduleData:",scheduleData);
+        console.log("session data",scheduleData);
         return (
             <Box sx={{ backgroundColor: '#f8f9fa', p: 3 }}>
                 <DialogActions sx={{ p: 2 }}>
@@ -219,7 +218,7 @@ const TaCalender
                         </Grid>
                     </Grid>
                 </DialogActions>
-                <CalendarComponent eventsList={scheduleData} addEvent={addEvent} slotData={slotData}/*handleSelectEvent={handleSelectEvent}*/ />
+                <CalendarComponent eventsList={scheduleData.data} addEvent={addEvent} slotData={slotData}/*handleSelectEvent={handleSelectEvent}*/ />
                 {sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} />}
                 {markLeaveOpen && <MarkLeave id={id} name={name} />}
                 {scheduledSlotsOpen && <Slots  id={id} name={name}/>}
