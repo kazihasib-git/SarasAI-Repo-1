@@ -17,86 +17,13 @@ import editIcon from "../../assets/editIcon.png";
 import bin from "../../assets/bin.png";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { useDispatch } from "react-redux";
-import { updateTA } from "../../redux/features/taModule/taSlice";
 import { openScheduleSession } from "../../redux/features/taModule/taScheduling";
 
-const CustomButton = styled(Button)(({ theme }) => ({
-  borderRadius: "20px",
-  border: "1px solid #F56D3B",
-  color: "#F56D3B",
-  padding: "8px 16px", // Add padding for horizontal and vertical spacing
-  margin: "0 8px", // Add horizontal margin between buttons
-  "&:hover": {
-    backgroundColor: "#F56D3B",
-    color: "#fff",
-    borderColor: "#F56D3B",
-  },
-  "&.active": {
-    backgroundColor: "#F56D3B",
-    color: "#fff",
-  },
-}));
+import { updateTA } from "../../redux/features/taModule/taSlice";
+import { updateCoach } from "../../redux/features/CoachModule/coachSlice";
 
-const CalenderButton = styled(Button)(({ theme }) => ({
-  borderRadius: "20px",
-  border: "none",
-  color: "#F56D3B",
-  backgroundColor: "#FEEBE3",
-  transition: "all 0.3s ease", // Corrected transition syntax
-  "&:hover": {
-    backgroundColor: "#FEEBE3",
-    color: "#F56D3B",
-    border: "none", // Corrected border removal syntax
-  },
-  "&:focus": {
-    outline: "none", // Remove default focus outline if desired
-  },
-}));
 
-const AntSwitch = styled(Switch)(({ theme }) => ({
-  width: 36, // adjust width as needed
-  height: 20, // increased height
-  padding: 0,
-  marginTop: 5,
-  display: "flex",
-  "&:active": {
-    "& .MuiSwitch-thumb": {
-      width: 17, // adjust width to keep thumb proportional
-    },
-    "& .MuiSwitch-switchBase.Mui-checked": {
-      transform: "translateX(16px)", // adjust translation to match increased height
-    },
-  },
-  "& .MuiSwitch-switchBase": {
-    padding: 3, // increased padding for larger height
-    "&.Mui-checked": {
-      transform: "translateX(18px)", // adjust translation to match increased height
-      color: "#fff",
-      "& + .MuiSwitch-track": {
-        opacity: 1,
-        backgroundColor: theme.palette.mode === "dark" ? "#177ddc" : "#14D249",
-      },
-    },
-  },
-  "& .MuiSwitch-thumb": {
-    boxShadow: "0 2px 4px 0 rgb(0 35 11 / 20%)",
-    width: 14, // increased width for larger thumb
-    height: 14, // increased height for larger thumb
-    borderRadius: 7, // adjusted to keep thumb circular
-    transition: theme.transitions.create(["width"], {
-      duration: 200,
-    }),
-  },
-  "& .MuiSwitch-track": {
-    borderRadius: 20 / 2, // adjusted to match new height
-    opacity: 1,
-    backgroundColor:
-      theme.palette.mode === "dark"
-        ? "rgba(255,255,255,.35)"
-        : "rgba(0,0,0,.25)",
-    boxSizing: "border-box",
-  },
-}));
+
 
 const DynamicTable = ({
   headers,
@@ -159,24 +86,26 @@ const DynamicTable = ({
         navigate(`/view-report/${id}`); // Append id as a parameter
       }
     } else {
-      if (type === "students") {
-        navigate(`/active-Coach-students/${id}`); // Append id as a parameter
-      } else if (type === "batches") {
-        navigate(`/active-Coach-batches/${id}`); // Append id as a parameter
+      if(componentName === "COACHMAPPING"){
+        if (type === "students") {
+          navigate(`/active-Coach-students/${id}`); // Append id as a parameter
+        } else if (type === "batches") {
+          navigate(`/active-Coach-batches/${id}`); // Append id as a parameter
+        }
       }
     }
   };
 
   const handlePopup = (id, name, timezone) => {
-    console.log("ID handlePopup : ", id, name, timezone);
-    const data = {
-      id, name, timezone
+    const data = { id, name, timezone };
+    if (componentName === "TAMAPPING") {
+      dispatch(openScheduleSession(data));
+    } else {
+      dispatch(openCoachScheduleSession(data));
     }
-    dispatch(openScheduleSession(data));
-  }
+  };
 
   const handleToggle = (id) => {
-    console.log("id : ", id);
     const updatedData = data.map((item) =>
       item.id === id
         ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
@@ -191,9 +120,8 @@ const DynamicTable = ({
       case "MANAGETA":
         dispatch(updateTA({ id, data: requestData }));
         break;
-      case "TAMAPPING":
-        console.log("TA MAPPING : ", id, requestData);
-        // dispatch(updateTA({ id, data: requestData }));
+      case "MANAGECOACH":
+        dispatch(updateCoach({ id, data: requestData }));
         break;
       default:
         console.warn(`No API call defined for component: ${componentName}`);
@@ -446,4 +374,83 @@ const DynamicTable = ({
   );
 };
 
+
+
+const CustomButton = styled(Button)(({ theme }) => ({
+  borderRadius: "20px",
+  border: "1px solid #F56D3B",
+  color: "#F56D3B",
+  padding: "8px 16px", // Add padding for horizontal and vertical spacing
+  margin: "0 8px", // Add horizontal margin between buttons
+  "&:hover": {
+    backgroundColor: "#F56D3B",
+    color: "#fff",
+    borderColor: "#F56D3B",
+  },
+  "&.active": {
+    backgroundColor: "#F56D3B",
+    color: "#fff",
+  },
+}));
+
+const CalenderButton = styled(Button)(({ theme }) => ({
+  borderRadius: "20px",
+  border: "none",
+  color: "#F56D3B",
+  backgroundColor: "#FEEBE3",
+  transition: "all 0.3s ease", // Corrected transition syntax
+  "&:hover": {
+    backgroundColor: "#FEEBE3",
+    color: "#F56D3B",
+    border: "none", // Corrected border removal syntax
+  },
+  "&:focus": {
+    outline: "none", // Remove default focus outline if desired
+  },
+}));
+
+const AntSwitch = styled(Switch)(({ theme }) => ({
+  width: 36, // adjust width as needed
+  height: 20, // increased height
+  padding: 0,
+  marginTop: 5,
+  display: "flex",
+  "&:active": {
+    "& .MuiSwitch-thumb": {
+      width: 17, // adjust width to keep thumb proportional
+    },
+    "& .MuiSwitch-switchBase.Mui-checked": {
+      transform: "translateX(16px)", // adjust translation to match increased height
+    },
+  },
+  "& .MuiSwitch-switchBase": {
+    padding: 3, // increased padding for larger height
+    "&.Mui-checked": {
+      transform: "translateX(18px)", // adjust translation to match increased height
+      color: "#fff",
+      "& + .MuiSwitch-track": {
+        opacity: 1,
+        backgroundColor: theme.palette.mode === "dark" ? "#177ddc" : "#14D249",
+      },
+    },
+  },
+  "& .MuiSwitch-thumb": {
+    boxShadow: "0 2px 4px 0 rgb(0 35 11 / 20%)",
+    width: 14, // increased width for larger thumb
+    height: 14, // increased height for larger thumb
+    borderRadius: 7, // adjusted to keep thumb circular
+    transition: theme.transitions.create(["width"], {
+      duration: 200,
+    }),
+  },
+  "& .MuiSwitch-track": {
+    borderRadius: 20 / 2, // adjusted to match new height
+    opacity: 1,
+    backgroundColor:
+      theme.palette.mode === "dark"
+        ? "rgba(255,255,255,.35)"
+        : "rgba(0,0,0,.25)",
+    boxSizing: "border-box",
+  },
+}));
 export default DynamicTable;

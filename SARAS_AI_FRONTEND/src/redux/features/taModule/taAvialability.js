@@ -331,6 +331,7 @@ const initialState = {
   scheduledSessionOpen: false,
   cancelSessionOpen: false,
   resheduleSessionOpen: false,
+  customResheduleSessionOpen:false,
   reasonForLeaveOpen: false,
   deleteFutureSlotOpen: false,
   scheduleNewSession: false,
@@ -386,6 +387,13 @@ export const taAvailabilitySlice = createSlice({
     },
     closeRescheduleSession(state) {
       state.resheduleSessionOpen = false;
+    },
+
+    openStudentsRescheduleSession(state) {
+      state.customResheduleSessionOpen = true;
+    },
+    closeStudentsRescheduleSession(state) {
+      state.customResheduleSessionOpen = false;
     },
   },
   extraReducers: (builder) => {
@@ -505,6 +513,8 @@ export const {
   closeReasonForLeave,
   openRescheduleSession,
   closeRescheduleSession,
+  openStudentsRescheduleSession,
+  closeStudentsRescheduleSession
 } = taAvailabilitySlice.actions;
 
 export default taAvailabilitySlice.reducer;

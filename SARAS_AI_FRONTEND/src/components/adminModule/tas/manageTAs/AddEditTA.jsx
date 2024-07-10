@@ -176,7 +176,7 @@ const AddEditTA = ({ data }) => {
           {data ? (
             <>
               <Grid item xs>
-                <Typography variant="h4" sx={{ mb: 4, font: "Nunito Sans" }}>
+                <Typography variant="h4" sx={{ mb: 4}}>
                   Edit TA
                 </Typography>
               </Grid>
@@ -598,8 +598,8 @@ const AddEditTA = ({ data }) => {
           actions={actions}
         /> */}
         {successPopup && <SubmitPopup componentname={"ADDEDITTA"} />}
-        {assignStudentOpen && <AssignStudents />}
-        {assignBatchOpen && <AssignBatches />}
+        {assignStudentOpen && <AssignStudents componentname={"ADDEDITTA"} />}
+        {assignBatchOpen && <AssignBatches componentname={"ADDEDITTA"} />}
       </Box>
     </Box>
   );
