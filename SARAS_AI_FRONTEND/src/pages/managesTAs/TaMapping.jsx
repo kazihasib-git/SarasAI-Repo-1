@@ -30,6 +30,7 @@ const TaMapping = () => {
   const dispatch = useDispatch();
   const { taMapping, loading } = useSelector((state) => state.taModule);
   const [taMappingData, setTaMappingData] = useState([]);
+  console.log("tamapping " ,taMapping);
 
   useEffect(() => {
     dispatch(showTAMapping());
