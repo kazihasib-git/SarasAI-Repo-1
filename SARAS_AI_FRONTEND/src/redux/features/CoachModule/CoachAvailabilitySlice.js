@@ -4,10 +4,10 @@ import { baseUrl } from "../../../utils/baseURL";
 
 
 // Get Today Available Ta
-export const getTodayTaAvailability = createAsyncThunk(
-  "taAvialability/getTodayTaAvailability",
+export const getTodayCoachAvailability = createAsyncThunk(
+  "coachAvailability/getTodayCoachAvailability",
   async () => {
-    const response = await axios.get(`${baseUrl}/admin/TA-availability/get-today-available-ta`);
+    const response = await axios.get(`${baseUrl}/admin/Coach-availability/get-today-available-coach`);
     return response.data;
   }
 );
@@ -287,7 +287,7 @@ export const deleteFutureSlots = createAsyncThunk(
 );
 
 const initialState = {
-  todaysAvailableTa: [],
+  todaysAvailableCoach: [],
   markLeaveOpen: false,
   scheduledSlotsOpen: false,
   scheduledSlotsData: [], // Ensure this is correctly named and initialized
@@ -306,8 +306,8 @@ const initialState = {
   schduldeCancelData:null
 };
 
-export const taAvailabilitySlice = createSlice({
-  name: "taAvialability",
+export const coachAvailabilitySlice = createSlice({
+  name: "coachAvailability",
   initialState,
   reducers: {
     openMarkLeave(state) {
@@ -358,14 +358,14 @@ export const taAvailabilitySlice = createSlice({
   extraReducers: (builder) => {
 
     // Get Today Available Ta
-    builder.addCase(getTodayTaAvailability.pending, (state) => {
+    builder.addCase(getTodayCoachAvailability.pending, (state) => {
       state.loading = true;
     });
-    builder.addCase(getTodayTaAvailability.fulfilled, (state, action) => {
+    builder.addCase(getTodayCoachAvailability.fulfilled, (state, action) => {
       state.loading = false;
-      state.todaysAvailableTa = action.payload?.data;
+      state.todaysAvailableCoach = action.payload?.data;
     });
-    builder.addCase(getTodayTaAvailability.rejected, (state, action) => {
+    builder.addCase(getTodayCoachAvailability.rejected, (state, action) => {
       state.loading = false;
       state.error = action.error.message;
     });
@@ -398,14 +398,13 @@ export const taAvailabilitySlice = createSlice({
     builder.addCase(fetchAvailableSlots.pending, (state) => {
       state.loading = true;
     });
-  builder.addCase(fetchAvailableSlots.fulfilled, (state, action) => {
+    builder.addCase(fetchAvailableSlots.fulfilled, (state, action) => {
       state.loading = false;
       state.availableSlotsData = action.payload?.data;
     });
     builder.addCase(fetchAvailableSlots.rejected, (state, action) => {
       state.loading = false;
       state.error = action.error.message;
-      state.availableSlotsData = []
     });
 
     builder.addCase(deleteFutureSlots.pending, (state) => {
@@ -436,6 +435,6 @@ export const {
   closeRescheduleSession,
   openStudentsRescheduleSession,
   closeStudentsRescheduleSession
-} = taAvailabilitySlice.actions;
+} = coachAvailabilitySlice.actions;
 
-export default taAvailabilitySlice.reducer;
+export default coachAvailabilitySlice.reducer;

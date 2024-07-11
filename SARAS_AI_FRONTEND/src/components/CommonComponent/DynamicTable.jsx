@@ -21,6 +21,7 @@ import { openScheduleSession } from "../../redux/features/taModule/taScheduling"
 
 import { updateTA } from "../../redux/features/taModule/taSlice";
 import { updateCoach } from "../../redux/features/CoachModule/coachSlice";
+import { openCoachScheduleSession } from "../../redux/features/CoachModule/coachSchedule";
 
 
 
@@ -98,9 +99,10 @@ const DynamicTable = ({
 
   const handlePopup = (id, name, timezone) => {
     const data = { id, name, timezone };
-    if (componentName === "TAMAPPING") {
+    if (componentName === "TAMAPPING"){
       dispatch(openScheduleSession(data));
     } else {
+      if(componentName === "COACHMAPPING")
       dispatch(openCoachScheduleSession(data));
     }
   };

@@ -49,7 +49,7 @@ const CustomButton = ({
   );
 };
 
-const ReschedulingSession = () => {
+const ReschedulingSession = ({id}) => {
   const dispatch = useDispatch();
   const { resheduleSessionOpen, availableSlotsData } = useSelector(
     (state) => state.taAvailability
@@ -63,7 +63,7 @@ const ReschedulingSession = () => {
     if (selectDate) {
       console.log("Fetching slots for date:", selectDate);
       const data = {
-        admin_user_id: 73,
+        admin_user_id: id,
         date: selectDate,
       };
       dispatch(fetchAvailableSlots(data));
@@ -71,6 +71,7 @@ const ReschedulingSession = () => {
   }, [selectDate, dispatch]);
 
   useEffect(() => {
+    console.log("AVIALABLE SLOTS : ", availableSlotsData)
     if (availableSlotsData.length > 0) {
       const transformData = availableSlotsData.map((slot, index) => ({
         "S. No.": index + 1,

@@ -25,7 +25,7 @@ import TAAvailability from "./pages/managesTAs/TaAvaialablity";
 import ManageCoaches from "./pages/ManageCoaches/ManageCoaches";
 import CoachMapping from "./pages/ManageCoaches/CoachMapping";
 import CoachTemplate from "./pages/ManageCoaches/CoachingTemplate/CoachTemplate";
-import CoachAvialability from "./pages/managesTAs/CoachAvialability";
+import CoachAvialability from "./pages/ManageCoaches/CoachAvialability";
 import CoachScheduling from "./pages/ManageCoaches/CoachScheduling";
 import AllRoutes from "./components/AllRoutes/AllRoutes";
 import TaMapping from "./pages/managesTAs/TaMapping";

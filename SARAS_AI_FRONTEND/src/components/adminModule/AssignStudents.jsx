@@ -5,7 +5,6 @@ import {
   closeAssignStudents,
   openSuccessPopup,
   getStudentBatchMapping,
-  getTA,
   postAssignStudents,
 } from "../../redux/features/taModule/taSlice";
 import CustomTextField from "../CustomFields/CustomTextField";
@@ -63,7 +62,15 @@ const AssignStudents = ({ componentname }) => {
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [filteredStudents, setFilteredStudents] = useState([]);
 
-  let stateModuleKey, nameKey, assignStudentOpenKey, assignMappingKey, closeDialogAction, openSuccessAction, getBatchMappingAction, postAssignAction;
+  let stateModuleKey,
+    nameKey,
+    assignStudentOpenKey,
+    assignMappingKey,
+    closeDialogAction,
+    openSuccessAction,
+    getBatchMappingAction,
+    postAssignAction;
+  let schedulingState, nameKeyScheduling, idKeyScheduling;
 
   switch (componentname) {
     case "ADDITCOACH":
@@ -75,6 +82,9 @@ const AssignStudents = ({ componentname }) => {
       openSuccessAction = openCoachSuccessPopup;
       getBatchMappingAction = getCoachStudentBatchMapping;
       postAssignAction = postCoachAssignStudents;
+      schedulingState = useSelector((state) => state.coachScheduling);
+      nameKeyScheduling = "coachName";
+      idKeyScheduling = "coachID";
       break;
     case "ADDEDITTA":
       stateModuleKey = "taModule";
@@ -85,6 +95,9 @@ const AssignStudents = ({ componentname }) => {
       openSuccessAction = openSuccessPopup;
       getBatchMappingAction = getStudentBatchMapping;
       postAssignAction = postAssignStudents;
+      schedulingState = useSelector((state) => state.taScheduling);
+      nameKeyScheduling = "taName";
+      idKeyScheduling = "taID";
       break;
     default:
       stateModuleKey = null;
@@ -95,11 +108,17 @@ const AssignStudents = ({ componentname }) => {
       openSuccessAction = null;
       getBatchMappingAction = null;
       postAssignAction = null;
+      schedulingState = null;
+      nameKeyScheduling = null;
+      idKeyScheduling = null;
       break;
   }
 
-  const stateSelector = useSelector((state) => (stateModuleKey ? state[stateModuleKey] : {}));
-  const { taName, taID: taId } = useSelector((state) => state.taScheduling);
+  const stateSelector = useSelector((state) =>
+    stateModuleKey ? state[stateModuleKey] : {}
+  );
+  const { [nameKeyScheduling]: assignedName, [idKeyScheduling]: assignedId } =
+    schedulingState || {};
 
   const {
     [assignStudentOpenKey]: assignStudentOpen,
@@ -121,16 +140,25 @@ const AssignStudents = ({ componentname }) => {
         "S. No.": student.student_id,
         "Student Name": student.student_name,
         "Academic Term": student.academic_term,
-        Batch: student.batches.map((batch) => batch.batch_name).join(", ") || "N/A",
+        Batch:
+          student.batches.map((batch) => batch.batch_name).join(", ") || "N/A",
         Select: student.is_active ? "Active" : "Inactive",
         student_id: student.student_id,
         is_active: student.is_active,
       }));
 
       const filtered = transformedData.filter((student) => {
-        const matchesTerm = selectedTerm ? student["Academic Term"] === selectedTerm : true;
-        const matchesBatch = selectedBatch ? student.Batch.includes(selectedBatch) : true;
-        const matchesName = searchName ? student["Student Name"].toLowerCase().includes(searchName.toLowerCase()) : true;
+        const matchesTerm = selectedTerm
+          ? student["Academic Term"] === selectedTerm
+          : true;
+        const matchesBatch = selectedBatch
+          ? student.Batch.includes(selectedBatch)
+          : true;
+        const matchesName = searchName
+          ? student["Student Name"]
+              .toLowerCase()
+              .includes(searchName.toLowerCase())
+          : true;
         return matchesTerm && matchesBatch && matchesName;
       });
 
@@ -142,8 +170,13 @@ const AssignStudents = ({ componentname }) => {
     ? [
         ...new Set(
           studentBatchMapping
-            .filter((student) => !selectedTerm || student.academic_term === selectedTerm)
-            .flatMap((student) => student.batches.map((batch) => batch.batch_name))
+            .filter(
+              (student) =>
+                !selectedTerm || student.academic_term === selectedTerm
+            )
+            .flatMap((student) =>
+              student.batches.map((batch) => batch.batch_name)
+            )
         ),
       ]
     : [];
@@ -153,21 +186,26 @@ const AssignStudents = ({ componentname }) => {
     : [];
 
   const handleSelectStudent = (id) => {
-    setSelectedStudents((prev) => (prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id]));
+    setSelectedStudents((prev) =>
+      prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id]
+    );
   };
 
   const handleSubmit = () => {
-    const id = componentname === "ADDITCOACH" ? coachID : taID ? taID : taId;
+    const id =
+      componentname === "ADDITCOACH"
+        ? coachID || assignedId
+        : taID || assignedId;
     const data = {
       [componentname === "ADDITCOACH" ? "Coach_id" : "ta_id"]: id,
       student: selectedStudents.map((id) => ({ id: id.toString() })),
     };
-    dispatch(postAssignAction({ id: taID ? taID : taId, data })).then(() => {
-      if (taId) {
+    dispatch(postAssignAction({ id, data })).then(() => {
+      if (assignedId) {
         dispatch(
           openScheduleSession({
-            id: taId,
-            name: taName,
+            id: assignedId,
+            name: assignedName,
             student: selectedStudents.map((id) => ({ id: id.toString() })),
           })
         );
@@ -177,7 +215,13 @@ const AssignStudents = ({ componentname }) => {
     dispatch(closeDialogAction());
   };
 
-  const headers = ["S. No.", "Student Name", "Academic Term", "Batch", "Select"];
+  const headers = [
+    "S. No.",
+    "Student Name",
+    "Academic Term",
+    "Batch",
+    "Select",
+  ];
 
   const content = (
     <>
@@ -227,7 +271,11 @@ const AssignStudents = ({ componentname }) => {
         onRowClick={handleSelectStudent}
         selectedBox={selectedStudents}
       />
-      <Typography variant="subtitle1" gutterBottom sx={{ mt: 2, textAlign: "center" }}>
+      <Typography
+        variant="subtitle1"
+        gutterBottom
+        sx={{ mt: 2, textAlign: "center" }}
+      >
         {selectedStudents.length} Student(s) Selected
       </Typography>
     </>
@@ -246,8 +294,7 @@ const AssignStudents = ({ componentname }) => {
     </CustomButton>
   );
 
-  const assignedTA = assignedTAName || taName;
-
+  const assignedTA = assignedTAName || assignedName;
   return (
     <ReusableDialog
       open={assignStudentOpen}
@@ -258,7 +305,5 @@ const AssignStudents = ({ componentname }) => {
     />
   );
 };
-
-
 
 export default AssignStudents;

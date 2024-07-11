@@ -61,16 +61,12 @@ const CoachTemplate = () => {
 
   return (
     <>
+    <Box m="40px">
       <Header />
       <Sidebar />
       <>
-        <Box
-          display={"flex"}
-          justifyContent={"space-between"}
-          marginTop={3}
-          alignItems={"center"}
-        >
-          <p style={{ fontSize: "44px", justifyContent: "center" }}>
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+          <p style={{ fontSize: "44px", justifyContent: "center",fontFamily: "ExtraLight"}}>
             Coaching Template
           </p>
           <div className="inputBtnContainer">
@@ -93,6 +89,7 @@ const CoachTemplate = () => {
           />
         )}
       </>
+      </Box>
     </>
   );
 };

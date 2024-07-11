@@ -163,10 +163,10 @@ const AdminDataTable = ({
     <div className="table-container">
       <Box display={"flex"} justifyContent={"space-between"}>
         <Box display="flex" alignItems="center" padding="16px">
-          <ArrowBackIosIcon
+          {/* <ArrowBackIosIcon
             style={{ fontSize: "25px", marginBottom: "17px" }}
             onClick={() => navigate("/coach-mapping")}
-          />
+          /> */}
 
           <p
             style={{

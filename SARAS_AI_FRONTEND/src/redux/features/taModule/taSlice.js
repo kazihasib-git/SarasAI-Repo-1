@@ -214,21 +214,12 @@ export const deleteAssignedBatch = createAsyncThunk(
   }
 );
 
-export const showTASchedule = createAsyncThunk(
-  "taModule/showTaSchedule",
-  async () => {
-    const response = await axios.get(`${baseUrl}/admin/taschedules`);
-    return response.data;
-   
-  }
-);
 
 const initialState = {
   tas: [],
   studentBatchMapping: [],
   batchMapping: [],
   taMapping: null,
-  taSchedule: null,
   assignedStudents: [],
   assignedBatches: [],
   loading: false,
@@ -504,20 +495,6 @@ export const taSlice = createSlice({
       // state.assignedStudents = action.payload;
     });
     builder.addCase(deleteAssignedBatch.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload || action.error.message;
-    });
-
-    // Show TA Mapping
-    builder.addCase(showTASchedule.pending, (state) => {
-      state.loading = true;
-    });
-    builder.addCase(showTASchedule.fulfilled, (state, action) => {
-      // console.log("TASCHEDULE : ", action.payload);
-      state.loading = false;
-      state.taSchedule = action.payload.data;
-    });
-    builder.addCase(showTASchedule.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload || action.error.message;
     });
