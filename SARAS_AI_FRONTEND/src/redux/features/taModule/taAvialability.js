@@ -75,11 +75,11 @@ export const fetchAvailableSlots = createAsyncThunk(
 // Delete Future Slots
 export const deleteFutureSlots = createAsyncThunk(
   "taAvialability/deleteFutureSlots",
-  async (id) => {
-    console.log("ID : ", id);
-    const response = await axios.delete(
-      `${baseUrl}/admin/coach-slots/${id.id}`
-    );
+  async ({ id, data }) => {
+    // console.log("ID : ", id);
+
+    console.log("Data : ", data , id);
+    const response = await axios.delete(`${baseUrl}/admin/coach-slots/${id}`, { data: data });
     return response.data;
   }
 );
@@ -112,7 +112,8 @@ const initialState = {
   deleteFutureSlotOpen: false,
   scheduleNewSession: false,
   createNewSlotOpen: false,
-  slotEventData: null,
+  slotEventData: null, // To Cancel Session
+  sessionEventData : null, // To Reschedule Session
   loading: false,
   error: null,
   schduldeCancelData: null
@@ -161,8 +162,10 @@ export const taAvailabilitySlice = createSlice({
     closeReasonForLeave(state) {
       state.reasonForLeaveOpen = false;
     },
-    openRescheduleSession(state) {
+    openRescheduleSession(state, action) {
+      console.log("Open Action sessionEventData : ", action.payload)
       state.resheduleSessionOpen = true;
+      state.sessionEventData = action.payload;
     },
     closeRescheduleSession(state) {
       state.resheduleSessionOpen = false;

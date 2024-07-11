@@ -7,6 +7,7 @@ import {
   closeScheduledSession,
   openCancelSession,
   openRescheduleSession,
+  openScheduledSlots,
   reasonForLeave,
 } from "../../redux/features/taModule/taAvialability";
 import PopUpTable from "../CommonComponent/PopUpTable";
@@ -79,7 +80,7 @@ const ScheduledSessions = () => {
 
   const handleRescheduleClick = (session) => {
     dispatch(closeScheduledSession());
-    dispatch(openRescheduleSession());
+    dispatch(openRescheduleSession(session));
     console.log("Reschedule clicked!", session);
   };
 
@@ -91,9 +92,7 @@ const ScheduledSessions = () => {
 
   const handleSubmit = () => {
     console.log("*** ScheduledSessions");
-    // dispatch(reasonForLeave(slotEventData))
-
-
+    // dispatch(reasonForLeave(slotEventData);
   };
 
   const content = (
@@ -130,10 +129,13 @@ const ScheduledSessions = () => {
   return (
     <ReusableDialog
       open={scheduledSessionOpen}
-      handleClose={() => dispatch(closeScheduledSession())}
+      handleClose={() => {
+        dispatch(openScheduledSlots())
+        dispatch(closeScheduledSession())
+      }}
       title="Scheduled Sessions"
       content={content}
-      actions={actions}
+      actions={scheduledSessionData.length === 0 ? actions : undefined}
     />
   );
 };

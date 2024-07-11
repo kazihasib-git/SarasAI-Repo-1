@@ -92,7 +92,10 @@ const CancelSchedule = () => {
     return (
         <ReusableDialog
             open={cancelSessionOpen}
-            handleClose={() => dispatch(closeCancelSession())}
+            handleClose={() => {
+                dispatch(closeCancelSession())
+                dispatch(openScheduledSession())
+            }}
             title="Are you sure that you want to cancel the session"
             content={content}
             actions={actions}

@@ -39,6 +39,15 @@ export const getTaAvailableSlotsFromDate = createAsyncThunk(
     }
 )
 
+// Reschedule Session
+export const rescheduleSession = createAsyncThunk(
+    "taAvialability/rescheduleSession",
+    async ({ id , data }) => {
+        const response = await axios.post(`${baseUrl}/admin/taschedules/${id}`, data);
+        return response.data;
+    }
+)
+
 // Cancel Scheduled Sessions
 export const cancelScheduledSession = createAsyncThunk(
     "taAvialability/cancelScheduledSession",
@@ -162,6 +171,20 @@ const taScheduling = createSlice({
             state.loading = false;
             state.error = action.error.message;
         });
+
+        // Reschedule Session // TODO : Check this
+        builder.addCase(rescheduleSession.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(rescheduleSession.fulfilled, (state, action) => {
+            state.loading = false;
+            state.taScheduledSessions = action.payload.data;
+        });
+        builder.addCase(rescheduleSession.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+        })
+
     },
 });
 
