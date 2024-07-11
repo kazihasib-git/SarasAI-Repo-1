@@ -7,6 +7,7 @@ import {
   closeScheduledSession,
   openCancelSession,
   openRescheduleSession,
+  reasonForLeave,
 } from "../../redux/features/taModule/taAvialability";
 import PopUpTable from "../CommonComponent/PopUpTable";
 
@@ -47,7 +48,7 @@ const CustomButton = ({
 
 const ScheduledSessions = () => {
   const dispatch = useDispatch();
-  const { scheduledSessionOpen, scheduledSessionData } = useSelector(
+  const { scheduledSessionOpen, scheduledSessionData, slotEventData } = useSelector(
     (state) => state.taAvialability
   );
 
@@ -60,8 +61,10 @@ const ScheduledSessions = () => {
     "Actions",
   ];
 
+  console.log("Scheduled Session Data: ", scheduledSessionData);
+
   const formattedData = scheduledSessionData.map((session, index) => ({
-    "S. No.": index + 1,
+    "S. No.": session.id,
     "Session Name": session.meeting_name,
     Date: session.date.split(" ")[0],
     Time: `${session.start_time} - ${session.end_time}`,
@@ -88,6 +91,9 @@ const ScheduledSessions = () => {
 
   const handleSubmit = () => {
     console.log("*** ScheduledSessions");
+    // dispatch(reasonForLeave(slotEventData))
+
+
   };
 
   const content = (

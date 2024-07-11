@@ -20,6 +20,7 @@ import {
 } from "../../redux/features/taModule/taAvialability";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
+import { useParams } from "react-router-dom";
 const CustomButton = ({
   onClick,
   children,
@@ -56,6 +57,7 @@ const CustomButton = ({
 };
 
 const MarkLeave = () => {
+  const taId = useParams()
   const dispatch = useDispatch();
   const { markLeaveOpen } = useSelector((state) => state.taAvialability);
   const [fromDate, setFromDate] = useState(null);
@@ -66,10 +68,11 @@ const MarkLeave = () => {
     const formattedToDate = moment(toDate).format("YYYY-MM-DD");
 
     const leaveData = {
-      admin_user_id: 2, // Replace with the actual admin user ID
+      admin_user_id: taId.id, // Replace with the actual admin user ID
       start_date: formattedFromDate,
       end_date: formattedToDate,
     };
+
     dispatch(getSlots(leaveData))
       .unwrap()
       .then(() => {

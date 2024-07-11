@@ -15,10 +15,7 @@ export const getTodayTaAvailability = createAsyncThunk(
 export const getSlots = createAsyncThunk(
   "taAvialability/getSlots",
   async (data) => {
-    const response = await axios.post(
-      `${baseUrl}/admin/coach-slots/records`,
-      data
-    );
+    const response = await axios.post(`${baseUrl}/admin/coach-slots/records`, data);
     return response.data;
   }
 );
@@ -36,15 +33,12 @@ export const fetchTAScheduleById = createAsyncThunk(
 export const fetchCoachSlots = createAsyncThunk(
   "taAvialability/fetchCoachSlots",
   async (id) => {
-    try {
-      const response = await axios.get(`${baseUrl}/admin/coach-slots/${id}`);
-      return response.data;
-    } catch (error) {
-      throw Error(error.response.data.message || error.message);
-    }
+    const response = await axios.get(`${baseUrl}/admin/coach-slots/${id}`);
+    return response.data;
   }
 );
 
+// Create Slots for TA
 export const createSlots = createAsyncThunk(
   "taAvialability/createSlots",
   async (data) => {
@@ -57,246 +51,16 @@ export const createSlots = createAsyncThunk(
   }
 );
 
+// Get Schedule Session
 export const getScheduleSession = createAsyncThunk(
   "taAvialability/getScheduleSession",
   async (data) => {
-    // const response = await axios.post(`${baseUrl}/admin/taschedules/get-schedules-records`, data);
-    // return response.data;
-
-    return {
-      status: true,
-      status_code: 200,
-      message: "Schedules retrieved successfully.",
-      data: [
-        {
-          id: 6,
-          admin_user_id: 2,
-          meeting_name: "Team Meeting",
-          meeting_url: "http://example.com/meeting",
-          date: "2024-07-05 00:00:00",
-          slot_id: 1,
-          start_time: "11:00:00",
-          end_time: "12:00:00",
-          time_zone: "IST",
-          is_active: 1,
-          event_status: "scheduled",
-          is_deleted: 0,
-          created_by: null,
-          updated_by: null,
-          Students: [
-            {
-              student_id: 1,
-              student_name: "John Doe",
-              academic_term: "2024",
-              email: "john.doe2@example.com",
-              phone: "1234567890",
-              is_active: 1,
-              batches: [
-                {
-                  batch_id: 1,
-                  batch_name: "Saras Institute",
-                  branch: "abcd",
-                  is_active: 1,
-                },
-                {
-                  batch_id: 13,
-                  batch_name: "SARA",
-                  branch: "abcd",
-                  is_active: 1,
-                },
-                {
-                  batch_id: 14,
-                  batch_name: "Ai Course",
-                  branch: "gbtrghm",
-                  is_active: 1,
-                },
-              ],
-            },
-            {
-              student_id: 2,
-              student_name: "John Doe",
-              academic_term: "2023",
-              email: "john.doe@example.com",
-              phone: "1234567890",
-              is_active: 1,
-              batches: [
-                {
-                  batch_id: 1,
-                  batch_name: "Saras Institute",
-                  branch: "abcd",
-                  is_active: 1,
-                },
-                {
-                  batch_id: 13,
-                  batch_name: "SARA",
-                  branch: "abcd",
-                  is_active: 1,
-                },
-                {
-                  batch_id: 14,
-                  batch_name: "Ai Course",
-                  branch: "gbtrghm",
-                  is_active: 1,
-                },
-              ],
-            },
-            {
-              student_id: 3,
-              student_name: "John Doe",
-              academic_term: "2023",
-              email: "john.doe1@example.com",
-              phone: "1234567890",
-              is_active: 1,
-              batches: [
-                {
-                  batch_id: 1,
-                  batch_name: "Saras Institute",
-                  branch: "abcd",
-                  is_active: 1,
-                },
-                {
-                  batch_id: 13,
-                  batch_name: "SARA",
-                  branch: "abcd",
-                  is_active: 1,
-                },
-              ],
-            },
-            {
-              student_id: 4,
-              student_name: "John Doe",
-              academic_term: "2024",
-              email: "john.does@example.com",
-              phone: "1234567890",
-              is_active: 1,
-              batches: [
-                {
-                  batch_id: 12,
-                  batch_name: "Saras USA",
-                  branch: "gbtrghm",
-                  is_active: 1,
-                },
-              ],
-            },
-          ],
-        },
-        {
-          id: 7,
-          admin_user_id: 2,
-          meeting_name: "Team Meeting",
-          meeting_url: "http://example.com/meeting",
-          date: "2024-07-08 00:00:00",
-          slot_id: 2,
-          start_time: "11:00:00",
-          end_time: "12:00:00",
-          time_zone: "IST",
-          is_active: 1,
-          event_status: "scheduled",
-          is_deleted: 0,
-          created_by: null,
-          updated_by: null,
-          Students: [
-            {
-              student_id: 1,
-              student_name: "John Doe",
-              academic_term: "2024",
-              email: "john.doe2@example.com",
-              phone: "1234567890",
-              is_active: 1,
-              batches: [
-                {
-                  batch_id: 1,
-                  batch_name: "Saras Institute",
-                  branch: "abcd",
-                  is_active: 1,
-                },
-                {
-                  batch_id: 13,
-                  batch_name: "SARA",
-                  branch: "abcd",
-                  is_active: 1,
-                },
-                {
-                  batch_id: 14,
-                  batch_name: "Ai Course",
-                  branch: "gbtrghm",
-                  is_active: 1,
-                },
-              ],
-            },
-            {
-              student_id: 2,
-              student_name: "John Doe",
-              academic_term: "2023",
-              email: "john.doe@example.com",
-              phone: "1234567890",
-              is_active: 1,
-              batches: [
-                {
-                  batch_id: 1,
-                  batch_name: "Saras Institute",
-                  branch: "abcd",
-                  is_active: 1,
-                },
-                {
-                  batch_id: 13,
-                  batch_name: "SARA",
-                  branch: "abcd",
-                  is_active: 1,
-                },
-                {
-                  batch_id: 14,
-                  batch_name: "Ai Course",
-                  branch: "gbtrghm",
-                  is_active: 1,
-                },
-              ],
-            },
-            {
-              student_id: 3,
-              student_name: "John Doe",
-              academic_term: "2023",
-              email: "john.doe1@example.com",
-              phone: "1234567890",
-              is_active: 1,
-              batches: [
-                {
-                  batch_id: 1,
-                  batch_name: "Saras Institute",
-                  branch: "abcd",
-                  is_active: 1,
-                },
-                {
-                  batch_id: 13,
-                  batch_name: "SARA",
-                  branch: "abcd",
-                  is_active: 1,
-                },
-              ],
-            },
-            {
-              student_id: 4,
-              student_name: "John Doe",
-              academic_term: "2024",
-              email: "john.does@example.com",
-              phone: "1234567890",
-              is_active: 1,
-              batches: [
-                {
-                  batch_id: 12,
-                  batch_name: "Saras USA",
-                  branch: "gbtrghm",
-                  is_active: 1,
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    };
+    const response = await axios.post(`${baseUrl}/admin/taschedules/get-schedules-records`, data);
+    return response.data;
   }
 );
 
+// Get Available Slots
 export const fetchAvailableSlots = createAsyncThunk(
   "taAvialability/fetchAvailableSlots",
   async (data) => {
@@ -308,6 +72,7 @@ export const fetchAvailableSlots = createAsyncThunk(
   }
 );
 
+// Delete Future Slots
 export const deleteFutureSlots = createAsyncThunk(
   "taAvialability/deleteFutureSlots",
   async (id) => {
@@ -319,6 +84,16 @@ export const deleteFutureSlots = createAsyncThunk(
   }
 );
 
+// Reason for Leave
+export const reasonForLeave = createAsyncThunk(
+  'taAvialability/reasonForLeave',
+  async (data) => {
+    const response = await axios.post(`${baseUrl}/admin/leave`, data);
+    return response.data;
+  
+  }
+)
+
 const initialState = {
   todaysAvailableTa: [],
   markLeaveOpen: false,
@@ -328,14 +103,16 @@ const initialState = {
   scheduledSlotsData: [], // Ensure this is correctly named and initialized
   scheduledSessionData: [], // Ensure this is correctly named and initialized
   availableSlotsData: [],
+  reasonForLeaveData: [],
   scheduledSessionOpen: false,
   cancelSessionOpen: false,
   resheduleSessionOpen: false,
-  customResheduleSessionOpen:false,
+  customResheduleSessionOpen: false,
   reasonForLeaveOpen: false,
   deleteFutureSlotOpen: false,
   scheduleNewSession: false,
   createNewSlotOpen: false,
+  slotEventData: null,
   loading: false,
   error: null,
   schduldeCancelData: null
@@ -357,8 +134,10 @@ export const taAvailabilitySlice = createSlice({
     closeScheduledSlots(state) {
       state.scheduledSlotsOpen = false;
     },
-    openScheduledSession(state) {
+    openScheduledSession(state, action) {
+      console.log("Open Action slotEventData : ", action.payload)
       state.scheduledSessionOpen = true;
+      state.slotEventData = action.payload;
     },
     closeScheduledSession(state) {
       state.scheduledSessionOpen = false;
@@ -409,7 +188,7 @@ export const taAvailabilitySlice = createSlice({
       state.loading = false;
       state.error = action.error.message;
     });
-    
+
     //for slots of ta for calendar
     builder.addCase(fetchCoachSlots.pending, (state) => {
       state.loading = true;
@@ -420,6 +199,7 @@ export const taAvailabilitySlice = createSlice({
     });
     builder.addCase(fetchCoachSlots.rejected, (state, action) => {
       state.loading = false;
+      state.slotData = [];
       state.error = action.error.message;
     });
 
@@ -449,6 +229,7 @@ export const taAvailabilitySlice = createSlice({
       state.error = action.error.message;
     });
 
+    // Create Slots
     builder.addCase(createSlots.pending, (state) => {
       state.loading = true;
     });
@@ -461,6 +242,7 @@ export const taAvailabilitySlice = createSlice({
       state.error = action.error.message;
     });
 
+    // Get Schedule Session
     builder.addCase(getScheduleSession.pending, (state) => {
       state.loading = true;
     });
@@ -470,9 +252,11 @@ export const taAvailabilitySlice = createSlice({
     });
     builder.addCase(getScheduleSession.rejected, (state, action) => {
       state.loading = false;
+      state.scheduledSessionData = [];
       state.error = action.error.message;
     });
 
+    // Get Available Slots
     builder.addCase(fetchAvailableSlots.pending, (state) => {
       state.loading = true;
     });
@@ -485,6 +269,8 @@ export const taAvailabilitySlice = createSlice({
       state.error = action.error.message;
     });
 
+
+    // Delete Future Slots
     builder.addCase(deleteFutureSlots.pending, (state) => {
       state.loading = true;
     });
@@ -492,6 +278,19 @@ export const taAvailabilitySlice = createSlice({
       state.loading = false;
     });
     builder.addCase(deleteFutureSlots.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message;
+    });
+
+    // Reason for Leave
+    builder.addCase(reasonForLeave.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(reasonForLeave.fulfilled, (state, action) => {
+      state.loading = false;
+      state.reasonForLeaveData = action.payload.data;
+    });
+    builder.addCase(reasonForLeave.rejected, (state, action) => {
       state.loading = false;
       state.error = action.error.message;
     });

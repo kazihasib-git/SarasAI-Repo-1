@@ -98,11 +98,13 @@ const DynamicTable = ({
 
   const handlePopup = (id, name, timezone) => {
     const data = { id, name, timezone };
-    if (componentName === "TAMAPPING") {
-      dispatch(openScheduleSession(data));
-    } else {
-      dispatch(openCoachScheduleSession(data));
-    }
+
+    dispatch(openScheduleSession(data));
+    // if (componentName === "TAMAPPING") {
+    //   dispatch(openScheduleSession(data));
+    // } else {
+    //   dispatch(openCoachScheduleSession(data));
+    // }
   };
 
   const handleToggle = (id) => {

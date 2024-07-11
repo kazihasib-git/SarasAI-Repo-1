@@ -66,8 +66,8 @@ const TaScheduling = () => {
         actionButtons={actionButtons}
       />
       {scheduleSessionOpen && <Schedule />}
-      {assignStudentOpen && <AssignStudents />}
-      {assignBatchOpen && <AssignBatches />}
+      {assignStudentOpen && <AssignStudents componentname="ADDEDITTA" />}
+      {assignBatchOpen && <AssignBatches componentname="ADDEDITTA" />}
     </>
   );
 }
