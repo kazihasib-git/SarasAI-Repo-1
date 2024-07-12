@@ -3,7 +3,9 @@ import React, { useEffect, useState } from "react";
 import moment from "moment";
 import { Calendar, momentLocalizer, Views } from 'react-big-calendar';
 import "react-big-calendar/lib/css/react-big-calendar.css";
+
 import "moment/locale/en-gb";
+import "./BigCal.css";
 
 import Header from "../Header/Header";
 import Sidebar from "../Sidebar/Sidebar";
@@ -66,9 +68,9 @@ const CalendarComponent = ({ eventsList, addEvent, slotData /*,handleSelectEvent
         opacity: 1,
         borderRadius: '5px',
         color: 'white',
-        border: '0px',
-        display: 'block',
-        
+        display: 'flex',
+        border: '1px solid #28a745',
+        width: '50%',
       }
     };
   };
@@ -85,10 +87,15 @@ const CalendarComponent = ({ eventsList, addEvent, slotData /*,handleSelectEvent
         // Check if the date falls within the slot's time range
         if (date >= startDate && date <= endDate) {
           return {
+            className: 'custom-timeslot-group',
             style: {
-              backgroundColor: '#B0FC38', // Example background color
-              opacity: 0.5,
-              border: '0px'
+              backgroundColor: '#caffd8', // Example background color
+              opacity: 1,
+              border: 'none'
+              
+              
+              
+              
             }
             // You can add more properties here based on slotData
           };
