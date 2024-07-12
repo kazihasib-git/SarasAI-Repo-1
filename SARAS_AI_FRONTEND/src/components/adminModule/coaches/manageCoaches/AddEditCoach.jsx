@@ -350,6 +350,7 @@ function AddEditCoach({ data }) {
                   helperText={errors.username?.message}
                 />
               </Grid>
+              {!data && (
               <Grid item xs={12} sm={6} md={4}>
                 <CustomTextField
                   label="Password"
@@ -378,6 +379,7 @@ function AddEditCoach({ data }) {
                   helperText={errors.password?.message}
                 />
               </Grid>
+              )}
               <Grid item xs={12} sm={6} md={4}>
                 <CustomTextField
                   label="Address"

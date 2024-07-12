@@ -39,6 +39,7 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { getTimezone } from "../../../../redux/features/timezone/timezoneSlice";
 import CustomTimeZoneForm from "../../../CustomFields/CustomTimeZoneForm";
+import { dateFormatter } from "../../../../utils/dateFormatter";
 
 const AddEditTA = ({ data }) => {
   const {
@@ -76,6 +77,10 @@ const AddEditTA = ({ data }) => {
   }, [data]);
 
   const populateForm = (data) => {
+    // TODO : Neet to format the date in MM/DD/YYYY format
+    // const newDate = dateFormatter(data.date_of_birth)
+    // console.log("NEW DATE : ", newDate)
+
     const formattedDate = moment(data.date_of_birth).format("YYYY-MM-DD");
     setDateOfBirth(formattedDate);
     dispatch(accessTaName(data));
@@ -474,7 +479,7 @@ const AddEditTA = ({ data }) => {
                 control={control}
                 rules={{ required: "Gender is required" }}
                 render={({ field }) => (
-                  <CustomFormControl
+                  <CustomTextField
                     label="Gender"
                     name="gender"
                     value={field.value}
@@ -483,24 +488,10 @@ const AddEditTA = ({ data }) => {
                     options={genders}
                   />
                 )}
+                
               />
             </Grid>
-            {/* <Grid item xs={12} sm={6} md={4}>
-              <CustomDateField
-                label="Date Of Birth"
-                value={
-                  data
-                    ? moment(data.date_of_birth).format("YYYY-MM-DD")
-                    : dateOfBirth
-                }
-                onChange={setDateOfBirth}
-                name="dateOfBirth"
-                register={register}
-                validation={{ required: "Date of birth is required" }}
-                errors={errors}
-                sx={{ width: "100%" }}
-              />
-            </Grid> */}
+     
 
             <Grid item xs={12} sm={6} md={4}>
               <Controller

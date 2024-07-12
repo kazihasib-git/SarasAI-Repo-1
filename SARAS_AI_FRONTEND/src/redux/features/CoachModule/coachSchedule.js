@@ -2,37 +2,32 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { baseUrl } from "../../../utils/baseURL";
 
-
-// Show TA Schedule
 export const showTASchedule = createAsyncThunk(
-    "taScheduling/showTaSchedule",
+    "coachScheduling/showTaSchedule",
     async () => {
         const response = await axios.get(`${baseUrl}/admin/taschedules`);
         return response.data;
     }
 );
 
-// Get TA Scheduled Sessions
 export const getTAScheduledSessions = createAsyncThunk(
-    "taScheduling/getTAScheduledSessions",
+    "coachScheduling/getTAScheduledSessions",
     async ({ id, data}) => {
         const response = await axios.post(`${baseUrl}/admin/taschedules/${id}`, data);
         return response.data;
     }
 );
 
-// Create TA Schedule
-export const createTASchedule = createAsyncThunk(
-    "taScheduling/createTASchedule",
+export const createCoachSchedule = createAsyncThunk(
+    "coachScheduling/createCoachSchedule",
     async (data) => {
-        const response = await axios.post(`${baseUrl}/admin/taschedules`, data);
+        const response = await axios.post(`${baseUrl}/admin/coachschedules`, data);
         return response.data;
     }
 )
 
-// Get TA Available Slots From Date
-export const getTaAvailableSlotsFromDate = createAsyncThunk(
-    'taScheduling/getTaAvailableSlotsFromDate',
+export const getCoachAvailableSlotsFromDate = createAsyncThunk(
+    'coachScheduling/getCoachAvailableSlotsFromDate',
     async (data) => {
         const response = await axios.post(`${baseUrl}/admin/coach-slots/getTACoachSlotForADate`, data);
         return response.data;
@@ -41,7 +36,7 @@ export const getTaAvailableSlotsFromDate = createAsyncThunk(
 
 // Reschedule Session
 export const rescheduleSession = createAsyncThunk(
-    "taAvialability/rescheduleSession",
+    "coachAvailability/rescheduleSession",
     async ({ id , data }) => {
         const response = await axios.put(`${baseUrl}/admin/taschedules/${id}`, data);
         return response.data;
@@ -49,8 +44,8 @@ export const rescheduleSession = createAsyncThunk(
 )
 
 // Cancel Scheduled Sessions
-export const cancelScheduledSession = createAsyncThunk(
-    "taAvialability/cancelScheduledSession",
+export const cancelCoachScheduledSession = createAsyncThunk(
+    "coachAvailability/cancelCoachScheduledSession",
     async (id) => {
       const response = await axios.put(`${baseUrl}/admin/taschedules/${id}/cancel`);
       return response.data;
@@ -58,67 +53,53 @@ export const cancelScheduledSession = createAsyncThunk(
 );
 
 const initialState = {
-    taAvailableSlots: [], // TA Available Slots
-    taScheduledSessions : [], // TA Scheduled Sessions
-    taSchedule: [], // TA Schedule
-    studentBatchMapping: [],  // Student Batch Mapping
-    students: [],  // Students
-    batches: [],  // Batches
+    coachAvailableSlots: [],
+    coachScheduledSessions : [],
+   
     loading: false,
     error: null,
-    
+    studentBatchMapping: [],
     studentBatchMappingLoading: false,
     studentBatchMappingError: null,
-    scheduleSessionOpen: false,
-    taID: null,
-    taName: null,
-    taTimezone : null,
+    scheduleCoachSessionOpen: false,
+    students: [],
+    batches: [],
+    coachID: null,
+    coachName: null,
+    coachTimezone : null,
 };
 
-const taScheduling = createSlice({
-    name: "taScheduling",
+const coachScheduling = createSlice({
+    name: "coachScheduling",
     initialState,
     reducers: {
-        openScheduleSession(state, action) {
+        openCoachScheduleSession(state, action) {
             console.log("Open Action : ", action.payload)
-            state.taID = action.payload.id;
-            state.taName = action.payload.name;
-            state.taTimezone = action.payload.timezone;
+            state.coachID = action.payload.id;
+            state.coachName = action.payload.name;
+            state.coachTimezone = action.payload.timezone;
             if (action.payload.student) {
                 state.students = action.payload.student;
             }
             if (action.payload.batches) {
                 state.batches = action.payload.batches;
             }
-            state.scheduleSessionOpen = true;
+            state.scheduleCoachSessionOpen = true;
         },
-        closeScheduleSession(state, action) {
+        closeCoachScheduleSession(state, action) {
             console.log("Close Action : ", action.payload)
-            state.taID = null;
-            state.taName = null;
-            state.taTimezone = null;
+            state.coachID = null;
+            state.coachName = null;
+            state.coachTimezone = null;
             state.students = [];
             state.batches = [];
-            state.scheduleSessionOpen = false;
+            state.scheduleCoachSessionOpen = false;
         },
         clearAvailableSlots(state) {
-            state.taAvailableSlots = [];
+            state.coachAvailableSlots = [];
         },
     },
     extraReducers: (builder) => {
-        
-        // Show TA Schedule
-        builder.addCase(showTASchedule.pending, (state) => {
-            state.loading = true;
-        });
-        builder.addCase(showTASchedule.fulfilled, (state, action) => {
-            state.loading = false;
-            state.taSchedule = action.payload.data;
-        });
-        builder.addCase(showTASchedule.rejected, (state, action) => {
-            state.loading = false;
-            state.error = action.error.message;
-        });
 
         // Get TA Scheduled Sessions
         builder.addCase(getTAScheduledSessions.pending, (state) => {
@@ -126,7 +107,7 @@ const taScheduling = createSlice({
         });
         builder.addCase(getTAScheduledSessions.fulfilled, (state, action) => {
             state.loading = false;
-            state.taScheduledSessions = action.payload.data;
+            state.coachScheduledSessions = action.payload.data;
         });
         builder.addCase(getTAScheduledSessions.rejected, (state, action) => { 
             state.loading = false;
@@ -134,40 +115,41 @@ const taScheduling = createSlice({
         });
 
         // Create TA Schedule
-        builder.addCase(createTASchedule.pending, (state) => {
+        builder.addCase(createCoachSchedule.pending, (state) => {
             state.loading = true;
         });
-        builder.addCase(createTASchedule.fulfilled, (state, action) => {
+        builder.addCase(createCoachSchedule.fulfilled, (state, action) => {
             state.loading = false;
-            state.taScheduledSessions = action.payload.data;
+            state.coachScheduledSessions = action.payload.data;
         });
-        builder.addCase(createTASchedule.rejected, (state, action) => {
+        builder.addCase(createCoachSchedule.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
         });
 
         // Get TA Available Slots From Date
-        builder.addCase(getTaAvailableSlotsFromDate.pending, (state) => {
+        builder.addCase(getCoachAvailableSlotsFromDate.pending, (state) => {
             state.loading = true;
         });
-        builder.addCase(getTaAvailableSlotsFromDate.fulfilled, (state, action) => {
+        builder.addCase(getCoachAvailableSlotsFromDate.fulfilled, (state, action) => {
             state.loading = false;
-            state.taAvailableSlots = action.payload.data;
+            state.coachAvailableSlots = action.payload.data;
         });
-        builder.addCase(getTaAvailableSlotsFromDate.rejected, (state, action) => {
+        builder.addCase(getCoachAvailableSlotsFromDate.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            state.coachAvailableSlots = []
         });
 
         // Cancel Scheduled Sessions
-        builder.addCase(cancelScheduledSession.pending, (state) => {
+        builder.addCase(cancelCoachScheduledSession.pending, (state) => {
             state.loading = true;
         });
-        builder.addCase(cancelScheduledSession.fulfilled, (state, action) => {
+        builder.addCase(cancelCoachScheduledSession.fulfilled, (state, action) => {
             state.loading = false;
-            state.taScheduledSessions = action.payload.data;
+            state.coachScheduledSessions = action.payload.data;
         });
-        builder.addCase(cancelScheduledSession.rejected, (state, action) => {
+        builder.addCase(cancelCoachScheduledSession.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
         });
@@ -178,19 +160,18 @@ const taScheduling = createSlice({
         });
         builder.addCase(rescheduleSession.fulfilled, (state, action) => {
             state.loading = false;
-            state.taScheduledSessions = action.payload.data;
+            state.coachScheduledSessions = action.payload.data;
         });
         builder.addCase(rescheduleSession.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
         })
-
     },
 });
 
 export const {
-    openScheduleSession,
-    closeScheduleSession,
-} = taScheduling.actions
+    openCoachScheduleSession,
+    closeCoachScheduleSession,
+} = coachScheduling.actions
 
-export default taScheduling.reducer
+export default coachScheduling.reducer

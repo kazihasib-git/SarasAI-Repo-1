@@ -21,6 +21,7 @@ import { openScheduleSession } from "../../redux/features/taModule/taScheduling"
 
 import { updateTA } from "../../redux/features/taModule/taSlice";
 import { updateCoach } from "../../redux/features/CoachModule/coachSlice";
+import { openCoachScheduleSession } from "../../redux/features/CoachModule/coachSchedule";
 
 
 
@@ -70,7 +71,14 @@ const DynamicTable = ({
     //         // Implement view functionality here based on type ('students' or 'batches')
 
     //         console.log(`Viewing ${type} for item with id:`, id);
-    navigate(`/ta-calendar/${taName}/${id}`)
+    console.log("COMPONENTNAME : ", componentName)
+    if (componentName === "COACHAVAILABLE") {
+      navigate(`/coach-calender/${taName}/${id}`)
+    }
+    else if (componentName === "TAAVAILABLE")(
+      navigate(`/ta-calendar/${taName}/${id}`)
+    )
+   
   };
 
 
@@ -98,9 +106,10 @@ const DynamicTable = ({
 
   const handlePopup = (id, name, timezone) => {
     const data = { id, name, timezone };
-    if (componentName === "TAMAPPING") {
+    if (componentName === "TAMAPPING"){
       dispatch(openScheduleSession(data));
     } else {
+      if(componentName === "COACHMAPPING")
       dispatch(openCoachScheduleSession(data));
     }
   };
