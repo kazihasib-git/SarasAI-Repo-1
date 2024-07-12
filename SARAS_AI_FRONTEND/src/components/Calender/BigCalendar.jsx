@@ -24,7 +24,7 @@ const myEventsList = [
   
 ];
 
-const CalendarComponent = ({ eventsList, addEvent,slotData /*,handleSelectEvent*/ }) => {
+const CalendarComponent = ({ eventsList, addEvent, slotData /*,handleSelectEvent*/ }) => {
   // const [eventsList, setEventsList] = useState([]);
 
   // const handleSelectSlot = ({ start, end }) => {

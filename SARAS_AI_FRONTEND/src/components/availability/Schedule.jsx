@@ -61,6 +61,7 @@ const Schedule = () => {
     const [selectedDays, setSelectedDays] = useState([]);
     const [taSlotData, setTaSlotData] = useState([{}]);
     const [selectedSlot, setSelectedSlot] = useState([{}]);
+    const [availableSlotsOptions, setAvailableSlotsOptions] = useState([{}]);
 
     const dispatch = useDispatch()
     const { scheduleSessionOpen, taID, taName, taTimezone, students, batches, taAvailableSlots } = useSelector((state) => state.taScheduling);
@@ -76,7 +77,7 @@ const Schedule = () => {
 
     useEffect(() => {
         dispatch(getTimezone())
-    },[dispatch])
+    }, [dispatch])
 
     useEffect(() => {
         if (taAvailableSlots && taAvailableSlots.length > 0) {
@@ -87,6 +88,17 @@ const Schedule = () => {
                 "To Time": item.to_time,
                 //'Time Zone': item.timezone,
             }));
+
+            // I want to create options for the available slots to select the from and to time 
+            // from time and to will come as a single label
+
+            const options = taAvailableSlots.map((item) => ({
+                label: `${item.from_time} - ${item.to_time}`,
+                value: item.id,
+            }));
+
+            setAvailableSlotsOptions(options);
+
             setTaSlotData(transformData);
         }
     }, [taAvailableSlots]);
@@ -114,10 +126,24 @@ const Schedule = () => {
         });
     }
 
+
+    // 
+    const handleSelectOption = (e) => {
+        const selectedOption = e.target.value;
+        console.log("selectedOption : ", selectedOption)
+        const selectedSlot = taSlotData.filter((slot) => slot.id === selectedOption);
+        console.log("selectedSlot : ", selectedSlot)
+        setSelectedSlot(selectedSlot);
+    }
+
     const handleAssignStudents = () => {
         // dispatch(closeScheduleSession())
         dispatch(openAssignStudents());
     }
+
+    // const handleClear = () => {
+    //     setSelectedSlot([{}]);
+    // }
 
     const handleAssignBatches = () => {
         // dispatch(closeScheduleSession())
@@ -128,10 +154,6 @@ const Schedule = () => {
         console.log("formData : ", formData)
         const studentId = students.map((student) => student.id)
         const batchId = batches.map((batch) => batch.id)
-        console.log("students Id : ", studentId)
-        console.log("batch Id : ", batchId)
-        console.log("selected Daysss : ", selectedDays)
-        console.log("selected Slot : ", selectedSlot, selectedSlot[1])
 
         let weeksArray = Array(7).fill(0);
         if (repeat === 'recurring') {
@@ -144,7 +166,7 @@ const Schedule = () => {
             weeksArray[index] = 1;
         }
 
-        console.log("weeksArray : ", weeksArray)
+        console.log("selectedSlot : ", selectedSlot)
 
         formData.start_time = fromTime;
         formData.end_time = toTime;
@@ -152,7 +174,7 @@ const Schedule = () => {
         formData.schedule_date = fromDate;
         formData.end_date = repeat === 'recurring' ? toDate : fromDate;
         formData.admin_user_id = taID;
-        formData.slot_id = selectedSlot[1];
+        // formData.slot_id = selectedSlot[1];
         // formData.slot_id = 2;
         formData.event_status = "scheduled";
         formData.weeks = weeksArray;
@@ -168,59 +190,13 @@ const Schedule = () => {
     const content = (
         <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: '100%', width: '100%' }}>
             <Grid container spacing={3} justifyContent="center">
-                <Grid item xs={12} display="flex" justifyContent="center">
-                    <Box display="flex" justifyContent="center" gap={2} sx={{ mb: 3 }}>
-                        <Button
-                            variant="contained"
-                            onClick={handleAssignStudents}
-                            sx={{
-                                backgroundColor: "#F56D3B",
-                                color: "white",
-                                height: "60px",
-                                width: "201px",
-                                borderRadius: "50px",
-                                textTransform: "none",
-                                padding: "18px 30px",
-                                fontWeight: "700",
-                                fontSize: "16px",
-                                "&:hover": {
-                                    backgroundColor: '#D4522A',
-                                },
-                            }}
-                        >
-                            Students
-                        </Button>
-                        <Button
-                            variant="outlined"
-                            onClick={handleAssignBatches}
-                            sx={{
-                                backgroundColor: "white",
-                                color: "#F56D3B",
-                                height: "60px",
-                                width: "194px",
-                                border: "2px solid #F56D3B",
-                                borderRadius: "50px",
-                                textTransform: "none",
-                                fontWeight: "700",
-                                fontSize: "16px",
-                                padding: "18px 30px",
-                                "&:hover": {
-                                    backgroundColor: '#F56D3B',
-                                    color: 'white',
-                                },
-                            }}
-                        >
-                            Batches
-                        </Button>
-                    </Box>
-                </Grid>
 
                 <form onSubmit={handleSubmit(onSubmit)} noValidate>
                     <Box display="flex" justifyContent="center" m={4}>
                         <Grid container spacing={3} justifyContent="center">
                             <Grid item xs={12} sm={6} display="flex" justifyContent="center">
                                 <CustomDateField
-                                    label="From Date"
+                                    label="Date"
                                     value={fromDate}
                                     onChange={setFromDate}
                                     name="schedule_date"
@@ -239,6 +215,25 @@ const Schedule = () => {
                                     ) : (
                                         <>
                                             <Grid item xs={12} display="flex" justifyContent="center">
+                                                <Controller
+                                                    name="slot_id"
+                                                    control={control}
+                                                    rules={{ required: 'Slot is required' }}
+                                                    render={({ field }) => (
+                                                        <CustomFormControl
+                                                            label="Available Slots"
+                                                            name="slot_id"
+                                                            value={field.value}
+                                                            onChange={field.onChange}
+                                                            options={availableSlotsOptions}
+                                                            errors={errors}
+                                                        />
+                                                    )}
+                                                />
+                                            </Grid>
+
+                                            {/*
+                                            <Grid item xs={12} display="flex" justifyContent="center">
                                                 <PopUpTable
                                                     headers={headers}
                                                     initialData={taSlotData}
@@ -246,6 +241,7 @@ const Schedule = () => {
                                                     selectedBox={selectedSlot}
                                                 />
                                             </Grid>
+                                            */}
 
                                             <Grid container spacing={3} sx={{ pt: 3 }} justifyContent="center">
                                                 <Grid item xs={12} display="flex" justifyContent="center">
@@ -307,7 +303,55 @@ const Schedule = () => {
                                                         }}
                                                     />
                                                 </Grid>
+                                                <Grid item xs={12} display="flex" justifyContent="center">
+                                                    <Box display="flex" justifyContent="center" gap={2} sx={{ mb: 3 }}>
+                                                        <Button
+                                                            variant="contained"
+                                                            onClick={handleAssignStudents}
+                                                            sx={{
+                                                                backgroundColor: "#F56D3B",
+                                                                color: "white",
+                                                                height: "60px",
+                                                                width: "201px",
+                                                                borderRadius: "50px",
+                                                                textTransform: "none",
+                                                                padding: "18px 30px",
+                                                                fontWeight: "700",
+                                                                fontSize: "16px",
+                                                                "&:hover": {
+                                                                    backgroundColor: '#D4522A',
+                                                                },
+                                                            }}
+                                                        >
+                                                            Edit Students
+                                                        </Button>
+                                                        <Button
+                                                            variant="outlined"
+                                                            onClick={handleAssignBatches}
+                                                            sx={{
+                                                                backgroundColor: "white",
+                                                                color: "#F56D3B",
+                                                                height: "60px",
+                                                                width: "194px",
+                                                                border: "2px solid #F56D3B",
+                                                                borderRadius: "50px",
+                                                                textTransform: "none",
+                                                                fontWeight: "700",
+                                                                fontSize: "16px",
+                                                                padding: "18px 30px",
+                                                                "&:hover": {
+                                                                    backgroundColor: '#F56D3B',
+                                                                    color: 'white',
+                                                                },
+                                                            }}
+                                                        >
+                                                            Edit Batches
+                                                        </Button>
+                                                    </Box>
+                                                </Grid>
                                             </Grid>
+
+
 
                                             <Grid container spacing={3} justifyContent="center" sx={{ pt: 3 }}>
                                                 <Grid item xs={12} display="flex" justifyContent="center">
@@ -415,11 +459,12 @@ const Schedule = () => {
         <ReusableDialog
             open={scheduleSessionOpen}
             handleClose={() => dispatch(closeScheduleSession())}
-            title={`Schedule Session for ${taName}`}
+            title={'Schedule'} 
+            //Session for ${taName}`}
             content={content}
         // actions={actions}
         />
     )
 }
 
-export default Schedule
+export default Schedule 
