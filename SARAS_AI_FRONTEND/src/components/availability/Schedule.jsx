@@ -192,7 +192,7 @@ const Schedule = ({ componentName }) => {
             // I want to create options for the available slots to select the from and to time 
             // from time and to will come as a single label
 
-            const options = taAvailableSlots.map((item) => ({
+            const options = availableSlots.map((item) => ({
                 label: `${item.from_time} - ${item.to_time}`,
                 value: item.id,
             }));
