@@ -42,7 +42,7 @@ const AddActivity = () => {
   const dispatch = useDispatch();
   const [activityName, setActivityName] = useState("");
   const [activityType, setActivityType] = useState("");
-  const { openActivityPopUp } = useSelector((state) => state.coachTemplate);
+  const { openActivityPopUp, selectedModule } = useSelector((state) => state.coachTemplate);
   const content = (
     <Grid
       container
@@ -91,9 +91,25 @@ const AddActivity = () => {
     </Grid>
   );
 
+  const handleSubmit = () =>{
+    const data = {
+        "module_id": selectedModule,
+        "activity_type_id": 1,
+        "activity_name": activityName,
+        "due_date": "2024-07-29",
+        "points": 100,
+        "after_due_date": "2024-07-30",
+        "is_active": true,
+        "created_by": null,
+        "updated_by": null
+    };
+
+
+  };
+
   const actions = (
     <CustomButton
-      //   onClick={handleSubmit}
+      onClick={handleSubmit}
       backgroundColor="#F56D3B"
       borderColor="#F56D3B"
       color="#FFFFFF"
@@ -106,7 +122,7 @@ const AddActivity = () => {
     <>
       <ReusableDialog
         open={openActivityPopUp}
-        handleClose={() => dispatch(closeTemplateActivityPopup())}
+        handleClose={()=> dispatch(closeTemplateActivityPopup())}
         title="Add Activity"
         content={content}
         actions={actions}
