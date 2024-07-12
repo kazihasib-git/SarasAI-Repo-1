@@ -39,7 +39,7 @@ const CoachAvialablity = () => {
       setCoachAvailabilityData(transformData);
     }
   }, [todaysAvailableCoach]);
-  console.log("DATA : ", coachAvailabilityData);
+  console.log("Coach Available Data : ", coachAvailabilityData);
 
   const actionButtons = [
     {
@@ -79,7 +79,6 @@ const CoachAvialablity = () => {
           initialData={coachAvailabilityData}
           componentName={"COACHAVAILABLE"}
           actionButtons={actionButtons}
-          title="Coach Availability"
         />
       </Box>
     </>

@@ -3,12 +3,23 @@ import ReusableDialog from "../CustomFields/ReusableDialog";
 import { Box, Button, DialogContent, Typography } from "@mui/material";
 import DynamicTable from "../CommonComponent/DynamicTable";
 import { useDispatch, useSelector } from "react-redux";
+import PopUpTable from "../CommonComponent/PopUpTable";
+
 import {
   closeScheduledSession,
   openCancelSession,
   openRescheduleSession,
+  openScheduledSlots,
+  reasonForLeave,
 } from "../../redux/features/taModule/taAvialability";
-import PopUpTable from "../CommonComponent/PopUpTable";
+
+import {
+  closeCoachScheduledSession,
+  openCoachCancelSession,
+  openCoachRescheduleSession,
+  openCoachScheduledSlots,
+} from "../../redux/features/CoachModule/CoachAvailabilitySlice";
+import { useParams } from "react-router-dom";
 
 const CustomButton = ({
   onClick,
@@ -45,11 +56,60 @@ const CustomButton = ({
   );
 };
 
-const ScheduledSessions = () => {
+const ScheduledSessions = ({ componentName }) => {
   const dispatch = useDispatch();
-  const { scheduledSessionOpen, scheduledSessionData } = useSelector(
-    (state) => state.taAvialability
+  const { id } = useParams(); // Ensure the correct ID is used
+
+  let scheduleSessionOpenKey,
+    scheduledSessionDataKey,
+    schedulingStateKey,
+    closeSessionAction,
+    openCancelAction,
+    openRescheduleAction,
+    openSlotsAction,
+    slotEventAction;
+
+  switch (componentName) {
+    case "TACALENDER":
+      scheduleSessionOpenKey = "scheduledSessionOpen";
+      scheduledSessionDataKey = "scheduledSessionData";
+      schedulingStateKey = "taAvialability";
+      closeSessionAction = closeScheduledSession;
+      openCancelAction = openCancelSession;
+      openRescheduleAction = openRescheduleSession;
+      openSlotsAction = openScheduledSlots;
+      slotEventAction = "slotEventData"
+      break;
+    case "COACHCALENDER":
+      scheduleSessionOpenKey = "scheduledCoachSessionOpen";
+      scheduledSessionDataKey = "scheduledCoachSessionData";
+      schedulingStateKey = "coachAvailability";
+      closeSessionAction = closeCoachScheduledSession;
+      openCancelAction = openCoachCancelSession;
+      openRescheduleAction = openCoachRescheduleSession;
+      openSlotsAction = openCoachScheduledSlots;
+      slotEventAction = "slotCoachEventData"
+      break;
+    default:
+      scheduleSessionOpenKey = null;
+      scheduledSessionDataKey = null;
+      schedulingStateKey = null;
+      closeSessionAction = null;
+      openCancelAction = null;
+      openRescheduleAction = null;
+      openSlotsAction = null;
+      slotEventAction = null;
+      break;
+  }
+
+  const schedulingState = useSelector((state) =>
+    schedulingStateKey ? state[schedulingStateKey] : {}
   );
+  const {
+    [scheduleSessionOpenKey]: scheduledSessionOpen,
+    [scheduledSessionDataKey]: scheduledSessionData = [],
+    [slotEventAction]:slotEventData,
+  } = schedulingState;
 
   const headers = [
     "S. No.",
@@ -61,7 +121,7 @@ const ScheduledSessions = () => {
   ];
 
   const formattedData = scheduledSessionData.map((session, index) => ({
-    "S. No.": index + 1,
+    "S. No.": session.id,
     "Session Name": session.meeting_name,
     Date: session.date.split(" ")[0],
     Time: `${session.start_time} - ${session.end_time}`,
@@ -75,27 +135,26 @@ const ScheduledSessions = () => {
   };
 
   const handleRescheduleClick = (session) => {
-    dispatch(closeScheduledSession());
-    dispatch(openRescheduleSession());
+    dispatch(closeSessionAction());
+    dispatch(openRescheduleAction(session));
     console.log("Reschedule clicked!", session);
   };
 
   const handleCancelClick = (session) => {
-    dispatch(closeScheduledSession());
-    dispatch(openCancelSession(session));
+    dispatch(closeSessionAction());
+    dispatch(openCancelAction(session));
     console.log("Cancel clicked!", session);
   };
 
   const handleSubmit = () => {
     console.log("*** ScheduledSessions");
+    // dispatch(reasonForLeave(slotEventData);
   };
 
-  const content = (
+  const content =
     formattedData.length === 0 ? (
       <DialogContent style={{ justifyContent: "center", display: "flex" }}>
-        <Typography>
-          No scheduled sessions.
-        </Typography>
+        <Typography>No scheduled sessions.</Typography>
       </DialogContent>
     ) : (
       <PopUpTable
@@ -105,8 +164,7 @@ const ScheduledSessions = () => {
         onRescheduleClick={handleRescheduleClick}
         onCancelClick={handleCancelClick}
       />
-    )
-  );
+    );
 
   const actions = (
     <Box>
@@ -124,14 +182,15 @@ const ScheduledSessions = () => {
   return (
     <ReusableDialog
       open={scheduledSessionOpen}
-      handleClose={() => dispatch(closeScheduledSession())}
+      handleClose={() => {
+        dispatch(openSlotsAction());
+        dispatch(closeSessionAction());
+      }}
       title="Scheduled Sessions"
       content={content}
-      actions={actions}
+      actions={scheduledSessionData.length === 0 ? actions : undefined}
     />
   );
 };
 
 export default ScheduledSessions;
-
-

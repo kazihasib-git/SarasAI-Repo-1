@@ -38,10 +38,12 @@ import {
   openAssignBatches,
   openAssignStudents,
 } from "../../redux/features/taModule/taSlice";
-import {
+import { Controller,
   openCoachAssignBatches,
   openCoachAssignStudents,
 } from "../../redux/features/CoachModule/coachSlice";
+import { getTimezone } from '../../redux/features/timezone/timezoneSlice';
+import CustomTimeZoneForm from '../CustomFields/CustomTimeZoneForm';
 
 const CustomButton = ({
   onClick,
@@ -107,53 +109,83 @@ const Schedule = ({ componentName }) => {
   const [selectedSlot, setSelectedSlot] = useState([{}]);
 
   const dispatch = useDispatch();
+  let scheduleSessionOpenKey, schedulingStateKey, availableKey, idKey, nameKey, timezoneKey, getAvailableSlotsAction, closeScheduleSessionAction, createScheduleAction;
+
+  switch (componentName) {
+    case "TASCHEDULE":
+      scheduleSessionOpenKey = "scheduleSessionOpen";
+      schedulingStateKey = "taScheduling";
+      availableKey = "taAvailableSlots";
+      idKey = "taID";
+      nameKey = "taName";
+      timezoneKey = "taTimezone";
+      getAvailableSlotsAction = getTaAvailableSlotsFromDate;
+      closeScheduleSessionAction = closeScheduleSession;
+      createScheduleAction = createTASchedule;
+      break;
+    case "COACHSCHEDULE":
+      scheduleSessionOpenKey = "scheduleCoachSessionOpen";
+      schedulingStateKey = "coachScheduling";
+      availableKey = "coachAvailableSlots";
+      idKey = "coachID";
+      nameKey = "coachName";
+      timezoneKey = "coachTimezone";
+      getAvailableSlotsAction = getCoachAvailableSlotsFromDate;
+      closeScheduleSessionAction = closeCoachScheduleSession;
+      createScheduleAction = createCoachSchedule;
+      break;
+    default:
+      scheduleSessionOpenKey = null;
+      schedulingStateKey = null;
+      availableKey = null;
+      idKey = null;
+      nameKey = null;
+      timezoneKey = null;
+      getAvailableSlotsAction = null;
+      closeScheduleSessionAction = null;
+      createScheduleAction = null;
+      break;
+  }
+
+  const schedulingState = useSelector((state) => (schedulingStateKey ? state[schedulingStateKey] : {}));
   const {
-    scheduleSessionOpen,
-    scheduleCoachSessionOpen,
-    taID,
-    taName,
-    coachName,
-    coachID,
-    taTimezone,
-    coachTimezone,
+    [scheduleSessionOpenKey]: scheduleSessionOpen,
+    [idKey]: adminUserID,
+    [nameKey]: adminUserName,
+    [timezoneKey]: adminUserTimezone,
+    [availableKey]: availableSlots,
     students,
     batches,
-    availableSlots,
-  } = useSelector((state) => {
-    if (componentName === "TASCHEDULE") return state.taScheduling;
-    if (componentName === "COACHSCHEDULE") return state.coachScheduling;
-  });
+  } = schedulingState;
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    control, formState: { errors },
   } = useForm();
 
   useEffect(() => {
     if (fromDate) {
-      if (componentName === "TASCHEDULE") {
-        dispatch(
-          getTaAvailableSlotsFromDate({ admin_user_id: taID, date: fromDate })
-        );
-      } else if (componentName === "COACHSCHEDULE") {
-        dispatch(
-          getCoachAvailableSlotsFromDate({
-            admin_user_id: coachID,
-            date: fromDate,
-          })
-        );
-      }
+      dispatch(getAvailableSlotsAction({ admin_user_id: adminUserID, date: fromDate }));
     }
-  }, [fromDate]);
+  }, [fromDate, dispatch, adminUserID, getAvailableSlotsAction]);
+
+    // const { timezones } = useSelector((state) => state.timezone);
+
+    useEffect(() => {
+        dispatch(getTimezone())
+    },[dispatch])
 
   useEffect(() => {
+    console.log("AVIALABLE KEY : ", availableKey)
+    console.log("Avaialable slots : ", availableSlots)
     if (availableSlots && availableSlots.length > 0) {
-      const transformData = availableSlots.map((item) => ({
-        "S. No.": item.id,
+      const transformData = availableSlots.map((item, index) => ({
+        "S. No.": index+1,
         "Slot Date": item.slot_date,
         "From Time": item.from_time,
         "To Time": item.to_time,
+        id:item.id
       }));
       setSlotData(transformData);
     }
@@ -200,36 +232,31 @@ const Schedule = ({ componentName }) => {
     const batchId = batches.map((batch) => batch.id);
 
     let weeksArray = Array(7).fill(0);
-    if (repeat === "recurring") {
+    if  (repeat === "recurring") {
       selectedDays.forEach((day) => {
         const index = weekDays.indexOf(day);
         weeksArray[index] = 1;
       });
-    } else if (repeat === "onetime") {
+    }  else if  (repeat === "onetime") {
       const index = new Date(fromDate).getDay();
       weeksArray[index] = 1;
     }
-
+    console.log("FORM DATA : ", formData)
     formData.start_time = fromTime;
     formData.end_time = toTime;
     formData.timezone = timezone;
     formData.schedule_date = fromDate;
     formData.end_date = repeat === "recurring" ? toDate : fromDate;
-    formData.admin_user_id = taID;
-    formData.slot_id = selectedSlot[1];
+    formData.admin_user_id = adminUserID;
+    formData.slot_id = selectedSlot[1]; // Assuming single slot selection
     formData.event_status = "scheduled";
     formData.weeks = weeksArray;
-    formData.timezone = "IST";
+    formData.timezone = adminUserTimezone;
     formData.studentId = studentId;
     formData.batchId = batchId;
 
-    if (componentName === "TASCHEDULE") {
-      dispatch(createTASchedule({ ...formData }));
-      dispatch(closeScheduleSession());
-    } else if (componentName === "COACHSCHEDULE") {
-      dispatch(createCoachSchedule({ ...formData }));
-      dispatch(closeCoachScheduleSession());
-    }
+    dispatch(createScheduleAction({ ...formData }));
+    dispatch(closeScheduleSessionAction());
   };
 
   const content = (
@@ -396,7 +423,7 @@ const Schedule = ({ componentName }) => {
                           <CustomFormControl
                             label="Select Timezone"
                             name="timezone"
-                            value={componentName === "TASCHEDULE" ? taTimezone : coachTimezone}
+                            value={adminUserTimezone}
                             controlProps={{
                               select: true,
                               fullWidth: true,
@@ -533,15 +560,9 @@ const Schedule = ({ componentName }) => {
 
   return (
     <ReusableDialog
-      open={componentName === "TASCHEDULE" ? scheduleSessionOpen : scheduleCoachSessionOpen}
-      handleClose={() => {
-        if (componentName === "TASCHEDULE") {
-          dispatch(closeScheduleSession());
-        } else if (componentName === "COACHSCHEDULE") {
-          dispatch(closeCoachScheduleSession());
-        }
-      }}
-      title={`Schedule Session for ${componentName === "TASCHEDULE" ? taName : coachName}`}
+      open={scheduleSessionOpen}
+      handleClose={() => {dispatch(closeScheduleSessionAction())}}
+      title={`Schedule Session for ${adminUserName}`}
       content={content}
     />
   );

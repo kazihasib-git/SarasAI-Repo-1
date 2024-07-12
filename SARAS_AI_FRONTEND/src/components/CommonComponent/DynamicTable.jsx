@@ -71,7 +71,14 @@ const DynamicTable = ({
     //         // Implement view functionality here based on type ('students' or 'batches')
 
     //         console.log(`Viewing ${type} for item with id:`, id);
-    navigate(`/ta-calendar/${taName}/${id}`)
+    console.log("COMPONENTNAME : ", componentName)
+    if (componentName === "COACHAVAILABLE") {
+      navigate(`/coach-calender/${taName}/${id}`)
+    }
+    else if (componentName === "TAAVAILABLE")(
+      navigate(`/ta-calendar/${taName}/${id}`)
+    )
+   
   };
 
 

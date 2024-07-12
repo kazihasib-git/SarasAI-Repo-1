@@ -128,8 +128,8 @@ function App() {
               element={<CoachMapping page="Coach Mapping" />}
             />
             <Route
-              path="coach-manage/tacalender"
-              element={<CoachCalender />}
+              path="coach-calender/:name/:id"
+              element={<CoachCalender page="Calendar" />}
             />
             <Route
               path="coach-template"
