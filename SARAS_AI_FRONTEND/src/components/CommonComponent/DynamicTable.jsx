@@ -18,7 +18,7 @@ import bin from "../../assets/bin.png";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { useDispatch } from "react-redux";
 import { openScheduleSession } from "../../redux/features/taModule/taScheduling";
-
+import { openCoachScheduleSession} from "../../redux/features/CoachModule/coachSchedulslice";
 import { updateTA } from "../../redux/features/taModule/taSlice";
 import { updateCoach } from "../../redux/features/CoachModule/coachSlice";
 
@@ -302,6 +302,7 @@ const DynamicTable = ({
                               color="secondary"
                               endIcon={<CallMadeOutlinedIcon />}
                               onClick={() => handleCalender('Calendar', item.id, item.taName)}
+                              style={{ textTransform: 'none' }}
                             >
                               Check
                             </CustomButton>

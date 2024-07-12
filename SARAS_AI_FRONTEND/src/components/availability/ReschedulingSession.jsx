@@ -84,7 +84,7 @@ const ReschedulingSession = () => {
   }, [availableSlotsData]);
 
   const handleDateChange = (date) => {
-    console.log("Date selected:", date);
+   
     setSelectDate(date);
     setSelectedSlots([]); // Clear selected slots when date changes
   };
@@ -103,13 +103,13 @@ const ReschedulingSession = () => {
 
   const content = (
     <>
-      <Grid item xs={12} sm={6} mb={2} pt={"16px"}>
+    <Grid item xs={12} sm={6} mb={2} pt={"16px"} style={{ display: 'flex', justifyContent: 'center' }}>
         <CustomDateField
           label="Select Date"
           value={selectDate}
           onChange={handleDateChange}
           name="selectDate"
-          sx={{ width: "100%" }}
+          sx={{ width: "50%" }}
         />
       </Grid>
 

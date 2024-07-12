@@ -4,6 +4,7 @@ import "./popUpTable.css";
 import { useNavigate } from "react-router-dom";
 import editIcon from "../../assets/editIcon.png";
 import bin from "../../assets/bin.png";
+import CallMadeOutlinedIcon from "@mui/icons-material/CallMadeOutlined";
 
 const CustomButton = ({ onClick, children, variant = 'contained', color = '#FFFFFF', backgroundColor = '#4E18A5', borderColor = '#FFFFFF', sx, ...props }) => {
   const variantStyles = {
@@ -109,8 +110,16 @@ const PopUpTable = ({ headers, initialData, onRowClick, selectedBox = [] ,onView
                         borderColor="#F56D38"
                         variant="contained"
                         onClick={() => onCancelClick(item)}
+                        endIcon={<CallMadeOutlinedIcon />}
+                        style={{ 
+                         
+                          textTransform: 'none', 
+                          padding: '4px 8px', // Adjust padding as needed
+                          fontSize: '0.875rem', // Adjust font size as needed
+                          minWidth: 'auto' // Ensures button doesn't have a minimum width
+                        }}
                       >
-                        Cancel
+                        Check
                       </CustomButton>
                       <div
                         style={{
@@ -118,6 +127,7 @@ const PopUpTable = ({ headers, initialData, onRowClick, selectedBox = [] ,onView
                           cursor: "pointer",
                           marginTop: "4px",
                           color: "#F56D3B",
+                          fontSize:'0.570rem'
                         }}
                         onClick={() => onRescheduleClick(item)}
                       >
@@ -132,7 +142,17 @@ const PopUpTable = ({ headers, initialData, onRowClick, selectedBox = [] ,onView
                         backgroundColor="#FFFFFF"
                         borderColor="#F56D38"
                         color="#F56D38"
-                        onClick={() => onViewClick(item.StudentList)}
+                        padding= "4px 16px 4px 16px"
+                        endIcon={<CallMadeOutlinedIcon />}
+                        onClick={() => onViewClick('calendar' , item.StudentList)}
+                        style={{ 
+                          textTransform: 'none', 
+                          padding: '4px 16px 4px 16px', 
+                          marginBottom: '15px', // Adjust marginBottom to move it upwards
+                          fontSize: '0.875rem', // Adjust font size as needed
+                          minWidth: 'auto' ,// Ensures button doesn't have a minimum width
+                          
+                        }}
                       >
                         View
                       </CustomButton>

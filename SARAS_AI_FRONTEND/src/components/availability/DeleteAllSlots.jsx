@@ -61,7 +61,7 @@ const DeleteAllSlots = ({ open, handleClose ,id , name}) => {
             <Grid container spacing={2}>
                 <Grid item xs={12}>
                     <CustomTextField
-                        label="Reason for Deletion"
+                        label="Reason for leave"
                         fullWidth
                         placeholder="Enter reason for deletion"
                         variant="outlined"

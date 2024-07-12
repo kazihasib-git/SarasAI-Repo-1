@@ -149,6 +149,7 @@ const TaCalender
                                     color='#FFFFFF'
                                     backgroundColor='#4E18A5'
                                     borderColor='#4E18A5'
+                                    style={{ textTransform: 'none' }}
                                 >
                                     <AddCircleOutlineIcon />
                                     Schedule New Session
@@ -159,6 +160,7 @@ const TaCalender
                                     color='#F56D3B'
                                     backgroundColor='#FFFFFF'
                                     borderColor='#F56D3B'
+                                    style={{ textTransform: 'none' }}
                                 >
                                     Mark Leave
                                 </CustomButton>
@@ -168,6 +170,7 @@ const TaCalender
                                     color='#F56D3B'
                                     backgroundColor='#FFFFFF'
                                     borderColor='#F56D3B'
+                                    style={{ textTransform: 'none' }}
                                 >
                                     Delete All Future Slots
                                 </CustomButton>
@@ -177,6 +180,7 @@ const TaCalender
                                     backgroundColor='#F56D3B'
                                     borderColor='#F56D3B'
                                     onClick={setCreateNewSlot}
+                                    style={{ textTransform: 'none' }}
                                 >
                                     {/* <AddCircleOutlineIcon /> */}
                                     Create New Slot

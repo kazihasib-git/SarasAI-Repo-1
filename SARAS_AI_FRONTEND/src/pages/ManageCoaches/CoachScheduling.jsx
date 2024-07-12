@@ -3,29 +3,54 @@ import { DataGrid } from "@mui/x-data-grid";
 import { mockMappingDat } from '../../fakeData/mappingData';
 import Header from "../../components/Header/Header";
 import Sidebar from "../../components/Sidebar/Sidebar";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { OnOffSwitch } from '../../components/Switch';
 import editIcon from '../../assets/editIcon.png';
 import DynamicTable from '../../components/CommonComponent/DynamicTable';
+import { useDispatch, useSelector } from 'react-redux';
+import { showCoachMapping } from '../../redux/features/CoachModule/coachSlice';
+
 
 const CoachSheduling = () => {
+  const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [currentRow, setCurrentRow] = useState(null);
+  const { coachMapping , loading } = useSelector((state) => state.coachModule);
   const [viewType, setViewType] = useState('');
+  const [coachScheduleData, setCoachScheduleData] = useState([]);
+  const [triggerFetch, setTriggerFetch] = useState(false);
+ 
+  useEffect(() => {
+    dispatch(showCoachMapping());
+  }, [dispatch]);
+  
+  useEffect(() => {
+    console.log("CoachSCHEDULE : ", coachMapping)
+    if (coachMapping && coachMapping.length > 0) {
+      const transformData = coachMapping.map((item, index) => ({
+        id: item.id,
+        name: item.name,
+        Username: item.username,
+        Active_Students: item.Active_Students,
+        Active_Batches: item.Active_Batches,
+      }));
 
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
+      setCoachScheduleData(transformData);
+    }
+  }, [coachMapping]);
+
   const actionButtons = [
     {
       type: "calendar",
       text: "Schedule",
-      onClick: (rowData) => {
-        console.log("Schedule button clicked for row:", rowData);
-        handleEdit(rowData.id);
-      },
+      
     },
   ];
+ 
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
@@ -51,7 +76,8 @@ const CoachSheduling = () => {
   };
 
   const handleEdit = (id) => {
-    console.log(`Edit TA with ID: ${id}`);
+    
+  
     handleOpenModal();
   };
 
@@ -170,7 +196,7 @@ const CoachSheduling = () => {
         }}>
            <DynamicTable
                         headers={headers}
-                        initialData={mockMappingDat}
+                        initialData={coachScheduleData}
                         actionButtons={actionButtons}
                         componentName={"MANAGECOACH"}
                     />

@@ -43,14 +43,17 @@ const ReasonForLeave = () => {
 
     const content = (
             <Grid container spacing={2}>
-                <Grid item xs={12}>
-                    <CustomTextField
-                        label="Reason for Deletion"
+               <Grid item xs={120}>  
+                 <CustomTextField
+                        label="Reason for Leave"
                         fullWidth
                         placeholder="Enter reason for deletion"
                         variant="outlined"
                         multiline
                         rows={4}
+                        
+                        
+                         
                     />
                 </Grid>
             </Grid>

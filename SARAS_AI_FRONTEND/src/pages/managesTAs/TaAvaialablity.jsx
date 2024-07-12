@@ -243,7 +243,7 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
 //     );
 // };
 
-const headers = ["Sr. No.", "TA Name", "Username", "Availability", "Calendar"];
+const headers = ["Sr. No.", "TA Name", "Username", "Current Availability", "Calendar"];
 
 const TaAvialability = () => {
 
@@ -281,6 +281,18 @@ const TaAvialability = () => {
         <>
             <Header />
             <Sidebar />
+            <Box display={"flex"} justifyContent={"space-between"} marginTop={3}>
+        <pre
+          style={{
+            fontSize: "44px",
+            justifyContent: "center",
+            marginBottom: "20px",
+            fontFamily:"ExtraLight"
+          }}
+        >
+          TA  Availability
+        </pre>
+      </Box>
             <DynamicTable
                 headers={headers}
                 initialData={taAvailabilityData}
