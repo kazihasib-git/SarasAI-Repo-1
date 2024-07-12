@@ -52,12 +52,14 @@ const CalendarComponent = ({ eventsList, addEvent,slotData /*,handleSelectEvent*
       }));
       setMyEventsList(transformedEvents);
     }
-  }, [eventsList]);
+  }, [eventsList , slotData]);
 
   const showSessionPopUp = () => {
     console.log("clicked");
   };
+  
   console.log("event list:",eventsList);
+
   const eventStyleGetter = (event) => {
     
     return {
@@ -76,13 +78,8 @@ const CalendarComponent = ({ eventsList, addEvent,slotData /*,handleSelectEvent*
   const slotPropGetter = (date) => {
     if (slotData) {
       // Iterate over each slot object in slotData
-      for (let i = 0; i < slotData.data.length; i++) {
-        // setTimeout(() => {
-        //   const timeslotGroups = document.getElementsByClassName('rbc-timeslot-group');
-        //   Array.from(timeslotGroups).forEach((element) => {
-        //     element.classList.add('custom-timeslot-group');
-        //   });
-        // }, 0);
+      for (let i = 0; i < slotData.data?.length; i++) {
+        
         const slot = slotData.data[i];
         const startDate = new Date(slot.slot_date + 'T' + slot.from_time); // Combine date and time
         const endDate = new Date(slot.slot_date + 'T' + slot.to_time); // Combine date and time

@@ -2,6 +2,8 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { baseUrl } from "../../../utils/baseURL";
 
+
+// Show TA Schedule
 export const showTASchedule = createAsyncThunk(
     "taScheduling/showTaSchedule",
     async () => {
@@ -10,6 +12,7 @@ export const showTASchedule = createAsyncThunk(
     }
 );
 
+// Get TA Scheduled Sessions
 export const getTAScheduledSessions = createAsyncThunk(
     "taScheduling/getTAScheduledSessions",
     async ({ id, data}) => {
@@ -18,6 +21,7 @@ export const getTAScheduledSessions = createAsyncThunk(
     }
 );
 
+// Create TA Schedule
 export const createTASchedule = createAsyncThunk(
     "taScheduling/createTASchedule",
     async (data) => {
@@ -26,6 +30,7 @@ export const createTASchedule = createAsyncThunk(
     }
 )
 
+// Get TA Available Slots From Date
 export const getTaAvailableSlotsFromDate = createAsyncThunk(
     'taScheduling/getTaAvailableSlotsFromDate',
     async (data) => {
@@ -34,18 +39,37 @@ export const getTaAvailableSlotsFromDate = createAsyncThunk(
     }
 )
 
+// Reschedule Session
+export const rescheduleSession = createAsyncThunk(
+    "taAvialability/rescheduleSession",
+    async ({ id , data }) => {
+        const response = await axios.post(`${baseUrl}/admin/taschedules/${id}`, data);
+        return response.data;
+    }
+)
+
+// Cancel Scheduled Sessions
+export const cancelScheduledSession = createAsyncThunk(
+    "taAvialability/cancelScheduledSession",
+    async (id) => {
+      const response = await axios.put(`${baseUrl}/admin/taschedules/${id}/cancel`);
+      return response.data;
+    }
+);
+
 const initialState = {
-    taAvailableSlots: [],
-    taScheduledSessions : [],
-    taSchedule: [],
+    taAvailableSlots: [], // TA Available Slots
+    taScheduledSessions : [], // TA Scheduled Sessions
+    taSchedule: [], // TA Schedule
+    studentBatchMapping: [],  // Student Batch Mapping
+    students: [],  // Students
+    batches: [],  // Batches
     loading: false,
     error: null,
-    studentBatchMapping: [],
+    
     studentBatchMappingLoading: false,
     studentBatchMappingError: null,
     scheduleSessionOpen: false,
-    students: [],
-    batches: [],
     taID: null,
     taName: null,
     taTimezone : null,
@@ -82,6 +106,7 @@ const taScheduling = createSlice({
         },
     },
     extraReducers: (builder) => {
+        
         // Show TA Schedule
         builder.addCase(showTASchedule.pending, (state) => {
             state.loading = true;
@@ -133,6 +158,33 @@ const taScheduling = createSlice({
             state.loading = false;
             state.error = action.error.message;
         });
+
+        // Cancel Scheduled Sessions
+        builder.addCase(cancelScheduledSession.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(cancelScheduledSession.fulfilled, (state, action) => {
+            state.loading = false;
+            state.taScheduledSessions = action.payload.data;
+        });
+        builder.addCase(cancelScheduledSession.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+        });
+
+        // Reschedule Session // TODO : Check this
+        builder.addCase(rescheduleSession.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(rescheduleSession.fulfilled, (state, action) => {
+            state.loading = false;
+            state.taScheduledSessions = action.payload.data;
+        });
+        builder.addCase(rescheduleSession.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+        })
+
     },
 });
 

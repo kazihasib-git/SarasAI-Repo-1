@@ -9,6 +9,7 @@ import {
   getScheduleSession,
 } from "../../redux/features/taModule/taAvialability";
 import PopUpTable from "../CommonComponent/PopUpTable";
+import { useParams } from "react-router-dom";
 
 const CustomButton = ({
   onClick,
@@ -47,7 +48,10 @@ const CustomButton = ({
 
 const Slots = () => {
   const dispatch = useDispatch();
+  const taId = useParams();
+  
   const taAvialability = useSelector((state) => state.taAvialability);
+  
   const {
     scheduledSlotsData = [],
     scheduledSlotsOpen = false,
@@ -73,9 +77,12 @@ const Slots = () => {
     );
   };
 
+  //TODO : Handle the submit action
   const handleSubmit = () => {
-    const formattedSelectedSlots = selectedSlots.map((slotId) => {
+
+    const data = selectedSlots.map((slotId) => {
       const slot = scheduledSlotsData.find((s) => s.id === slotId);
+
       return {
         slot_id: slot.id,
         date: slot.slot_date,
@@ -85,8 +92,8 @@ const Slots = () => {
     });
 
     const requestData = {
-      admin_user_id: 2,
-      data: formattedSelectedSlots,
+      admin_user_id: taId.id,
+      data,
     };
 
     console.log("Submitting selected slots:", requestData);
@@ -97,7 +104,7 @@ const Slots = () => {
         console.log("API response:", response);
         // Handle successful response
         dispatch(closeScheduledSlots());
-        dispatch(openScheduledSession());
+        dispatch(openScheduledSession(requestData));
       })
       .catch((error) => {
         console.error("API error:", error);

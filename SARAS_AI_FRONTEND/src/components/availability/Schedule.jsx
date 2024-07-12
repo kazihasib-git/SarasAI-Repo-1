@@ -11,7 +11,9 @@ import { timeZones, transformedTimeZones, validateTimeZone } from '../CustomFiel
 import { closeScheduleSession, createTASchedule, getTaAvailableSlotsFromDate } from '../../redux/features/taModule/taScheduling';
 import { openAssignBatches, openAssignStudents } from '../../redux/features/taModule/taSlice';
 import { getSlots } from '../../redux/features/taModule/taAvialability';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
+import { getTimezone } from '../../redux/features/timezone/timezoneSlice';
+import CustomTimeZoneForm from '../CustomFields/CustomTimeZoneForm';
 
 const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = '#4E18A5', borderColor = '#FFFFFF', sx, ...props }) => {
     return (
@@ -41,7 +43,7 @@ const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = 
 };
 
 const headers = ['S. No.', 'Slot Date', 'From Time', 'To Time', 'Select'];
-const weekDays = ['Sunday','Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 const actionButtons = [
     {
@@ -62,13 +64,19 @@ const Schedule = () => {
 
     const dispatch = useDispatch()
     const { scheduleSessionOpen, taID, taName, taTimezone, students, batches, taAvailableSlots } = useSelector((state) => state.taScheduling);
-    const { register, handleSubmit, formState: { errors } } = useForm();
+    const { register, handleSubmit, control, formState: { errors } } = useForm();
 
     useEffect(() => {
         if (fromDate) {
             dispatch(getTaAvailableSlotsFromDate({ admin_user_id: taID, date: fromDate }));
         }
     }, [fromDate]);
+
+    const { timezones } = useSelector((state) => state.timezone);
+
+    useEffect(() => {
+        dispatch(getTimezone())
+    },[dispatch])
 
     useEffect(() => {
         if (taAvailableSlots && taAvailableSlots.length > 0) {
@@ -126,12 +134,12 @@ const Schedule = () => {
         console.log("selected Slot : ", selectedSlot, selectedSlot[1])
 
         let weeksArray = Array(7).fill(0);
-        if(repeat === 'recurring') {
+        if (repeat === 'recurring') {
             selectedDays.forEach((day) => {
                 const index = weekDays.indexOf(day);
                 weeksArray[index] = 1;
             });
-        }else if(repeat === 'onetime') {
+        } else if (repeat === 'onetime') {
             const index = new Date(fromDate).getDay();
             weeksArray[index] = 1;
         }
@@ -206,7 +214,7 @@ const Schedule = () => {
                         </Button>
                     </Box>
                 </Grid>
-    
+
                 <form onSubmit={handleSubmit(onSubmit)} noValidate>
                     <Box display="flex" justifyContent="center" m={4}>
                         <Grid container spacing={3} justifyContent="center">
@@ -221,7 +229,7 @@ const Schedule = () => {
                                     sx={{ width: '100%' }}
                                 />
                             </Grid>
-    
+
                             {fromDate && (
                                 <>
                                     {taSlotData.length === 0 ? (
@@ -238,7 +246,7 @@ const Schedule = () => {
                                                     selectedBox={selectedSlot}
                                                 />
                                             </Grid>
-    
+
                                             <Grid container spacing={3} sx={{ pt: 3 }} justifyContent="center">
                                                 <Grid item xs={12} display="flex" justifyContent="center">
                                                     <CustomTextField
@@ -281,24 +289,26 @@ const Schedule = () => {
                                                     />
                                                 </Grid>
                                                 <Grid item xs={12} sm={6} display="flex" justifyContent="center">
-                                                    <CustomFormControl
-                                                        label="Select Timezone"
-                                                        name="timezone"
-                                                        value={taTimezone}
-                                                        controlProps={{
-                                                            select: true,
-                                                            fullWidth: true,
-                                                            value: timezone,
-                                                            onChange: (e) => setTimezone(e.target.value),
+                                                    <Controller
+                                                        name="time_zone"
+                                                        control={control}
+                                                        rules={{ required: "Time Zone is required" }}
+                                                        render={({ field }) => {
+                                                            return (
+                                                                <CustomTimeZoneForm
+                                                                    label="Time Zone"
+                                                                    name="time_zone"
+                                                                    value={field.value}
+                                                                    onChange={field.onChange}
+                                                                    errors={errors}
+                                                                    options={timezones}
+                                                                />
+                                                            );
                                                         }}
-                                                        register={register}
-                                                        validation={{ validate: validateTimeZone }}
-                                                        errors={errors}
-                                                        options={transformedTimeZones}
                                                     />
                                                 </Grid>
                                             </Grid>
-    
+
                                             <Grid container spacing={3} justifyContent="center" sx={{ pt: 3 }}>
                                                 <Grid item xs={12} display="flex" justifyContent="center">
                                                     <FormControl component="fieldset">
@@ -322,7 +332,7 @@ const Schedule = () => {
                                                     </FormControl>
                                                 </Grid>
                                             </Grid>
-    
+
                                             {repeat === 'recurring' && (
                                                 <>
                                                     <Grid container spacing={3} justifyContent="center" sx={{ pt: 3 }}>
@@ -388,7 +398,7 @@ const Schedule = () => {
             </Grid>
         </Box>
     );
-    
+
 
     const actions = (
         <CustomButton
