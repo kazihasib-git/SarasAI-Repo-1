@@ -51,7 +51,7 @@ export const createSlots = createAsyncThunk(
   }
 );
 
-// Get Schedule Session
+// Get Schedule Session for TA
 export const getScheduleSession = createAsyncThunk(
   "taAvialability/getScheduleSession",
   async (data) => {
@@ -151,6 +151,7 @@ export const taAvailabilitySlice = createSlice({
     },
     openCancelSession(state, action) {
       state.cancelSessionOpen = true;
+      console.log("ACTION : ", action.payload)
       state.schduldeCancelData = action.payload
     },
     closeCancelSession(state) {
@@ -263,13 +264,15 @@ export const taAvailabilitySlice = createSlice({
     builder.addCase(fetchAvailableSlots.pending, (state) => {
       state.loading = true;
     });
-    builder.addCase(fetchAvailableSlots.fulfilled, (state, action) => {
+  builder.addCase(fetchAvailableSlots.fulfilled, (state, action) => {
       state.loading = false;
+      console.log("AVIAIAIAI : ", action.payload?.data)
       state.availableSlotsData = action.payload?.data;
     });
     builder.addCase(fetchAvailableSlots.rejected, (state, action) => {
       state.loading = false;
       state.error = action.error.message;
+      state.availableSlotsData = []
     });
 
 

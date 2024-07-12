@@ -3,14 +3,22 @@ import { Button } from "@mui/material";
 import ReusableDialog from "../CustomFields/ReusableDialog";
 import DynamicTable from "../CommonComponent/DynamicTable";
 import { useDispatch, useSelector } from "react-redux";
+import PopUpTable from "../CommonComponent/PopUpTable";
+import { useParams } from "react-router-dom";
+
 import {
   closeScheduledSlots,
   openScheduledSession,
   getScheduleSession,
 } from "../../redux/features/taModule/taAvialability";
-import PopUpTable from "../CommonComponent/PopUpTable";
-import { useParams } from "react-router-dom";
 
+import {
+  closeCoachScheduledSlots,
+  openCoachScheduledSession,
+  getCoachScheduleSession
+} from "../../redux/features/CoachModule/CoachAvailabilitySlice"
+
+  
 const CustomButton = ({
   onClick,
   children,
@@ -46,22 +54,50 @@ const CustomButton = ({
   );
 };
 
-const Slots = () => {
+
+const Slots = ({ componentName }) => {
   const dispatch = useDispatch();
-  const taId = useParams();
-  
-  const taAvialability = useSelector((state) => state.taAvialability);
-  
-  const {
-    scheduledSlotsData = [],
-    scheduledSlotsOpen = false,
-    error,
-  } = taAvialability || {};
+  const { id } = useParams();
   const [selectedSlots, setSelectedSlots] = useState([]);
   const [data, setData] = useState([]);
 
+  let scheduleSessionOpenKey, scheduledSlotsDataKey, schedulingStateKey, getAvailableSlotsAction, closeScheduleSessionAction, getScheduleSessionAction;
+
+  switch (componentName) {
+    case "TACALENDER":
+      scheduleSessionOpenKey = "scheduledSlotsOpen";
+      scheduledSlotsDataKey = "scheduledSlotsData";
+      schedulingStateKey = "taAvailability";
+      getAvailableSlotsAction = openScheduledSession;
+      closeScheduleSessionAction = closeScheduledSlots;
+      getScheduleSessionAction = getScheduleSession;
+      break;
+    case "COACHCALENDER":
+      scheduleSessionOpenKey = "scheduledCoachSlotsOpen";
+      scheduledSlotsDataKey = "scheduledCoachSlotsData";
+      schedulingStateKey = "coachAvailability";
+      getAvailableSlotsAction = openCoachScheduledSession;
+      closeScheduleSessionAction = closeCoachScheduledSlots;
+      getScheduleSessionAction = getCoachScheduleSession;
+      break;
+    default:
+      scheduleSessionOpenKey = null;
+      scheduledSlotsDataKey = null;
+      schedulingStateKey = null;
+      getAvailableSlotsAction = null;
+      closeScheduleSessionAction = null;
+      getScheduleSessionAction = null;
+      break;
+  }
+
+  const schedulingState = useSelector((state) =>
+    schedulingStateKey ? state[schedulingStateKey] : {}
+  ) || {};
+
+  const { [scheduleSessionOpenKey]: scheduledSlotsOpen, [scheduledSlotsDataKey]: scheduledSlotsData = [], error } = schedulingState;
+
   useEffect(() => {
-    console.log("HELLO  : ", scheduledSlotsData)
+    console.log("HELLO  : ", scheduledSlotsData);
     const formattedData = scheduledSlotsData.map((slot) => ({
       "S. No.": slot.id,
       Date: slot.slot_date,
@@ -77,9 +113,7 @@ const Slots = () => {
     );
   };
 
-  //TODO : Handle the submit action
   const handleSubmit = () => {
-
     const data = selectedSlots.map((slotId) => {
       const slot = scheduledSlotsData.find((s) => s.id === slotId);
 
@@ -92,23 +126,20 @@ const Slots = () => {
     });
 
     const requestData = {
-      admin_user_id: taId.id,
+      admin_user_id: id,
       data,
     };
 
     console.log("Submitting selected slots:", requestData);
 
-    // Dispatch the thunk action
-    dispatch(getScheduleSession(requestData))
+    dispatch(getScheduleSessionAction(requestData))
       .then((response) => {
         console.log("API response:", response);
-        // Handle successful response
-        dispatch(closeScheduledSlots());
-        dispatch(openScheduledSession(requestData));
+        dispatch(closeScheduleSessionAction());
+        dispatch(getAvailableSlotsAction(requestData));
       })
       .catch((error) => {
         console.error("API error:", error);
-        // Handle error response
       });
   };
 
@@ -137,7 +168,7 @@ const Slots = () => {
   return (
     <ReusableDialog
       open={scheduledSlotsOpen}
-      handleClose={() => dispatch(closeScheduledSlots())}
+      handleClose={() => dispatch(closeScheduleSessionAction())}
       title="Slots"
       content={table}
       actions={actions}
@@ -145,4 +176,7 @@ const Slots = () => {
   );
 };
 
+
 export default Slots;
+
+

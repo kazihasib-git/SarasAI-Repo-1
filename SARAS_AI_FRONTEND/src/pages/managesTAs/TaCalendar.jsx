@@ -197,6 +197,7 @@ const TaCalender
                                     color='#FFFFFF'
                                     backgroundColor='#4E18A5'
                                     borderColor='#4E18A5'
+                                    style={{ textTransform: 'none' }}
                                 >
                                     <AddCircleOutlineIcon />
                                     Schedule New Session
@@ -207,6 +208,7 @@ const TaCalender
                                     color='#F56D3B'
                                     backgroundColor='#FFFFFF'
                                     borderColor='#F56D3B'
+                                    style={{ textTransform: 'none' }}
                                 >
                                     Mark Leave
                                 </CustomButton>
@@ -216,6 +218,7 @@ const TaCalender
                                     color='#F56D3B'
                                     backgroundColor='#FFFFFF'
                                     borderColor='#F56D3B'
+                                    style={{ textTransform: 'none' }}
                                 >
                                     Delete All Future Slots
                                 </CustomButton>
@@ -225,6 +228,7 @@ const TaCalender
                                     backgroundColor='#F56D3B'
                                     borderColor='#F56D3B'
                                     onClick={handleCreateNewSlot}
+                                    style={{ textTransform: 'none' }}
                                 >
                                     {/* <AddCircleOutlineIcon /> */}
                                     Create New Slot
@@ -233,17 +237,17 @@ const TaCalender
                         </Grid>
                     </Grid>
                 </DialogActions>
-                <CalendarComponent eventsList={scheduleData.data} addEvent={addEvent} slotData={slotData}/*handleSelectEvent={handleSelectEvent}*/ />
+                <CalendarComponent eventsList={scheduleData.data} addEvent={addEvent} slotData={slotData} componentName={"TACALENDER"} />
                 {scheduleSessionOpen && <Schedule />}
-                {sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} />}
-                {markLeaveOpen && <MarkLeave id={id} name={name} />}
-                {scheduledSlotsOpen && <Slots id={id} name={name} />}
-                {scheduledSessionOpen && <ScheduledSessions id={id} name={name} />}
-                {cancelSessionOpen && <CancelSchedule id={id} name={name} />}
-                {reasonForLeaveOpen && <ReasonForLeave id={id} name={name} />}
-                {resheduleSessionOpen && <ReschedulingSession id={id} name={name} />}
-                {deleteFutureSlots && <DeleteAllSlots open={deleteFutureSlots} handleClose={() => setDeleteFutureSlots(false)} id={id} name={name} />}
-                {createNewSlotOpen && <CreateNewSlot addEvent={addEvent} />}
+                {sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} componentName={"TACALENDER"} />}
+                {markLeaveOpen && <MarkLeave id={id} name={name} componentName={"TACALENDER"} />}
+                {scheduledSlotsOpen && <Slots id={id} name={name} componentName={"TACALENDER"} />}
+                {scheduledSessionOpen && <ScheduledSessions id={id} name={name} componentName={"TACALENDER"} />}
+                {cancelSessionOpen && <CancelSchedule id={id} name={name} componentName={"TACALENDER"} />}
+                {reasonForLeaveOpen && <ReasonForLeave id={id} name={name} componentName={"TACALENDER"} />}
+                {resheduleSessionOpen && <ReschedulingSession id={id} name={name} componentName={"TACALENDER"} />}
+                {deleteFutureSlots && <DeleteAllSlots open={deleteFutureSlots} handleClose={() => setDeleteFutureSlots(false)} id={id} name={name} componentName={"TACALENDER"} />}
+                {createNewSlotOpen && <CreateNewSlot addEvent={addEvent} componentName={"TACALENDER"}/>}
                 {assignStudentOpen && <AssignStudents componentname="ADDEDITTA" />}
                 {assignBatchOpen && <AssignBatches componentname="ADDEDITTA" />}
             </Box>

@@ -1,106 +1,195 @@
-import React from 'react'
-import ReusableDialog from '../CustomFields/ReusableDialog'
-import { Box, Button, DialogContent, DialogTitle, Typography } from '@mui/material'
-import { useDispatch, useSelector } from 'react-redux'
-import { closeCancelSession, closeReasonForLeave, getScheduleSession, openReasonForLeave, openScheduledSession } from '../../redux/features/taModule/taAvialability'
-import { cancelScheduledSession } from '../../redux/features/taModule/taScheduling'
+import React from "react";
+import ReusableDialog from "../CustomFields/ReusableDialog";
+import {
+  Box,
+  Button,
+  DialogContent,
+  DialogTitle,
+  Typography,
+} from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  closeCancelSession,
+  closeReasonForLeave,
+  getScheduleSession,
+  openReasonForLeave,
+  openScheduledSession,
+} from "../../redux/features/taModule/taAvialability";
 
-const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = '#4E18A5', borderColor = '#FFFFFF', sx, ...props }) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                padding: "10px 20px",
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
+import {
+  closeCoachCancelSession,
+  getCoachScheduleSession,
+  openCoachScheduledSession,
+} from "../../redux/features/CoachModule/CoachAvailabilitySlice";
+
+import { cancelScheduledSession } from "../../redux/features/taModule/taScheduling";
+
+import { cancelCoachScheduledSession } from "../../redux/features/CoachModule/coachSchedule";
+
+const CustomButton = ({
+  onClick,
+  children,
+  color = "#FFFFFF",
+  backgroundColor = "#4E18A5",
+  borderColor = "#FFFFFF",
+  sx,
+  ...props
+}) => {
+  return (
+    <Button
+      variant="contained"
+      onClick={onClick}
+      sx={{
+        backgroundColor: backgroundColor,
+        color: color,
+        fontWeight: "700",
+        fontSize: "16px",
+        borderRadius: "50px",
+        padding: "10px 20px",
+        border: `2px solid ${borderColor}`,
+        "&:hover": {
+          backgroundColor: color,
+          color: backgroundColor,
+          borderColor: color,
+        },
+        ...sx,
+      }}
+      {...props}
+    >
+      {children}
+    </Button>
+  );
 };
 
-const CancelSchedule = () => {
-    const dispatch = useDispatch()
-    const { cancelSessionOpen, schduldeCancelData, slotEventData } = useSelector((state) => state.taAvialability)
-    
-    console.log("schduldeCancelData : ", schduldeCancelData ,  schduldeCancelData['S. No.'] )
+const CancelSchedule = ({ componentName }) => {
+  const dispatch = useDispatch();
 
-    const handleCancel = () => {
-        dispatch(closeCancelSession())
-        dispatch(cancelScheduledSession(schduldeCancelData['S. No.']))
-            .unwrap()
-            .then(() => {
-                dispatch(getScheduleSession(slotEventData))
-                dispatch(openScheduledSession())
-            })
-        
-    }
+  let closeSessionAction,
+    cancelSessionAction,
+    getSessionAction,
+    openSessionAction;
 
-    const actions = (
-        <Box>
-            <CustomButton
-                onClick={handleCancel}
-                backgroundColor="#FFFFFF"
-                borderColor="#F56D38"
-                color="#F56D38"
-                sx={{ mr: 2 }}
-            >
-                Yes
-            </CustomButton>
-            <CustomButton
-                onClick={() => {
-                    dispatch(closeCancelSession())
-                    dispatch(openScheduledSession())
-                }}
-                backgroundColor="#F56D38"
-                borderColor="#F56D38"
-                color="#FFFFFF"
-            >
-                No
-            </CustomButton>
-        </Box>
-    )
+  switch (componentName) {
+    case "TACALENDER":
+      closeSessionAction = closeCancelSession;
+      cancelSessionAction = cancelScheduledSession;
+      getSessionAction = getScheduleSession;
+      openSessionAction = openScheduledSession;
+      break;
+    case "COACHCALENDER":
+      closeSessionAction = closeCoachCancelSession;
+      cancelSessionAction = cancelCoachScheduledSession;
+      getSessionAction = getCoachScheduleSession;
+      openSessionAction = openCoachScheduledSession;
+      break;
+    default:
+      closeSessionAction = null;
+      cancelSessionAction = null;
+      getSessionAction = null;
+      openSessionAction = null;
+      break;
+  }
 
-    const content = (
-        <>
-            <DialogTitle>
-                {/* `'${Batch_Info} - ${Week_Info}'` */}
-                {schduldeCancelData["Session Name"]}
-            </DialogTitle>
-            <DialogContent style={{ display: 'flex', justifyContent: "center" }}>
-                <Typography>
-                    {/* `scheduled for ${date} from ${from_time} to ${to_fime}` */}
-                    Scheduled for Date from {schduldeCancelData.Time} ?
-                </Typography>
-            </DialogContent>
-        </>
-    )
+  const schedulingState = useSelector((state) =>
+    componentName === "TACALENDER"
+      ? state.taAvialability
+      : state.coachAvailability
+  );
 
-    return (
-        <ReusableDialog
-            open={cancelSessionOpen}
-            handleClose={() => {
-                dispatch(closeCancelSession())
-                dispatch(openScheduledSession())
-            }}
-            title="Are you sure that you want to cancel the session"
-            content={content}
-            actions={actions}
-        />
-    )
-}
+  const { cancelSessionOpen, schduldeCancelData, slotEventData } =
+    schedulingState;
 
-export default CancelSchedule
+  // For coachAvailability specific data
+  const {
+    cancelCoachSessionOpen,
+    schduldeCoachCancelData,
+    slotCoachEventData,
+  } = schedulingState;
+
+  const handleCancel = () => {
+    console.log("SLOT EVENT DATA : ", slotEventData)
+    console.log("SLOT COACH EVENT DATA : ", slotCoachEventData)
+    dispatch(closeSessionAction());
+    const sessionData =
+      componentName === "TACALENDER"
+        ? schduldeCancelData
+        : schduldeCoachCancelData;
+    const sessionNo = sessionData["S. No."];
+    dispatch(cancelSessionAction(sessionNo))
+      .unwrap()
+      .then(() => {
+        dispatch(
+          getSessionAction(
+            componentName === "TACALENDER" ? slotEventData : slotCoachEventData
+          )
+        );
+        dispatch(openSessionAction());
+      })
+      .catch((error) => {
+        console.error("Failed to cancel the session:", error);
+      });
+  };
+
+  const actions = (
+    <Box>
+      <CustomButton
+        onClick={handleCancel}
+        backgroundColor="#FFFFFF"
+        borderColor="#F56D38"
+        color="#F56D38"
+        sx={{ mr: 2 }}
+      >
+        Yes
+      </CustomButton>
+      <CustomButton
+        onClick={() => {
+          dispatch(closeSessionAction());
+          dispatch(openSessionAction());
+        }}
+        backgroundColor="#F56D38"
+        borderColor="#F56D38"
+        color="#FFFFFF"
+      >
+        No
+      </CustomButton>
+    </Box>
+  );
+
+  const content = (
+    <>
+      <DialogTitle>
+        {componentName === "TACALENDER"
+          ? schduldeCancelData["Session Name"]
+          : schduldeCoachCancelData["Session Name"]}
+      </DialogTitle>
+      <DialogContent style={{ display: "flex", justifyContent: "center" }}>
+        <Typography>
+          Scheduled for Date from{" "}
+          {componentName === "TACALENDER"
+            ? schduldeCancelData.Time
+            : schduldeCoachCancelData.Time}{" "}
+          ?
+        </Typography>
+      </DialogContent>
+    </>
+  );
+
+  return (
+    <ReusableDialog
+      open={
+        componentName === "TACALENDER"
+          ? cancelSessionOpen
+          : cancelCoachSessionOpen
+      }
+      handleClose={() => {
+        dispatch(closeSessionAction());
+        dispatch(openSessionAction());
+      }}
+      title="Are you sure that you want to cancel the session"
+      content={content}
+      actions={actions}
+    />
+  );
+};
+
+export default CancelSchedule;

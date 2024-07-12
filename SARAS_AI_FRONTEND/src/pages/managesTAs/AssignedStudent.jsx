@@ -348,6 +348,7 @@ const AssignedStudent = () => {
 
   return (
     <>
+    <Box m={"10px"}>
       <Header />
       <Sidebar />
       <DynamicTable
@@ -358,6 +359,7 @@ const AssignedStudent = () => {
         ta_id={id}
         dispatch={dispatch}
       />
+      </Box>
     </>
   );
 };

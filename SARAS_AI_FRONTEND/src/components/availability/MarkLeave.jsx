@@ -12,15 +12,23 @@ import CloseIcon from "@mui/icons-material/Close";
 import ReusableDialog from "../CustomFields/ReusableDialog";
 import CustomDateField from "../CustomFields/CustomDateField";
 import Slots from "./Slots";
-import {
-  openScheduledSlots,
-  closeScheduledSlots,
-  closeMarkLeave,
-  getSlots,
-} from "../../redux/features/taModule/taAvialability";
+
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import { useParams } from "react-router-dom";
+
+import {
+  openScheduledSlots,
+  closeMarkLeave,
+  getSlots,
+} from "../../redux/features/taModule/taAvialability";
+
+import {
+  openCoachScheduledSlots,
+  closeCoachMarkLeave,
+  getCoachSlots,
+} from "../../redux/features/CoachModule/CoachAvailabilitySlice";
+
 const CustomButton = ({
   onClick,
   children,
@@ -56,12 +64,44 @@ const CustomButton = ({
   );
 };
 
-const MarkLeave = () => {
-  const taId = useParams()
+const MarkLeave = ({ componentName }) => {
+  const taId = useParams();
   const dispatch = useDispatch();
-  const { markLeaveOpen } = useSelector((state) => state.taAvialability);
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
+
+  let scheduleSessionOpenKey, schedulingStateKey, openAvailableSlotsAction, closeMarkLeaveAction, getSlotsAction;
+
+  switch (componentName) {
+    case "TACALENDER":
+      scheduleSessionOpenKey = "markLeaveOpen";
+      schedulingStateKey = "taAvialability";
+      openAvailableSlotsAction = openScheduledSlots;
+      closeMarkLeaveAction = closeMarkLeave;
+      getSlotsAction = getSlots;
+      break;
+    case "COACHCALENDER":
+      scheduleSessionOpenKey = "coachMarkLeaveOpen";
+      schedulingStateKey = "coachAvailability";
+      openAvailableSlotsAction = openCoachScheduledSlots;
+      closeMarkLeaveAction = closeCoachMarkLeave;
+      getSlotsAction = getCoachSlots;
+      break;
+    default:
+      scheduleSessionOpenKey = null;
+      schedulingStateKey = null;
+      openAvailableSlotsAction = null;
+      closeMarkLeaveAction = null;
+      getSlotsAction = null;
+      break;
+  }
+  console.log("schedulingStateKey : ", schedulingStateKey);
+  console.log("scheduleSessionOpenKey : ", scheduleSessionOpenKey);
+  console.log("component Name : ", componentName);
+  const schedulingState = useSelector((state) =>
+    schedulingStateKey ? state[schedulingStateKey] : {}
+  );
+  const { [scheduleSessionOpenKey]: markLeaveOpen } = schedulingState;
 
   const handleSubmit = () => {
     const formattedFromDate = moment(fromDate).format("YYYY-MM-DD");
@@ -73,11 +113,11 @@ const MarkLeave = () => {
       end_date: formattedToDate,
     };
 
-    dispatch(getSlots(leaveData))
+    dispatch(getSlotsAction(leaveData))
       .unwrap()
       .then(() => {
-        dispatch(closeMarkLeave());
-        dispatch(openScheduledSlots());
+        dispatch(openAvailableSlotsAction())
+        dispatch(closeMarkLeaveAction());
       })
       .catch((error) => {
         console.error("Failed to fetch scheduled slots:", error);
@@ -92,7 +132,7 @@ const MarkLeave = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        textAlign: "center", // Add this line if needed
+        textAlign: "center",
       }}
     >
       <Grid item xs={12} sm={6}>
@@ -123,7 +163,7 @@ const MarkLeave = () => {
     <>
       <ReusableDialog
         open={markLeaveOpen}
-        handleClose={() => dispatch(closeMarkLeave())}
+        handleClose={() => dispatch(closeMarkLeaveAction())}
         title="Mark Leave"
         content={content}
         actions={actions}

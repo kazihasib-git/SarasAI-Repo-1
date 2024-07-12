@@ -160,10 +160,10 @@ const DynamicTable = ({
             className="bi bi-caret-left"
             onClick={() => navigate("/ta-mapping")}
           ></i> */}
-          <ArrowBackIosIcon
+          {/* <ArrowBackIosIcon
             style={{ fontSize: "25px", marginBottom: "17px" }}
             onClick={() => navigate("/ta-mapping")}
-          />
+          /> */}
           <p
             style={{
               fontSize: "44px",
@@ -341,6 +341,7 @@ const AssignBatches = () => {
 
   return (
     <>
+    <Box m="10px">
       <Header />
       <Sidebar />
       <DynamicTable
@@ -351,6 +352,7 @@ const AssignBatches = () => {
         ta_id={id}
         dispatch={dispatch}
       />
+      </Box>
     </>
   );
 };

@@ -45,6 +45,7 @@ body,
 .app {
   display: flex;
   position: relative;
+  /* width: 1920px; */
 }
 
 ::-webkit-scrollbar {

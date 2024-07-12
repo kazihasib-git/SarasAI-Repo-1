@@ -27,8 +27,8 @@ const Students = () => {
                 id: item.id,
                 Name: item.name,
                 "Lms Id": item.student_lms_id,
-                Email: item.primary_email,
-                'Phone Number': item.primary_phone,
+                'Acedemic Term': item.academic_term,
+                Batch: item.primary_phone,
             }));
             setStudents(transformedData);
         }
@@ -38,7 +38,7 @@ const Students = () => {
         return <div>Loading....</div>;
     }
 
-    const headers = ['ID', 'Name', 'Lms Id', 'Email', 'Phone Number'];
+    const headers = ['ID', 'Name', 'Lms Id', 'Acedemic Term', 'Batch'];
 
     // Filter students based on the search input
     const filteredStudents = students.filter(student => 

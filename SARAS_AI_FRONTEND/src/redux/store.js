@@ -10,6 +10,9 @@ import coachTemplateReducer from './features/CoachModule/CoachTemplateSlice';
 import wolSliceReducer from './features/coachingTools/wol/wolSlice';
 import timezoneSliceReducer from './features/timezone/timezoneSlice';
 import coachReducer from './features/CoachModule/coachSlice';
+import coachAvailabilityReducer from './features/CoachModule/CoachAvailabilitySlice';
+import coachSchedulingReducer from './features/CoachModule/coachSchedule';
+
 const store = configureStore({
 
     reducer: {
@@ -21,6 +24,8 @@ const store = configureStore({
         wol : wolSliceReducer,
         timezone : timezoneSliceReducer,
         coachModule : coachReducer,
+        coachAvailability : coachAvailabilityReducer,
+        coachScheduling : coachSchedulingReducer,
         [studentsApi.reducerPath]: studentsApi.reducer,
         [batchesApi.reducerPath]: batchesApi.reducer,
         [coursesApi.reducerPath]: coursesApi.reducer,
