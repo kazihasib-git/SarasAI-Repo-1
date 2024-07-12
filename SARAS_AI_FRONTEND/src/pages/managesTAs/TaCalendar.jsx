@@ -24,6 +24,8 @@ import moment from 'moment';
 import Schedule from '../../components/availability/Schedule';
 import AssignStudents from '../../components/adminModule/AssignStudents';
 import AssignBatches from '../../components/adminModule/AssignBatches';
+import EditBatches from '../../components/availability/EditBatches';
+import EditStudents from '../../components/availability/EditStudents';
 
 const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = '#4E18A5', borderColor = '#FFFFFF', sx, ...props }) => {
     return (
@@ -56,15 +58,15 @@ const TaCalender
     = () => {
         const dispatch = useDispatch();
         const { id, name } = useParams();
-        
-        const [sheduleNewSession, setSheduleNewSession] = useState(false)
+
+        //const [sheduleNewSession, setSheduleNewSession] = useState(false)
         const [deleteFutureSlots, setDeleteFutureSlots] = useState(false)
         //const [createNewSlot, setCreateNewSlot] = useState(false)
 
         const { assignBatchOpen, assignStudentOpen } = useSelector((state) => state.taModule);
 
         const {
-            slotData, 
+            slotData,
             scheduleData,
             markLeaveOpen,
             scheduledSlotsOpen,
@@ -75,7 +77,8 @@ const TaCalender
             createNewSlotOpen,
         } = useSelector((state) => state.taAvialability);
 
-        const { taScheduledSessions, scheduleSessionOpen } = useSelector((state) => state.taScheduling);
+        const { taScheduledSessions, scheduleSessionOpen, openEditBatch, openEditStudent } = useSelector((state) => state.taScheduling);
+
         //calendar
         const [eventsList, setEventsList] = useState([]);
 
@@ -123,11 +126,6 @@ const TaCalender
         }, [id]);
         */
 
-        // console.log("taScheduledSessions", taScheduledSessions)
-        // useEffect(() => {
-        //     dispatch(getSlots());
-        // }, [slotEventData])
-
         console.log("ta Id :", id)
 
         useEffect(() => {
@@ -136,10 +134,6 @@ const TaCalender
         }, [id]);
 
         console.log("slotData", slotData, "scheduleData", scheduleData);
-
-        // useEffect(() => {
-        //     ); // Replace `2` with the actual ID you need
-        // }, [dispatch]);
 
         const handleScheduleNewSession = () => {
             // console.log("Pressed")
@@ -158,27 +152,6 @@ const TaCalender
         const handleCreateNewSlot = () => {
             dispatch(openCreateNewSlots());
         }
-
-        // console.log("markLeaveOpen", markLeaveOpen);
-        // console.log("scheduledSlotsOpen", scheduledSlotsOpen)
-        // console.log("scheduledSessionOpen", scheduledSessionOpen)
-        // console.log("cancelSessionOpen", cancelSessionOpen)
-
-        // const timeSlots = [
-        // {
-        //     start: moment("2024-07-10 09:00", "YYYY-MM-DD HH:mm").toDate(), 
-        //     end: moment("2024-07-10 10:00", "YYYY-MM-DD HH:mm").toDate()
-        // },
-        // {
-        //     start: moment("2024-07-11 14:00", "YYYY-MM-DD HH:mm").toDate(), 
-        //     end: moment("2024-07-11 15:00", "YYYY-MM-DD HH:mm").toDate()
-        // },
-        // {
-        //     start: moment("2024-07-12 11:30", "YYYY-MM-DD HH:mm").toDate(), 
-        //     end: moment("2024-07-12 12:30", "YYYY-MM-DD HH:mm").toDate()
-        // }
-        // ];
-
 
         // console.log("session data",scheduleData);
         return (
@@ -238,8 +211,10 @@ const TaCalender
                     </Grid>
                 </DialogActions>
                 <CalendarComponent eventsList={scheduleData.data} addEvent={addEvent} slotData={slotData} componentName={"TACALENDER"} />
-                {scheduleSessionOpen && <Schedule />}
-                {sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} componentName={"TACALENDER"} />}
+                {scheduleSessionOpen && <Schedule componentName={"TASCHEDULE"} />}
+                {openEditBatch && <EditBatches componentname={"ADDEDITTA"} />}
+                {openEditStudent && <EditStudents componentname={"ADDEDITTA"} />}
+                {/*{sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} componentName={"TACALENDER"} />} */}
                 {markLeaveOpen && <MarkLeave id={id} name={name} componentName={"TACALENDER"} />}
                 {scheduledSlotsOpen && <Slots id={id} name={name} componentName={"TACALENDER"} />}
                 {scheduledSessionOpen && <ScheduledSessions id={id} name={name} componentName={"TACALENDER"} />}
@@ -247,9 +222,10 @@ const TaCalender
                 {reasonForLeaveOpen && <ReasonForLeave id={id} name={name} componentName={"TACALENDER"} />}
                 {resheduleSessionOpen && <ReschedulingSession id={id} name={name} componentName={"TACALENDER"} />}
                 {deleteFutureSlots && <DeleteAllSlots open={deleteFutureSlots} handleClose={() => setDeleteFutureSlots(false)} id={id} name={name} componentName={"TACALENDER"} />}
-                {createNewSlotOpen && <CreateNewSlot addEvent={addEvent} componentName={"TACALENDER"}/>}
-                {assignStudentOpen && <AssignStudents componentname="ADDEDITTA" />}
-                {assignBatchOpen && <AssignBatches componentname="ADDEDITTA" />}
+                {createNewSlotOpen && <CreateNewSlot addEvent={addEvent} componentName={"TACALENDER"} />}
+                {/* {assignStudentOpen && <AssignStudents componentname="ADDEDITTA" />}
+                {assignBatchOpen && <AssignBatches componentname="ADDEDITTA" />} */}
+                
             </Box>
         )
     }
