@@ -39,6 +39,7 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { getTimezone } from "../../../../redux/features/timezone/timezoneSlice";
 import CustomTimeZoneForm from "../../../CustomFields/CustomTimeZoneForm";
+import { dateFormatter } from "../../../../utils/dateFormatter";
 
 const AddEditTA = ({ data }) => {
   const {
@@ -76,6 +77,10 @@ const AddEditTA = ({ data }) => {
   }, [data]);
 
   const populateForm = (data) => {
+    // TODO : Neet to format the date in MM/DD/YYYY format
+    // const newDate = dateFormatter(data.date_of_birth)
+    // console.log("NEW DATE : ", newDate)
+
     const formattedDate = moment(data.date_of_birth).format("YYYY-MM-DD");
     setDateOfBirth(formattedDate);
     dispatch(accessTaName(data));
