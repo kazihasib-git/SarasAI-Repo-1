@@ -1,11 +1,20 @@
-import React, { useEffect } from 'react';
-import { Grid, Button, FormControl, RadioGroup, FormControlLabel, Radio, FormGroup, Checkbox, Box } from '@mui/material';
-import { useForm, Controller } from 'react-hook-form';
-import CustomDateField from '../CustomFields/CustomDateField';
-import CustomTimeField from '../CustomFields/CustomTimeField'; // Assuming you have a CustomTimeField component
-import ReusableDialog from '../CustomFields/ReusableDialog';
-import { format, addDays, parseISO } from 'date-fns';
-import CustomTextField from '../CustomFields/CustomTextField';
+import React, { useEffect } from "react";
+import {
+  Grid,
+  Button,
+  FormControl,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  FormGroup,
+  Checkbox, Box,
+} from "@mui/material";
+import { useForm, Controller } from "react-hook-form";
+import CustomDateField from "../CustomFields/CustomDateField";
+import CustomTimeField from "../CustomFields/CustomTimeField"; // Assuming you have a CustomTimeField component
+import ReusableDialog from "../CustomFields/ReusableDialog";
+import { format, addDays, parseISO } from "date-fns";
+import CustomTextField from "../CustomFields/CustomTextField";
 import { useState } from 'react';
 
 
@@ -18,31 +27,39 @@ import { getTimezone } from '../../redux/features/timezone/timezoneSlice';
 import { useParams } from 'react-router-dom';
 
 
-const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = '#4E18A5', borderColor = '#FFFFFF', sx, ...props }) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                padding: "10px 20px",
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
+const CustomButton = ({
+  onClick,
+  children,
+  color = "#FFFFFF",
+  backgroundColor = "#4E18A5",
+  borderColor = "#FFFFFF",
+  sx,
+  ...props
+}) => {
+  return (
+    <Button
+      variant="contained"
+      onClick={onClick}
+      sx={{
+        backgroundColor: backgroundColor,
+        color: color,
+        fontWeight: "700",
+        fontSize: "16px",
+        borderRadius: "50px",
+        padding: "10px 20px",
+        border: `2px solid ${borderColor}`,
+        "&:hover": {
+          backgroundColor: color,
+          color: backgroundColor,
+          borderColor: color,
+        },
+        ...sx,
+      }}
+      {...props}
+    >
+      {children}
+    </Button>
+  );
 };
 
 const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -68,7 +85,7 @@ const CreateNewSlot = ({ addEvent }) => {
 
     const { register, control, handleSubmit, formState: { errors } } = useForm();
 
-    const { timezones } = useSelector((state) => state.timezone);
+  const { timezones } = useSelector((state) => state.timezone);
 
     const handleDayChange = (day) => {
         setSelectedDays((prev) => {
@@ -236,16 +253,27 @@ const CreateNewSlot = ({ addEvent }) => {
     );
     
 
-    const actions = (
-        <>
-            <CustomButton onClick={() => dispatch(closeCreateNewSlots())} backgroundColor="white" color="#F56D3B" borderColor="#F56D3B">
-                Back
-            </CustomButton>
-            <CustomButton type="submit" form="createForm" backgroundColor="#F56D3B" color="white" borderColor="#F56D3B">
-                Submit
-            </CustomButton>
-        </>
-    );
+  const actions = (
+    <>
+      <CustomButton
+        onClick={() => dispatch(closeCreateNewSlots())}
+        backgroundColor="white"
+        color="#F56D3B"
+        borderColor="#F56D3B"
+      >
+        Back
+      </CustomButton>
+      <CustomButton
+        type="submit"
+        form="createForm"
+        backgroundColor="#F56D3B"
+        color="white"
+        borderColor="#F56D3B"
+      >
+        Submit
+      </CustomButton>
+    </>
+  );
 
     return (
         <ReusableDialog
