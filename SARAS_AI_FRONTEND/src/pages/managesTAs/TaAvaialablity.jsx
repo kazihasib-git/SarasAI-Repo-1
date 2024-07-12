@@ -278,7 +278,7 @@ const TaAvialability = () => {
 
   return (
     <>
-      <Box m="20px">
+      <Box m="10px">
         <Header />
         <Sidebar />
         <Box display={"flex"} justifyContent={"space-between"}>
