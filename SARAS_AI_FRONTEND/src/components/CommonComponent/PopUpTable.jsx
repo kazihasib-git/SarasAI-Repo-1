@@ -59,7 +59,7 @@ const CustomButton = ({ onClick, children, variant = 'contained', color = '#FFFF
 
 const PopUpTable = ({ headers, initialData, onRowClick, selectedBox = [] ,onViewClick, onRescheduleClick, onCancelClick, itemsPerPage = 4}) => {
   const [data, setData] = useState(initialData ?? []);
-  // console.log("INTIAL DATA : ", data)
+
   useEffect(() => {
     setData(initialData ?? []);
   }, [initialData]);
@@ -87,17 +87,16 @@ const PopUpTable = ({ headers, initialData, onRowClick, selectedBox = [] ,onView
         </thead>
         <tbody className="popUpBody">
           {currentData.map((item, index) => (
-            <tr key={item["S. No."] ?? index} id="popUpRow">
-              {/* {console.log("DATA : ",item)} */}
+            <tr key={item.id ?? index} id="popUpRow">
               {headers.map((header, idx) => (
                 <td key={idx}>
                   {header === "Select" ? (
                     <Checkbox
-                      checked={selectedBox.includes(item["S. No."])}
-                      onChange={() => handleCheckboxChange(item["S. No."])}
+                      checked={selectedBox.includes(item.id)}
+                      onChange={() => handleCheckboxChange(item.id)}
                       sx={{
                         "& .MuiSvgIcon-root": {
-                          color: "#C2C2E7", // Color for the tick
+                          color: "#C2C2E7",
                         },
                       }}
                       inputProps={{ "aria-label": "select all" }}
@@ -158,7 +157,7 @@ const PopUpTable = ({ headers, initialData, onRowClick, selectedBox = [] ,onView
                       </CustomButton>
                     </>
                   ) : (
-                    item[header] ?? "N/A"
+                    header === "S. No." ? index + 1 : item[header] ?? "N/A"
                   )}
                 </td>
               ))}
