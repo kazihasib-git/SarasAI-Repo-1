@@ -25,7 +25,7 @@ import TAAvailability from "./pages/managesTAs/TaAvaialablity";
 import ManageCoaches from "./pages/ManageCoaches/ManageCoaches";
 import CoachMapping from "./pages/ManageCoaches/CoachMapping";
 import CoachTemplate from "./pages/ManageCoaches/CoachingTemplate/CoachTemplate";
-import CoachAvialability from "./pages/managesTAs/CoachAvialability";
+import CoachAvialability from "./pages/ManageCoaches/CoachAvialability";
 import CoachScheduling from "./pages/ManageCoaches/CoachScheduling";
 import AllRoutes from "./components/AllRoutes/AllRoutes";
 import TaMapping from "./pages/managesTAs/TaMapping";
@@ -128,8 +128,8 @@ function App() {
               element={<CoachMapping page="Coach Mapping" />}
             />
             <Route
-              path="coach-manage/tacalender"
-              element={<CoachCalender />}
+              path="coach-calender/:name/:id"
+              element={<CoachCalender page="Calendar" />}
             />
             <Route
               path="coach-template"

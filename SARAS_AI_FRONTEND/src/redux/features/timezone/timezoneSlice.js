@@ -3,24 +3,24 @@ import axios from 'axios';
 import { baseUrl } from '../../../utils/baseURL';
 
 export const getTimezone = createAsyncThunk(
-    'timezone/getTimezone',
-    async () => {
-        const response = await axios.get(`${baseUrl}/timezones`)
-        return response.data;
-    }
+  'timezone/getTimezone',
+  async () => {
+    const response = await axios.get(`${baseUrl}/timezones`)
+    return response.data;
+  }
 )
 
 const initialState = {
-    timezones: [],
-    loading: false,
-    error: null
+  timezones: [],
+  loading: false,
+  error: null
 }
 
 const timezoneSlice = createSlice({
   name: 'timezone',
   initialState,
   reducers: {},
-  extraReducers : (builder) => {
+  extraReducers: (builder) => {
     builder
       .addCase(getTimezone.pending, (state) => {
         state.loading = true
@@ -33,9 +33,9 @@ const timezoneSlice = createSlice({
         state.loading = false
         state.error = action.error.message
       })
-    }
+  }
 });
 
-export const {} = timezoneSlice.actions
+export const { } = timezoneSlice.actions
 
 export default timezoneSlice.reducer

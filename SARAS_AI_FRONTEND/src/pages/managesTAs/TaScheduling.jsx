@@ -1,24 +1,27 @@
-import { Box, InputBase, Button, Modal, Typography } from '@mui/material';
+import { Box, InputBase, Button, Modal, Typography } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { mockMappingDat } from '../../fakeData/mappingData';
+import { mockMappingDat } from "../../fakeData/mappingData";
 import Header from "../../components/Header/Header";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import { useEffect, useState } from "react";
-import { OnOffSwitch } from '../../components/Switch';
-import editIcon from '../../assets/editIcon.png';
-import { useNavigate } from 'react-router-dom';
-import DynamicTable from '../../components/CommonComponent/DynamicTable';
-import { useDispatch, useSelector } from 'react-redux';
-import { showTASchedule } from '../../redux/features/taModule/taScheduling';
-import Schedule from '../../components/availability/Schedule';
-import AssignStudents from '../../components/adminModule/AssignStudents';
-import AssignBatches from '../../components/adminModule/AssignBatches';
-import { showTAMapping } from '../../redux/features/taModule/taSlice';
+import { OnOffSwitch } from "../../components/Switch";
+import editIcon from "../../assets/editIcon.png";
+import { useNavigate } from "react-router-dom";
+import DynamicTable from "../../components/CommonComponent/DynamicTable";
+import { useDispatch, useSelector } from "react-redux";
+import Schedule from "../../components/availability/Schedule";
+import AssignStudents from "../../components/adminModule/AssignStudents";
+import AssignBatches from "../../components/adminModule/AssignBatches";
+import { showTAMapping } from "../../redux/features/taModule/taSlice";
 
 const TaScheduling = () => {
   const dispatch = useDispatch();
-  const { assignStudentOpen, assignBatchOpen, loading } = useSelector((state) => state.taModule);
-  const { taSchedule, scheduleSessionOpen } = useSelector((state) => state.taScheduling);
+  const { assignStudentOpen, assignBatchOpen, loading } = useSelector(
+    (state) => state.taModule
+  );
+  const { scheduleSessionOpen } = useSelector(
+    (state) => state.taScheduling
+  );
   const { taMapping } = useSelector((state) => state.taModule);
 
   const [taScheduleData, setTaScheduleData] = useState([]);
@@ -28,7 +31,7 @@ const TaScheduling = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    console.log("TASCHEDULE : ", taMapping)
+    console.log("TASCHEDULE : ", taMapping);
     if (taMapping && taMapping.length > 0) {
       const transformData = taMapping.map((item, index) => ({
         id: item.id,
@@ -38,38 +41,56 @@ const TaScheduling = () => {
         Active_Batches: item.Active_Students,
         // Active_Students: item.Active_Students,
         // Active_Batches: item.Active_Batches,
-        timezone : item.time_zone,
+        timezone: item.time_zone,
       }));
 
       setTaScheduleData(transformData);
     }
   }, [taMapping]);
 
-  const headers = ["S. No.", "TA Name", "Username", "Active Students", "Active Batches","timezone","Action"];
+  const headers = [
+    "S. No.",
+    "TA Name",
+    "Username",
+    "Active Students",
+    "Active Batches",
+    "timezone",
+    "Action",
+  ];
 
   const actionButtons = [
     {
-      type: 'calendar',
-    }
+      type: "calendar",
+    },
   ];
 
   return (
     <>
-      <Header />
-      <Sidebar />
-      <Box display={"flex"} justifyContent={"space-between"} marginTop={3} alignItems={"center"}>
-        <p style={{ fontSize: "44px", justifyContent: "center" }}>TA Scheduling </p>
+      <Box m="20px">
+        <Header />
+        <Sidebar />
+        <Box
+          display={"flex"}
+          justifyContent={"space-between"}
+          marginTop={3}
+          alignItems={"center"}
+        >
+          <p style={{ fontSize: "44px", justifyContent: "center" }}>
+            TA Scheduling{" "}
+          </p>
+        </Box>
+        <DynamicTable
+          headers={headers}
+          initialData={taScheduleData}
+          actionButtons={actionButtons}
+          componentName={"TAMAPPING"}
+        />
       </Box>
-      <DynamicTable
-        headers={headers}
-        initialData={taScheduleData}
-        actionButtons={actionButtons}
-      />
-      {scheduleSessionOpen && <Schedule />}
-      {assignStudentOpen && <AssignStudents />}
-      {assignBatchOpen && <AssignBatches />}
+      {scheduleSessionOpen && <Schedule componentName={"TASCHEDULE"} />}
+      {assignStudentOpen && <AssignStudents componentname={"ADDEDITTA"} />}
+      {assignBatchOpen && <AssignBatches componentname={"ADDEDITTA"} />}
     </>
   );
-}
+};
 
 export default TaScheduling;

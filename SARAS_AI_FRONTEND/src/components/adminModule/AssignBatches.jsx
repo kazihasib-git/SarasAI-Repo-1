@@ -72,6 +72,7 @@ const AssignBatches = ({ componentname }) => {
     openSuccessAction,
     getBatchMappingAction,
     postAssignAction;
+  let schedulingState, nameKeyScheduling, idKeyScheduling;
 
   switch (componentname) {
     case "ADDITCOACH":
@@ -83,6 +84,9 @@ const AssignBatches = ({ componentname }) => {
       openSuccessAction = openCoachSuccessPopup;
       getBatchMappingAction = getCoachBatchMapping;
       postAssignAction = postCoachAssignBatches;
+      schedulingState = useSelector((state) => state.coachScheduling);
+      nameKeyScheduling = "coachName";
+      idKeyScheduling = "coachID";
       break;
     case "ADDEDITTA":
       stateModuleKey = "taModule";
@@ -93,6 +97,9 @@ const AssignBatches = ({ componentname }) => {
       openSuccessAction = openSuccessPopup;
       getBatchMappingAction = getBatchMapping;
       postAssignAction = postAssignBatches;
+      schedulingState = useSelector((state) => state.taScheduling);
+      nameKeyScheduling = "taName";
+      idKeyScheduling = "taID";
       break;
     default:
       stateModuleKey = null;
@@ -103,13 +110,14 @@ const AssignBatches = ({ componentname }) => {
       openSuccessAction = null;
       getBatchMappingAction = null;
       postAssignAction = null;
+      schedulingState = null;
+      nameKeyScheduling = null;
+      idKeyScheduling = null;
       break;
   }
 
-  const stateSelector = useSelector((state) =>
-    stateModuleKey ? state[stateModuleKey] : {}
-  );
-  const { taName, taID: taId } = useSelector((state) => state.taScheduling);
+  const stateSelector = useSelector((state) => (stateModuleKey ? state[stateModuleKey] : {}));
+  const { [nameKeyScheduling]: assignedName, [idKeyScheduling]: assignedId } = schedulingState || {};
 
   const {
     [assignBatchOpenKey]: assignBatchOpen,
@@ -128,7 +136,6 @@ const AssignBatches = ({ componentname }) => {
 
   useEffect(() => {
     if (batchMapping) {
-      console.log("BATCHMAPPING : ", batchMapping)
       const transformedData = batchMapping.map((batch) => ({
         "S. No.": batch.id,
         "Batch Name": batch.name,
@@ -138,14 +145,8 @@ const AssignBatches = ({ componentname }) => {
       }));
 
       const filtered = transformedData.filter((batch) => {
-        const matchesBranch = selectedBranch
-          ? batch.Branch === selectedBranch
-          : true;
-        const matchesQuery = searchQuery
-          ? batch["Batch Name"]
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase())
-          : true;
+        const matchesBranch = selectedBranch ? batch.Branch === selectedBranch : true;
+        const matchesQuery = searchQuery ? batch["Batch Name"].toLowerCase().includes(searchQuery.toLowerCase()) : true;
         return matchesBranch && matchesQuery;
       });
 
@@ -158,23 +159,21 @@ const AssignBatches = ({ componentname }) => {
     : [];
 
   const handleSelectBatch = (id) => {
-    setSelectedBatch((prev) =>
-      prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id]
-    );
+    setSelectedBatch((prev) => (prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id]));
   };
 
   const handleSubmit = () => {
-    const id = componentname === "ADDITCOACH" ? coachID : taID ? taID : taId;
+    const id = componentname === "ADDITCOACH" ? coachID || assignedId : taID || assignedId;
     const data = {
       [componentname === "ADDITCOACH" ? "Coach_id" : "ta_id"]: id,
       batches: selectedBatch.map((id) => ({ id: id.toString() })),
     };
-    dispatch(postAssignAction({ id: taID ? taID : taId, data })).then(() => {
-      if (taId) {
+    dispatch(postAssignAction({ id, data })).then(() => {
+      if (assignedId) {
         dispatch(
           openScheduleSession({
-            id: taId,
-            name: taName,
+            id: assignedId,
+            name: assignedName,
             batches: selectedBatch.map((id) => ({ id: id.toString() })),
           })
         );
@@ -231,7 +230,7 @@ const AssignBatches = ({ componentname }) => {
   );
 
   const actions = (
-    <Button
+    <CustomButton
       onClick={handleSubmit}
       style={{
         backgroundColor: "#F56D3B",
@@ -240,14 +239,14 @@ const AssignBatches = ({ componentname }) => {
       }}
     >
       Submit
-    </Button>
+    </CustomButton>
   );
 
   if (loading) {
     return <div>Loading...</div>;
   }
 
-  const assignedTA = assignedTAName || taName;
+  const assignedTA = assignedTAName || assignedName;
 
   return (
     <ReusableDialog
