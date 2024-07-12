@@ -13,6 +13,13 @@ import ReusableDialog from "../CustomFields/ReusableDialog";
 import PopUpTable from "../CommonComponent/PopUpTable";
 import { openScheduleSession } from "../../redux/features/taModule/taScheduling";
 
+import {
+  closeCoachAssignStudents,
+  openCoachSuccessPopup,
+  getCoachStudentBatchMapping,
+  postCoachAssignStudents,
+} from "../../redux/features/CoachModule/coachSlice";
+
 const CustomButton = ({
   onClick,
   children,
@@ -48,7 +55,7 @@ const CustomButton = ({
   );
 };
 
-const AssignStudents = () => {
+const AssignStudents = ({ componentname }) => {
   const dispatch = useDispatch();
   const [selectedTerm, setSelectedTerm] = useState("");
   const [selectedBatch, setSelectedBatch] = useState("");
@@ -56,14 +63,57 @@ const AssignStudents = () => {
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [filteredStudents, setFilteredStudents] = useState([]);
 
-  const { assignStudentOpen, ta_name, taID, studentBatchMapping } = useSelector((state) => state.taModule);
+  let stateModuleKey, nameKey, assignStudentOpenKey, assignMappingKey, closeDialogAction, openSuccessAction, getBatchMappingAction, postAssignAction;
+
+  switch (componentname) {
+    case "ADDITCOACH":
+      stateModuleKey = "coachModule";
+      nameKey = "coach_name";
+      assignStudentOpenKey = "assignCoachStudentOpen";
+      assignMappingKey = "coachStudentBatchMapping";
+      closeDialogAction = closeCoachAssignStudents;
+      openSuccessAction = openCoachSuccessPopup;
+      getBatchMappingAction = getCoachStudentBatchMapping;
+      postAssignAction = postCoachAssignStudents;
+      break;
+    case "ADDEDITTA":
+      stateModuleKey = "taModule";
+      nameKey = "ta_name";
+      assignStudentOpenKey = "assignStudentOpen";
+      assignMappingKey = "studentBatchMapping";
+      closeDialogAction = closeAssignStudents;
+      openSuccessAction = openSuccessPopup;
+      getBatchMappingAction = getStudentBatchMapping;
+      postAssignAction = postAssignStudents;
+      break;
+    default:
+      stateModuleKey = null;
+      nameKey = null;
+      assignStudentOpenKey = null;
+      assignMappingKey = null;
+      closeDialogAction = null;
+      openSuccessAction = null;
+      getBatchMappingAction = null;
+      postAssignAction = null;
+      break;
+  }
+
+  const stateSelector = useSelector((state) => (stateModuleKey ? state[stateModuleKey] : {}));
   const { taName, taID: taId } = useSelector((state) => state.taScheduling);
 
+  const {
+    [assignStudentOpenKey]: assignStudentOpen,
+    [nameKey]: assignedTAName,
+    taID,
+    coachID,
+    [assignMappingKey]: studentBatchMapping,
+  } = stateSelector || {};
+
   useEffect(() => {
-    if (assignStudentOpen) {
-      dispatch(getStudentBatchMapping());
+    if (stateModuleKey && assignStudentOpen) {
+      dispatch(getBatchMappingAction());
     }
-  }, [assignStudentOpen, dispatch]);
+  }, [assignStudentOpen, dispatch, getBatchMappingAction]);
 
   useEffect(() => {
     if (studentBatchMapping) {
@@ -89,11 +139,13 @@ const AssignStudents = () => {
   }, [studentBatchMapping, selectedTerm, selectedBatch, searchName]);
 
   const batchOptions = studentBatchMapping
-    ? [...new Set(
-        studentBatchMapping
-          .filter((student) => !selectedTerm || student.academic_term === selectedTerm)
-          .flatMap((student) => student.batches.map((batch) => batch.batch_name))
-      )]
+    ? [
+        ...new Set(
+          studentBatchMapping
+            .filter((student) => !selectedTerm || student.academic_term === selectedTerm)
+            .flatMap((student) => student.batches.map((batch) => batch.batch_name))
+        ),
+      ]
     : [];
 
   const academicTermOptions = studentBatchMapping
@@ -101,33 +153,31 @@ const AssignStudents = () => {
     : [];
 
   const handleSelectStudent = (id) => {
-    setSelectedStudents((prev) =>
-      prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id]
-    );
+    setSelectedStudents((prev) => (prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id]));
   };
 
   const handleSubmit = () => {
+    const id = componentname === "ADDITCOACH" ? coachID : taID ? taID : taId;
     const data = {
-      ta_id: taID ? taID : taId,
+      [componentname === "ADDITCOACH" ? "Coach_id" : "ta_id"]: id,
       student: selectedStudents.map((id) => ({ id: id.toString() })),
     };
-    dispatch(postAssignStudents({ id: taID ? taID : taId, data }))
-      .then(() => {
-        if (taId) {
-          dispatch(openScheduleSession({ id: taId, name: taName, student: selectedStudents.map((id) => ({ id: id.toString() })) }));
-        }
-        dispatch(openSuccessPopup());
-      });
-    dispatch(closeAssignStudents());
+    dispatch(postAssignAction({ id: taID ? taID : taId, data })).then(() => {
+      if (taId) {
+        dispatch(
+          openScheduleSession({
+            id: taId,
+            name: taName,
+            student: selectedStudents.map((id) => ({ id: id.toString() })),
+          })
+        );
+      }
+      dispatch(openSuccessAction());
+    });
+    dispatch(closeDialogAction());
   };
 
-  const headers = [
-    "S. No.",
-    "Student Name",
-    "Academic Term",
-    "Batch",
-    "Select",
-  ];
+  const headers = ["S. No.", "Student Name", "Academic Term", "Batch", "Select"];
 
   const content = (
     <>
@@ -177,11 +227,7 @@ const AssignStudents = () => {
         onRowClick={handleSelectStudent}
         selectedBox={selectedStudents}
       />
-      <Typography
-        variant="subtitle1"
-        gutterBottom
-        sx={{ mt: 2, textAlign: "center" }}
-      >
+      <Typography variant="subtitle1" gutterBottom sx={{ mt: 2, textAlign: "center" }}>
         {selectedStudents.length} Student(s) Selected
       </Typography>
     </>
@@ -200,17 +246,19 @@ const AssignStudents = () => {
     </CustomButton>
   );
 
-  const assignedTA = ta_name || taName;
+  const assignedTA = assignedTAName || taName;
 
   return (
     <ReusableDialog
       open={assignStudentOpen}
-      handleClose={() => dispatch(closeAssignStudents())}
+      handleClose={() => dispatch(closeDialogAction())}
       title={`Assign Students to ${assignedTA}`}
       content={content}
       actions={actions}
     />
   );
 };
+
+
 
 export default AssignStudents;

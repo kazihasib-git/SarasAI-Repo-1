@@ -41,7 +41,7 @@ const ManageCoaches = () => {
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const { coaches , loading, error, createCoachOpen, editCoachOpen } = useSelector((state) => state.coachModule);
 
-console.log("coachess " , coaches);
+// console.log("coachess " , coaches);
     // Fetch coach data on component mount
     useEffect(() => {
         dispatch(closeCreateCoach());
@@ -93,7 +93,7 @@ console.log("coachess " , coaches);
     const handleAddCoach = () => {
         navigate('/createcoach');
     };
-    console.log("EditData" , editCoachOpen);
+    // console.log("EditData" , editCoachOpen);
     const handleEdit = (id) => {
         const coachData = tasData.find(ta => ta.id === id);
         setSelectedCoachData(coachData);
