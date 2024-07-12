@@ -230,7 +230,7 @@ const AssignBatches = ({ componentname }) => {
   );
 
   const actions = (
-    <Button
+    <CustomButton
       onClick={handleSubmit}
       style={{
         backgroundColor: "#F56D3B",
@@ -239,7 +239,7 @@ const AssignBatches = ({ componentname }) => {
       }}
     >
       Submit
-    </Button>
+    </CustomButton>
   );
 
   if (loading) {

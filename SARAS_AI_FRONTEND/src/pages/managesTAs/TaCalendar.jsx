@@ -8,7 +8,7 @@ import MarkLeave from '../../components/availability/MarkLeave';
 import DeleteAllSlots from '../../components/availability/DeleteAllSlots';
 import CreateNewSlot from '../../components/availability/CreateNewSlot';
 import ScheduleSession from '../../components/availability/ScheduleSession';
-import { openMarkLeave, closeMarkLeave, getSlots, fetchCoachSlots, fetchTAScheduleById,selectTAScheduleData, openCreateNewSlots} from '../../redux/features/taModule/taAvialability';
+import { openMarkLeave, closeMarkLeave, getSlots, fetchCoachSlots, fetchTAScheduleById, selectTAScheduleData, openCreateNewSlots } from '../../redux/features/taModule/taAvialability';
 import { useDispatch, useSelector } from 'react-redux';
 import Slots from '../../components/availability/Slots';
 import ScheduledSessions from '../../components/availability/ScheduledSessions';
@@ -19,8 +19,11 @@ import { PickersInputBaseSectionsContainer } from '@mui/x-date-pickers/PickersTe
 import NewCal from '../../components/Calender/IndexCalenderNew';
 import { add } from 'date-fns';
 import { useParams } from 'react-router-dom';
-import { getTAScheduledSessions } from '../../redux/features/taModule/taScheduling';
+import { getTAScheduledSessions, openScheduleSession } from '../../redux/features/taModule/taScheduling';
 import moment from 'moment';
+import Schedule from '../../components/availability/Schedule';
+import AssignStudents from '../../components/adminModule/AssignStudents';
+import AssignBatches from '../../components/adminModule/AssignBatches';
 
 const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = '#4E18A5', borderColor = '#FFFFFF', sx, ...props }) => {
     return (
@@ -53,22 +56,26 @@ const TaCalender
     = () => {
         const dispatch = useDispatch();
         const { id, name } = useParams();
-        const { createNewSlotsOpen, slotEventData, slotData, scheduleData} = useSelector((state) => state.taAvialability);
+        
         const [sheduleNewSession, setSheduleNewSession] = useState(false)
         const [deleteFutureSlots, setDeleteFutureSlots] = useState(false)
         //const [createNewSlot, setCreateNewSlot] = useState(false)
-        
-        const { 
-            markLeaveOpen, 
-            scheduledSlotsOpen, 
-            scheduledSessionOpen, 
+
+        const { assignBatchOpen, assignStudentOpen } = useSelector((state) => state.taModule);
+
+        const {
+            slotData, 
+            scheduleData,
+            markLeaveOpen,
+            scheduledSlotsOpen,
+            scheduledSessionOpen,
             cancelSessionOpen,
             reasonForLeaveOpen,
             resheduleSessionOpen,
             createNewSlotOpen,
         } = useSelector((state) => state.taAvialability);
 
-        const { taScheduledSessions } = useSelector((state) => state.taScheduling);
+        const { taScheduledSessions, scheduleSessionOpen } = useSelector((state) => state.taScheduling);
         //calendar
         const [eventsList, setEventsList] = useState([]);
 
@@ -78,7 +85,7 @@ const TaCalender
             const newEnd = new Date(endDateTime);
             setEventsList(prev => [...prev, { title, start: newStart, end: newEnd }]);
         };
-        
+
         // const handleSelectEvent = event => {
         //     if (window.confirm(`Are you sure you want to delete the event '${event.title}'?`)) {
         //         setEventsList(prev => {
@@ -121,7 +128,7 @@ const TaCalender
         //     dispatch(getSlots());
         // }, [slotEventData])
 
-        console.log("ta Id :",  id)
+        console.log("ta Id :", id)
 
         useEffect(() => {
             dispatch(fetchCoachSlots(id));
@@ -135,8 +142,9 @@ const TaCalender
         // }, [dispatch]);
 
         const handleScheduleNewSession = () => {
-            console.log("Pressed")
-            setSheduleNewSession()
+            // console.log("Pressed")
+            // setSheduleNewSession()
+            dispatch(openScheduleSession({ id, name }));
         }
 
         const handleMarkLeave = () => {
@@ -147,7 +155,7 @@ const TaCalender
             setDeleteFutureSlots(true)
         }
 
-        const handleCreateNewSlot= () => {
+        const handleCreateNewSlot = () => {
             dispatch(openCreateNewSlots());
         }
 
@@ -170,8 +178,8 @@ const TaCalender
         //     end: moment("2024-07-12 12:30", "YYYY-MM-DD HH:mm").toDate()
         // }
         // ];
-       
-        
+
+
         // console.log("session data",scheduleData);
         return (
             <Box sx={{ backgroundColor: '#f8f9fa', p: 3 }}>
@@ -179,7 +187,7 @@ const TaCalender
                     <Grid container alignItems="center">
                         <Grid item xs>
                             <Typography variant='h4' sx={{ mb: 4 }}>
-                               {name} Calender 
+                                {name} Calender
                             </Typography>
                         </Grid>
                         <Grid item>
@@ -230,15 +238,18 @@ const TaCalender
                     </Grid>
                 </DialogActions>
                 <CalendarComponent eventsList={scheduleData.data} addEvent={addEvent} slotData={slotData} componentName={"TACALENDER"} />
+                {scheduleSessionOpen && <Schedule />}
                 {sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} componentName={"TACALENDER"} />}
                 {markLeaveOpen && <MarkLeave id={id} name={name} componentName={"TACALENDER"} />}
-                {scheduledSlotsOpen && <Slots  id={id} name={name} componentName={"TACALENDER"}/>}
-                {scheduledSessionOpen && <ScheduledSessions id={id} name={name} componentName={"TACALENDER"}/> }
-                {cancelSessionOpen && <CancelSchedule id={id} name={name} componentName={"TACALENDER"}/>}
-                {reasonForLeaveOpen && <ReasonForLeave id={id} name={name} componentName={"TACALENDER"}/> }
-                {resheduleSessionOpen && <ReschedulingSession id={id} name={name} componentName={"TACALENDER"} /> }
+                {scheduledSlotsOpen && <Slots id={id} name={name} componentName={"TACALENDER"} />}
+                {scheduledSessionOpen && <ScheduledSessions id={id} name={name} componentName={"TACALENDER"} />}
+                {cancelSessionOpen && <CancelSchedule id={id} name={name} componentName={"TACALENDER"} />}
+                {reasonForLeaveOpen && <ReasonForLeave id={id} name={name} componentName={"TACALENDER"} />}
+                {resheduleSessionOpen && <ReschedulingSession id={id} name={name} componentName={"TACALENDER"} />}
                 {deleteFutureSlots && <DeleteAllSlots open={deleteFutureSlots} handleClose={() => setDeleteFutureSlots(false)} id={id} name={name} componentName={"TACALENDER"} />}
-                {createNewSlotOpen && <CreateNewSlot addEvent={addEvent} componentName={"TACALENDER"} />}
+                {createNewSlotOpen && <CreateNewSlot addEvent={addEvent} componentName={"TACALENDER"}/>}
+                {assignStudentOpen && <AssignStudents componentname="ADDEDITTA" />}
+                {assignBatchOpen && <AssignBatches componentname="ADDEDITTA" />}
             </Box>
         )
     }

@@ -121,7 +121,7 @@ const CreateNewSlot = ({ addEvent }) => {
         formData.to_time = toTime;
         //formData.timezone = timeZone;
         formData.timezone = 'Asia/Kolkata'
-        formData.end_date = toDate;
+        formData.end_date = repeat === 'recurring' ? toDate : fromDate;
         formData.weeks = weeksArray;
         formData.admin_user_id = taId.id;
 

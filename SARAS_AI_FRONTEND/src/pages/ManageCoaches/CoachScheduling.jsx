@@ -60,51 +60,55 @@ const CoachSheduling = () => {
     "Action",
   ];
 
-
   return (
     <>
-    <Box m="20px">
-      <Header />
-      <Sidebar />
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-        mb={2}
-      >
-        <p
-          style={{
-            fontSize: "44px",
-            justifyContent: "center",
-            fontFamily: "ExtraLight",
-          }}
+      <Box m="20px">
+        <Header />
+        <Sidebar />
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          mb={2}
         >
-          Coach Scheduling
-        </p>
-        <Box display={"flex"}>
-          <Box
-            display={"flex"}
-            backgroundColor="#FFF"
-            borderRadius={"30px"}
-            width={"20vw"}
-            height={"5vh"}
-            marginBottom={"15px"}
-            marginRight={"10px"}
+          <p
+            style={{
+              fontSize: "44px",
+              justifyContent: "center",
+              fontFamily: "ExtraLight",
+            }}
           >
-            <InputBase sx={{ ml: 2, flex: 1 }} placeholder="Search here ..." />
+            Coach Scheduling
+          </p>
+          <Box display={"flex"}>
+            <Box
+              display={"flex"}
+              backgroundColor="#FFF"
+              borderRadius={"30px"}
+              width={"20vw"}
+              height={"5vh"}
+              marginBottom={"15px"}
+              marginRight={"10px"}
+            >
+              <InputBase
+                sx={{ ml: 2, flex: 1 }}
+                placeholder="Search here ..."
+              />
+            </Box>
           </Box>
         </Box>
-      </Box>
-      <DynamicTable
-        headers={headers}
-        initialData={coachScheduleData}
-        actionButtons={actionButtons}
-        componentName={"COACHMAPPING"}
-      />
+        <DynamicTable
+          headers={headers}
+          initialData={coachScheduleData}
+          actionButtons={actionButtons}
+          componentName={"COACHMAPPING"}
+        />
       </Box>
       {scheduleCoachSessionOpen && <Schedule componentName={"COACHSCHEDULE"} />}
-      {assignCoachStudentOpen && <AssignStudents componentname={"ADDITCOACH"} />}
-      {assignCoachBatchOpen && <AssignBatches  componentname={"ADDITCOACH"}/>}
+      {assignCoachStudentOpen && (
+        <AssignStudents componentname={"ADDITCOACH"} />
+      )}
+      {assignCoachBatchOpen && <AssignBatches componentname={"ADDITCOACH"} />}
     </>
   );
 };

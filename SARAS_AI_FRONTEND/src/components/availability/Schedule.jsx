@@ -107,6 +107,7 @@ const Schedule = ({ componentName }) => {
   const [selectedDays, setSelectedDays] = useState([]);
   const [slotData, setSlotData] = useState([{}]);
   const [selectedSlot, setSelectedSlot] = useState([{}]);
+    const [availableSlotsOptions, setAvailableSlotsOptions] = useState([{}]);
 
   const dispatch = useDispatch();
   let scheduleSessionOpenKey, schedulingStateKey, availableKey, idKey, nameKey, timezoneKey, getAvailableSlotsAction, closeScheduleSessionAction, createScheduleAction;
@@ -174,7 +175,7 @@ const Schedule = ({ componentName }) => {
 
     useEffect(() => {
         dispatch(getTimezone())
-    },[dispatch])
+    }, [dispatch])
 
   useEffect(() => {
     console.log("AVIALABLE KEY : ", availableKey)
@@ -187,6 +188,17 @@ const Schedule = ({ componentName }) => {
         "To Time": item.to_time,
         id:item.id
       }));
+
+            // I want to create options for the available slots to select the from and to time 
+            // from time and to will come as a single label
+
+            const options = taAvailableSlots.map((item) => ({
+                label: `${item.from_time} - ${item.to_time}`,
+                value: item.id,
+            }));
+
+            setAvailableSlotsOptions(options);
+
       setSlotData(transformData);
     }
   }, [availableSlots]);
@@ -211,6 +223,16 @@ const Schedule = ({ componentName }) => {
     });
   };
 
+
+    // 
+    const handleSelectOption = (e) => {
+        const selectedOption = e.target.value;
+        console.log("selectedOption : ", selectedOption)
+        const selectedSlot = taSlotData.filter((slot) => slot.id === selectedOption);
+        console.log("selectedSlot : ", selectedSlot)
+        setSelectedSlot(selectedSlot);
+    }
+
   const handleAssignStudents = () => {
     if (componentName === "TASCHEDULE") {
       dispatch(openAssignStudents());
@@ -218,6 +240,10 @@ const Schedule = ({ componentName }) => {
       dispatch(openCoachAssignStudents());
     }
   };
+
+    // const handleClear = () => {
+    //     setSelectedSlot([{}]);
+    // }
 
   const handleAssignBatches = () => {
     if (componentName === "TASCHEDULE") {
