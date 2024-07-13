@@ -302,7 +302,7 @@ const DynamicTable = ({
   );
 };
 
-const headers = ["Sr. No.", "Student Name", "Batch", "Actions"];
+const headers = ["Sr. No.", "Batch name", "Branch", "Actions"];
 const actionButtons = [
   {
     type: "switch",
@@ -328,10 +328,12 @@ const AssignBatches = () => {
 
   useEffect(() => {
     if (assignedBatches && assignedBatches.length > 0) {
+      console.log("assigned batches", assignedBatches)
       const transformData = assignedBatches.map((item, index) => ({
         id: item.id,
-        ta_name: item.ta.name,
+        //ta_name: item.ta.name,
         batch_name: item.batch.name,
+        branch : item.batch.branch,
         is_active: item.is_active,
       }));
 
