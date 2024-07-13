@@ -46,6 +46,7 @@ import {
 } from "../../redux/features/CoachModule/coachSlice";
 import { getTimezone } from '../../redux/features/timezone/timezoneSlice';
 import CustomTimeZoneForm from '../CustomFields/CustomTimeZoneForm';
+import { fetchTAScheduleById } from "../../redux/features/taModule/taAvialability";
 
 const CustomButton = ({
   onClick,
@@ -233,7 +234,7 @@ const Schedule = ({ componentName }) => {
   }
 
   const handleAssignStudents = () => {
-      dispatch(openEditStudent());
+    dispatch(openEditStudent());
     // if (componentName === "TASCHEDULE") {
     //   dispatch(openAssignStudents());
     // } else if (componentName === "COACHSCHEDULE") {
@@ -246,15 +247,15 @@ const Schedule = ({ componentName }) => {
   // }
 
   const handleAssignBatches = () => {
-     dispatch(openEditBatch())
-     /*
-    if (componentName === "TASCHEDULE") {
-      dispatch(openAssignBatches());
+    dispatch(openEditBatch())
+    /*
+   if (componentName === "TASCHEDULE") {
+     dispatch(openAssignBatches());
 
-    } else if (componentName === "COACHSCHEDULE") {
-      dispatch(openCoachAssignBatches());
-    }
-      */
+   } else if (componentName === "COACHSCHEDULE") {
+     dispatch(openCoachAssignBatches());
+   }
+     */
   };
 
   const onSubmit = async (formData) => {
@@ -262,6 +263,17 @@ const Schedule = ({ componentName }) => {
     const batchId = batches.map((batch) => batch.id);
 
     console.log("studentId : ", studentId, "batchId : ", batchId);
+    if (toTime) {
+      if (toTime < fromTime) {
+        alert('To time should be greater than from time!');
+      }
+    }
+
+    if (toDate) {
+      if (toDate < fromDate) {
+        alert('To Date should be greater than from Date!')
+      }
+    }
 
     let weeksArray = Array(7).fill(0);
     if (repeat === "recurring") {
@@ -291,8 +303,20 @@ const Schedule = ({ componentName }) => {
     formData.studentId = studentId;
     formData.batchId = batchId;
 
+    dispatch(createScheduleAction({ ...formData }))
+      .then(() => {
+        dispatch(closeScheduleSessionAction());
+        return dispatch(fetchTAScheduleById(adminUserID))
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+
+    /*
     dispatch(createScheduleAction({ ...formData }));
+    dispatch(fetchTAScheduleById(adminUserID))
     dispatch(closeScheduleSessionAction());
+    */
   };
 
   const content = (
@@ -428,16 +452,16 @@ const Schedule = ({ componentName }) => {
                           <Controller
                             name="timezone"
                             control={control}
-                            rules={{ required: "Time Zone is required" }}
+                            // rules={{ required: "Time Zone is required" }}
                             render={({ field }) => (
-                                <CustomTimeZoneForm
-                                    label="Time Zone"
-                                    name="timezone"
-                                    value={field.value}
-                                    onChange={field.onChange}
-                                    errors={errors}
-                                    options={timezones}
-                                />
+                              <CustomTimeZoneForm
+                                label="Time Zone"
+                                name="timezone"
+                                value={field.value}
+                                onChange={field.onChange}
+                                errors={errors}
+                                options={timezones}
+                              />
                             )}
                           />
                           {/*
