@@ -51,16 +51,16 @@ const WheelOfLife = () => {
             <Sidebar />
             <>
                 <Box display="flex" justifyContent="space-between" marginTop={3} alignItems={"center"}>
-                    <p style={{ fontSize: "44px", justifyContent: "center" }}>
+                    <p style={{ fontSize: "44px",fontWeight: 200, justifyContent: "center" }}>
                         Wheel Of Life
                     </p>
-                    <div className='inputBtnContainer'>
+                    <Box className='inputBtnContainer' paddingBottom="16px">
                         <button className='buttonContainer' onClick={handleWOLCategories} > WOL Categories </button>
                         <button className='buttonContainer' onClick={handleWOLInstructions}>WOL Instructions</button>
-                        <button className='buttonContainer'>WOL Questions</button>
-                        <button className='buttonContainer'>WOL Options Config</button>
-                        <button className='buttonContainer'>WOL Test Config</button>
-                    </div>
+                        <button className='buttonContainer' onClick={() => navigate('/wolQuestions') }>WOL Questions</button>
+                        <button className='buttonContainer' onClick={() => navigate('/wolOptionsConfig') } >WOL Options Config</button>
+                        <button className='buttonContainer' onClick={() => navigate('/wolTestConfig') }>WOL Test Config</button>
+                    </Box>
                 </Box>
                 {dummyData.length > 0 ? (
                     <DynamicTable

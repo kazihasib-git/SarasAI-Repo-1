@@ -17,6 +17,7 @@ import editIcon from "../../assets/editIcon.png";
 import bin from "../../assets/bin.png";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { useDispatch } from "react-redux";
+import {activeDeactiveWOLCategory} from "../../redux/features/coachingTools/wol/wolSlice";
 import { openScheduleSession } from "../../redux/features/taModule/taScheduling";
 
 import { updateTA } from "../../redux/features/taModule/taSlice";
@@ -122,6 +123,10 @@ const DynamicTable = ({
         break;
       case "MANAGECOACH":
         dispatch(updateCoach({ id, data: requestData }));
+        break;
+      case "WOLCATEGORY":
+        console.log("WOL Categories : ", id, requestData);
+        dispatch(activeDeactiveWOLCategory(id));
         break;
       default:
         console.warn(`No API call defined for component: ${componentName}`);
