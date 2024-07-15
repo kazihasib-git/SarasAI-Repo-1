@@ -3,8 +3,8 @@
 //export const baseUrl = process.env.REACT_APP_BASE_URL_LOCALOST
 
 //  DEV environment
-export const baseUrl = 'http://34.100.233.67:8080/api/v1'
-// export const baseUrl = process.env.REACT_APP_BASE_URL_DEV
+// export const baseUrl = 'http://34.100.233.67:8080/api/v1'
+export const baseUrl = process.env.REACT_APP_BASE_URL_DEV
 
 
 //  UAT environment

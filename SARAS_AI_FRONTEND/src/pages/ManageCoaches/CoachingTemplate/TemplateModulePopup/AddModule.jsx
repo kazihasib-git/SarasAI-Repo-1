@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import ReusableDialog from "../../../../components/CustomFields/ReusableDialog";
 import { Button, Grid } from "@mui/material";
 import CustomTextField from "../../../../components/CustomFields/CustomTextField";
-import { closeTemplateModulePopup } from "../../../../redux/features/CoachModule/CoachTemplateSlice";
+import { closeTemplateModulePopup, createCoachTemplateModule } from "../../../../redux/features/CoachModule/CoachTemplateSlice";
 import { useDispatch, useSelector } from "react-redux";
 const CustomButton = ({
   onClick,
@@ -41,8 +41,9 @@ const CustomButton = ({
 const AddModule = () => {
     const dispatch = useDispatch()
     const [moduleName, setModuleName] = useState("");
-    const { openModulePopUp } = useSelector((state) => state.coachTemplate)
-  const content = (
+    const { openModulePopUp, selectedCoachTemplate } = useSelector((state) => state.coachTemplate)
+
+    const content = (
     <Grid
       container
       sx={{
@@ -66,9 +67,23 @@ const AddModule = () => {
     </Grid>
   );
 
+  const handleSubmit = () =>{
+    if(moduleName){
+      const data ={
+          "template_id": selectedCoachTemplate,
+          "module_name": moduleName,
+          "is_active": true,
+          "created_by": 1,
+          "updated_by": 1
+      }
+      dispatch(createCoachTemplateModule(data));
+      dispatch(closeTemplateModulePopup());
+    }
+  }
+
   const actions = (
     <CustomButton
-    //   onClick={handleSubmit}
+      onClick={handleSubmit}
       backgroundColor="#F56D3B"
       borderColor="#F56D3B"
       color="#FFFFFF"

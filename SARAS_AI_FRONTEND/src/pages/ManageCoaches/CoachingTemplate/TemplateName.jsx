@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../../../components/Header/Header";
 import Sidebar from "../../../components/Sidebar/Sidebar";
 import { Box } from "@mui/material";
 import AddModule from "./TemplateModulePopup/AddModule";
 import { useDispatch, useSelector } from "react-redux";
-import { openEditModulePopup, openTemplateActivityPopup, openTemplateModulePopup } from "../../../redux/features/CoachModule/CoachTemplateSlice";
+import { openEditModulePopup, openTemplateActivityPopup, openTemplateModulePopup, removeSelectedModule, setSelectedModule } from "../../../redux/features/CoachModule/CoachTemplateSlice";
 import TemplateModuleTable from "./TemplateModuleTable/TemplateModuleTable";
 import "./TemplateName.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -13,14 +13,46 @@ import AddActivity from "./TemplateModulePopup/AddActivity";
 import EditModule from "./TemplateModulePopup/EditModule";
 
 const TemplateName = () => {
-  const { openModulePopUp, openActivityPopUp } = useSelector((state) => state.coachTemplate);
+  const { openModulePopUp, openActivityPopUp, selectedCoachTemplate, coachTemplates} = useSelector((state) => state.coachTemplate);
   const [isActive, setIsActive] = useState(true);
+  const [modulesData, setModulesData] = useState([]);
   const dispatch = useDispatch();
+
+  useEffect(()=>{
+    dispatch(removeSelectedModule());
+  },[dispatch]);
+
+  useEffect(()=>{
+    if(coachTemplates && coachTemplates.length){
+      const currentTemplateData = coachTemplates.find((template) => template.id === selectedCoachTemplate);
+
+      if(currentTemplateData && currentTemplateData.modules.length){
+        const tranformData = currentTemplateData.modules.map((item)=>({
+            id: module.id,
+            module_name : item.module_name,
+            is_active : item.is_active,
+            activities : item.activities.map((property)=>({
+              id: property.id,
+              "Activity Name": property.activity_name,
+              "Due Date": property.due_date,
+              Activity: property.activity_type.type_name,
+              Points: property.points,
+              Prerequisites: "Activity 1, Activity 2",
+              "After Due Date": property.after_due_date,
+              is_active: property.is_active
+            }))    
+        }));
+        setModulesData(tranformData);
+      }
+    }
+  },[coachTemplates]);
+
   const handleModule = () => {
     dispatch(openTemplateModulePopup());
   };
 
-  const handleActivity = () => {
+  const handleActivity = (module) => {
+    dispatch(setSelectedModule(module.id));
     dispatch(openTemplateActivityPopup());
   };
 
@@ -120,9 +152,11 @@ const TemplateName = () => {
           </button>
         </div>
       </Box>
-      {!dummyData || dummyData.length === 0 ? (
+      {!modulesData || modulesData.length === 0 ? (
         <div>{/* <p>No Data Available</p> */}</div>
       ) : (
+        <>
+        {modulesData && modulesData.map((module)=>(
         <>
           <Box
             display={"flex"}
@@ -131,22 +165,22 @@ const TemplateName = () => {
             alignItems={"center"}
           >
             <p style={{ fontSize: "24px", justifyContent: "center" }}>
-              Template Name{" "}
+              {module.module_name}
               <span
                 style={{
                   borderRadius: "50px",
-                  backgroundColor: isActive ? "#14D249" : "red",
+                  backgroundColor: module.is_active ? "#14D249" : "red",
                   color: "white",
                   padding: "3px 10px",
                   marginLeft: "10px",
                   fontSize:"12px"
                 }}
               >
-                {isActive ? "Active" : "Inactive"}
+                {module.is_active ? "Active" : "Inactive"}
               </span>
             </p>
             <div className="inputBtnContainer">
-              <button className="buttonTemplateContainer" onClick={handleActivity}>
+              <button className="buttonTemplateContainer" onClick={handleActivity(module)}>
                 <i className="bi bi-plus-circle"></i>
                 <span>Add Activity</span>
               </button>
@@ -160,15 +194,17 @@ const TemplateName = () => {
 
           <TemplateModuleTable
             headers={headers}
-            initialData={Array.isArray(dummyData) ? dummyData : []}
+            initialData={Array.isArray(module.activities) ? module.activities : []}
             actionButtons={actionButtons}
             componentName={"TemplateName"}
           />
         </>
+        ))}
+        </>
       )}
 
       {openModulePopUp && <AddModule />}
-      {openActivityPopUp && <AddActivity />}
+      {/* {openActivityPopUp && <AddActivity />} */}
       {openEditModulePopup && <EditModule />}
     </>
   );
