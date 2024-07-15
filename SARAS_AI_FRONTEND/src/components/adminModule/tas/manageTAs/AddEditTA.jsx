@@ -479,7 +479,7 @@ const AddEditTA = ({ data }) => {
                 control={control}
                 rules={{ required: "Gender is required" }}
                 render={({ field }) => (
-                  <CustomTextField
+                  <CustomFormControl
                     label="Gender"
                     name="gender"
                     value={field.value}
