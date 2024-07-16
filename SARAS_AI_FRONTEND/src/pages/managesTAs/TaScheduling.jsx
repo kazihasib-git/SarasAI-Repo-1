@@ -66,14 +66,16 @@ const TaScheduling = () => {
 
   return (
     <>
-      <Box m="20px">
+      <Box m="10px">
         <Header />
         <Sidebar />
         <Box
-          display={"flex"}
-          justifyContent={"space-between"}
-          marginTop={3}
-          alignItems={"center"}
+          style={{
+            fontSize: "44px",
+            justifyContent: "center",
+            marginBottom: "20px",
+            fontFamily:"ExtraLight"
+          }}
         >
           <p style={{ fontSize: "44px", justifyContent: "center" }}>
             TA Scheduling{" "}

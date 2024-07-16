@@ -341,6 +341,7 @@ const AssignBatches = () => {
 
   return (
     <>
+    <Box m="10px">
       <Header />
       <Sidebar />
       <DynamicTable
@@ -351,6 +352,7 @@ const AssignBatches = () => {
         ta_id={id}
         dispatch={dispatch}
       />
+      </Box>
     </>
   );
 };
