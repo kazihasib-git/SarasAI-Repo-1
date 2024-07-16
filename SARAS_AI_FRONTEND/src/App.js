@@ -55,6 +55,10 @@ import TemplateName from "./pages/ManageCoaches/CoachingTemplate/TemplateName";
 import WheelOfLife from "./pages/coachingTools/wheelOfLife/WheelOfLife";
 import WOLCategories from "./components/coachingTools/wheelOfLife/WOLCategories";
 import WOLInstructions from "./components/coachingTools/wheelOfLife/WOLInstructions";
+import WOLQuestions from "./components/coachingTools/wheelOfLife/WOLQuestions";
+import WOLOptionsConfig from "./components/coachingTools/wheelOfLife/WOLOptionsConfig";
+import WOLTestConfig from "./components/coachingTools/wheelOfLife/WOLTestConfig";
+import AddEditWOLQuestions from "./components/coachingTools/wheelOfLife/AddEditWOLQuestions";
 import AddEditTeachingAssistant from "./pages/MODULE/TaModule/TeachingAssistant";
 import CreateTaMenu from "./pages/MODULE/TaModule/CreateTaMenu";
 const ROLES = {
@@ -173,6 +177,10 @@ function App() {
             <Route path="wheel-of-life" element={<WheelOfLife />} />
             <Route path="wolCategories" element={<WOLCategories />} />
             <Route path="wolInstructions" element={<WOLInstructions />} />
+            <Route path="wolQuestions" element={<WOLQuestions/>} />
+            <Route path="wolQuestions/add-Edit" element={<AddEditWOLQuestions/> } />
+            <Route path="wolOptionsConfig" element={<WOLOptionsConfig/>} />
+            <Route path="wolTestConfig" element={<WOLTestConfig/>} />
           </Route>
         </Route>
 

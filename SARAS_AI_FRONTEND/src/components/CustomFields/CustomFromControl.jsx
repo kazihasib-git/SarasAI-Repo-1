@@ -18,7 +18,7 @@ const CustomFormControl = ({
         sx={{
           color: hasError ? 'red' : '#1A1E3D',
           "&.Mui-focused": {
-            color: '#9A9DAD', // Change label color on focus regardless of error
+            color: '#1A1E3D', // Change label color on focus regardless of error
           },
           "&.MuiFormLabel-filled": {
             color: hasError ? 'red' : '#1A1E3D', // Change label color when the field is filled
@@ -52,6 +52,7 @@ const CustomFormControl = ({
           },
           "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
             borderColor: hasError ? 'red' : 'rgb(245, 109, 59)', // Change border color on focus based on error
+            color:"#1A1E3D"
           },
         }}
 >

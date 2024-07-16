@@ -225,7 +225,7 @@ const AssignStudents = ({ componentname }) => {
 
   const content = (
     <>
-      <Grid container spacing={2}>
+      <Grid container spacing={2} sx={{mt:0}}>
         <Grid item sm={6}>
           <CustomTextField
             select
@@ -299,7 +299,7 @@ const AssignStudents = ({ componentname }) => {
     <ReusableDialog
       open={assignStudentOpen}
       handleClose={() => dispatch(closeDialogAction())}
-      title={`Assign Students to ${assignedTA}`}
+      title={`Assign Students to '${assignedTA}'`}
       content={content}
       actions={actions}
     />

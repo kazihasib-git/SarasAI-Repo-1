@@ -45,6 +45,7 @@ const CustomButton = ({
           color: backgroundColor,
           borderColor: color,
         },
+        textTransform: "none",
         ...sx,
       }}
       {...props}
@@ -154,7 +155,7 @@ const SubmitPopup = ({ componentname }) => {
     <ReusableDialog
       open={stateModuleKey === "coachModule" ? coachSuccessPopup : successPopup}
       handleClose={handleCloseButton}
-      title={`${displayName} successfully created.`}
+      title={`'${displayName}' successfully created.`}
       actions={actions}
     />
   );

@@ -1,13 +1,13 @@
 import React, { useEffect } from "react";
 import {
-  Grid,
-  Button,
-  FormControl,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  FormGroup,
-  Checkbox, Box,
+    Grid,
+    Button,
+    FormControl,
+    RadioGroup,
+    FormControlLabel,
+    Radio,
+    FormGroup,
+    Checkbox, Box,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import CustomDateField from "../CustomFields/CustomDateField";
@@ -28,38 +28,38 @@ import { useParams } from 'react-router-dom';
 
 
 const CustomButton = ({
-  onClick,
-  children,
-  color = "#FFFFFF",
-  backgroundColor = "#4E18A5",
-  borderColor = "#FFFFFF",
-  sx,
-  ...props
+    onClick,
+    children,
+    color = "#FFFFFF",
+    backgroundColor = "#4E18A5",
+    borderColor = "#FFFFFF",
+    sx,
+    ...props
 }) => {
-  return (
-    <Button
-      variant="contained"
-      onClick={onClick}
-      sx={{
-        backgroundColor: backgroundColor,
-        color: color,
-        fontWeight: "700",
-        fontSize: "16px",
-        borderRadius: "50px",
-        padding: "10px 20px",
-        border: `2px solid ${borderColor}`,
-        "&:hover": {
-          backgroundColor: color,
-          color: backgroundColor,
-          borderColor: color,
-        },
-        ...sx,
-      }}
-      {...props}
-    >
-      {children}
-    </Button>
-  );
+    return (
+        <Button
+            variant="contained"
+            onClick={onClick}
+            sx={{
+                backgroundColor: backgroundColor,
+                color: color,
+                fontWeight: "700",
+                fontSize: "16px",
+                borderRadius: "50px",
+                padding: "10px 20px",
+                border: `2px solid ${borderColor}`,
+                "&:hover": {
+                    backgroundColor: color,
+                    color: backgroundColor,
+                    borderColor: color,
+                },
+                ...sx,
+            }}
+            {...props}
+        >
+            {children}
+        </Button>
+    );
 };
 
 const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -85,7 +85,7 @@ const CreateNewSlot = ({ addEvent }) => {
 
     const { register, control, handleSubmit, formState: { errors } } = useForm();
 
-  const { timezones } = useSelector((state) => state.timezone);
+    const { timezones } = useSelector((state) => state.timezone);
 
     const handleDayChange = (day) => {
         setSelectedDays((prev) => {
@@ -103,7 +103,10 @@ const CreateNewSlot = ({ addEvent }) => {
 
     const onSubmit = (formData) => {
         console.log("form data", formData);
-
+        //TODO : Need to add validation on
+        // 1 : to Date should be greater than from date
+        // 2 : to time should be greater than from time 
+        
         let weeksArray = Array(7).fill(0);
         if (repeat === 'recurring') {
             selectedDays.forEach(day => {
@@ -115,7 +118,7 @@ const CreateNewSlot = ({ addEvent }) => {
             weeksArray[index] = 1;
         }
 
-       
+
         formData.slot_date = fromDate;
         formData.from_time = fromTime;
         formData.to_time = toTime;
@@ -126,8 +129,18 @@ const CreateNewSlot = ({ addEvent }) => {
         formData.admin_user_id = taId.id;
 
         dispatch(createSlots(formData))
+            .then(() => {
+                dispatch(closeCreateNewSlots());
+                return dispatch(fetchCoachSlots(taId.id));
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        /*
+        dispatch(createSlots(formData))
         dispatch(closeCreateNewSlots());
         dispatch(fetchCoachSlots(taId.id));
+        */
     }
 
     const content = (
@@ -146,7 +159,7 @@ const CreateNewSlot = ({ addEvent }) => {
                                 sx={{ width: '100%' }}
                             />
                         </Grid>
-                        <Grid container spacing={3} sx={{ pt: 3 , pb : 3}} justifyContent="center">
+                        <Grid container spacing={3} sx={{ pt: 3, pb: 3 }} justifyContent="center">
                             <Grid item xs={12} sm={6} display="flex" justifyContent="center">
                                 <CustomTimeField
                                     label="From Time"
@@ -170,7 +183,7 @@ const CreateNewSlot = ({ addEvent }) => {
                                 />
                             </Grid>
                         </Grid>
-                        <Grid container spacing={3} sx={{ pt : 3 }} justifyContent="center">
+                        <Grid container spacing={3} sx={{ pt: 3 }} justifyContent="center">
                             <Controller
                                 name="time_zone"
                                 control={control}
@@ -233,7 +246,7 @@ const CreateNewSlot = ({ addEvent }) => {
                                         </FormControl>
                                     </Grid>
                                 </Grid>
-                                <Grid item xs={12} sm={6} display="flex" sx={{ pt : 3 }} justifyContent="center">
+                                <Grid item xs={12} sm={6} display="flex" sx={{ pt: 3 }} justifyContent="center">
                                     <CustomDateField
                                         label="To Date"
                                         value={toDate}
@@ -251,29 +264,29 @@ const CreateNewSlot = ({ addEvent }) => {
             </Grid>
         </Box>
     );
-    
 
-  const actions = (
-    <>
-      <CustomButton
-        onClick={() => dispatch(closeCreateNewSlots())}
-        backgroundColor="white"
-        color="#F56D3B"
-        borderColor="#F56D3B"
-      >
-        Back
-      </CustomButton>
-      <CustomButton
-        type="submit"
-        form="createForm"
-        backgroundColor="#F56D3B"
-        color="white"
-        borderColor="#F56D3B"
-      >
-        Submit
-      </CustomButton>
-    </>
-  );
+
+    const actions = (
+        <>
+            <CustomButton
+                onClick={() => dispatch(closeCreateNewSlots())}
+                backgroundColor="white"
+                color="#F56D3B"
+                borderColor="#F56D3B"
+            >
+                Back
+            </CustomButton>
+            <CustomButton
+                type="submit"
+                form="createForm"
+                backgroundColor="#F56D3B"
+                color="white"
+                borderColor="#F56D3B"
+            >
+                Submit
+            </CustomButton>
+        </>
+    );
 
     return (
         <ReusableDialog
