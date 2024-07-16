@@ -93,7 +93,7 @@ const Login = () => {
                         value={user}
                         required
                         style={{
-                            fontFamily: 'Nunito, sans-serif',
+                            
                             fontSize: '22px',
                             padding: '0.25rem',
                             borderRadius: '0.5rem'
@@ -108,14 +108,14 @@ const Login = () => {
                         value={pwd}
                         required
                         style={{
-                            fontFamily: 'Nunito, sans-serif',
+                            
                             fontSize: '22px',
                             padding: '0.25rem',
                             borderRadius: '0.5rem'
                         }}
                     />
                     <button style={{
-                        fontFamily: 'Nunito, sans-serif',
+                
                         fontSize: '22px',
                         padding: '0.25rem',
                         borderRadius: '0.5rem'

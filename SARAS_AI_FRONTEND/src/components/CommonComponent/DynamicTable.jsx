@@ -17,14 +17,12 @@ import editIcon from "../../assets/editIcon.png";
 import bin from "../../assets/bin.png";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { useDispatch } from "react-redux";
+import { activeDeactiveWOLCategory } from "../../redux/features/coachingTools/wol/wolSlice";
 import { openScheduleSession } from "../../redux/features/taModule/taScheduling";
 
 import { updateTA } from "../../redux/features/taModule/taSlice";
 import { updateCoach } from "../../redux/features/CoachModule/coachSlice";
 import { openCoachScheduleSession } from "../../redux/features/CoachModule/coachSchedule";
-
-
-
 
 const DynamicTable = ({
   headers,
@@ -39,6 +37,8 @@ const DynamicTable = ({
     }))
   );
 
+  const [currentPage, setCurrentPage] = useState(1);
+
   useEffect(() => {
     setData(
       initialData.map((item) => ({
@@ -46,9 +46,9 @@ const DynamicTable = ({
         is_active: item.is_active !== undefined ? item.is_active : 0,
       }))
     );
+    setCurrentPage(1); // Reset to first page whenever initialData changes
   }, [initialData]);
 
-  const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const totalPages = Math.ceil(data.length / itemsPerPage);
   const currentData = data.slice(
@@ -57,7 +57,7 @@ const DynamicTable = ({
   );
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  // console.log("componentName", componentName);
+
   const handlePageChange = (event, pageNumber) => {
     setCurrentPage(pageNumber);
   };
@@ -67,20 +67,15 @@ const DynamicTable = ({
   };
 
   const handleCalender = (type, id, taName) => {
-
     //         // Implement view functionality here based on type ('students' or 'batches')
 
     //         console.log(`Viewing ${type} for item with id:`, id);
-    console.log("COMPONENTNAME : ", componentName)
+    console.log("COMPONENTNAME : ", componentName);
     if (componentName === "COACHAVAILABLE") {
-      navigate(`/coach-calender/${taName}/${id}`)
-    }
-    else if (componentName === "TAAVAILABLE")(
-      navigate(`/ta-calendar/${taName}/${id}`)
-    )
-   
+      navigate(`/coach-calender/${taName}/${id}`);
+    } else if (componentName === "TAAVAILABLE")
+      navigate(`/ta-calendar/${taName}/${id}`);
   };
-
 
   const handleView = (type, id) => {
     // console.log("ID handleview : ", id);
@@ -94,7 +89,7 @@ const DynamicTable = ({
         navigate(`/view-report/${id}`); // Append id as a parameter
       }
     } else {
-      if(componentName === "COACHMAPPING"){
+      if (componentName === "COACHMAPPING") {
         if (type === "students") {
           navigate(`/active-Coach-students/${id}`); // Append id as a parameter
         } else if (type === "batches") {
@@ -106,11 +101,11 @@ const DynamicTable = ({
 
   const handlePopup = (id, name, timezone) => {
     const data = { id, name, timezone };
-    if (componentName === "TAMAPPING"){
+    if (componentName === "TAMAPPING") {
       dispatch(openScheduleSession(data));
     } else {
-      if(componentName === "COACHMAPPING")
-      dispatch(openCoachScheduleSession(data));
+      if (componentName === "COACHMAPPING")
+        dispatch(openCoachScheduleSession(data));
     }
   };
 
@@ -131,6 +126,10 @@ const DynamicTable = ({
         break;
       case "MANAGECOACH":
         dispatch(updateCoach({ id, data: requestData }));
+        break;
+      case "WOLCATEGORY":
+        console.log("WOL Categories : ", id, requestData);
+        dispatch(activeDeactiveWOLCategory(id));
         break;
       default:
         console.warn(`No API call defined for component: ${componentName}`);
@@ -155,9 +154,10 @@ const DynamicTable = ({
       <table>
         <thead className="tableHead">
           <tr>
-            {headers.map((header, index) => (
-              header !== "timezone" && <th key={index}>{header}</th>
-            ))}
+            {headers.map(
+              (header, index) =>
+                header !== "timezone" && <th key={index}>{header}</th>
+            )}
           </tr>
         </thead>
         <tbody className="tableBody">
@@ -174,9 +174,16 @@ const DynamicTable = ({
                 <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                 {Object.keys(item).map((key, idx) => {
                   // {console.log("KEY : ", key)}
-                  if (key === 'Availability') {
+                  if (key === "Availability") {
                     return (
-                      <td key={idx} style={{ color: getColorForAvailability(item[key]), fontFamily: "Regular", letterSpacing: "0.8px" }}>
+                      <td
+                        key={idx}
+                        style={{
+                          color: getColorForAvailability(item[key]),
+                          fontFamily: "Regular",
+                          letterSpacing: "0.8px",
+                        }}
+                      >
                         {item[key]}
                       </td>
                     );
@@ -208,7 +215,11 @@ const DynamicTable = ({
                         </CustomButton>
                       </td>
                     );
-                  } else if (key !== "id" && key !== "is_active" && key !== "timezone") {
+                  } else if (
+                    key !== "id" &&
+                    key !== "is_active" &&
+                    key !== "timezone"
+                  ) {
                     // Check if item[key] is an object, and handle accordingly
                     if (typeof item[key] === "object" && item[key] !== null) {
                       // Render a string representation or a relevant property of the object
@@ -296,7 +307,9 @@ const DynamicTable = ({
                             variant="outlined"
                             color="secondary"
                             startIcon={<CalendarMonthIcon />}
-                            onClick={() => handlePopup(item.id, item.name, item.timezone)}
+                            onClick={() =>
+                              handlePopup(item.id, item.name, item.timezone)
+                            }
                           >
                             Schedule
                           </CalenderButton>
@@ -310,13 +323,14 @@ const DynamicTable = ({
                               variant="outlined"
                               color="secondary"
                               endIcon={<CallMadeOutlinedIcon />}
-                              onClick={() => handleCalender('Calendar', item.id, item.taName)}
+                              onClick={() =>
+                                handleCalender("Calendar", item.id, item.taName)
+                              }
                             >
                               Check
                             </CustomButton>
                           </td>
-                        )
-
+                        );
                       }
 
                       if (button.type === "view") {
@@ -383,14 +397,13 @@ const DynamicTable = ({
   );
 };
 
-
-
 const CustomButton = styled(Button)(({ theme }) => ({
   borderRadius: "20px",
   border: "1px solid #F56D3B",
   color: "#F56D3B",
   padding: "8px 16px", // Add padding for horizontal and vertical spacing
   margin: "0 8px", // Add horizontal margin between buttons
+  textTransform:'none',
   "&:hover": {
     backgroundColor: "#F56D3B",
     color: "#fff",

@@ -67,7 +67,8 @@ const initialState = {
   error: null,
   createCoachTemplateOpen: false,
   editCoachTemplateOpen: false,
-  selectedCoach: null,
+  selectedCoachTemplate: null,
+  selectedModule: null,
   openModulePopUp: false,
   openActivityPopUp: false,
   openEditModulePopUp: false,
@@ -88,6 +89,18 @@ export const coachTemplateSlice = createSlice({
       //   console.log("ACTION PAYLOAD : ", action.payload);
       state.template_name = action.payload.name;
       state.templateId = action.payload.id;
+    },
+    setSelectedCoachTemplate(state, action) {
+      state.selectedCoachTemplate = action.payload;
+    },
+    removeSelectedCoachTemplate(state) {
+      state.selectedCoachTemplate = null;
+    },
+    setSelectedModule(state,action){
+      state.selectedModule = action.payload;
+    },
+    removeSelectedModule(state){
+      state.selectedModule = null;
     },
     openCreateTemplateCoach(state) {
       state.createCoachTemplateOpen = true;
@@ -145,6 +158,7 @@ export const coachTemplateSlice = createSlice({
       .addCase(createCoachTemplate.fulfilled, (state, action) => {
         state.loading = false;
         state.coachTemplates.push(action.payload.data);
+        state.selectedCoachTemplate = action.payload.data.id;
       })
       .addCase(createCoachTemplate.rejected, (state, action) => {
         state.loading = false;
@@ -215,6 +229,10 @@ export const coachTemplateSlice = createSlice({
 });
 
 export const {
+  setSelectedCoachTemplate,
+  removeSelectedCoachTemplate,
+  setSelectedModule,
+  removeSelectedModule,
   openCreateTemplateCoach,
   closeCreateTemplateCoach,
   openEditTemplateCoach,

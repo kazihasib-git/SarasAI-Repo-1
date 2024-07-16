@@ -11,6 +11,7 @@ import {
   openRescheduleSession,
   openScheduledSlots,
   reasonForLeave,
+  openReasonForLeave,
 } from "../../redux/features/taModule/taAvialability";
 
 import {
@@ -18,6 +19,8 @@ import {
   openCoachCancelSession,
   openCoachRescheduleSession,
   openCoachScheduledSlots,
+  openCoachReasonForLeave,
+  reasonForCoachLeave
 } from "../../redux/features/CoachModule/CoachAvailabilitySlice";
 import { useParams } from "react-router-dom";
 
@@ -58,8 +61,7 @@ const CustomButton = ({
 
 const ScheduledSessions = ({ componentName }) => {
   const dispatch = useDispatch();
-  const { id } = useParams(); // Ensure the correct ID is used
-
+  const { id } = useParams();
   let scheduleSessionOpenKey,
     scheduledSessionDataKey,
     schedulingStateKey,
@@ -67,7 +69,9 @@ const ScheduledSessions = ({ componentName }) => {
     openCancelAction,
     openRescheduleAction,
     openSlotsAction,
-    slotEventAction;
+    slotEventKey,
+    openReasonAction,
+    reasonForLeaveAction;
 
   switch (componentName) {
     case "TACALENDER":
@@ -78,7 +82,9 @@ const ScheduledSessions = ({ componentName }) => {
       openCancelAction = openCancelSession;
       openRescheduleAction = openRescheduleSession;
       openSlotsAction = openScheduledSlots;
-      slotEventAction = "slotEventData"
+      slotEventKey = "slotEventData";
+      openReasonAction = openReasonForLeave;;
+      reasonForLeaveAction = reasonForLeave
       break;
     case "COACHCALENDER":
       scheduleSessionOpenKey = "scheduledCoachSessionOpen";
@@ -88,7 +94,9 @@ const ScheduledSessions = ({ componentName }) => {
       openCancelAction = openCoachCancelSession;
       openRescheduleAction = openCoachRescheduleSession;
       openSlotsAction = openCoachScheduledSlots;
-      slotEventAction = "slotCoachEventData"
+      slotEventKey = "slotCoachEventData";
+      openReasonAction = openCoachReasonForLeave;;
+      reasonForLeaveAction = reasonForCoachLeave
       break;
     default:
       scheduleSessionOpenKey = null;
@@ -98,7 +106,9 @@ const ScheduledSessions = ({ componentName }) => {
       openCancelAction = null;
       openRescheduleAction = null;
       openSlotsAction = null;
-      slotEventAction = null;
+      slotEventKey = null;
+      openReasonAction = null;
+      reasonForLeaveAction = null;
       break;
   }
 
@@ -108,7 +118,7 @@ const ScheduledSessions = ({ componentName }) => {
   const {
     [scheduleSessionOpenKey]: scheduledSessionOpen,
     [scheduledSessionDataKey]: scheduledSessionData = [],
-    [slotEventAction]:slotEventData,
+    [slotEventKey]: slotEventData,
   } = schedulingState;
 
   const headers = [
@@ -121,12 +131,13 @@ const ScheduledSessions = ({ componentName }) => {
   ];
 
   const formattedData = scheduledSessionData.map((session, index) => ({
-    "S. No.": session.id,
+    "S. No.": index + 1,
     "Session Name": session.meeting_name,
     Date: session.date.split(" ")[0],
     Time: `${session.start_time} - ${session.end_time}`,
     Students: session.Students.length,
     StudentList: session.Students,
+    id: session.id
   }));
 
   const handleViewClick = (students) => {
@@ -136,6 +147,7 @@ const ScheduledSessions = ({ componentName }) => {
 
   const handleRescheduleClick = (session) => {
     dispatch(closeSessionAction());
+    console.log("SESSION : ", session);
     dispatch(openRescheduleAction(session));
     console.log("Reschedule clicked!", session);
   };
@@ -148,7 +160,7 @@ const ScheduledSessions = ({ componentName }) => {
 
   const handleSubmit = () => {
     console.log("*** ScheduledSessions");
-    // dispatch(reasonForLeave(slotEventData);
+    dispatch(openReasonAction(slotEventData));
   };
 
   const content =

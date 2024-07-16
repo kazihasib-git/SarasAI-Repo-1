@@ -20,6 +20,12 @@ import {
   fetchCoachScheduleById,
   openCoachCreateNewSlots,
 } from "../../redux/features/CoachModule/CoachAvailabilitySlice";
+import EditBatches from "../../components/availability/EditBatches";
+import EditStudents from "../../components/availability/EditStudents";
+import {
+  openCoachEditBatch,
+  openCoachEditStudent,
+} from "../../redux/features/CoachModule/coachSchedule";
 
 const CustomButton = ({
   onClick,
@@ -179,13 +185,15 @@ const CoachCalender = () => {
           "COACHCALENDER"
         }
       />
+      {openCoachEditBatch && <EditBatches componentname={"COACHSCHEDULE"} />}
+      {openCoachEditStudent && <EditStudents componentname={"COACHSCHEDULE"} />}
 
-      {sheduleNewSession && (
+      {/* {sheduleNewSession && (
         <ScheduleSession
           open={sheduleNewSession}
           handleClose={() => setSheduleNewSession(false)}
         />
-      )}
+      )} */}
       {coachMarkLeaveOpen && (
         <MarkLeave id={id} name={name} componentName={"COACHCALENDER"} />
       )}

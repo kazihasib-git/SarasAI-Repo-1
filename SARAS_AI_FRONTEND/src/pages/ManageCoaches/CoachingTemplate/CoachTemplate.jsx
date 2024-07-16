@@ -1,13 +1,45 @@
-import React from "react";
+import React, { useEffect, useState} from "react";
 import Header from "../../../components/Header/Header";
 import Sidebar from "../../../components/Sidebar/Sidebar";
 import { Box } from "@mui/material";
 import DynamicTable from "../../../components/CommonComponent/DynamicTable";
-import { openCreateTemplateCoach } from "../../../redux/features/CoachModule/CoachTemplateSlice";
+import { closeCreateTemplateCoach, closeEditTemplateCoach, getAllCoachTemplates, openCreateTemplateCoach, openEditTemplateCoach, setSelectedCoachTemplate } from "../../../redux/features/CoachModule/CoachTemplateSlice";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+
 
 const CoachTemplate = () => {
   const navigation = useNavigate();
+  const dispatch = useDispatch();
+  const [ coachTemplatesData, setCoachTemplatesData ] = useState([]);
+
+  const { coachTemplates } = useSelector((state)=> state.coachTemplate);
+  
+
+  useEffect(()=>{
+    dispatch(getAllCoachTemplates());
+    dispatch(closeCreateTemplateCoach());
+    dispatch(closeEditTemplateCoach());
+  },[dispatch]);
+
+  useEffect(()=>{
+    if(coachTemplates.length>0){
+      const transformData = coachTemplates.map((item)=>({
+        id: item.id,
+        "Template Name": item.name,
+        Duration: item.duration,
+        Activities: item.modules.map((module)=> module.module_name).join(', '),
+        "Assigned To": "John Doe",
+        is_active: item.is_active
+      }));
+      setCoachTemplatesData(transformData);
+    }
+
+  },[coachTemplates]);
+
+
+  
+
   const headers = [
     "S. No.",
     "Template Name",
@@ -48,14 +80,17 @@ const CoachTemplate = () => {
     {
       type: "edit",
       onClick: (id) => {
-        console.log("CLICKED : ", id)
+        dispatch(openEditTemplateCoach());
+        dispatch(setSelectedCoachTemplate(id));
+        navigation("/template-name");
+        console.log("CLICKED : ", id);
       },
     },
   ];
 
 
-  const handleAddTa = () => {
-    // dispatch(openCreateTemplateCoach());
+  const handleAddTemplate = () => {
+    dispatch(openCreateTemplateCoach());
     navigation("/create-template")
   };
 
@@ -70,20 +105,20 @@ const CoachTemplate = () => {
             Coaching Template
           </p>
           <div className="inputBtnContainer">
-            <button className="buttonContainer" onClick={handleAddTa}>
+            <button className="buttonContainer" onClick={handleAddTemplate}>
               <i className="bi bi-plus-circle"></i>
               <span>Create New Template</span>
             </button>
           </div>
         </Box>
-        {!dummyData || dummyData.length === 0 ? (
+        {!coachTemplatesData || coachTemplatesData.length === 0 ? (
           <div>
             <p>No Data Available</p>
           </div>
         ) : (
           <DynamicTable
             headers={headers}
-            initialData={dummyData}
+            initialData={coachTemplatesData}
             actionButtons={actionButtons}
             componentName={"COACHTEMPLATE"}
           />
