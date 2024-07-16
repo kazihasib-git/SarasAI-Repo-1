@@ -37,6 +37,9 @@ import dayjs from "dayjs";
 import AvatarInput from "../../../CustomFields/AvatarInput";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+import { getTimezone } from "../../../../redux/features/timezone/timezoneSlice";
+import CustomTimeZoneForm from "../../../CustomFields/CustomTimeZoneForm";
+import { dateFormatter } from "../../../../utils/dateFormatter";
 
 const AddEditTA = ({ data }) => {
   const {
@@ -56,48 +59,68 @@ const AddEditTA = ({ data }) => {
   });
 
   const [selectedImage, setSelectedImage] = useState(null);
-  // const [taName, setTAName] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState("");
+
   const dispatch = useDispatch();
   const { successPopup, assignStudentOpen, assignBatchOpen } = useSelector(
     (state) => state.taModule
   );
+  const { timezones } = useSelector((state) => state.timezone);
+
+  useEffect(() => {
+    dispatch(getTimezone());
+  }, [dispatch]);
 
   useEffect(() => {
     if (data) {
-      console.log("data",data);
-      const formattedDate = moment(data.date_of_birth).format("YYYY-MM-DD");
-      setDateOfBirth(formattedDate);
-      dispatch(accessTaName(data));
-
-      // Convert base64 image to blob
-      if (data.profile_picture) {
-        const byteCharacters = atob(data.profile_picture);
-        const byteNumbers = Array.from(byteCharacters, (char) =>
-          char.charCodeAt(0)
-        );
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: "image/jpeg" });
-        const blobUrl = URL.createObjectURL(blob);
-        setSelectedImage(blobUrl);
-      }
-
-      setValue("name", data.name);
-      setValue("username", data.username);
-      setValue("password", data.password);
-      setValue("location", data.location);
-      setValue("address", data.address);
-      setValue("pincode", data.pincode);
-      setValue("time_zone", data.time_zone);
-      setValue("gender", data.gender);
-      setValue("email", data.email);
-      setValue("date_of_birth", formattedDate);
-      setValue("highest_qualification", data.highest_qualification);
-      setValue("about_me", data.about_me);
-      setPhoneNumber(data.phone);
+      populateForm(data);
     }
-  }, [data, setValue, dispatch]);
+  }, [data]);
+
+  const populateForm = (data) => {
+    // TODO : Neet to format the date in MM/DD/YYYY format
+    // const newDate = dateFormatter(data.date_of_birth)
+    // console.log("NEW DATE : ", newDate)
+
+    const formattedDate = moment(data.date_of_birth).format("YYYY-MM-DD");
+    setDateOfBirth(formattedDate);
+    dispatch(accessTaName(data));
+
+    if (data.profile_picture) {
+      const blobUrl = base64ToBlobUrl(data.profile_picture);
+      setSelectedImage(blobUrl);
+    }
+
+    const formValues = {
+      name: data.name,
+      username: data.username,
+      password: data.password,
+      location: data.location,
+      address: data.address,
+      pincode: data.pincode,
+      time_zone: data.time_zone,
+      gender: data.gender,
+      email: data.email,
+      date_of_birth: formattedDate,
+      highest_qualification: data.highest_qualification,
+      about_me: data.about_me,
+    };
+
+    Object.entries(formValues).forEach(([key, value]) => setValue(key, value));
+
+    setPhoneNumber(data.phone);
+  };
+
+  const base64ToBlobUrl = (base64Data) => {
+    const byteCharacters = atob(base64Data);
+    const byteNumbers = Array.from(byteCharacters, (char) =>
+      char.charCodeAt(0)
+    );
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: "image/jpeg" });
+    return URL.createObjectURL(blob);
+  };
 
   const handleAssignStudents = () => {
     dispatch(openAssignStudents());
@@ -128,13 +151,12 @@ const AddEditTA = ({ data }) => {
         const updateRes = await dispatch(
           updateTA({ id: data.id, data: updatedFormData })
         ).unwrap();
-        console.log("UPDATE RES : ", updateRes)
+        console.log("UPDATE RES : ", updateRes);
         dispatch(openSuccessPopup());
         dispatch(accessTaName(updateRes));
       } else {
-        
-        updatedFormData.email = email
-        updatedFormData.time_zone = time_zone
+        updatedFormData.email = email;
+        updatedFormData.time_zone = time_zone;
         const createRes = await dispatch(createTA(updatedFormData)).unwrap();
         dispatch(openSuccessPopup());
         dispatch(accessTaName(createRes.ta));
@@ -160,7 +182,7 @@ const AddEditTA = ({ data }) => {
           {data ? (
             <>
               <Grid item xs>
-                <Typography variant="h4" sx={{ mb: 4, font: "Nunito Sans" }}>
+                <Typography variant="h4" sx={{ mb: 4 }}>
                   Edit TA
                 </Typography>
               </Grid>
@@ -416,6 +438,26 @@ const AddEditTA = ({ data }) => {
 
             <Grid item xs={12} sm={6} md={4}>
               <Controller
+                name="time_zone"
+                control={control}
+                rules={{ required: "Time Zone is required" }}
+                render={({ field }) => {
+                  return (
+                    <CustomTimeZoneForm
+                      label="Time Zone"
+                      name="time_zone"
+                      value={field.value}
+                      onChange={field.onChange}
+                      errors={errors}
+                      options={timezones}
+                    />
+                  );
+                }}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6} md={4}>
+              <Controller
                 control={control}
                 name="date_of_birth"
                 render={({ field }) => (
@@ -449,22 +491,6 @@ const AddEditTA = ({ data }) => {
                 )}
               />
             </Grid>
-            {/* <Grid item xs={12} sm={6} md={4}>
-              <CustomDateField
-                label="Date Of Birth"
-                value={
-                  data
-                    ? moment(data.date_of_birth).format("YYYY-MM-DD")
-                    : dateOfBirth
-                }
-                onChange={setDateOfBirth}
-                name="dateOfBirth"
-                register={register}
-                validation={{ required: "Date of birth is required" }}
-                errors={errors}
-                sx={{ width: "100%" }}
-              />
-            </Grid> */}
 
             <Grid item xs={12} sm={6} md={4}>
               <Controller
@@ -505,9 +531,16 @@ const AddEditTA = ({ data }) => {
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <PhoneInput
+                enableAreaCodes={["in"]}
+                enableAreaCodeStretch
                 name="phone"
                 country={"in"}
                 value={phoneNumber}
+                inputProps={{
+                  name: name,
+                  required: true,
+                  autoFocus: true,
+                }}
                 onChange={(phone) => setPhoneNumber(phone)}
                 containerStyle={{ width: "100%" }}
                 inputStyle={{
@@ -562,8 +595,8 @@ const AddEditTA = ({ data }) => {
           actions={actions}
         /> */}
         {successPopup && <SubmitPopup componentname={"ADDEDITTA"} />}
-        {assignStudentOpen && <AssignStudents />}
-        {assignBatchOpen && <AssignBatches />}
+        {assignStudentOpen && <AssignStudents componentname={"ADDEDITTA"} />}
+        {assignBatchOpen && <AssignBatches componentname={"ADDEDITTA"} />}
       </Box>
     </Box>
   );

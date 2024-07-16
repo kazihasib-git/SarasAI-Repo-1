@@ -7,7 +7,12 @@ import taReducer from './features/taModule/taSlice';
 import taSchedulingReducer from './features/taModule/taScheduling';
 import taAvailabilityReducer from './features/taModule/taAvialability';
 import coachTemplateReducer from './features/CoachModule/CoachTemplateSlice';
+import wolSliceReducer from './features/coachingTools/wol/wolSlice';
+import timezoneSliceReducer from './features/timezone/timezoneSlice';
 import coachReducer from './features/CoachModule/coachSlice';
+import coachAvailabilityReducer from './features/CoachModule/CoachAvailabilitySlice';
+import coachSchedulingReducer from './features/CoachModule/coachSchedule';
+
 const store = configureStore({
 
     reducer: {
@@ -16,7 +21,11 @@ const store = configureStore({
         taScheduling : taSchedulingReducer,
         taAvialability : taAvailabilityReducer,
         coachTemplate : coachTemplateReducer,
+        wol : wolSliceReducer,
+        timezone : timezoneSliceReducer,
         coachModule : coachReducer,
+        coachAvailability : coachAvailabilityReducer,
+        coachScheduling : coachSchedulingReducer,
         [studentsApi.reducerPath]: studentsApi.reducer,
         [batchesApi.reducerPath]: batchesApi.reducer,
         [coursesApi.reducerPath]: coursesApi.reducer,

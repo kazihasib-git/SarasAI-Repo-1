@@ -38,13 +38,14 @@ body,
 .content {
   height: 100%;
   width: 100%;
-  font-family: "Nunito Sans", sans-serif;
+  /* font-family: "Nunito Sans", sans-serif; */
   background-color: #f1f1fb;
 }
 
 .app {
   display: flex;
   position: relative;
+  /* width: 1920px; */
 }
 
 ::-webkit-scrollbar {

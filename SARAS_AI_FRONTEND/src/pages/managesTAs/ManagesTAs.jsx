@@ -92,6 +92,7 @@ const ManageTA = () => {
 
   return (
     <>
+    <Box m="10px">
       <Header />
       <Sidebar />
       {!createTAOpen && !editTAOpen && (
@@ -137,6 +138,7 @@ const ManageTA = () => {
 
       {createTAOpen && <AddEditTA />}
       {editTAOpen && <AddEditTA data={editData} />}
+      </Box>
     </>
   );
 };

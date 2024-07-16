@@ -9,7 +9,7 @@ const CustomFormControl = ({
   errors,
   options,
 }) => {
-  // console.log("label", label , name , value ) 
+  console.log("label", label , name , value, options ) 
   return (
     <FormControl variant="outlined" fullWidth>
       <InputLabel
@@ -17,7 +17,7 @@ const CustomFormControl = ({
         sx={{
           color: "#1A1E3D",
           "&.Mui-focused": {
-            color: "#9A9DAD", // Change label color on focus
+            color: "#1A1E3D", // Change label color on focus
           },
         }}
       >
@@ -48,9 +48,10 @@ const CustomFormControl = ({
           },
           "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
             borderColor: "rgb(245, 109, 59)", // Change border color on focus
+            color:"#1A1E3D"
           },
         }}
-      >
+      > 
         {options.map((option) => (
           <MenuItem key={option.value} value={option.value}>
             {option.label}

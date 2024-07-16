@@ -4,7 +4,7 @@
     margin: auto;
     /* margin-top: 20px; */
     text-align: left;
-    font-family: "Nunito Sans", sans-serif;
+    
     border-radius: 10px; /* Add border radius to the table container */
     overflow: hidden; /* Ensure the border radius applies to the entire table */
   }

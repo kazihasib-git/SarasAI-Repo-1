@@ -1,129 +1,246 @@
-import { Box, DialogActions, Grid, Typography, Button } from '@mui/material'
-import React, { useState } from 'react'
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import Calendar from '../../components/Calender/indexCalender';
-import MarkLeave from '../../components/availability/MarkLeave';
-import DeleteAllSlots from '../../components/availability/DeleteAllSlots';
-import CreateNewSlot from '../../components/availability/CreateNewSlot';
+import { Box, DialogActions, Grid, Typography, Button } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import CalendarComponent from "../../components/Calender/BigCalendar";
+import MarkLeave from "../../components/availability/MarkLeave";
+import DeleteAllSlots from "../../components/availability/DeleteAllSlots";
+import CreateNewSlot from "../../components/availability/CreateNewSlot";
+import ScheduleSession from "../../components/availability/ScheduleSession";
+import Slots from "../../components/availability/Slots";
+import CancelSchedule from "../../components/availability/CancelSchedule";
+import ReasonForLeave from "../../components/availability/ReasonForLeave";
+import ReschedulingSession from "../../components/availability/ReschedulingSession";
+import ScheduledSessions from "../../components/availability/ScheduledSessions";
+
+import {
+  openCoachMarkLeave,
+  fetchCoachSlots,
+  fetchCoachScheduleById,
+  openCoachCreateNewSlots,
+} from "../../redux/features/CoachModule/CoachAvailabilitySlice";
+import EditBatches from "../../components/availability/EditBatches";
+import EditStudents from "../../components/availability/EditStudents";
+import {
+  openCoachEditBatch,
+  openCoachEditStudent,
+} from "../../redux/features/CoachModule/coachSchedule";
+
+const CustomButton = ({
+  onClick,
+  children,
+  color = "#FFFFFF",
+  backgroundColor = "#4E18A5",
+  borderColor = "#FFFFFF",
+  sx,
+  ...props
+}) => {
+  return (
+    <Button
+      variant="contained"
+      onClick={onClick}
+      sx={{
+        backgroundColor: backgroundColor,
+        color: color,
+        fontWeight: "700",
+        fontSize: "16px",
+        borderRadius: "50px",
+        // padding: "18px 25px",
+        border: `1.5px solid ${borderColor}`,
+        "&:hover": {
+          backgroundColor: color,
+          color: backgroundColor,
+          borderColor: color,
+        },
+        ...sx,
+      }}
+      {...props}
+    >
+      {children}
+    </Button>
+  );
+};
 
 const CoachCalender = () => {
-    const [sheduleNewSession, setSheduleNewSession] = useState(false)
-    const [markLeave, setMarkLeave] = useState(false)
-    const [deleteFutureSlots, setDeleteFutureSlots] = useState(false)
-    const [createNewSlot, setCreateNewSlot] = useState(false)
+  const dispatch = useDispatch();
+  const { id, name } = useParams();
+  const [sheduleNewSession, setSheduleNewSession] = useState(false);
+  const [deleteFutureSlots, setDeleteFutureSlots] = useState(false);
+  //const [createNewSlot, setCreateNewSlot] = useState(false)
 
-    const handleScheduleNewSession = () => {
-        setSheduleNewSession(true)
-    }
+  const {
+    coachMarkLeaveOpen,
+    scheduledCoachSlotsOpen,
+    scheduledCoachSessionOpen,
+    cancelCoachSessionOpen,
+    reasonForCoachLeaveOpen,
+    resheduleCoachSessionOpen,
+    createNewCoachSlotOpen,
+    slotCoachData,
+    scheduleCoachData,
+  } = useSelector((state) => state.coachAvailability);
+  //calendar
+  const [eventsList, setEventsList] = useState([]);
 
-    const handleMarkLeave = () => {
-        setMarkLeave(true)
-    }
+  const addEvent = (title, startDateTime, endDateTime) => {
+    const newStart = new Date(startDateTime);
+    const newEnd = new Date(endDateTime);
+    setEventsList((prev) => [...prev, { title, start: newStart, end: newEnd }]);
+  };
 
-    const handleDeleteFutureSlots = () => {
-        setDeleteFutureSlots(true)
-    }
+  console.log("ta Id :", id);
 
-    const handleCreateNewSlot = () => {
-        setCreateNewSlot(true)
-    }
+  useEffect(() => {
+    dispatch(fetchCoachSlots(id));
+    dispatch(fetchCoachScheduleById(id));
+  }, [id]);
 
-    return (
-        <Box sx={{ backgroundColor: '#f8f9fa', p: 3 }}>
-            <DialogActions sx={{ p: 2 }}>
-                <Grid container alignItems="center">
-                    <Grid item xs>
-                        <Typography variant='h4' sx={{ mb: 4 }}>
-                            Coach Name Calender
-                        </Typography>
-                    </Grid>
-                    <Grid item>
-                        <Box display="flex" justifyContent="center" gap={2}>
-                            <Button
-                                variant="contained"
-                                onClick={handleScheduleNewSession}
-                                sx={{
-                                    width: '195px',
-                                    height: '50px',
-                                    backgroundColor: '#4E18A5',
-                                    color: '#FFFFFF',
-                                    font : 'Nodemi',
-                                    fontWeight : '700',
-                                    fontSize : '16px',
-                                    borderRadius: '50px',
-                                    padding: "18px 25px"
-                                }}
-                            >
-                                <AddCircleOutlineIcon />
-                                Schedule New Session
-                            </Button>
+  console.log(
+    "slotCoachData",
+    slotCoachData,
+    "scheduleCoachData",
+    scheduleCoachData
+  );
 
-                            <Button
-                                variant="contained"
-                                onClick={handleMarkLeave}
-                                sx={{
-                                    width: '255px',
-                                    height: '50px',
-                                    backgroundColor: '#FFFFFF',
-                                    color: '#F56D3B',
-                                    borderRadius: '50px',
-                                    font : 'Nodemi',
-                                    fontWeight : '700',
-                                    fontSize : '16px',
-                                    padding: "18px 25px",
-                                    border: '1px solid #F56D3B'
-                                }}
-                            >
-                                Mark Leave
-                            </Button>
+  // useEffect(() => {
+  //     ); // Replace `2` with the actual ID you need
+  // }, [dispatch]);
 
-                            <Button
-                                variant="contained"
-                                onClick={handleDeleteFutureSlots}
-                                sx={{
-                                    width: '341px',
-                                    height: '50px',
-                                    backgroundColor: '#FFFFFF',
-                                    color: '#F56D3B',
-                                    borderRadius: '50px',
-                                    padding: "18px 25px",
-                                    border: '1px solid #F56D3B',
-                                    font : 'Nodemi',
-                                    fontWeight : '700',
-                                    fontSize : '16px',
-                                }}
-                            >
-                                Delete All Future Slots
-                            </Button>
+  const handleScheduleNewSession = () => {
+    console.log("Pressed");
+    setSheduleNewSession();
+  };
 
-                            <Button
-                                variant="contained"
-                                onClick={handleCreateNewSlot}
-                                sx={{
-                                    width: '225px',
-                                    height: '50px',
-                                    backgroundColor: '#F56D3B',
-                                    color: '#FFFFFF',
-                                    borderRadius: '50px',
-                                    padding: "18px 25px",
-                                    font : 'Nodemi',
-                                    fontSize : '16px',
-                                    fontWeight : '700'
-                                }}
-                            >
-                                {/* <AddCircleOutlineIcon /> */}
-                                Create New Slot
-                            </Button>
-                        </Box>
-                    </Grid>
-                </Grid>
-            </DialogActions>
-            <Calendar />
-            {markLeave && <MarkLeave open={markLeave} handleClose={() => setMarkLeave(false)} />}
-            {deleteFutureSlots && <DeleteAllSlots open={deleteFutureSlots} handleClose={() => setDeleteFutureSlots(false)} />}
-            {createNewSlot && <CreateNewSlot open={createNewSlot} handleClose={() => setCreateNewSlot(false)} />}
-        </Box>
-    )
-}
+  const handleMarkLeave = () => {
+    dispatch(openCoachMarkLeave());
+  };
 
-export default CoachCalender
+  const handleDeleteFutureSlots = () => {
+    setDeleteFutureSlots(true);
+  };
+
+  const handleCreateNewSlot = () => {
+    dispatch(openCoachCreateNewSlots());
+  };
+
+  return (
+    <Box sx={{ backgroundColor: "#f8f9fa", p: 3 }}>
+      <DialogActions sx={{ p: 2 }}>
+        <Grid container alignItems="center">
+          <Grid item xs>
+            <Typography variant="h4" sx={{ mb: 4 }}>
+              {name} Calender
+            </Typography>
+          </Grid>
+          <Grid item>
+            <Box display="flex" justifyContent="center" gap={2}>
+              <CustomButton
+                onClick={handleScheduleNewSession}
+                color="#FFFFFF"
+                backgroundColor="#4E18A5"
+                borderColor="#4E18A5"
+              >
+                <AddCircleOutlineIcon />
+                Schedule New Session
+              </CustomButton>
+
+              <CustomButton
+                onClick={handleMarkLeave}
+                color="#F56D3B"
+                backgroundColor="#FFFFFF"
+                borderColor="#F56D3B"
+              >
+                Mark Leave
+              </CustomButton>
+
+              <CustomButton
+                onClick={handleDeleteFutureSlots}
+                color="#F56D3B"
+                backgroundColor="#FFFFFF"
+                borderColor="#F56D3B"
+              >
+                Delete All Future Slots
+              </CustomButton>
+
+              <CustomButton
+                color="#FFFFFF"
+                backgroundColor="#F56D3B"
+                borderColor="#F56D3B"
+                onClick={handleCreateNewSlot}
+              >
+                {/* <AddCircleOutlineIcon /> */}
+                Create New Slot
+              </CustomButton>
+            </Box>
+          </Grid>
+        </Grid>
+      </DialogActions>
+
+      <CalendarComponent
+        eventsList={scheduleCoachData.data}
+        addEvent={addEvent}
+        slotData={slotCoachData}
+        /*handleSelectEvent={handleSelectEvent}*/ componentName={
+          "COACHCALENDER"
+        }
+      />
+      {openCoachEditBatch && <EditBatches componentname={"COACHSCHEDULE"} />}
+      {openCoachEditStudent && <EditStudents componentname={"COACHSCHEDULE"} />}
+
+      {/* {sheduleNewSession && (
+        <ScheduleSession
+          open={sheduleNewSession}
+          handleClose={() => setSheduleNewSession(false)}
+        />
+      )} */}
+      {coachMarkLeaveOpen && (
+        <MarkLeave id={id} name={name} componentName={"COACHCALENDER"} />
+      )}
+
+      {scheduledCoachSlotsOpen && (
+        <Slots id={id} name={name} componentName={"COACHCALENDER"} />
+      )}
+
+      {scheduledCoachSessionOpen && (
+        <ScheduledSessions
+          id={id}
+          name={name}
+          componentName={"COACHCALENDER"}
+        />
+      )}
+
+      {cancelCoachSessionOpen && (
+        <CancelSchedule id={id} name={name} componentName={"COACHCALENDER"} />
+      )}
+
+      {reasonForCoachLeaveOpen && (
+        <ReasonForLeave id={id} name={name} componentName={"COACHCALENDER"} />
+      )}
+
+      {resheduleCoachSessionOpen && (
+        <ReschedulingSession
+          id={id}
+          name={name}
+          componentName={"COACHCALENDER"}
+        />
+      )}
+
+      {deleteFutureSlots && (
+        <DeleteAllSlots
+          open={deleteFutureSlots}
+          handleClose={() => setDeleteFutureSlots(false)}
+          id={id}
+          name={name}
+          componentName={"COACHCALENDER"}
+        />
+      )}
+
+      {createNewCoachSlotOpen && (
+        <CreateNewSlot addEvent={addEvent} componentName={"COACHCALENDER"} />
+      )}
+    </Box>
+  );
+};
+
+export default CoachCalender;

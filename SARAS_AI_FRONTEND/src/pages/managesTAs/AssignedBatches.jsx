@@ -24,7 +24,7 @@ const CustomButton = styled(Button)(({ theme, active }) => ({
   backgroundColor: active ? "#F56D3B" : "#FFF",
   padding: "8px 16px", // Add padding for horizontal and vertical spacing
   margin: "0 8px",
-
+  textTransform:"none",
   "&:hover": {
     backgroundColor: "#F56D3B",
     color: "#fff",
@@ -160,14 +160,15 @@ const DynamicTable = ({
             className="bi bi-caret-left"
             onClick={() => navigate("/ta-mapping")}
           ></i> */}
-          <ArrowBackIosIcon
+          {/* <ArrowBackIosIcon
             style={{ fontSize: "25px", marginBottom: "17px" }}
             onClick={() => navigate("/ta-mapping")}
-          />
+          /> */}
           <p
             style={{
               fontSize: "44px",
-              marginLeft: "16px",
+              // marginLeft: "16px",
+              fontFamily:"ExtraLight"
             }}
           >
             {title}
@@ -302,7 +303,7 @@ const DynamicTable = ({
   );
 };
 
-const headers = ["Sr. No.", "Student Name", "Batch", "Actions"];
+const headers = ["Sr. No.", "Batch name", "Branch", "Actions"];
 const actionButtons = [
   {
     type: "switch",
@@ -328,10 +329,12 @@ const AssignBatches = () => {
 
   useEffect(() => {
     if (assignedBatches && assignedBatches.length > 0) {
+      console.log("assigned batches", assignedBatches)
       const transformData = assignedBatches.map((item, index) => ({
         id: item.id,
-        ta_name: item.ta.name,
+        //ta_name: item.ta.name,
         batch_name: item.batch.name,
+        branch : item.batch.branch,
         is_active: item.is_active,
       }));
 
@@ -341,9 +344,10 @@ const AssignBatches = () => {
 
   return (
     <>
+    <Box m="10px">
       <Header />
       <Sidebar />
-      <AdminDataTable
+      <DynamicTable
         headers={headers}
         initialData={taAssignBatchesData}
         title="Assigned Batches"
@@ -351,8 +355,10 @@ const AssignBatches = () => {
         ta_id={id}
         dispatch={dispatch}
       />
+      </Box>
     </>
   );
 };
 
 export default AssignBatches;
+  

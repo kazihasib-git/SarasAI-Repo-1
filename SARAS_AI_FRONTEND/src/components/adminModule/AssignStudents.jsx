@@ -5,13 +5,19 @@ import {
   closeAssignStudents,
   openSuccessPopup,
   getStudentBatchMapping,
-  getTA,
   postAssignStudents,
 } from "../../redux/features/taModule/taSlice";
 import CustomTextField from "../CustomFields/CustomTextField";
 import ReusableDialog from "../CustomFields/ReusableDialog";
 import PopUpTable from "../CommonComponent/PopUpTable";
 import { openScheduleSession } from "../../redux/features/taModule/taScheduling";
+
+import {
+  closeCoachAssignStudents,
+  openCoachSuccessPopup,
+  getCoachStudentBatchMapping,
+  postCoachAssignStudents,
+} from "../../redux/features/CoachModule/coachSlice";
 
 const CustomButton = ({
   onClick,
@@ -48,7 +54,7 @@ const CustomButton = ({
   );
 };
 
-const AssignStudents = () => {
+const AssignStudents = ({ componentname }) => {
   const dispatch = useDispatch();
   const [selectedTerm, setSelectedTerm] = useState("");
   const [selectedBatch, setSelectedBatch] = useState("");
@@ -56,31 +62,103 @@ const AssignStudents = () => {
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [filteredStudents, setFilteredStudents] = useState([]);
 
-  const { assignStudentOpen, ta_name, taID, studentBatchMapping } = useSelector((state) => state.taModule);
-  const { taName, taID: taId } = useSelector((state) => state.taScheduling);
+  let stateModuleKey,
+    nameKey,
+    assignStudentOpenKey,
+    assignMappingKey,
+    closeDialogAction,
+    openSuccessAction,
+    getBatchMappingAction,
+    postAssignAction;
+  let schedulingState, nameKeyScheduling, idKeyScheduling;
+
+  switch (componentname) {
+    case "ADDITCOACH":
+      stateModuleKey = "coachModule";
+      nameKey = "coach_name";
+      assignStudentOpenKey = "assignCoachStudentOpen";
+      assignMappingKey = "coachStudentBatchMapping";
+      closeDialogAction = closeCoachAssignStudents;
+      openSuccessAction = openCoachSuccessPopup;
+      getBatchMappingAction = getCoachStudentBatchMapping;
+      postAssignAction = postCoachAssignStudents;
+      schedulingState = useSelector((state) => state.coachScheduling);
+      nameKeyScheduling = "coachName";
+      idKeyScheduling = "coachID";
+      break;
+    case "ADDEDITTA":
+      stateModuleKey = "taModule";
+      nameKey = "ta_name";
+      assignStudentOpenKey = "assignStudentOpen";
+      assignMappingKey = "studentBatchMapping";
+      closeDialogAction = closeAssignStudents;
+      openSuccessAction = openSuccessPopup;
+      getBatchMappingAction = getStudentBatchMapping;
+      postAssignAction = postAssignStudents;
+      schedulingState = useSelector((state) => state.taScheduling);
+      nameKeyScheduling = "taName";
+      idKeyScheduling = "taID";
+      break;
+    default:
+      stateModuleKey = null;
+      nameKey = null;
+      assignStudentOpenKey = null;
+      assignMappingKey = null;
+      closeDialogAction = null;
+      openSuccessAction = null;
+      getBatchMappingAction = null;
+      postAssignAction = null;
+      schedulingState = null;
+      nameKeyScheduling = null;
+      idKeyScheduling = null;
+      break;
+  }
+
+  const stateSelector = useSelector((state) =>
+    stateModuleKey ? state[stateModuleKey] : {}
+  );
+  const { [nameKeyScheduling]: assignedName, [idKeyScheduling]: assignedId } =
+    schedulingState || {};
+
+  const {
+    [assignStudentOpenKey]: assignStudentOpen,
+    [nameKey]: assignedTAName,
+    taID,
+    coachID,
+    [assignMappingKey]: studentBatchMapping,
+  } = stateSelector || {};
 
   useEffect(() => {
-    if (assignStudentOpen) {
-      dispatch(getStudentBatchMapping());
+    if (stateModuleKey && assignStudentOpen) {
+      dispatch(getBatchMappingAction());
     }
-  }, [assignStudentOpen, dispatch]);
+  }, [assignStudentOpen, dispatch, getBatchMappingAction]);
 
   useEffect(() => {
     if (studentBatchMapping) {
-      const transformedData = studentBatchMapping.map((student) => ({
-        "S. No.": student.student_id,
+      const transformedData = studentBatchMapping.map((student, index) => ({
+        "S. No.": index + 1,
         "Student Name": student.student_name,
         "Academic Term": student.academic_term,
-        Batch: student.batches.map((batch) => batch.batch_name).join(", ") || "N/A",
-        Select: student.is_active ? "Active" : "Inactive",
-        student_id: student.student_id,
+        Batch:
+          student.batches.map((batch) => batch.batch_name).join(", ") || "N/A",
+        Select: student.is_active ? 1 : 0,
+        id: student.student_id,
         is_active: student.is_active,
       }));
 
       const filtered = transformedData.filter((student) => {
-        const matchesTerm = selectedTerm ? student["Academic Term"] === selectedTerm : true;
-        const matchesBatch = selectedBatch ? student.Batch.includes(selectedBatch) : true;
-        const matchesName = searchName ? student["Student Name"].toLowerCase().includes(searchName.toLowerCase()) : true;
+        const matchesTerm = selectedTerm
+          ? student["Academic Term"] === selectedTerm
+          : true;
+        const matchesBatch = selectedBatch
+          ? student.Batch.includes(selectedBatch)
+          : true;
+        const matchesName = searchName
+          ? student["Student Name"]
+              .toLowerCase()
+              .includes(searchName.toLowerCase())
+          : true;
         return matchesTerm && matchesBatch && matchesName;
       });
 
@@ -89,11 +167,18 @@ const AssignStudents = () => {
   }, [studentBatchMapping, selectedTerm, selectedBatch, searchName]);
 
   const batchOptions = studentBatchMapping
-    ? [...new Set(
-        studentBatchMapping
-          .filter((student) => !selectedTerm || student.academic_term === selectedTerm)
-          .flatMap((student) => student.batches.map((batch) => batch.batch_name))
-      )]
+    ? [
+        ...new Set(
+          studentBatchMapping
+            .filter(
+              (student) =>
+                !selectedTerm || student.academic_term === selectedTerm
+            )
+            .flatMap((student) =>
+              student.batches.map((batch) => batch.batch_name)
+            )
+        ),
+      ]
     : [];
 
   const academicTermOptions = studentBatchMapping
@@ -107,18 +192,27 @@ const AssignStudents = () => {
   };
 
   const handleSubmit = () => {
+    const id =
+      componentname === "ADDITCOACH"
+        ? coachID || assignedId
+        : taID || assignedId;
     const data = {
-      ta_id: taID ? taID : taId,
+      [componentname === "ADDITCOACH" ? "Coach_id" : "ta_id"]: id,
       student: selectedStudents.map((id) => ({ id: id.toString() })),
     };
-    dispatch(postAssignStudents({ id: taID ? taID : taId, data }))
-      .then(() => {
-        if (taId) {
-          dispatch(openScheduleSession({ id: taId, name: taName, student: selectedStudents.map((id) => ({ id: id.toString() })) }));
-        }
-        dispatch(openSuccessPopup());
-      });
-    dispatch(closeAssignStudents());
+    dispatch(postAssignAction({ id, data })).then(() => {
+      if (assignedId) {
+        dispatch(
+          openScheduleSession({
+            id: assignedId,
+            name: assignedName,
+            student: selectedStudents.map((id) => ({ id: id.toString() })),
+          })
+        );
+      }
+      dispatch(openSuccessAction());
+    });
+    dispatch(closeDialogAction());
   };
 
   const headers = [
@@ -131,7 +225,7 @@ const AssignStudents = () => {
 
   const content = (
     <>
-      <Grid container spacing={2}>
+      <Grid container spacing={2} sx={{mt:0}}>
         <Grid item sm={6}>
           <CustomTextField
             select
@@ -200,13 +294,12 @@ const AssignStudents = () => {
     </CustomButton>
   );
 
-  const assignedTA = ta_name || taName;
-
+  const assignedTA = assignedTAName || assignedName;
   return (
     <ReusableDialog
       open={assignStudentOpen}
-      handleClose={() => dispatch(closeAssignStudents())}
-      title={`Assign Students to ${assignedTA}`}
+      handleClose={() => dispatch(closeDialogAction())}
+      title={`Assign Students to '${assignedTA}'`}
       content={content}
       actions={actions}
     />

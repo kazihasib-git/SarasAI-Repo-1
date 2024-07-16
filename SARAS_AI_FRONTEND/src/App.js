@@ -25,7 +25,7 @@ import TAAvailability from "./pages/managesTAs/TaAvaialablity";
 import ManageCoaches from "./pages/ManageCoaches/ManageCoaches";
 import CoachMapping from "./pages/ManageCoaches/CoachMapping";
 import CoachTemplate from "./pages/ManageCoaches/CoachingTemplate/CoachTemplate";
-import CoachAvialability from "./pages/managesTAs/CoachAvialability";
+import CoachAvialability from "./pages/ManageCoaches/CoachAvialability";
 import CoachScheduling from "./pages/ManageCoaches/CoachScheduling";
 import AllRoutes from "./components/AllRoutes/AllRoutes";
 import TaMapping from "./pages/managesTAs/TaMapping";
@@ -53,6 +53,12 @@ import BatchPage from "./pages/batches/BatchPage";
 import CreateTemplate from "./pages/ManageCoaches/CoachingTemplate/CreateTemplate";
 import TemplateName from "./pages/ManageCoaches/CoachingTemplate/TemplateName";
 import WheelOfLife from "./pages/coachingTools/wheelOfLife/WheelOfLife";
+import WOLCategories from "./components/coachingTools/wheelOfLife/WOLCategories";
+import WOLInstructions from "./components/coachingTools/wheelOfLife/WOLInstructions";
+import WOLQuestions from "./components/coachingTools/wheelOfLife/WOLQuestions";
+import WOLOptionsConfig from "./components/coachingTools/wheelOfLife/WOLOptionsConfig";
+import WOLTestConfig from "./components/coachingTools/wheelOfLife/WOLTestConfig";
+import AddEditWOLQuestions from "./components/coachingTools/wheelOfLife/AddEditWOLQuestions";
 const ROLES = {
   Teaching: 2001,
   Coaches: 1984,
@@ -126,8 +132,8 @@ function App() {
               element={<CoachMapping page="Coach Mapping" />}
             />
             <Route
-              path="coach-manage/tacalender"
-              element={<CoachCalender />}
+              path="coach-calender/:name/:id"
+              element={<CoachCalender page="Calendar" />}
             />
             <Route
               path="coach-template"
@@ -153,7 +159,13 @@ function App() {
             <Route path="students" element={<StudentPage />} />
             <Route path="batches" element={<BatchPage />} />
             {/* <Route path='/student-list' element={<StudentList page="Student" />} /> */}
-            <Route path="coaching-tools" element={<WheelOfLife />} />
+            <Route path="wheel-of-life" element={<WheelOfLife />} />
+            <Route path="wolCategories" element={<WOLCategories />} />
+            <Route path="wolInstructions" element={<WOLInstructions />} />
+            <Route path="wolQuestions" element={<WOLQuestions/>} />
+            <Route path="wolQuestions/add-Edit" element={<AddEditWOLQuestions/> } />
+            <Route path="wolOptionsConfig" element={<WOLOptionsConfig/>} />
+            <Route path="wolTestConfig" element={<WOLTestConfig/>} />
           </Route>
         </Route>
 

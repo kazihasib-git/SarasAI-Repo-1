@@ -24,6 +24,7 @@ const CustomButton = styled(Button)(({ theme, active }) => ({
   backgroundColor: active ? "#F56D3B" : "#FFF",
   padding: "8px 16px", // Add padding for horizontal and vertical spacing
   margin: "0 8px",
+  textTransform:'none',
   "&:hover": {
     backgroundColor: "#F56D3B",
     color: "#fff",
@@ -152,7 +153,8 @@ const DynamicTable = ({
           <p
             style={{
               fontSize: "44px",
-              marginLeft: "16px",
+              // marginLeft: "16px",
+              fontFamily:"ExtraLight"
             }}
           >
             {title}
@@ -348,6 +350,7 @@ const AssignedStudent = () => {
 
   return (
     <>
+    <Box m={"10px"}>
       <Header />
       <Sidebar />
       <DynamicTable
@@ -358,6 +361,7 @@ const AssignedStudent = () => {
         ta_id={id}
         dispatch={dispatch}
       />
+      </Box>
     </>
   );
 };

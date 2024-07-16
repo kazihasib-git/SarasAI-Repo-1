@@ -11,6 +11,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { AssignedBatchesData } from "../../fakeData/AssignedBatchesData";
 import bin from "../../assets/bin.png";
 import { useDispatch, useSelector } from "react-redux";
+import { deleteCoachAssignedBatch, deleteCoachAssignedStudent, getCoachAssignBatches, getCoachAssignStudents, toggleCoachAssignBatchStatus, toggleCoachAssignStudentStatus } from "../../redux/features/CoachModule/coachSlice";
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
   borderRadius: "50px",
@@ -78,6 +79,7 @@ const AdminDataTable = ({
   actionButtons,
   ta_id,
   dispatch,
+  componentName
 }) => {
     console.log("initial data", initialData)
   const [data, setData] = useState(
@@ -117,14 +119,40 @@ const AdminDataTable = ({
         : item
     );
     setData(updatedData);
-
+    console.log("ID : handle toggle : ", id)
     const toggledItem = updatedData.find((item) => item.id === id);
     const requestData = { is_active: toggledItem.is_active };
-    dispatch(toggleAssignStudentStatus({ id, data: requestData }));
+    switch (componentName) {
+      case "ASSIGNCOACHSTUDENT":
+        dispatch(toggleCoachAssignStudentStatus({ id, data: requestData }));
+        dispatch(getCoachAssignStudents(ta_id))
+        break;
+      case "ASSIGNCOACHBATCH":
+        dispatch(toggleCoachAssignBatchStatus({ id, data: requestData }));
+        dispatch(getCoachAssignBatches(ta_id))
+        break;
+      default:
+        console.warn(`No API call defined for component: ${componentName}`);
+        break;
+    }
+
+   
   };
 
   const handleDelete = (id) => {
-    dispatch(deleteAssignedStudent({ id }));
+    switch (componentName) {
+      case "ASSIGNCOACHSTUDENT":
+        dispatch(deleteCoachAssignedStudent({ id }));
+        dispatch(getCoachAssignStudents(ta_id))
+        break;
+      case "ASSIGNCOACHBATCH":
+        dispatch(deleteCoachAssignedBatch({ id }));
+        dispatch(getCoachAssignBatches(ta_id))
+        break;
+      default:
+        console.warn(`No delete action defined for component: ${componentName}`);
+        break;
+    }
   };
 
   const handleNavigate = (path) => {
@@ -135,10 +163,10 @@ const AdminDataTable = ({
     <div className="table-container">
       <Box display={"flex"} justifyContent={"space-between"}>
         <Box display="flex" alignItems="center" padding="16px">
-          <ArrowBackIosIcon
+          {/* <ArrowBackIosIcon
             style={{ fontSize: "25px", marginBottom: "17px" }}
-            onClick={() => navigate("/ta-mapping")}
-          />
+            onClick={() => navigate("/coach-mapping")}
+          /> */}
 
           <p
             style={{
@@ -151,14 +179,14 @@ const AdminDataTable = ({
         </Box>
         <div className="inputBtnContainer">
           <CustomButton
-            onClick={() => handleNavigate(`/active-students/${ta_id}`)}
-            active={location.pathname === `/active-students/${ta_id}`}
+            onClick={() => handleNavigate(`/active-Coach-students/${ta_id}`)}
+            active={location.pathname === `/active-Coach-students/${ta_id}`}
           >
             Assigned Student
           </CustomButton>
           <CustomButton
-            onClick={() => handleNavigate(`/active-batches/${ta_id}`)}
-            active={location.pathname === `/active-batches/${ta_id}`}
+            onClick={() => handleNavigate(`/active-Coach-batches/${ta_id}`)}
+            active={location.pathname === `/active-Coach-batches/${ta_id}`}
           >
             Assigned Batches
           </CustomButton>
