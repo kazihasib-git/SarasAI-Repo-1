@@ -27,6 +27,8 @@ import CoachMapping from "./pages/ManageCoaches/CoachMapping";
 import CoachTemplate from "./pages/ManageCoaches/CoachingTemplate/CoachTemplate";
 import CoachAvialability from "./pages/ManageCoaches/CoachAvialability";
 import CoachScheduling from "./pages/ManageCoaches/CoachScheduling";
+import ScheduledCalls from "./pages/Coach/ScheduleCalls";
+
 import AllRoutes from "./components/AllRoutes/AllRoutes";
 import TaMapping from "./pages/managesTAs/TaMapping";
 import TaScheduling from "./pages/managesTAs/TaScheduling";
@@ -36,7 +38,6 @@ import MyProfile from "./components/RoleRoute/CommonComponent/MyProfile";
 import CallRecords from "./components/RoleRoute/CommonComponent/CallRecords";
 import Messages from "./components/RoleRoute/CommonComponent/Messages";
 import CallRequest from "./components/RoleRoute/CommonComponent/CallRequest";
-import ScheduledCalls from "./components/RoleRoute/CommonComponent/ScheduledCalls";
 import MyCalender from "./components/RoleRoute/CommonComponent/MyCalender";
 import Mystudents from "./components/RoleRoute/CommonComponent/Mystudents";
 import AssignedStudent from "./pages/managesTAs/AssignedStudent";
@@ -166,8 +167,13 @@ function App() {
             <Route path="wolQuestions/add-Edit" element={<AddEditWOLQuestions/> } />
             <Route path="wolOptionsConfig" element={<WOLOptionsConfig/>} />
             <Route path="wolTestConfig" element={<WOLTestConfig/>} />
+            <Route
+          path="schedule-calls"
+          element={<ScheduledCalls page="Schedule Calls" />}
+        />
           </Route>
         </Route>
+        
 
         <Route element={<RequireAuth allowedRoles={[ROLES.Teaching]} />}>
           <Route path="/" element={<Main page="Teaching Assistant" />}>

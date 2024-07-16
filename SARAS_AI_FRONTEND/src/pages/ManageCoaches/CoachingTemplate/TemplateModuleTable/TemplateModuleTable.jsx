@@ -14,6 +14,8 @@ import editIcon from "../../../../assets/editIcon.png";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye } from "@fortawesome/free-solid-svg-icons";
+import LinkActivityPopup from "../TemplateModulePopup/LinkActivity"; // Import the LinkActivityPopup component
+
 const CustomButton = styled(Button)(({ theme }) => ({
   borderRadius: "20px",
   border: "1px solid #F56D3B",
@@ -108,6 +110,9 @@ const TemplateModuleTable = ({
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const [linkActivityPopupOpen, setLinkActivityPopupOpen] = useState(false); // State for controlling popup
+  const [popupContent, setPopupContent] = useState(""); // State for popup content
+
   const handlePageChange = (event, pageNumber) => {
     setCurrentPage(pageNumber);
   };
@@ -137,6 +142,15 @@ const TemplateModuleTable = ({
     }
   };
 
+  const openLinkActivityPopup = (content) => {
+    setPopupContent(content);
+    setLinkActivityPopupOpen(true);
+  };
+
+  const closeLinkActivityPopup = () => {
+    setLinkActivityPopupOpen(false);
+  };
+
   return (
     <div className="tableContainer">
       <table>
@@ -147,7 +161,7 @@ const TemplateModuleTable = ({
             ))}
           </tr>
         </thead>
-        <tbody className="tableBody" >
+        <tbody className="tableBody">
           {currentData.length === 0 ? (
             <tr>
               <td colSpan={headers.length} style={{ textAlign: "center" }}>
@@ -176,7 +190,12 @@ const TemplateModuleTable = ({
                             textAlign: "center",
                           }}
                         >
-                          {value}
+                          <Button
+                            style={{ color: "#F56D3B" }}
+                            onClick={() => openLinkActivityPopup(value)}
+                          >
+                            {value}
+                          </Button>
                         </td>
                       );
                     } else if (key === "Activity" && value === "Video Name") {
@@ -189,7 +208,7 @@ const TemplateModuleTable = ({
                           />
                         </td>
                       );
-                    } else return <td key={idx}> {value}</td> ;
+                    } else return <td key={idx}> {value}</td>;
                   } else if (key !== "id" && key !== "is_active") {
                     if (typeof item[key] === "object" && item[key] !== null) {
                       return <td key={idx}>{JSON.stringify(item[key])}</td>;
@@ -301,6 +320,11 @@ const TemplateModuleTable = ({
           }}
         />
       </div>
+      <LinkActivityPopup
+        open={linkActivityPopupOpen}
+        onClose={closeLinkActivityPopup}
+        content={popupContent}
+      />
     </div>
   );
 };

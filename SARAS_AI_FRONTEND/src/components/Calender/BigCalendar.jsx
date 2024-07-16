@@ -90,6 +90,8 @@ const CalendarComponent = ({ eventsList, addEvent, slotData }) => {
           onSelectEvent={showSessionPopUp}
           step={30}
           selectable
+          views={{ week: true }} // Only show week view
+          defaultView={Views.WEEK} // Set default view to week
         />
       </div>
     </>

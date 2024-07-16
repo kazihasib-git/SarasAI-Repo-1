@@ -11,11 +11,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import AddActivity from "./TemplateModulePopup/AddActivity";
 import EditModule from "./TemplateModulePopup/EditModule";
+import LinkActivityPopup from "./TemplateModulePopup/LinkActivity"; // Import the new component
 
 const TemplateName = () => {
   const { openModulePopUp, openActivityPopUp, selectedCoachTemplate, coachTemplates} = useSelector((state) => state.coachTemplate);
   const [isActive, setIsActive] = useState(true);
   const [modulesData, setModulesData] = useState([]);
+  const [linkActivityPopupOpen, setLinkActivityPopupOpen] = useState(false); // State for controlling popup
   const dispatch = useDispatch();
 
   useEffect(()=>{
@@ -47,6 +49,7 @@ const TemplateName = () => {
     }
   },[coachTemplates]);
 
+  
   const handleModule = () => {
     dispatch(openTemplateModulePopup());
   };
@@ -58,6 +61,15 @@ const TemplateName = () => {
 
   const handleEditModule = () => {
     dispatch(openEditModulePopup());
+  };
+
+  const openLinkActivityPopup = () => {
+    setLinkActivityPopupOpen(true);
+  };
+
+  const closeLinkActivityPopup = () => {
+    console.log("Closing Link Activity Popup");
+    setLinkActivityPopupOpen(false);
   };
 
   const headers = [
@@ -118,7 +130,6 @@ const TemplateName = () => {
       "After Due Date": "Late Submission",
     },
   ];
-  // const dummyData = [];
 
   const actionButtons = [
     {
@@ -169,7 +180,7 @@ const TemplateName = () => {
               <span
                 style={{
                   borderRadius: "50px",
-                  backgroundColor: module.is_active ? "#14D249" : "red",
+                  backgroundColor: isActive ? "#14D249" : "red",
                   color: "white",
                   padding: "3px 10px",
                   marginLeft: "10px",
@@ -197,6 +208,7 @@ const TemplateName = () => {
             initialData={Array.isArray(module.activities) ? module.activities : []}
             actionButtons={actionButtons}
             componentName={"TemplateName"}
+            openLinkActivityPopup={openLinkActivityPopup} // Pass the function to open popup
           />
         </>
         ))}
@@ -204,8 +216,9 @@ const TemplateName = () => {
       )}
 
       {openModulePopUp && <AddModule />}
-      {/* {openActivityPopUp && <AddActivity />} */}
+      {openActivityPopUp && <AddActivity />}
       {openEditModulePopup && <EditModule />}
+      {/* <LinkActivityPopup open={linkActivityPopupOpen} handleClose={setLinkActivityPopupOpen()} /> */}
     </>
   );
 };
