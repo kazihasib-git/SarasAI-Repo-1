@@ -64,6 +64,8 @@ const initialState = {
     studentBatchMapping: [],  // Student Batch Mapping
     students: [],  // Students
     batches: [],  // Batches
+    openEditBatch: false,
+    openEditStudent : false,
     loading: false,
     error: null,
     
@@ -91,6 +93,7 @@ const taScheduling = createSlice({
                 state.batches = action.payload.batches;
             }
             state.scheduleSessionOpen = true;
+            
         },
         closeScheduleSession(state, action) {
             console.log("Close Action : ", action.payload)
@@ -99,7 +102,20 @@ const taScheduling = createSlice({
             state.taTimezone = null;
             state.students = [];
             state.batches = [];
+            //state.openEditBatch = false;
             state.scheduleSessionOpen = false;
+        },
+        openEditBatch(state, action) {
+            state.openEditBatch = true;
+        },
+        closeEditBatch(state, action) {
+            state.openEditBatch = false;
+        },
+        openEditStudent(state, action) {
+            state.openEditStudent = true;
+        },
+        closeEditStudent(state, action) {
+            state.openEditStudent = false;
         },
         clearAvailableSlots(state) {
             state.taAvailableSlots = [];
@@ -191,6 +207,10 @@ const taScheduling = createSlice({
 export const {
     openScheduleSession,
     closeScheduleSession,
+    openEditBatch,
+    closeEditBatch,
+    openEditStudent,
+    closeEditStudent,
 } = taScheduling.actions
 
 export default taScheduling.reducer

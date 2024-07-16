@@ -58,8 +58,7 @@ const CustomButton = ({
 
 const ScheduledSessions = ({ componentName }) => {
   const dispatch = useDispatch();
-  const { id } = useParams(); // Ensure the correct ID is used
-
+  const { id } = useParams(); 
   let scheduleSessionOpenKey,
     scheduledSessionDataKey,
     schedulingStateKey,

@@ -47,6 +47,7 @@ const CustomButton = ({ onClick, children, variant = 'contained', color = '#FFFF
         fontSize: '16px',
         borderRadius: '50px',
         padding: '10px 20px',
+        textTransform:"none",
         ...sx,
       }}
       {...props}
@@ -118,7 +119,7 @@ const PopUpTable = ({ headers, initialData, onRowClick, selectedBox = [] ,onView
                           minWidth: 'auto' // Ensures button doesn't have a minimum width
                         }}
                       >
-                        Check
+                        Cancel
                       </CustomButton>
                       <div
                         style={{
