@@ -33,7 +33,7 @@ import TaScheduling from "./pages/managesTAs/TaScheduling";
 import Calendar from "./components/Calender/indexCalender";
 import StudentPage from "./pages/students/StudentPage";
 import MyProfile from "./components/RoleRoute/CommonComponent/MyProfile";
-import CallRecords from "./components/RoleRoute/CommonComponent/CallRecords";
+import CallRecords from "./pages/MODULE/TaModule/CallRecords";
 import Messages from "./components/RoleRoute/CommonComponent/Messages";
 import CallRequest from "./components/RoleRoute/CommonComponent/CallRequest";
 import ScheduledCalls from "./components/RoleRoute/CommonComponent/ScheduledCalls";
@@ -55,6 +55,8 @@ import TemplateName from "./pages/ManageCoaches/CoachingTemplate/TemplateName";
 import WheelOfLife from "./pages/coachingTools/wheelOfLife/WheelOfLife";
 import WOLCategories from "./components/coachingTools/wheelOfLife/WOLCategories";
 import WOLInstructions from "./components/coachingTools/wheelOfLife/WOLInstructions";
+import AddEditTeachingAssistant from "./pages/MODULE/TaModule/TeachingAssistant";
+import CreateTaMenu from "./pages/MODULE/TaModule/CreateTaMenu";
 const ROLES = {
   Teaching: 2001,
   Coaches: 1984,
@@ -81,7 +83,16 @@ function App() {
               path="createta"
               element={<CreateTAPage page="Create TA" />}
             />
+              <Route
+              path="createmenu"
+              element={<CreateTaMenu page="Create Menu" />}
+            />
+              <Route
+              path="call-records"
+              element={<CallRecords page="CallRecords" />}
+            />
             <Route path="AddEditTA" element={<AddEditTA page="Edit Ta" />} />
+       
             <Route
               path="ta-mapping"
               element={<TaMapping page="TA Mapping" />}
@@ -105,6 +116,10 @@ function App() {
             <Route
               path="ta-availability"
               element={<TAAvailability page="TA Availability" />}
+            />
+            <Route
+              path="TaProfile"
+              element={<AddEditTeachingAssistant page="Ta-Profile" />}
             />
             <Route
               path="ta-scheduling"

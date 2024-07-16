@@ -1,6 +1,6 @@
 import React from 'react';
 import { FormControl, InputLabel, Select, MenuItem, Typography } from '@mui/material';
-
+ 
 const CustomFormControl = ({
   label,
   name,
@@ -9,26 +9,30 @@ const CustomFormControl = ({
   errors,
   options,
 }) => {
-  console.log("label", label , name , value, options ) 
+  const hasError = !!errors[name];
+ 
   return (
-    <FormControl variant="outlined" fullWidth>
-      <InputLabel
+<FormControl variant="outlined" fullWidth>
+<InputLabel
         style={{ margin: 0 }}
         sx={{
-          color: "#1A1E3D",
+          color: hasError ? 'red' : '#1A1E3D',
           "&.Mui-focused": {
-            color: "#9A9DAD", // Change label color on focus
+            color: '#9A9DAD', // Change label color on focus regardless of error
+          },
+          "&.MuiFormLabel-filled": {
+            color: hasError ? 'red' : '#1A1E3D', // Change label color when the field is filled
           },
         }}
-      >
+>
         {label}
-      </InputLabel>
-      <Select
+</InputLabel>
+<Select
         label={label}
         name={name}
         value={value}
         onChange={onChange}
-        error={!!errors[name]}
+        error={hasError}
         MenuProps={{
           PaperProps: {
             style: {
@@ -47,23 +51,23 @@ const CustomFormControl = ({
             borderColor: "#D0D0EC",
           },
           "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-            borderColor: "rgb(245, 109, 59)", // Change border color on focus
+            borderColor: hasError ? 'red' : 'rgb(245, 109, 59)', // Change border color on focus based on error
           },
         }}
-      > 
+>
         {options.map((option) => (
-          <MenuItem key={option.value} value={option.value}>
+<MenuItem key={option.value} value={option.value}>
             {option.label}
-          </MenuItem>
+</MenuItem>
         ))}
-      </Select>
-      {errors[name] && (
-        <Typography variant="body2" color="error">
+</Select>
+      {hasError && (
+<Typography variant="body2" color="error" sx={{ fontSize: '0.75rem' }}>
           {errors[name].message}
-        </Typography>
+</Typography>
       )}
-    </FormControl>
+</FormControl>
   );
 };
-
+ 
 export default CustomFormControl;
