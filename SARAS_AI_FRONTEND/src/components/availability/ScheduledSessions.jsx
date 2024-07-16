@@ -20,6 +20,7 @@ import {
   openCoachRescheduleSession,
   openCoachScheduledSlots,
   openCoachReasonForLeave,
+  reasonForCoachLeave
 } from "../../redux/features/CoachModule/CoachAvailabilitySlice";
 import { useParams } from "react-router-dom";
 
@@ -69,7 +70,8 @@ const ScheduledSessions = ({ componentName }) => {
     openRescheduleAction,
     openSlotsAction,
     slotEventKey,
-    openReasonAction;
+    openReasonAction,
+    reasonForLeaveAction;
 
   switch (componentName) {
     case "TACALENDER":
@@ -81,7 +83,8 @@ const ScheduledSessions = ({ componentName }) => {
       openRescheduleAction = openRescheduleSession;
       openSlotsAction = openScheduledSlots;
       slotEventKey = "slotEventData";
-      openReasonAction = openReasonForLeave;
+      openReasonAction = openReasonForLeave;;
+      reasonForLeaveAction = reasonForLeave
       break;
     case "COACHCALENDER":
       scheduleSessionOpenKey = "scheduledCoachSessionOpen";
@@ -92,7 +95,8 @@ const ScheduledSessions = ({ componentName }) => {
       openRescheduleAction = openCoachRescheduleSession;
       openSlotsAction = openCoachScheduledSlots;
       slotEventKey = "slotCoachEventData";
-      openReasonAction = openCoachReasonForLeave;
+      openReasonAction = openCoachReasonForLeave;;
+      reasonForLeaveAction = reasonForCoachLeave
       break;
     default:
       scheduleSessionOpenKey = null;
@@ -104,6 +108,7 @@ const ScheduledSessions = ({ componentName }) => {
       openSlotsAction = null;
       slotEventKey = null;
       openReasonAction = null;
+      reasonForLeaveAction = null;
       break;
   }
 

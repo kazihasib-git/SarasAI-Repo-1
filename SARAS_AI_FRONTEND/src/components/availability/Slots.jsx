@@ -167,7 +167,7 @@ const Slots = ({ componentName }) => {
     } else {
       console.log("No slots selected, opening reason for leave");
       dispatch(closeScheduleSessionAction());
-      dispatch(openMarkLeaveAction(markLeaveData));
+      // dispatch(openMarkLeaveAction(markLeaveData));
     }
   };
 

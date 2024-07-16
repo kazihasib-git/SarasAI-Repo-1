@@ -258,8 +258,8 @@ const TaCalender = () => {
         componentName={"TACALENDER"}
       />
       {scheduleSessionOpen && <Schedule componentName={"TASCHEDULE"} />}
-      {openEditBatch && <EditBatches componentname={"ADDEDITTA"} />}
-      {openEditStudent && <EditStudents componentname={"ADDEDITTA"} />}
+      {openEditBatch && <EditBatches componentname={"TASCHEDULE"} />}
+      {openEditStudent && <EditStudents componentname={"TASCHEDULE"} />}
       {/*{sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} componentName={"TACALENDER"} />} */}
       {markLeaveOpen && (
         <MarkLeave id={id} name={name} componentName={"TACALENDER"} />
