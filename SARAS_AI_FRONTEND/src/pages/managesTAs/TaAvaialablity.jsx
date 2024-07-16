@@ -289,7 +289,7 @@ const TaAvialability = () => {
               fontFamily: "ExtraLight",
             }}
           >
-            Ta Availability
+            TA Availability
           </p>
         </Box>
         <DynamicTable

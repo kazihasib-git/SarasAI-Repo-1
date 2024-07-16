@@ -129,9 +129,10 @@ const ReschedulingSession = ({ componentName }) => {
   useEffect(() => {
     console.log("Available Slots Data:", availableSlotsData);
     if (availableSlotsData && availableSlotsData.length > 0) {
-      const transformedData = availableSlotsData.map((slot) => ({
-        "S. No.": slot.id,
+      const transformedData = availableSlotsData.map((slot, index) => ({
+        "S. No.": index + 1,
         "Slots Available": `${slot.from_time} - ${slot.to_time}`,
+        id : slot.id
       }));
       setTransformedSlotsData(transformedData);
     } else {
@@ -154,14 +155,15 @@ const ReschedulingSession = ({ componentName }) => {
 
   const handleSubmit = () => {
     console.log("*** Submitting Reschedule Session....");
-
+    console.log("selectedSlots : ", selectedSlots);
+    console.log("sessionEventData : ", sessionEventData['S. No.'])
     dispatch(
       rescheduleSession({
-        id: sessionEventData["S. No."],
+        id: sessionEventData['S. No.'],
         data: {
           admin_user_id: taId.id,
           schedule_date: selectDate,
-          slot_id: selectedSlots[0], // Assuming only one slot can be selected
+          slot_id: selectedSlots[1], // Assuming only one slot can be selected
           start_time: fromTime,
           end_time: toTime,
           timezone: "IST",
@@ -171,7 +173,7 @@ const ReschedulingSession = ({ componentName }) => {
     )
       .unwrap()
       .then(() => {
-        console.log("SLOT EVENT DATA : ", slotEventData)
+        // console.log("SLOT EVENT DATA : ", slotEventData)
         dispatch(closeRescheduleSessionAction());
         dispatch(getScheduleSessionAction(slotEventData));
         dispatch(openScheduledSessionAction());

@@ -44,8 +44,8 @@ export const fetchCoachSlots = createAsyncThunk(
 );
 
 // Create Slots for Coach
-export const CreatCoachSlots = createAsyncThunk(
-  "coachAvailability/CreatCoachSlots",
+export const createCoachSlots = createAsyncThunk(
+  "coachAvailability/createCoachSlots",
   async (data) => {
     console.log("Data being sent:", data);
     const response = await axios.post(`${baseUrl}/admin/coach-slots`, data);
@@ -88,6 +88,16 @@ export const deleteFutureSlots = createAsyncThunk(
   }
 );
 
+// Reason for Coach Leave
+export const reasonForCoachLeave = createAsyncThunk(
+  'taAvialability/reasonForCoachLeave',
+  async (data) => {
+    const response = await axios.post(`${baseUrl}/admin/leave`, data);
+    return response.data;
+  
+  }
+)
+
 const initialState = {
   todaysAvailableCoach: [],
   coachMarkLeaveOpen: false,
@@ -97,6 +107,7 @@ const initialState = {
   scheduledCoachSlotsData: [], // Ensure this is correctly named and initialized
   scheduledCoachSessionData: [], // Ensure this is correctly named and initialized
   availableCoachSlotsData: [],
+  reasonForCoachLeaveData: [],
   scheduledCoachSessionOpen: false,
   cancelCoachSessionOpen: false,
   resheduleCoachSessionOpen: false,
@@ -228,14 +239,14 @@ export const coachAvailabilitySlice = createSlice({
     });
 
     // Create Coach Slots
-    builder.addCase(CreatCoachSlots.pending, (state) => {
+    builder.addCase(createCoachSlots.pending, (state) => {
       state.loading = true;
     });
-    builder.addCase(CreatCoachSlots.fulfilled, (state, action) => {
+    builder.addCase(createCoachSlots.fulfilled, (state, action) => {
       state.loading = false;
       state.slotCoachEventData = action.payload?.data;
     });
-    builder.addCase(CreatCoachSlots.rejected, (state, action) => {
+    builder.addCase(createCoachSlots.rejected, (state, action) => {
       state.loading = false;
       state.error = action.error.message;
     });
@@ -272,6 +283,19 @@ export const coachAvailabilitySlice = createSlice({
       state.loading = false;
     });
     builder.addCase(deleteFutureSlots.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message;
+    });
+
+     // Reason for Leave
+     builder.addCase(reasonForCoachLeave.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(reasonForCoachLeave.fulfilled, (state, action) => {
+      state.loading = false;
+      state.reasonForCoachLeaveData = action.payload.data;
+    });
+    builder.addCase(reasonForCoachLeave.rejected, (state, action) => {
       state.loading = false;
       state.error = action.error.message;
     });

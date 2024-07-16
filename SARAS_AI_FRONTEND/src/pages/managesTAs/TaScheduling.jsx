@@ -13,16 +13,19 @@ import Schedule from "../../components/availability/Schedule";
 import AssignStudents from "../../components/adminModule/AssignStudents";
 import AssignBatches from "../../components/adminModule/AssignBatches";
 import { showTAMapping } from "../../redux/features/taModule/taSlice";
+import EditBatches from "../../components/availability/EditBatches";
+import EditStudents from "../../components/availability/EditStudents";
 
 const TaScheduling = () => {
   const dispatch = useDispatch();
-  const { assignStudentOpen, assignBatchOpen, loading } = useSelector(
+  const { assignStudentOpen, taMapping, assignBatchOpen, loading } = useSelector(
     (state) => state.taModule
   );
-  const { scheduleSessionOpen } = useSelector(
+  const { scheduleSessionOpen, openEditBatch, openEditStudent } = useSelector(
     (state) => state.taScheduling
   );
-  const { taMapping } = useSelector((state) => state.taModule);
+
+
 
   const [taScheduleData, setTaScheduleData] = useState([]);
 
@@ -89,8 +92,11 @@ const TaScheduling = () => {
         />
       </Box>
       {scheduleSessionOpen && <Schedule componentName={"TASCHEDULE"} />}
-      {assignStudentOpen && <AssignStudents componentname={"ADDEDITTA"} />}
-      {assignBatchOpen && <AssignBatches componentname={"ADDEDITTA"} />}
+      {/* {assignStudentOpen && <AssignStudents componentname={"ADDEDITTA"} />} */}
+      {/* {assignBatchOpen && <AssignBatches componentname={"ADDEDITTA"} />} */}
+      {openEditBatch && <EditBatches componentname={"TASCHEDULE"} />}
+      {openEditStudent && <EditStudents componentname={"TASCHEDULE"} />}
+   
     </>
   );
 };

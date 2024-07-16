@@ -13,37 +13,29 @@ import {
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import CustomTextField from "../CustomFields/CustomTextField";
-import PopUpTable from "../CommonComponent/PopUpTable";
 import CustomTimeField from "../CustomFields/CustomTimeField";
 import CustomDateField from "../CustomFields/CustomDateField";
 import ReusableDialog from "../CustomFields/ReusableDialog";
 import CustomFormControl from "../CustomFields/CustomFromControl";
-import { useForm } from "react-hook-form";
-import {
-  timeZones,
-  transformedTimeZones,
-  validateTimeZone,
-} from "../CustomFields/FormOptions";
+import { useForm, Controller } from "react-hook-form";
+
 import {
   closeScheduleSession,
   createTASchedule,
   getTaAvailableSlotsFromDate,
+  openEditBatch,
+  openEditStudent,
 } from "../../redux/features/taModule/taScheduling";
 import {
   closeCoachScheduleSession,
   createCoachSchedule,
   getCoachAvailableSlotsFromDate,
+  openCoachEditBatch,
+  openCoachEditStudent,
 } from "../../redux/features/CoachModule/coachSchedule";
-import {
-  openAssignBatches,
-  openAssignStudents,
-} from "../../redux/features/taModule/taSlice";
-import { Controller,
-  openCoachAssignBatches,
-  openCoachAssignStudents,
-} from "../../redux/features/CoachModule/coachSlice";
-import { getTimezone } from '../../redux/features/timezone/timezoneSlice';
-import CustomTimeZoneForm from '../CustomFields/CustomTimeZoneForm';
+import { getTimezone } from "../../redux/features/timezone/timezoneSlice";
+import CustomTimeZoneForm from "../CustomFields/CustomTimeZoneForm";
+import { fetchTAScheduleById } from "../../redux/features/taModule/taAvialability";
 
 const CustomButton = ({
   onClick,
@@ -107,10 +99,18 @@ const Schedule = ({ componentName }) => {
   const [selectedDays, setSelectedDays] = useState([]);
   const [slotData, setSlotData] = useState([{}]);
   const [selectedSlot, setSelectedSlot] = useState([{}]);
-    const [availableSlotsOptions, setAvailableSlotsOptions] = useState([{}]);
+  const [availableSlotsOptions, setAvailableSlotsOptions] = useState([{}]);
 
   const dispatch = useDispatch();
-  let scheduleSessionOpenKey, schedulingStateKey, availableKey, idKey, nameKey, timezoneKey, getAvailableSlotsAction, closeScheduleSessionAction, createScheduleAction;
+  let scheduleSessionOpenKey,
+    schedulingStateKey,
+    availableKey,
+    idKey,
+    nameKey,
+    timezoneKey,
+    getAvailableSlotsAction,
+    closeScheduleSessionAction,
+    createScheduleAction;
 
   switch (componentName) {
     case "TASCHEDULE":
@@ -148,7 +148,9 @@ const Schedule = ({ componentName }) => {
       break;
   }
 
-  const schedulingState = useSelector((state) => (schedulingStateKey ? state[schedulingStateKey] : {}));
+  const schedulingState = useSelector((state) =>
+    schedulingStateKey ? state[schedulingStateKey] : {}
+  );
   const {
     [scheduleSessionOpenKey]: scheduleSessionOpen,
     [idKey]: adminUserID,
@@ -162,42 +164,42 @@ const Schedule = ({ componentName }) => {
   const {
     register,
     handleSubmit,
-    control, formState: { errors },
+    control,
+    formState: { errors },
   } = useForm();
 
   useEffect(() => {
     if (fromDate) {
-      dispatch(getAvailableSlotsAction({ admin_user_id: adminUserID, date: fromDate }));
+      dispatch(
+        getAvailableSlotsAction({ admin_user_id: adminUserID, date: fromDate })
+      );
     }
   }, [fromDate, dispatch, adminUserID, getAvailableSlotsAction]);
 
-    // const { timezones } = useSelector((state) => state.timezone);
-
-    useEffect(() => {
-        dispatch(getTimezone())
-    }, [dispatch])
+  const { timezones } = useSelector((state) => state.timezone);
 
   useEffect(() => {
-    console.log("AVIALABLE KEY : ", availableKey)
-    console.log("Avaialable slots : ", availableSlots)
+    dispatch(getTimezone());
+  }, [dispatch]);
+
+  useEffect(() => {
+    console.log("AVIALABLE KEY : ", availableKey);
+    console.log("Avaialable slots : ", availableSlots);
     if (availableSlots && availableSlots.length > 0) {
       const transformData = availableSlots.map((item, index) => ({
-        "S. No.": index+1,
+        "S. No.": index + 1,
         "Slot Date": item.slot_date,
         "From Time": item.from_time,
         "To Time": item.to_time,
-        id:item.id
+        id: item.id,
       }));
 
-            // I want to create options for the available slots to select the from and to time 
-            // from time and to will come as a single label
+      const options = availableSlots.map((item) => ({
+        label: `${item.from_time} - ${item.to_time}`,
+        value: item.id,
+      }));
 
-            const options = availableSlots.map((item) => ({
-                label: `${item.from_time} - ${item.to_time}`,
-                value: item.id,
-            }));
-
-            setAvailableSlotsOptions(options);
+      setAvailableSlotsOptions(options);
 
       setSlotData(transformData);
     }
@@ -223,33 +225,34 @@ const Schedule = ({ componentName }) => {
     });
   };
 
-
-    // 
-    const handleSelectOption = (e) => {
-        const selectedOption = e.target.value;
-        console.log("selectedOption : ", selectedOption)
-        const selectedSlot = taSlotData.filter((slot) => slot.id === selectedOption);
-        console.log("selectedSlot : ", selectedSlot)
-        setSelectedSlot(selectedSlot);
-    }
+  //
+  const handleSelectOption = (e) => {
+    const selectedOption = e.target.value;
+    console.log("selectedOption : ", selectedOption);
+    const selectedSlot = slotData.filter((slot) => slot.id === selectedOption);
+    console.log("selectedSlot : ", selectedSlot);
+    setSelectedSlot(selectedSlot);
+  };
 
   const handleAssignStudents = () => {
+    console.log("COMPONENT NAME  handleAssignStudents : ", componentName)
     if (componentName === "TASCHEDULE") {
-      dispatch(openAssignStudents());
+      dispatch(openEditStudent());
     } else if (componentName === "COACHSCHEDULE") {
-      dispatch(openCoachAssignStudents());
+      dispatch(openCoachEditStudent());
     }
   };
 
-    // const handleClear = () => {
-    //     setSelectedSlot([{}]);
-    // }
+  // const handleClear = () => {
+  //     setSelectedSlot([{}]);
+  // }
 
   const handleAssignBatches = () => {
+    console.log("COMPONENT NAME  handleAssignBatches : ", componentName)
     if (componentName === "TASCHEDULE") {
-      dispatch(openAssignBatches());
+      dispatch(openEditBatch());
     } else if (componentName === "COACHSCHEDULE") {
-      dispatch(openCoachAssignBatches());
+      dispatch(openCoachEditBatch());
     }
   };
 
@@ -257,32 +260,61 @@ const Schedule = ({ componentName }) => {
     const studentId = students.map((student) => student.id);
     const batchId = batches.map((batch) => batch.id);
 
+    console.log("studentId : ", studentId, "batchId : ", batchId);
+    if (toTime) {
+      if (toTime < fromTime) {
+        alert("To time should be greater than from time!");
+      }
+    }
+
+    if (toDate) {
+      if (toDate < fromDate) {
+        alert("To Date should be greater than from Date!");
+      }
+    }
+
     let weeksArray = Array(7).fill(0);
-    if  (repeat === "recurring") {
+    if (repeat === "recurring") {
       selectedDays.forEach((day) => {
         const index = weekDays.indexOf(day);
         weeksArray[index] = 1;
       });
-    }  else if  (repeat === "onetime") {
+    } else if (repeat === "onetime") {
       const index = new Date(fromDate).getDay();
       weeksArray[index] = 1;
     }
-    console.log("FORM DATA : ", formData)
+
+    console.log("FORM DATA : ", formData);
+    console.log("selected slots", selectedSlot);
+
     formData.start_time = fromTime;
     formData.end_time = toTime;
     formData.timezone = timezone;
     formData.schedule_date = fromDate;
     formData.end_date = repeat === "recurring" ? toDate : fromDate;
     formData.admin_user_id = adminUserID;
-    formData.slot_id = selectedSlot[1]; // Assuming single slot selection
+    formData.slot_id = selectedSlot[0].id; // Assuming single slot selection
     formData.event_status = "scheduled";
     formData.weeks = weeksArray;
-    formData.timezone = adminUserTimezone;
+    // formData.timezone = adminUserTimezone;
+    formData.timezone = "Asia/Kolkata";
     formData.studentId = studentId;
     formData.batchId = batchId;
 
+    dispatch(createScheduleAction({ ...formData }))
+      .then(() => {
+        dispatch(closeScheduleSessionAction());
+        return dispatch(fetchTAScheduleById(adminUserID));
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+
+    /*
     dispatch(createScheduleAction({ ...formData }));
+    dispatch(fetchTAScheduleById(adminUserID))
     dispatch(closeScheduleSessionAction());
+    */
   };
 
   const content = (
@@ -293,52 +325,6 @@ const Schedule = ({ componentName }) => {
       sx={{ height: "100%", width: "100%" }}
     >
       <Grid container spacing={3} justifyContent="center">
-        <Grid item xs={12} display="flex" justifyContent="center">
-          <Box display="flex" justifyContent="center" gap={2} sx={{ mb: 3 }}>
-            <Button
-              variant="contained"
-              onClick={handleAssignStudents}
-              sx={{
-                backgroundColor: "#F56D3B",
-                color: "white",
-                height: "60px",
-                width: "201px",
-                borderRadius: "50px",
-                textTransform: "none",
-                padding: "18px 30px",
-                fontWeight: "700",
-                fontSize: "16px",
-                "&:hover": {
-                  backgroundColor: "#D4522A",
-                },
-              }}
-            >
-              Students
-            </Button>
-            <Button
-              variant="outlined"
-              onClick={handleAssignBatches}
-              sx={{
-                backgroundColor: "white",
-                color: "#F56D3B",
-                height: "60px",
-                width: "194px",
-                border: "2px solid #F56D3B",
-                borderRadius: "50px",
-                textTransform: "none",
-                fontWeight: "700",
-                fontSize: "16px",
-                padding: "18px 30px",
-                "&:hover": {
-                  backgroundColor: "#F56D3B",
-                  color: "white",
-                },
-              }}
-            >
-              Batches
-            </Button>
-          </Box>
-        </Grid>
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <Box display="flex" justifyContent="center" m={4}>
             <Grid container spacing={3} justifyContent="center">
@@ -362,6 +348,19 @@ const Schedule = ({ componentName }) => {
                   ) : (
                     <>
                       <Grid item xs={12} display="flex" justifyContent="center">
+                        <CustomFormControl
+                          name="slot_id"
+                          control={control}
+                          rules={{ required: "Slot is required" }}
+                          options={availableSlotsOptions}
+                          label="Available Slot"
+                          onChange={handleSelectOption}
+                          errors={errors}
+                        />
+                      </Grid>
+
+                      {/*
+                      <Grid item xs={12} display="flex" justifyContent="center">
                         <PopUpTable
                           headers={headers}
                           initialData={slotData}
@@ -369,6 +368,7 @@ const Schedule = ({ componentName }) => {
                           selectedBox={selectedSlot}
                         />
                       </Grid>
+                      */}
                       <Grid
                         container
                         spacing={3}
@@ -446,6 +446,22 @@ const Schedule = ({ componentName }) => {
                           display="flex"
                           justifyContent="center"
                         >
+                          <Controller
+                            name="timezone"
+                            control={control}
+                            // rules={{ required: "Time Zone is required" }}
+                            render={({ field }) => (
+                              <CustomTimeZoneForm
+                                label="Time Zone"
+                                name="timezone"
+                                value={field.value}
+                                onChange={field.onChange}
+                                errors={errors}
+                                options={timezones}
+                              />
+                            )}
+                          />
+                          {/*
                           <CustomFormControl
                             label="Select Timezone"
                             name="timezone"
@@ -456,12 +472,65 @@ const Schedule = ({ componentName }) => {
                               value: timezone,
                               onChange: (e) => setTimezone(e.target.value),
                             }}
+
                             register={register}
                             validation={{ validate: validateTimeZone }}
                             errors={errors}
                             options={transformedTimeZones}
                           />
+                           */}
                         </Grid>
+                      </Grid>
+                      <Grid item xs={12} display="flex" justifyContent="center">
+                        <Box
+                          display="flex"
+                          justifyContent="center"
+                          gap={2}
+                          sx={{ mb: 3 }}
+                        >
+                          <Button
+                            variant="contained"
+                            onClick={handleAssignStudents}
+                            sx={{
+                              backgroundColor: "#F56D3B",
+                              color: "white",
+                              height: "60px",
+                              width: "201px",
+                              borderRadius: "50px",
+                              textTransform: "none",
+                              padding: "18px 30px",
+                              fontWeight: "700",
+                              fontSize: "16px",
+                              "&:hover": {
+                                backgroundColor: "#D4522A",
+                              },
+                            }}
+                          >
+                            Edit Students
+                          </Button>
+                          <Button
+                            variant="outlined"
+                            onClick={handleAssignBatches}
+                            sx={{
+                              backgroundColor: "white",
+                              color: "#F56D3B",
+                              height: "60px",
+                              width: "194px",
+                              border: "2px solid #F56D3B",
+                              borderRadius: "50px",
+                              textTransform: "none",
+                              fontWeight: "700",
+                              fontSize: "16px",
+                              padding: "18px 30px",
+                              "&:hover": {
+                                backgroundColor: "#F56D3B",
+                                color: "white",
+                              },
+                            }}
+                          >
+                            Edit Batches
+                          </Button>
+                        </Box>
                       </Grid>
                       <Grid
                         container
@@ -587,8 +656,11 @@ const Schedule = ({ componentName }) => {
   return (
     <ReusableDialog
       open={scheduleSessionOpen}
-      handleClose={() => {dispatch(closeScheduleSessionAction())}}
-      title={`Schedule Session for ${adminUserName}`}
+      handleClose={() => {
+        dispatch(closeScheduleSessionAction());
+      }}
+      title={`Schedule`}
+      // Session for ${adminUserName}`}
       content={content}
     />
   );

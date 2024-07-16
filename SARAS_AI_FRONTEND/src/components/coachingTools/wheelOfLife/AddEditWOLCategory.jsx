@@ -3,26 +3,45 @@ import ReusableDialog from '../../CustomFields/ReusableDialog'
 import { Button, Grid } from '@mui/material'
 import CustomTextField from '../../CustomFields/CustomTextField'
 import { useDispatch, useSelector } from 'react-redux'
-import { setAddEditWolCategory } from '../../../redux/features/coachingTools/wol/wolSlice'
+import { setAddEditWolCategory,setEditData } from '../../../redux/features/coachingTools/wol/wolSlice'
+import {createWOLCategory , updateeWOLCategory , getWOLCategory} from '../../../redux/features/coachingTools/wol/wolSlice';
 
-const AddEditWOLCategory = (editData) => {
+const AddEditWOLCategory = () => {
     const dispatch = useDispatch();
-    const { openAddEditWolCategory } = useSelector((state) => state.wol);
+    const { openAddEditWolCategory, editData } = useSelector((state) => state.wol);
     const [categoryName, setCategoryName] = useState("")
 
-    const handleSubmit = () => {
-        console.log('Submit')
+    const handleSubmit = async () => {
         if (editData) {
-            setCategoryName(editData.categoryName);
+            //setCategoryName(editData.name);
             console.log('Edit')
+            try {
+                const updatedWOL = await dispatch(updateeWOLCategory({ id: editData.id, data:{ name: categoryName }})).unwrap();
+            } catch (error) {
+                console.log(error.message) //TODO: Show toast message
+            }
         }
-        console.log('Add')
+        else {
+            try {
+                const createdWOL = await dispatch(createWOLCategory({ name: categoryName })).unwrap();
+            } catch (error) {
+                console.log(error.message) //TODO: Show toast message
+            }
+        }
+        await dispatch(getWOLCategory());
+        dispatch(setEditData(null))
+        dispatch(setAddEditWolCategory(false))
+    }
+
+    const handlepopupClose = () => {
+        dispatch(setAddEditWolCategory(false))
+        dispatch(setEditData(null))
     }
 
     useEffect(() => {
         console.log(editData)
         if (editData) {
-            setCategoryName(editData.category)
+            setCategoryName(editData.name)
         }
     }, [editData])
 
@@ -66,7 +85,7 @@ const AddEditWOLCategory = (editData) => {
     return (
         <ReusableDialog
             open={openAddEditWolCategory}
-            handleClose={() => dispatch(setAddEditWolCategory(false))}
+            handleClose={handlepopupClose}
             title={editData ? "Edit New WOL Category" : "Add New WOL Category"}
             content={content}
             actions={actions}

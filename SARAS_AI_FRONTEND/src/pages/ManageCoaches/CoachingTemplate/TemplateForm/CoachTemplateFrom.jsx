@@ -3,6 +3,8 @@ import { Box, Grid, TextField, Button, MenuItem } from "@mui/material";
 import CustomTextField from "../../../../components/CustomFields/CustomTextField";
 import { styled } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { createCoachTemplate } from "../../../../redux/features/CoachModule/CoachTemplateSlice";
 
 const durations = [
   { value: "30 mins", label: "30 mins" },
@@ -25,15 +27,27 @@ const CustomButton = styled(Button)(({ theme, active }) => ({
 }));
 
 const CoachTemplateForm = () => {
+  const dispatch = useDispatch();
   const [templateName, setTemplateName] = useState("");
   const [duration, setDuration] = useState("");
   const navigation = useNavigate();
+
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
     // Handle form submission
     console.log(`Template Name: ${templateName}, Duration: ${duration}`);
-    navigation("/template-name")
+    
+    const newTemplateData = {
+      "name" : templateName,
+      "is_active" : "1",
+      "duration" : duration
+    }
+
+    dispatch(createCoachTemplate(newTemplateData));
+    navigation("/template-name");
+
   };
 
   return (
