@@ -154,7 +154,7 @@ const TaCalender = () => {
         }, [id]);
         */
 
-  console.log("ta Id :", id);
+  // console.log("ta Id :", id);
 
   useEffect(() => {
     dispatch(fetchCoachSlots(id));
@@ -172,7 +172,7 @@ const TaCalender = () => {
     }
   }, [scheduleData]);
 
-  console.log("slotData", slotData, "scheduleData", scheduleData);
+  // console.log("slotData", slotData, "scheduleData", scheduleData);
 
   const handleScheduleNewSession = () => {
     // console.log("Pressed")
@@ -192,8 +192,8 @@ const TaCalender = () => {
     dispatch(openCreateNewSlots());
   };
 
-  console.log("session", scheduleData);
-  console.log("sessiond data", scheduleData.data);
+  // console.log("session", scheduleData);
+  // console.log("sessiond data", scheduleData.data);
 
   return (
     <Box sx={{ backgroundColor: "#f8f9fa", p: 3 }}>

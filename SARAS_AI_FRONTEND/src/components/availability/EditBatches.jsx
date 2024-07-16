@@ -155,12 +155,12 @@ const EditBatches = ({ componentname }) => {
         if (assignedBatches) {
             console.log("assignedBatches", assignedBatches)
 
-            const transformedData = assignedBatches.map((batch) => ({
-                "S. No.": batch.id,
+            const transformedData = assignedBatches.map((batch, index) => ({
+                "S. No.": index +1,
                 "Batch Name": batch.batch.name,
                 Branch: batch.batch.branch,
                 //Select: batch.is_active ? "Active" : "Inactive",
-                batch_id: batch.id,
+                id : batch.id,
             }));
 
             console.log("transformedData", transformedData)

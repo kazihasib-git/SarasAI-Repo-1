@@ -142,8 +142,8 @@ const EditStudents = ({ componentname }) => {
     useEffect(() => {
         if (assignedStudents) {
             console.log("STUDENT BATCH MAPPING : ", assignedStudents)
-            const transformedData = assignedStudents.map((stu) => ({
-                "S. No.": stu.student.id,
+            const transformedData = assignedStudents.map((stu, index) => ({
+                "S. No.": index + 1,
                 "Student Name": stu.student.name,
                 "Academic Term": stu.student.academic_term,
                 Batch:
@@ -151,6 +151,7 @@ const EditStudents = ({ componentname }) => {
                 Select: stu.is_active ? "Active" : "Inactive",
                 student_id: stu.student_id,
                 is_active: stu.is_active,
+                id: stu.student.id
             }));
 
             const filtered = transformedData.filter((student) => {

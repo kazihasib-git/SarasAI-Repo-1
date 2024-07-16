@@ -81,7 +81,7 @@ const CreateNewSlot = ({ addEvent }) => {
 
     const { createNewSlotOpen, slotEventData } = useSelector((state) => state.taAvialability);
 
-    console.log("new slot data:", slotEventData);
+    // console.log("new slot data:", slotEventData);
 
     const { register, control, handleSubmit, formState: { errors } } = useForm();
 
