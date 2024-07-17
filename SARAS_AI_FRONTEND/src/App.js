@@ -35,7 +35,7 @@ import StudentPage from "./pages/students/StudentPage";
 import MyProfile from "./components/RoleRoute/CommonComponent/MyProfile";
 import CallRecords from "./pages/MODULE/TaModule/CallRecords";
 import Messages from "./components/RoleRoute/CommonComponent/Messages";
-import CallRequest from "./components/RoleRoute/CommonComponent/CallRequest";
+import CallRequest from "./pages/MODULE/TaModule/CallRequest";
 import ScheduledCalls from "./components/RoleRoute/CommonComponent/ScheduledCalls";
 import MyCalender from "./components/RoleRoute/CommonComponent/MyCalender";
 import Mystudents from "./components/RoleRoute/CommonComponent/Mystudents";
@@ -61,6 +61,7 @@ import WOLTestConfig from "./components/coachingTools/wheelOfLife/WOLTestConfig"
 import AddEditWOLQuestions from "./components/coachingTools/wheelOfLife/AddEditWOLQuestions";
 import AddEditTeachingAssistant from "./pages/MODULE/TaModule/TeachingAssistant";
 import CreateTaMenu from "./pages/MODULE/TaModule/CreateTaMenu";
+
 const ROLES = {
   Teaching: 2001,
   Coaches: 1984,
@@ -86,6 +87,10 @@ function App() {
             <Route
               path="createta"
               element={<CreateTAPage page="Create TA" />}
+            />
+             <Route
+              path="callrequest"
+              element={<CallRequest page="Call-Request" />}
             />
               <Route
               path="createmenu"

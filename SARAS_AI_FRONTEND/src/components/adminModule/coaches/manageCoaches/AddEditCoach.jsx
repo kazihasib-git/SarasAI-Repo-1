@@ -412,7 +412,7 @@ function AddEditCoach({ data }) {
                   errors={errors}
                 />
               </Grid>
-              <Grid item xs={12} sm={6} md={4}>
+              {/* <Grid item xs={12} sm={6} md={4}>
                 <CustomTextField
                   label="PIN Code"
                   name="pincode"
@@ -436,8 +436,32 @@ function AddEditCoach({ data }) {
                   errors={errors}
                   helperText={errors.pinCode?.message}
                 />
-              </Grid>
-
+              </Grid> */}
+              <Grid item xs={12} sm={6} md={4}>
+              <CustomTextField
+                label="PIN Code"
+                name="pincode"
+                type="number"
+                placeholder="Enter PIN Code"
+                register={register}
+                validation={{
+                  required: "PIN Code is required",
+                  pattern: {
+                    value: /^[a-zA-Z0-9-]*$/,
+                    message: "PIN Code must be alphanumeric",
+                  },
+                  minLength: {
+                    value: 3,
+                    message: "PIN Code must be at least 3 characters long",
+                  },
+                  maxLength: {
+                    value: 10,
+                    message: "PIN Code cannot exceed 10 characters",
+                  },
+                }}
+                errors={errors}
+              />
+            </Grid>
               <Grid item xs={12} sm={6} md={4}>
                 <Controller
                   name="time_zone"
@@ -474,18 +498,25 @@ function AddEditCoach({ data }) {
                   )}
                 />
               </Grid>
+             
               <Grid item xs={12} sm={6} md={4}>
-                <CustomDateField
-                  label="Date Of Birth"
-                  value={dateOfBirth}
-                  onChange={setDateOfBirth}
-                  name="dateOfBirth"
-                  register={register}
-                  validation={{ required: "Date of birth is required" }}
-                  errors={errors}
-                  sx={{ width: "100%" }}
-                />
-              </Grid>
+              <Controller
+                control={control}
+                name="date_of_birth"
+                render={({ field }) => (
+                  <CustomDateField
+                    label="Date of Birth"
+                    name="date_of_birth"
+                    value={dateOfBirth}
+                    onChange={(date) => handleDateChange(date, field)}
+                    error={!!errors.date_of_birth}
+                    helperText={errors.date_of_birth?.message}
+                    sx={{ width: "100%" }}
+                  />
+                )}
+                rules={{ required: "Date of Birth is required" }}
+              />
+            </Grid>
               <Grid item xs={12} sm={6} md={4}>
                 <Controller
                   name="highest_qualification"
@@ -520,31 +551,44 @@ function AddEditCoach({ data }) {
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={4}>
-                <Controller
-                  name="phone"
-                  control={control}
-                  rules={{ required: "Phone number is required" }} // Setting validation rules
-                  render={({ field }) => (
-                    <PhoneInput
-                      country={"in"}
-                      value={field.value} // Binding the value to the field value
-                      onChange={field.onChange} // Handling the onChange event
-                      containerStyle={{ width: "100%" }}
-                      inputStyle={{
-                        width: "100%",
-                        borderRadius: "50px",
-                        borderColor: "#D0D0EC",
-                        height: "60px",
-                      }}
-                      buttonStyle={{
-                        borderRadius: "50px 0 0 50px",
-                        height: "60px",
-                        paddingLeft: "10px",
-                      }}
+                    <Controller
+                        name="phone"
+                        control={control}
+                        rules={{ required: "Phone number is required" }}
+                        render={({ field }) => (
+                            <PhoneInput
+                                {...field}
+                                country={"in"}
+                                // containerStyle={{ width: "100%" }}
+                                
+                                inputStyle={{
+                                  width: "100%",
+                                  borderRadius: "50px",
+                                  borderColor: errors.phone ? "red" : "#D0D0EC",
+                                  outline: "none",
+                                  height: "60px",
+                                  // boxShadow: errors.phone ? "0 0 0 2px red" : "none",
+                              }}
+                              buttonStyle={{
+                                borderRadius: "50px 0 0 50px",
+                                borderColor: errors.phone ? "red" : "#D0D0EC",
+                                height: "60px",
+                                outline: "none",
+                                paddingLeft: "10px",
+                                // boxShadow: errors.phone ? "0 0 0 2px red" : "none",
+                            }}
+                            onFocus={(e) => e.target.style.borderColor = errors.phone ? "red" : "#D0D0EC"}
+                                onChange={field.onChange}
+                                
+                            />
+                        )}
                     />
-                  )}
-                />
-              </Grid>
+                    {errors.phone && (
+                        <Typography variant="body2" color="error" style={{ marginTop: '8px' }}>
+                            {errors.phone.message}
+                        </Typography>
+                    )}
+                </Grid>
               <Grid item xs={12}>
                 <CustomTextField
                   label="About Me"
