@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import moment from "moment";
 import { Calendar, momentLocalizer, Views } from 'react-big-calendar';
 import "react-big-calendar/lib/css/react-big-calendar.css";
+
 import "moment/locale/en-gb";
+import "./BigCal.css";
 
 import Header from "../Header/Header";
 import Sidebar from "../Sidebar/Sidebar";

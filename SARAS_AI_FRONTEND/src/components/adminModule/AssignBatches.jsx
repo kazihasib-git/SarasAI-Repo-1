@@ -136,12 +136,12 @@ const AssignBatches = ({ componentname }) => {
 
   useEffect(() => {
     if (batchMapping) {
-      const transformedData = batchMapping.map((batch) => ({
-        "S. No.": batch.id,
+      const transformedData = batchMapping.map((batch, index) => ({
+        "S. No.": index+1,
         "Batch Name": batch.name,
         Branch: batch.branch,
-        Select: batch.is_active ? "Active" : "Inactive",
-        batch_id: batch.id,
+        Select: batch.is_active ? 0 : 1,
+        id: batch.id,
       }));
 
       const filtered = transformedData.filter((batch) => {
@@ -187,7 +187,7 @@ const AssignBatches = ({ componentname }) => {
 
   const content = (
     <>
-      <Grid container spacing={2} justifyContent="center">
+      <Grid container spacing={2} justifyContent="center" sx={{mt:0}}>
         <Grid item sm={6}>
           <CustomTextField
             select
@@ -252,7 +252,7 @@ const AssignBatches = ({ componentname }) => {
     <ReusableDialog
       open={assignBatchOpen}
       handleClose={() => dispatch(closeDialogAction())}
-      title={`Assign Batches to ${assignedTA}`}
+      title={`Assign Batches to '${assignedTA}'`}
       content={content}
       actions={actions}
     />

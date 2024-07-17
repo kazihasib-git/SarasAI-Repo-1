@@ -107,8 +107,8 @@ const CancelSchedule = ({ componentName }) => {
   } = schedulingState;
 
   const handleCancel = () => {
-    console.log("SLOT EVENT DATA : ", slotEventData)
-    console.log("SLOT COACH EVENT DATA : ", slotCoachEventData)
+    // console.log("SLOT EVENT DATA : ", slotEventData)
+    // console.log("SLOT COACH EVENT DATA : ", slotCoachEventData)
     dispatch(closeSessionAction());
     const sessionData =
       componentName === "TACALENDER"

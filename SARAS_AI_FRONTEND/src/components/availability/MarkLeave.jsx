@@ -65,12 +65,16 @@ const CustomButton = ({
 };
 
 const MarkLeave = ({ componentName }) => {
-  const taId = useParams();
+  const { id: taId } = useParams(); // Ensure taId is correctly extracted
   const dispatch = useDispatch();
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
 
-  let scheduleSessionOpenKey, schedulingStateKey, openAvailableSlotsAction, closeMarkLeaveAction, getSlotsAction;
+  let scheduleSessionOpenKey,
+    schedulingStateKey,
+    openAvailableSlotsAction,
+    closeMarkLeaveAction,
+    getSlotsAction;
 
   switch (componentName) {
     case "TACALENDER":
@@ -95,9 +99,7 @@ const MarkLeave = ({ componentName }) => {
       getSlotsAction = null;
       break;
   }
-  console.log("schedulingStateKey : ", schedulingStateKey);
-  console.log("scheduleSessionOpenKey : ", scheduleSessionOpenKey);
-  console.log("component Name : ", componentName);
+
   const schedulingState = useSelector((state) =>
     schedulingStateKey ? state[schedulingStateKey] : {}
   );
@@ -108,19 +110,25 @@ const MarkLeave = ({ componentName }) => {
     const formattedToDate = moment(toDate).format("YYYY-MM-DD");
 
     const leaveData = {
-      admin_user_id: taId.id, // Replace with the actual admin user ID
+      admin_user_id: taId, // Ensure taId is correctly extracted
       start_date: formattedFromDate,
-      end_date: formattedToDate,
+      end_date:
+        formattedFromDate === formattedToDate
+          ? formattedFromDate
+          : formattedToDate,
+      start_time: "00:00:00",
+      end_time: "23:59:59",
     };
 
     dispatch(getSlotsAction(leaveData))
       .unwrap()
       .then(() => {
-        dispatch(openAvailableSlotsAction())
+        dispatch(openAvailableSlotsAction(leaveData));
         dispatch(closeMarkLeaveAction());
       })
       .catch((error) => {
         console.error("Failed to fetch scheduled slots:", error);
+        dispatch(openAvailableSlotsAction(leaveData));
       });
   };
 

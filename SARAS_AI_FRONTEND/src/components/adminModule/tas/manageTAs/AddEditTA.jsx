@@ -63,15 +63,17 @@ const AddEditTA = ({ data }) => {
   const [phoneNumber, setPhoneNumber] = useState("");
 
   const dispatch = useDispatch();
-  const { successPopup, assignStudentOpen, assignBatchOpen } = useSelector((state) => state.taModule);
+  const { successPopup, assignStudentOpen, assignBatchOpen } = useSelector(
+    (state) => state.taModule
+  );
   const { timezones } = useSelector((state) => state.timezone);
 
   useEffect(() => {
-    dispatch(getTimezone())
-  }, [dispatch])
+    dispatch(getTimezone());
+  }, [dispatch]);
 
   useEffect(() => {
-    if(data){
+    if (data) {
       populateForm(data);
     }
   }, [data]);
@@ -85,7 +87,7 @@ const AddEditTA = ({ data }) => {
     setDateOfBirth(formattedDate);
     dispatch(accessTaName(data));
 
-    if(data.profile_picture){
+    if (data.profile_picture) {
       const blobUrl = base64ToBlobUrl(data.profile_picture);
       setSelectedImage(blobUrl);
     }
@@ -105,16 +107,16 @@ const AddEditTA = ({ data }) => {
       about_me: data.about_me,
     };
 
-    Object.entries(formValues).forEach(([key, value]) =>
-      setValue(key, value)
-    );
+    Object.entries(formValues).forEach(([key, value]) => setValue(key, value));
 
     setPhoneNumber(data.phone);
-  }
+  };
 
   const base64ToBlobUrl = (base64Data) => {
     const byteCharacters = atob(base64Data);
-    const byteNumbers = Array.from(byteCharacters, (char) => char.charCodeAt(0));
+    const byteNumbers = Array.from(byteCharacters, (char) =>
+      char.charCodeAt(0)
+    );
     const byteArray = new Uint8Array(byteNumbers);
     const blob = new Blob([byteArray], { type: "image/jpeg" });
     return URL.createObjectURL(blob);
@@ -149,13 +151,12 @@ const AddEditTA = ({ data }) => {
         const updateRes = await dispatch(
           updateTA({ id: data.id, data: updatedFormData })
         ).unwrap();
-        console.log("UPDATE RES : ", updateRes)
+        console.log("UPDATE RES : ", updateRes);
         dispatch(openSuccessPopup());
         dispatch(accessTaName(updateRes));
       } else {
-
-        updatedFormData.email = email
-        updatedFormData.time_zone = time_zone
+        updatedFormData.email = email;
+        updatedFormData.time_zone = time_zone;
         const createRes = await dispatch(createTA(updatedFormData)).unwrap();
         dispatch(openSuccessPopup());
         dispatch(accessTaName(createRes.ta));
@@ -181,7 +182,7 @@ const AddEditTA = ({ data }) => {
           {data ? (
             <>
               <Grid item xs>
-                <Typography variant="h4" sx={{ mb: 4}}>
+                <Typography variant="h4" sx={{ mb: 4 }}>
                   Edit TA
                 </Typography>
               </Grid>
@@ -488,10 +489,8 @@ const AddEditTA = ({ data }) => {
                     options={genders}
                   />
                 )}
-                
               />
             </Grid>
-     
 
             <Grid item xs={12} sm={6} md={4}>
               <Controller
@@ -532,9 +531,16 @@ const AddEditTA = ({ data }) => {
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <PhoneInput
+                enableAreaCodes={["in"]}
+                enableAreaCodeStretch
                 name="phone"
                 country={"in"}
                 value={phoneNumber}
+                inputProps={{
+                  name: name,
+                  required: true,
+                  autoFocus: true,
+                }}
                 onChange={(phone) => setPhoneNumber(phone)}
                 containerStyle={{ width: "100%" }}
                 inputStyle={{
