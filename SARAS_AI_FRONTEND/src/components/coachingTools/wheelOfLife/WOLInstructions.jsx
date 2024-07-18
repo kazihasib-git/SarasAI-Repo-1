@@ -1,4 +1,4 @@
-import { Box, Button, Container, Typography, Paper } from '@mui/material'
+import { Box, Button, Container, Typography, Paper, styled } from '@mui/material'
 import React, { useState,useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
@@ -10,6 +10,20 @@ import 'react-quill/dist/quill.snow.css';
 import editIcon_White from '../../../assets/editIcon_White.png'
 import { Navigate } from 'react-router-dom'
 import {getLifeInstruction , editLifeInstruction} from '../../../redux/features/coachingTools/wol/wolSlice';
+
+const CustomButton = styled(Button)(({ theme, active }) => ({
+    borderRadius: "50px",
+    border: "1px solid #F56D3B",
+    color: active ? "#fff" : "#F56D3B",
+    backgroundColor: active ? "#F56D3B" : "#FFF",
+    padding: "8px 16px",
+    margin: "0 8px",
+    "&:hover": {
+        backgroundColor: "#F56D3B",
+        color: "#fff",
+        borderColor: "#F56D3B",
+    },
+}));
 
 const WOLInstructions = () => {
     const [value, setValue] = useState();
@@ -38,7 +52,7 @@ const WOLInstructions = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        if (instructionData.status) {
+        if (instructionData && instructionData.data.length > 0) {
             console.log(instructionData.message);
             setInstruction(instructionData.data[0].message);
         }
