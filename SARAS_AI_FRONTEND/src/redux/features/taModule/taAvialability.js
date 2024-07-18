@@ -98,6 +98,7 @@ const initialState = {
   todaysAvailableTa: [],
   markLeaveOpen: false,
   scheduledSlotsOpen: false,
+  markLeaveData: [],
   slotData: [],
   scheduleData: [],
   scheduledSlotsData: [], // Ensure this is correctly named and initialized
@@ -129,14 +130,17 @@ export const taAvailabilitySlice = createSlice({
     closeMarkLeave(state) {
       state.markLeaveOpen = false;
     },
-    openScheduledSlots(state) {
+    openScheduledSlots(state, action) {
+      console.log("OPENSCHEDULE SLOTS : ", action.payload)
       state.scheduledSlotsOpen = true;
+      state.markLeaveData = action.payload
     },
     closeScheduledSlots(state) {
       state.scheduledSlotsOpen = false;
+      state.markLeaveData = []
     },
     openScheduledSession(state, action) {
-      console.log("Open Action slotEventData : ", action.payload)
+      // console.log("Open Action slotEventData : ", action.payload)
       state.scheduledSessionOpen = true;
       state.slotEventData = action.payload;
     },
@@ -157,8 +161,9 @@ export const taAvailabilitySlice = createSlice({
     closeCancelSession(state) {
       state.cancelSessionOpen = false;
     },
-    openReasonForLeave(state) {
+    openReasonForLeave(state, action) {
       state.reasonForLeaveOpen = true;
+      state.markLeaveData = action.payload
     },
     closeReasonForLeave(state) {
       state.reasonForLeaveOpen = false;
@@ -230,6 +235,7 @@ export const taAvailabilitySlice = createSlice({
     });
     builder.addCase(getSlots.rejected, (state, action) => {
       state.loading = false;
+      state.scheduledSlotsData = null;
       state.error = action.error.message;
     });
 

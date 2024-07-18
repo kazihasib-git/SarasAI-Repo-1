@@ -94,8 +94,9 @@ const TaScheduling = () => {
       {scheduleSessionOpen && <Schedule componentName={"TASCHEDULE"} />}
       {/* {assignStudentOpen && <AssignStudents componentname={"ADDEDITTA"} />} */}
       {/* {assignBatchOpen && <AssignBatches componentname={"ADDEDITTA"} />} */}
-      {openEditBatch && <EditBatches componentname={"ADDEDITTA"} />}
-      {openEditStudent && <EditStudents componentname={"ADDEDITTA"} />}
+      {openEditBatch && <EditBatches componentname={"TASCHEDULE"} />}
+      {openEditStudent && <EditStudents componentname={"TASCHEDULE"} />}
+   
     </>
   );
 };

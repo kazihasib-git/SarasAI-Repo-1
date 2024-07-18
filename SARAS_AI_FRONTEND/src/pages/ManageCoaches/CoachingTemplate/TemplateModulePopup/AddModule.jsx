@@ -73,8 +73,6 @@ const AddModule = () => {
           "template_id": selectedCoachTemplate,
           "module_name": moduleName,
           "is_active": true,
-          "created_by": 1,
-          "updated_by": 1
       }
       dispatch(createCoachTemplateModule(data));
       dispatch(closeTemplateModulePopup());

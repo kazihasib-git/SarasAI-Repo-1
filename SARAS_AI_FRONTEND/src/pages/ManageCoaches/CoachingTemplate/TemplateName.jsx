@@ -13,11 +13,14 @@ import AddActivity from "./TemplateModulePopup/AddActivity";
 import EditModule from "./TemplateModulePopup/EditModule";
 
 const TemplateName = () => {
-  const { openModulePopUp, openActivityPopUp, selectedCoachTemplate, coachTemplates} = useSelector((state) => state.coachTemplate);
+  const { openModulePopUp, openActivityPopUp, template_name ,selectedCoachTemplate, coachTemplates} = useSelector((state) => state.coachTemplate);
   const [isActive, setIsActive] = useState(true);
   const [modulesData, setModulesData] = useState([]);
   const dispatch = useDispatch();
 
+console.log("Tempete name is", template_name);
+console.log("coach templete", coachTemplates);
+console.log("selcted coach templete",selectedCoachTemplate)
   useEffect(()=>{
     dispatch(removeSelectedModule());
   },[dispatch]);
@@ -25,11 +28,12 @@ const TemplateName = () => {
   useEffect(()=>{
     if(coachTemplates && coachTemplates.length){
       const currentTemplateData = coachTemplates.find((template) => template.id === selectedCoachTemplate);
-
-      if(currentTemplateData && currentTemplateData.modules.length){
-        const tranformData = currentTemplateData.modules.map((item)=>({
+      console.log("currenteeee",currentTemplateData );
+      if(currentTemplateData && currentTemplateData.length){
+        const tranformData = currentTemplateData.map((item)=>({
             id: module.id,
             module_name : item.module_name,
+            
             is_active : item.is_active,
             activities : item.activities.map((property)=>({
               id: property.id,
@@ -143,7 +147,7 @@ const TemplateName = () => {
         alignItems={"center"}
       >
         <p style={{ fontSize: "44px", justifyContent: "center" }}>
-          Template Name
+       {template_name}
         </p>
         <div className="inputBtnContainer">
           <button className="buttonContainer" onClick={handleModule}>
@@ -164,7 +168,9 @@ const TemplateName = () => {
             marginTop={3}
             alignItems={"center"}
           >
+            
             <p style={{ fontSize: "24px", justifyContent: "center" }}>
+              
               {module.module_name}
               <span
                 style={{

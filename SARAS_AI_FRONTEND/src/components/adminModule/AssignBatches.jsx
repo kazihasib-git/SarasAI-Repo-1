@@ -136,12 +136,12 @@ const AssignBatches = ({ componentname }) => {
 
   useEffect(() => {
     if (batchMapping) {
-      const transformedData = batchMapping.map((batch) => ({
-        "S. No.": batch.id,
+      const transformedData = batchMapping.map((batch, index) => ({
+        "S. No.": index+1,
         "Batch Name": batch.name,
         Branch: batch.branch,
-        Select: batch.is_active ? "Active" : "Inactive",
-        batch_id: batch.id,
+        Select: batch.is_active ? 0 : 1,
+        id: batch.id,
       }));
 
       const filtered = transformedData.filter((batch) => {

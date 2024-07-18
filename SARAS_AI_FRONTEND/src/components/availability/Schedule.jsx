@@ -13,17 +13,12 @@ import {
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import CustomTextField from "../CustomFields/CustomTextField";
-import PopUpTable from "../CommonComponent/PopUpTable";
 import CustomTimeField from "../CustomFields/CustomTimeField";
 import CustomDateField from "../CustomFields/CustomDateField";
 import ReusableDialog from "../CustomFields/ReusableDialog";
 import CustomFormControl from "../CustomFields/CustomFromControl";
 import { useForm, Controller } from "react-hook-form";
-import {
-  timeZones,
-  transformedTimeZones,
-  validateTimeZone,
-} from "../CustomFields/FormOptions";
+
 import {
   closeScheduleSession,
   createTASchedule,
@@ -35,17 +30,11 @@ import {
   closeCoachScheduleSession,
   createCoachSchedule,
   getCoachAvailableSlotsFromDate,
+  openCoachEditBatch,
+  openCoachEditStudent,
 } from "../../redux/features/CoachModule/coachSchedule";
-import {
-  openAssignBatches,
-  openAssignStudents,
-} from "../../redux/features/taModule/taSlice";
-import {
-  openCoachAssignBatches,
-  openCoachAssignStudents,
-} from "../../redux/features/CoachModule/coachSlice";
-import { getTimezone } from '../../redux/features/timezone/timezoneSlice';
-import CustomTimeZoneForm from '../CustomFields/CustomTimeZoneForm';
+import { getTimezone } from "../../redux/features/timezone/timezoneSlice";
+import CustomTimeZoneForm from "../CustomFields/CustomTimeZoneForm";
 import { fetchTAScheduleById } from "../../redux/features/taModule/taAvialability";
 
 const CustomButton = ({
@@ -113,7 +102,15 @@ const Schedule = ({ componentName }) => {
   const [availableSlotsOptions, setAvailableSlotsOptions] = useState([{}]);
 
   const dispatch = useDispatch();
-  let scheduleSessionOpenKey, schedulingStateKey, availableKey, idKey, nameKey, timezoneKey, getAvailableSlotsAction, closeScheduleSessionAction, createScheduleAction;
+  let scheduleSessionOpenKey,
+    schedulingStateKey,
+    availableKey,
+    idKey,
+    nameKey,
+    timezoneKey,
+    getAvailableSlotsAction,
+    closeScheduleSessionAction,
+    createScheduleAction;
 
   switch (componentName) {
     case "TASCHEDULE":
@@ -151,7 +148,9 @@ const Schedule = ({ componentName }) => {
       break;
   }
 
-  const schedulingState = useSelector((state) => (schedulingStateKey ? state[schedulingStateKey] : {}));
+  const schedulingState = useSelector((state) =>
+    schedulingStateKey ? state[schedulingStateKey] : {}
+  );
   const {
     [scheduleSessionOpenKey]: scheduleSessionOpen,
     [idKey]: adminUserID,
@@ -165,31 +164,34 @@ const Schedule = ({ componentName }) => {
   const {
     register,
     handleSubmit,
-    control, formState: { errors },
+    control,
+    formState: { errors },
   } = useForm();
 
   useEffect(() => {
     if (fromDate) {
-      dispatch(getAvailableSlotsAction({ admin_user_id: adminUserID, date: fromDate }));
+      dispatch(
+        getAvailableSlotsAction({ admin_user_id: adminUserID, date: fromDate })
+      );
     }
   }, [fromDate, dispatch, adminUserID, getAvailableSlotsAction]);
 
   const { timezones } = useSelector((state) => state.timezone);
 
   useEffect(() => {
-    dispatch(getTimezone())
-  }, [dispatch])
+    dispatch(getTimezone());
+  }, [dispatch]);
 
   useEffect(() => {
-    console.log("AVIALABLE KEY : ", availableKey)
-    console.log("Avaialable slots : ", availableSlots)
+    console.log("AVIALABLE KEY : ", availableKey);
+    console.log("Avaialable slots : ", availableSlots);
     if (availableSlots && availableSlots.length > 0) {
       const transformData = availableSlots.map((item, index) => ({
         "S. No.": index + 1,
         "Slot Date": item.slot_date,
         "From Time": item.from_time,
         "To Time": item.to_time,
-        id: item.id
+        id: item.id,
       }));
 
       const options = availableSlots.map((item) => ({
@@ -223,23 +225,22 @@ const Schedule = ({ componentName }) => {
     });
   };
 
-
-  // 
+  //
   const handleSelectOption = (e) => {
     const selectedOption = e.target.value;
-    console.log("selectedOption : ", selectedOption)
+    console.log("selectedOption : ", selectedOption);
     const selectedSlot = slotData.filter((slot) => slot.id === selectedOption);
-    console.log("selectedSlot : ", selectedSlot)
+    console.log("selectedSlot : ", selectedSlot);
     setSelectedSlot(selectedSlot);
-  }
+  };
 
   const handleAssignStudents = () => {
-    dispatch(openEditStudent());
-    // if (componentName === "TASCHEDULE") {
-    //   dispatch(openAssignStudents());
-    // } else if (componentName === "COACHSCHEDULE") {
-    //   dispatch(openCoachAssignStudents());
-    // }
+    console.log("COMPONENT NAME  handleAssignStudents : ", componentName)
+    if (componentName === "TASCHEDULE") {
+      dispatch(openEditStudent());
+    } else if (componentName === "COACHSCHEDULE") {
+      dispatch(openCoachEditStudent());
+    }
   };
 
   // const handleClear = () => {
@@ -247,15 +248,12 @@ const Schedule = ({ componentName }) => {
   // }
 
   const handleAssignBatches = () => {
-    dispatch(openEditBatch())
-    /*
-   if (componentName === "TASCHEDULE") {
-     dispatch(openAssignBatches());
-
-   } else if (componentName === "COACHSCHEDULE") {
-     dispatch(openCoachAssignBatches());
-   }
-     */
+    console.log("COMPONENT NAME  handleAssignBatches : ", componentName)
+    if (componentName === "TASCHEDULE") {
+      dispatch(openEditBatch());
+    } else if (componentName === "COACHSCHEDULE") {
+      dispatch(openCoachEditBatch());
+    }
   };
 
   const onSubmit = async (formData) => {
@@ -265,13 +263,13 @@ const Schedule = ({ componentName }) => {
     console.log("studentId : ", studentId, "batchId : ", batchId);
     if (toTime) {
       if (toTime < fromTime) {
-        alert('To time should be greater than from time!');
+        alert("To time should be greater than from time!");
       }
     }
 
     if (toDate) {
       if (toDate < fromDate) {
-        alert('To Date should be greater than from Date!')
+        alert("To Date should be greater than from Date!");
       }
     }
 
@@ -286,8 +284,8 @@ const Schedule = ({ componentName }) => {
       weeksArray[index] = 1;
     }
 
-    console.log("FORM DATA : ", formData)
-    console.log("selected slots", selectedSlot)
+    console.log("FORM DATA : ", formData);
+    console.log("selected slots", selectedSlot);
 
     formData.start_time = fromTime;
     formData.end_time = toTime;
@@ -299,17 +297,17 @@ const Schedule = ({ componentName }) => {
     formData.event_status = "scheduled";
     formData.weeks = weeksArray;
     // formData.timezone = adminUserTimezone;
-    formData.timezone = 'Asia/Kolkata';
+    formData.timezone = "Asia/Kolkata";
     formData.studentId = studentId;
     formData.batchId = batchId;
 
     dispatch(createScheduleAction({ ...formData }))
       .then(() => {
         dispatch(closeScheduleSessionAction());
-        return dispatch(fetchTAScheduleById(adminUserID))
+        return dispatch(fetchTAScheduleById(adminUserID));
       })
-      .catch(error => {
-        console.error('Error:', error);
+      .catch((error) => {
+        console.error("Error:", error);
       });
 
     /*
@@ -327,7 +325,6 @@ const Schedule = ({ componentName }) => {
       sx={{ height: "100%", width: "100%" }}
     >
       <Grid container spacing={3} justifyContent="center">
-
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <Box display="flex" justifyContent="center" m={4}>
             <Grid container spacing={3} justifyContent="center">
@@ -354,7 +351,7 @@ const Schedule = ({ componentName }) => {
                         <CustomFormControl
                           name="slot_id"
                           control={control}
-                          rules={{ required: 'Slot is required' }}
+                          rules={{ required: "Slot is required" }}
                           options={availableSlotsOptions}
                           label="Available Slot"
                           onChange={handleSelectOption}
@@ -483,10 +480,14 @@ const Schedule = ({ componentName }) => {
                           />
                            */}
                         </Grid>
-
                       </Grid>
                       <Grid item xs={12} display="flex" justifyContent="center">
-                        <Box display="flex" justifyContent="center" gap={2} sx={{ mb: 3 }}>
+                        <Box
+                          display="flex"
+                          justifyContent="center"
+                          gap={2}
+                          sx={{ mb: 3 }}
+                        >
                           <Button
                             variant="contained"
                             onClick={handleAssignStudents}
@@ -655,7 +656,9 @@ const Schedule = ({ componentName }) => {
   return (
     <ReusableDialog
       open={scheduleSessionOpen}
-      handleClose={() => { dispatch(closeScheduleSessionAction()) }}
+      handleClose={() => {
+        dispatch(closeScheduleSessionAction());
+      }}
       title={`Schedule`}
       // Session for ${adminUserName}`}
       content={content}

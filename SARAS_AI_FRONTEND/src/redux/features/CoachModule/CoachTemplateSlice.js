@@ -156,9 +156,11 @@ export const coachTemplateSlice = createSlice({
         state.loading = true;
       })
       .addCase(createCoachTemplate.fulfilled, (state, action) => {
+        console.log("action .payload", action.payload)
         state.loading = false;
         state.coachTemplates.push(action.payload.data);
         state.selectedCoachTemplate = action.payload.data.id;
+        state.template_name =  action.payload.data.name;
       })
       .addCase(createCoachTemplate.rejected, (state, action) => {
         state.loading = false;
