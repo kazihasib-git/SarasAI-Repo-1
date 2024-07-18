@@ -1,5 +1,4 @@
-import React, { useState } from 'react'
-
+import React, { useEffect, useState } from 'react';
 import Header from '../../../components/Header/Header';
 import Sidebar from '../../../components/Sidebar/Sidebar';
 import DynamicTable from '../../../components/CommonComponent/DynamicTable';
@@ -7,17 +6,19 @@ import { Box, Button, Container, Grid, Paper, styled, Table, TableBody, TableCel
 import { useDispatch, useSelector } from 'react-redux';
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { useNavigate } from 'react-router-dom';
-import editIcon_White from '../../../assets/editIcon_White.png'
+import editIcon_White from '../../../assets/editIcon_White.png';
 import CustomFormControl from '../../CustomFields/CustomFromControl';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useFieldArray } from 'react-hook-form';
 import CustomTextField from '../../CustomFields/CustomTextField';
+import star from '../../../assets/star.png';
+import { addWOLOptionConfig, getWOLOptionConfig } from '../../../redux/features/coachingTools/wol/wolSlice';
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
     borderRadius: "50px",
     border: "1px solid #F56D3B",
     color: active ? "#fff" : "#F56D3B",
     backgroundColor: active ? "#F56D3B" : "#FFF",
-    padding: "8px 16px", // Add padding for horizontal and vertical spacing
+    padding: "8px 16px",
     margin: "0 8px",
     "&:hover": {
         backgroundColor: "#F56D3B",
@@ -26,33 +27,145 @@ const CustomButton = styled(Button)(({ theme, active }) => ({
     },
 }));
 
-let scaleOptions = []
+let scaleOptions = [];
 
-// using for loop add 1 to 100 in scaleOptions
-for (let i = 1; i <= 100; i++) {
-    scaleOptions.push({ value: i, label: i })
+// using for loop add 1 to 20 in scaleOptions
+for (let i = 1; i <= 20; i++) {
+    scaleOptions.push({ value: i, label: i });
 }
 
-console.log("scaleOptions", scaleOptions)
+const headers = ['Point', 'Text', 'Icon'];
 
-const headers = ['Point', 'Text', 'Icon']
+const feedbackIcons = [
+    { value: '😀', label: '😀' },
+    { value: '😃', label: '😃' },
+    { value: '😄', label: '😄' },
+    { value: '😁', label: '😁' },
+    { value: '😅', label: '😅' },
+    { value: '😂', label: '😂' },
+    { value: '😊', label: '😊' },
+    { value: '😇', label: '😇' },
+    { value: '🙂', label: '🙂' },
+    { value: '😌', label: '😌' },
+    { value: '😍', label: '😍' },
+    { value: '😋', label: '😋' },
+    { value: '🤨', label: '🤨' },
+    { value: '🧐', label: '🧐' },
+    { value: '🤓', label: '🤓' },
+    { value: '😎', label: '😎' },
+    { value: '🤩', label: '🤩' },
+    { value: '🥳', label: '🥳' },
+    { value: '😒', label: '😒' },
+    { value: '😞', label: '😞' },
+    { value: '😔', label: '😔' },
+    { value: '😟', label: '😟' },
+    { value: '😕', label: '😕' },
+    { value: '🙁', label: '🙁' },
+];
 
 const WOLOptionsConfig = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [edit, setEdit] = useState(false);
-    const { register, handleSubmit, control, formState: { errors }, } = useForm();
+    const [minScale, setMinScale] = useState(0);
+    const [maxScale, setMaxScale] = useState(0);
+    const { optionsConfigData } = useSelector((state) => state.wol);
+    const { register, handleSubmit, control, formState: { errors }, reset } = useForm({
+        defaultValues: {
+            minScale: 0,
+            maxScale: 0,
+            details: [],
+        }
+    });
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: 'details',
+    });
 
-    const onSubmit = (data) => {
-        console.log("data", data);
+    useEffect(() => {
+        // dispatch(getWOLOptionConfig());
+    }, [dispatch])
 
-        const minScale = data.minScale
-        const maxScale = data.maxScale
-        const scale = maxScale - minScale + 1;
-        const newOptions = [];
-        setEdit(true);
+    useEffect(() => {
+        console.log("useEffect !")
+        if (optionsConfigData.data && optionsConfigData.data.length > 0) {
+            const { minimum_scale, maximum_scale, get_config_details } = optionsConfigData.data[0];
+            setMinScale(minimum_scale);
+            setMaxScale(maximum_scale);
+            reset({
+                minScale: minimum_scale,
+                maxScale: maximum_scale,
+                details: get_config_details.map(detail => ({
+                    point: detail.point,
+                    text: detail.text,
+                    icon: detail.icon,
+                })),
+            });
+            setEdit(true);
+        }
+    }, [optionsConfigData, reset]);
 
-    }
+    const handleEdit = () => {
+        console.log("handleEdit")
+        reset({
+            minScale: 0,
+            maxScale: 0,
+            details: [],
+        });
+        setMinScale(0);
+        setMaxScale(0);
+        setEdit(false);
+    };
+
+    const onHandleSubmit = (data) => {
+        console.log("onSubmit")
+
+        if (edit) {
+            console.log("handleEdit")
+            reset({
+                minScale: 0,
+                maxScale: 0,
+                details: [],
+            });
+            setMinScale(0);
+            setMaxScale(0);
+            setEdit(false);
+        } else {
+            console.log("not edit ")
+            setEdit(true);
+
+            // setMinScale(data.minScale);
+            // setMaxScale(data.maxScale);
+
+            // Initialize form fields for details
+            for (let i = data.minScale; i <= data.maxScale; i++) {
+                append({ point: i, text: '', icon: '' });
+            }
+
+
+        }
+    };
+
+    const onFormSubmit = (data) => {
+        console.log("onForm Submit")
+        const { minScale, maxScale, details } = data;
+        const payload = {
+            minimum_scale: minScale,
+            maximum_scale: maxScale,
+            details: details.map((detail, index) => ({
+                point: minScale + index,
+                text: detail.text,
+                icon: detail.icon,
+            })),
+        };
+
+        dispatch(addWOLOptionConfig(payload));
+        setEdit(false); // Exit edit mode after submit
+    };
+
+    console.log("Edit", edit)
+    console.log("minScale", minScale)
+    console.log("maxScale", maxScale)
 
     return (
         <>
@@ -62,7 +175,7 @@ const WOLOptionsConfig = () => {
                 <Box display="flex" alignItems="center" padding="16px">
                     <ArrowBackIosIcon
                         style={{ fontSize: "25px", marginBottom: "17px" }}
-                        onClick={() => navigate('')}
+                        onClick={() => navigate('/wheel-of-life')}
                     />
                     <Typography
                         variant="h1"
@@ -74,17 +187,6 @@ const WOLOptionsConfig = () => {
                         Wheel of Life Options Config
                     </Typography>
                 </Box>
-                <Box className='inputBtnContainer' sx={{ marginRight: '20px', paddingBottom: "16px" }}>
-                    <button className='buttonContainer' onClick={''}>
-                        <img src={editIcon_White} backgroundColor='white' alt="" />
-                        <Typography
-                            component="small"
-                            sx={{ fontSize: "16px", fontWeight: 700, marginLeft: "5px" }}
-                        >
-                            Edit
-                        </Typography>
-                    </button>
-                </Box>
             </Box>
             <Container
                 sx={{
@@ -94,7 +196,7 @@ const WOLOptionsConfig = () => {
                     borderRadius: 2,
                     minHeight: 160,
                     padding: 2,
-                    maxWidth: 'md', // Sets the max-width to medium breakpoint
+                    maxWidth: 'md',
                     width: '100%',
                 }}
             >
@@ -112,9 +214,9 @@ const WOLOptionsConfig = () => {
                     Options Scale
                 </Typography>
 
-                <form onSubmit={handleSubmit(onSubmit)} noValidate style={{ width: '100%' }}>
-                    <Grid container spacing={2} alignItems="center">
-                        <Grid item xs={12} md={4} sm={4}>
+                <form noValidate onSubmit={edit ? handleEdit : handleSubmit(onHandleSubmit)}>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} md={4}>
                             <Controller
                                 name='minScale'
                                 control={control}
@@ -122,16 +224,15 @@ const WOLOptionsConfig = () => {
                                 render={({ field }) => (
                                     <CustomFormControl
                                         label="Minimum Scale"
-                                        name="minScale"
                                         value={field.value}
                                         onChange={field.onChange}
-                                        errors={errors}
+                                        errors={errors} // Ensure to pass errors correctly
                                         options={scaleOptions}
                                     />
                                 )}
                             />
                         </Grid>
-                        <Grid item xs={12} md={4} sm={4}>
+                        <Grid item xs={12} md={4}>
                             <Controller
                                 name='maxScale'
                                 control={control}
@@ -139,16 +240,104 @@ const WOLOptionsConfig = () => {
                                 render={({ field }) => (
                                     <CustomFormControl
                                         label="Maximum Scale"
-                                        name="maxScale"
                                         value={field.value}
                                         onChange={field.onChange}
-                                        errors={errors}
+                                        errors={errors} // Ensure to pass errors correctly
                                         options={scaleOptions}
                                     />
                                 )}
                             />
                         </Grid>
-                        <Grid item xs={12} md={4} sm={4} display="flex" >
+                        <Grid item xs={12} md={4}>
+                            {edit ? (
+                                <CustomButton
+                                    type="submit"
+                                    active={true}
+                                    variant="contained"
+                                    sx={{ borderRadius: "50px", padding: "18px 30px", margin: "0 8px" }}
+                                >
+                                    Edit
+                                </CustomButton>
+                            ) : (
+                                <CustomButton
+                                    type="submit"
+                                    active={true}
+                                    variant="contained"
+                                    sx={{ borderRadius: "50px", padding: "18px 30px", margin: "0 8px" }}
+                                >
+                                    Submit
+                                </CustomButton>
+
+                            )}
+                        </Grid>
+                    </Grid>
+                </form>
+
+            </Container>
+
+            {edit && (
+                <Container
+                    sx={{
+                        mt: 2,
+                        mb: 2,
+                        backgroundColor: 'white',
+                        borderRadius: 2,
+                        minHeight: 160,
+                        padding: 2,
+                        maxWidth: 'md',
+                        width: '100%',
+                    }}
+                >
+                    <form onSubmit={handleSubmit(onFormSubmit)} noValidate>
+                        <TableContainer component={Paper}>
+                            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>Point</TableCell>
+                                        <TableCell align="left">Text</TableCell>
+                                        <TableCell align="left">Icon</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {fields.map((field, index) => (
+                                        <TableRow key={field.id}>
+                                            <TableCell component="th" scope="row">
+                                                {field.point} {index === 0 && <img src={star} alt='str' />} {index === fields.length - 1 && <img src={star} alt='str' />}
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                <CustomTextField
+                                                    label="Text"
+                                                    name={`details[${index}].text`}
+                                                    placeholder="Enter Text"
+                                                    register={register}
+                                                    validation={{ required: index === 0 || index === fields.length - 1 ? 'Text is required' : false }}
+                                                    errors={errors}
+                                                    fullWidth
+                                                />
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                <Controller
+                                                    name={`details[${index}].icon`}
+                                                    control={control}
+                                                    rules={{ required: index === 0 || index === fields.length - 1 ? 'Icon is required' : false }}
+                                                    render={({ field }) => (
+                                                        <CustomFormControl
+                                                            label="Icon"
+                                                            name={`details[${index}].icon`}
+                                                            value={field.value}
+                                                            onChange={field.onChange}
+                                                            errors={errors}
+                                                            options={feedbackIcons}
+                                                        />
+                                                    )}
+                                                />
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                        <Box display="flex" mt={2}>
                             <CustomButton
                                 type="submit"
                                 active={true}
@@ -157,65 +346,12 @@ const WOLOptionsConfig = () => {
                             >
                                 Submit
                             </CustomButton>
-                        </Grid>
-                    </Grid>
-                </form>
-
-                {edit && (
-                      <Container
-                      sx={{
-                          mt: 2,
-                          mb: 2,
-                          backgroundColor: 'white',
-                          borderRadius: 2,
-                          minHeight: 160,
-                          padding: 2,
-                          maxWidth: 'md', // Sets the max-width to medium breakpoint
-                          width: '100%',
-                      }}
-                  >
-                      <TableContainer component={Paper}>
-                          <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                              <TableHead>
-                                  <TableRow>
-                                      <TableCell>Point</TableCell>
-                                      <TableCell align="right">Text</TableCell>
-                                      <TableCell align="right">Icon</TableCell>
-                                  </TableRow>
-                              </TableHead>
-                              <TableBody>
-                                    <TableRow>
-                                        <TableCell component="th" scope="row">
-                                            1
-                                        </TableCell>
-                                        <TableCell align="right">
-                                            <CustomTextField
-                                                label="Text"
-                                                name="text"
-                                                placeholder="Enter Text"
-                                                register={register}
-                                                validation={{ required: 'Text is required' }}
-                                                errors={errors}
-                                                fullWidth
-                                            />
-                                        </TableCell>
-                                        <TableCell align="right">Otto</TableCell>
-                                    </TableRow>
-                                    <TableRow>
-                                        <TableCell component="th" scope="row">
-                                            2
-                                        </TableCell>
-                                        <TableCell align="right">Jacob</TableCell>
-                                        <TableCell align="right">Thornton</TableCell>
-                                    </TableRow>
-                              </TableBody>
-                          </Table>
-                      </TableContainer>
-                  </Container>
-                )}
-            </Container>
+                        </Box>
+                    </form>
+                </Container>
+            )}
         </>
     );
-}
+};
 
 export default WOLOptionsConfig;

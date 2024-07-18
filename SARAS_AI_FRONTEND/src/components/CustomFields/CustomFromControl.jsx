@@ -9,7 +9,7 @@ const CustomFormControl = ({
   errors,
   options,
 }) => {
-  console.log("label", label , name , value, options ) 
+  // console.log("label", label , name , value, options ) 
   return (
     <FormControl variant="outlined" fullWidth>
       <InputLabel

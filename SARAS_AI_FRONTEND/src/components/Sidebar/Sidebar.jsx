@@ -194,7 +194,7 @@ const Sidebar = () => {
         />
         <li className="nav-item">
           <a
-            className={`nav-link ${activeLink === "/tools" ? "active" : "collapsed"}`}
+            className={`nav-link ${activeLink === "/wheel-of-life" ? "active" : "collapsed"}`}
             data-bs-target="#coaching-tools-nav"
             data-bs-toggle="collapse"
             href="#"
