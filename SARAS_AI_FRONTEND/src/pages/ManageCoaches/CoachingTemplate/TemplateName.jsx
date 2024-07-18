@@ -4,7 +4,7 @@ import Sidebar from "../../../components/Sidebar/Sidebar";
 import { Box } from "@mui/material";
 import AddModule from "./TemplateModulePopup/AddModule";
 import { useDispatch, useSelector } from "react-redux";
-import { openEditModulePopup, openTemplateActivityPopup, openTemplateModulePopup, removeSelectedModule, setSelectedModule } from "../../../redux/features/CoachModule/CoachTemplateSlice";
+import { openEditModulePopup, openTemplateActivityPopup, openTemplateModulePopup, removeSelectedModule, setSelectedModule, updateCoachTemplateModule } from "../../../redux/features/CoachModule/CoachTemplateSlice";
 import TemplateModuleTable from "./TemplateModuleTable/TemplateModuleTable";
 import "./TemplateName.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -15,6 +15,7 @@ import EditModule from "./TemplateModulePopup/EditModule";
 const TemplateName = () => {
   const { openModulePopUp, openActivityPopUp, template_name ,selectedCoachTemplate, coachTemplates} = useSelector((state) => state.coachTemplate);
   const [isActive, setIsActive] = useState(true);
+  const [templateEditName, setTemplateEditName] = useState();
   const [modulesData, setModulesData] = useState([]);
   const dispatch = useDispatch();
 
@@ -28,13 +29,24 @@ console.log("selcted coach templete",selectedCoachTemplate)
   useEffect(()=>{
     if(coachTemplates && coachTemplates.length){
       const currentTemplateData = coachTemplates.find((template) => template.id === selectedCoachTemplate);
-      console.log("currenteeee",currentTemplateData );
+      console.log("currenttemplat data", currentTemplateData);
+      const newTemplateData = {
+        "module_id": currentTemplateData.id, 
+        "template_id": selectedCoachTemplate,
+        "module_name": currentTemplateData.name,
+        "is_active": currentTemplateData.is_active,
+        "created_by": 1,
+        "updated_by": 1,
+      }
+      dispatch(updateCoachTemplateModule(newTemplateData));
+      setTemplateEditName(currentTemplateData.name);
       if(currentTemplateData && currentTemplateData.length){
         const tranformData = currentTemplateData.map((item)=>({
             id: module.id,
             module_name : item.module_name,
             
             is_active : item.is_active,
+            
             activities : item.activities.map((property)=>({
               id: property.id,
               "Activity Name": property.activity_name,
@@ -46,6 +58,7 @@ console.log("selcted coach templete",selectedCoachTemplate)
               is_active: property.is_active
             }))    
         }));
+        console.log("transforData", tranformData)
         setModulesData(tranformData);
       }
     }
@@ -147,7 +160,7 @@ console.log("selcted coach templete",selectedCoachTemplate)
         alignItems={"center"}
       >
         <p style={{ fontSize: "44px", justifyContent: "center" }}>
-       {template_name}
+        {templateEditName || template_name}
         </p>
         <div className="inputBtnContainer">
           <button className="buttonContainer" onClick={handleModule}>

@@ -39,10 +39,11 @@ export const createCoachTemplateModule = createAsyncThunk(
   }
 );
 
+
 export const updateCoachTemplateModule = createAsyncThunk(
   "coachTemplate/updateCoachTemplateModule",
   async (data) => {
-    const response = await axios.put(
+    const response = await axios.post(
       `${baseUrl}/admin/coaching-templates/update-modules`,
       data
     );
