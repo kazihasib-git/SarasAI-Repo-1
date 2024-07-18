@@ -7,7 +7,6 @@ import { Box, Button, Container, Grid, Paper, styled, Table, TableBody, TableCel
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { useNavigate } from 'react-router-dom';
 import CustomFormControl from '../../CustomFields/CustomFromControl';
-import { Controller, useForm } from 'react-hook-form';
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
     borderRadius: "50px",
@@ -27,13 +26,13 @@ const WOLTestConfig = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { wolCategoryData } = useSelector((state) => state.wol);
+
     const [edit, setEdit] = useState(false);
-    const [selectedNumberOfWolCategories, setSelectedNumberOfWolCategories] = useState();
     const [numberOfWolCategoriesOptions, setNumberOfWolCategoriesOptions] = useState([]);
-    const { control, handleSubmit, formState: { errors } } = useForm();
+    const [formValues, setFormValues] = useState({ numberOfWolCategories: '', categories: [] });
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
-        console.log("calling api....");
         dispatch(getWOLCategory());
     }, [dispatch]);
 
@@ -54,44 +53,60 @@ const WOLTestConfig = () => {
         }))
         : [];
 
-    // 1 to 10 options in a dropdown
     const numberOfQuestions = Array.from({ length: 10 }, (_, i) => ({
         value: i + 1,
         label: i + 1
     }));
 
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const newErrors = {};
 
+        if (!formValues.numberOfWolCategories) {
+            newErrors.numberOfWolCategories = 'Number of WOL Categories is required';
+        }
 
-    console.log("WOLCategoriesOptions", WOLCategoriesOptions);
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
 
-    const onSubmit = (data) => {
-        console.log(data);
         setEdit(true);
-        setSelectedNumberOfWolCategories(data['Number of WOL Categories']);
-        dispatch(getWOLCategory())
+        setErrors({});
     };
 
-    const onFormSubmit = (formData) => {
-        console.log("onFormSubmit", formData);
+    const handleFormSubmit = (e) => {
+        e.preventDefault();
+        const newErrors = {};
+        const selectedNumberOfWolCategories = formValues.numberOfWolCategories;
+
+        const categories = Array.from({ length: selectedNumberOfWolCategories }, (_, i) => {
+            const categoryName = formValues[`category_name_${i}`];
+            const noOfQuestions = formValues[`no_of_questions_${i}`];
+
+            if (!categoryName) {
+                newErrors[`category_name_${i}`] = 'Category name is required';
+            }
+            if (!noOfQuestions) {
+                newErrors[`no_of_questions_${i}`] = 'Number of questions is required';
+            }
+
+            return { wol_category_id: categoryName, number_of_questions: noOfQuestions };
+        });
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
 
         const data = {
             number_of_categories: selectedNumberOfWolCategories,
-            categories: Array.from({ length: selectedNumberOfWolCategories }, (_, i) => ({
-                wol_category_id: formData[`category_name_${i}`],
-                number_of_questions: formData[`no_of_questions_${i}`]
-            }))
+            categories: categories
         };
 
-        dispatch(addWOLTestConfig(data))
-        // .then(() => {
-        //     navigate('/WOLTestConfigSelectQuestions');
-        // });
-
+        dispatch(addWOLTestConfig(data));
         navigate('/WOLTestConfigSelectQuestions');
-
     };
-
-
 
     return (
         <>
@@ -123,23 +138,18 @@ const WOLTestConfig = () => {
                     width: '100%',
                 }}
             >
-                <form onSubmit={handleSubmit(onSubmit)} noValidate>
+                <form onSubmit={handleSubmit} noValidate>
                     <Grid container spacing={2}>
                         {numberOfWolCategoriesOptions && (
                             <Grid item xs={12} md={4}>
-                                <Controller
-                                    name='Number of WOL Categories'
-                                    control={control}
-                                    rules={{ required: 'Number of WOL Categories is required' }}
-                                    render={({ field }) => (
-                                        <CustomFormControl
-                                            label="Number of WOL Categories"
-                                            name="Number of WOL Categories"
-                                            {...field}
-                                            errors={errors}
-                                            options={numberOfWolCategoriesOptions}
-                                        />
-                                    )}
+                                <CustomFormControl
+                                    label="Number of WOL Categories"
+                                    name="numberOfWolCategories"
+                                    value={formValues.numberOfWolCategories}
+                                    onChange={(e) => setFormValues({ ...formValues, numberOfWolCategories: e.target.value })}
+                                    errors={errors}
+                                    options={numberOfWolCategoriesOptions}
+                                    disabled={edit}
                                 />
                             </Grid>
                         )}
@@ -148,8 +158,9 @@ const WOLTestConfig = () => {
                                 type="submit"
                                 active={true}
                                 variant="contained"
+                                sx={{ borderRadius: "50px", padding: "18px 30px", margin: "0 8px" }}
                             >
-                                Submit
+                                {edit ? 'Edit' : 'Submit'}
                             </CustomButton>
                         </Grid>
                     </Grid>
@@ -169,71 +180,58 @@ const WOLTestConfig = () => {
                         width: '100%',
                     }}
                 >
-                    <TableContainer component={Paper}>
-                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>S. No.</TableCell>
-                                    <TableCell align="left">Wheel of Life Category</TableCell>
-                                    <TableCell align="left">No. of Questions</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {Array.from({ length: selectedNumberOfWolCategories }).map((_, index) => (
-                                    <TableRow
-                                        key={index}
-                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                    >
-                                        <TableCell component="th" scope="row">
-                                            {index + 1}
-                                        </TableCell>
-                                        <TableCell align="left">
-                                            <Controller
-                                                name={`category_name_${index}`}
-                                                control={control}
-                                                rules={{ required: 'Category name is required' }}
-                                                render={({ field }) => (
-                                                    <CustomFormControl
-                                                        label="Category Name"
-                                                        name={`category_name_${index}`}
-                                                        {...field}
-                                                        errors={errors}
-                                                        options={WOLCategoriesOptions}
-                                                    />
-                                                )}
-                                            />
-                                        </TableCell>
-                                        <TableCell align="left">
-                                            <Controller
-                                                name={`no_of_questions_${index}`}
-                                                control={control}
-                                                rules={{ required: 'Number of questions is required' }}
-                                                render={({ field }) => (
-                                                    <CustomFormControl
-                                                        label="No. of Questions"
-                                                        name={`no_of_questions_${index}`}
-                                                        {...field}
-                                                        errors={errors}
-                                                        options={numberOfQuestions}
-                                                    />
-                                                )}
-                                            />
-                                        </TableCell>
+                    <form onSubmit={handleFormSubmit} noValidate>
+                        <TableContainer component={Paper}>
+                            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>S. No.</TableCell>
+                                        <TableCell align="left">Wheel of Life Category</TableCell>
+                                        <TableCell align="left">No. of Questions</TableCell>
                                     </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                    <Box display="flex" mt={2}>
-                        <CustomButton
-                            onClick={handleSubmit(onFormSubmit)}
-                            active={true}
-                            variant="contained"
-                            sx={{ borderRadius: "50px", padding: "18px 30px", margin: "0 8px" }}
-                        >
-                            Submit
-                        </CustomButton>
-                    </Box>
+                                </TableHead>
+                                <TableBody>
+                                    {Array.from({ length: formValues.numberOfWolCategories }).map((_, index) => (
+                                        <TableRow key={index}>
+                                            <TableCell component="th" scope="row">
+                                                {index + 1}
+                                            </TableCell>
+                                            <TableCell align="left">
+                                                <CustomFormControl
+                                                    label="Category Name"
+                                                    name={`category_name_${index}`}
+                                                    value={formValues[`category_name_${index}`] || ''}
+                                                    onChange={(e) => setFormValues({ ...formValues, [`category_name_${index}`]: e.target.value })}
+                                                    errors={errors}
+                                                    options={WOLCategoriesOptions}
+                                                />
+                                            </TableCell>
+                                            <TableCell align="left">
+                                                <CustomFormControl
+                                                    label="No. of Questions"
+                                                    name={`no_of_questions_${index}`}
+                                                    value={formValues[`no_of_questions_${index}`] || ''}
+                                                    onChange={(e) => setFormValues({ ...formValues, [`no_of_questions_${index}`]: e.target.value })}
+                                                    errors={errors}
+                                                    options={numberOfQuestions}
+                                                />
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                        <Box display="flex" mt={2}>
+                            <CustomButton
+                                type="submit"
+                                active={true}
+                                variant="contained"
+                                sx={{ borderRadius: "50px", padding: "18px 30px", margin: "0 8px" }}
+                            >
+                                Submit
+                            </CustomButton>
+                        </Box>
+                    </form>
                 </Container>
             )}
         </>

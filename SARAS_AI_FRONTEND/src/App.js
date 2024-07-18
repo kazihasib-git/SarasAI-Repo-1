@@ -60,6 +60,7 @@ import WOLOptionsConfig from "./components/coachingTools/wheelOfLife/WOLOptionsC
 import WOLTestConfig from "./components/coachingTools/wheelOfLife/WOLTestConfig";
 import AddEditWOLQuestions from "./components/coachingTools/wheelOfLife/AddEditWOLQuestions";
 import WOLTestConfigSelectQuestions from "./components/coachingTools/wheelOfLife/WOLTestConfigSelectQuestions";
+import WOLSelectQuestions from "./components/coachingTools/wheelOfLife/WOLSelectQuestions";
 const ROLES = {
   Teaching: 2001,
   Coaches: 1984,
@@ -168,6 +169,7 @@ function App() {
             <Route path="wolOptionsConfig" element={<WOLOptionsConfig/>} />
             <Route path="wolTestConfig" element={<WOLTestConfig/>} />
             <Route path="WOLTestConfigSelectQuestions" element={<WOLTestConfigSelectQuestions />} />
+            <Route path="WolselectQuestions" element={<WOLSelectQuestions />} />
           </Route>
         </Route>
 

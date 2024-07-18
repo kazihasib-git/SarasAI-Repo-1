@@ -1,9 +1,10 @@
-import { Box, Button, Container, Paper, styled, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
-import React, { useState } from 'react'
-import editIcon_White from '../../../assets/editIcon_White.png';
+import React, { useState } from 'react';
+import { Box, Button, Container, Paper, styled, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import Header from '../../Header/Header';
 import Sidebar from '../../Sidebar/Sidebar';
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import editIcon_White from '../../../assets/editIcon_White.png';
+import { useNavigate } from 'react-router-dom';
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
     borderRadius: "50px",
@@ -20,6 +21,7 @@ const CustomButton = styled(Button)(({ theme, active }) => ({
 }));
 
 const WOLTestConfigSelectQuestions = () => {
+    const navigate = useNavigate()
     const [selectedQuestions, setSelectedQuestions] = useState([]);
 
     return (
@@ -52,40 +54,33 @@ const WOLTestConfigSelectQuestions = () => {
                     width: '100%',
                 }}
             >
-                <Box display="flex" alignItems="center" padding="16px">
-                    <ArrowBackIosIcon
-                        style={{ fontSize: "25px", marginBottom: "17px" }}
-                        onClick={() => navigate('')}
-                    />
-                    <Typography
-                        variant="h7"
-                        sx={{ color: '#1A1E3D', fontSize: '16px', fontWeight: 500, marginBottom: '20px' }}
-                        component="h4"
-                        gutterBottom
-                    >
-                        Total Questions : 40
-                    </Typography>
-                </Box>
-
-
-                <Typography
-                    variant="h7"
-                    sx={{ color: '#1A1E3D', fontSize: '16px', fontWeight: 500, marginBottom: '20px' }}
-                    component="h4"
-                    gutterBottom
-                >
-                    Selected Questions : {selectedQuestions.length}
-                </Typography>
-
-                <Box className='inputBtnContainer' sx={{ marginRight: '20px', paddingBottom: "16px" }}>
-                    <CustomButton className='buttonContainer' onClick={''}>
-                        <img src={editIcon_White} backgroundColor='white' alt="" />
+                <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ marginBottom: "20px" }}>
+                    <Box>
                         <Typography
-                            component="small"
-                            sx={{ fontSize: "16px", fontWeight: 700, marginLeft: "5px" }}
+                            variant="h6"
+                            sx={{ color: '#1A1E3D', fontSize: '24px', fontWeight: 500 }}
+                            component="h4"
+                            gutterBottom
                         >
-                            Edit
+                            Total Questions: 40
                         </Typography>
+
+                        <Typography
+                            variant="h6"
+                            sx={{ color: '#1A1E3D', fontSize: '24px', fontWeight: 500 }}
+                            component="h4"
+                            gutterBottom
+                        >
+                            Selected Questions: {selectedQuestions.length}
+                        </Typography>
+                    </Box>
+
+                    <CustomButton type="submit"
+                        active={true}
+                        variant="contained"
+                        sx={{ borderRadius: "50px", padding: "18px 30px", margin: "0 8px" }}>
+                        <img src={editIcon_White} backgroundColor='white' alt="edit icon" />
+                        Edit Config
                     </CustomButton>
                 </Box>
 
@@ -93,14 +88,14 @@ const WOLTestConfigSelectQuestions = () => {
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
                         <TableHead>
                             <TableRow>
-                                <TableRow>S. No.</TableRow>
+                                <TableCell>S. No.</TableCell>
                                 <TableCell>Wheel Of Life Category</TableCell>
                                 <TableCell>No. of Questions</TableCell>
                                 <TableCell>Action</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {/* {rows.map((row, index) => (
+                            {[{ id: 1, category: "Academics" }, { id: 2, category: "Health" }, { id: 3, category: "Family" }, { id: 4, category: "Career" }].map((row, index) => (
                                 <TableRow
                                     key={row.id}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -108,40 +103,35 @@ const WOLTestConfigSelectQuestions = () => {
                                     <TableCell component="th" scope="row">
                                         {index + 1}
                                     </TableCell>
-                                    <TableCell>{row["WOL Category"]}</TableCell>
+                                    <TableCell>{row.category}</TableCell>
+                                    <TableCell>0/10</TableCell>
                                     <TableCell>
-                                        <Switch
-                                            checked={row.is_active}
-                                            onChange={handleChange}
-                                            inputProps={{ 'aria-label': 'controlled' }}
-                                        />
-                                    </TableCell>
-                                    <TableCell>
-                                        <Button
+                                        <CustomButton
                                             variant="contained"
-                                            color="primary"
-                                            onClick={() => actionButtons[1].onClick(row.id)}
+                                            active={true}
+                                            onClick={() => { navigate('/WolselectQuestions') }}
                                         >
                                             Select Questions
-                                        </Button>
+                                        </CustomButton>
                                     </TableCell>
                                 </TableRow>
-                            ))} */}
+                            ))}
                         </TableBody>
                     </Table>
                 </TableContainer>
                 <Box display="flex" mt={2}>
                     <CustomButton
+                        type="submit"
+                        active={true}
                         variant="contained"
-                        color="primary"
-                        onClick={''}
+                        sx={{ borderRadius: "50px", padding: "18px 30px", margin: "0 8px" }}
                     >
                         Submit
                     </CustomButton>
                 </Box>
             </Container>
         </>
-    )
-}
+    );
+};
 
-export default WOLTestConfigSelectQuestions
+export default WOLTestConfigSelectQuestions;
