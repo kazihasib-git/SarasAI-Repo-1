@@ -1,7 +1,10 @@
 import { Button, Grid } from "@mui/material";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { closeReasonForLeave } from "../../redux/features/taModule/taAvialability";
+import {
+  closeReasonForLeave,
+  reasonForLeave,
+} from "../../redux/features/taModule/taAvialability";
 import { closeCoachReasonForLeave } from "../../redux/features/CoachModule/CoachAvailabilitySlice";
 
 import CustomTextField from "../CustomFields/CustomTextField";
@@ -45,29 +48,77 @@ const CustomButton = ({
 const ReasonForLeave = ({ componentName }) => {
   const dispatch = useDispatch();
 
-  let reasonForLeaveOpenKey, closeReasonForLeaveAction;
+  let reasonForLeaveOpenKey,
+    closeReasonForLeaveAction,
+    markLeaveKey,
+    slotEventKey;
 
   switch (componentName) {
     case "TACALENDER":
       reasonForLeaveOpenKey = "reasonForLeaveOpen";
       closeReasonForLeaveAction = closeReasonForLeave;
+      markLeaveKey = "markLeaveData";
+      slotEventKey = "slotEventData";
       break;
     case "COACHCALENDER":
       reasonForLeaveOpenKey = "reasonForCoachLeaveOpen"; // Adjust based on your actual key
       closeReasonForLeaveAction = closeCoachReasonForLeave;
+      markLeaveKey = "markLeaveData";
+      slotEventKey = "slotEventData";
       break;
     default:
       reasonForLeaveOpenKey = null;
       closeReasonForLeaveAction = null;
+      markLeaveKey = null;
+      slotEventKey = null;
       break;
   }
 
-  const { [reasonForLeaveOpenKey]: reasonForLeaveOpen } = useSelector(
+  const {
+    [reasonForLeaveOpenKey]: reasonForLeaveOpen,
+    [markLeaveKey]: markLeaveData,
+    [slotEventKey]: slotEventDetails,
+  } = useSelector(
     (state) => state.taAvialability || state.coachAvailability || {} // Adjust to access the correct state slice
   );
 
   const handleSubmit = () => {
-    dispatch(closeReasonForLeaveAction());
+    if (slotEventDetails.length > 0) {
+      const slots = slotEventDetails?.map((slotId) => {
+        const slot = slotId?.data?.find((s) => s.id === slotId);
+        return {
+          slot_id: slot.id,
+          date: slot.slot_date,
+          start_time: slot.from_time,
+          end_time: slot.to_time,
+        };
+      });
+
+      // Get the first and last slots
+      const firstSlot = slots[0];
+      const lastSlot = slots[slots.length - 1];
+
+      const slotEventDetails = {
+        admin_user_id: id, // Assuming 'id' is the admin user ID
+        start_date: firstSlot.date,
+        end_date: lastSlot.date,
+        start_time: firstSlot.start_time,
+        end_time: lastSlot.end_time,
+        approve_status: 1,
+        leave_type: "full",
+        reason: "",
+        slot_id: slots.map((slot) => slot.slot_id), // Collect all slot IDs into an array
+      };
+
+      console.log("SLOT EVENT DATA: ", slotEventDetails);
+
+      dispatch(reasonForLeave(slotEventDetails));
+      dispatch(closeReasonForLeaveAction());
+    } else {
+      console.log("No slots selected, opening reason for leave");
+      dispatch(reasonForLeave(markLeaveData));
+      dispatch(closeReasonForLeaveAction());
+    }
   };
 
   const content = (

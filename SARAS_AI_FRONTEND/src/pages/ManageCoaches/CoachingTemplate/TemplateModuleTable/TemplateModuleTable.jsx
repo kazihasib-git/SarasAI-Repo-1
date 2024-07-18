@@ -1,19 +1,12 @@
-import React, { useEffect, useState } from "react";
-import {
-  Button,
-  IconButton,
-  Switch,
-  Pagination,
-  Box,
-} from "@mui/material";
+import React, { useState, useCallback } from "react";
+import { Box, Button, Switch } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye } from "@fortawesome/free-solid-svg-icons";
+import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import LinkActivityPopup from "../TemplateModulePopup/LinkActivity";
 import PrerequisitesPopup from "../TemplateModulePopup/Prerequisites";
-import editIcon from "../../../../assets/editIcon.png";
+import editIcon from "../../../../assets/editIcon.png"; // Assuming this is the correct path to your edit icon
 
 const CustomButton = styled(Button)(({ theme }) => ({
   borderRadius: "20px",
@@ -25,10 +18,6 @@ const CustomButton = styled(Button)(({ theme }) => ({
     backgroundColor: "#F56D3B",
     color: "#fff",
     borderColor: "#F56D3B",
-  },
-  "&.active": {
-    backgroundColor: "#F56D3B",
-    color: "#fff",
   },
 }));
 
@@ -77,67 +66,14 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
   },
 }));
 
-const TemplateModuleTable = ({
-  headers,
-  initialData,
-  actionButtons,
-  componentName,
-}) => {
-  const [data, setData] = useState(
-    initialData.map((item) => ({
-      ...item,
-      is_active: item.is_active !== undefined ? item.is_active : 0,
-    }))
-  );
-
-  useEffect(() => {
-    setData(
-      initialData.map((item) => ({
-        ...item,
-        is_active: item.is_active !== undefined ? item.is_active : 0,
-      }))
-    );
-  }, [initialData]);
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-  const totalPages = Math.ceil(data.length / itemsPerPage);
-  const currentData = data.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-  const navigate = useNavigate();
+const TemplateModuleTable = ({ modulesData }) => {
+  const [linkActivityPopupOpen, setLinkActivityPopupOpen] = useState(false);
+  const [prerequisitesPopupOpen, setPrerequisitesPopupOpen] = useState(false);
   const dispatch = useDispatch();
 
-  const [linkActivityPopupOpen, setLinkActivityPopupOpen] = useState(false);
-  const [prerequisitesPopupOpen, setPrerequisitesPopupOpen] = useState(false); // State for prerequisites popup
-
-  const handlePageChange = (event, pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
-
-  const handleToggle = (id) => {
-    const updatedData = data.map((item) =>
-      item.id === id
-        ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
-        : item
-    );
-    setData(updatedData);
-
-    const toggledItem = updatedData.find((item) => item.id === id);
-    const requestData = { is_active: toggledItem.is_active };
-
-    switch (componentName) {
-      case "MANAGETA":
-        dispatch(updateTA({ id, data: requestData }));
-        break;
-      case "TAMAPPING":
-        console.log("TA MAPPING : ", id, requestData);
-        break;
-      default:
-        console.warn(`No API call defined for component: ${componentName}`);
-        break;
-    }
+  const handleToggle = (moduleId, activityId) => {
+    console.log(`Toggled activity ${activityId} in module ${moduleId}`);
+    // Implement toggle action dispatch
   };
 
   const openLinkActivityPopup = () => {
@@ -156,188 +92,108 @@ const TemplateModuleTable = ({
     setPrerequisitesPopupOpen(false);
   };
 
-  return (
-    <div className="tableContainer">
-      <table>
-        <thead className="tableHead">
-          <tr>
-            {headers.map((header, index) => (
-              <th key={index}>{header}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="tableBody">
-          {currentData.length === 0 ? (
-            <tr>
-              <td colSpan={headers.length} style={{ textAlign: "center" }}>
-                No Data Available
-              </td>
-            </tr>
-          ) : (
-            currentData.map((item, index) => (
-              <tr key={item.id} id="tableRow">
-                <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                {Object.keys(item).map((key, idx) => {
-                  if (key === "Activity" || key === "Prerequisites") {
-                    const value = item[key];
-                    if (
-                      value === "Link Activity" ||
-                      value === "Prerequisites"
-                    ) {
-                      return (
-                        <td
-                          key={idx}
-                          style={{
-                            borderRadius: "50px",
-                            backgroundColor: "#FEEBE3",
-                            color: "#F56D3B",
-                            padding: "8px",
-                            textAlign: "center",
-                          }}
-                        >
-                          <Button
-                            style={{ color: "#F56D3B" }}
-                            onClick={() =>
-                              key === "Prerequisites"
-                                ? openPrerequisitesPopup()
-                                : openLinkActivityPopup()
-                            }
-                          >
-                            {value}
-                          </Button>
-                        </td>
-                      );
-                    } else if (key === "Activity" && value === "Video Name") {
-                      return (
-                        <td key={idx}>
-                          {value}
-                          <FontAwesomeIcon
-                            icon={faEye}
-                            style={{ marginLeft: "10px" }}
-                          />
-                        </td>
-                      );
-                    } else return <td key={idx}> {value}</td>;
-                  } else if (key !== "id" && key !== "is_active") {
-                    if (typeof item[key] === "object" && item[key] !== null) {
-                      return <td key={idx}>{JSON.stringify(item[key])}</td>;
-                    } else {
-                      return <td key={idx}>{item[key]}</td>;
-                    }
-                  }
-                  return null;
-                })}
+  const handleActivity = (module) => {
+    console.log("Add Activity clicked for module:", module.module_name);
+    // Implement your logic for adding activity
+  };
 
-                {actionButtons && (
-                  <td
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      verticalAlign: "middle",
-                    }}
-                  >
-                    {actionButtons.map((button, idx) => {
-                      if (button.type === "switch") {
-                        return (
-                          <AntSwitch
-                            key={idx}
-                            checked={item.is_active}
-                            onChange={() => handleToggle(item.id)}
+  const handleEditModule = () => {
+    console.log("Edit Module clicked");
+    // Implement your logic for editing module
+  };
+
+  return (
+    <>
+      {modulesData.map((module) => (
+        <Box key={module.id} marginTop={3}>
+          <Box display="flex" justifyContent="space-between" alignItems="center" padding={2} borderRadius="0px" border="0px solid #e0e0e0">
+            <p style={{ fontSize: "24px", justifyContent: "center", margin: 0 }}>
+              {module.module_name}
+              <span
+                style={{
+                  borderRadius: "50px",
+                  backgroundColor: module.is_active ? "#14D249" : "red",
+                  color: "white",
+                  padding: "3px 10px",
+                  marginLeft: "10px",
+                  fontSize: "12px",
+                }}
+              >
+                {module.is_active ? "Active" : "Inactive"}
+              </span>
+            </p>
+            <div className="inputBtnContainer" style={{ display: "flex", alignItems: "center" }}>
+              <CustomButton className="buttonTemplateContainer" onClick={handleActivity(module)}>
+                <i className="bi bi-plus-circle"></i>
+                <span>Add Activity</span>
+              </CustomButton>
+
+              <CustomButton className="buttonTemplateContainer" onClick={handleEditModule}>
+              <FontAwesomeIcon icon={faPenToSquare} className="bi" />
+                <span >Edit Module</span>
+              </CustomButton>
+            </div>
+          </Box>
+          {module.activities.length > 0 && (
+            <Box marginTop={1} padding={2} border="1px solid #e0e0e0" borderRadius="8px" backgroundColor="#fff">
+              <div className="tableContainer">
+                <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                  <thead className="tableHead">
+                    <tr>
+                      <th style={{ padding: "8px 0" }}>S. No.</th>
+                      <th style={{ padding: "8px 0" }}>Activity Name</th>
+                      <th style={{ padding: "8px 0" }}>Due Date</th>
+                      <th style={{ padding: "8px 0" }}>Activity</th>
+                      <th style={{ padding: "8px 0" }}>Points</th>
+                      <th style={{ padding: "8px 0" }}>Prerequisites</th>
+                      <th style={{ padding: "8px 0" }}>After Due Date</th>
+                      <th style={{ padding: "8px 0" }}>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="tableBody">
+                    {module.activities.map((activity, index) => (
+                      <tr key={activity.id}>
+                        <td style={{ padding: "8px 0", borderBottom: "1px solid #e0e0e0" }}>{index + 1}</td>
+                        <td style={{ padding: "8px 0", borderBottom: "1px solid #e0e0e0" }}>{activity.activity_name}</td>
+                        <td style={{ padding: "8px 0", borderBottom: "1px solid #e0e0e0" }}>{activity.due_date}</td>
+                        <td style={{ padding: "8px 0", borderBottom: "1px solid #e0e0e0" }}>
+                          <CustomButton onClick={openLinkActivityPopup} className="linkActivityBtn">
+                            Link Activity
+                          </CustomButton>
+                        </td>
+                        <td style={{ padding: "8px 0", borderBottom: "1px solid #e0e0e0" }}>{activity.points}</td>
+                        <td style={{ padding: "8px 0", borderBottom: "1px solid #e0e0e0" }}>
+                          <CustomButton onClick={openPrerequisitesPopup} className="prerequisitesBtn">
+                            Prerequisites
+                          </CustomButton>
+                        </td>
+                        <td style={{ padding: "8px 0", borderBottom: "1px solid #e0e0e0" }}>{activity.after_due_date}</td>
+                        <td style={{ padding: "8px 0", borderBottom: "1px solid #e0e0e0" }}>
+                        <AntSwitch
+                            key={activity.id}
+                            checked={activity.is_active}
+                            onChange={() => handleToggle(activity.id)}
                             inputProps={{ "aria-label": "ant design" }}
                           />
-                        );
-                      }
-                      if (button.type === "edit") {
-                        return (
-                          <IconButton
-                            key={idx}
-                            color="primary"
-                            sx={{
-                              marginLeft: "10px",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              color: "#F56D3B",
-                              backgroundColor: "#FEEBE3",
-                              gap: "4px",
-                              height: "30px",
-                              width: "70px",
-                              borderRadius: "15px",
-                              padding: "5px",
-                              "&:hover": {
-                                backgroundColor: "rgba(245, 235, 227, 0.8)",
-                              },
-                              "& img": {
-                                height: "16px",
-                                width: "16px",
-                              },
-                              "& small": {
-                                lineHeight: "16px",
-                              },
-                            }}
-                            onClick={() => button.onClick(item.id)}
-                          >
-                            <img src={editIcon} alt="" />
-                            <small style={{ fontSize: "14px" }}>Edit</small>
-                          </IconButton>
-                        );
-                      }
-                      return null;
-                    })}
-                  </td>
-                )}
-              </tr>
-            ))
+                        </td>
+                        <td style={{ padding: "8px 0", borderBottom: "1px solid #e0e0e0" }}>
+                          <CustomButton onClick={handleEditModule} className="editBtn">
+                            <FontAwesomeIcon icon={faPenToSquare} style={{ color: "#F56D3B" }} />
+                            <span style={{ fontSize: "14px", marginLeft: "5px", color: "#F56D3B" }}>Edit</span>
+                          </CustomButton>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </Box>
           )}
-        </tbody>
-      </table>
-      <div className="pagination">
-        <Pagination
-          count={totalPages}
-          page={currentPage}
-          onChange={handlePageChange}
-          variant="outlined"
-          color="primary"
-          sx={{
-            width: "65vw",
-            display: "flex",
-            justifyContent: "center",
-            marginTop: "20px",
-            ".MuiPaginationItem-root": {
-              backgroundColor: "#fff",
-              border: "1px solid #ddd",
-              borderRadius: "50%",
-              width: "40px",
-              height: "40px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              transition: "background-color 0.3s, transform 0.3s",
-              "&:hover": {
-                backgroundColor: "#DFDFF4",
-                transform: "scale(1.1)",
-              },
-              "&.Mui-selected": {
-                backgroundColor: "#F56D3B",
-                color: "#fff",
-              },
-              "&.Mui-disabled": {
-                backgroundColor: "#DFDFF4",
-                cursor: "not-allowed",
-              },
-            },
-          }}
-        />
-      </div>
-      <LinkActivityPopup
-        open={linkActivityPopupOpen}
-        handleClose={closeLinkActivityPopup}
-      />
-      <PrerequisitesPopup
-        open={prerequisitesPopupOpen}
-        handleClose={closePrerequisitesPopup}
-      />
-    </div>
+        </Box>
+      ))}
+      <LinkActivityPopup open={linkActivityPopupOpen} handleClose={closeLinkActivityPopup} />
+      <PrerequisitesPopup open={prerequisitesPopupOpen} handleClose={closePrerequisitesPopup} />
+    </>
   );
 };
 

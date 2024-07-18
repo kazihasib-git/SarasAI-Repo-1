@@ -12,6 +12,9 @@ import Schedule from "../../components/availability/Schedule";
 import AssignStudents from "../../components/adminModule/AssignStudents";
 import AssignBatches from "../../components/adminModule/AssignBatches";
 import { showCoachMapping } from "../../redux/features/CoachModule/coachSlice";
+import EditBatches from "../../components/availability/EditBatches";
+import EditStudents from "../../components/availability/EditStudents";
+import { openCoachEditBatch, openCoachEditStudent } from "../../redux/features/CoachModule/coachSchedule";
 
 const CoachSheduling = () => {
   const dispatch = useDispatch();
@@ -23,6 +26,8 @@ const CoachSheduling = () => {
   );
   const { coachMapping } = useSelector((state) => state.coachModule);
   const [coachScheduleData, setCoachScheduleData] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+
   useEffect(() => {
     dispatch(showCoachMapping());
   }, [dispatch]);
@@ -45,9 +50,19 @@ const CoachSheduling = () => {
     }
   }, [coachMapping]);
 
+  const handleSearch = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const filteredData = coachScheduleData.filter((item) =>
+    item.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const actionButtons = [
     {
       type: "calendar",
+     
+      
     },
   ];
 
@@ -93,22 +108,26 @@ const CoachSheduling = () => {
               <InputBase
                 sx={{ ml: 2, flex: 1 }}
                 placeholder="Search here ..."
+                value={searchQuery}
+                onChange={handleSearch}
               />
             </Box>
           </Box>
         </Box>
         <DynamicTable
           headers={headers}
-          initialData={coachScheduleData}
+          initialData={filteredData}
           actionButtons={actionButtons}
           componentName={"COACHMAPPING"}
         />
       </Box>
       {scheduleCoachSessionOpen && <Schedule componentName={"COACHSCHEDULE"} />}
-      {assignCoachStudentOpen && (
+      {/* {assignCoachStudentOpen && (
         <AssignStudents componentname={"ADDITCOACH"} />
       )}
-      {assignCoachBatchOpen && <AssignBatches componentname={"ADDITCOACH"} />}
+      {assignCoachBatchOpen && <AssignBatches componentname={"ADDITCOACH"} />} */}
+      {openCoachEditBatch && <EditBatches componentname={"COACHSCHEDULE"} />}
+      {openCoachEditStudent && <EditStudents componentname={"COACHSCHEDULE"} />}
     </>
   );
 };

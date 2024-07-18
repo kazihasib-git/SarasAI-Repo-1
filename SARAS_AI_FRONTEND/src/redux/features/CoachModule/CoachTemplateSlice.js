@@ -20,11 +20,12 @@ export const createCoachTemplate = createAsyncThunk(
 
 export const getAllCoachTemplateModules = createAsyncThunk(
   "coachTemplate/getAllCoachTemplateModules",
-  async () => {
+  async (templateId) => {
     const response = await axios.get(
       `${baseUrl}/admin/coaching-templates/modules`
     );
-    return response.data;
+    const modules = response.data.data.filter(module => module.template_id === templateId);
+    return modules;
   }
 );
 
@@ -60,6 +61,7 @@ export const createCoachTemplateActivity = createAsyncThunk(
     return response.data;
   }
 );
+
 const initialState = {
   coachesTemplateList: [],
   coachTemplates: [],
@@ -78,6 +80,7 @@ const initialState = {
   templateId: null,
   createCoachTemplateOpen: false,
   editCoachTemplateOpen: false,
+  modulesData: [],
 };
 
 export const coachTemplateSlice = createSlice({
@@ -85,8 +88,6 @@ export const coachTemplateSlice = createSlice({
   initialState,
   reducers: {
     accessCoachTemplateName(state, action) {
-      //   console.log("ACTION : ", action);
-      //   console.log("ACTION PAYLOAD : ", action.payload);
       state.template_name = action.payload.name;
       state.templateId = action.payload.id;
     },
@@ -96,10 +97,10 @@ export const coachTemplateSlice = createSlice({
     removeSelectedCoachTemplate(state) {
       state.selectedCoachTemplate = null;
     },
-    setSelectedModule(state,action){
+    setSelectedModule(state, action) {
       state.selectedModule = action.payload;
     },
-    removeSelectedModule(state){
+    removeSelectedModule(state) {
       state.selectedModule = null;
     },
     openCreateTemplateCoach(state) {
@@ -120,14 +121,12 @@ export const coachTemplateSlice = createSlice({
     closeTemplateModulePopup(state) {
       state.openModulePopUp = false;
     },
-
     openTemplateActivityPopup(state) {
       state.openActivityPopUp = true;
     },
     closeTemplateActivityPopup(state) {
       state.openActivityPopUp = false;
     },
-
     openEditModulePopup(state) {
       state.openEditModulePopUp = true;
     },
@@ -159,6 +158,7 @@ export const coachTemplateSlice = createSlice({
         state.loading = false;
         state.coachTemplates.push(action.payload.data);
         state.selectedCoachTemplate = action.payload.data.id;
+        state.template_name = action.payload.data.name;
       })
       .addCase(createCoachTemplate.rejected, (state, action) => {
         state.loading = false;
@@ -172,7 +172,7 @@ export const coachTemplateSlice = createSlice({
       })
       .addCase(getAllCoachTemplateModules.fulfilled, (state, action) => {
         state.loading = false;
-        state.coachTemplates = action.payload.data;
+        state.modulesData = action.payload;
       })
       .addCase(getAllCoachTemplateModules.rejected, (state, action) => {
         state.loading = false;
@@ -243,7 +243,7 @@ export const {
   openTemplateActivityPopup,
   closeTemplateActivityPopup,
   openEditModulePopup,
-  closeEditModulePopup
+  closeEditModulePopup,
 } = coachTemplateSlice.actions;
 
 export default coachTemplateSlice.reducer;

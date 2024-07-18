@@ -1,16 +1,20 @@
-import "./Sidebar.css";
 
+import './TaMenuSidebar.css';
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Divider from "@mui/material/Divider";
-import dashboard from "../../assets/dashboard.png";
-import coaches from "../../assets/coaches.png";
-import assistant from "../../assets/teachingassis.png";
-const Sidebar = () => {
+import mystudent from "../../../assets/mystudent.png";
+import message from "../../../assets/message.png";
+import calendar from "../../../assets/calendar.png";
+import   callrecordsicon from "../../../assets/callrecordsicon.png";
+import schedulecallsicon from "../../../assets/schedulecallsicon.png";
+const TaMenuSidebar = () => {
   const location = useLocation();
   const [activeLink, setActiveLink] = useState(location.pathname);
 
   const handleLinkClick = (path) => {
+    console.log(path);
+    console.log(activeLink);
     setActiveLink(path);
   };
 
@@ -19,14 +23,18 @@ const Sidebar = () => {
       <ul className="sidebar-nav" id="sidebar-nav">
         <li className="nav-item">
           <Link
-            className={`nav-link ${activeLink === "/" ? "active" : ""}`}
-            to={"/"}
-            onClick={() => handleLinkClick("/dashboard")}
+           to="/createmenu"
+        //    className={activeLink === "/ta-manage" ? "active-link" : ""}
+            className={activeLink === "/createmenu" ? "active-link" : ""}
+           
+            onClick={() => handleLinkClick("/createmenu")}
           >
-            <i className="bi bi-grid"></i>
-            <span className="SideHeader">Dashboard</span>
+          <i className='bi bi-person-circle'></i>
+            <span >My Profile</span>
+            {/* <i className="bi bi-chevron-up ms-auto"></i> */}
           </Link>
         </li>
+       
         <Divider
           variant="middle"
           component="li"
@@ -43,12 +51,11 @@ const Sidebar = () => {
           >
             {/* <i className='bi bi-menu-button-wide'></i>
              */}
-            <img
-              src={dashboard}
+              <img
+              src={mystudent}
               style={{ width: "18px", height: "18px", marginRight: "10px" }}
             />
-            <span className="SideHeader">Teaching Assistant</span>
-            <i className="bi bi-chevron-down ms-auto"></i>
+            <span >My Students</span>
           </a>
           <ul
             id="manage-tas-nav"
@@ -67,7 +74,7 @@ const Sidebar = () => {
             </li>
             <li>
               <Link
-                to="/ta-mapping"
+                to=""
                 className={activeLink === "/ta-mapping" ? "active-link" : ""}
                 onClick={() => handleLinkClick("/ta-mapping")}
               >
@@ -76,7 +83,7 @@ const Sidebar = () => {
             </li>
             <li>
               <Link
-                to="/ta-availability"
+                to=""
                 className={
                   activeLink === "/ta-availability" ? "active-link" : ""
                 }
@@ -87,7 +94,7 @@ const Sidebar = () => {
             </li>
             <li>
               <Link
-                to="/ta-scheduling"
+                to=""
                 className={activeLink === "/ta-scheduling" ? "active-link" : ""}
                 onClick={() => handleLinkClick("/ta-scheduling")}
               >
@@ -111,11 +118,11 @@ const Sidebar = () => {
             onClick={() => handleLinkClick("/coach")}
           >
             <img
-              src={coaches}
+              src={calendar}
               style={{ width: "18px", height: "18px", marginRight: "10px" }}
             />
-            <span className="SideHeader" >Coaches</span>
-            <i className="bi bi-chevron-down ms-auto"></i>
+          
+            <span>My Calender</span>
           </a>
           <ul
             id="manage-coaches-nav"
@@ -125,7 +132,7 @@ const Sidebar = () => {
           >
             <li>
               <Link
-                to={"/coach-manage"}
+                to={""}
                 className={activeLink === "/coach-manage" ? "active-link" : ""}
                 onClick={() => handleLinkClick("/manage-coaches")}
               >
@@ -134,7 +141,7 @@ const Sidebar = () => {
             </li>
             <li>
               <Link
-                to={"/coach-mapping"}
+                to={""}
                 className={activeLink === "/coach-mapping" ? "active-link" : ""}
                 onClick={() => handleLinkClick("/coach-mapping")}
               >
@@ -143,7 +150,7 @@ const Sidebar = () => {
             </li>
             <li>
               <Link
-                to={"/coach-template"}
+                to={""}
                 className={
                   activeLink === "/coach-template" ? "active-link" : ""
                 }
@@ -154,7 +161,7 @@ const Sidebar = () => {
             </li>
             <li>
               <Link
-                to={"/coach-availability"}
+                to={""}
                 className={
                   activeLink === "/coach-availability" ? "active-link" : ""
                 }
@@ -165,7 +172,7 @@ const Sidebar = () => {
             </li>
             <li>
               <Link
-                to={"/coach-scheduling"}
+                to={""}
                 className={
                   activeLink === "/coach-scheduling" ? "active-link" : ""
                 }
@@ -176,55 +183,17 @@ const Sidebar = () => {
             </li>
           </ul>
         </li>
-
+        <Divider
+          variant="middle"
+          component="li"
+          sx={{ backgroundColor: "white", opacity: "0.3" }}
+        />
         {/* <li className='nav-item'>
           <Link className={`nav-link ${activeLink === '/courses' ? 'active' : 'collapsed'}`} to={'/courses'} onClick={() => handleLinkClick('/courses')}>
             <i className='bi bi-book'></i>
             <span>Courses</span>
           </Link>
         </li> */}
-        <Divider
-          variant="middle"
-          component="li"
-          sx={{ backgroundColor: "white", opacity: "0.3" }}
-        />
-          <li className="nav-item">
-  <a
-    className={`nav-link ${activeLink === "/users" ? "active" : "collapsed"}`}
-    data-bs-target="#users-nav"
-    data-bs-toggle="collapse"
-    href="#"
-    onClick={() => handleLinkClick("/users")}
-  >
-    <i className="bi bi-person"></i>
-    <span className="SideHeader">Users</span>
-    <i className="bi bi-chevron-down ms-auto"></i>
-  </a>
-  <ul
-    id="users-nav"
-    className={`nav-content collapse ${activeLink.startsWith("/users-") ? "show" : ""}`}
-    data-bs-parent="#sidebar-nav"
-  >
-    <li>
-      <Link
-        to="/students"
-        className={activeLink === "/students" ? "active-link" : ""}
-        onClick={() => handleLinkClick("/students")}
-      >
-        <span className="SideSubHeading">Students</span>
-      </Link>
-    </li>
-    <li>
-      <Link
-        to="/batches"
-        className={activeLink === "/batches" ? "active-link" : ""}
-        onClick={() => handleLinkClick("/batches")}
-      >
-        <span className="SideSubHeading">Batches</span>
-      </Link>
-    </li>
-  </ul>
-</li>
         <Divider
           variant="middle"
           component="li"
@@ -238,53 +207,70 @@ const Sidebar = () => {
             href="#"
             onClick={() => handleLinkClick("/tools")}
           >
-            <img
-              src={assistant}
-              alt=""
+             <img
+              src={schedulecallsicon}
               style={{ width: "18px", height: "18px", marginRight: "10px" }}
             />
-            <span className="SideHeader">Coaching Tools</span>
-            <i className="bi bi-chevron-down ms-auto"></i>
+            <span>Scheduled Calls</span>
+           
           </a>
-          <ul
-            id="coaching-tools-nav"
-            className={`nav-content collapse ${activeLink.startsWith("/tools-") ? "show" : ""}`}
-            data-bs-parent="#sidebar-nav"
-          >
-            <li>
-              <Link
-                to={"/wheel-of-life"}
-                className={activeLink === "/wheel-of-life" ? "active-link" : ""}
-                onClick={() => handleLinkClick("/wheel-of-life")}
-              >
-                <span className="SideSubHeading">Wheel of Life</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to={"/core-value"}
-                className={activeLink === "/core-value" ? "active-link" : ""}
-                onClick={() => handleLinkClick("/core-value")}
-              >
-                <span className="SideSubHeading">Core Value</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to={"/belief"}
-                className={activeLink === "/belief" ? "active-link" : ""}
-                onClick={() => handleLinkClick("/belief")}
-              >
-                <span className="SideSubHeading">Belief</span>
-              </Link>
-            </li>
-          </ul>
         </li>
         <Divider variant="middle" component="li" sx={{ backgroundColor: "white", opacity: "0.3" }} />
-      
+        <li className="nav-item">
+          <Link
+            to="/students"
+            className={`nav-link ${activeLink === "/students" ? "active-link" : "collapsed"
+              }`}
+            onClick={() => handleLinkClick("/students")}
+          >
+       
+       <i className='bi bi-telephone-plus-fill'></i>
+            <span>Call Requests</span>
+          </Link>
+        </li>
+        <Divider
+          variant="middle"
+          component="li"
+          sx={{ backgroundColor: "white", opacity: "0.3" }}
+        />
+        <li className="nav-item">
+          <Link
+            to="/batches"
+            className={`nav-link ${activeLink === "/batches" ? "active-link" : ""
+              }`}
+            onClick={() => handleLinkClick("/batches")}
+          >
+           <img
+              src={message}
+              style={{ width: "18px", height: "13.88px", marginRight: "10px" }}
+            />
+            <span>Messages</span>
+          </Link>
+          <Divider variant="middle" component="li" sx={{ backgroundColor: "white", opacity: "0.3" }} />
+        <li className="nav-item">
+          <Link
+            to="/call-records"
+            className={`nav-link ${activeLink === "/call-records" ? "active-link" : "collapsed"
+              }`}
+            onClick={() => handleLinkClick("/call-records")}
+          >
+            <img
+              src={callrecordsicon}
+              style={{ width: "18px", height: "18px", marginRight: "10px" }}
+            />
+        
+            <span>Call Records</span>
+          </Link>
+        </li>
+        <Divider
+          variant="middle"
+          component="li"
+          sx={{ backgroundColor: "white", opacity: "0.3" }}
+        />
+        </li>
       </ul>
     </aside>
   );
 };
 
-export default Sidebar;
+export default TaMenuSidebar;

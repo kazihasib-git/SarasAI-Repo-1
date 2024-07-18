@@ -35,9 +35,9 @@ import TaScheduling from "./pages/managesTAs/TaScheduling";
 import Calendar from "./components/Calender/indexCalender";
 import StudentPage from "./pages/students/StudentPage";
 import MyProfile from "./components/RoleRoute/CommonComponent/MyProfile";
-import CallRecords from "./components/RoleRoute/CommonComponent/CallRecords";
+import CallRecords from "./pages/MODULE/TaModule/CallRecords";
 import Messages from "./components/RoleRoute/CommonComponent/Messages";
-import CallRequest from "./components/RoleRoute/CommonComponent/CallRequest";
+import CallRequest from "./pages/MODULE/TaModule/CallRequest";
 import MyCalender from "./components/RoleRoute/CommonComponent/MyCalender";
 import Mystudents from "./components/RoleRoute/CommonComponent/Mystudents";
 import AssignedStudent from "./pages/managesTAs/AssignedStudent";
@@ -60,6 +60,9 @@ import WOLQuestions from "./components/coachingTools/wheelOfLife/WOLQuestions";
 import WOLOptionsConfig from "./components/coachingTools/wheelOfLife/WOLOptionsConfig";
 import WOLTestConfig from "./components/coachingTools/wheelOfLife/WOLTestConfig";
 import AddEditWOLQuestions from "./components/coachingTools/wheelOfLife/AddEditWOLQuestions";
+import AddEditTeachingAssistant from "./pages/MODULE/TaModule/TeachingAssistant";
+import CreateTaMenu from "./pages/MODULE/TaModule/CreateTaMenu";
+
 const ROLES = {
   Teaching: 2001,
   Coaches: 1984,
@@ -86,7 +89,20 @@ function App() {
               path="createta"
               element={<CreateTAPage page="Create TA" />}
             />
+             <Route
+              path="callrequest"
+              element={<CallRequest page="Call-Request" />}
+            />
+              <Route
+              path="createmenu"
+              element={<CreateTaMenu page="Create Menu" />}
+            />
+              <Route
+              path="call-records"
+              element={<CallRecords page="CallRecords" />}
+            />
             <Route path="AddEditTA" element={<AddEditTA page="Edit Ta" />} />
+       
             <Route
               path="ta-mapping"
               element={<TaMapping page="TA Mapping" />}
@@ -110,6 +126,10 @@ function App() {
             <Route
               path="ta-availability"
               element={<TAAvailability page="TA Availability" />}
+            />
+            <Route
+              path="TaProfile"
+              element={<AddEditTeachingAssistant page="Ta-Profile" />}
             />
             <Route
               path="ta-scheduling"

@@ -17,7 +17,7 @@ const CustomTimeZoneForm = ({
         sx={{
           color: "#1A1E3D",
           "&.Mui-focused": {
-            color: "#9A9DAD", // Change label color on focus
+            color: "#1A1E3D", // Change label color on focus
           },
         }}
       >

@@ -7,9 +7,9 @@ import { useDispatch } from "react-redux";
 import { createCoachTemplate } from "../../../../redux/features/CoachModule/CoachTemplateSlice";
 
 const durations = [
-  { value: "30 mins", label: "30 mins" },
-  { value: "45 mins", label: "45 mins" },
-  { value: "60 mins", label: "60 mins" },
+  { value: 30, label: "30 mins" },
+  { value: 45, label: "45 mins" },
+  { value: 60, label: "60 mins" },
 ];
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
@@ -46,6 +46,7 @@ const CoachTemplateForm = () => {
     }
 
     dispatch(createCoachTemplate(newTemplateData));
+    
     navigation("/template-name");
 
   };
