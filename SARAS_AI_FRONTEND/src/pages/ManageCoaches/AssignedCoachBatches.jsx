@@ -34,11 +34,11 @@ const AssignCoachBatches  = () => {
       if (assignedBatches && assignedBatches.length > 0) {
         const transformData = assignedBatches.map((item, index) => ({
           id: item.id,
-          ta_name: item.ta.name,
+          coach_name: item.coach.name,
           batch_name: item.batch.name,
           is_active: item.is_active,
         }));
-  
+        console.log("TRANSFORM DATA : ", transformData)
         setCoachAssignBatchesData(transformData);
       }
     }, [assignedBatches]);
@@ -54,7 +54,9 @@ const AssignCoachBatches  = () => {
           actionButtons={actionButtons}
           ta_id={id}
           dispatch={dispatch}
+          componentName={"ASSIGNCOACHBATCH"}
         />
+        
       </>
     );
   };

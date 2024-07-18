@@ -25,7 +25,7 @@ import TAAvailability from "./pages/managesTAs/TaAvaialablity";
 import ManageCoaches from "./pages/ManageCoaches/ManageCoaches";
 import CoachMapping from "./pages/ManageCoaches/CoachMapping";
 import CoachTemplate from "./pages/ManageCoaches/CoachingTemplate/CoachTemplate";
-import CoachAvialability from "./pages/managesTAs/CoachAvialability";
+import CoachAvialability from "./pages/ManageCoaches/CoachAvialability";
 import CoachScheduling from "./pages/ManageCoaches/CoachScheduling";
 import AllRoutes from "./components/AllRoutes/AllRoutes";
 import TaMapping from "./pages/managesTAs/TaMapping";
@@ -33,9 +33,9 @@ import TaScheduling from "./pages/managesTAs/TaScheduling";
 import Calendar from "./components/Calender/indexCalender";
 import StudentPage from "./pages/students/StudentPage";
 import MyProfile from "./components/RoleRoute/CommonComponent/MyProfile";
-import CallRecords from "./components/RoleRoute/CommonComponent/CallRecords";
+import CallRecords from "./pages/MODULE/TaModule/CallRecords";
 import Messages from "./components/RoleRoute/CommonComponent/Messages";
-import CallRequest from "./components/RoleRoute/CommonComponent/CallRequest";
+import CallRequest from "./pages/MODULE/TaModule/CallRequest";
 import ScheduledCalls from "./components/RoleRoute/CommonComponent/ScheduledCalls";
 import MyCalender from "./components/RoleRoute/CommonComponent/MyCalender";
 import Mystudents from "./components/RoleRoute/CommonComponent/Mystudents";
@@ -53,6 +53,22 @@ import BatchPage from "./pages/batches/BatchPage";
 import CreateTemplate from "./pages/ManageCoaches/CoachingTemplate/CreateTemplate";
 import TemplateName from "./pages/ManageCoaches/CoachingTemplate/TemplateName";
 import WheelOfLife from "./pages/coachingTools/wheelOfLife/WheelOfLife";
+import WOLCategories from "./components/coachingTools/wheelOfLife/WOLCategories";
+import WOLInstructions from "./components/coachingTools/wheelOfLife/WOLInstructions";
+import WOLQuestions from "./components/coachingTools/wheelOfLife/WOLQuestions";
+import WOLOptionsConfig from "./components/coachingTools/wheelOfLife/WOLOptionsConfig";
+import WOLTestConfig from "./components/coachingTools/wheelOfLife/WOLTestConfig";
+import AddEditWOLQuestions from "./components/coachingTools/wheelOfLife/AddEditWOLQuestions";
+import AddEditTeachingAssistant from "./pages/MODULE/TaModule/TeachingAssistant";
+import CreateTaMenu from "./pages/MODULE/TaModule/CreateTaMenu";
+
+import CoachMenu from "./pages/MODULE/coachModule/CoachMenu";
+
+import CoachMenuProfile from "./pages/MODULE/coachModule/CoachMenuProfile";
+import CoachCallRequest from "./pages/MODULE/coachModule/CoachCallRequest";
+
+import CoachMenuCalendar from "./pages/MODULE/coachModule/CoachMenuCalendar";
+import CoachCallRecord from "./pages/MODULE/coachModule/CoachCallRecord";
 const ROLES = {
   Teaching: 2001,
   Coaches: 1984,
@@ -75,11 +91,52 @@ function App() {
             <Route path="dashboard" element={<Dashboard />} />
 
             <Route path="ta-manage" element={<ManagesTAs page="Manage TA" />} />
+
+
+            <Route
+              path="coachmenu"
+              element={<CoachMenu page="Coach Menu" />}
+            />
+             <Route
+              path="coachmenu-profile"
+              element={<CoachMenuProfile page="Coach Menu" />}
+            />
+            <Route 
+            path="coach-call-request"
+            element={<CoachCallRequest page="Call Request"/>}
+            />
+             <Route
+              path="coach-call-records"
+              element={<CoachCallRecord page="Call Records" />}
+            />
+             <Route
+              path="coachmenu-calendar"
+              element={<CoachMenuCalendar page="coachmenu" />}
+            />
+
+            
             <Route
               path="createta"
               element={<CreateTAPage page="Create TA" />}
             />
+             <Route
+              path="call-request"
+              element={<CallRequest page="Call-Request" />}
+            />
+              <Route
+              path="createmenu"
+              element={<CreateTaMenu page="Create Menu" />}
+            />
+              <Route
+              path="call-records"
+              element={<CallRecords page="CallRecords" />}
+            />
+           
+           
+
+            
             <Route path="AddEditTA" element={<AddEditTA page="Edit Ta" />} />
+       
             <Route
               path="ta-mapping"
               element={<TaMapping page="TA Mapping" />}
@@ -105,6 +162,10 @@ function App() {
               element={<TAAvailability page="TA Availability" />}
             />
             <Route
+              path="TaProfile"
+              element={<AddEditTeachingAssistant page="Ta-Profile" />}
+            />
+            <Route
               path="ta-scheduling"
               element={<TaScheduling page="TA Scheduling" />}
             />
@@ -126,8 +187,8 @@ function App() {
               element={<CoachMapping page="Coach Mapping" />}
             />
             <Route
-              path="coach-manage/tacalender"
-              element={<CoachCalender />}
+              path="coach-calender/:name/:id"
+              element={<CoachCalender page="Calendar" />}
             />
             <Route
               path="coach-template"
@@ -153,7 +214,13 @@ function App() {
             <Route path="students" element={<StudentPage />} />
             <Route path="batches" element={<BatchPage />} />
             {/* <Route path='/student-list' element={<StudentList page="Student" />} /> */}
-            <Route path="coaching-tools" element={<WheelOfLife />} />
+            <Route path="wheel-of-life" element={<WheelOfLife />} />
+            <Route path="wolCategories" element={<WOLCategories />} />
+            <Route path="wolInstructions" element={<WOLInstructions />} />
+            <Route path="wolQuestions" element={<WOLQuestions/>} />
+            <Route path="wolQuestions/add-Edit" element={<AddEditWOLQuestions/> } />
+            <Route path="wolOptionsConfig" element={<WOLOptionsConfig/>} />
+            <Route path="wolTestConfig" element={<WOLTestConfig/>} />
           </Route>
         </Route>
 

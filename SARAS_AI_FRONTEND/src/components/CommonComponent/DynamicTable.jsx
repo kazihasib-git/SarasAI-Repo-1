@@ -17,86 +17,12 @@ import editIcon from "../../assets/editIcon.png";
 import bin from "../../assets/bin.png";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { useDispatch } from "react-redux";
-import { updateTA } from "../../redux/features/taModule/taSlice";
+import { activeDeactiveWOLCategory } from "../../redux/features/coachingTools/wol/wolSlice";
 import { openScheduleSession } from "../../redux/features/taModule/taScheduling";
 
-const CustomButton = styled(Button)(({ theme }) => ({
-  borderRadius: "20px",
-  border: "1px solid #F56D3B",
-  color: "#F56D3B",
-  padding: "8px 16px", // Add padding for horizontal and vertical spacing
-  margin: "0 8px", // Add horizontal margin between buttons
-  "&:hover": {
-    backgroundColor: "#F56D3B",
-    color: "#fff",
-    borderColor: "#F56D3B",
-  },
-  "&.active": {
-    backgroundColor: "#F56D3B",
-    color: "#fff",
-  },
-}));
-
-const CalenderButton = styled(Button)(({ theme }) => ({
-  borderRadius: "20px",
-  border: "none",
-  color: "#F56D3B",
-  backgroundColor: "#FEEBE3",
-  transition: "all 0.3s ease", // Corrected transition syntax
-  "&:hover": {
-    backgroundColor: "#FEEBE3",
-    color: "#F56D3B",
-    border: "none", // Corrected border removal syntax
-  },
-  "&:focus": {
-    outline: "none", // Remove default focus outline if desired
-  },
-}));
-
-const AntSwitch = styled(Switch)(({ theme }) => ({
-  width: 36, // adjust width as needed
-  height: 20, // increased height
-  padding: 0,
-  marginTop: 5,
-  display: "flex",
-  "&:active": {
-    "& .MuiSwitch-thumb": {
-      width: 17, // adjust width to keep thumb proportional
-    },
-    "& .MuiSwitch-switchBase.Mui-checked": {
-      transform: "translateX(16px)", // adjust translation to match increased height
-    },
-  },
-  "& .MuiSwitch-switchBase": {
-    padding: 3, // increased padding for larger height
-    "&.Mui-checked": {
-      transform: "translateX(18px)", // adjust translation to match increased height
-      color: "#fff",
-      "& + .MuiSwitch-track": {
-        opacity: 1,
-        backgroundColor: theme.palette.mode === "dark" ? "#177ddc" : "#14D249",
-      },
-    },
-  },
-  "& .MuiSwitch-thumb": {
-    boxShadow: "0 2px 4px 0 rgb(0 35 11 / 20%)",
-    width: 14, // increased width for larger thumb
-    height: 14, // increased height for larger thumb
-    borderRadius: 7, // adjusted to keep thumb circular
-    transition: theme.transitions.create(["width"], {
-      duration: 200,
-    }),
-  },
-  "& .MuiSwitch-track": {
-    borderRadius: 20 / 2, // adjusted to match new height
-    opacity: 1,
-    backgroundColor:
-      theme.palette.mode === "dark"
-        ? "rgba(255,255,255,.35)"
-        : "rgba(0,0,0,.25)",
-    boxSizing: "border-box",
-  },
-}));
+import { updateTA } from "../../redux/features/taModule/taSlice";
+import { updateCoach } from "../../redux/features/CoachModule/coachSlice";
+import { openCoachScheduleSession } from "../../redux/features/CoachModule/coachSchedule";
 
 const DynamicTable = ({
   headers,
@@ -111,6 +37,8 @@ const DynamicTable = ({
     }))
   );
 
+  const [currentPage, setCurrentPage] = useState(1);
+
   useEffect(() => {
     setData(
       initialData.map((item) => ({
@@ -118,9 +46,9 @@ const DynamicTable = ({
         is_active: item.is_active !== undefined ? item.is_active : 0,
       }))
     );
+    setCurrentPage(1); // Reset to first page whenever initialData changes
   }, [initialData]);
 
-  const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const totalPages = Math.ceil(data.length / itemsPerPage);
   const currentData = data.slice(
@@ -129,7 +57,7 @@ const DynamicTable = ({
   );
   const navigate = useNavigate();
   const dispatch = useDispatch();
-console.log("componentName", componentName);
+
   const handlePageChange = (event, pageNumber) => {
     setCurrentPage(pageNumber);
   };
@@ -138,36 +66,50 @@ console.log("componentName", componentName);
     console.log("Deleting item with id:", id);
   };
 
-  const handleView = (type, id) => {
-    // console.log("ID handleview : ", id);
-    console.log("component name is",componentName);
-    if(componentName=== "TAMAPPING"){
-    if (type === "students") {
-      navigate(`/active-students/${id}`); // Append id as a parameter
-    } else if (type === "batches") {
-      navigate(`/active-batches/${id}`); // Append id as a parameter
-    } else if (type === "view report") {
-      navigate(`/view-report/${id}`); // Append id as a parameter
-    }
-  }else{
-    if (type === "students") {
-      navigate(`/active-Coach-students/${id}`); // Append id as a parameter
-    } else if (type === "batches") {
-      navigate(`/active-Coach-batches/${id}`); // Append id as a parameter
-    }
-  }
+  const handleCalender = (type, id, taName) => {
+    //         // Implement view functionality here based on type ('students' or 'batches')
+
+    //         console.log(`Viewing ${type} for item with id:`, id);
+    console.log("COMPONENTNAME : ", componentName);
+    if (componentName === "COACHAVAILABLE") {
+      navigate(`/coach-calender/${taName}/${id}`);
+    } else if (componentName === "TAAVAILABLE")
+      navigate(`/ta-calendar/${taName}/${id}`);
   };
 
-  const handlePopup = (id, name) => {
-    console.log("ID handlePopup : ", id, name);
-    const data = {
-      id, name
+  const handleView = (type, id) => {
+    // console.log("ID handleview : ", id);
+    console.log("component name is", componentName);
+    if (componentName === "TAMAPPING") {
+      if (type === "students") {
+        navigate(`/active-students/${id}`); // Append id as a parameter
+      } else if (type === "batches") {
+        navigate(`/active-batches/${id}`); // Append id as a parameter
+      } else if (type === "view report") {
+        navigate(`/view-report/${id}`); // Append id as a parameter
+      }
+    } else {
+      if (componentName === "COACHMAPPING") {
+        if (type === "students") {
+          navigate(`/active-Coach-students/${id}`); // Append id as a parameter
+        } else if (type === "batches") {
+          navigate(`/active-Coach-batches/${id}`); // Append id as a parameter
+        }
+      }
     }
-    dispatch(openScheduleSession(data));
-  }
+  };
+
+  const handlePopup = (id, name, timezone) => {
+    const data = { id, name, timezone };
+    if (componentName === "TAMAPPING") {
+      dispatch(openScheduleSession(data));
+    } else {
+      if (componentName === "COACHMAPPING")
+        dispatch(openCoachScheduleSession(data));
+    }
+  };
 
   const handleToggle = (id) => {
-    console.log("id : ", id);
     const updatedData = data.map((item) =>
       item.id === id
         ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
@@ -182,9 +124,12 @@ console.log("componentName", componentName);
       case "MANAGETA":
         dispatch(updateTA({ id, data: requestData }));
         break;
-      case "TAMAPPING":
-        console.log("TA MAPPING : ", id, requestData);
-        // dispatch(updateTA({ id, data: requestData }));
+      case "MANAGECOACH":
+        dispatch(updateCoach({ id, data: requestData }));
+        break;
+      case "WOLCATEGORY":
+        console.log("WOL Categories : ", id, requestData);
+        dispatch(activeDeactiveWOLCategory(id));
         break;
       default:
         console.warn(`No API call defined for component: ${componentName}`);
@@ -194,9 +139,9 @@ console.log("componentName", componentName);
 
   const getColorForAvailability = (availability) => {
     switch (availability) {
-      case "Active":
+      case "available":
         return "#06DD0F";
-      case "On Leave":
+      case "on leave":
         return "#F48606";
       case "Inactive":
         return "#808080";
@@ -209,9 +154,10 @@ console.log("componentName", componentName);
       <table>
         <thead className="tableHead">
           <tr>
-            {headers.map((header, index) => (
-              <th key={index}>{header}</th>
-            ))}
+            {headers.map(
+              (header, index) =>
+                header !== "timezone" && <th key={index}>{header}</th>
+            )}
           </tr>
         </thead>
         <tbody className="tableBody">
@@ -228,7 +174,20 @@ console.log("componentName", componentName);
                 <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                 {Object.keys(item).map((key, idx) => {
                   // {console.log("KEY : ", key)}
-                  if (key === "Active_Students") {
+                  if (key === "Availability") {
+                    return (
+                      <td
+                        key={idx}
+                        style={{
+                          color: getColorForAvailability(item[key]),
+                          fontFamily: "Regular",
+                          letterSpacing: "0.8px",
+                        }}
+                      >
+                        {item[key]}
+                      </td>
+                    );
+                  } else if (key === "Active_Students") {
                     return (
                       <td key={idx}>
                         {item[key]}{" "}
@@ -256,7 +215,11 @@ console.log("componentName", componentName);
                         </CustomButton>
                       </td>
                     );
-                  } else if (key !== "id" && key !== "is_active") {
+                  } else if (
+                    key !== "id" &&
+                    key !== "is_active" &&
+                    key !== "timezone"
+                  ) {
                     // Check if item[key] is an object, and handle accordingly
                     if (typeof item[key] === "object" && item[key] !== null) {
                       // Render a string representation or a relevant property of the object
@@ -344,10 +307,29 @@ console.log("componentName", componentName);
                             variant="outlined"
                             color="secondary"
                             startIcon={<CalendarMonthIcon />}
-                            onClick={() => handlePopup(item.id, item.name)}
+                            onClick={() =>
+                              handlePopup(item.id, item.name, item.timezone)
+                            }
                           >
                             Schedule
                           </CalenderButton>
+                        );
+                      }
+                      if (button.type === "calender") {
+                        return (
+                          <td key={idx}>
+                            {/* {item[key]}{" "} */}
+                            <CustomButton
+                              variant="outlined"
+                              color="secondary"
+                              endIcon={<CallMadeOutlinedIcon />}
+                              onClick={() =>
+                                handleCalender("Calendar", item.id, item.taName)
+                              }
+                            >
+                              Check
+                            </CustomButton>
+                          </td>
                         );
                       }
 
@@ -415,4 +397,82 @@ console.log("componentName", componentName);
   );
 };
 
+const CustomButton = styled(Button)(({ theme }) => ({
+  borderRadius: "20px",
+  border: "1px solid #F56D3B",
+  color: "#F56D3B",
+  padding: "8px 16px", // Add padding for horizontal and vertical spacing
+  margin: "0 8px", // Add horizontal margin between buttons
+  textTransform:'none',
+  "&:hover": {
+    backgroundColor: "#F56D3B",
+    color: "#fff",
+    borderColor: "#F56D3B",
+  },
+  "&.active": {
+    backgroundColor: "#F56D3B",
+    color: "#fff",
+  },
+}));
+
+const CalenderButton = styled(Button)(({ theme }) => ({
+  borderRadius: "20px",
+  border: "none",
+  color: "#F56D3B",
+  backgroundColor: "#FEEBE3",
+  transition: "all 0.3s ease", // Corrected transition syntax
+  "&:hover": {
+    backgroundColor: "#FEEBE3",
+    color: "#F56D3B",
+    border: "none", // Corrected border removal syntax
+  },
+  "&:focus": {
+    outline: "none", // Remove default focus outline if desired
+  },
+}));
+
+const AntSwitch = styled(Switch)(({ theme }) => ({
+  width: 36, // adjust width as needed
+  height: 20, // increased height
+  padding: 0,
+  marginTop: 5,
+  display: "flex",
+  "&:active": {
+    "& .MuiSwitch-thumb": {
+      width: 17, // adjust width to keep thumb proportional
+    },
+    "& .MuiSwitch-switchBase.Mui-checked": {
+      transform: "translateX(16px)", // adjust translation to match increased height
+    },
+  },
+  "& .MuiSwitch-switchBase": {
+    padding: 3, // increased padding for larger height
+    "&.Mui-checked": {
+      transform: "translateX(18px)", // adjust translation to match increased height
+      color: "#fff",
+      "& + .MuiSwitch-track": {
+        opacity: 1,
+        backgroundColor: theme.palette.mode === "dark" ? "#177ddc" : "#14D249",
+      },
+    },
+  },
+  "& .MuiSwitch-thumb": {
+    boxShadow: "0 2px 4px 0 rgb(0 35 11 / 20%)",
+    width: 14, // increased width for larger thumb
+    height: 14, // increased height for larger thumb
+    borderRadius: 7, // adjusted to keep thumb circular
+    transition: theme.transitions.create(["width"], {
+      duration: 200,
+    }),
+  },
+  "& .MuiSwitch-track": {
+    borderRadius: 20 / 2, // adjusted to match new height
+    opacity: 1,
+    backgroundColor:
+      theme.palette.mode === "dark"
+        ? "rgba(255,255,255,.35)"
+        : "rgba(0,0,0,.25)",
+    boxSizing: "border-box",
+  },
+}));
 export default DynamicTable;

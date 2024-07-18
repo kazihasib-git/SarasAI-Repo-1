@@ -16,21 +16,19 @@ const Students = () => {
         setInput(value);
     };
 
-    // Flag to use dummy data or API data
-    const useDummyData = true;
+    const useDummyData = false;
 
     const { data: apiData, error, isLoading } = useGetStudentsQuery();
 
     useEffect(() => {
-        console.log("DATA : ",apiData)
         const dataToUse = useDummyData ? studentDummyDatadata : apiData;
         if (dataToUse) {
             const transformedData = dataToUse.map(item => ({
                 id: item.id,
                 Name: item.name,
-                User: item.user_id,
-                Email: item.email,
-                'Phone Number': item.phone,
+                "Lms Id": item.student_lms_id,
+                'Acedemic Term': item.academic_term,
+                Batch: item.primary_phone,
             }));
             setStudents(transformedData);
         }
@@ -40,11 +38,12 @@ const Students = () => {
         return <div>Loading....</div>;
     }
 
-    // if (error && !useDummyData) {
-    //     return <div>Error Loading students</div>;
-    // }
+    const headers = ['ID', 'Name', 'Lms Id', 'Acedemic Term', 'Batch'];
 
-    const headers = ['ID',  'Name', 'User', 'Email', 'Phone Number'];
+    // Filter students based on the search input
+    const filteredStudents = students.filter(student => 
+        student.Name.toLowerCase().includes(input.toLowerCase())
+    );
 
     return (
         <>
@@ -54,13 +53,18 @@ const Students = () => {
                 <p style={{ fontSize: "44px", justifyContent: "center" }}>Students</p>
                 <div className='inputBtnContainer'>
                     <div className="inputContainer">
-                        <input className="inputField" placeholder="Search Here ..." value={input} onChange={(e) => handleChange(e.target.value)} />
+                        <input 
+                            className="inputField" 
+                            placeholder="Search Here ..." 
+                            value={input} 
+                            onChange={(e) => handleChange(e.target.value)} 
+                        />
                     </div>
                 </div>
             </Box>
             <DynamicTable
                 headers={headers}
-                initialData={students}
+                initialData={filteredStudents}
                 componentName={"STUDENTS"}
             />
         </>
