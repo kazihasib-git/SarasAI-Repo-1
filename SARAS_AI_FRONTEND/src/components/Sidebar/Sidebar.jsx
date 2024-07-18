@@ -176,17 +176,55 @@ const Sidebar = () => {
             </li>
           </ul>
         </li>
-        <Divider
-          variant="middle"
-          component="li"
-          sx={{ backgroundColor: "white", opacity: "0.3" }}
-        />
+
         {/* <li className='nav-item'>
           <Link className={`nav-link ${activeLink === '/courses' ? 'active' : 'collapsed'}`} to={'/courses'} onClick={() => handleLinkClick('/courses')}>
             <i className='bi bi-book'></i>
             <span>Courses</span>
           </Link>
         </li> */}
+        <Divider
+          variant="middle"
+          component="li"
+          sx={{ backgroundColor: "white", opacity: "0.3" }}
+        />
+          <li className="nav-item">
+  <a
+    className={`nav-link ${activeLink === "/users" ? "active" : "collapsed"}`}
+    data-bs-target="#users-nav"
+    data-bs-toggle="collapse"
+    href="#"
+    onClick={() => handleLinkClick("/users")}
+  >
+    <i className="bi bi-person"></i>
+    <span className="SideHeader">Users</span>
+    <i className="bi bi-chevron-down ms-auto"></i>
+  </a>
+  <ul
+    id="users-nav"
+    className={`nav-content collapse ${activeLink.startsWith("/users-") ? "show" : ""}`}
+    data-bs-parent="#sidebar-nav"
+  >
+    <li>
+      <Link
+        to="/students"
+        className={activeLink === "/students" ? "active-link" : ""}
+        onClick={() => handleLinkClick("/students")}
+      >
+        <span className="SideSubHeading">Students</span>
+      </Link>
+    </li>
+    <li>
+      <Link
+        to="/batches"
+        className={activeLink === "/batches" ? "active-link" : ""}
+        onClick={() => handleLinkClick("/batches")}
+      >
+        <span className="SideSubHeading">Batches</span>
+      </Link>
+    </li>
+  </ul>
+</li>
         <Divider
           variant="middle"
           component="li"
@@ -243,33 +281,7 @@ const Sidebar = () => {
           </ul>
         </li>
         <Divider variant="middle" component="li" sx={{ backgroundColor: "white", opacity: "0.3" }} />
-        <li className="nav-item">
-          <Link
-            to="/students"
-            className={`nav-link ${activeLink === "/students" ? "active-link" : "collapsed"
-              }`}
-            onClick={() => handleLinkClick("/students")}
-          >
-            <i className="bi bi-people"></i>
-            <span className="SideHeader">Students</span>
-          </Link>
-        </li>
-        <Divider
-          variant="middle"
-          component="li"
-          sx={{ backgroundColor: "white", opacity: "0.3" }}
-        />
-        <li className="nav-item">
-          <Link
-            to="/batches"
-            className={`nav-link ${activeLink === "/batches" ? "active-link" : ""
-              }`}
-            onClick={() => handleLinkClick("/batches")}
-          >
-            <i className="bi bi-grid-3x3-gap"></i>
-            <span className="SideHeader">Batches</span>
-          </Link>
-        </li>
+      
       </ul>
     </aside>
   );

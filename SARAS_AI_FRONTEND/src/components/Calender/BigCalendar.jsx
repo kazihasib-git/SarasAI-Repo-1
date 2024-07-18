@@ -76,8 +76,8 @@ const CalendarComponent = ({ eventsList, addEvent, slotData }) => {
 
   return (
     <>
-      <Header />
-      <Sidebar />
+      {/* <Header />
+      <Sidebar /> */}
       <div style={{ height: 700 }}>
         <Calendar
           localizer={localizer}

@@ -67,8 +67,6 @@ const WOLOptionsConfig = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [edit, setEdit] = useState(false);
-    const [minScale, setMinScale] = useState(0);
-    const [maxScale, setMaxScale] = useState(0);
     const { optionsConfigData } = useSelector((state) => state.wol);
     const { register, handleSubmit, control, formState: { errors }, reset } = useForm({
         defaultValues: {
@@ -77,21 +75,18 @@ const WOLOptionsConfig = () => {
             details: [],
         }
     });
-    const { fields, append, remove } = useFieldArray({
+    const { fields, append } = useFieldArray({
         control,
         name: 'details',
     });
 
     useEffect(() => {
         // dispatch(getWOLOptionConfig());
-    }, [dispatch])
+    }, [dispatch]);
 
     useEffect(() => {
-        console.log("useEffect !")
         if (optionsConfigData.data && optionsConfigData.data.length > 0) {
             const { minimum_scale, maximum_scale, get_config_details } = optionsConfigData.data[0];
-            setMinScale(minimum_scale);
-            setMaxScale(maximum_scale);
             reset({
                 minScale: minimum_scale,
                 maxScale: maximum_scale,
@@ -106,48 +101,26 @@ const WOLOptionsConfig = () => {
     }, [optionsConfigData, reset]);
 
     const handleEdit = () => {
-        console.log("handleEdit")
         reset({
             minScale: 0,
             maxScale: 0,
             details: [],
         });
-        setMinScale(0);
-        setMaxScale(0);
         setEdit(false);
     };
 
     const onHandleSubmit = (data) => {
-        console.log("onSubmit")
-
         if (edit) {
-            console.log("handleEdit")
-            reset({
-                minScale: 0,
-                maxScale: 0,
-                details: [],
-            });
-            setMinScale(0);
-            setMaxScale(0);
-            setEdit(false);
+            handleEdit();
         } else {
-            console.log("not edit ")
             setEdit(true);
-
-            // setMinScale(data.minScale);
-            // setMaxScale(data.maxScale);
-
-            // Initialize form fields for details
             for (let i = data.minScale; i <= data.maxScale; i++) {
                 append({ point: i, text: '', icon: '' });
             }
-
-
         }
     };
 
     const onFormSubmit = (data) => {
-        console.log("onForm Submit")
         const { minScale, maxScale, details } = data;
         const payload = {
             minimum_scale: minScale,
@@ -158,14 +131,9 @@ const WOLOptionsConfig = () => {
                 icon: detail.icon,
             })),
         };
-
         dispatch(addWOLOptionConfig(payload));
-        setEdit(false); // Exit edit mode after submit
+        setEdit(false);
     };
-
-    console.log("Edit", edit)
-    console.log("minScale", minScale)
-    console.log("maxScale", maxScale)
 
     return (
         <>
@@ -214,7 +182,7 @@ const WOLOptionsConfig = () => {
                     Options Scale
                 </Typography>
 
-                <form noValidate onSubmit={edit ? handleEdit : handleSubmit(onHandleSubmit)}>
+                <form noValidate onSubmit={handleSubmit(onHandleSubmit)}>
                     <Grid container spacing={2}>
                         <Grid item xs={12} md={4}>
                             <Controller
@@ -226,7 +194,7 @@ const WOLOptionsConfig = () => {
                                         label="Minimum Scale"
                                         value={field.value}
                                         onChange={field.onChange}
-                                        errors={errors} // Ensure to pass errors correctly
+                                        errors={errors}
                                         options={scaleOptions}
                                     />
                                 )}
@@ -242,37 +210,24 @@ const WOLOptionsConfig = () => {
                                         label="Maximum Scale"
                                         value={field.value}
                                         onChange={field.onChange}
-                                        errors={errors} // Ensure to pass errors correctly
+                                        errors={errors}
                                         options={scaleOptions}
                                     />
                                 )}
                             />
                         </Grid>
                         <Grid item xs={12} md={4}>
-                            {edit ? (
-                                <CustomButton
-                                    type="submit"
-                                    active={true}
-                                    variant="contained"
-                                    sx={{ borderRadius: "50px", padding: "18px 30px", margin: "0 8px" }}
-                                >
-                                    Edit
-                                </CustomButton>
-                            ) : (
-                                <CustomButton
-                                    type="submit"
-                                    active={true}
-                                    variant="contained"
-                                    sx={{ borderRadius: "50px", padding: "18px 30px", margin: "0 8px" }}
-                                >
-                                    Submit
-                                </CustomButton>
-
-                            )}
+                            <CustomButton
+                                type="submit"
+                                active={true}
+                                variant="contained"
+                                sx={{ borderRadius: "50px", padding: "18px 30px", margin: "0 8px" }}
+                            >
+                                {edit ? "Edit" : "Submit"}
+                            </CustomButton>
                         </Grid>
                     </Grid>
                 </form>
-
             </Container>
 
             {edit && (
