@@ -269,12 +269,20 @@ const Schedule = ({ componentName }) => {
       }
     }
 
-    if (toDate) {
-      if (toDate < fromDate) {
-        alert('To Date should be greater than from Date!')
-      }
-    }
+    if (!fromDate || !toDate || !fromTime || !toTime) {
+      alert('Please fill in all fields');
+      return;
+  }
 
+  if (toDate < fromDate) {
+      alert('To Date should be greater than From Date!');
+      return;
+  }
+
+  if (toTime < fromTime) {
+      alert('To Time should be greater than From Time!');
+      return;
+  }
     let weeksArray = Array(7).fill(0);
     if (repeat === "recurring") {
       selectedDays.forEach((day) => {

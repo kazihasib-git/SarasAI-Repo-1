@@ -67,13 +67,19 @@ const UploadBox = styled(Box)(({ theme }) => ({
   }
 }));
 
-const LinkActivityPopup = ({open,handleClose}) => {
+const LinkActivityPopup = ({ open, handleClose }) => {
+  
   const dispatch = useDispatch();
   const { handleSubmit, control, formState: { errors } } = useForm();
   const [activityType, setActivityType] = useState("");
   const [selectedSessionType, setSelectedSessionType] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
   const [askCoach, setAskCoach] = useState(false);
+
+  const onSubmit = (data) => {
+    console.log(data); // Example: Log form data
+    handleClose();
+  };
 
   const activityOptions = [
     { value: "video", label: "Video" },
@@ -114,10 +120,7 @@ const LinkActivityPopup = ({open,handleClose}) => {
     { value: "EST", label: "Eastern Standard Time" },
   ];
 
-  const onSubmit = (data) => {
-    console.log(data); // Example: Log form data
-    handleClose();
-  };
+  
 
   const contentComponent = (
     <Grid
@@ -394,20 +397,21 @@ const LinkActivityPopup = ({open,handleClose}) => {
   );
 
   const actions = (
-    <CustomButton
-      onClick={onSubmit}
-      backgroundColor="#F56D3B"
-      borderColor="#F56D3B"
-      color="#FFFFFF"
-    >
-      Submit
-    </CustomButton>
+    <>
+      <CustomButton
+        onClick={handleSubmit(onSubmit)}
+        backgroundColor="#F56D3B"
+        borderColor="#F56D3B"
+        color="#FFFFFF" >
+        Submit
+      </CustomButton>
+    </>
   );
 
   return (
     <ReusableDialog
       open={open}
-      handleClose={handleSubmit(onSubmit)}
+      handleClose={handleClose}
       title="Link Activity"
       content={contentComponent}
       actions={actions}

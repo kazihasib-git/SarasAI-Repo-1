@@ -119,6 +119,7 @@ const CreateNewSlot = ({ addEvent }) => {
         }
 
 
+
         formData.slot_date = fromDate;
         formData.from_time = fromTime;
         formData.to_time = toTime;
