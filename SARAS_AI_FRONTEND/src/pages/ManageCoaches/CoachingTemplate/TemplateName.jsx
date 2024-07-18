@@ -11,42 +11,47 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import AddActivity from "./TemplateModulePopup/AddActivity";
 import EditModule from "./TemplateModulePopup/EditModule";
+import LinkActivityPopup from "./TemplateModulePopup/LinkActivity"; // Import the new component
+import PrerequisitesPopup from "./TemplateModulePopup/Prerequisites";
 
 const TemplateName = () => {
   const { openModulePopUp, openActivityPopUp, selectedCoachTemplate, coachTemplates} = useSelector((state) => state.coachTemplate);
   const [isActive, setIsActive] = useState(true);
   const [modulesData, setModulesData] = useState([]);
+  const [linkActivityPopupOpen, setLinkActivityPopupOpen] = useState(false); // State for controlling popup
+  const [prerequisitesPopupOpen, setPrerequisitesPopupOpen] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(()=>{
     dispatch(removeSelectedModule());
   },[dispatch]);
 
-  useEffect(()=>{
-    if(coachTemplates && coachTemplates.length){
-      const currentTemplateData = coachTemplates.find((template) => template.id === selectedCoachTemplate);
+  // useEffect(()=>{
+  //   if(coachTemplates && coachTemplates.length){
+  //     const currentTemplateData = coachTemplates.find((template) => template.id === selectedCoachTemplate);
 
-      if(currentTemplateData && currentTemplateData.modules.length){
-        const tranformData = currentTemplateData.modules.map((item)=>({
-            id: module.id,
-            module_name : item.module_name,
-            is_active : item.is_active,
-            activities : item.activities.map((property)=>({
-              id: property.id,
-              "Activity Name": property.activity_name,
-              "Due Date": property.due_date,
-              Activity: property.activity_type.type_name,
-              Points: property.points,
-              Prerequisites: "Activity 1, Activity 2",
-              "After Due Date": property.after_due_date,
-              is_active: property.is_active
-            }))    
-        }));
-        setModulesData(tranformData);
-      }
-    }
-  },[coachTemplates]);
+  //     if(currentTemplateData && currentTemplateData.modules.length){
+  //       const tranformData = currentTemplateData.modules.map((item)=>({
+  //           id: module.id,
+  //           module_name : item.module_name,
+  //           is_active : item.is_active,
+  //           activities : item.activities.map((property)=>({
+  //             id: property.id,
+  //             "Activity Name": property.activity_name,
+  //             "Due Date": property.due_date,
+  //             Activity: property.activity_type.type_name,
+  //             Points: property.points,
+  //             Prerequisites: "Activity 1, Activity 2",
+  //             "After Due Date": property.after_due_date,
+  //             is_active: property.is_active
+  //           }))    
+  //       }));
+  //       setModulesData(tranformData);
+  //     }
+  //   }
+  // },[coachTemplates]);
 
+  
   const handleModule = () => {
     dispatch(openTemplateModulePopup());
   };
@@ -58,6 +63,23 @@ const TemplateName = () => {
 
   const handleEditModule = () => {
     dispatch(openEditModulePopup());
+  };
+
+  const openLinkActivityPopup = () => {
+    setLinkActivityPopupOpen(true);
+  };
+
+  const closeLinkActivityPopup = () => {
+    console.log("Closing Link Activity Popup");
+    setLinkActivityPopupOpen(false);
+  };
+  const openPrerequisitesPopup = () => {
+    setPrerequisitesPopupOpen(true);
+  };
+
+  const closePrerequisitesPopup = () => {
+    console.log("Closing Prerequisites Popup");
+    setPrerequisitesPopupOpen(false);
   };
 
   const headers = [
@@ -118,7 +140,6 @@ const TemplateName = () => {
       "After Due Date": "Late Submission",
     },
   ];
-  // const dummyData = [];
 
   const actionButtons = [
     {
@@ -130,6 +151,14 @@ const TemplateName = () => {
         console.log("CLICKED : ", id);
       },
     },
+    {
+      type: "prerequisites", // Add a new action type for prerequisites
+      onClick: openPrerequisitesPopup, // Set the function to open the prerequisites popup
+    },
+    {
+      type: "linkactivity",
+      onClick: openLinkActivityPopup,
+    }
   ]; // Define your action buttons if any
 
   return (
@@ -152,11 +181,11 @@ const TemplateName = () => {
           </button>
         </div>
       </Box>
-      {!modulesData || modulesData.length === 0 ? (
-        <div>{/* <p>No Data Available</p> */}</div>
+      {!dummyData || dummyData.length === 0 ? (
+        <div><p>No Data Available</p></div>
       ) : (
         <>
-        {modulesData && modulesData.map((module)=>(
+        {/* {modulesData && modulesData.map((module)=>( */}
         <>
           <Box
             display={"flex"}
@@ -165,11 +194,11 @@ const TemplateName = () => {
             alignItems={"center"}
           >
             <p style={{ fontSize: "24px", justifyContent: "center" }}>
-              {module.module_name}
+              {/* {module.module_name} */} Template Name
               <span
                 style={{
                   borderRadius: "50px",
-                  backgroundColor: module.is_active ? "#14D249" : "red",
+                  backgroundColor: isActive ? "#14D249" : "red",
                   color: "white",
                   padding: "3px 10px",
                   marginLeft: "10px",
@@ -194,18 +223,22 @@ const TemplateName = () => {
 
           <TemplateModuleTable
             headers={headers}
-            initialData={Array.isArray(module.activities) ? module.activities : []}
+            initialData={Array.isArray(/*module.activities*/dummyData) ? /*module.activities*/ dummyData : []}
             actionButtons={actionButtons}
             componentName={"TemplateName"}
           />
         </>
-        ))}
+        
+        {/* )} */}
         </>
       )}
 
       {openModulePopUp && <AddModule />}
       {/* {openActivityPopUp && <AddActivity />} */}
       {openEditModulePopup && <EditModule />}
+      <LinkActivityPopup open={linkActivityPopupOpen} handleClose={closeLinkActivityPopup} />
+      <PrerequisitesPopup open={prerequisitesPopupOpen} handleClose={closePrerequisitesPopup}
+      />
     </>
   );
 };

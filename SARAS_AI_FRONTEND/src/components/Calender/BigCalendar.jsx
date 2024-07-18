@@ -59,19 +59,30 @@ const CalendarComponent = ({ eventsList, addEvent, slotData }) => {
   };
 
   const slotPropGetter = (date) => {
-    for (let i = 0; i < slots.length; i++) {
-      const slot = slots[i];
-      if (date >= slot.startDate && date <= slot.endDate) {
-        return {
-          style: {
-            backgroundColor: '#B0FC38',
-            opacity: 0.5,
-            border: '0px'
-          }
-        };
-      }
+    
+    const dateString = moment(date).format('YYYY-MM-DD');
+    const timeString = moment(date).format('HH:mm');
+
+  for (let i = 0; i < slots.length; i++) {
+    const slot = slots[i];
+    const slotDate = moment(slot.startDate).format('YYYY-MM-DD');
+    const slotStartTime = moment(slot.startDate).format('HH:mm');
+    const slotEndTime = moment(slot.endDate).format('HH:mm');
+
+
+    // Check if the date matches and the time is within the slot's range
+    if (dateString === slotDate && timeString >= slotStartTime && timeString < slotEndTime) {
+      return {
+        style: {
+          backgroundColor: '#B0FC38',
+          opacity: 0.5,
+          border: '0px'
+        }
+      };
     }
+  }
     return {};
+    
   };
 
   return (
@@ -90,6 +101,8 @@ const CalendarComponent = ({ eventsList, addEvent, slotData }) => {
           onSelectEvent={showSessionPopUp}
           step={30}
           selectable
+          views={{ week: true }} // Only show week view
+          defaultView={Views.WEEK} // Set default view to week
         />
       </div>
     </>

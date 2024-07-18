@@ -5,21 +5,22 @@ import {
   Switch,
   Pagination,
   Box,
-  Checkbox,
 } from "@mui/material";
-import CallMadeOutlinedIcon from "@mui/icons-material/CallMadeOutlined";
 import { styled } from "@mui/material/styles";
 import { useDispatch } from "react-redux";
-import editIcon from "../../../../assets/editIcon.png";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye } from "@fortawesome/free-solid-svg-icons";
+import LinkActivityPopup from "../TemplateModulePopup/LinkActivity";
+import PrerequisitesPopup from "../TemplateModulePopup/Prerequisites";
+import editIcon from "../../../../assets/editIcon.png";
+
 const CustomButton = styled(Button)(({ theme }) => ({
   borderRadius: "20px",
   border: "1px solid #F56D3B",
   color: "#F56D3B",
-  padding: "8px 16px", // Add padding for horizontal and vertical spacing
-  margin: "0 8px", // Add horizontal margin between buttons
+  padding: "8px 16px",
+  margin: "0 8px",
   "&:hover": {
     backgroundColor: "#F56D3B",
     color: "#fff",
@@ -32,23 +33,23 @@ const CustomButton = styled(Button)(({ theme }) => ({
 }));
 
 const AntSwitch = styled(Switch)(({ theme }) => ({
-  width: 36, // adjust width as needed
-  height: 20, // increased height
+  width: 36,
+  height: 20,
   padding: 0,
   marginTop: 5,
   display: "flex",
   "&:active": {
     "& .MuiSwitch-thumb": {
-      width: 17, // adjust width to keep thumb proportional
+      width: 17,
     },
     "& .MuiSwitch-switchBase.Mui-checked": {
-      transform: "translateX(16px)", // adjust translation to match increased height
+      transform: "translateX(16px)",
     },
   },
   "& .MuiSwitch-switchBase": {
-    padding: 3, // increased padding for larger height
+    padding: 3,
     "&.Mui-checked": {
-      transform: "translateX(18px)", // adjust translation to match increased height
+      transform: "translateX(18px)",
       color: "#fff",
       "& + .MuiSwitch-track": {
         opacity: 1,
@@ -58,15 +59,15 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
   },
   "& .MuiSwitch-thumb": {
     boxShadow: "0 2px 4px 0 rgb(0 35 11 / 20%)",
-    width: 14, // increased width for larger thumb
-    height: 14, // increased height for larger thumb
-    borderRadius: 7, // adjusted to keep thumb circular
+    width: 14,
+    height: 14,
+    borderRadius: 7,
     transition: theme.transitions.create(["width"], {
       duration: 200,
     }),
   },
   "& .MuiSwitch-track": {
-    borderRadius: 20 / 2, // adjusted to match new height
+    borderRadius: 20 / 2,
     opacity: 1,
     backgroundColor:
       theme.palette.mode === "dark"
@@ -108,6 +109,9 @@ const TemplateModuleTable = ({
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const [linkActivityPopupOpen, setLinkActivityPopupOpen] = useState(false);
+  const [prerequisitesPopupOpen, setPrerequisitesPopupOpen] = useState(false); // State for prerequisites popup
+
   const handlePageChange = (event, pageNumber) => {
     setCurrentPage(pageNumber);
   };
@@ -129,12 +133,27 @@ const TemplateModuleTable = ({
         break;
       case "TAMAPPING":
         console.log("TA MAPPING : ", id, requestData);
-        // dispatch(updateTA({ id, data: requestData }));
         break;
       default:
         console.warn(`No API call defined for component: ${componentName}`);
         break;
     }
+  };
+
+  const openLinkActivityPopup = () => {
+    setLinkActivityPopupOpen(true);
+  };
+
+  const closeLinkActivityPopup = () => {
+    setLinkActivityPopupOpen(false);
+  };
+
+  const openPrerequisitesPopup = () => {
+    setPrerequisitesPopupOpen(true);
+  };
+
+  const closePrerequisitesPopup = () => {
+    setPrerequisitesPopupOpen(false);
   };
 
   return (
@@ -147,7 +166,7 @@ const TemplateModuleTable = ({
             ))}
           </tr>
         </thead>
-        <tbody className="tableBody" >
+        <tbody className="tableBody">
           {currentData.length === 0 ? (
             <tr>
               <td colSpan={headers.length} style={{ textAlign: "center" }}>
@@ -176,7 +195,16 @@ const TemplateModuleTable = ({
                             textAlign: "center",
                           }}
                         >
-                          {value}
+                          <Button
+                            style={{ color: "#F56D3B" }}
+                            onClick={() =>
+                              key === "Prerequisites"
+                                ? openPrerequisitesPopup()
+                                : openLinkActivityPopup()
+                            }
+                          >
+                            {value}
+                          </Button>
                         </td>
                       );
                     } else if (key === "Activity" && value === "Video Name") {
@@ -189,7 +217,7 @@ const TemplateModuleTable = ({
                           />
                         </td>
                       );
-                    } else return <td key={idx}> {value}</td> ;
+                    } else return <td key={idx}> {value}</td>;
                   } else if (key !== "id" && key !== "is_active") {
                     if (typeof item[key] === "object" && item[key] !== null) {
                       return <td key={idx}>{JSON.stringify(item[key])}</td>;
@@ -301,6 +329,14 @@ const TemplateModuleTable = ({
           }}
         />
       </div>
+      <LinkActivityPopup
+        open={linkActivityPopupOpen}
+        handleClose={closeLinkActivityPopup}
+      />
+      <PrerequisitesPopup
+        open={prerequisitesPopupOpen}
+        handleClose={closePrerequisitesPopup}
+      />
     </div>
   );
 };
