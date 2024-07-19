@@ -4,6 +4,7 @@ import { Button, Grid } from "@mui/material";
 import CustomTextField from "../../../../components/CustomFields/CustomTextField";
 import { closeTemplateModulePopup, createCoachTemplateModule } from "../../../../redux/features/CoachModule/CoachTemplateSlice";
 import { useDispatch, useSelector } from "react-redux";
+
 const CustomButton = ({
   onClick,
   children,
@@ -38,12 +39,13 @@ const CustomButton = ({
     </Button>
   );
 };
-const AddModule = () => {
-    const dispatch = useDispatch()
-    const [moduleName, setModuleName] = useState("");
-    const { openModulePopUp, selectedCoachTemplate } = useSelector((state) => state.coachTemplate)
 
-    const content = (
+const AddModule = ({ selectedTemplateId }) => {
+  const dispatch = useDispatch();
+  const [moduleName, setModuleName] = useState("");
+  const { openModulePopUp } = useSelector((state) => state.coachTemplate);
+
+  const content = (
     <Grid
       container
       sx={{
@@ -51,7 +53,7 @@ const AddModule = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        textAlign: "center", // Add this line if needed
+        textAlign: "center",
       }}
     >
       <Grid item xs={12} sm={6}>
@@ -67,18 +69,19 @@ const AddModule = () => {
     </Grid>
   );
 
-  const handleSubmit = () =>{
-    if(moduleName){
-      const data ={
-          "template_id": selectedCoachTemplate,
-          "module_name": moduleName,
-          "is_active": true,
-          "updated_by":1,
-      }
+  const handleSubmit = () => {
+    if (moduleName) {
+      const data = {
+        template_id: selectedTemplateId,
+        module_name: moduleName,
+        is_active: true,
+        updated_by: 1,
+      };
       dispatch(createCoachTemplateModule(data));
       dispatch(closeTemplateModulePopup());
+      setModuleName(""); // Reset the input field
     }
-  }
+  };
 
   const actions = (
     <CustomButton
@@ -92,15 +95,13 @@ const AddModule = () => {
   );
 
   return (
-    <>
-      <ReusableDialog
-        open={openModulePopUp}
-        handleClose={() => dispatch(closeTemplateModulePopup())}
-        title="Add Module"
-        content={content}
-        actions={actions}
-      />
-    </>
+    <ReusableDialog
+      open={openModulePopUp}
+      handleClose={() => dispatch(closeTemplateModulePopup())}
+      title="Add Module"
+      content={content}
+      actions={actions}
+    />
   );
 };
 

@@ -3,7 +3,7 @@ import { Box, Grid, TextField, Button, MenuItem } from "@mui/material";
 import CustomTextField from "../../../../components/CustomFields/CustomTextField";
 import { styled } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { createCoachTemplate } from "../../../../redux/features/CoachModule/CoachTemplateSlice";
 
 const durations = [
@@ -64,9 +64,10 @@ const CoachTemplateForm = () => {
     };
 
     dispatch(createCoachTemplate(newTemplateData));
+    
     navigation("/template-name", { state: { newTemplateData } });
   };
-
+  
   const handleTemplateNameChange = (e) => {
     setTemplateName(e.target.value);
     const error = validateTemplateName(e.target.value);

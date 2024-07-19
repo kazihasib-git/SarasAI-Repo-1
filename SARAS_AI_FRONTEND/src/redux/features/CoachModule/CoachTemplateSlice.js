@@ -158,7 +158,6 @@ export const coachTemplateSlice = createSlice({
       .addCase(createCoachTemplate.fulfilled, (state, action) => {
         state.loading = false;
         state.newlyCreateTemplate = action.payload;
-        // state.selectedCoachTemplate = action.payload.data.id;
         state.template_name = action.payload.data.name;
       })
       .addCase(createCoachTemplate.rejected, (state, action) => {
@@ -187,7 +186,7 @@ export const coachTemplateSlice = createSlice({
       })
       .addCase(createCoachTemplateModule.fulfilled, (state, action) => {
         state.loading = false;
-        state.coachTemplates.push(action.payload.data);
+        state.modulesData.push(action.payload.data);
       })
       .addCase(createCoachTemplateModule.rejected, (state, action) => {
         state.loading = false;
@@ -201,11 +200,11 @@ export const coachTemplateSlice = createSlice({
       })
       .addCase(updateCoachTemplateModule.fulfilled, (state, action) => {
         state.loading = false;
-        const index = state.coachTemplates.findIndex(
-          (coachTemplate) => coachTemplate.id === action.payload.id
+        const index = state.modulesData.findIndex(
+          (module) => module.id === action.payload.id
         );
         if (index !== -1) {
-          state.coachTemplates[index] = action.payload;
+          state.modulesData[index] = action.payload;
         }
       })
       .addCase(updateCoachTemplateModule.rejected, (state, action) => {
@@ -220,7 +219,7 @@ export const coachTemplateSlice = createSlice({
       })
       .addCase(createCoachTemplateActivity.fulfilled, (state, action) => {
         state.loading = false;
-        state.coachTemplates.push(action.payload.data);
+        state.modulesData.push(action.payload.data);
       })
       .addCase(createCoachTemplateActivity.rejected, (state, action) => {
         state.loading = false;
