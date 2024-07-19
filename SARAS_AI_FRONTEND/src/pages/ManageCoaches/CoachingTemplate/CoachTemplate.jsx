@@ -2,10 +2,10 @@ import React, { useEffect, useState} from "react";
 import Header from "../../../components/Header/Header";
 import Sidebar from "../../../components/Sidebar/Sidebar";
 import { Box } from "@mui/material";
-import DynamicTable from "../../../components/CommonComponent/DynamicTable";
 import { closeCreateTemplateCoach, closeEditTemplateCoach, getAllCoachTemplates, openCreateTemplateCoach, openEditTemplateCoach, setSelectedCoachTemplate } from "../../../redux/features/CoachModule/CoachTemplateSlice";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import CoachTemplateTable from "./TemplateTable/CoachTemplateTable";
 
 
 const CoachTemplate = () => {
@@ -96,7 +96,7 @@ const CoachTemplate = () => {
 
   return (
     <>
-    <Box m="40px">
+    <Box m="20px">
       <Header />
       <Sidebar />
       <>
@@ -116,7 +116,7 @@ const CoachTemplate = () => {
             <p>No Data Available</p>
           </div>
         ) : (
-          <DynamicTable
+          <CoachTemplateTable
             headers={headers}
             initialData={coachTemplatesData}
             actionButtons={actionButtons}

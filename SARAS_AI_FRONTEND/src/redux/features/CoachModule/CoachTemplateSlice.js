@@ -78,6 +78,7 @@ const initialState = {
   templateId: null,
   createCoachTemplateOpen: false,
   editCoachTemplateOpen: false,
+  newlyCreateTemplate: null,
 };
 
 export const coachTemplateSlice = createSlice({
@@ -157,8 +158,8 @@ export const coachTemplateSlice = createSlice({
       })
       .addCase(createCoachTemplate.fulfilled, (state, action) => {
         state.loading = false;
-        state.coachTemplates.push(action.payload.data);
-        state.selectedCoachTemplate = action.payload.data.id;
+        state.newlyCreateTemplate = action.payload;
+        // state.selectedCoachTemplate = action.payload.data.id;
       })
       .addCase(createCoachTemplate.rejected, (state, action) => {
         state.loading = false;

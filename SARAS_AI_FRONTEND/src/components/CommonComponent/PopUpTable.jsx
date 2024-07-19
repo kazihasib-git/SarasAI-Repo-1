@@ -177,6 +177,8 @@ const PopUpTable = ({
                       </>
                     ) : header === "S. No." ? (
                       index + 1
+                    ) : typeof item[header] === "object" ? (
+                      JSON.stringify(item[header])
                     ) : (
                       item[header] ?? "N/A"
                     )}
@@ -196,5 +198,4 @@ const PopUpTable = ({
     </div>
   );
 };
-
 export default PopUpTable;

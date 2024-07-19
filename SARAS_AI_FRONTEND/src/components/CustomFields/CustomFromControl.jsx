@@ -9,7 +9,7 @@ const CustomFormControl = ({
   errors,
   options,
 }) => {
-  // const hasError = !!errors[name];
+  const hasError = !!errors[name];
  
   return (
 <FormControl variant="outlined" fullWidth>

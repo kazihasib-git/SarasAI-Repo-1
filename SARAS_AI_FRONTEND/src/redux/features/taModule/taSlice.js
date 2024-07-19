@@ -364,7 +364,7 @@ export const taSlice = createSlice({
     builder.addCase(getBatchMapping.fulfilled, (state, action) => {
       state.loading = false;
       // console.log("MAPPING PAYLOAD :", action.payload )
-      state.batchMapping = action.payload;
+      state.batchMapping = action.payload.batches;
     });
     builder.addCase(getBatchMapping.rejected, (state, action) => {
       state.loading = false;
@@ -390,6 +390,7 @@ export const taSlice = createSlice({
       state.loading = true;
     });
     builder.addCase(getAssignStudents.fulfilled, (state, action) => {
+      console.log("ACTION : ", action.payload)
       state.loading = false;
       state.assignedStudents = action.payload;
     });

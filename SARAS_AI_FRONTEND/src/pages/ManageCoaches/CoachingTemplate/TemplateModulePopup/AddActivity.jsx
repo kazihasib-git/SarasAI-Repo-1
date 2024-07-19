@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import ReusableDialog from "../../../../components/CustomFields/ReusableDialog";
 import { Button, Grid } from "@mui/material";
 import CustomTextField from "../../../../components/CustomFields/CustomTextField";
-import { closeTemplateActivityPopup } from "../../../../redux/features/CoachModule/CoachTemplateSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { closeTemplateActivityPopup } from "../../../../redux/features/CoachModule/CoachTemplateSlice";
 const CustomButton = ({
   onClick,
   children,
@@ -42,7 +42,11 @@ const AddActivity = () => {
   const dispatch = useDispatch();
   const [activityName, setActivityName] = useState("");
   const [activityType, setActivityType] = useState("");
-  const { openActivityPopUp, selectedModule } = useSelector((state) => state.coachTemplate);
+  const { openActivityPopUp, selectedModule } = useSelector((state) => {
+    // console.log("coachTemplate state:", state.coachTemplate);
+    return state.coachTemplate;
+  });
+  
   const content = (
     <Grid
       container
@@ -103,7 +107,8 @@ const AddActivity = () => {
         "created_by": null,
         "updated_by": null
     };
-
+    console.log("CLICKED");
+    dispatch(closeTemplateActivityPopup())
 
   };
 
@@ -122,7 +127,10 @@ const AddActivity = () => {
     <>
       <ReusableDialog
         open={openActivityPopUp}
-        handleClose={()=> dispatch(closeTemplateActivityPopup())}
+        handleClose={()=> {
+          console.log("dispatch(closeTemplateActivityPopup())", openActivityPopUp)
+          dispatch(closeTemplateActivityPopup())
+        }}
         title="Add Activity"
         content={content}
         actions={actions}

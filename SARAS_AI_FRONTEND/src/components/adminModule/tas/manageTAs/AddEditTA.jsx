@@ -62,15 +62,17 @@ const AddEditTA = ({ data }) => {
   const [phoneNumber, setPhoneNumber] = useState("");
 
   const dispatch = useDispatch();
-  const { successPopup, assignStudentOpen, assignBatchOpen } = useSelector((state) => state.taModule);
+  const { successPopup, assignStudentOpen, assignBatchOpen } = useSelector(
+    (state) => state.taModule
+  );
   const { timezones } = useSelector((state) => state.timezone);
 
   useEffect(() => {
-    dispatch(getTimezone())
-  }, [dispatch])
+    dispatch(getTimezone());
+  }, [dispatch]);
 
   useEffect(() => {
-    if(data){
+    if (data) {
       populateForm(data);
     }
   }, [data]);
@@ -80,7 +82,7 @@ const AddEditTA = ({ data }) => {
     setDateOfBirth(formattedDate);
     dispatch(accessTaName(data));
 
-    if(data.profile_picture){
+    if (data.profile_picture) {
       const blobUrl = base64ToBlobUrl(data.profile_picture);
       setSelectedImage(blobUrl);
     }
@@ -100,16 +102,16 @@ const AddEditTA = ({ data }) => {
       about_me: data.about_me,
     };
 
-    Object.entries(formValues).forEach(([key, value]) =>
-      setValue(key, value)
-    );
+    Object.entries(formValues).forEach(([key, value]) => setValue(key, value));
 
     setPhoneNumber(data.phone);
-  }
+  };
 
   const base64ToBlobUrl = (base64Data) => {
     const byteCharacters = atob(base64Data);
-    const byteNumbers = Array.from(byteCharacters, (char) => char.charCodeAt(0));
+    const byteNumbers = Array.from(byteCharacters, (char) =>
+      char.charCodeAt(0)
+    );
     const byteArray = new Uint8Array(byteNumbers);
     const blob = new Blob([byteArray], { type: "image/jpeg" });
     return URL.createObjectURL(blob);
@@ -126,10 +128,9 @@ const AddEditTA = ({ data }) => {
   const onSubmit = async (formData) => {
     // setTAName(formData.name);
 
-    const { email, time_zone, ...updatedFormData } = formData;
+    const { email, time_zone, phone, ...updatedFormData } = formData;
 
     updatedFormData.date_of_birth = dateOfBirth;
-    updatedFormData.phone = phoneNumber;
 
     if (selectedImage) {
       const base64Data = selectedImage.replace(
@@ -144,13 +145,13 @@ const AddEditTA = ({ data }) => {
         const updateRes = await dispatch(
           updateTA({ id: data.id, data: updatedFormData })
         ).unwrap();
-        console.log("UPDATE RES : ", updateRes)
+        console.log("UPDATE RES : ", updateRes);
         dispatch(openSuccessPopup());
         dispatch(accessTaName(updateRes));
       } else {
-
-        updatedFormData.email = email
-        updatedFormData.time_zone = time_zone
+        updatedFormData.email = email;
+        updatedFormData.time_zone = time_zone;
+        formData.phone = phoneNumber;
         const createRes = await dispatch(createTA(updatedFormData)).unwrap();
         dispatch(openSuccessPopup());
         dispatch(accessTaName(createRes.ta));
@@ -176,7 +177,7 @@ const AddEditTA = ({ data }) => {
           {data ? (
             <>
               <Grid item xs>
-                <Typography variant="h4" sx={{ mb: 4}}>
+                <Typography variant="h4" sx={{ mb: 4 }}>
                   Edit TA
                 </Typography>
               </Grid>
@@ -483,10 +484,8 @@ const AddEditTA = ({ data }) => {
                     options={genders}
                   />
                 )}
-                
               />
             </Grid>
-     
 
             <Grid item xs={12} sm={6} md={4}>
               <Controller
@@ -526,44 +525,43 @@ const AddEditTA = ({ data }) => {
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
-                    <Controller
-                        name="phone"
-                        control={control}
-                        rules={{ required: "Phone number is required" }}
-                        render={({ field }) => (
-                            <PhoneInput
-                                {...field}
-                                country={"in"}
-                                // containerStyle={{ width: "100%" }}
-                                
-                                inputStyle={{
-                                  width: "100%",
-                                  borderRadius: "50px",
-                                  borderColor: errors.phone ? "red" : "#D0D0EC",
-                                  outline: "none",
-                                  height: "60px",
-                                  // boxShadow: errors.phone ? "0 0 0 2px red" : "none",
-                              }}
-                              buttonStyle={{
-                                borderRadius: "50px 0 0 50px",
-                                borderColor: errors.phone ? "red" : "#D0D0EC",
-                                height: "60px",
-                                outline: "none",
-                                paddingLeft: "10px",
-                                // boxShadow: errors.phone ? "0 0 0 2px red" : "none",
-                            }}
-                            onFocus={(e) => e.target.style.borderColor = errors.phone ? "red" : "#D0D0EC"}
-                                onChange={field.onChange}
-                                
-                            />
-                        )}
-                    />
-                    {errors.phone && (
-                        <Typography variant="body2" color="error" style={{ marginTop: '8px' }}>
-                            {errors.phone.message}
-                        </Typography>
-                    )}
-                </Grid>
+              <Controller
+                name="phone"
+                control={control}
+                rules={{ required: "Phone number is required" }} // Setting validation rules
+                render={({ field }) => (
+                  <PhoneInput
+                    country={"in"}
+                    value={field.value} // Binding the value to the field value
+                    onChange={field.onChange} // Handling the onChange event
+                    containerStyle={{ width: "100%" }}
+                    inputStyle={{
+                      width: "100%",
+                      borderRadius: "50px",
+                      borderColor: errors.phone ? "red" : "#D0D0EC",
+                      outline: "none",
+                      height: "60px",
+                    }}
+                    buttonStyle={{
+                      borderRadius: "50px 0 0 50px",
+                      borderColor: errors.phone ? "red" : "#D0D0EC",
+                      height: "60px",
+                      outline: "none",
+                      paddingLeft: "10px",
+                    }}
+                  />
+                )}
+              />
+              {errors.phone && (
+                <Typography
+                  variant="body2"
+                  color="error"
+                  style={{ marginTop: "8px" }}
+                >
+                  {errors.phone.message}
+                </Typography>
+              )}
+            </Grid>
             <Grid item xs={12}>
               <CustomTextField
                 label="About Me"

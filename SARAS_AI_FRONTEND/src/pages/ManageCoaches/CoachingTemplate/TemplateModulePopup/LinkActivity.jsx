@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReusableDialog from "../../../../components/CustomFields/ReusableDialog";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
@@ -12,12 +12,13 @@ import {
   FormControl,
 } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
-import { styled } from "@mui/material/styles";
+import { useDispatch, useSelector } from "react-redux";
+import VideoUploadComponent from "./videoUpload/VideoUploadComponent";
 import CustomFormControl from "../../../../components/CustomFields/CustomFromControl";
 import CustomTextField from "../../../../components/CustomFields/CustomTextField";
 import CustomDateField from "../../../../components/CustomFields/CustomDateField";
 import CustomTimeField from "../../../../components/CustomFields/CustomTimeField";
+import { getActivityType } from "../../../../redux/features/ActivityType/activityTypeSlice";
 
 const CustomButton = ({
   onClick,
@@ -54,23 +55,13 @@ const CustomButton = ({
   );
 };
 
-const UploadBox = styled(Box)(({ theme }) => ({
-  border: "2px dashed #ccc",
-  borderRadius: "10px",
-  padding: "10px", // Reduced padding
-  textAlign: "center",
-  color: "#888",
-  cursor: "pointer",
-  marginTop: "10px",
-  '&:hover': {
-    borderColor: "#888",
-  }
-}));
-
 const LinkActivityPopup = ({ open, handleClose }) => {
-  
   const dispatch = useDispatch();
-  const { handleSubmit, control, formState: { errors } } = useForm();
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm();
   const [activityType, setActivityType] = useState("");
   const [selectedSessionType, setSelectedSessionType] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
@@ -80,20 +71,24 @@ const LinkActivityPopup = ({ open, handleClose }) => {
     console.log(data); // Example: Log form data
     handleClose();
   };
+  useEffect(() => {
+    dispatch(getActivityType());
+  }, [dispatch]);
 
-  const activityOptions = [
-    { value: "video", label: "Video" },
-    { value: "test", label: "Test" },
-    { value: "link", label: "Link" },
-    { value: "virtual meet", label: "Virtual Meet" },
-  ];
+  const { typeList } = useSelector((state) => state.activityType);
+
+  const activityOptions =
+    typeList?.map((type) => ({
+      value: type.type_name,
+      label: type.type_name.charAt(0).toUpperCase() + type.type_name.slice(1), // Capitalize the first letter of each type_name
+    })) || [];
 
   const assessmentOptions = [
     { value: "wheel_of_life", label: "Wheel of Life" },
     { value: "core_value", label: "Core Value" },
     { value: "belief", label: "Belief" },
   ];
-  
+
   const sessionTypes = [
     { value: "one-on-one", label: "One-on-one session" },
     { value: "group", label: "Group session" },
@@ -120,8 +115,6 @@ const LinkActivityPopup = ({ open, handleClose }) => {
     { value: "EST", label: "Eastern Standard Time" },
   ];
 
-  
-
   const contentComponent = (
     <Grid
       container
@@ -134,11 +127,17 @@ const LinkActivityPopup = ({ open, handleClose }) => {
         width: "100%",
       }}
     >
-      <Grid item xs={12} sm={6} md={6} style={{ margin: "10px 0px", width: "80%" }}>
+      <Grid
+        item
+        xs={12}
+        sm={6}
+        md={6}
+        style={{ margin: "10px 0px", width: "80%" }}
+      >
         <Controller
           name="activityName"
           control={control}
-          defaultValue="name"
+          defaultValue=""
           render={({ field }) => (
             <CustomFormControl
               label="Activity Type"
@@ -155,20 +154,16 @@ const LinkActivityPopup = ({ open, handleClose }) => {
         />
       </Grid>
 
-      {activityType === "video" && (
-        <Grid item xs={12} sm={6} md={6} style={{ width: "80%" }}>
-          <UploadBox>
-            <Typography>Drag and Drop the file</Typography>
-            <Typography>Or</Typography>
-            <Button variant="text" sx={{ color: "#F56D3B" }} component="span">
-              Browse File
-            </Button>
-          </UploadBox>
-        </Grid>
-      )}
+      {activityType === "videos" && <VideoUploadComponent />}
 
       {activityType === "link" && (
-        <Grid item xs={12} sm={6} md={6} style={{ margin: "5px 0px", width: "80%" }}>
+        <Grid
+          item
+          xs={12}
+          sm={6}
+          md={6}
+          style={{ margin: "5px 0px", width: "80%" }}
+        >
           <Controller
             name="link"
             control={control}
@@ -190,7 +185,13 @@ const LinkActivityPopup = ({ open, handleClose }) => {
         </Grid>
       )}
       {activityType === "test" && (
-        <Grid item xs={12} sm={6} md={6} style={{ margin: "5px 0px", width: "80%" }}>
+        <Grid
+          item
+          xs={12}
+          sm={6}
+          md={6}
+          style={{ margin: "5px 0px", width: "80%" }}
+        >
           <Controller
             name="assessment"
             control={control}
@@ -213,7 +214,13 @@ const LinkActivityPopup = ({ open, handleClose }) => {
 
       {activityType === "virtual meet" && (
         <>
-          <Grid item xs={12} sm={6} md={6} style={{ margin: "5px 0px", width: "80%" }}>
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={6}
+            style={{ margin: "5px 0px", width: "80%" }}
+          >
             <Controller
               name="virtualMeetLink"
               control={control}
@@ -234,7 +241,14 @@ const LinkActivityPopup = ({ open, handleClose }) => {
             />
           </Grid>
           <Grid item xs={12} style={{ margin: "5px 0px", width: "80%" }}>
-            <FormControl component="fieldset" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+            <FormControl
+              component="fieldset"
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+              }}
+            >
               <Controller
                 name="sessionType"
                 control={control}
@@ -267,16 +281,20 @@ const LinkActivityPopup = ({ open, handleClose }) => {
       )}
 
       {selectedSessionType === "one-on-one" && (
-        <Grid item xs={12} style={{ margin: "2px 0px", width: "80%", paddingTop:"2px" }}>
+        <Grid
+          item
+          xs={12}
+          style={{ margin: "2px 0px", width: "80%", paddingTop: "2px" }}
+        >
           <FormControlLabel
             control={
               <Checkbox
                 checked={askCoach}
                 onChange={(e) => setAskCoach(e.target.checked)}
                 sx={{
-                  color: 'black',
-                  '&.Mui-checked': {
-                    color: 'black',
+                  color: "black",
+                  "&.Mui-checked": {
+                    color: "black",
                   },
                 }}
               />
@@ -285,9 +303,15 @@ const LinkActivityPopup = ({ open, handleClose }) => {
           />
         </Grid>
       )}
-      {selectedSessionType === "group" && activityType === "virtual meet" &&  (
+      {selectedSessionType === "group" && activityType === "virtual meet" && (
         <>
-          <Grid item xs={12} sm={6} md={6} style={{ margin: "5px 0px", width: "80%" }}>
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={6}
+            style={{ margin: "5px 0px", width: "80%" }}
+          >
             <Controller
               name="coach"
               control={control}
@@ -307,7 +331,13 @@ const LinkActivityPopup = ({ open, handleClose }) => {
               )}
             />
           </Grid>
-          <Grid item xs={12} sm={6} md={6} style={{ margin: "5px 0px", width: "80%" }}>
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={6}
+            style={{ margin: "5px 0px", width: "80%" }}
+          >
             <Controller
               name="date"
               control={control}
@@ -331,45 +361,44 @@ const LinkActivityPopup = ({ open, handleClose }) => {
             <Grid container spacing={1}>
               {timeSlots.map((slot) => (
                 <Grid item xs={6} sm={4} key={slot.value}>
-                  <FormControlLabel
-                    control={<Checkbox />}
-                    label={slot.label}
-                  />
+                  <FormControlLabel control={<Checkbox />} label={slot.label} />
                 </Grid>
               ))}
             </Grid>
           </Grid>
-          <Grid container spacing={1} style={{ margin: "5px 0px", width: "80%" }}>
-          <Grid item xs={6}>
-            <Controller
-              name="fromTime"
-              control={control}
-              defaultValue=""
-              render={({ field }) => (
-                <CustomTimeField
-                  {...field}
-                  label="From Time"
-                  fullWidth
-                />
-              )}
-            />
+          <Grid
+            container
+            spacing={1}
+            style={{ margin: "5px 0px", width: "80%" }}
+          >
+            <Grid item xs={6}>
+              <Controller
+                name="fromTime"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <CustomTimeField {...field} label="From Time" fullWidth />
+                )}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <Controller
+                name="toTime"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <CustomTimeField {...field} label="To Time" fullWidth />
+                )}
+              />
+            </Grid>
           </Grid>
-          <Grid item xs={6}>
-            <Controller
-              name="toTime"
-              control={control}
-              defaultValue=""
-              render={({ field }) => (
-                <CustomTimeField
-                  {...field}
-                  label="To Time"
-                  fullWidth
-                />
-              )}
-            />
-          </Grid>
-        </Grid>
-          <Grid item xs={12} sm={6} md={6} style={{ margin: "5px 0px", width: "80%" }}>
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={6}
+            style={{ margin: "5px 0px", width: "80%" }}
+          >
             <Controller
               name="timezone"
               control={control}
@@ -402,7 +431,8 @@ const LinkActivityPopup = ({ open, handleClose }) => {
         onClick={handleSubmit(onSubmit)}
         backgroundColor="#F56D3B"
         borderColor="#F56D3B"
-        color="#FFFFFF" >
+        color="#FFFFFF"
+      >
         Submit
       </CustomButton>
     </>

@@ -12,7 +12,7 @@ import timezoneSliceReducer from './features/timezone/timezoneSlice';
 import coachReducer from './features/CoachModule/coachSlice';
 import coachAvailabilityReducer from './features/CoachModule/CoachAvailabilitySlice';
 import coachSchedulingReducer from './features/CoachModule/coachSchedule';
-
+import activityTypeReducer from './features/ActivityType/activityTypeSlice';
 const store = configureStore({
 
     reducer: {
@@ -26,6 +26,7 @@ const store = configureStore({
         coachModule : coachReducer,
         coachAvailability : coachAvailabilityReducer,
         coachScheduling : coachSchedulingReducer,
+        activityType : activityTypeReducer,
         [studentsApi.reducerPath]: studentsApi.reducer,
         [batchesApi.reducerPath]: batchesApi.reducer,
         [coursesApi.reducerPath]: coursesApi.reducer,
