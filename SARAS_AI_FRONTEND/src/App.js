@@ -71,6 +71,7 @@ import CoachCallRequest from "./pages/MODULE/coachModule/CoachCallRequest";
 import CoachMenuCalendar from "./pages/MODULE/coachModule/CoachMenuCalendar";
 import CoachCallRecord from "./pages/MODULE/coachModule/CoachCallRecord";
 import WOLTestConfigSelectQuestions from "./components/coachingTools/wheelOfLife/WOLTestConfigSelectQuestions";
+import WOLSelectQuestions from "./components/coachingTools/wheelOfLife/WOLSelectQuestions";
 const ROLES = {
   Teaching: 2001,
   Coaches: 1984,
@@ -228,6 +229,7 @@ function App() {
           path="schedule-calls"
           element={<ScheduledCalls page="Schedule Calls" />}
         />
+            <Route path="WolselectQuestions" element={<WOLSelectQuestions />} />
           </Route>
         </Route>
         

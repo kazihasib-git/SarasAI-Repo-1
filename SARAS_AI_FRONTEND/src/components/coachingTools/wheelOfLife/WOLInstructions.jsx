@@ -1,5 +1,5 @@
 import { Box, Button, Container, Typography, Paper, styled } from '@mui/material'
-import React, { useState,useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
@@ -9,7 +9,7 @@ import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css';
 import editIcon_White from '../../../assets/editIcon_White.png'
 import { Navigate } from 'react-router-dom'
-import {getLifeInstruction , editLifeInstruction} from '../../../redux/features/coachingTools/wol/wolSlice';
+import { getLifeInstruction, editLifeInstruction } from '../../../redux/features/coachingTools/wol/wolSlice';
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
     borderRadius: "50px",
@@ -30,17 +30,20 @@ const WOLInstructions = () => {
     const [editData, setEditData] = useState(false)
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const {  instructionData  } = useSelector((state) => state.wol);
-    const [ instruction, setInstruction] = useState("");
+    const { instructionData } = useSelector((state) => state.wol);
+    const [instruction, setInstruction] = useState("");
 
     const handleEditWOLInstructions = () => {
         setValue(instruction)
         setEditData(true)
     }
 
-    const handleUpdateWOLInstructions = async () => {
+    const handleUpdateWOLInstructions = () => {
         try {
-            await dispatch(editLifeInstruction({ message: value })).unwrap();
+            dispatch(editLifeInstruction({ message: value })).unwrap()
+            .then(() => {
+                dispatch(getLifeInstruction())
+            });
             setEditData(false)
         } catch (error) {
             console.log(error.message) //TODO: Show toast message
@@ -90,36 +93,36 @@ const WOLInstructions = () => {
             <Sidebar />
             <Box display="flex" justifyContent="space-between" marginTop={3} alignItems={"center"}>
                 <Box display="flex" alignItems="center" padding="16px">
-                <ArrowBackIosIcon
-                        style={{ fontSize: "25px", marginBottom: "16px", marginRight:"10px", cursor: "pointer"}}
+                    <ArrowBackIosIcon
+                        style={{ fontSize: "25px", marginBottom: "16px", marginRight: "10px", cursor: "pointer" }}
                         onClick={() => navigate(-1)}
                     />
-                    <p style={{ fontSize: "40px",fontWeight: 200 , justifyContent: "center" }}>
+                    <p style={{ fontSize: "40px", fontWeight: 200, justifyContent: "center" }}>
                         {editData ? "Edit Instructions" : "Wheel of Life Instructions"}
                     </p>
                 </Box>
-                    {!editData && (
-                    <div className='inputBtnContainer' style={{marginRight:'20px', paddingBottom : "16px"}}>
+                {!editData && (
+                    <div className='inputBtnContainer' style={{ marginRight: '20px', paddingBottom: "16px" }}>
                         <button className='buttonContainer'
-                            onClick={handleEditWOLInstructions} 
+                            onClick={handleEditWOLInstructions}
                         >
                             <img src={editIcon_White} backgroundColor='white' alt="" />
-                            <small style={{ fontSize: "16px" ,fontWeight: 700, marginLeft: "5px" }}>Edit</small>
+                            <small style={{ fontSize: "16px", fontWeight: 700, marginLeft: "5px" }}>Edit</small>
                         </button>
                     </div>
-                    )}
+                )}
             </Box>
-            <Container 
-                sx={{ 
-                    mt: 2, 
-                    mb: 2, 
-                    backgroundColor: 'white', 
+            <Box
+                sx={{
+                    mt: 2,
+                    mb: 2,
+                    backgroundColor: 'white',
                     borderRadius: 2,  // 10px border radius
-                    minHeight: 450, // Minimum height of 400px
-                    padding :2
+                    minHeight: 550, // Minimum height of 400px
+                    padding: 2,
                 }}
             >
-                <Typography variant="h7" sx={{color:'#1A1E3D', fontSize:'16px', fontWeight:500, marginBottom:'20px'}} component="h4" gutterBottom>
+                <Typography variant="h7" sx={{ color: '#1A1E3D', fontSize: '16px', fontWeight: 500, marginBottom: '20px' }} component="h4" gutterBottom>
                     Instructions
                 </Typography>
                 {editData ? (
@@ -134,14 +137,14 @@ const WOLInstructions = () => {
                         </Paper>
                         <Box className='inputBtnContainer' sx={{ display: 'flex', justifyContent: 'flex-start', marginTop: 2 }}>
                             <button className='buttonContainer'
-                                onClick={handleUpdateWOLInstructions} 
+                                onClick={handleUpdateWOLInstructions}
                             >
                                 <small style={{ fontSize: "14px" }}>Update</small>
                             </button>
                         </Box>
                     </>
                 ) : (
-                    <Typography sx={{color:'#5F6383'}} variant="body1" gutterBottom>
+                    <Typography sx={{ color: '#5F6383' }} variant="body1" gutterBottom>
                         {instruction.split('\n').map((line, index) => (
                             <span key={index}>
                                 {line}
@@ -150,7 +153,7 @@ const WOLInstructions = () => {
                         ))}
                     </Typography>
                 )}
-            </Container>
+            </Box>
 
         </>
     )

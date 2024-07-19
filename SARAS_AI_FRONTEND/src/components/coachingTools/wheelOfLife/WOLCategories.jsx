@@ -7,10 +7,11 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import DynamicTable from '../../CommonComponent/DynamicTable';
 import { Box } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { setAddEditWolCategory, 
-    setEditData ,
+import {
+    setAddEditWolCategory,
+    setEditData,
     getWOLCategory,
- } from '../../../redux/features/coachingTools/wol/wolSlice';
+} from '../../../redux/features/coachingTools/wol/wolSlice';
 import AddEditWOLCategory from './AddEditWOLCategory';
 
 
@@ -18,7 +19,7 @@ const WOLCategories = () => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { openAddEditWolCategory, wolCategoryData  } = useSelector((state) => state.wol);
+    const { openAddEditWolCategory, wolCategoryData } = useSelector((state) => state.wol);
     const [WOLCategoriesData, setWOLCategoriesData] = useState([]);
 
     const headers = ['S. No.', 'Wheel Of Life Category', 'Action'];
@@ -67,18 +68,18 @@ const WOLCategories = () => {
             <Sidebar />
             <>
                 <Box display="flex" justifyContent="space-between" marginTop={3} alignItems={"center"}>
-                <Box display="flex" alignItems="center" padding="16px">
-                <ArrowBackIosIcon
-                        style={{ fontSize: "25px", marginBottom: "17px", marginRight:"10px", cursor: "pointer"}}
-                        onClick={() => navigate(-1)}
-                    />
-                    <p style={{ fontSize: "40px",fontWeight: 200 , justifyContent: "center" }}>
-                        Wheel Of Life Categories
-                    </p>
-                </Box>
+                    <Box display="flex" alignItems="center" padding="16px">
+                        <ArrowBackIosIcon
+                            style={{ fontSize: "25px", marginBottom: "17px", marginRight: "10px", cursor: "pointer" }}
+                            onClick={() => navigate('/wheel-of-life')}
+                        />
+                        <p style={{ fontSize: "40px", fontWeight: 200, justifyContent: "center" }}>
+                            Wheel Of Life Categories
+                        </p>
+                    </Box>
                     <Box className='inputBtnContainer' paddingBottom="16px">
                         <button className='buttonContainer'
-                            onClick={handleAddNewWOLCategory} 
+                            onClick={handleAddNewWOLCategory}
                         >
                             <i className="bi bi-plus-circle"></i>
                             <span>Add New WOL Category</span>
@@ -97,7 +98,7 @@ const WOLCategories = () => {
                         <p>No Data Available</p>
                     </div>
                 )}
-                {openAddEditWolCategory && <AddEditWOLCategory/> }
+                {openAddEditWolCategory && <AddEditWOLCategory />}
             </>
         </>
     )
