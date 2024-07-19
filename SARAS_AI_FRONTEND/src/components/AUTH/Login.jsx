@@ -62,6 +62,7 @@ const Login = () => {
             setUser('');
             setPwd('');
             // setSuccess(true);
+            console.log(from,'from');
             navigate(from, { replace: true });
         } catch (err) {
             if (!err?.response) {

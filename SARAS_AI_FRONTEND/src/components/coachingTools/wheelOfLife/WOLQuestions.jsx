@@ -7,14 +7,15 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import DynamicTable from '../../CommonComponent/DynamicTable';
 import { Box } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import {getWOLQuestions, seteditwolQuestionData } from '../../../redux/features/coachingTools/wol/wolSlice';
+import { getWOLQuestions, seteditwolQuestionData } from '../../../redux/features/coachingTools/wol/wolSlice';
 
 const WOLQuestions = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [WOLQuestions, setWOLQuestions] = useState([]);
     const { wolQuestionsData } = useSelector((state) => state.wol);
-    const headers = ['S. No.','Question','WOL Category','Action'];
+    const headers = ['S. No.', 'Question', 'WOL Category', 'Action'];
+
     const actionButtons = [
         {
             type: "switch",
@@ -34,8 +35,7 @@ const WOLQuestions = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        console.log(wolQuestionsData)
-        if (wolQuestionsData.status) {
+        if (wolQuestionsData.data && wolQuestionsData.data.length > 0) {
             console.log(wolQuestionsData.message);
             const transformData = wolQuestionsData.data.map((item) => ({
                 id: item.id,
@@ -44,7 +44,7 @@ const WOLQuestions = () => {
                 is_active: item.is_active,
             }));
             setWOLQuestions(transformData);
-        } 
+        }
     }, [wolQuestionsData]);
 
     const handleAddQuestion = () => {
@@ -52,7 +52,7 @@ const WOLQuestions = () => {
         dispatch(seteditwolQuestionData(null))
         navigate('add-Edit')
     }
-    
+
     return (
         <>
             <Header />
@@ -60,21 +60,22 @@ const WOLQuestions = () => {
             <>
                 <Box className="content-box" display="flex" justifyContent="space-between" marginTop={3} alignItems={"center"}>
                     <Box className="content-box-header-left" display="flex" alignItems="center" justifyContent={"center"} padding="16px">
-                            <ArrowBackIosIcon 
-                            style={{ fontSize: "25px", marginBottom: "17px", marginRight:"10px", cursor: "pointer"}}
-                            onClick={() => navigate(-1)} />
-                            <h3 style={{ fontSize: "40px",fontWeight: 200 , justifyContent: "center" }}>
+                        <ArrowBackIosIcon
+                            style={{ fontSize: "25px", marginBottom: "17px", marginRight: "10px", cursor: "pointer" }}
+                            onClick={() => navigate('/wheel-of-life')}
+                        />
+                        <h3 style={{ fontSize: "40px", fontWeight: 200, justifyContent: "center" }}>
                             Wheel Of Life Questions
-                            </h3>
+                        </h3>
                     </Box>
                     <Box className="content-box-header-right" paddingBottom="16px"
                     >
-                            <button className='buttonContainer'
-                                onClick={handleAddQuestion} 
-                            >
-                                <i className="bi bi-plus-circle"></i>
-                                <span>Add Question</span>
-                            </button>
+                        <button className='buttonContainer'
+                            onClick={handleAddQuestion}
+                        >
+                            <i className="bi bi-plus-circle"></i>
+                            <span>Add Question</span>
+                        </button>
                     </Box>
                 </Box>
                 {
