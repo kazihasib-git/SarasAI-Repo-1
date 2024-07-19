@@ -139,7 +139,7 @@ const AssignStudents = ({ componentname }) => {
       const transformedData = studentBatchMapping.map((student, index) => ({
         "S. No.": index + 1,
         "Student Name": student.student_name,
-        "Academic Term": student.academic_term,
+        "Program": student.packages.map((pack) => pack.name).join(", ") || "N/A",
         Batch:
           student.batches.map((batch) => batch.batch_name).join(", ") || "N/A",
         Select: student.is_active ? 1 : 0,
@@ -218,7 +218,7 @@ const AssignStudents = ({ componentname }) => {
   const headers = [
     "S. No.",
     "Student Name",
-    "Academic Term",
+    "Program",
     "Batch",
     "Select",
   ];

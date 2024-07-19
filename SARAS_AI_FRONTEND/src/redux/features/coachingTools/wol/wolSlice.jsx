@@ -101,6 +101,12 @@ export const getWolTestConfigCategoryWise = createAsyncThunk("wol/getWolTestConf
   return response.data;
 });
 
+// Add question to category
+export const addQuestionToCategory = createAsyncThunk("wol/addQuestionToCategory", async (data) => {
+  const response = await axios.post(`${baseUrl}/admin/wol/wol-test-config-add-question-to-category`, data);
+  return response.data;
+});
+
 
 const initialState = {
   wolCategoryData: [], // to store all WOL Category data
@@ -109,10 +115,12 @@ const initialState = {
   wolTestConfig : [],
   wolQuestionCategoryWise : [], // to store WOL Question category wise data
   wolTestConfigCategoryWise : [], // to store WOL Test Config category wise questions count data
+  addQuestionToCategoryData: [],
   openAddEditWolCategory: false,
   editData: null, // to store WOL category edit data
   editwolQuestionData: null,
   optionsConfigData: [],
+  categoryIdToSubmitSelectedQuestions: null,
   loading: false,
   error: null,
 }
@@ -129,6 +137,9 @@ const wolSlice = createSlice({
     },
     seteditwolQuestionData: (state, action) => {
       state.editwolQuestionData = action.payload
+    },
+    handleIdToSubmitSelectedQuestions: (state, action) => {
+      state.categoryIdToSubmitSelectedQuestions = action.payload
     }
   },
 
@@ -302,13 +313,27 @@ const wolSlice = createSlice({
       state.loading = false;
       state.error = action.payload || action.error.message;
     });
+
+    // addQuestionToCategory
+    builder.addCase(addQuestionToCategory.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(addQuestionToCategory.fulfilled, (state, action) => {
+      state.loading = false;
+      state.addQuestionToCategoryData = action.payload;
+    });
+    builder.addCase(addQuestionToCategory.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload || action.error.message;
+    });
   }
 });
 
 export const {
   setAddEditWolCategory,
   setEditData,
-  seteditwolQuestionData
+  seteditwolQuestionData,
+  handleIdToSubmitSelectedQuestions
 } = wolSlice.actions
 
 export default wolSlice.reducer

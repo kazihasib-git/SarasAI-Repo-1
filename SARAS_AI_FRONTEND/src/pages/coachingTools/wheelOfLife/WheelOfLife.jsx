@@ -4,7 +4,7 @@ import Sidebar from '../../../components/Sidebar/Sidebar';
 import DynamicTable from '../../../components/CommonComponent/DynamicTable';
 import { Box } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { setOpenWolCategories } from '../../../redux/features/coachingTools/wol/wolSlice';
+import { getWolTestConfig, setOpenWolCategories } from '../../../redux/features/coachingTools/wol/wolSlice';
 import WOLCategories from '../../../components/coachingTools/wheelOfLife/WOLCategories';
 import { useNavigate } from 'react-router-dom';
 
@@ -28,6 +28,10 @@ const WheelOfLife = () => {
     const dispatch = useDispatch();
 
     const { wolTestConfig } = useSelector((state) => state.wol);
+
+    useEffect(() => {
+        dispatch(getWolTestConfig())
+    },[dispatch])
 
     const actionButtons = [
         {

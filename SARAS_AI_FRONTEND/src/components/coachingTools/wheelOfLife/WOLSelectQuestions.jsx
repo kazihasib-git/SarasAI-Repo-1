@@ -7,6 +7,7 @@ import editIcon_White from '../../../assets/editIcon_White.png';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { set } from 'date-fns';
+import { addQuestionToCategory, getWolTestConfigCategoryWise, handleIdToSubmitSelectedQuestions } from '../../../redux/features/coachingTools/wol/wolSlice';
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
     borderRadius: "50px",
@@ -26,20 +27,23 @@ const WOLSelectQuestions = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const { wolQuestionCategoryWise } = useSelector((state) => state.wol);
+    const { wolQuestionCategoryWise, categoryIdToSubmitSelectedQuestions } = useSelector((state) => state.wol);
 
     const [selectedQuestions, setSelectedQuestions] = useState([]);
     const [questions, setQuestions] = useState([]);
     const [totalQuestions, setTotalQuestions] = useState(0)
     const [selectedCategory, setSelectedCategory] = useState('');
+    const [categoryId, setCategoryId] = useState();
 
     useEffect(() => {
-        if (wolQuestionCategoryWise.data) {
+        if (wolQuestionCategoryWise.data && wolQuestionCategoryWise.data.length > 0) {
+            // console.log("Wol Question Category Wise", wolQuestionCategoryWise.data)
             setQuestions(wolQuestionCategoryWise.data);
             setTotalQuestions(wolQuestionCategoryWise.data.length);
             setSelectedCategory(wolQuestionCategoryWise.data[0].wol_category_name);
+            setCategoryId(wolQuestionCategoryWise.data[0].id);
         }
-    }, [wolQuestionCategoryWise]);
+    }, [wolQuestionCategoryWise.data]);
 
     const handleSelectQuestion = (index) => {
         console.log(`Toggling question ${index}`);
@@ -57,10 +61,21 @@ const WOLSelectQuestions = () => {
     }, [selectedQuestions]);
 
     const handleSubmit = () => {
-        const selectedQuestionData = selectedQuestions.map(index => questions[index]);
-        console.log('Selected Questions:', selectedQuestionData);
+        //const selectedQuestionData = selectedQuestions.map(index => questions[index]);
+        // console.log('Selected Questions:', selectedQuestionData);
         // Dispatch an action or call an API to save the selected questions
 
+        const data = {
+            wol_test_category_id : categoryIdToSubmitSelectedQuestions,
+            wol_questions_id : selectedQuestions
+            //selectedQuestionData.map(question => question.id)
+        }
+        dispatch(addQuestionToCategory(data))
+        .then(() => {
+            dispatch(getWolTestConfigCategoryWise())
+            dispatch(handleIdToSubmitSelectedQuestions(''))
+        });
+        navigate('/WOLTestConfigSelectQuestions')
     };
 
     return (

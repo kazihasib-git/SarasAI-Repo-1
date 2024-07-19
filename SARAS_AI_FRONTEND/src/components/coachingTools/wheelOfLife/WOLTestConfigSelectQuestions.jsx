@@ -6,7 +6,7 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import editIcon_White from '../../../assets/editIcon_White.png';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { getWolQuestionCategoryWise, getWolTestConfig, getWolTestConfigCategoryWise } from '../../../redux/features/coachingTools/wol/wolSlice';
+import { addQuestionToCategory, getWolQuestionCategoryWise, getWolTestConfig, getWolTestConfigCategoryWise, handleIdToSubmitSelectedQuestions } from '../../../redux/features/coachingTools/wol/wolSlice';
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
     borderRadius: "50px",
@@ -30,7 +30,6 @@ const WOLTestConfigSelectQuestions = () => {
     const [totalQuestions, setTotalQuestions] = useState(0)
     const [selectedQuestions, setSelectedQuestions] = useState([])
     const { wolCategoryData, wolTestConfig, wolTestConfigCategoryWise } = useSelector((state) => state.wol);
-    
 
     const [category, setCategory] = useState([]);
 
@@ -42,16 +41,17 @@ const WOLTestConfigSelectQuestions = () => {
 
     useEffect(() => {
         if(wolTestConfigCategoryWise.data){
-            console.log("Wol Test Config Category Wise", wolTestConfigCategoryWise.data)
+            // console.log("Wol Test Config Category Wise", wolTestConfigCategoryWise.data)
             setTotalQuestions(wolTestConfigCategoryWise.data.total_questions)
             setSelectedQuestions(wolTestConfigCategoryWise.data.selected_questions)
             setCategory(wolTestConfigCategoryWise.data.questions)
         }
-    },[])
+    },[wolTestConfigCategoryWise.data])
 
-    const handleSelectQuestions = (id) => {
-        console.log('Select Questions:', id);
-        dispatch(getWolQuestionCategoryWise(id));
+    const handleSelectQuestions = (cat_id, id) => {
+        console.log('Select Questions:', cat_id, id);
+        dispatch(getWolQuestionCategoryWise(cat_id));
+        dispatch(handleIdToSubmitSelectedQuestions(id));
         navigate('/WolselectQuestions');
     }
 
@@ -144,7 +144,7 @@ const WOLTestConfigSelectQuestions = () => {
                                             variant="contained"
                                             active={true}
                                             sx={{ borderRadius: "50px", padding: "8px 16px", margin: "0 8px" }}
-                                            onClick={() => handleSelectQuestions(category.wol_category_id)}
+                                            onClick={() => handleSelectQuestions(category.wol_category_id, category.id)}
                                         >
                                             Select Questions
                                         </CustomButton>
