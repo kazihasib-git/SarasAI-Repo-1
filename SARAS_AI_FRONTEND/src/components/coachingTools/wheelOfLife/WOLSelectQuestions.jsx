@@ -7,7 +7,7 @@ import editIcon_White from '../../../assets/editIcon_White.png';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { set } from 'date-fns';
-import { addQuestionToCategory, getWolTestConfigCategoryWise, handleIdToSubmitSelectedQuestions } from '../../../redux/features/coachingTools/wol/wolSlice';
+import { addQuestionToCategory, getWolTestConfigCategoryWise, handleIdToSubmitSelectedQuestions, selectedQuestionsList } from '../../../redux/features/coachingTools/wol/wolSlice';
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
     borderRadius: "50px",
@@ -27,7 +27,7 @@ const WOLSelectQuestions = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const { wolQuestionCategoryWise, categoryIdToSubmitSelectedQuestions } = useSelector((state) => state.wol);
+    const { wolQuestionCategoryWise, categoryIdToSubmitSelectedQuestions, selectedQuestionsListData } = useSelector((state) => state.wol);
 
     const [selectedQuestions, setSelectedQuestions] = useState([]);
     const [questions, setQuestions] = useState([]);
@@ -45,6 +45,22 @@ const WOLSelectQuestions = () => {
         }
     }, [wolQuestionCategoryWise.data]);
 
+    useEffect(() => {
+        dispatch(selectedQuestionsList(categoryIdToSubmitSelectedQuestions))
+    },[dispatch])
+
+    console.log('selectedQuestionsListData', selectedQuestionsListData);
+
+    useEffect(() => {
+        if (selectedQuestionsListData.data && selectedQuestionsListData.data.length > 0) {
+            // Map over the data array to extract the 'wol_question_id'
+            console.log('selectedQuestionsListData', selectedQuestionsListData.data);
+            setSelectedQuestions(selectedQuestionsListData.data.map(question => question.wol_question_id));
+        }
+    }, [selectedQuestionsListData]);
+
+    console.log('selectedQuestions', selectedQuestions)
+
     const handleSelectQuestion = (index) => {
         console.log(`Toggling question ${index}`);
         setSelectedQuestions(prevSelected => {
@@ -55,10 +71,6 @@ const WOLSelectQuestions = () => {
             return updatedSelection;
         });
     };
-
-    useEffect(() => {
-        console.log('Selected Questions:', selectedQuestions);
-    }, [selectedQuestions]);
 
     const handleSubmit = () => {
         //const selectedQuestionData = selectedQuestions.map(index => questions[index]);

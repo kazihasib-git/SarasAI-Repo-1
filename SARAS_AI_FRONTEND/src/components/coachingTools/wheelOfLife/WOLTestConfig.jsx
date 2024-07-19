@@ -36,6 +36,7 @@ const WOLTestConfig = () => {
         dispatch(getWOLCategory());
         dispatch(getWolTestConfig());
     }, [dispatch]);
+    
 
     useEffect(() => {
         if (wolTestConfig.data && wolTestConfig.data.length > 0) {
