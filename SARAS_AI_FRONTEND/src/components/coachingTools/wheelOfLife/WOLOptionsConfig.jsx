@@ -186,7 +186,7 @@ const WOLOptionsConfig = () => {
                     </Typography>
                 </Box>
             </Box>
-            <Container
+            <Box
                 sx={{
                     mt: 2,
                     mb: 2,
@@ -194,8 +194,6 @@ const WOLOptionsConfig = () => {
                     borderRadius: 2,
                     minHeight: 160,
                     padding: 2,
-                    maxWidth: 'md',
-                    width: '100%',
                 }}
             >
                 <Typography
@@ -250,75 +248,68 @@ const WOLOptionsConfig = () => {
                 </form>
 
 
-            </Container>
+            </Box>
 
             {edit && (
-                <Container
-                    sx={{
-                        mt: 2,
-                        mb: 2,
-                        backgroundColor: 'white',
-                        borderRadius: 2,
-                        minHeight: 160,
-                        padding: 2,
-                        maxWidth: 'md',
-                        width: '100%',
-                    }}
-                >
-                    <form onSubmit={handleFormSubmit} noValidate>
-                        <TableContainer component={Paper}>
-                            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell align="left">Point</TableCell>
-                                        <TableCell align="left">Text</TableCell>
-                                        <TableCell align="left">Icon</TableCell>
+                <form onSubmit={handleFormSubmit} noValidate>
+                    <TableContainer 
+                        sx={{ 
+                            padding : 2,
+                              
+                            }} 
+                            component={Paper}
+                        >
+                        <Table  aria-label="simple table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell align="left">Point</TableCell>
+                                    <TableCell align="left">Text</TableCell>
+                                    <TableCell align="left">Icon</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {formValues.details.map((detail, index) => (
+                                    <TableRow key={index}>
+                                        <TableCell component="th" scope="row">
+                                            {detail.point} {index === 0 && <img src={star} alt='str' />} {index === formValues.details.length - 1 && <img src={star} alt='str' />}
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            <CustomTextField
+                                                label="Text"
+                                                name="text"
+                                                placeholder="Enter Text"
+                                                value={detail.text ? detail.text : ''}
+                                                onChange={(e) => handleDetailChange(e, index)}
+                                                error={errors[`detailText${index}`]}
+                                                fullWidth
+                                            />
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            <CustomFormControl
+                                                label="Icon"
+                                                name="icon"
+                                                value={detail.icon ? detail.icon : ''}
+                                                onChange={(e) => handleDetailChange(e, index)}
+                                                errors={errors}
+                                                options={feedbackIcons}
+                                            />
+                                        </TableCell>
                                     </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {formValues.details.map((detail, index) => (
-                                        <TableRow key={index}>
-                                            <TableCell component="th" scope="row">
-                                                {detail.point} {index === 0 && <img src={star} alt='str' />} {index === formValues.details.length - 1 && <img src={star} alt='str' />}
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                <CustomTextField
-                                                    label="Text"
-                                                    name="text"
-                                                    placeholder="Enter Text"
-                                                    value={detail.text ? detail.text : ''}
-                                                    onChange={(e) => handleDetailChange(e, index)}
-                                                    error={errors[`detailText${index}`]}
-                                                    fullWidth
-                                                />
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                <CustomFormControl
-                                                    label="Icon"
-                                                    name="icon"
-                                                    value={detail.icon ? detail.icon : ''}
-                                                    onChange={(e) => handleDetailChange(e, index)}
-                                                    errors={errors}
-                                                    options={feedbackIcons}
-                                                />
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                        <Box display="flex" mt={2}>
-                            <CustomButton
-                                type="submit"
-                                active={true}
-                                variant="contained"
-                                sx={{ borderRadius: "50px", padding: "18px 30px", margin: "0 8px" }}
-                            >
-                                Submit
-                            </CustomButton>
-                        </Box>
-                    </form>
-                </Container>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    <Box display="flex" mt={2}>
+                        <CustomButton
+                            type="submit"
+                            active={true}
+                            variant="contained"
+                            sx={{ borderRadius: "50px", padding: "18px 30px", margin: "0 8px" }}
+                        >
+                            Submit
+                        </CustomButton>
+                    </Box>
+                </form>
             )}
         </>
     );

@@ -89,11 +89,26 @@ export const getWolTestConfig = createAsyncThunk("wol/getWolTestConfig", async (
   return response.data;
 });
 
+// Get Wol Question Category Wise
+export const getWolQuestionCategoryWise = createAsyncThunk("wol/getWolQuestionCategoryWise", async (id) => {
+  const response = await axios.get(`${baseUrl}/admin/wol/wol-question-category-wise/${id}`);
+  return response.data;
+});
+
+// Get Wol Test Config Category Wise questions count  
+export const getWolTestConfigCategoryWise = createAsyncThunk("wol/getWolTestConfigCategoryWise", async (id) => {
+  const response = await axios.get(`${baseUrl}/admin/wol/wol-test-config-category-question-count`);
+  return response.data;
+});
+
+
 const initialState = {
   wolCategoryData: [], // to store all WOL Category data
   instructionData: "", // to store all life instruction data
   wolQuestionsData: [], // to store all WOL Questions data
   wolTestConfig : [],
+  wolQuestionCategoryWise : [], // to store WOL Question category wise data
+  wolTestConfigCategoryWise : [], // to store WOL Test Config category wise questions count data
   openAddEditWolCategory: false,
   editData: null, // to store WOL category edit data
   editwolQuestionData: null,
@@ -258,6 +273,32 @@ const wolSlice = createSlice({
       state.wolTestConfig = action.payload;
     });
     builder.addCase(getWolTestConfig.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload || action.error.message;
+    });
+
+    // getWolQuestionCategoryWise
+    builder.addCase(getWolQuestionCategoryWise.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(getWolQuestionCategoryWise.fulfilled, (state, action) => {
+      state.loading = false;
+      state.wolQuestionCategoryWise = action.payload;
+    });
+    builder.addCase(getWolQuestionCategoryWise.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload || action.error.message;
+    });
+
+    // getWolTestConfigCategoryWise
+    builder.addCase(getWolTestConfigCategoryWise.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(getWolTestConfigCategoryWise.fulfilled, (state, action) => {
+      state.loading = false;
+      state.wolTestConfigCategoryWise = action.payload;
+    });
+    builder.addCase(getWolTestConfigCategoryWise.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload || action.error.message;
     });

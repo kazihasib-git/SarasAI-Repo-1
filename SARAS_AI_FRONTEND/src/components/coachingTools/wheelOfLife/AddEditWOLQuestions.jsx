@@ -159,7 +159,7 @@ const AddEditWOLQuestions = () => {
                     </p>
                 </Box>
             </Box>
-            <Container
+            <Box
                 sx={{
                     backgroundColor: 'white',
                     borderRadius: 2,
@@ -221,7 +221,7 @@ const AddEditWOLQuestions = () => {
                         }
                     </Box>
                 </form>
-            </Container>
+            </Box>
         </>
     )
 }

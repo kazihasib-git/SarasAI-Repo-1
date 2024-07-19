@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
-import { Box, Button, Container, FormControlLabel, Paper, Radio, RadioGroup, styled, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Box, Button, Checkbox, Container, FormControlLabel, Radio, styled, Typography } from '@mui/material';
 import Header from '../../Header/Header';
 import Sidebar from '../../Sidebar/Sidebar';
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import editIcon_White from '../../../assets/editIcon_White.png';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { set } from 'date-fns';
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
     borderRadius: "50px",
@@ -20,17 +23,44 @@ const CustomButton = styled(Button)(({ theme, active }) => ({
 }));
 
 const WOLSelectQuestions = () => {
-    const [selectedQuestions, setSelectedQuestions] = useState([1, 2, 3]);
-    const totalQuestions = 10;
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const { wolQuestionCategoryWise } = useSelector((state) => state.wol);
+
+    const [selectedQuestions, setSelectedQuestions] = useState([]);
+    const [questions, setQuestions] = useState([]);
+    const [totalQuestions, setTotalQuestions] = useState(0)
+    const [selectedCategory, setSelectedCategory] = useState('');
+
+    useEffect(() => {
+        if (wolQuestionCategoryWise.data) {
+            setQuestions(wolQuestionCategoryWise.data);
+            setTotalQuestions(wolQuestionCategoryWise.data.length);
+            setSelectedCategory(wolQuestionCategoryWise.data[0].wol_category_name);
+        }
+    }, [wolQuestionCategoryWise]);
 
     const handleSelectQuestion = (index) => {
+        console.log(`Toggling question ${index}`);
         setSelectedQuestions(prevSelected => {
-            if (prevSelected.includes(index)) {
-                return prevSelected.filter(i => i !== index);
-            } else {
-                return [...prevSelected, index];
-            }
+            const updatedSelection = prevSelected.includes(index)
+                ? prevSelected.filter(i => i !== index)
+                : [...prevSelected, index];
+            console.log('Updated Selection:', updatedSelection);
+            return updatedSelection;
         });
+    };
+
+    useEffect(() => {
+        console.log('Selected Questions:', selectedQuestions);
+    }, [selectedQuestions]);
+
+    const handleSubmit = () => {
+        const selectedQuestionData = selectedQuestions.map(index => questions[index]);
+        console.log('Selected Questions:', selectedQuestionData);
+        // Dispatch an action or call an API to save the selected questions
+
     };
 
     return (
@@ -40,18 +70,15 @@ const WOLSelectQuestions = () => {
             <Box display="flex" justifyContent="space-between" marginTop={3} alignItems="center">
                 <Box display="flex" alignItems="center" padding="16px">
                     <ArrowBackIosIcon
-                        style={{ fontSize: "25px", marginBottom: "17px" }}
-                        onClick={() => console.log('Go back')}
+                        style={{ fontSize: "25px", marginBottom: "17px", marginRight: "10px", cursor: "pointer" }}
+                        onClick={() => navigate('/wheel-of-life')}
                     />
-                    <Typography
-                        variant="h1"
-                        sx={{ fontSize: "44px", marginLeft: "16px" }}
-                    >
-                        Wheel of Life Test Config
-                    </Typography>
+                    <p style={{ fontSize: "40px", fontWeight: 200, justifyContent: "center" }}>
+                        Wheel Of Test Config
+                    </p>
                 </Box>
             </Box>
-            <Container
+            <Box
                 sx={{
                     mt: 2,
                     mb: 2,
@@ -59,24 +86,20 @@ const WOLSelectQuestions = () => {
                     borderRadius: 2,
                     minHeight: 160,
                     padding: 2,
-                    maxWidth: 'md',
-                    width: '100%',
                 }}
             >
                 <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ marginBottom: "20px" }}>
                     <Box>
-                        <Typography
-                            variant="h6"
-                            sx={{ color: '#1A1E3D', fontSize: '16px', fontWeight: 500 }}
-                            component="h4"
-                            gutterBottom
-                        >
+
+                        <Box display="flex" alignItems="center" padding="16px">
                             <ArrowBackIosIcon
-                                style={{ fontSize: "25px", marginBottom: "17px" }}
-                                onClick={() => console.log('Go back')}
+                                style={{ fontSize: "25px", marginBottom: "17px", marginRight: "10px", cursor: "pointer" }}
+                                onClick={() => navigate('/WOLTestConfigSelectQuestions')}
                             />
-                            Total Questions: {totalQuestions}
-                        </Typography>
+                            <p style={{ fontSize: "20px", fontWeight: 500, justifyContent: "center" }}>
+                                Total Questions: {totalQuestions}
+                            </p>
+                        </Box>
 
                         <Typography
                             variant="h6"
@@ -84,7 +107,7 @@ const WOLSelectQuestions = () => {
                             component="h4"
                             gutterBottom
                         >
-                            Wheel of life category :  Academics
+                            Wheel of life category: {selectedCategory}
                         </Typography>
 
                         <Typography
@@ -97,8 +120,10 @@ const WOLSelectQuestions = () => {
                         </Typography>
                     </Box>
 
-                    <CustomButton type="submit"
+                    <CustomButton
+                        type="submit"
                         active={true}
+                        onClick={() => navigate('/WOLTestConfig')}
                         variant="contained"
                         sx={{ borderRadius: "50px", padding: "18px 30px", margin: "0 8px" }}>
                         <img src={editIcon_White} backgroundColor='white' alt="edit icon" />
@@ -106,35 +131,22 @@ const WOLSelectQuestions = () => {
                     </CustomButton>
                 </Box>
 
-                {[...Array(totalQuestions)].map((_, index) => (
-                    <Box key={index} display="flex" alignItems="center" justifyContent="space-between" mb={2} p={2} border="1px solid #E0E0E0" borderRadius="8px">
+                {questions.slice(0, totalQuestions).map((question, index) => (
+                    <Box key={question.id} display="flex" alignItems="center" justifyContent="space-between" mb={2} p={2} border="1px solid #E0E0E0" borderRadius="8px">
                         <Box flex="1">
                             <Typography
                                 variant="body1"
                                 sx={{ color: '#1A1E3D', fontWeight: 500, mb: 1 }}
                             >
-                                Q{index + 1}: Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's
+                                Q{index + 1}: {question.question}
                             </Typography>
-                            <RadioGroup
-                                aria-label={`question-${index + 1}`}
-                                name={`question-${index + 1}`}
-                            >
-                                {[...Array(4)].map((_, i) => (
-                                    <FormControlLabel
-                                        key={i}
-                                        value={`answer-${i}`}
-                                        control={<Radio />}
-                                        label={`Standard Dummy Text`}
-                                    />
-                                ))}
-                            </RadioGroup>
                         </Box>
                         <Box>
                             <FormControlLabel
                                 control={
-                                    <Radio
-                                        checked={selectedQuestions.includes(index)}
-                                        onChange={() => handleSelectQuestion(index)}
+                                    <Checkbox
+                                        checked={selectedQuestions.includes(question.id)}
+                                        onChange={() => handleSelectQuestion(question.id)}
                                     />
                                 }
                                 label=""
@@ -148,12 +160,12 @@ const WOLSelectQuestions = () => {
                         variant="contained"
                         color="primary"
                         sx={{ borderRadius: "50px", padding: "8px 16px", margin: "0 8px" }}
-                        onClick={() => console.log('Submit')}
+                        onClick={handleSubmit}
                     >
                         Submit
                     </CustomButton>
                 </Box>
-            </Container>
+            </Box>
         </>
     );
 }

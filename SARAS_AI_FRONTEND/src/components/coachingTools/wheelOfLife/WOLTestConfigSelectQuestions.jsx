@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Button, Container, Paper, styled, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import Header from '../../Header/Header';
 import Sidebar from '../../Sidebar/Sidebar';
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import editIcon_White from '../../../assets/editIcon_White.png';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { getWolQuestionCategoryWise, getWolTestConfig, getWolTestConfigCategoryWise } from '../../../redux/features/coachingTools/wol/wolSlice';
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
     borderRadius: "50px",
@@ -21,9 +23,44 @@ const CustomButton = styled(Button)(({ theme, active }) => ({
 }));
 
 const WOLTestConfigSelectQuestions = () => {
-    const navigate = useNavigate()
-    const [selectedQuestions, setSelectedQuestions] = useState([]);
 
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const [totalQuestions, setTotalQuestions] = useState(0)
+    const [selectedQuestions, setSelectedQuestions] = useState([])
+    const { wolCategoryData, wolTestConfig, wolTestConfigCategoryWise } = useSelector((state) => state.wol);
+    
+
+    const [category, setCategory] = useState([]);
+
+
+    useEffect(() => {
+        dispatch(getWolTestConfigCategoryWise())
+    },[dispatch])
+
+
+    useEffect(() => {
+        if(wolTestConfigCategoryWise.data){
+            console.log("Wol Test Config Category Wise", wolTestConfigCategoryWise.data)
+            setTotalQuestions(wolTestConfigCategoryWise.data.total_questions)
+            setSelectedQuestions(wolTestConfigCategoryWise.data.selected_questions)
+            setCategory(wolTestConfigCategoryWise.data.questions)
+        }
+    },[])
+
+    const handleSelectQuestions = (id) => {
+        console.log('Select Questions:', id);
+        dispatch(getWolQuestionCategoryWise(id));
+        navigate('/WolselectQuestions');
+    }
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        console.log('Submit');
+    }
+    
     return (
         <>
             <Header />
@@ -31,18 +68,15 @@ const WOLTestConfigSelectQuestions = () => {
             <Box display="flex" justifyContent="space-between" marginTop={3} alignItems="center">
                 <Box display="flex" alignItems="center" padding="16px">
                     <ArrowBackIosIcon
-                        style={{ fontSize: "25px", marginBottom: "17px" }}
+                        style={{ fontSize: "25px", marginBottom: "17px", marginRight: "10px", cursor: "pointer" }}
                         onClick={() => navigate('/wheel-of-life')}
                     />
-                    <Typography
-                        variant="h1"
-                        sx={{ fontSize: "44px", marginLeft: "16px" }}
-                    >
-                        Wheel of Life Test Config
-                    </Typography>
+                    <p style={{ fontSize: "40px", fontWeight: 200, justifyContent: "center" }}>
+                        Wheel Of Test Config
+                    </p>
                 </Box>
             </Box>
-            <Container
+            <Box
                 sx={{
                     mt: 2,
                     mb: 2,
@@ -50,8 +84,6 @@ const WOLTestConfigSelectQuestions = () => {
                     borderRadius: 2,
                     minHeight: 160,
                     padding: 2,
-                    maxWidth: 'md',
-                    width: '100%',
                 }}
             >
                 <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ marginBottom: "20px" }}>
@@ -62,7 +94,7 @@ const WOLTestConfigSelectQuestions = () => {
                             component="h4"
                             gutterBottom
                         >
-                            Total Questions: 40
+                            Total Questions: {totalQuestions}
                         </Typography>
 
                         <Typography
@@ -71,20 +103,22 @@ const WOLTestConfigSelectQuestions = () => {
                             component="h4"
                             gutterBottom
                         >
-                            Selected Questions: {selectedQuestions.length}
+                            Selected Questions: {selectedQuestions}
                         </Typography>
                     </Box>
 
-                    <CustomButton type="submit"
+                    <CustomButton
+                        type="submit"
                         active={true}
                         variant="contained"
+                        onClick={() => navigate('/WOLTestConfig')}
                         sx={{ borderRadius: "50px", padding: "18px 30px", margin: "0 8px" }}>
                         <img src={editIcon_White} backgroundColor='white' alt="edit icon" />
                         Edit Config
                     </CustomButton>
                 </Box>
 
-                <TableContainer component={Paper}>
+                <TableContainer sx={{ padding : 2 }} component={Paper}>
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
                         <TableHead>
                             <TableRow>
@@ -95,21 +129,22 @@ const WOLTestConfigSelectQuestions = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {[{ id: 1, category: "Academics" }, { id: 2, category: "Health" }, { id: 3, category: "Family" }, { id: 4, category: "Career" }].map((row, index) => (
+                            {category.map((category, index) => (
                                 <TableRow
-                                    key={row.id}
+                                    key={category.id}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                 >
                                     <TableCell component="th" scope="row">
                                         {index + 1}
                                     </TableCell>
-                                    <TableCell>{row.category}</TableCell>
-                                    <TableCell>0/10</TableCell>
+                                    <TableCell>{category.wol_category_name}</TableCell>
+                                    <TableCell>{category.selected_question_count}/{category.number_of_questions_for_total}</TableCell>
                                     <TableCell>
                                         <CustomButton
                                             variant="contained"
                                             active={true}
-                                            onClick={() => { navigate('/WolselectQuestions') }}
+                                            sx={{ borderRadius: "50px", padding: "8px 16px", margin: "0 8px" }}
+                                            onClick={() => handleSelectQuestions(category.wol_category_id)}
                                         >
                                             Select Questions
                                         </CustomButton>
@@ -129,7 +164,7 @@ const WOLTestConfigSelectQuestions = () => {
                         Submit
                     </CustomButton>
                 </Box>
-            </Container>
+            </Box>
         </>
     );
 };

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Header from '../../../components/Header/Header';
 import Sidebar from '../../../components/Sidebar/Sidebar';
 import { useDispatch, useSelector } from 'react-redux';
-import { addWOLTestConfig, getWOLCategory } from '../../../redux/features/coachingTools/wol/wolSlice';
+import { addWOLTestConfig, getWOLCategory, getWolTestConfig } from '../../../redux/features/coachingTools/wol/wolSlice';
 import { Box, Button, Container, Grid, Paper, styled, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { useNavigate } from 'react-router-dom';
@@ -25,7 +25,7 @@ const CustomButton = styled(Button)(({ theme, active }) => ({
 const WOLTestConfig = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { wolCategoryData } = useSelector((state) => state.wol);
+    const { wolCategoryData, wolTestConfig } = useSelector((state) => state.wol);
 
     const [edit, setEdit] = useState(false);
     const [numberOfWolCategoriesOptions, setNumberOfWolCategoriesOptions] = useState([]);
@@ -34,7 +34,22 @@ const WOLTestConfig = () => {
 
     useEffect(() => {
         dispatch(getWOLCategory());
+        dispatch(getWolTestConfig());
     }, [dispatch]);
+
+    useEffect(() => {
+        if (wolTestConfig.data && wolTestConfig.data.length > 0) {
+            const testConfig = wolTestConfig.data[0];
+            setFormValues({
+                numberOfWolCategories: testConfig.number_of_categories,
+                categories: testConfig.test_categories.map((item) => ({
+                    category_name: item.wol_category_id,
+                    no_of_questions: item.number_of_questions
+                }))
+            });
+            setEdit(true);
+        }
+    }, [wolTestConfig]);
 
     useEffect(() => {
         if (wolCategoryData.data && wolCategoryData.data.length > 0) {
@@ -60,6 +75,12 @@ const WOLTestConfig = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        if (edit) {
+            setEdit(false);
+            setFormValues({ numberOfWolCategories: '', categories: [] });
+            return;
+        }
         const newErrors = {};
 
         if (!formValues.numberOfWolCategories) {
@@ -81,8 +102,8 @@ const WOLTestConfig = () => {
         const selectedNumberOfWolCategories = formValues.numberOfWolCategories;
 
         const categories = Array.from({ length: selectedNumberOfWolCategories }, (_, i) => {
-            const categoryName = formValues[`category_name_${i}`];
-            const noOfQuestions = formValues[`no_of_questions_${i}`];
+            const categoryName = formValues.categories[i]?.category_name || '';
+            const noOfQuestions = formValues.categories[i]?.no_of_questions || '';
 
             if (!categoryName) {
                 newErrors[`category_name_${i}`] = 'Category name is required';
@@ -104,6 +125,8 @@ const WOLTestConfig = () => {
             categories: categories
         };
 
+        console.log("Data :", data)
+
         dispatch(addWOLTestConfig(data));
         navigate('/WOLTestConfigSelectQuestions');
     };
@@ -115,18 +138,15 @@ const WOLTestConfig = () => {
             <Box display="flex" justifyContent="space-between" marginTop={3} alignItems="center">
                 <Box display="flex" alignItems="center" padding="16px">
                     <ArrowBackIosIcon
-                        style={{ fontSize: "25px", marginBottom: "17px" }}
+                        style={{ fontSize: "25px", marginBottom: "17px", marginRight: "10px", cursor: "pointer" }}
                         onClick={() => navigate('/wheel-of-life')}
                     />
-                    <Typography
-                        variant="h1"
-                        sx={{ fontSize: "44px", marginLeft: "16px" }}
-                    >
-                        Wheel of Life Test Config
-                    </Typography>
+                    <p style={{ fontSize: "40px", fontWeight: 200, justifyContent: "center" }}>
+                        Wheel Of Test Config
+                    </p>
                 </Box>
             </Box>
-            <Container
+            <Box
                 sx={{
                     mt: 2,
                     mb: 2,
@@ -134,8 +154,6 @@ const WOLTestConfig = () => {
                     borderRadius: 2,
                     minHeight: 160,
                     padding: 2,
-                    maxWidth: 'md',
-                    width: '100%',
                 }}
             >
                 <form onSubmit={handleSubmit} noValidate>
@@ -165,74 +183,75 @@ const WOLTestConfig = () => {
                         </Grid>
                     </Grid>
                 </form>
-            </Container>
+            </Box>
 
             {edit && (
-                <Container
-                    sx={{
-                        mt: 2,
-                        mb: 2,
-                        backgroundColor: 'white',
-                        borderRadius: 2,
-                        minHeight: 160,
-                        padding: 2,
-                        maxWidth: 'md',
-                        width: '100%',
-                    }}
-                >
-                    <form onSubmit={handleFormSubmit} noValidate>
-                        <TableContainer component={Paper}>
-                            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>S. No.</TableCell>
-                                        <TableCell align="left">Wheel of Life Category</TableCell>
-                                        <TableCell align="left">No. of Questions</TableCell>
+                <form onSubmit={handleFormSubmit} noValidate>
+                    <TableContainer sx={{ padding: 2 }} component={Paper}>
+                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>S. No.</TableCell>
+                                    <TableCell align="left">Wheel of Life Category</TableCell>
+                                    <TableCell align="left">No. of Questions</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {Array.from({ length: formValues.numberOfWolCategories }).map((_, index) => (
+                                    <TableRow key={index}>
+                                        <TableCell component="th" scope="row">
+                                            {index + 1}
+                                        </TableCell>
+                                        <TableCell align="left">
+                                            <CustomFormControl
+                                                label="Category Name"
+                                                name={`category_name_${index}`}
+                                                value={formValues.categories[index]?.category_name || ''}
+                                                onChange={(e) => {
+                                                    const newCategories = [...formValues.categories];
+                                                    newCategories[index] = {
+                                                        ...newCategories[index],
+                                                        category_name: e.target.value
+                                                    };
+                                                    setFormValues({ ...formValues, categories: newCategories });
+                                                }}
+                                                errors={errors}
+                                                options={WOLCategoriesOptions}
+                                            />
+                                        </TableCell>
+                                        <TableCell align="left">
+                                            <CustomFormControl
+                                                label="No. of Questions"
+                                                name={`no_of_questions_${index}`}
+                                                value={formValues.categories[index]?.no_of_questions || ''}
+                                                onChange={(e) => {
+                                                    const newCategories = [...formValues.categories];
+                                                    newCategories[index] = {
+                                                        ...newCategories[index],
+                                                        no_of_questions: e.target.value
+                                                    };
+                                                    setFormValues({ ...formValues, categories: newCategories });
+                                                }}
+                                                errors={errors}
+                                                options={numberOfQuestions}
+                                            />
+                                        </TableCell>
                                     </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {Array.from({ length: formValues.numberOfWolCategories }).map((_, index) => (
-                                        <TableRow key={index}>
-                                            <TableCell component="th" scope="row">
-                                                {index + 1}
-                                            </TableCell>
-                                            <TableCell align="left">
-                                                <CustomFormControl
-                                                    label="Category Name"
-                                                    name={`category_name_${index}`}
-                                                    value={formValues[`category_name_${index}`] || ''}
-                                                    onChange={(e) => setFormValues({ ...formValues, [`category_name_${index}`]: e.target.value })}
-                                                    errors={errors}
-                                                    options={WOLCategoriesOptions}
-                                                />
-                                            </TableCell>
-                                            <TableCell align="left">
-                                                <CustomFormControl
-                                                    label="No. of Questions"
-                                                    name={`no_of_questions_${index}`}
-                                                    value={formValues[`no_of_questions_${index}`] || ''}
-                                                    onChange={(e) => setFormValues({ ...formValues, [`no_of_questions_${index}`]: e.target.value })}
-                                                    errors={errors}
-                                                    options={numberOfQuestions}
-                                                />
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                        <Box display="flex" mt={2}>
-                            <CustomButton
-                                type="submit"
-                                active={true}
-                                variant="contained"
-                                sx={{ borderRadius: "50px", padding: "18px 30px", margin: "0 8px" }}
-                            >
-                                Submit
-                            </CustomButton>
-                        </Box>
-                    </form>
-                </Container>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    <Box display="flex" mt={2}>
+                        <CustomButton
+                            type="submit"
+                            active={true}
+                            variant="contained"
+                            sx={{ borderRadius: "50px", padding: "18px 30px", margin: "0 8px" }}
+                        >
+                            Submit
+                        </CustomButton>
+                    </Box>
+                </form>
             )}
         </>
     );
