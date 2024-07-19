@@ -38,9 +38,12 @@ const WOLInstructions = () => {
         setEditData(true)
     }
 
-    const handleUpdateWOLInstructions = async () => {
+    const handleUpdateWOLInstructions = () => {
         try {
-            await dispatch(editLifeInstruction({ message: value })).unwrap();
+            dispatch(editLifeInstruction({ message: value })).unwrap()
+            .then(() => {
+                dispatch(getLifeInstruction())
+            });
             setEditData(false)
         } catch (error) {
             console.log(error.message) //TODO: Show toast message

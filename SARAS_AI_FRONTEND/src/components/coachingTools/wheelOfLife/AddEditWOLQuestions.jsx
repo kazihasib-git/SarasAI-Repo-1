@@ -9,7 +9,7 @@ import { Box, Button, Container, InputLabel, TextField, styled, MenuItem, Paper 
 import CustomFormControl from '../../CustomFields/CustomFromControl';
 import ReactQuill from 'react-quill'
 import { useDispatch, useSelector } from 'react-redux';
-import { seteditwolQuestionData, getWOLCategory, createWOLQuestion, updateWOLQuestion } from '../../../redux/features/coachingTools/wol/wolSlice';
+import { seteditwolQuestionData, getWOLCategory, createWOLQuestion, updateWOLQuestion, getWOLQuestions } from '../../../redux/features/coachingTools/wol/wolSlice';
 
 
 const AddEditWOLQuestions = () => {
@@ -124,9 +124,9 @@ const AddEditWOLQuestions = () => {
             dispatch(updateWOLQuestion({id , data}))
         }
         else {
-            dispatch(createWOLQuestion(data));
+            dispatch(createWOLQuestion(data))
         }
-        //await dispatch(getWOLQuestions());
+        dispatch(getWOLQuestions());
         dispatch(seteditwolQuestionData(null))
         navigate('/wolQuestions')
     }

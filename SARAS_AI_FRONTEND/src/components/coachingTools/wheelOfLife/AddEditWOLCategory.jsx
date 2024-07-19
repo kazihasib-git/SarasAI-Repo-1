@@ -37,7 +37,7 @@ const AddEditWOLCategory = () => {
         }
         else {
             try {
-                const createdWOL = await dispatch(createWOLCategory({ name: categoryName })).unwrap();
+                const createdWOL = await dispatch(createWOLCategory({ name: categoryName })).unwrap()
             } catch (error) {
                 console.log(error.message) //TODO: Show toast message
             }
