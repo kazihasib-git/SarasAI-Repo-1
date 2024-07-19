@@ -164,7 +164,7 @@ const TemplateModuleTable = ({ modulesData }) => {
                         <td style={{ padding: "8px 0", borderBottom: "1px solid #e0e0e0" }}>{activity.points}</td>
                         <td style={{ padding: "8px 0", borderBottom: "1px solid #e0e0e0" }}>
                           <CustomButton onClick={openPrerequisitesPopup} className="prerequisitesBtn">
-                            Prerequisites
+                            Prerequisite
                           </CustomButton>
                         </td>
                         <td style={{ padding: "8px 0", borderBottom: "1px solid #e0e0e0" }}>{activity.after_due_date}</td>
