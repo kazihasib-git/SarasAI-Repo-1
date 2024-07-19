@@ -129,7 +129,7 @@ const AddEditTA = ({ data }) => {
     const { email, time_zone, ...updatedFormData } = formData;
 
     updatedFormData.date_of_birth = dateOfBirth;
-    updatedFormData.phone = phoneNumber;
+    formData.phone = phoneNumber;
 
     if (selectedImage) {
       const base64Data = selectedImage.replace(
@@ -526,44 +526,43 @@ const AddEditTA = ({ data }) => {
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
-                    <Controller
-                        name="phone"
-                        control={control}
-                        rules={{ required: "Phone number is required" }}
-                        render={({ field }) => (
-                            <PhoneInput
-                                {...field}
-                                country={"in"}
-                                // containerStyle={{ width: "100%" }}
-                                
-                                inputStyle={{
-                                  width: "100%",
-                                  borderRadius: "50px",
-                                  borderColor: errors.phone ? "red" : "#D0D0EC",
-                                  outline: "none",
-                                  height: "60px",
-                                  // boxShadow: errors.phone ? "0 0 0 2px red" : "none",
-                              }}
-                              buttonStyle={{
-                                borderRadius: "50px 0 0 50px",
-                                borderColor: errors.phone ? "red" : "#D0D0EC",
-                                height: "60px",
-                                outline: "none",
-                                paddingLeft: "10px",
-                                // boxShadow: errors.phone ? "0 0 0 2px red" : "none",
-                            }}
-                            onFocus={(e) => e.target.style.borderColor = errors.phone ? "red" : "#D0D0EC"}
-                                onChange={field.onChange}
-                                
-                            />
-                        )}
+                <Controller
+                  name="phone"
+                  control={control}
+                  rules={{ required: "Phone number is required" }} // Setting validation rules
+                  render={({ field }) => (
+                    <PhoneInput
+                      country={"in"}
+                      value={field.value} // Binding the value to the field value
+                      onChange={field.onChange} // Handling the onChange event
+                      containerStyle={{ width: "100%" }}
+                      inputStyle={{
+                        width: "100%",
+                        borderRadius: "50px",
+                        borderColor: errors.phone ? "red" : "#D0D0EC",
+                        outline: "none",
+                        height: "60px",
+                      }}
+                      buttonStyle={{
+                        borderRadius: "50px 0 0 50px",
+                        borderColor: errors.phone ? "red" : "#D0D0EC",
+                        height: "60px",
+                        outline: "none",
+                        paddingLeft: "10px",
+                      }}
                     />
-                    {errors.phone && (
-                        <Typography variant="body2" color="error" style={{ marginTop: '8px' }}>
-                            {errors.phone.message}
-                        </Typography>
-                    )}
-                </Grid>
+                  )}
+                />
+                {errors.phone && (
+                  <Typography
+                    variant="body2"
+                    color="error"
+                    style={{ marginTop: "8px" }}
+                  >
+                    {errors.phone.message}
+                  </Typography>
+                )}
+              </Grid>
             <Grid item xs={12}>
               <CustomTextField
                 label="About Me"

@@ -27,6 +27,8 @@ import CoachMapping from "./pages/ManageCoaches/CoachMapping";
 import CoachTemplate from "./pages/ManageCoaches/CoachingTemplate/CoachTemplate";
 import CoachAvialability from "./pages/ManageCoaches/CoachAvialability";
 import CoachScheduling from "./pages/ManageCoaches/CoachScheduling";
+import ScheduledCalls from "./pages/Coach/ScheduleCalls";
+
 import AllRoutes from "./components/AllRoutes/AllRoutes";
 import TaMapping from "./pages/managesTAs/TaMapping";
 import TaScheduling from "./pages/managesTAs/TaScheduling";
@@ -36,7 +38,6 @@ import MyProfile from "./components/RoleRoute/CommonComponent/MyProfile";
 import CallRecords from "./pages/MODULE/TaModule/CallRecords";
 import Messages from "./components/RoleRoute/CommonComponent/Messages";
 import CallRequest from "./pages/MODULE/TaModule/CallRequest";
-import ScheduledCalls from "./components/RoleRoute/CommonComponent/ScheduledCalls";
 import MyCalender from "./components/RoleRoute/CommonComponent/MyCalender";
 import Mystudents from "./components/RoleRoute/CommonComponent/Mystudents";
 import AssignedStudent from "./pages/managesTAs/AssignedStudent";
@@ -62,6 +63,14 @@ import AddEditWOLQuestions from "./components/coachingTools/wheelOfLife/AddEditW
 import AddEditTeachingAssistant from "./pages/MODULE/TaModule/TeachingAssistant";
 import CreateTaMenu from "./pages/MODULE/TaModule/CreateTaMenu";
 
+import CoachMenu from "./pages/MODULE/coachModule/CoachMenu";
+
+import CoachMenuProfile from "./pages/MODULE/coachModule/CoachMenuProfile";
+import CoachCallRequest from "./pages/MODULE/coachModule/CoachCallRequest";
+
+import CoachMenuCalendar from "./pages/MODULE/coachModule/CoachMenuCalendar";
+import CoachCallRecord from "./pages/MODULE/coachModule/CoachCallRecord";
+import WOLTestConfigSelectQuestions from "./components/coachingTools/wheelOfLife/WOLTestConfigSelectQuestions";
 const ROLES = {
   Teaching: 2001,
   Coaches: 1984,
@@ -84,12 +93,36 @@ function App() {
             <Route path="dashboard" element={<Dashboard />} />
 
             <Route path="ta-manage" element={<ManagesTAs page="Manage TA" />} />
+
+
+            <Route
+              path="coachmenu"
+              element={<CoachMenu page="Coach Menu" />}
+            />
+             <Route
+              path="coachmenu-profile"
+              element={<CoachMenuProfile page="Coach Menu" />}
+            />
+            <Route 
+            path="coach-call-request"
+            element={<CoachCallRequest page="Call Request"/>}
+            />
+             <Route
+              path="coach-call-records"
+              element={<CoachCallRecord page="Call Records" />}
+            />
+             <Route
+              path="coachmenu-calendar"
+              element={<CoachMenuCalendar page="coachmenu" />}
+            />
+
+            
             <Route
               path="createta"
               element={<CreateTAPage page="Create TA" />}
             />
              <Route
-              path="callrequest"
+              path="call-request"
               element={<CallRequest page="Call-Request" />}
             />
               <Route
@@ -100,6 +133,10 @@ function App() {
               path="call-records"
               element={<CallRecords page="CallRecords" />}
             />
+           
+           
+
+            
             <Route path="AddEditTA" element={<AddEditTA page="Edit Ta" />} />
        
             <Route
@@ -186,8 +223,14 @@ function App() {
             <Route path="wolQuestions/add-Edit" element={<AddEditWOLQuestions/> } />
             <Route path="wolOptionsConfig" element={<WOLOptionsConfig/>} />
             <Route path="wolTestConfig" element={<WOLTestConfig/>} />
+            <Route path="WOLTestConfigSelectQuestions" element={<WOLTestConfigSelectQuestions />} />
+            <Route
+          path="schedule-calls"
+          element={<ScheduledCalls page="Schedule Calls" />}
+        />
           </Route>
         </Route>
+        
 
         <Route element={<RequireAuth allowedRoles={[ROLES.Teaching]} />}>
           <Route path="/" element={<Main page="Teaching Assistant" />}>

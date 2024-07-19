@@ -1,10 +1,24 @@
 import React, { useEffect, useState } from 'react'
 import ReusableDialog from '../../CustomFields/ReusableDialog'
-import { Button, Grid } from '@mui/material'
+import { Button, Grid, styled } from '@mui/material'
 import CustomTextField from '../../CustomFields/CustomTextField'
 import { useDispatch, useSelector } from 'react-redux'
 import { setAddEditWolCategory,setEditData } from '../../../redux/features/coachingTools/wol/wolSlice'
 import {createWOLCategory , updateeWOLCategory , getWOLCategory} from '../../../redux/features/coachingTools/wol/wolSlice';
+
+const CustomButton = styled(Button)(({ theme, active }) => ({
+    borderRadius: "50px",
+    border: "1px solid #F56D3B",
+    color: active ? "#fff" : "#F56D3B",
+    backgroundColor: active ? "#F56D3B" : "#FFF",
+    padding: "8px 16px",
+    margin: "0 8px",
+    "&:hover": {
+        backgroundColor: "#F56D3B",
+        color: "#fff",
+        borderColor: "#F56D3B",
+    },
+}));
 
 const AddEditWOLCategory = () => {
     const dispatch = useDispatch();
@@ -28,9 +42,11 @@ const AddEditWOLCategory = () => {
                 console.log(error.message) //TODO: Show toast message
             }
         }
-        await dispatch(getWOLCategory());
-        dispatch(setEditData(null))
-        dispatch(setAddEditWolCategory(false))
+        dispatch(getWOLCategory())
+        .then(() => {
+            dispatch(setAddEditWolCategory(false))
+            dispatch(setEditData(null))
+        })
     }
 
     const handlepopupClose = () => {
@@ -46,7 +62,7 @@ const AddEditWOLCategory = () => {
     }, [editData])
 
     const actions = editData ? (
-        <Button
+        <CustomButton
             onClick={handleSubmit}
             style={{
                 backgroundColor: "#F56D3B",
@@ -54,9 +70,9 @@ const AddEditWOLCategory = () => {
                 color: "#FFFFFF",
             }}>
             Update
-        </Button >
+        </CustomButton >
     ) : (
-        <Button
+        <CustomButton
             onClick={handleSubmit}
             style={{
                 backgroundColor: "#F56D3B",
@@ -65,7 +81,7 @@ const AddEditWOLCategory = () => {
             }}
         >
             Submit
-        </Button>
+        </CustomButton>
     )
 
     const content = (
