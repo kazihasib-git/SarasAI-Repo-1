@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import AddEditTeachingAssistant from './TeachingAssistant';
 import Header from '../../../components/Header/Header';
 import TaMenuSidebar from './TeachingAssistantSidebar';
@@ -6,12 +6,12 @@ import TaMenuSidebar from './TeachingAssistantSidebar';
 const CreateTaMenu = () => {
     return (
         <>
-        <Header />
-        <TaMenuSidebar />
-    
-        <AddEditTeachingAssistant />
-        </>
-    )
-}
+            <Header />
+            <TaMenuSidebar />
 
-export default CreateTaMenu
+            <AddEditTeachingAssistant />
+        </>
+    );
+};
+
+export default CreateTaMenu;

@@ -1,9 +1,9 @@
-import { useState } from "react";
-import FullCalendar from "@fullcalendar/react";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import timeGridPlugin from "@fullcalendar/timegrid";
-import interactionPlugin from "@fullcalendar/interaction";
-import listPlugin from "@fullcalendar/list";
+import { useState } from 'react';
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPlugin from '@fullcalendar/interaction';
+import listPlugin from '@fullcalendar/list';
 import {
     Box,
     List,
@@ -11,11 +11,11 @@ import {
     ListItemText,
     Typography,
     useTheme,
-} from "@mui/material";
+} from '@mui/material';
 
 // import { tokens } from "../../theme";
-import Header from "../Header/Header";
-import Sidebar from "../Sidebar/Sidebar";
+import Header from '../Header/Header';
+import Sidebar from '../Sidebar/Sidebar';
 
 const Calendar = () => {
     const theme = useTheme();
@@ -23,7 +23,7 @@ const Calendar = () => {
     const [currentEvents, setCurrentEvents] = useState([]);
 
     const handleDateClick = (selected) => {
-        const title = prompt("Please enter a new title for your event");
+        const title = prompt('Please enter a new title for your event');
         const calendarApi = selected.view.calendar;
         calendarApi.unselect();
 
@@ -37,13 +37,11 @@ const Calendar = () => {
             });
         }
     };
-    
-    
 
     const handleEventClick = (selected) => {
         if (
             window.confirm(
-                `Are you sure you want to delete the event '${selected.event.title}'`
+                `Are you sure you want to delete the event '${selected.event.title}'`,
             )
         ) {
             selected.event.remove();
@@ -51,15 +49,13 @@ const Calendar = () => {
     };
 
     const formatDate = (date) => {
-        return new Intl.DateTimeFormat("en-US", {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
+        return new Intl.DateTimeFormat('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
         }).format(date);
     };
 
-    
-    
     return (
         <>
             <Header />
@@ -69,7 +65,7 @@ const Calendar = () => {
                     {/* CALENDAR SIDEBAR */}
                     <Box
                         flex="1 1 20%"
-                        backgroundColor={"#CCC"}
+                        backgroundColor={'#CCC'}
                         p="15px"
                         borderRadius="4px"
                     >
@@ -79,9 +75,9 @@ const Calendar = () => {
                                 <ListItem
                                     key={event.id}
                                     sx={{
-                                        backgroundColor: "#FFF",
-                                        margin: "10px 0",
-                                        borderRadius: "2px",
+                                        backgroundColor: '#FFF',
+                                        margin: '10px 0',
+                                        borderRadius: '2px',
                                     }}
                                 >
                                     <ListItemText
@@ -89,9 +85,9 @@ const Calendar = () => {
                                         secondary={
                                             <Typography>
                                                 {formatDate(event.start, {
-                                                    year: "numeric",
-                                                    month: "short",
-                                                    day: "numeric",
+                                                    year: 'numeric',
+                                                    month: 'short',
+                                                    day: 'numeric',
                                                 })}
                                             </Typography>
                                         }
@@ -112,9 +108,9 @@ const Calendar = () => {
                                 listPlugin,
                             ]}
                             headerToolbar={{
-                                left: "prev,next today",
-                                center: "title",
-                                right: "dayGridMonth,timeGridWeek,timeGridDay,listMonth",
+                                left: 'prev,next today',
+                                center: 'title',
+                                right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth',
                             }}
                             initialView="dayGridMonth"
                             editable={true}
@@ -126,14 +122,14 @@ const Calendar = () => {
                             eventsSet={(events) => setCurrentEvents(events)}
                             initialEvents={[
                                 {
-                                    id: "12315",
-                                    title: "All-day event",
-                                    date: "2022-09-14",
+                                    id: '12315',
+                                    title: 'All-day event',
+                                    date: '2022-09-14',
                                 },
                                 {
-                                    id: "5123",
-                                    title: "Timed event",
-                                    date: "2022-09-28",
+                                    id: '5123',
+                                    title: 'Timed event',
+                                    date: '2022-09-28',
                                 },
                             ]}
                         />
