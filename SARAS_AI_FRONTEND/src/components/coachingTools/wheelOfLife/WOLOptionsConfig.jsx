@@ -80,7 +80,6 @@ const WOLOptionsConfig = () => {
     }, [dispatch])
 
     useEffect(() => {
-        console.log("useEffect !")
         if (optionsConfigData.data && optionsConfigData.data.length > 0) {
             const { minimum_scale, maximum_scale, get_config_details } = optionsConfigData.data[0];
             setFormValues({

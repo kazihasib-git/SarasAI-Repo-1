@@ -177,6 +177,7 @@ const CreateNewSlot = ({ componentName }) => {
       weeksArray[index] = 1;
     }
 
+
     formData.slot_date = fromDate;
     formData.from_time = fromTime;
     formData.to_time = toTime;
