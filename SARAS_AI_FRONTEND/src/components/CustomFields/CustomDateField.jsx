@@ -17,7 +17,7 @@ const CustomDateField = ({ label, name, value, onChange, sx, ...props }) => {
                 name={name}
                 value={value ? moment(value, 'YYYY-MM-DD') : null}
                 onChange={handleDateChange}
-                format="YYYY-MM-DD"
+                format="MMMM-DD-YYYY"
                 slotProps={{
                     textField: {
                         InputLabelProps: {

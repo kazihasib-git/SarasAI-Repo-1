@@ -25,7 +25,7 @@ export const createWOLCategory = createAsyncThunk(
 );
 
 // To Update WOL Category
-export const updateeWOLCategory = createAsyncThunk(
+export const updateWOLCategory = createAsyncThunk(
     'wol/updateWOLCategory',
     async ({ id, data }) => {
         const response = await axios.put(

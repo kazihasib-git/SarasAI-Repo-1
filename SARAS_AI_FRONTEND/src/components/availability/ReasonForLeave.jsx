@@ -127,7 +127,7 @@ const ReasonForLeave = ({ componentName }) => {
                 <CustomTextField
                     label="Reason for Leave"
                     fullWidth
-                    placeholder="Enter reason for deletion"
+                    placeholder="Enter reason for leave"
                     variant="outlined"
                     multiline
                     rows={4}

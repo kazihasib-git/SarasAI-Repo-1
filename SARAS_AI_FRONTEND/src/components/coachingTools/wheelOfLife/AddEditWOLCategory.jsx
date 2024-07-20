@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
     setAddEditWolCategory,
     setEditData,
+    updateWOLCategory,
 } from '../../../redux/features/coachingTools/wol/wolSlice';
 import {
     createWOLCategory,
@@ -40,7 +41,7 @@ const AddEditWOLCategory = () => {
             console.log('Edit');
             try {
                 const updatedWOL = await dispatch(
-                    updateeWOLCategory({
+                    updateWOLCategory({
                         id: editData.id,
                         data: { name: categoryName },
                     }),

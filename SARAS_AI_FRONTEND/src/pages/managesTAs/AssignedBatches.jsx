@@ -17,6 +17,7 @@ import {
     toggleAssignBatchStatus,
 } from '../../redux/features/taModule/taSlice';
 import AdminDataTable from '../../components/CommonComponent/AdminDataTable';
+
 const CustomButton = styled(Button)(({ theme, active }) => ({
     borderRadius: '50px',
     border: '1px solid #F56D3B',
@@ -157,14 +158,14 @@ const DynamicTable = ({
             <Box display={'flex'} justifyContent={'space-between'}>
                 <Box display="flex" alignItems="center" padding="16px">
                     {/* <i
-            style={{ fontSize: "25px" }}
-            className="bi bi-caret-left"
-            onClick={() => navigate("/ta-mapping")}
-          ></i> */}
-                    {/* <ArrowBackIosIcon
-            style={{ fontSize: "25px", marginBottom: "17px" }}
-            onClick={() => navigate("/ta-mapping")}
-          /> */}
+                            style={{ fontSize: "25px" }}
+                            className="bi bi-caret-left"
+                            onClick={() => navigate("/ta-mapping")}
+                        ></i> */}
+                                    {/* <ArrowBackIosIcon
+                            style={{ fontSize: "25px", marginBottom: "17px" }}
+                            onClick={() => navigate("/ta-mapping")}
+                        /> */}
                     <p
                         style={{
                             fontSize: '44px',
@@ -344,6 +345,7 @@ const actionButtons = [
 ];
 
 const AssignBatches = () => {
+
     const { id } = useParams();
     console.log('ID : ', id);
     const dispatch = useDispatch();
