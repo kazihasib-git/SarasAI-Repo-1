@@ -61,12 +61,20 @@ const AddEditTA = ({ data }) => {
     const [dateOfBirth, setDateOfBirth] = useState(null);
     const [phoneNumber, setPhoneNumber] = useState('');
 
+  const dispatch = useDispatch();
+  const { successPopup, assignStudentOpen, assignBatchOpen } = useSelector(
+    (state) => state.taModule
+  );
+  const { timezones } = useSelector((state) => state.timezone);
     const dispatch = useDispatch();
     const { successPopup, assignStudentOpen, assignBatchOpen } = useSelector(
         (state) => state.taModule,
     );
     const { timezones } = useSelector((state) => state.timezone);
 
+  useEffect(() => {
+    dispatch(getTimezone());
+  }, [dispatch]);
     useEffect(() => {
         dispatch(getTimezone());
     }, [dispatch]);
@@ -103,6 +111,7 @@ const AddEditTA = ({ data }) => {
             about_me: data.about_me,
         };
 
+    Object.entries(formValues).forEach(([key, value]) => setValue(key, value));
         Object.entries(formValues).forEach(([key, value]) =>
             setValue(key, value),
         );

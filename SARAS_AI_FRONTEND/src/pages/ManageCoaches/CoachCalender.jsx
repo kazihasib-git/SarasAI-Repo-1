@@ -23,9 +23,11 @@ import {
 import EditBatches from '../../components/availability/EditBatches';
 import EditStudents from '../../components/availability/EditStudents';
 import {
-    openCoachEditBatch,
-    openCoachEditStudent,
-} from '../../redux/features/CoachModule/coachSchedule';
+  openCoachEditBatch,
+  openCoachEditStudent,
+} from "../../redux/features/CoachModule/coachSchedule";
+import Header from "../../components/Header/Header";
+import Sidebar from "../../components/Sidebar/Sidebar";
 
 const CustomButton = ({
     onClick,
@@ -127,108 +129,104 @@ const CoachCalender = () => {
         dispatch(openCoachCreateNewSlots());
     };
 
-    return (
-        <Box sx={{ backgroundColor: '#f8f9fa', p: 3 }}>
-            <DialogActions sx={{ p: 2 }}>
-                <Grid container alignItems="center">
-                    <Grid item xs>
-                        <Typography variant="h4" sx={{ mb: 4 }}>
-                            {name} Calender
-                        </Typography>
-                    </Grid>
-                    <Grid item>
-                        <Box display="flex" justifyContent="center" gap={2}>
-                            <CustomButton
-                                onClick={handleScheduleNewSession}
-                                color="#FFFFFF"
-                                backgroundColor="#4E18A5"
-                                borderColor="#4E18A5"
-                            >
-                                <AddCircleOutlineIcon />
-                                Schedule New Session
-                            </CustomButton>
+  return (
+    <>
+      <Header />
+      <Sidebar />
+      <Box sx={{ backgroundColor: "#f8f9fa" }}>
+        <DialogActions sx={{ p: 2 }}>
+          <Grid container alignItems="center">
+            <Grid item xs>
+              <Typography variant="h4" sx={{ mb: 4 }}>
+                {name} Calender
+              </Typography>
+            </Grid>
+            <Grid item>
+              <Box display="flex" justifyContent="center" gap={2}>
+                <CustomButton
+                  onClick={handleScheduleNewSession}
+                  color="#FFFFFF"
+                  backgroundColor="#4E18A5"
+                  borderColor="#4E18A5"
+                >
+                  <AddCircleOutlineIcon />
+                  Schedule New Session
+                </CustomButton>
 
-                            <CustomButton
-                                onClick={handleMarkLeave}
-                                color="#F56D3B"
-                                backgroundColor="#FFFFFF"
-                                borderColor="#F56D3B"
-                            >
-                                Mark Leave
-                            </CustomButton>
+                <CustomButton
+                  onClick={handleMarkLeave}
+                  color="#F56D3B"
+                  backgroundColor="#FFFFFF"
+                  borderColor="#F56D3B"
+                >
+                  Mark Leave
+                </CustomButton>
 
-                            <CustomButton
-                                onClick={handleDeleteFutureSlots}
-                                color="#F56D3B"
-                                backgroundColor="#FFFFFF"
-                                borderColor="#F56D3B"
-                            >
-                                Delete All Future Slots
-                            </CustomButton>
+                <CustomButton
+                  onClick={handleDeleteFutureSlots}
+                  color="#F56D3B"
+                  backgroundColor="#FFFFFF"
+                  borderColor="#F56D3B"
+                >
+                  Delete All Future Slots
+                </CustomButton>
 
-                            <CustomButton
-                                color="#FFFFFF"
-                                backgroundColor="#F56D3B"
-                                borderColor="#F56D3B"
-                                onClick={handleCreateNewSlot}
-                            >
-                                {/* <AddCircleOutlineIcon /> */}
-                                Create New Slot
-                            </CustomButton>
-                        </Box>
-                    </Grid>
-                </Grid>
-            </DialogActions>
+                <CustomButton
+                  color="#FFFFFF"
+                  backgroundColor="#F56D3B"
+                  borderColor="#F56D3B"
+                  onClick={handleCreateNewSlot}
+                >
+                  {/* <AddCircleOutlineIcon /> */}
+                  Create New Slot
+                </CustomButton>
+              </Box>
+            </Grid>
+          </Grid>
+        </DialogActions>
 
-            <CalendarComponent
-                eventsList={scheduleCoachData.data}
-                addEvent={addEvent}
-                slotData={slotCoachData}
-                /*handleSelectEvent={handleSelectEvent}*/ componentName={
-                    'COACHCALENDER'
-                }
-            />
-            {openCoachEditBatch && (
-                <EditBatches componentname={'COACHSCHEDULE'} />
-            )}
-            {openCoachEditStudent && (
-                <EditStudents componentname={'COACHSCHEDULE'} />
-            )}
+        <CalendarComponent
+          eventsList={scheduleCoachData.data}
+          addEvent={addEvent}
+          slotData={slotCoachData}
+          /*handleSelectEvent={handleSelectEvent}*/ componentName={
+            "COACHCALENDER"
+          }
+        />
+        {openCoachEditBatch && <EditBatches componentname={"COACHSCHEDULE"} />}
+        {openCoachEditStudent && (
+          <EditStudents componentname={"COACHSCHEDULE"} />
+        )}
 
-            {/* {sheduleNewSession && (
+        {/* {sheduleNewSession && (
         <ScheduleSession
           open={sheduleNewSession}
           handleClose={() => setSheduleNewSession(false)}
         />
       )} */}
-            {coachMarkLeaveOpen && (
-                <MarkLeave
-                    id={id}
-                    name={name}
-                    componentName={'COACHCALENDER'}
-                />
-            )}
+        {coachMarkLeaveOpen && (
+          <MarkLeave id={id} name={name} componentName={"COACHCALENDER"} />
+        )}
 
-            {scheduledCoachSlotsOpen && (
-                <Slots id={id} name={name} componentName={'COACHCALENDER'} />
-            )}
+        {scheduledCoachSlotsOpen && (
+          <Slots id={id} name={name} componentName={"COACHCALENDER"} />
+        )}
 
-            {scheduledCoachSessionOpen && (
-                <ScheduledSessions
-                    id={id}
-                    name={name}
-                    componentName={'COACHCALENDER'}
-                />
-            )}
+        {scheduledCoachSessionOpen && (
+          <ScheduledSessions
+            id={id}
+            name={name}
+            componentName={"COACHCALENDER"}
+          />
+        )}
 
-            {cancelCoachSessionOpen && (
-                <CancelSchedule
-                    id={id}
-                    name={name}
-                    componentName={'COACHCALENDER'}
-                />
-            )}
+        {cancelCoachSessionOpen && (
+          <CancelSchedule id={id} name={name} componentName={"COACHCALENDER"} />
+        )}
 
+        {reasonForCoachLeaveOpen && (
+          <ReasonForLeave id={id} name={name} componentName={"COACHCALENDER"} />
+        )}
             {reasonForCoachLeaveOpen && (
                 <ReasonForLeave
                     id={id}
@@ -237,32 +235,30 @@ const CoachCalender = () => {
                 />
             )}
 
-            {resheduleCoachSessionOpen && (
-                <ReschedulingSession
-                    id={id}
-                    name={name}
-                    componentName={'COACHCALENDER'}
-                />
-            )}
+        {resheduleCoachSessionOpen && (
+          <ReschedulingSession
+            id={id}
+            name={name}
+            componentName={"COACHCALENDER"}
+          />
+        )}
 
-            {deleteFutureSlots && (
-                <DeleteAllSlots
-                    open={deleteFutureSlots}
-                    handleClose={() => setDeleteFutureSlots(false)}
-                    id={id}
-                    name={name}
-                    componentName={'COACHCALENDER'}
-                />
-            )}
+        {deleteFutureSlots && (
+          <DeleteAllSlots
+            open={deleteFutureSlots}
+            handleClose={() => setDeleteFutureSlots(false)}
+            id={id}
+            name={name}
+            componentName={"COACHCALENDER"}
+          />
+        )}
 
-            {createNewCoachSlotOpen && (
-                <CreateNewSlot
-                    addEvent={addEvent}
-                    componentName={'COACHCALENDER'}
-                />
-            )}
-        </Box>
-    );
+        {createNewCoachSlotOpen && (
+          <CreateNewSlot addEvent={addEvent} componentName={"COACHCALENDER"} />
+        )}
+      </Box>
+    </>
+  );
 };
 
 export default CoachCalender;

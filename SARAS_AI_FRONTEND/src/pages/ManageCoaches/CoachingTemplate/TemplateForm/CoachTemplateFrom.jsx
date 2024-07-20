@@ -7,9 +7,9 @@ import { useDispatch } from 'react-redux';
 import { createCoachTemplate } from '../../../../redux/features/CoachModule/CoachTemplateSlice';
 
 const durations = [
-    { value: '30 mins', label: '30 mins' },
-    { value: '45 mins', label: '45 mins' },
-    { value: '60 mins', label: '60 mins' },
+  { value: 30, label: "30 mins" },
+  { value: 45, label: "45 mins" },
+  { value: 60, label: "60 mins" },
 ];
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
@@ -27,91 +27,110 @@ const CustomButton = styled(Button)(({ theme, active }) => ({
 }));
 
 const CoachTemplateForm = () => {
-    const dispatch = useDispatch();
-    const [templateName, setTemplateName] = useState('');
-    const [duration, setDuration] = useState('');
-    const navigation = useNavigate();
+  const dispatch = useDispatch();
+  const [templateName, setTemplateName] = useState("");
+  const [duration, setDuration] = useState("");
+  const [errors, setErrors] = useState({});
+  const navigation = useNavigate();
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        // Handle form submission
-        console.log(`Template Name: ${templateName}, Duration: ${duration}`);
+  const validateTemplateName = (name) => {
+    // Regex to ensure the template name is more than 4 characters and contains at least one space between words
+    const regex = /^(?=.*\s).{5,}$/;
+    if (!regex.test(name)) {
+      return "Template Name must be more than 4 characters and contain at least one space between words";
+    }
+    return "";
+  };
 
-        const newTemplateData = {
-            name: templateName,
-            is_active: '1',
-            duration: duration,
-        };
+  const validateForm = () => {
+    const newErrors = {};
+    const templateNameError = validateTemplateName(templateName);
+    if (templateNameError) newErrors.templateName = templateNameError;
+    if (!duration) newErrors.duration = "Duration is required";
+    return newErrors;
+  };
 
-        dispatch(createCoachTemplate(newTemplateData));
-        navigation('/template-name');
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
+
+    const newTemplateData = {
+      name: templateName,
+      duration: duration,
     };
 
-    return (
-        <Box
-            component="form"
-            onSubmit={handleSubmit}
-            sx={{
-                backgroundColor: '#FFFFFF',
-                borderRadius: '10px',
-                padding: '20px',
-                // maxWidth: "800px",
-                margin: '0 auto',
-                marginTop: '50px',
-            }}
-        >
-            <Grid container spacing={3} sx={{ maxWidth: '800px' }}>
-                <Grid item xs={12} sm={6}>
-                    <CustomTextField
-                        // fullWidth
-                        label="Template Name"
-                        variant="outlined"
-                        value={templateName}
-                        onChange={(e) => setTemplateName(e.target.value)}
-                        placeholder="Enter Template Name"
-                        name="templateName"
-                    />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                    <CustomTextField
-                        // fullWidth
-                        select
-                        label="Duration"
-                        value={duration}
-                        onChange={(e) => setDuration(e.target.value)}
-                        variant="outlined"
-                        name="duration"
-                    >
-                        {durations.map((option) => (
-                            <MenuItem key={option.value} value={option.value}>
-                                {option.label}
-                            </MenuItem>
-                        ))}
-                    </CustomTextField>
-                </Grid>
-                <Grid item xs={12}>
-                    <Button
-                        type="submit"
-                        variant="contained"
-                        sx={{
-                            backgroundColor: '#F56D38',
-                            color: '#FFFFFF',
-                            borderRadius: '50px',
-                            padding: '10px 20px',
-                            border: '2px solid #F56D38',
-                            '&:hover': {
-                                backgroundColor: '#FFFFFF',
-                                color: '#F56D38',
-                                borderColor: '#F56D38',
-                            },
-                        }}
-                    >
-                        Submit
-                    </Button>
-                </Grid>
-            </Grid>
-        </Box>
-    );
+    dispatch(createCoachTemplate(newTemplateData));
+    navigation("/template-name", { state: { newTemplateData } });
+  };
+
+  const handleTemplateNameChange = (e) => {
+    setTemplateName(e.target.value);
+    const error = validateTemplateName(e.target.value);
+    setErrors((prevErrors) => ({ ...prevErrors, templateName: error }));
+  };
+
+  const handleDurationChange = (e) => {
+    setDuration(e.target.value);
+    if (errors.duration) {
+      setErrors((prevErrors) => ({ ...prevErrors, duration: "" }));
+    }
+  };
+
+  return (
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      sx={{
+        backgroundColor: "#FFFFFF",
+        borderRadius: "10px",
+        padding: "20px",
+        margin: "0 auto",
+        marginTop: "50px",
+      }}
+    >
+      <Grid container spacing={3} sx={{ maxWidth: "800px" }}>
+        <Grid item xs={12} sm={6}>
+          <CustomTextField
+            label="Template Name"
+            variant="outlined"
+            value={templateName}
+            onChange={handleTemplateNameChange}
+            placeholder="Enter Template Name"
+            name="templateName"
+            error={!!errors.templateName}
+            helperText={errors.templateName}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <CustomTextField
+            select
+            label="Duration"
+            value={duration}
+            onChange={handleDurationChange}
+            variant="outlined"
+            name="duration"
+            error={!!errors.duration}
+            helperText={errors.duration}
+          >
+            {durations.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </CustomTextField>
+        </Grid>
+        <Grid item xs={12}>
+          <CustomButton type="submit" variant="contained">
+            Submit
+          </CustomButton>
+        </Grid>
+      </Grid>
+    </Box>
+  );
 };
 
 export default CoachTemplateForm;

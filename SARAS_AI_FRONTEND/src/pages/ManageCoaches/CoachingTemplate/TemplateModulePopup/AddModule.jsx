@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
-import ReusableDialog from '../../../../components/CustomFields/ReusableDialog';
-import { Button, Grid } from '@mui/material';
-import CustomTextField from '../../../../components/CustomFields/CustomTextField';
+import React, { useState } from "react";
+import ReusableDialog from "../../../../components/CustomFields/ReusableDialog";
+import { Button, Grid } from "@mui/material";
+import CustomTextField from "../../../../components/CustomFields/CustomTextField";
 import {
-    closeTemplateModulePopup,
-    createCoachTemplateModule,
-} from '../../../../redux/features/CoachModule/CoachTemplateSlice';
-import { useDispatch, useSelector } from 'react-redux';
+  closeTemplateModulePopup,
+  createCoachTemplateModule,
+  getAllCoachTemplateModules,
+} from "../../../../redux/features/CoachModule/CoachTemplateSlice";
+import { useDispatch, useSelector } from "react-redux";
 const CustomButton = ({
     onClick,
     children,
@@ -42,49 +43,53 @@ const CustomButton = ({
     );
 };
 const AddModule = () => {
-    const dispatch = useDispatch();
-    const [moduleName, setModuleName] = useState('');
-    const { openModulePopUp, selectedCoachTemplate } = useSelector(
-        (state) => state.coachTemplate,
-    );
+  const dispatch = useDispatch();
+  const [moduleName, setModuleName] = useState("");
+  const { openModulePopUp, selectedCoachTemplate } = useSelector(
+    (state) => state.coachTemplate
+  );
 
-    const content = (
-        <Grid
-            container
-            sx={{
-                pt: 3,
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                textAlign: 'center', // Add this line if needed
-            }}
-        >
-            <Grid item xs={12} sm={6}>
-                <CustomTextField
-                    label="Module Name"
-                    variant="outlined"
-                    value={moduleName}
-                    onChange={(e) => setModuleName(e.target.value)}
-                    placeholder="Enter Module Name"
-                    name="moduleName"
-                />
-            </Grid>
-        </Grid>
-    );
+  const content = (
+    <Grid
+      container
+      sx={{
+        pt: 3,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        textAlign: "center", // Add this line if needed
+      }}
+    >
+      <Grid item xs={12} sm={6}>
+        <CustomTextField
+          label="Module Name"
+          variant="outlined"
+          value={moduleName}
+          onChange={(e) => setModuleName(e.target.value)}
+          placeholder="Enter Module Name"
+          name="moduleName"
+        />
+      </Grid>
+    </Grid>
+  );
 
-    const handleSubmit = () => {
-        if (moduleName) {
-            const data = {
-                template_id: selectedCoachTemplate,
-                module_name: moduleName,
-                is_active: true,
-                created_by: 1,
-                updated_by: 1,
-            };
-            dispatch(createCoachTemplateModule(data));
-            dispatch(closeTemplateModulePopup());
-        }
-    };
+  const handleSubmit = () => {
+    if (moduleName) {
+      const data = {
+        template_id: selectedCoachTemplate,
+        module_name: moduleName,
+        is_active: true,
+        created_by: 1,
+        updated_by: 1,
+      };
+      dispatch(createCoachTemplateModule(data))
+        .unwrap()
+        .then(() => {
+          dispatch(getAllCoachTemplateModules(selectedCoachTemplate));
+        });
+      dispatch(closeTemplateModulePopup());
+    }
+  };
 
     const actions = (
         <CustomButton

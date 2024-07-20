@@ -232,63 +232,63 @@ const AssignStudents = ({ componentname }) => {
 
     const headers = ['S. No.', 'Student Name', 'Program', 'Batch', 'Select'];
 
-    const content = (
-        <>
-            <Grid container spacing={2} sx={{ mt: 0 }}>
-                <Grid item sm={6}>
-                    <CustomTextField
-                        select
-                        label="Academic Term"
-                        value={selectedTerm}
-                        onChange={(e) => setSelectedTerm(e.target.value)}
-                    >
-                        {academicTermOptions.map((term) => (
-                            <MenuItem key={term} value={term}>
-                                {term}
-                            </MenuItem>
-                        ))}
-                    </CustomTextField>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                    <CustomTextField
-                        select
-                        label="Batch"
-                        value={selectedBatch}
-                        onChange={(e) => setSelectedBatch(e.target.value)}
-                    >
-                        {batchOptions.map((batch) => (
-                            <MenuItem key={batch} value={batch}>
-                                {batch}
-                            </MenuItem>
-                        ))}
-                    </CustomTextField>
-                </Grid>
-                <Grid item xs={12}>
-                    <Divider sx={{ border: '1px solid #C2C2E7' }} />
-                </Grid>
-                <Grid item xs={12} marginBottom={2}>
-                    <CustomTextField
-                        label="Search By Student Name"
-                        value={searchName}
-                        onChange={(e) => setSearchName(e.target.value)}
-                    />
-                </Grid>
-            </Grid>
-            <PopUpTable
-                headers={headers}
-                initialData={filteredStudents}
-                onRowClick={handleSelectStudent}
-                selectedBox={selectedStudents}
-            />
-            <Typography
-                variant="subtitle1"
-                gutterBottom
-                sx={{ mt: 2, textAlign: 'center' }}
-            >
-                {selectedStudents.length} Student(s) Selected
-            </Typography>
-        </>
-    );
+  const content = (
+    <>
+      <Grid container spacing={2} >
+        <Grid item sm={6}>
+          <CustomTextField
+            select
+            label="Academic Term"
+            value={selectedTerm}
+            onChange={(e) => setSelectedTerm(e.target.value)}
+          >
+            {academicTermOptions.map((term) => (
+              <MenuItem key={term} value={term}>
+                {term}
+              </MenuItem>
+            ))}
+          </CustomTextField>
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <CustomTextField
+            select
+            label="Batch"
+            value={selectedBatch}
+            onChange={(e) => setSelectedBatch(e.target.value)}
+          >
+            {batchOptions.map((batch) => (
+              <MenuItem key={batch} value={batch}>
+                {batch}
+              </MenuItem>
+            ))}
+          </CustomTextField>
+        </Grid>
+        <Grid item xs={12}>
+          <Divider sx={{ border: "1px solid #C2C2E7" }} />
+        </Grid>
+        <Grid item xs={12} marginBottom={2}>
+          <CustomTextField
+            label="Search By Student Name"
+            value={searchName}
+            onChange={(e) => setSearchName(e.target.value)}
+          />
+        </Grid>
+      </Grid>
+      <PopUpTable
+        headers={headers}
+        initialData={filteredStudents}
+        onRowClick={handleSelectStudent}
+        selectedBox={selectedStudents}
+      />
+      <Typography
+        variant="subtitle1"
+        gutterBottom
+        sx={{ mt: 2, textAlign: "center" }}
+      >
+        {selectedStudents.length} Student(s) Selected
+      </Typography>
+    </>
+  );
 
     const actions = (
         <CustomButton
