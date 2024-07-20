@@ -1,124 +1,153 @@
-import React, { useEffect, useState } from "react";
-import ReusableDialog from "../../../../components/CustomFields/ReusableDialog";
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
+import React, { useEffect, useState } from 'react';
+import ReusableDialog from '../../../../components/CustomFields/ReusableDialog';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
 import {
-  Button,
-  Grid,
-  Typography,
-  Box,
-  Checkbox,
-  FormControlLabel,
-  FormControl,
-} from "@mui/material";
-import { Controller, useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import VideoUploadComponent from "./videoUpload/VideoUploadComponent";
-import CustomFormControl from "../../../../components/CustomFields/CustomFromControl";
-import CustomTextField from "../../../../components/CustomFields/CustomTextField";
-import CustomDateField from "../../../../components/CustomFields/CustomDateField";
-import CustomTimeField from "../../../../components/CustomFields/CustomTimeField";
-import { getActivityType } from "../../../../redux/features/ActivityType/activityTypeSlice";
-import { getCoach } from "../../../../redux/features/CoachModule/coachSlice";
+    Button,
+    Grid,
+    Typography,
+    Box,
+    Checkbox,
+    FormControlLabel,
+    FormControl,
+} from '@mui/material';
+import { Controller, useForm } from 'react-hook-form';
+import { useDispatch, useSelector } from 'react-redux';
+import VideoUploadComponent from './videoUpload/VideoUploadComponent';
+import CustomFormControl from '../../../../components/CustomFields/CustomFromControl';
+import CustomTextField from '../../../../components/CustomFields/CustomTextField';
+import CustomDateField from '../../../../components/CustomFields/CustomDateField';
+import CustomTimeField from '../../../../components/CustomFields/CustomTimeField';
+import { getActivityType } from '../../../../redux/features/ActivityType/activityTypeSlice';
+import { getCoach } from '../../../../redux/features/CoachModule/coachSlice';
+import { linkActivity } from '../../../../redux/features/ActivityType/LinkActivitySlice';
+
 import { getCoachAvailableSlotsFromDate } from "../../../../redux/features/CoachModule/coachSchedule";
 import { getTaAvailableSlotsFromDate } from "../../../../redux/features/taModule/taScheduling";
 import { createCoachSchedule } from "../../../../redux/features/CoachModule/coachSchedule"; 
 const CustomButton = ({
-  onClick,
-  children,
-  color = "#FFFFFF",
-  backgroundColor = "#4E18A5",
-  borderColor = "#FFFFFF",
-  sx,
-  ...props
+    onClick,
+    children,
+    color = '#FFFFFF',
+    backgroundColor = '#4E18A5',
+    borderColor = '#FFFFFF',
+    sx,
+    ...props
 }) => {
-  return (
-    <Button
-      variant="contained"
-      onClick={onClick}
-      sx={{
-        backgroundColor: backgroundColor,
-        color: color,
-        fontWeight: "700",
-        fontSize: "14px", // Reduced font size
-        borderRadius: "50px",
-        padding: "8px 16px", // Reduced padding
-        border: `2px solid ${borderColor}`,
-        "&:hover": {
-          backgroundColor: color,
-          color: backgroundColor,
-          borderColor: color,
-        },
-        ...sx,
-      }}
-      {...props}
-    >
-      {children}
-    </Button>
-  );
+    return (
+        <Button
+            variant="contained"
+            onClick={onClick}
+            sx={{
+                backgroundColor: backgroundColor,
+                color: color,
+                fontWeight: '700',
+                fontSize: '14px', // Reduced font size
+                borderRadius: '50px',
+                padding: '8px 16px', // Reduced padding
+                border: `2px solid ${borderColor}`,
+                '&:hover': {
+                    backgroundColor: color,
+                    color: backgroundColor,
+                    borderColor: color,
+                },
+                ...sx,
+            }}
+            {...props}
+        >
+            {children}
+        </Button>
+    );
 };
 
-const LinkActivityPopup = ({ open, handleClose }) => {
-  const dispatch = useDispatch();
-  const {
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = useForm();
-  const [fromDate, setFromDate] = useState(null);
-  const [activityType, setActivityType] = useState("");
-  const [selectedSessionType, setSelectedSessionType] = useState("");
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [askCoach, setAskCoach] = useState(false);
-  const [selectedCoachId, setSelectedCoachId] = useState("");
+const LinkActivityPopup = ({ open, handleClose, activityId }) => {
+    const dispatch = useDispatch();
+    const {
+        handleSubmit,
+        control,
+        formState: { errors },
+    } = useForm();
+    const [fromDate, setFromDate] = useState(null);
+    const [activityType, setActivityType] = useState('');
+    const [selectedSessionType, setSelectedSessionType] = useState('');
+    const [selectedDate, setSelectedDate] = useState(null);
+    const [askCoach, setAskCoach] = useState(false);
+    const [selectedCoachId, setSelectedCoachId] = useState('');
+    const [selectedAssessmentId, setSelectedAssessmentId] = useState('');
+    const [selectedActivityId, setSelectedActivityId] = useState('');
 
-  const onSubmit = (data) => {
-    console.log(data); // Example: Log form data
-    handleClose();
-  };
-  useEffect(() => {
-    dispatch(getActivityType());
-    dispatch(getCoach());
-    // dispatch(getSlotsCoachTemplateModule());
+    const onSubmit = async (data) => {
+        // Prepare the payload
+        console.log('clicked');
+        console.log('activity data', data);
+        console.log('selected assessment id', selectedAssessmentId);
+        const payload = {
+            activity_id: activityId, // Ensure this value is correctly set
+            activity_type_id:
+                activityType === 'test'
+                    ? selectedAssessmentId
+                    : selectedActivityId, // Ensure this value is correctly set
+            link: data.virtualMeetLink, // Add other fields if needed
+        };
+        console.log('payload', payload);
+
+        try {
+            await dispatch(linkActivity(payload)).unwrap();
+            handleClose();
+        } catch (error) {
+            console.error('Failed to link activity:', error);
+        }
+    };
+
+    useEffect(() => {
+        dispatch(getActivityType());
+        dispatch(getCoach());
+      // dispatch(getSlotsCoachTemplateModule());
   }, [dispatch]);
 
-  const { typeList } = useSelector((state) => state.activityType);
-  const { coaches }  = useSelector((state) => state.coachModule);
+    const { typeList } = useSelector((state) => state.activityType);
+    const { coaches } = useSelector((state) => state.coachModule);
   const { coachAvailableSlots}  = useSelector((state) => state.coachScheduling);
-   console.log( "coaches", coaches)
-   console.log("coachesslot", coachAvailableSlots );
-  const activityOptions =
-    typeList?.map((type) => ({
-      value: type.type_name,
-      label: type.type_name.charAt(0).toUpperCase() + type.type_name.slice(1), // Capitalize the first letter of each type_name
-    })) || [];
+    console.log('coaches', coaches);
+     console.log("coachesslot", coachAvailableSlots );
+  const activityOptions = typeList
+        .filter((_, index) => index < 5)
+        .map((type) => ({
+            value: type.type_name,
+            label:
+                type.type_name.charAt(0).toUpperCase() +
+                type.type_name.slice(1), // Capitalize the first letter of each type_name
+            id: type.id,
+        }));
 
-  const assessmentOptions = [
-    { value: "wheel_of_life", label: "Wheel of Life" },
-    { value: "core_value", label: "Core Value" },
-    { value: "belief", label: "Belief" },
-  ];
+    const assessmentOptions = typeList
+        .filter((_, index) => index >= 5)
+        .map((type) => ({
+            value: type.type_name,
+            label:
+                type.type_name.charAt(0).toUpperCase() +
+                type.type_name.slice(1), // Capitalize the first letter of each type_name
+            id: type.id,
+        }));
 
-  const sessionTypes = [
-    { value: "one-on-one", label: "One-on-one session" },
-    { value: "group", label: "Group session" },
-  ];
+    const sessionTypes = [
+        { value: 'one-on-one', label: 'One-on-one session' },
+        { value: 'group', label: 'Group session' },
+    ];
 
-  const coachOptions = coaches.map(coach => ({
-    
-    value: coach.name,
-    label: coach.name,
-    id: coach.id,
-   
-  }));
+    const coachOptions = coaches.map((coach) => ({
+        value: coach.name,
+        label: coach.name,
+        id: coach.id,
+    }));
  
-  const timeSlots = [
-    { value: "slot1", label: "10:00 AM - 11:00 AM" },
-    { value: "slot2", label: "11:00 AM - 12:00 PM" },
-    { value: "slot3", label: "1:00 PM - 2:00 PM" },
-    { value: "slot4", label: "2:00 PM - 3:00 PM" },
-    { value: "slot5", label: "3:00 PM - 4:00 PM" },
-  ];
+    const timeSlots = [
+        { value: 'slot1', label: '10:00 AM - 11:00 AM' },
+        { value: 'slot2', label: '11:00 AM - 12:00 PM' },
+        { value: 'slot3', label: '1:00 PM - 2:00 PM' },
+        { value: 'slot4', label: '2:00 PM - 3:00 PM' },
+        { value: 'slot5', label: '3:00 PM - 4:00 PM' },
+    ];
   const formatTime = (time) => {
     const [hours, minutes] = time.split(':');
     const hour = parseInt(hours, 10);
@@ -127,14 +156,16 @@ const LinkActivityPopup = ({ open, handleClose }) => {
     const formattedHour = hour % 12 || 12;
     return `${formattedHour}:${minute < 10 ? '0' : ''}${minute} ${ampm}`;
   };
-  const timeZones = [
-    { value: "UTC", label: "UTC" },
-    { value: "GMT", label: "GMT" },
-    { value: "PST", label: "Pacific Standard Time" },
-    { value: "EST", label: "Eastern Standard Time" },
-  ];
-  const handleCoachChange = (e) => {
-    const selected = coachOptions.find(option => option.value === e.target.value);
+    const timeZones = [
+        { value: 'UTC', label: 'UTC' },
+        { value: 'GMT', label: 'GMT' },
+        { value: 'PST', label: 'Pacific Standard Time' },
+        { value: 'EST', label: 'Eastern Standard Time' },
+    ];
+    const handleCoachChange = (e) => {
+        const selected = coachOptions.find(
+            (option) => option.value === e.target.value,
+        );
 
     if (selected) {
       setSelectedCoachId(selected.id);
@@ -213,131 +244,146 @@ const LinkActivityPopup = ({ open, handleClose }) => {
         />
       </Grid>
 
-      {activityType === "videos" && <VideoUploadComponent />}
+            {activityType === 'videos' && <VideoUploadComponent />}
 
-      {activityType === "link" && (
-        <Grid
-          item
-          xs={12}
-          sm={6}
-          md={6}
-          style={{ margin: "5px 0px", width: "80%" }}
-        >
-          <Controller
-            name="link"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <CustomTextField
-                label="Link"
-                name="link"
-                variant="outlined"
-                value={field.value}
-                onChange={(e) => {
-                  field.onChange(e);
-                }}
-                placeholder="Enter Link"
-                fullWidth
-              />
+            {activityType === 'link' && (
+                <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    md={6}
+                    style={{ margin: '5px 0px', width: '80%' }}
+                >
+                    <Controller
+                        name="link"
+                        control={control}
+                        defaultValue=""
+                        render={({ field }) => (
+                            <CustomTextField
+                                label="Link"
+                                name="link"
+                                variant="outlined"
+                                value={field.value}
+                                onChange={(e) => {
+                                    field.onChange(e);
+                                }}
+                                placeholder="Enter Link"
+                                fullWidth
+                            />
+                        )}
+                    />
+                </Grid>
             )}
-          />
-        </Grid>
-      )}
-      {activityType === "test" && (
-        <Grid
-          item
-          xs={12}
-          sm={6}
-          md={6}
-          style={{ margin: "5px 0px", width: "80%" }}
-        >
-          <Controller
-            name="assessment"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <CustomFormControl
-                label="Assessment"
-                name="assessment"
-                value={field.value}
-                onChange={(e) => {
-                  field.onChange(e);
-                }}
-                errors={errors}
-                options={assessmentOptions}
-              />
-            )}
-          />
-        </Grid>
-      )}
 
-      {activityType === "virtual meet" && (
-        <>
-          <Grid
-            item
-            xs={12}
-            sm={6}
-            md={6}
-            style={{ margin: "5px 0px", width: "80%" }}
-          >
-            <Controller
-              name="virtualMeetLink"
-              control={control}
-              defaultValue=""
-              render={({ field }) => (
-                <CustomTextField
-                  label="Link"
-                  name="virtualMeetLink"
-                  variant="outlined"
-                  value={field.value}
-                  onChange={(e) => {
-                    field.onChange(e);
-                  }}
-                  placeholder="Enter Link"
-                  fullWidth
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} style={{ margin: "5px 0px", width: "80%" }}>
-            <FormControl
-              component="fieldset"
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "center",
-              }}
-            >
-              <Controller
-                name="sessionType"
-                control={control}
-                defaultValue=""
-                render={({ field }) => (
-                  <RadioGroup
-                    row
-                    value={field.value}
-                    onChange={(e) => {
-                      setSelectedSessionType(e.target.value);
-                      field.onChange(e.target.value);
-                    }}
-                  >
-                    <FormControlLabel
-                      control={<Radio />}
-                      label="One-on-one session"
-                      value="one-on-one"
+            {activityType === 'test' && (
+                <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    md={6}
+                    style={{ margin: '5px 0px', width: '80%' }}
+                >
+                    <Controller
+                        name="assessment"
+                        control={control}
+                        defaultValue=""
+                        render={({ field }) => (
+                            <CustomFormControl
+                                label="Assessment"
+                                name="assessment"
+                                value={field.value}
+                                onChange={(e) => {
+                                    const selectedValue = e.target.value;
+                                    field.onChange(e);
+                                    const selectedOption =
+                                        assessmentOptions.find(
+                                            (option) =>
+                                                option.value === selectedValue,
+                                        );
+                                    setSelectedAssessmentId(
+                                        selectedOption ? selectedOption.id : '',
+                                    );
+                                }}
+                                errors={errors}
+                                options={assessmentOptions}
+                            />
+                        )}
                     />
-                    <FormControlLabel
-                      control={<Radio />}
-                      label="Group session"
-                      value="group"
-                    />
-                  </RadioGroup>
-                )}
-              />
-            </FormControl>
-          </Grid>
-        </>
-      )}
+                </Grid>
+            )}
+            {activityType === 'virtual meet' && (
+                <>
+                    <Grid
+                        item
+                        xs={12}
+                        sm={6}
+                        md={6}
+                        style={{ margin: '5px 0px', width: '80%' }}
+                    >
+                        <Controller
+                            name="virtualMeetLink"
+                            control={control}
+                            defaultValue=""
+                            render={({ field }) => (
+                                <CustomTextField
+                                    label="Link"
+                                    name="virtualMeetLink"
+                                    variant="outlined"
+                                    value={field.value}
+                                    onChange={(e) => {
+                                        field.onChange(e);
+                                    }}
+                                    placeholder="Enter Link"
+                                    fullWidth
+                                />
+                            )}
+                        />
+                    </Grid>
+                    <Grid
+                        item
+                        xs={12}
+                        style={{ margin: '5px 0px', width: '80%' }}
+                    >
+                        <FormControl
+                            component="fieldset"
+                            style={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: 'center',
+                            }}
+                        >
+                            <Controller
+                                name="sessionType"
+                                control={control}
+                                defaultValue=""
+                                render={({ field }) => (
+                                    <RadioGroup
+                                        row
+                                        value={field.value}
+                                        onChange={(e) => {
+                                            setSelectedSessionType(
+                                                e.target.value,
+                                            );
+                                            field.onChange(e.target.value);
+                                        }}
+                                    >
+                                        <FormControlLabel
+                                            control={<Radio />}
+                                            label="One-on-one session"
+                                            value="one-on-one"
+                                        />
+                                        <FormControlLabel
+                                            control={<Radio />}
+                                            label="Group session"
+                                            value="group"
+                                        />
+                                    </RadioGroup>
+                                )}
+                            />
+                        </FormControl>
+                    </Grid>
+                </>
+            )}
 
       {selectedSessionType === "one-on-one" && (
         <Grid
@@ -492,28 +538,28 @@ const LinkActivityPopup = ({ open, handleClose }) => {
     </Grid>
   );
 
-  const actions = (
-    <>
-      <CustomButton
-        onClick={handleSubmit(onSubmit)}
-        backgroundColor="#F56D3B"
-        borderColor="#F56D3B"
-        color="#FFFFFF"
-      >
-        Submit
-      </CustomButton>
-    </>
-  );
+    const actions = (
+        <>
+            <CustomButton
+                onClick={handleSubmit(onSubmit)}
+                backgroundColor="#F56D3B"
+                borderColor="#F56D3B"
+                color="#FFFFFF"
+            >
+                Submit
+            </CustomButton>
+        </>
+    );
 
-  return (
-    <ReusableDialog
-      open={open}
-      handleClose={handleClose}
-      title="Link Activity"
-      content={contentComponent}
-      actions={actions}
-    />
-  );
+    return (
+        <ReusableDialog
+            open={open}
+            handleClose={handleClose}
+            title="Link Activity"
+            content={contentComponent}
+            actions={actions}
+        />
+    );
 };
 
 export default LinkActivityPopup;

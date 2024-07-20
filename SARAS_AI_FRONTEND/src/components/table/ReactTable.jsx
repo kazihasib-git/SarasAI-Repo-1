@@ -12,7 +12,7 @@ import {
     TablePagination,
     Switch,
     Button,
-    Pagination
+    Pagination,
 } from '@mui/material';
 
 const ReactTable = ({ columns, data }) => {
@@ -27,14 +27,14 @@ const ReactTable = ({ columns, data }) => {
         pageOptions,
         nextPage,
         previousPage,
-        state: { pageIndex, pageSize }
+        state: { pageIndex, pageSize },
     } = useTable(
         {
             columns,
             data,
-            initialState: { pageIndex: 0, pageSize: 5 }
+            initialState: { pageIndex: 0, pageSize: 5 },
         },
-        usePagination
+        usePagination,
     );
 
     return (
@@ -42,21 +42,25 @@ const ReactTable = ({ columns, data }) => {
             <TableContainer component={Paper}>
                 <Table {...getTableProps()}>
                     <TableHead>
-                        {headerGroups.map(headerGroup => (
+                        {headerGroups.map((headerGroup) => (
                             <TableRow {...headerGroup.getHeaderGroupProps()}>
-                                {headerGroup.headers.map(column => (
-                                    <TableCell {...column.getHeaderProps()}>{column.render('Header')}</TableCell>
+                                {headerGroup.headers.map((column) => (
+                                    <TableCell {...column.getHeaderProps()}>
+                                        {column.render('Header')}
+                                    </TableCell>
                                 ))}
                             </TableRow>
                         ))}
                     </TableHead>
                     <TableBody {...getTableBodyProps()}>
-                        {page.map(row => {
+                        {page.map((row) => {
                             prepareRow(row);
                             return (
                                 <TableRow {...row.getRowProps()}>
-                                    {row.cells.map(cell => (
-                                        <TableCell {...cell.getCellProps()}>{cell.render('Cell')}</TableCell>
+                                    {row.cells.map((cell) => (
+                                        <TableCell {...cell.getCellProps()}>
+                                            {cell.render('Cell')}
+                                        </TableCell>
                                     ))}
                                 </TableRow>
                             );
@@ -65,11 +69,23 @@ const ReactTable = ({ columns, data }) => {
                     <TableFooter>
                         <TableRow>
                             <TableCell colSpan={6}>
-                                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-                                    <Button onClick={() => previousPage()} disabled={!canPreviousPage}>
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        marginTop: '20px',
+                                    }}
+                                >
+                                    <Button
+                                        onClick={() => previousPage()}
+                                        disabled={!canPreviousPage}
+                                    >
                                         Previous
                                     </Button>
-                                    <Button onClick={() => nextPage()} disabled={!canNextPage}>
+                                    <Button
+                                        onClick={() => nextPage()}
+                                        disabled={!canNextPage}
+                                    >
                                         Next
                                     </Button>
                                 </div>
@@ -116,7 +132,6 @@ const ReactTable = ({ columns, data }) => {
                     }}
                 />
             </div>
-
         </>
     );
 };

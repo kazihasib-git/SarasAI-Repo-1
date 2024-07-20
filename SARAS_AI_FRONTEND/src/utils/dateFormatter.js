@@ -7,7 +7,7 @@ export const dateFormatter = (date) => {
     // Convert date in MM/DD/YYYY format
     // example July/11/2024
 
-    // to display date in the format of July/11/2024 
+    // to display date in the format of July/11/2024
     // and to send it to the backend in the format of 2024-07-11
 
     const month = date.toLocaleString('default', { month: 'long' });

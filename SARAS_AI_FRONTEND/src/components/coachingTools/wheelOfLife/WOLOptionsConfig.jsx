@@ -2,28 +2,45 @@ import React, { useEffect, useState } from 'react';
 import Header from '../../../components/Header/Header';
 import Sidebar from '../../../components/Sidebar/Sidebar';
 import DynamicTable from '../../../components/CommonComponent/DynamicTable';
-import { Box, Button, Container, Grid, Paper, styled, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
+import {
+    Box,
+    Button,
+    Container,
+    Grid,
+    Paper,
+    styled,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Typography,
+} from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { useNavigate } from 'react-router-dom';
 import editIcon_White from '../../../assets/editIcon_White.png';
 import CustomFormControl from '../../CustomFields/CustomFromControl';
 import { Controller, useForm, useFieldArray } from 'react-hook-form';
 import CustomTextField from '../../CustomFields/CustomTextField';
 import star from '../../../assets/star.png';
-import { addWOLOptionConfig, getWOLOptionConfig } from '../../../redux/features/coachingTools/wol/wolSlice';
+import {
+    addWOLOptionConfig,
+    getWOLOptionConfig,
+} from '../../../redux/features/coachingTools/wol/wolSlice';
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
-    borderRadius: "50px",
-    border: "1px solid #F56D3B",
-    color: active ? "#fff" : "#F56D3B",
-    backgroundColor: active ? "#F56D3B" : "#FFF",
-    padding: "8px 16px",
-    margin: "0 8px",
-    "&:hover": {
-        backgroundColor: "#F56D3B",
-        color: "#fff",
-        borderColor: "#F56D3B",
+    borderRadius: '50px',
+    border: '1px solid #F56D3B',
+    color: active ? '#fff' : '#F56D3B',
+    backgroundColor: active ? '#F56D3B' : '#FFF',
+    padding: '8px 16px',
+    margin: '0 8px',
+    '&:hover': {
+        backgroundColor: '#F56D3B',
+        color: '#fff',
+        borderColor: '#F56D3B',
     },
 }));
 
@@ -68,12 +85,18 @@ const WOLOptionsConfig = () => {
     const navigate = useNavigate();
     const [edit, setEdit] = useState(false);
     const { optionsConfigData } = useSelector((state) => state.wol);
-    const { register, handleSubmit, control, formState: { errors }, reset } = useForm({
+    const {
+        register,
+        handleSubmit,
+        control,
+        formState: { errors },
+        reset,
+    } = useForm({
         defaultValues: {
             minScale: 0,
             maxScale: 0,
             details: [],
-        }
+        },
     });
     const { fields, append } = useFieldArray({
         control,
@@ -86,11 +109,12 @@ const WOLOptionsConfig = () => {
 
     useEffect(() => {
         if (optionsConfigData.data && optionsConfigData.data.length > 0) {
-            const { minimum_scale, maximum_scale, get_config_details } = optionsConfigData.data[0];
+            const { minimum_scale, maximum_scale, get_config_details } =
+                optionsConfigData.data[0];
             reset({
                 minScale: minimum_scale,
                 maxScale: maximum_scale,
-                details: get_config_details.map(detail => ({
+                details: get_config_details.map((detail) => ({
                     point: detail.point,
                     text: detail.text,
                     icon: detail.icon,
@@ -139,17 +163,22 @@ const WOLOptionsConfig = () => {
         <>
             <Header />
             <Sidebar />
-            <Box display="flex" justifyContent="space-between" marginTop={3} alignItems="center">
+            <Box
+                display="flex"
+                justifyContent="space-between"
+                marginTop={3}
+                alignItems="center"
+            >
                 <Box display="flex" alignItems="center" padding="16px">
                     <ArrowBackIosIcon
-                        style={{ fontSize: "25px", marginBottom: "17px" }}
+                        style={{ fontSize: '25px', marginBottom: '17px' }}
                         onClick={() => navigate('/wheel-of-life')}
                     />
                     <Typography
                         variant="h1"
                         sx={{
-                            fontSize: "44px",
-                            marginLeft: "16px",
+                            fontSize: '44px',
+                            marginLeft: '16px',
                         }}
                     >
                         Wheel of Life Options Config
@@ -186,9 +215,11 @@ const WOLOptionsConfig = () => {
                     <Grid container spacing={2}>
                         <Grid item xs={12} md={4}>
                             <Controller
-                                name='minScale'
+                                name="minScale"
                                 control={control}
-                                rules={{ required: 'Minimum Scale is required' }}
+                                rules={{
+                                    required: 'Minimum Scale is required',
+                                }}
                                 render={({ field }) => (
                                     <CustomFormControl
                                         label="Minimum Scale"
@@ -202,9 +233,11 @@ const WOLOptionsConfig = () => {
                         </Grid>
                         <Grid item xs={12} md={4}>
                             <Controller
-                                name='maxScale'
+                                name="maxScale"
                                 control={control}
-                                rules={{ required: 'Maximum Scale is required' }}
+                                rules={{
+                                    required: 'Maximum Scale is required',
+                                }}
                                 render={({ field }) => (
                                     <CustomFormControl
                                         label="Maximum Scale"
@@ -221,9 +254,13 @@ const WOLOptionsConfig = () => {
                                 type="submit"
                                 active={true}
                                 variant="contained"
-                                sx={{ borderRadius: "50px", padding: "18px 30px", margin: "0 8px" }}
+                                sx={{
+                                    borderRadius: '50px',
+                                    padding: '18px 30px',
+                                    margin: '0 8px',
+                                }}
                             >
-                                {edit ? "Edit" : "Submit"}
+                                {edit ? 'Edit' : 'Submit'}
                             </CustomButton>
                         </Grid>
                     </Grid>
@@ -245,7 +282,10 @@ const WOLOptionsConfig = () => {
                 >
                     <form onSubmit={handleSubmit(onFormSubmit)} noValidate>
                         <TableContainer component={Paper}>
-                            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                            <Table
+                                sx={{ minWidth: 650 }}
+                                aria-label="simple table"
+                            >
                                 <TableHead>
                                     <TableRow>
                                         <TableCell>Point</TableCell>
@@ -256,8 +296,18 @@ const WOLOptionsConfig = () => {
                                 <TableBody>
                                     {fields.map((field, index) => (
                                         <TableRow key={field.id}>
-                                            <TableCell component="th" scope="row">
-                                                {field.point} {index === 0 && <img src={star} alt='str' />} {index === fields.length - 1 && <img src={star} alt='str' />}
+                                            <TableCell
+                                                component="th"
+                                                scope="row"
+                                            >
+                                                {field.point}{' '}
+                                                {index === 0 && (
+                                                    <img src={star} alt="str" />
+                                                )}{' '}
+                                                {index ===
+                                                    fields.length - 1 && (
+                                                    <img src={star} alt="str" />
+                                                )}
                                             </TableCell>
                                             <TableCell align="right">
                                                 <CustomTextField
@@ -265,7 +315,15 @@ const WOLOptionsConfig = () => {
                                                     name={`details[${index}].text`}
                                                     placeholder="Enter Text"
                                                     register={register}
-                                                    validation={{ required: index === 0 || index === fields.length - 1 ? 'Text is required' : false }}
+                                                    validation={{
+                                                        required:
+                                                            index === 0 ||
+                                                            index ===
+                                                                fields.length -
+                                                                    1
+                                                                ? 'Text is required'
+                                                                : false,
+                                                    }}
                                                     errors={errors}
                                                     fullWidth
                                                 />
@@ -274,15 +332,27 @@ const WOLOptionsConfig = () => {
                                                 <Controller
                                                     name={`details[${index}].icon`}
                                                     control={control}
-                                                    rules={{ required: index === 0 || index === fields.length - 1 ? 'Icon is required' : false }}
+                                                    rules={{
+                                                        required:
+                                                            index === 0 ||
+                                                            index ===
+                                                                fields.length -
+                                                                    1
+                                                                ? 'Icon is required'
+                                                                : false,
+                                                    }}
                                                     render={({ field }) => (
                                                         <CustomFormControl
                                                             label="Icon"
                                                             name={`details[${index}].icon`}
                                                             value={field.value}
-                                                            onChange={field.onChange}
+                                                            onChange={
+                                                                field.onChange
+                                                            }
                                                             errors={errors}
-                                                            options={feedbackIcons}
+                                                            options={
+                                                                feedbackIcons
+                                                            }
                                                         />
                                                     )}
                                                 />
@@ -297,7 +367,11 @@ const WOLOptionsConfig = () => {
                                 type="submit"
                                 active={true}
                                 variant="contained"
-                                sx={{ borderRadius: "50px", padding: "18px 30px", margin: "0 8px" }}
+                                sx={{
+                                    borderRadius: '50px',
+                                    padding: '18px 30px',
+                                    margin: '0 8px',
+                                }}
                             >
                                 Submit
                             </CustomButton>
