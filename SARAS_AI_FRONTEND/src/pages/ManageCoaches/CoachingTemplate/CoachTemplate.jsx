@@ -6,26 +6,23 @@ import CoachTemplateTable from "./TemplateTable/CoachTemplateTable";
 import { closeCreateTemplateCoach, closeEditTemplateCoach, getAllCoachTemplates, openCreateTemplateCoach, openEditTemplateCoach, setSelectedCoachTemplate, getCoachTemplateModuleId } from "../../../redux/features/CoachModule/CoachTemplateSlice";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import CoachTemplateTable from "./TemplateTable/CoachTemplateTable";
-
-
+ 
+ 
 const CoachTemplate = () => {
   const navigation = useNavigate();
   const dispatch = useDispatch();
   const [ coachTemplatesData, setCoachTemplatesData ] = useState([]);
-
+ 
   const { coachTemplates } = useSelector((state)=> state.coachTemplate);
-  
 
+ 
   useEffect(()=>{
     dispatch(getAllCoachTemplates());
     dispatch(closeCreateTemplateCoach());
     dispatch(closeEditTemplateCoach());
-   
   },[dispatch]);
-
+ 
   useEffect(()=>{
-    
     if(coachTemplates.length>0){
       const transformData = coachTemplates.map((item)=>({
         id: item.id,
@@ -37,12 +34,11 @@ const CoachTemplate = () => {
       }));
       setCoachTemplatesData(transformData);
     }
-
-  },[coachTemplates]);
-
-
  
-
+  },[coachTemplates]);
+ 
+ 
+ 
   const headers = [
     "S. No.",
     "Template Name",
@@ -51,7 +47,7 @@ const CoachTemplate = () => {
     "Assigned To",
     "Action"
   ];
-
+ 
   const dummyData = [
     {
       id: 1,
@@ -100,7 +96,6 @@ const data123= [
     "activities": []
 },
     ]
-   
   const actionButtons = [
     {
       type: "switch",
@@ -110,53 +105,52 @@ const data123= [
       onClick: (id) => {
         dispatch(openEditTemplateCoach());
         dispatch(setSelectedCoachTemplate(id));
-        
         dispatch(getCoachTemplateModuleId(id));
         navigation("/template-name");
         console.log("CLICKED : ", id);
       },
     },
   ];
-
-
+ 
+ 
   const handleAddTemplate = () => {
     dispatch(openCreateTemplateCoach());
     navigation("/create-template")
   };
-
+ 
   return (
-    <>
-    <Box m="20px">
-      <Header />
-      <Sidebar />
-      <>
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-          <p style={{ fontSize: "44px", justifyContent: "center",fontFamily: "ExtraLight"}}>
+<>
+<Box m="40px">
+<Header />
+<Sidebar />
+<>
+<Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+<p style={{ fontSize: "44px", justifyContent: "center",fontFamily: "ExtraLight"}}>
             Coaching Template
-          </p>
-          <div className="inputBtnContainer">
-            <button className="buttonContainer" onClick={handleAddTemplate}>
-              <i className="bi bi-plus-circle"></i>
-              <span>Create New Template</span>
-            </button>
-          </div>
-        </Box>
+</p>
+<div className="inputBtnContainer">
+<button className="buttonContainer" onClick={handleAddTemplate}>
+<i className="bi bi-plus-circle"></i>
+<span>Create New Template</span>
+</button>
+</div>
+</Box>
         {!coachTemplatesData || coachTemplatesData.length === 0 ? (
-          <div>
-            <p>No Data Available</p>
-          </div>
+<div>
+<p>No Data Available</p>
+</div>
         ) : (
-          <CoachTemplateTable
+<CoachTemplateTable
             headers={headers}
             initialData={coachTemplatesData}
             actionButtons={actionButtons}
             componentName={"COACHTEMPLATE"}
           />
         )}
-      </>
-      </Box>
-    </>
+</>
+</Box>
+</>
   );
 };
-
+ 
 export default CoachTemplate;

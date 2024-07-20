@@ -31,9 +31,8 @@ const TemplateName = () => {
     coachTemplates,
     newlyCreateTemplate,
     modulesData,
-   , coachTemplatesId } = useSelector((state) => state.coachTemplate);
+    coachTemplatesId } = useSelector((state) => state.coachTemplate);
   const [isActive, setIsActive] = useState(true);
-  const [templateEditName, setTemplateEditName] = useState("");
   const [templateEditName, setTemplateEditName] = useState();
   const [modulesData1, setModulesData1] = useState([]);
   const dispatch = useDispatch();
@@ -154,7 +153,7 @@ console.log("selcted coach templete",selectedCoachTemplate)
           </button>
         </div>
       </Box>
-      <TemplateModuleTable modulesData={dummyData} />
+      <TemplateModuleTable modulesData={ coachTemplatesId} />
       {openModulePopUp && (
         <AddModule selectedTemplateId={selectedCoachTemplate} />
       )}
