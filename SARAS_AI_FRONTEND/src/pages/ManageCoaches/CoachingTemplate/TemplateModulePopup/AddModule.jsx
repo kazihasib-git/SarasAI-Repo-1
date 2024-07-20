@@ -2,7 +2,11 @@ import React, { useState } from "react";
 import ReusableDialog from "../../../../components/CustomFields/ReusableDialog";
 import { Button, Grid } from "@mui/material";
 import CustomTextField from "../../../../components/CustomFields/CustomTextField";
-import { closeTemplateModulePopup, createCoachTemplateModule } from "../../../../redux/features/CoachModule/CoachTemplateSlice";
+import {
+  closeTemplateModulePopup,
+  createCoachTemplateModule,
+  getAllCoachTemplateModules,
+} from "../../../../redux/features/CoachModule/CoachTemplateSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 const CustomButton = ({
@@ -39,11 +43,12 @@ const CustomButton = ({
     </Button>
   );
 };
-
-const AddModule = ({ selectedTemplateId }) => {
+const AddModule = () => {
   const dispatch = useDispatch();
   const [moduleName, setModuleName] = useState("");
-  const { openModulePopUp } = useSelector((state) => state.coachTemplate);
+  const { openModulePopUp, selectedCoachTemplate } = useSelector(
+    (state) => state.coachTemplate
+  );
 
   const content = (
     <Grid
@@ -72,14 +77,17 @@ const AddModule = ({ selectedTemplateId }) => {
   const handleSubmit = () => {
     if (moduleName) {
       const data = {
-        template_id: selectedTemplateId,
+        template_id: selectedCoachTemplate,
         module_name: moduleName,
         is_active: true,
-          "created_by": 1,
-          "updated_by":1,
+        created_by: 1,
         updated_by: 1,
       };
-      dispatch(createCoachTemplateModule(data));
+      dispatch(createCoachTemplateModule(data))
+        .unwrap()
+        .then(() => {
+          dispatch(getAllCoachTemplateModules(selectedCoachTemplate));
+        });
       dispatch(closeTemplateModulePopup());
       setModuleName(""); // Reset the input field
     }

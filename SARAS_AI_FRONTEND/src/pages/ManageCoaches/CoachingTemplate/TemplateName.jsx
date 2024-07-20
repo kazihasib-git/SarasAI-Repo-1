@@ -4,6 +4,7 @@ import Sidebar from "../../../components/Sidebar/Sidebar";
 import { Box } from "@mui/material";
 import AddModule from "./TemplateModulePopup/AddModule";
 import { useDispatch, useSelector } from "react-redux";
+import { getAllCoachTemplateModules, openEditModulePopup, openTemplateActivityPopup, openTemplateModulePopup, removeSelectedModule, setSelectedModule } from "../../../redux/features/CoachModule/CoachTemplateSlice";
 import {
   createCoachTemplateModule,
   getAllCoachTemplateModules,
@@ -16,22 +17,13 @@ import {
 } from "../../../redux/features/CoachModule/CoachTemplateSlice";
 import TemplateModuleTable from "./TemplateTable/TemplateModuleTable";
 import "./TemplateName.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+
 import AddActivity from "./TemplateModulePopup/AddActivity";
 import EditModule from "./TemplateModulePopup/EditModule";
 import { useLocation } from "react-router-dom";
 
 const TemplateName = () => {
-  const {
-    openModulePopUp,
-    openActivityPopUp,
-    template_name,
-    selectedCoachTemplate,
-    coachTemplates,
-    newlyCreateTemplate,
-    modulesData,
-    coachTemplatesId } = useSelector((state) => state.coachTemplate);
+  const { openModulePopUp, openActivityPopUp, template_name ,selectedCoachTemplate, coachTemplates, modulesData} = useSelector((state) => state.coachTemplate);
   const [isActive, setIsActive] = useState(true);
   const [templateEditName, setTemplateEditName] = useState();
   const [modulesData1, setModulesData1] = useState([]);
@@ -39,54 +31,41 @@ const TemplateName = () => {
   const location = useLocation();
   const { newTemplateData } = location.state || {};
 
-console.log("Tempete name is", template_name);
-console.log("coach templete", coachTemplates);
-console.log("coachtemplate id", coachTemplatesId);
-
-//  setTemplateEditName(template_name);
-console.log("selcted coach templete",selectedCoachTemplate)
+// console.log("Template name is", template_name);
+// console.log("coach templete", coachTemplates);
+// console.log("selcted coach templete",selectedCoachTemplate)
   useEffect(()=>{
     dispatch(removeSelectedModule());
   }, [dispatch]);
 
-  useEffect(() => {
-    if (newTemplateData) {
-      dispatch(setSelectedCoachTemplate(newTemplateData.id));
-      setTemplateEditName(newTemplateData.name);
-    }
-  }, [dispatch, newTemplateData]);
-
-  useEffect(() => {
-    if (coachTemplates && coachTemplates.length) {
-      const currentTemplateData = coachTemplates.find(
-        (template) => template.id === selectedCoachTemplate
-      );
-      setTemplateEditName(currentTemplateData?.name || "");
-      if (currentTemplateData?.length) {
-        const tranformData = currentTemplateData.map((item) => ({
-          id: item.id,
-          module_name: item.module_name,
-          is_active: item.is_active,
-          activities: item.activities.map((property) => ({
-            id: property.id,
-            "Activity Name": property.activity_name,
-            "Due Date": property.due_date,
-            Activity: property.activity_type.type_name,
-            Points: property.points,
-            Prerequisites: "Activity 1, Activity 2",
-            "After Due Date": property.after_due_date,
-            is_active: property.is_active,
-          })),
+  useEffect(()=>{
+    if(coachTemplates && coachTemplates.length){
+      const currentTemplateData = coachTemplates.find((template) => template.id === selectedCoachTemplate);
+      setTemplateEditName(currentTemplateData.name)
+      console.log("currenteeee",currentTemplateData );
+      if(currentTemplateData && currentTemplateData.length){
+        const tranformData = currentTemplateData.map((item)=>({
+            id: module.id,
+            module_name : item.module_name,
+            
+            is_active : item.is_active,
+            activities : item.activities.map((property)=>({
+              id: property.id,
+              "Activity Name": property.activity_name,
+              "Due Date": property.due_date,
+              Activity: property.activity_type.type_name,
+              Points: property.points,
+              Prerequisites: "Activity 1, Activity 2",
+              "After Due Date": property.after_due_date,
+              is_active: property.is_active
+            }))    
         }));
         setModulesData1(tranformData);
       }
     }
-  }, [coachTemplates, selectedCoachTemplate]);
+  },[coachTemplates]);
 
   const handleModule = () => {
-    if (newlyCreateTemplate) {
-      dispatch(setSelectedCoachTemplate(newlyCreateTemplate.data.id));
-    }
     dispatch(openTemplateModulePopup());
   };
 
@@ -95,11 +74,6 @@ console.log("selcted coach templete",selectedCoachTemplate)
       dispatch(getAllCoachTemplateModules(selectedCoachTemplate));
     }
   }, [dispatch, selectedCoachTemplate]);
-
-  const handleActivity = () => {
-    dispatch(setSelectedModule());
-    dispatch(openTemplateActivityPopup());
-  };
 
   const handleEditModule = () => {
     dispatch(openEditModulePopup());
@@ -144,7 +118,7 @@ console.log("selcted coach templete",selectedCoachTemplate)
         alignItems={"center"}
       >
         <p style={{ fontSize: "44px", justifyContent: "center" }}>
-          {templateEditName || template_name}
+       {templateEditName || template_name}
         </p>
         <div className="inputBtnContainer">
           <button className="buttonContainer" onClick={handleModule}>
@@ -153,10 +127,16 @@ console.log("selcted coach templete",selectedCoachTemplate)
           </button>
         </div>
       </Box>
-      <TemplateModuleTable modulesData={ coachTemplatesId} />
-      {openModulePopUp && (
-        <AddModule selectedTemplateId={selectedCoachTemplate} />
-      )}
+      
+        <>
+          <TemplateModuleTable
+            modulesData={modulesData}
+          />
+        </>
+        
+      
+
+      {openModulePopUp && <AddModule />}
       {openActivityPopUp && <AddActivity />}
       {openEditModulePopup && <EditModule />}
     </>

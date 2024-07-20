@@ -22,7 +22,7 @@ export const getAllCoachTemplateModules = createAsyncThunk(
   "coachTemplate/getAllCoachTemplateModules",
   async () => {
     const response = await axios.get(
-      `${baseUrl}/admin/coaching-templates/modules`
+      `${baseUrl}/admin/coaching-templates/modules/${templateId}`
     );
     return response.data;
   }
@@ -89,6 +89,9 @@ const initialState = {
   templateId: null,
   createCoachTemplateOpen: false,
   editCoachTemplateOpen: false,
+  createCoachModule:null,
+  modulesData: [],
+  newlyCreateTemplate: null,
 };
  
 export const coachTemplateSlice = createSlice({
@@ -198,8 +201,9 @@ export const coachTemplateSlice = createSlice({
         state.loading = true;
       })
       .addCase(createCoachTemplateModule.fulfilled, (state, action) => {
+        console.log("ACTION CreateCoachTemplate : ", action.payload)
         state.loading = false;
-        state.coachTemplates.push(action.payload.data);
+        state.createCoachModule = action.payload.data;
       })
       .addCase(createCoachTemplateModule.rejected, (state, action) => {
         state.loading = false;
@@ -212,7 +216,7 @@ export const coachTemplateSlice = createSlice({
         state.loading = true;
       })
       .addCase(getCoachTemplateModuleId.fulfilled, (state, action) => {
-        console.log("ACtion playlod", action.payload)
+        // console.log("ACtion playlod", action.payload)
         state.loading = false;
         state.coachTemplatesId = action.payload.data;
         // state.template_name = action.payload.data.name

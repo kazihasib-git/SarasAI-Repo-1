@@ -6,8 +6,8 @@ import CoachTemplateTable from "./TemplateTable/CoachTemplateTable";
 import { closeCreateTemplateCoach, closeEditTemplateCoach, getAllCoachTemplates, openCreateTemplateCoach, openEditTemplateCoach, setSelectedCoachTemplate, getCoachTemplateModuleId } from "../../../redux/features/CoachModule/CoachTemplateSlice";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
- 
- 
+
+
 const CoachTemplate = () => {
   const navigation = useNavigate();
   const dispatch = useDispatch();
@@ -28,7 +28,7 @@ const CoachTemplate = () => {
         id: item.id,
         "Template Name": item.name,
         Duration: item.duration,
-        Activities: item?.modules.map((module)=> module.module_name).join(', '),
+        Activities: item?.modules?.map((module)=> module.module_name).join(', '),
         "Assigned To": "John Doe",
         is_active: item.is_active
       }));
