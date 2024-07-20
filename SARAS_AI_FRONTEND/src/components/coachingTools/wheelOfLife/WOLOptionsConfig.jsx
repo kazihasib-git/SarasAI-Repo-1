@@ -1,26 +1,43 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../../../components/Header/Header';
 import Sidebar from '../../../components/Sidebar/Sidebar';
-import { Box, Button, Container, Grid, Paper, styled, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
+import {
+    Box,
+    Button,
+    Container,
+    Grid,
+    Paper,
+    styled,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Typography,
+} from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { useNavigate } from 'react-router-dom';
 import CustomFormControl from '../../CustomFields/CustomFromControl';
 import CustomTextField from '../../CustomFields/CustomTextField';
 import star from '../../../assets/star.png';
-import { addWOLOptionConfig, getWOLOptionConfig } from '../../../redux/features/coachingTools/wol/wolSlice';
+import {
+    addWOLOptionConfig,
+    getWOLOptionConfig,
+} from '../../../redux/features/coachingTools/wol/wolSlice';
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
-    borderRadius: "50px",
-    border: "1px solid #F56D3B",
-    color: active ? "#fff" : "#F56D3B",
-    backgroundColor: active ? "#F56D3B" : "#FFF",
-    padding: "8px 16px",
-    margin: "0 8px",
-    "&:hover": {
-        backgroundColor: "#F56D3B",
-        color: "#fff",
-        borderColor: "#F56D3B",
+    borderRadius: '50px',
+    border: '1px solid #F56D3B',
+    color: active ? '#fff' : '#F56D3B',
+    backgroundColor: active ? '#F56D3B' : '#FFF',
+    padding: '8px 16px',
+    margin: '0 8px',
+    '&:hover': {
+        backgroundColor: '#F56D3B',
+        color: '#fff',
+        borderColor: '#F56D3B',
     },
 }));
 
@@ -61,27 +78,29 @@ const feedbackIcons = [
 ];
 
 const WOLOptionsConfig = () => {
-
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { optionsConfigData } = useSelector((state) => state.wol);
 
     const [edit, setEdit] = useState(false);
-    const [formValues, setFormValues] = useState({ minScale: '', maxScale: '', details: [] });
+    const [formValues, setFormValues] = useState({
+        minScale: '',
+        maxScale: '',
+        details: [],
+    });
     const [errors, setErrors] = useState({});
-
 
     const [minScale, setMinScale] = useState(0);
     const [maxScale, setMaxScale] = useState(0);
 
-
     useEffect(() => {
         dispatch(getWOLOptionConfig());
-    }, [dispatch])
+    }, [dispatch]);
 
     useEffect(() => {
         if (optionsConfigData.data && optionsConfigData.data.length > 0) {
-            const { minimum_scale, maximum_scale, get_config_details } = optionsConfigData.data[0];
+            const { minimum_scale, maximum_scale, get_config_details } =
+                optionsConfigData.data[0];
             setFormValues({
                 minScale: minimum_scale,
                 maxScale: maximum_scale,
@@ -97,7 +116,6 @@ const WOLOptionsConfig = () => {
 
     ////////////////////////////////////////////////////////////////////////////////
 
-
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormValues({ ...formValues, [name]: value });
@@ -105,19 +123,29 @@ const WOLOptionsConfig = () => {
 
     const handleDetailChange = (e, index) => {
         const { name, value } = e.target;
-        const updatedDetails = formValues.details.map((detail, i) => i === index ? { ...detail, [name]: value } : detail);
+        const updatedDetails = formValues.details.map((detail, i) =>
+            i === index ? { ...detail, [name]: value } : detail,
+        );
         setFormValues({ ...formValues, details: updatedDetails });
-    }
+    };
 
     const validate = () => {
         let tempErrors = {};
-        if (!formValues.minScale) tempErrors.minScale = 'Minimum Scale is required';
-        if (!formValues.maxScale) tempErrors.maxScale = 'Maximum Scale is required';
+        if (!formValues.minScale)
+            tempErrors.minScale = 'Minimum Scale is required';
+        if (!formValues.maxScale)
+            tempErrors.maxScale = 'Maximum Scale is required';
         formValues.details.forEach((detail, index) => {
-            if ((index === 0 || index === formValues.details.length - 1) && !detail.text) {
+            if (
+                (index === 0 || index === formValues.details.length - 1) &&
+                !detail.text
+            ) {
                 tempErrors[`detailText${index}`] = 'Text is required';
             }
-            if ((index === 0 || index === formValues.details.length - 1) && !detail.icon) {
+            if (
+                (index === 0 || index === formValues.details.length - 1) &&
+                !detail.icon
+            ) {
                 tempErrors[`detailIcon${index}`] = 'Icon is required';
             }
         });
@@ -128,15 +156,19 @@ const WOLOptionsConfig = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        console.log("handleSubmit", "edit : ", edit)
+        console.log('handleSubmit', 'edit : ', edit);
         if (edit) {
-            console.log("edit")
+            console.log('edit');
             setFormValues({ minScale: '', maxScale: '', details: [] });
             setEdit(false);
         } else {
             if (validate()) {
                 const details = [];
-                for (let i = Number(formValues.minScale); i <= Number(formValues.maxScale); i++) {
+                for (
+                    let i = Number(formValues.minScale);
+                    i <= Number(formValues.maxScale);
+                    i++
+                ) {
                     details.push({ point: i, text: '', icon: '' });
                 }
                 setFormValues({ ...formValues, details });
@@ -162,23 +194,28 @@ const WOLOptionsConfig = () => {
         }
     };
 
-    console.log("details", formValues.details.length)
+    console.log('details', formValues.details.length);
 
     return (
         <>
             <Header />
             <Sidebar />
-            <Box display="flex" justifyContent="space-between" marginTop={3} alignItems="center">
+            <Box
+                display="flex"
+                justifyContent="space-between"
+                marginTop={3}
+                alignItems="center"
+            >
                 <Box display="flex" alignItems="center" padding="16px">
                     <ArrowBackIosIcon
-                        style={{ fontSize: "25px", marginBottom: "17px" }}
+                        style={{ fontSize: '25px', marginBottom: '17px' }}
                         onClick={() => navigate('/wheel-of-life')}
                     />
                     <Typography
                         variant="h1"
                         sx={{
-                            fontSize: "44px",
-                            marginLeft: "16px",
+                            fontSize: '44px',
+                            marginLeft: '16px',
                         }}
                     >
                         Wheel of Life Options Config
@@ -219,7 +256,7 @@ const WOLOptionsConfig = () => {
                                 onChange={handleChange}
                                 errors={errors}
                                 options={scaleOptions}
-                                disabled={edit}  // Disable when edit is true
+                                disabled={edit} // Disable when edit is true
                             />
                         </Grid>
                         <Grid item xs={12} md={4}>
@@ -230,7 +267,7 @@ const WOLOptionsConfig = () => {
                                 onChange={handleChange}
                                 errors={errors}
                                 options={scaleOptions}
-                                disabled={edit}  // Disable when edit is true
+                                disabled={edit} // Disable when edit is true
                             />
                         </Grid>
                         <Grid item xs={12} md={4}>
@@ -238,27 +275,28 @@ const WOLOptionsConfig = () => {
                                 type="submit"
                                 active={true}
                                 variant="contained"
-                                sx={{ borderRadius: "50px", padding: "18px 30px", margin: "0 8px" }}
+                                sx={{
+                                    borderRadius: '50px',
+                                    padding: '18px 30px',
+                                    margin: '0 8px',
+                                }}
                             >
                                 {edit ? 'Edit' : 'Submit'}
                             </CustomButton>
                         </Grid>
                     </Grid>
                 </form>
-
-
             </Box>
 
             {edit && (
                 <form onSubmit={handleFormSubmit} noValidate>
-                    <TableContainer 
-                        sx={{ 
-                            padding : 2,
-                              
-                            }} 
-                            component={Paper}
-                        >
-                        <Table  aria-label="simple table">
+                    <TableContainer
+                        sx={{
+                            padding: 2,
+                        }}
+                        component={Paper}
+                    >
+                        <Table aria-label="simple table">
                             <TableHead>
                                 <TableRow>
                                     <TableCell align="left">Point</TableCell>
@@ -270,16 +308,32 @@ const WOLOptionsConfig = () => {
                                 {formValues.details.map((detail, index) => (
                                     <TableRow key={index}>
                                         <TableCell component="th" scope="row">
-                                            {detail.point} {index === 0 && <img src={star} alt='str' />} {index === formValues.details.length - 1 && <img src={star} alt='str' />}
+                                            {detail.point}{' '}
+                                            {index === 0 && (
+                                                <img src={star} alt="str" />
+                                            )}{' '}
+                                            {index ===
+                                                formValues.details.length -
+                                                    1 && (
+                                                <img src={star} alt="str" />
+                                            )}
                                         </TableCell>
                                         <TableCell align="right">
                                             <CustomTextField
                                                 label="Text"
                                                 name="text"
                                                 placeholder="Enter Text"
-                                                value={detail.text ? detail.text : ''}
-                                                onChange={(e) => handleDetailChange(e, index)}
-                                                error={errors[`detailText${index}`]}
+                                                value={
+                                                    detail.text
+                                                        ? detail.text
+                                                        : ''
+                                                }
+                                                onChange={(e) =>
+                                                    handleDetailChange(e, index)
+                                                }
+                                                error={
+                                                    errors[`detailText${index}`]
+                                                }
                                                 fullWidth
                                             />
                                         </TableCell>
@@ -287,8 +341,14 @@ const WOLOptionsConfig = () => {
                                             <CustomFormControl
                                                 label="Icon"
                                                 name="icon"
-                                                value={detail.icon ? detail.icon : ''}
-                                                onChange={(e) => handleDetailChange(e, index)}
+                                                value={
+                                                    detail.icon
+                                                        ? detail.icon
+                                                        : ''
+                                                }
+                                                onChange={(e) =>
+                                                    handleDetailChange(e, index)
+                                                }
                                                 errors={errors}
                                                 options={feedbackIcons}
                                             />
@@ -303,7 +363,11 @@ const WOLOptionsConfig = () => {
                             type="submit"
                             active={true}
                             variant="contained"
-                            sx={{ borderRadius: "50px", padding: "18px 30px", margin: "0 8px" }}
+                            sx={{
+                                borderRadius: '50px',
+                                padding: '18px 30px',
+                                margin: '0 8px',
+                            }}
                         >
                             Submit
                         </CustomButton>

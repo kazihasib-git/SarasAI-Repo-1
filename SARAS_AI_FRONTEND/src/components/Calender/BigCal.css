@@ -1,5 +1,5 @@
-.rbc-event{
-    background-color: #00C946 !important; 
+.rbc-event {
+    background-color: #00c946 !important;
     opacity: 1;
     border-radius: 5px !important;
     color: white;
@@ -10,8 +10,7 @@
     bottom: 0% !important;
 }
 
-
-.rbc-timeslot-group{
+.rbc-timeslot-group {
     min-height: 75px;
 }
 .rbc-event-session {
@@ -50,9 +49,7 @@
     color: #5f6368;
     border: 1px solid #eee;
 }
-.rbc-day-slot .rbc-time-slot{
+.rbc-day-slot .rbc-time-slot {
     border: 0px;
 }
 /* Custom bottom border for rbc-timeslot-group */
-
-  

@@ -23,10 +23,10 @@ const Students = () => {
     useEffect(() => {
         const dataToUse = useDummyData ? studentDummyDatadata : apiData;
         if (dataToUse) {
-            const transformedData = dataToUse.map(item => ({
+            const transformedData = dataToUse.map((item) => ({
                 id: item.id,
                 Name: item.name,
-                "Lms Id": item.student_lms_id,
+                'Lms Id': item.student_lms_id,
                 'Acedemic Term': item.academic_term,
                 Batch: item.primary_phone,
             }));
@@ -41,23 +41,30 @@ const Students = () => {
     const headers = ['ID', 'Name', 'Lms Id', 'Acedemic Term', 'Batch'];
 
     // Filter students based on the search input
-    const filteredStudents = students.filter(student => 
-        student.Name.toLowerCase().includes(input.toLowerCase())
+    const filteredStudents = students.filter((student) =>
+        student.Name.toLowerCase().includes(input.toLowerCase()),
     );
 
     return (
         <>
             <Header />
             <Sidebar />
-            <Box display={"flex"} justifyContent={"space-between"} marginTop={3} alignItems={"center"}>
-                <p style={{ fontSize: "44px", justifyContent: "center" }}>Students</p>
-                <div className='inputBtnContainer'>
+            <Box
+                display={'flex'}
+                justifyContent={'space-between'}
+                marginTop={3}
+                alignItems={'center'}
+            >
+                <p style={{ fontSize: '44px', justifyContent: 'center' }}>
+                    Students
+                </p>
+                <div className="inputBtnContainer">
                     <div className="inputContainer">
-                        <input 
-                            className="inputField" 
-                            placeholder="Search Here ..." 
-                            value={input} 
-                            onChange={(e) => handleChange(e.target.value)} 
+                        <input
+                            className="inputField"
+                            placeholder="Search Here ..."
+                            value={input}
+                            onChange={(e) => handleChange(e.target.value)}
                         />
                     </div>
                 </div>
@@ -65,7 +72,7 @@ const Students = () => {
             <DynamicTable
                 headers={headers}
                 initialData={filteredStudents}
-                componentName={"STUDENTS"}
+                componentName={'STUDENTS'}
             />
         </>
     );

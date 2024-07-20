@@ -14,24 +14,26 @@ import coachAvailabilityReducer from './features/CoachModule/CoachAvailabilitySl
 import coachSchedulingReducer from './features/CoachModule/coachSchedule';
 
 const store = configureStore({
-
     reducer: {
         taModule: taReducer,
-        taAvailability : taAvailabilityReducer,
-        taScheduling : taSchedulingReducer,
-        taAvialability : taAvailabilityReducer,
-        coachTemplate : coachTemplateReducer,
-        wol : wolSliceReducer,
-        timezone : timezoneSliceReducer,
-        coachModule : coachReducer,
-        coachAvailability : coachAvailabilityReducer,
-        coachScheduling : coachSchedulingReducer,
+        taAvailability: taAvailabilityReducer,
+        taScheduling: taSchedulingReducer,
+        taAvialability: taAvailabilityReducer,
+        coachTemplate: coachTemplateReducer,
+        wol: wolSliceReducer,
+        timezone: timezoneSliceReducer,
+        coachModule: coachReducer,
+        coachAvailability: coachAvailabilityReducer,
+        coachScheduling: coachSchedulingReducer,
         [studentsApi.reducerPath]: studentsApi.reducer,
         [batchesApi.reducerPath]: batchesApi.reducer,
         [coursesApi.reducerPath]: coursesApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware().concat(studentsApi.middleware).concat(batchesApi.middleware).concat(coursesApi.middleware),
+        getDefaultMiddleware()
+            .concat(studentsApi.middleware)
+            .concat(batchesApi.middleware)
+            .concat(coursesApi.middleware),
 });
 
 setupListeners(store.dispatch);
