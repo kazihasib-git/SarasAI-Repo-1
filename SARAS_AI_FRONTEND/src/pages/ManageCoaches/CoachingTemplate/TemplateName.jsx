@@ -167,7 +167,7 @@ const TemplateName = () => {
         alignItems={"center"}
       >
         <p style={{ fontSize: "44px", justifyContent: "center" }}>
-       {templateEditName || template_name}
+        {/* {coachTemplatesId[0].template.name} */}
         </p>
         <div className="inputBtnContainer">
           <button className="buttonContainer" onClick={handleModule}>

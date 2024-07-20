@@ -19,7 +19,7 @@ import CustomTextField from "../../../../components/CustomFields/CustomTextField
 import CustomDateField from "../../../../components/CustomFields/CustomDateField";
 import CustomTimeField from "../../../../components/CustomFields/CustomTimeField";
 import { getActivityType } from "../../../../redux/features/ActivityType/activityTypeSlice";
-
+import { getCoach } from "../../../../redux/features/CoachModule/coachSlice";
 const CustomButton = ({
   onClick,
   children,
@@ -62,10 +62,12 @@ const LinkActivityPopup = ({ open, handleClose }) => {
     control,
     formState: { errors },
   } = useForm();
+  const [fromDate, setFromDate] = useState(null);
   const [activityType, setActivityType] = useState("");
   const [selectedSessionType, setSelectedSessionType] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
   const [askCoach, setAskCoach] = useState(false);
+  const [selectedCoachId, setSelectedCoachId] = useState("");
 
   const onSubmit = (data) => {
     console.log(data); // Example: Log form data
@@ -73,10 +75,12 @@ const LinkActivityPopup = ({ open, handleClose }) => {
   };
   useEffect(() => {
     dispatch(getActivityType());
+    dispatch(getCoach());
   }, [dispatch]);
 
   const { typeList } = useSelector((state) => state.activityType);
-
+  const { coaches }  = useSelector((state) => state.coachModule);
+   console.log( "coaches", coaches)
   const activityOptions =
     typeList?.map((type) => ({
       value: type.type_name,
@@ -94,11 +98,13 @@ const LinkActivityPopup = ({ open, handleClose }) => {
     { value: "group", label: "Group session" },
   ];
 
-  const coachOptions = [
-    { value: "coach1", label: "Coach A" },
-    { value: "coach2", label: "Coach B" },
-    { value: "coach3", label: "Coach C" },
-  ];
+  const coachOptions = coaches.map(coach => ({
+    
+    value: coach.name,
+    label: coach.name,
+    id: coach.id,
+   
+  }));
 
   const timeSlots = [
     { value: "slot1", label: "10:00 AM - 11:00 AM" },
@@ -114,7 +120,23 @@ const LinkActivityPopup = ({ open, handleClose }) => {
     { value: "PST", label: "Pacific Standard Time" },
     { value: "EST", label: "Eastern Standard Time" },
   ];
+  const handleCoachChange = (e) => {
+    const selected = coachOptions.find(option => option.value === e.target.value);
 
+    if (selected) {
+      setSelectedCoachId(selected.id);
+      console.log("Selected Coach ID:", selected.id); // Log the selected coach ID
+    }
+  };
+  
+ console.log("hello coach id is", selectedCoachId)
+//  useEffect(() => {
+//   if (fromDate) {
+//     dispatch(
+//       getAvailableSlotsAction({ admin_user_id: selectedCoachId , date: fromDate })
+//     );
+//   }
+// }, [fromDate, dispatch, adminUserID, getAvailableSlotsAction]);
   const contentComponent = (
     <Grid
       container
@@ -323,6 +345,7 @@ const LinkActivityPopup = ({ open, handleClose }) => {
                   value={field.value}
                   onChange={(e) => {
                     field.onChange(e);
+                    handleCoachChange(e);
                     // handleCoachChange(e); // Uncomment if you have a handleCoachChange function
                   }}
                   errors={errors}
@@ -346,11 +369,8 @@ const LinkActivityPopup = ({ open, handleClose }) => {
                 <CustomDateField
                   label="Select Date"
                   name="date"
-                  value={selectedDate}
-                  onChange={(newValue) => {
-                    setSelectedDate(newValue);
-                    field.onChange(newValue);
-                  }}
+                  value={fromDate}
+                  onChange={setFromDate}
                   fullWidth
                 />
               )}

@@ -68,7 +68,7 @@ const AddEditTeachingAssistant = () => {
           }}
         >
          My  Profile
-        </p>
+        </p>   
       <Box
         sx={{
           bgcolor: "white",
