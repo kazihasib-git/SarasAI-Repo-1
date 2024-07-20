@@ -7,32 +7,32 @@ export const getCoachScheduledSessions = createAsyncThunk(
     async ({ id, data }) => {
         const response = await axios.post(
             `${baseUrl}/admin/coachschedules/${id}`,
-            data,
+            data
         );
         return response.data;
-    },
+    }
 );
 
 export const createCoachSchedule = createAsyncThunk(
     'coachScheduling/createCoachSchedule',
-    async (data) => {
+    async data => {
         const response = await axios.post(
             `${baseUrl}/admin/coachschedules`,
-            data,
+            data
         );
         return response.data;
-    },
+    }
 );
 
 export const getTaAvailableSlotsFromDate = createAsyncThunk(
     'coachScheduling/getTaAvailableSlotsFromDate',
-    async (data) => {
+    async data => {
         const response = await axios.post(
             `${baseUrl}/admin/coach-slots/getTACoachSlotForADate`,
-            data,
+            data
         );
         return response.data;
-    },
+    }
 );
 
 const initialState = {
@@ -82,9 +82,9 @@ const coachScheduling = createSlice({
             state.taAvailableSlots = [];
         },
     },
-    extraReducers: (builder) => {
+    extraReducers: builder => {
         // Get TA Scheduled Sessions
-        builder.addCase(getCoachScheduledSessions.pending, (state) => {
+        builder.addCase(getCoachScheduledSessions.pending, state => {
             state.loading = true;
         });
         builder.addCase(
@@ -92,7 +92,7 @@ const coachScheduling = createSlice({
             (state, action) => {
                 state.loading = false;
                 state.taScheduledSessions = action.payload.data;
-            },
+            }
         );
         builder.addCase(getCoachScheduledSessions.rejected, (state, action) => {
             state.loading = false;
@@ -100,7 +100,7 @@ const coachScheduling = createSlice({
         });
 
         // Create TA Schedule
-        builder.addCase(createCoachSchedule.pending, (state) => {
+        builder.addCase(createCoachSchedule.pending, state => {
             state.loading = true;
         });
         builder.addCase(createCoachSchedule.fulfilled, (state, action) => {
@@ -113,7 +113,7 @@ const coachScheduling = createSlice({
         });
 
         // Get TA Available Slots From Date
-        builder.addCase(getTaAvailableSlotsFromDate.pending, (state) => {
+        builder.addCase(getTaAvailableSlotsFromDate.pending, state => {
             state.loading = true;
         });
         builder.addCase(
@@ -121,14 +121,14 @@ const coachScheduling = createSlice({
             (state, action) => {
                 state.loading = false;
                 state.taAvailableSlots = action.payload.data;
-            },
+            }
         );
         builder.addCase(
             getTaAvailableSlotsFromDate.rejected,
             (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
-            },
+            }
         );
     },
 });

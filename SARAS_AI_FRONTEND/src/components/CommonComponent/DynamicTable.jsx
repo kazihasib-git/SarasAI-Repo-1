@@ -31,20 +31,20 @@ const DynamicTable = ({
     componentName,
 }) => {
     const [data, setData] = useState(
-        initialData.map((item) => ({
+        initialData.map(item => ({
             ...item,
             is_active: item.is_active !== undefined ? item.is_active : 0,
-        })),
+        }))
     );
 
     const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
         setData(
-            initialData.map((item) => ({
+            initialData.map(item => ({
                 ...item,
                 is_active: item.is_active !== undefined ? item.is_active : 0,
-            })),
+            }))
         );
         setCurrentPage(1); // Reset to first page whenever initialData changes
     }, [initialData]);
@@ -53,7 +53,7 @@ const DynamicTable = ({
     const totalPages = Math.ceil(data.length / itemsPerPage);
     const currentData = data.slice(
         (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage,
+        currentPage * itemsPerPage
     );
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -62,7 +62,7 @@ const DynamicTable = ({
         setCurrentPage(pageNumber);
     };
 
-    const handleDelete = (id) => {
+    const handleDelete = id => {
         console.log('Deleting item with id:', id);
     };
 
@@ -109,15 +109,15 @@ const DynamicTable = ({
         }
     };
 
-    const handleToggle = (id) => {
-        const updatedData = data.map((item) =>
+    const handleToggle = id => {
+        const updatedData = data.map(item =>
             item.id === id
                 ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
-                : item,
+                : item
         );
         setData(updatedData);
 
-        const toggledItem = updatedData.find((item) => item.id === id);
+        const toggledItem = updatedData.find(item => item.id === id);
         const requestData = { is_active: toggledItem.is_active };
 
         switch (componentName) {
@@ -133,13 +133,13 @@ const DynamicTable = ({
                 break;
             default:
                 console.warn(
-                    `No API call defined for component: ${componentName}`,
+                    `No API call defined for component: ${componentName}`
                 );
                 break;
         }
     };
 
-    const getColorForAvailability = (availability) => {
+    const getColorForAvailability = availability => {
         switch (availability) {
             case 'available':
                 return '#06DD0F';
@@ -160,7 +160,7 @@ const DynamicTable = ({
                             (header, index) =>
                                 header !== 'timezone' && (
                                     <th key={index}>{header}</th>
-                                ),
+                                )
                         )}
                     </tr>
                 </thead>
@@ -191,7 +191,7 @@ const DynamicTable = ({
                                                 key={idx}
                                                 style={{
                                                     color: getColorForAvailability(
-                                                        item[key],
+                                                        item[key]
                                                     ),
                                                     fontFamily: 'Regular',
                                                     letterSpacing: '0.8px',
@@ -213,7 +213,7 @@ const DynamicTable = ({
                                                     onClick={() =>
                                                         handleView(
                                                             'students',
-                                                            item.id,
+                                                            item.id
                                                         )
                                                     }
                                                 >
@@ -234,7 +234,7 @@ const DynamicTable = ({
                                                     onClick={() =>
                                                         handleView(
                                                             'batches',
-                                                            item.id,
+                                                            item.id
                                                         )
                                                     }
                                                 >
@@ -283,7 +283,7 @@ const DynamicTable = ({
                                                         checked={item.is_active}
                                                         onChange={() =>
                                                             handleToggle(
-                                                                item.id,
+                                                                item.id
                                                             )
                                                         }
                                                         inputProps={{
@@ -329,7 +329,7 @@ const DynamicTable = ({
                                                         }}
                                                         onClick={() =>
                                                             button.onClick(
-                                                                item.id,
+                                                                item.id
                                                             )
                                                         }
                                                     >
@@ -355,7 +355,7 @@ const DynamicTable = ({
                                                         color="primary"
                                                         onClick={() =>
                                                             handleDelete(
-                                                                item.id,
+                                                                item.id
                                                             )
                                                         }
                                                     >
@@ -383,7 +383,7 @@ const DynamicTable = ({
                                                             handlePopup(
                                                                 item.id,
                                                                 item.name,
-                                                                item.timezone,
+                                                                item.timezone
                                                             )
                                                         }
                                                     >
@@ -405,7 +405,7 @@ const DynamicTable = ({
                                                                 handleCalender(
                                                                     'Calendar',
                                                                     item.id,
-                                                                    item.taName,
+                                                                    item.taName
                                                                 )
                                                             }
                                                         >
@@ -427,7 +427,7 @@ const DynamicTable = ({
                                                         onClick={() =>
                                                             handleView(
                                                                 'view report',
-                                                                item.id,
+                                                                item.id
                                                             )
                                                         }
                                                     >

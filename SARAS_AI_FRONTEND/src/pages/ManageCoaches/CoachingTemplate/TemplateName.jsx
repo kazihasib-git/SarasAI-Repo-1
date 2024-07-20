@@ -33,7 +33,7 @@ const TemplateName = () => {
         selectedCoachTemplate,
         coachTemplates,
         coachTemplatesId,
-    } = useSelector((state) => state.coachTemplate);
+    } = useSelector(state => state.coachTemplate);
     const templateDumyName = 'No Template Name';
     const [linkActivityPopupOpen, setLinkActivityPopupOpen] = useState(false); // State for controlling popup
     const [prerequisitesPopupOpen, setPrerequisitesPopupOpen] = useState(false);
@@ -66,12 +66,12 @@ const TemplateName = () => {
         dispatch(openEditModulePopup());
     };
 
-    const handleAddModule = (moduleData) => {
+    const handleAddModule = moduleData => {
         dispatch(
             createCoachTemplateModule({
                 ...moduleData,
                 template_id: selectedCoachTemplate,
-            }),
+            })
         );
     };
 
@@ -109,7 +109,7 @@ const TemplateName = () => {
         },
         {
             type: 'edit',
-            onClick: (id) => {
+            onClick: id => {
                 console.log('CLICKED : ', id);
             },
         },

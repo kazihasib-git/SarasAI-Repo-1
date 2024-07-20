@@ -15,7 +15,7 @@ const actionButtons = [
     },
     {
         type: 'delete',
-        onClick: (id) => console.log(`Edit clicked for id ${id}`),
+        onClick: id => console.log(`Edit clicked for id ${id}`),
     },
 ];
 
@@ -24,7 +24,7 @@ const AssignCoachBatches = () => {
     console.log('ID : ', id);
     const dispatch = useDispatch();
     const { assignedBatches, loading } = useSelector(
-        (state) => state.coachModule,
+        state => state.coachModule
     );
     const [CoachAssignBatchesData, setCoachAssignBatchesData] = useState([]);
     console.log('Assigned BAtches', assignedBatches);

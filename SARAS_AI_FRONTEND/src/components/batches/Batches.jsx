@@ -11,18 +11,16 @@ const Batches = () => {
     const [input, setInput] = useState('');
     const [batches, setBatches] = useState([]);
 
-    const handleChange = (value) => {
+    const handleChange = value => {
         setInput(value);
     };
-
 
     const { data, error, isLoading } = useGetBatchesQuery();
 
     useEffect(() => {
-       
         if (data && data.batches && data.batches.length > 0) {
-            console.log("DATA Batch : ", data.batches)
-            const transformedData = data?.batches?.map((item) => ({
+            console.log('DATA Batch : ', data.batches);
+            const transformedData = data?.batches?.map(item => ({
                 id: item.id,
                 'Batch Name': item.name,
                 Branch: item.branch.name,
@@ -34,8 +32,8 @@ const Batches = () => {
     const headers = ['S No.', 'Batch Name', 'Branch'];
 
     // Filter batches based on the search input
-    const filteredBatches = batches.filter((batch) =>
-        batch['Batch Name'].toLowerCase().includes(input.toLowerCase()),
+    const filteredBatches = batches.filter(batch =>
+        batch['Batch Name'].toLowerCase().includes(input.toLowerCase())
     );
 
     return (
@@ -57,7 +55,7 @@ const Batches = () => {
                             className="inputField"
                             placeholder="Search Here ..."
                             value={input}
-                            onChange={(e) => handleChange(e.target.value)}
+                            onChange={e => handleChange(e.target.value)}
                         />
                     </div>
                 </div>

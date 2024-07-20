@@ -24,13 +24,13 @@ const actionButtons = [
     // },
     {
         type: 'delete',
-        onClick: (id) => console.log(`Delete clicked for id ${id}`),
+        onClick: id => console.log(`Delete clicked for id ${id}`),
     },
 ];
 
 const CoachMapping = () => {
     const dispatch = useDispatch();
-    const { coachMapping, loading } = useSelector((state) => state.coachModule);
+    const { coachMapping, loading } = useSelector(state => state.coachModule);
     const [caMappingData, setcaMappingData] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     // console.log("camapping" , coachMapping);
@@ -52,12 +52,12 @@ const CoachMapping = () => {
         }
     }, [coachMapping]);
 
-    const handleSearch = (event) => {
+    const handleSearch = event => {
         setSearchQuery(event.target.value);
     };
 
-    const filteredData = caMappingData.filter((item) =>
-        item.name.toLowerCase().includes(searchQuery.toLowerCase()),
+    const filteredData = caMappingData.filter(item =>
+        item.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     return (

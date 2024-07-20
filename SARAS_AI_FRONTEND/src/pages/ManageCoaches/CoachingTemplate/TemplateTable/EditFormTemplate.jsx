@@ -22,7 +22,7 @@ function EditFormTemplate({ open, handleClose, handleSubmitForm }) {
         formState: { errors },
     } = useForm();
 
-    const onSubmit = (data) => {
+    const onSubmit = data => {
         console.log(data);
         handleSubmitForm(data);
         handleClose();

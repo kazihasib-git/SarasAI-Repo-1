@@ -12,7 +12,7 @@ import ScheduleSession from '../availability/ScheduleSession';
 
 moment.locale('en-GB');
 const localizer = momentLocalizer(moment);
-const allViews = Object.keys(Views).map((k) => Views[k]);
+const allViews = Object.keys(Views).map(k => Views[k]);
 
 const CalendarComponent = ({ eventsList, addEvent, slotData }) => {
     const [myEventsList, setMyEventsList] = useState([]);
@@ -45,7 +45,7 @@ const CalendarComponent = ({ eventsList, addEvent, slotData }) => {
         console.log('clicked');
     };
 
-    const eventStyleGetter = (event) => {
+    const eventStyleGetter = event => {
         return {
             style: {
                 backgroundColor: 'green',
@@ -58,7 +58,7 @@ const CalendarComponent = ({ eventsList, addEvent, slotData }) => {
         };
     };
 
-    const slotPropGetter = (date) => {
+    const slotPropGetter = date => {
         const dateString = moment(date).format('YYYY-MM-DD');
         const timeString = moment(date).format('HH:mm');
 

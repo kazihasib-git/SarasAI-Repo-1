@@ -131,7 +131,7 @@ const CallRecords = () => {
                 gap="20px"
                 justifyContent="space-between"
             >
-                {calls.map((call) => (
+                {calls.map(call => (
                     <Card
                         key={call.id}
                         sx={{

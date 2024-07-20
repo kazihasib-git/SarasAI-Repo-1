@@ -4,7 +4,7 @@ import { baseUrl } from '../../../utils/baseURL';
 export const batchesApi = createApi({
     reducerPath: 'batchesApi',
     baseQuery: fetchBaseQuery({ baseUrl }),
-    endpoints: (builder) => ({
+    endpoints: builder => ({
         getBatches: builder.query({
             query: () => `/admin/batches`,
         }),

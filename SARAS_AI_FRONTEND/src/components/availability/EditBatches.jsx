@@ -94,7 +94,7 @@ const EditBatches = ({ componentname }) => {
             openSuccessAction = openCoachSuccessPopup;
             getAssignBatchesAction = getCoachAssignBatches;
             postAssignAction = postCoachAssignBatches;
-            schedulingState = useSelector((state) => state.coachScheduling);
+            schedulingState = useSelector(state => state.coachScheduling);
             nameKeyScheduling = 'coachName';
             idKeyScheduling = 'coachID';
             openScheduleSessionAction = openCoachScheduleSession;
@@ -109,7 +109,7 @@ const EditBatches = ({ componentname }) => {
             openSuccessAction = openSuccessPopup;
             getAssignBatchesAction = getAssignBatches;
             postAssignAction = postAssignBatches;
-            schedulingState = useSelector((state) => state.taScheduling);
+            schedulingState = useSelector(state => state.taScheduling);
             nameKeyScheduling = 'taName';
             idKeyScheduling = 'taID';
             openScheduleSessionAction = openScheduleSession;
@@ -131,8 +131,8 @@ const EditBatches = ({ componentname }) => {
             break;
     }
 
-    const stateSelector = useSelector((state) =>
-        stateModuleKey ? state[stateModuleKey] : {},
+    const stateSelector = useSelector(state =>
+        stateModuleKey ? state[stateModuleKey] : {}
     );
 
     const {
@@ -150,7 +150,7 @@ const EditBatches = ({ componentname }) => {
         loading,
     } = stateSelector || {};
 
-    console.log("assignedId : ", assignedId);
+    console.log('assignedId : ', assignedId);
 
     useEffect(() => {
         if (stateModuleKey && assignBatchOpen) {
@@ -164,7 +164,7 @@ const EditBatches = ({ componentname }) => {
         getAssignBatchesAction,
     ]);
 
-    console.log("Assigned Batches", assignedBatches);
+    console.log('Assigned Batches', assignedBatches);
 
     useEffect(() => {
         if (assignedBatches) {
@@ -176,7 +176,7 @@ const EditBatches = ({ componentname }) => {
                 id: batch.id,
             }));
 
-            const filtered = transformedData.filter((batch) => {
+            const filtered = transformedData.filter(batch => {
                 const matchesBranch = selectedBranch
                     ? batch.Branch === selectedBranch
                     : true;
@@ -193,23 +193,21 @@ const EditBatches = ({ componentname }) => {
     }, [assignedBatches, selectedBranch, searchQuery]);
 
     const batchOptions = assignedBatches
-        ? [...new Set(assignedBatches.map((batch) => batch.batch.branch.name))]
+        ? [...new Set(assignedBatches.map(batch => batch.batch.branch.name))]
         : [];
 
     useEffect(() => {
         if (selectedBatches) {
-            setSelectedBatch(selectedBatches.map((prev) => prev.id));
+            setSelectedBatch(selectedBatches.map(prev => prev.id));
         }
     }, [selectedBatches]);
 
-    const handleSelectBatch = (id) => {
-        setSelectedBatch((prev) =>
-            prev.includes(id)
-                ? prev.filter((sid) => sid !== id)
-                : [...prev, id],
+    const handleSelectBatch = id => {
+        setSelectedBatch(prev =>
+            prev.includes(id) ? prev.filter(sid => sid !== id) : [...prev, id]
         );
     };
-    const handleBranchChange = (e) => {
+    const handleBranchChange = e => {
         const selectedBranchValue = e.target.value;
         setSelectedBranch(selectedBranchValue);
 
@@ -221,7 +219,7 @@ const EditBatches = ({ componentname }) => {
                     'Batch Name': batch.batch.name,
                     Branch: batch.batch.branch.name,
                     id: batch.id,
-                })),
+                }))
             );
         }
     };
@@ -234,7 +232,7 @@ const EditBatches = ({ componentname }) => {
         const data = {
             [componentname === 'COACHSCHEDULE' ? 'Coach_id' : 'ta_id']: id,
             name: assignedName,
-            batches: selectedBatch ? selectedBatch.map((id) => ({ id })) : [],
+            batches: selectedBatch ? selectedBatch.map(id => ({ id })) : [],
         };
         console.log('DATA: ', data);
         dispatch(openScheduleSessionAction(data));
@@ -273,7 +271,7 @@ const EditBatches = ({ componentname }) => {
                     <CustomTextField
                         label="Search By Batch Name"
                         value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onChange={e => setSearchQuery(e.target.value)}
                     />
                 </Grid>
             </Grid>

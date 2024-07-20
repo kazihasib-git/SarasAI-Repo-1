@@ -106,7 +106,7 @@ const EditStudents = ({ componentname }) => {
             openSuccessAction = openCoachSuccessPopup;
             getAssignStudentAction = getCoachAssignStudents;
             postAssignAction = postCoachAssignStudents;
-            schedulingState = useSelector((state) => state.coachScheduling);
+            schedulingState = useSelector(state => state.coachScheduling);
             nameKeyScheduling = 'coachName';
             idKeyScheduling = 'coachID';
             openScheduleSessionAction = openCoachScheduleSession;
@@ -122,7 +122,7 @@ const EditStudents = ({ componentname }) => {
             openSuccessAction = openSuccessPopup;
             getAssignStudentAction = getAssignStudents;
             postAssignAction = postAssignStudents;
-            schedulingState = useSelector((state) => state.taScheduling);
+            schedulingState = useSelector(state => state.taScheduling);
             nameKeyScheduling = 'taName';
             idKeyScheduling = 'taID';
             openScheduleSessionAction = openScheduleSession;
@@ -145,8 +145,8 @@ const EditStudents = ({ componentname }) => {
             break;
     }
 
-    const stateSelector = useSelector((state) =>
-        stateModuleKey ? state[stateModuleKey] : {},
+    const stateSelector = useSelector(state =>
+        stateModuleKey ? state[stateModuleKey] : {}
     );
     const {
         [nameKeyScheduling]: assignedName,
@@ -181,19 +181,21 @@ const EditStudents = ({ componentname }) => {
             const transformedData = assignedStudents.map((stu, index) => ({
                 'S. No.': index + 1,
                 'Student Name': stu.student.name,
-                Program : stu.student.packages.map((pack) => pack.name).join(', ') || 'N/A',
+                Program:
+                    stu.student.packages.map(pack => pack.name).join(', ') ||
+                    'N/A',
                 //'Academic Term': stu.student.academic_term,
                 Batch:
                     stu.student.batches
-                        .map((batch) => batch.batch_name)
+                        .map(batch => batch.batch_name)
                         .join(', ') || 'N/A',
                 Select: stu.is_active ? 'Active' : 'Inactive',
                 student_id: stu.student_id,
                 is_active: stu.is_active,
-                id : stu.student.id,
+                id: stu.student.id,
             }));
 
-            const filtered = transformedData.filter((student) => {
+            const filtered = transformedData.filter(student => {
                 const matchesTerm = selectedTerm
                     ? student.Program === selectedTerm
                     : true;
@@ -218,16 +220,15 @@ const EditStudents = ({ componentname }) => {
                   ...new Set(
                       assignedStudents
                           .filter(
-                              (student) =>
+                              student =>
                                   !selectedTerm ||
-                                  student.student.academic_term ===
-                                      selectedTerm,
+                                  student.student.academic_term === selectedTerm
                           )
-                          .flatMap((student) =>
+                          .flatMap(student =>
                               student.student.batches.map(
-                                  (batch) => batch.batch_name,
-                              ),
-                          ),
+                                  batch => batch.batch_name
+                              )
+                          )
                   ),
               ]
             : [];
@@ -237,16 +238,16 @@ const EditStudents = ({ componentname }) => {
             ? [
                   ...new Set(
                       assignedStudents
-                        //  .filter(
-                        //     (student) =>
-                        //     !selectedBatch ||
-                        //     student.student.batches.some(
-                        //         (batch) => batch.batch_name === selectedBatch
-                        //     )
-                        //  )
-                         .flatMap((student) =>
-                         student.student.packages.map((pack) => pack.name),
-                      ),
+                          //  .filter(
+                          //     (student) =>
+                          //     !selectedBatch ||
+                          //     student.student.batches.some(
+                          //         (batch) => batch.batch_name === selectedBatch
+                          //     )
+                          //  )
+                          .flatMap(student =>
+                              student.student.packages.map(pack => pack.name)
+                          )
                   ),
               ]
             : [];
@@ -254,17 +255,15 @@ const EditStudents = ({ componentname }) => {
     useEffect(() => {
         console.log('Selected Student inside use Effect : ', assignedStudents);
         if (assignedStudents) {
-            setSelectedStudents(assignedStudents.map((student) => student.id));
+            setSelectedStudents(assignedStudents.map(student => student.id));
         }
     }, [selectedStudent]);
 
     console.log('selectedStudents : ', selectedStudents);
 
-    const handleSelectStudent = (id) => {
-        setSelectedStudents((prev) =>
-            prev.includes(id)
-                ? prev.filter((sid) => sid !== id)
-                : [...prev, id],
+    const handleSelectStudent = id => {
+        setSelectedStudents(prev =>
+            prev.includes(id) ? prev.filter(sid => sid !== id) : [...prev, id]
         );
     };
 
@@ -275,15 +274,15 @@ const EditStudents = ({ componentname }) => {
                 : taID || assignedId;
         const data = {
             [componentname === 'ADDITCOACH' ? 'Coach_id' : 'ta_id']: id,
-            student: selectedStudents.map((id) => ({ id })),
+            student: selectedStudents.map(id => ({ id })),
         };
 
         dispatch(
             openScheduleSession({
                 id,
                 name: assignedName,
-                student: selectedStudents.map((id) => ({ id })),
-            }),
+                student: selectedStudents.map(id => ({ id })),
+            })
         );
 
         /*
@@ -303,13 +302,7 @@ const EditStudents = ({ componentname }) => {
         dispatch(closeEditStudent());
     };
 
-    const headers = [
-        'S. No.',
-        'Student Name',
-        'Program',
-        'Batch',
-        'Select',
-    ];
+    const headers = ['S. No.', 'Student Name', 'Program', 'Batch', 'Select'];
 
     const content = (
         <>
@@ -319,9 +312,9 @@ const EditStudents = ({ componentname }) => {
                         select
                         label="Program"
                         value={selectedTerm}
-                        onChange={(e) => setSelectedTerm(e.target.value)}
+                        onChange={e => setSelectedTerm(e.target.value)}
                     >
-                        {academicTermOptions.map((term) => (
+                        {academicTermOptions.map(term => (
                             <MenuItem key={term} value={term}>
                                 {term}
                             </MenuItem>
@@ -333,9 +326,9 @@ const EditStudents = ({ componentname }) => {
                         select
                         label="Batch"
                         value={selectedBatch}
-                        onChange={(e) => setSelectedBatch(e.target.value)}
+                        onChange={e => setSelectedBatch(e.target.value)}
                     >
-                        {batchOptions.map((batch) => (
+                        {batchOptions.map(batch => (
                             <MenuItem key={batch} value={batch}>
                                 {batch}
                             </MenuItem>
@@ -349,7 +342,7 @@ const EditStudents = ({ componentname }) => {
                     <CustomTextField
                         label="Search By Student Name"
                         value={searchName}
-                        onChange={(e) => setSearchName(e.target.value)}
+                        onChange={e => setSearchName(e.target.value)}
                     />
                 </Grid>
             </Grid>

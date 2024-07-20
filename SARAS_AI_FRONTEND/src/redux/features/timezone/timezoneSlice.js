@@ -7,7 +7,7 @@ export const getTimezone = createAsyncThunk(
     async () => {
         const response = await axios.get(`${baseUrl}/timezones`);
         return response.data;
-    },
+    }
 );
 
 const initialState = {
@@ -20,9 +20,9 @@ const timezoneSlice = createSlice({
     name: 'timezone',
     initialState,
     reducers: {},
-    extraReducers: (builder) => {
+    extraReducers: builder => {
         builder
-            .addCase(getTimezone.pending, (state) => {
+            .addCase(getTimezone.pending, state => {
                 state.loading = true;
             })
             .addCase(getTimezone.fulfilled, (state, action) => {

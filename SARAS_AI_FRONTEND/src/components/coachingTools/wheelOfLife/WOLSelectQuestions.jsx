@@ -45,7 +45,7 @@ const WOLSelectQuestions = () => {
         wolQuestionCategoryWise,
         categoryIdToSubmitSelectedQuestions,
         selectedQuestionsListData,
-    } = useSelector((state) => state.wol);
+    } = useSelector(state => state.wol);
 
     const [selectedQuestions, setSelectedQuestions] = useState([]);
     const [questions, setQuestions] = useState([]);
@@ -62,7 +62,7 @@ const WOLSelectQuestions = () => {
             setQuestions(wolQuestionCategoryWise.data);
             setTotalQuestions(wolQuestionCategoryWise.data.length);
             setSelectedCategory(
-                wolQuestionCategoryWise.data[0].wol_category_name,
+                wolQuestionCategoryWise.data[0].wol_category_name
             );
             setCategoryId(wolQuestionCategoryWise.data[0].id);
         }
@@ -82,23 +82,23 @@ const WOLSelectQuestions = () => {
             // Map over the data array to extract the 'wol_question_id'
             console.log(
                 'selectedQuestionsListData',
-                selectedQuestionsListData.data,
+                selectedQuestionsListData.data
             );
             setSelectedQuestions(
                 selectedQuestionsListData.data.map(
-                    (question) => question.wol_question_id,
-                ),
+                    question => question.wol_question_id
+                )
             );
         }
     }, [selectedQuestionsListData]);
 
     console.log('selectedQuestions', selectedQuestions);
 
-    const handleSelectQuestion = (index) => {
+    const handleSelectQuestion = index => {
         console.log(`Toggling question ${index}`);
-        setSelectedQuestions((prevSelected) => {
+        setSelectedQuestions(prevSelected => {
             const updatedSelection = prevSelected.includes(index)
-                ? prevSelected.filter((i) => i !== index)
+                ? prevSelected.filter(i => i !== index)
                 : [...prevSelected, index];
             console.log('Updated Selection:', updatedSelection);
             return updatedSelection;
@@ -269,7 +269,7 @@ const WOLSelectQuestions = () => {
                                 control={
                                     <Checkbox
                                         checked={selectedQuestions.includes(
-                                            question.id,
+                                            question.id
                                         )}
                                         onChange={() =>
                                             handleSelectQuestion(question.id)

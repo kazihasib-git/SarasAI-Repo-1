@@ -31,7 +31,7 @@ const CustomButton = styled(Button)(({ theme, active }) => ({
 const AddEditWOLCategory = () => {
     const dispatch = useDispatch();
     const { openAddEditWolCategory, editData } = useSelector(
-        (state) => state.wol,
+        state => state.wol
     );
     const [categoryName, setCategoryName] = useState('');
 
@@ -44,7 +44,7 @@ const AddEditWOLCategory = () => {
                     updateWOLCategory({
                         id: editData.id,
                         data: { name: categoryName },
-                    }),
+                    })
                 ).unwrap();
             } catch (error) {
                 console.log(error.message); //TODO: Show toast message
@@ -52,7 +52,7 @@ const AddEditWOLCategory = () => {
         } else {
             try {
                 const createdWOL = await dispatch(
-                    createWOLCategory({ name: categoryName }),
+                    createWOLCategory({ name: categoryName })
                 ).unwrap();
             } catch (error) {
                 console.log(error.message); //TODO: Show toast message
@@ -107,7 +107,7 @@ const AddEditWOLCategory = () => {
                     label="WOL Category"
                     placeholder="Enter WOL Category"
                     value={categoryName}
-                    onChange={(e) => setCategoryName(e.target.value)}
+                    onChange={e => setCategoryName(e.target.value)}
                 />
             </Grid>
         </Grid>

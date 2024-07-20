@@ -49,7 +49,7 @@ const TaMenuProfile = () => {
         field.onChange(formattedDate);
     };
 
-    const onSubmit = async (formData) => {
+    const onSubmit = async formData => {
         // Handle form submission
     };
 
@@ -288,7 +288,7 @@ const TaMenuProfile = () => {
                                             label="Date of Birth"
                                             name="date_of_birth"
                                             value={dateOfBirth}
-                                            onChange={(date) =>
+                                            onChange={date =>
                                                 handleDateChange(date, field)
                                             }
                                             error={!!errors.date_of_birth}

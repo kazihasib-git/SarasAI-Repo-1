@@ -34,7 +34,7 @@ const ReactTable = ({ columns, data }) => {
             data,
             initialState: { pageIndex: 0, pageSize: 5 },
         },
-        usePagination,
+        usePagination
     );
 
     return (
@@ -42,9 +42,9 @@ const ReactTable = ({ columns, data }) => {
             <TableContainer component={Paper}>
                 <Table {...getTableProps()}>
                     <TableHead>
-                        {headerGroups.map((headerGroup) => (
+                        {headerGroups.map(headerGroup => (
                             <TableRow {...headerGroup.getHeaderGroupProps()}>
-                                {headerGroup.headers.map((column) => (
+                                {headerGroup.headers.map(column => (
                                     <TableCell {...column.getHeaderProps()}>
                                         {column.render('Header')}
                                     </TableCell>
@@ -53,11 +53,11 @@ const ReactTable = ({ columns, data }) => {
                         ))}
                     </TableHead>
                     <TableBody {...getTableBodyProps()}>
-                        {page.map((row) => {
+                        {page.map(row => {
                             prepareRow(row);
                             return (
                                 <TableRow {...row.getRowProps()}>
-                                    {row.cells.map((cell) => (
+                                    {row.cells.map(cell => (
                                         <TableCell {...cell.getCellProps()}>
                                             {cell.render('Cell')}
                                         </TableCell>

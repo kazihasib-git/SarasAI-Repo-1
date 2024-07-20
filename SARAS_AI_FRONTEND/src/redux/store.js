@@ -30,7 +30,7 @@ const store = configureStore({
         [batchesApi.reducerPath]: batchesApi.reducer,
         [coursesApi.reducerPath]: coursesApi.reducer,
     },
-    middleware: (getDefaultMiddleware) =>
+    middleware: getDefaultMiddleware =>
         getDefaultMiddleware()
             .concat(studentsApi.middleware)
             .concat(batchesApi.middleware)

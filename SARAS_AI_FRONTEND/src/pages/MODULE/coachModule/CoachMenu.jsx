@@ -18,7 +18,7 @@ const CoachMenu = () => {
     const location = useLocation();
     const [activeLink, setActiveLink] = useState(location.pathname);
 
-    const handleLinkClick = (path) => {
+    const handleLinkClick = path => {
         setActiveLink(path);
     };
 

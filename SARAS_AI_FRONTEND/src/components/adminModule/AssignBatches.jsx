@@ -84,7 +84,7 @@ const AssignBatches = ({ componentname }) => {
             openSuccessAction = openCoachSuccessPopup;
             getBatchMappingAction = getCoachBatchMapping;
             postAssignAction = postCoachAssignBatches;
-            schedulingState = useSelector((state) => state.coachScheduling);
+            schedulingState = useSelector(state => state.coachScheduling);
             nameKeyScheduling = 'coachName';
             idKeyScheduling = 'coachID';
             break;
@@ -97,7 +97,7 @@ const AssignBatches = ({ componentname }) => {
             openSuccessAction = openSuccessPopup;
             getBatchMappingAction = getBatchMapping;
             postAssignAction = postAssignBatches;
-            schedulingState = useSelector((state) => state.taScheduling);
+            schedulingState = useSelector(state => state.taScheduling);
             nameKeyScheduling = 'taName';
             idKeyScheduling = 'taID';
             break;
@@ -116,8 +116,8 @@ const AssignBatches = ({ componentname }) => {
             break;
     }
 
-    const stateSelector = useSelector((state) =>
-        stateModuleKey ? state[stateModuleKey] : {},
+    const stateSelector = useSelector(state =>
+        stateModuleKey ? state[stateModuleKey] : {}
     );
     const { [nameKeyScheduling]: assignedName, [idKeyScheduling]: assignedId } =
         schedulingState || {};
@@ -148,7 +148,7 @@ const AssignBatches = ({ componentname }) => {
                 id: batch.id,
             }));
 
-            const filtered = transformedData.filter((batch) => {
+            const filtered = transformedData.filter(batch => {
                 const matchesBranch = selectedBranch
                     ? batch.Branch === selectedBranch
                     : true;
@@ -165,18 +165,16 @@ const AssignBatches = ({ componentname }) => {
     }, [batchMapping, selectedBranch, searchQuery]);
 
     const batchOptions = batchMapping
-        ? [...new Set(batchMapping.map((batch) => batch.branch.name))]
+        ? [...new Set(batchMapping.map(batch => batch.branch.name))]
         : [];
 
-    const handleSelectBatch = (id) => {
-        setSelectedBatch((prev) =>
-            prev.includes(id)
-                ? prev.filter((sid) => sid !== id)
-                : [...prev, id],
+    const handleSelectBatch = id => {
+        setSelectedBatch(prev =>
+            prev.includes(id) ? prev.filter(sid => sid !== id) : [...prev, id]
         );
     };
 
-    const handleBranchChange = (e) => {
+    const handleBranchChange = e => {
         const selectedBranchValue = e.target.value;
         setSelectedBranch(selectedBranchValue);
 
@@ -189,7 +187,7 @@ const AssignBatches = ({ componentname }) => {
                     Branch: batch.branch.name,
                     Select: batch.is_active ? 0 : 1,
                     id: batch.id,
-                })),
+                }))
             );
         }
     };
@@ -201,7 +199,7 @@ const AssignBatches = ({ componentname }) => {
                 : taID || assignedId;
         const data = {
             [componentname === 'ADDITCOACH' ? 'Coach_id' : 'ta_id']: id,
-            batches: selectedBatch.map((id) => ({ id: id.toString() })),
+            batches: selectedBatch.map(id => ({ id: id.toString() })),
         };
         dispatch(postAssignAction({ id, data })).then(() => {
             if (assignedId) {
@@ -209,10 +207,10 @@ const AssignBatches = ({ componentname }) => {
                     openScheduleSession({
                         id: assignedId,
                         name: assignedName,
-                        batches: selectedBatch.map((id) => ({
+                        batches: selectedBatch.map(id => ({
                             id: id.toString(),
                         })),
-                    }),
+                    })
                 );
             }
             dispatch(openSuccessAction());
@@ -252,7 +250,7 @@ const AssignBatches = ({ componentname }) => {
                     <CustomTextField
                         label="Search By Batch Name"
                         value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onChange={e => setSearchQuery(e.target.value)}
                     />
                 </Grid>
             </Grid>

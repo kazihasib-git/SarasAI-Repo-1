@@ -72,7 +72,7 @@ const DenyDialog = ({ open, handleClose, handleDenySubmit }) => {
                 variant="outlined"
                 multiline
                 value={message}
-                onChange={(e) => setMessage(e.target.value)}
+                onChange={e => setMessage(e.target.value)}
             />
         </>
     );
@@ -86,7 +86,7 @@ const DenyDialog = ({ open, handleClose, handleDenySubmit }) => {
                     position: 'absolute',
                     right: 8,
                     top: 8,
-                    color: (theme) => theme.palette.grey[500],
+                    color: theme => theme.palette.grey[500],
                 }}
             ></IconButton>
             <CustomButton

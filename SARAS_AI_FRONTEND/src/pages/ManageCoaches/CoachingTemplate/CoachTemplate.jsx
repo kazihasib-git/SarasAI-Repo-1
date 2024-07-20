@@ -20,7 +20,7 @@ const CoachTemplate = () => {
     const dispatch = useDispatch();
     const [coachTemplatesData, setCoachTemplatesData] = useState([]);
 
-    const { coachTemplates } = useSelector((state) => state.coachTemplate);
+    const { coachTemplates } = useSelector(state => state.coachTemplate);
 
     useEffect(() => {
         dispatch(getAllCoachTemplates());
@@ -30,12 +30,12 @@ const CoachTemplate = () => {
 
     useEffect(() => {
         if (coachTemplates.length > 0) {
-            const transformData = coachTemplates.map((item) => ({
+            const transformData = coachTemplates.map(item => ({
                 id: item.id,
                 'Template Name': item.name,
                 Duration: item.duration,
                 Activities: item?.modules
-                    ?.map((module) => module?.module_name)
+                    ?.map(module => module?.module_name)
                     .join(', '),
                 'Assigned To': 'John Doe',
                 is_active: item.is_active,
@@ -107,7 +107,7 @@ const CoachTemplate = () => {
         },
         {
             type: 'edit',
-            onClick: (id) => {
+            onClick: id => {
                 dispatch(openEditTemplateCoach());
                 dispatch(setSelectedCoachTemplate(id));
                 dispatch(getCoachTemplateModuleId(id));

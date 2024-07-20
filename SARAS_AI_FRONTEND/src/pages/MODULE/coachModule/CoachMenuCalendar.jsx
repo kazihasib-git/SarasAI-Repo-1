@@ -97,14 +97,14 @@ const CoachMenuCalendar = () => {
         resheduleSessionOpen,
         createNewSlotOpen,
         scheduledSlotsData,
-    } = useSelector((state) => state.taAvialability);
+    } = useSelector(state => state.taAvialability);
 
     const {
         taScheduledSessions,
         scheduleSessionOpen,
         openEditBatch,
         openEditStudent,
-    } = useSelector((state) => state.taScheduling);
+    } = useSelector(state => state.taScheduling);
 
     //calendar
     const [eventsList, setEventsList] = useState([]);
@@ -118,10 +118,10 @@ const CoachMenuCalendar = () => {
 
     useEffect(() => {
         if (scheduleData && scheduleData.data) {
-            const transformedEvents = scheduleData.data.map((event) => ({
+            const transformedEvents = scheduleData.data.map(event => ({
                 title: event.meeting_name,
                 start: new Date(
-                    event.date.split(' ')[0] + 'T' + event.start_time,
+                    event.date.split(' ')[0] + 'T' + event.start_time
                 ),
                 end: new Date(event.date.split(' ')[0] + 'T' + event.end_time),
             }));

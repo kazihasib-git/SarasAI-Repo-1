@@ -16,7 +16,7 @@ const WOLQuestions = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [WOLQuestions, setWOLQuestions] = useState([]);
-    const { wolQuestionsData } = useSelector((state) => state.wol);
+    const { wolQuestionsData } = useSelector(state => state.wol);
     const headers = ['S. No.', 'Question', 'WOL Category', 'Action'];
 
     const actionButtons = [
@@ -25,12 +25,12 @@ const WOLQuestions = () => {
         },
         {
             type: 'edit',
-            onClick: (id) => {
+            onClick: id => {
                 console.log('Edit', id);
                 dispatch(
                     seteditwolQuestionData(
-                        wolQuestionsData.data.find((item) => item.id === id),
-                    ),
+                        wolQuestionsData.data.find(item => item.id === id)
+                    )
                 );
                 navigate('add-Edit');
             },
@@ -44,7 +44,7 @@ const WOLQuestions = () => {
     useEffect(() => {
         if (wolQuestionsData.data && wolQuestionsData.data.length > 0) {
             console.log(wolQuestionsData.message);
-            const transformData = wolQuestionsData.data.map((item) => ({
+            const transformData = wolQuestionsData.data.map(item => ({
                 id: item.id,
                 Question: item.question,
                 'WOL Category': item.wol_category_name

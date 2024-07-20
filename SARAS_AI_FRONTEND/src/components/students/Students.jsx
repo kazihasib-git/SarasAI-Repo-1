@@ -12,7 +12,7 @@ const Students = () => {
     const [input, setInput] = useState('');
     const [students, setStudents] = useState([]);
 
-    const handleChange = (value) => {
+    const handleChange = value => {
         setInput(value);
     };
 
@@ -23,7 +23,7 @@ const Students = () => {
     useEffect(() => {
         const dataToUse = useDummyData ? studentDummyDatadata : apiData;
         if (dataToUse) {
-            const transformedData = dataToUse.map((item) => ({
+            const transformedData = dataToUse.map(item => ({
                 id: item.id,
                 Name: item.name,
                 'Lms Id': item.student_lms_id,
@@ -41,8 +41,8 @@ const Students = () => {
     const headers = ['ID', 'Name', 'Lms Id', 'Acedemic Term', 'Batch'];
 
     // Filter students based on the search input
-    const filteredStudents = students.filter((student) =>
-        student.Name.toLowerCase().includes(input.toLowerCase()),
+    const filteredStudents = students.filter(student =>
+        student.Name.toLowerCase().includes(input.toLowerCase())
     );
 
     return (
@@ -64,7 +64,7 @@ const Students = () => {
                             className="inputField"
                             placeholder="Search Here ..."
                             value={input}
-                            onChange={(e) => handleChange(e.target.value)}
+                            onChange={e => handleChange(e.target.value)}
                         />
                     </div>
                 </div>

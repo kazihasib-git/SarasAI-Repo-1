@@ -18,7 +18,7 @@ const WOLCategories = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { openAddEditWolCategory, wolCategoryData } = useSelector(
-        (state) => state.wol,
+        state => state.wol
     );
     const [WOLCategoriesData, setWOLCategoriesData] = useState([]);
 
@@ -31,7 +31,7 @@ const WOLCategories = () => {
     useEffect(() => {
         if (wolCategoryData.status) {
             console.log(wolCategoryData.message);
-            const transformData = wolCategoryData.data.map((item) => ({
+            const transformData = wolCategoryData.data.map(item => ({
                 id: item.id,
                 'Wheel Of Life Category': item.name,
                 is_active: item.is_active,
@@ -46,12 +46,12 @@ const WOLCategories = () => {
         },
         {
             type: 'edit',
-            onClick: (id) => {
+            onClick: id => {
                 console.log('Edit', id);
                 dispatch(
                     setEditData(
-                        wolCategoryData.data.find((item) => item.id === id),
-                    ),
+                        wolCategoryData.data.find(item => item.id === id)
+                    )
                 );
                 dispatch(setAddEditWolCategory(true));
             },

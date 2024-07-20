@@ -63,9 +63,9 @@ const AddEditTA = ({ data }) => {
 
     const dispatch = useDispatch();
     const { successPopup, assignStudentOpen, assignBatchOpen } = useSelector(
-        (state) => state.taModule,
+        state => state.taModule
     );
-    const { timezones } = useSelector((state) => state.timezone);
+    const { timezones } = useSelector(state => state.timezone);
 
     useEffect(() => {
         dispatch(getTimezone());
@@ -80,7 +80,7 @@ const AddEditTA = ({ data }) => {
         }
     }, [data]);
 
-    const populateForm = (data) => {
+    const populateForm = data => {
         const formattedDate = moment(data.date_of_birth).format('YYYY-MM-DD');
         setDateOfBirth(formattedDate);
         dispatch(accessTaName(data));
@@ -107,19 +107,19 @@ const AddEditTA = ({ data }) => {
         };
 
         Object.entries(formValues).forEach(([key, value]) =>
-            setValue(key, value),
+            setValue(key, value)
         );
         Object.entries(formValues).forEach(([key, value]) =>
-            setValue(key, value),
+            setValue(key, value)
         );
 
         // setPhoneNumber(data.phone);
     };
 
-    const base64ToBlobUrl = (base64Data) => {
+    const base64ToBlobUrl = base64Data => {
         const byteCharacters = atob(base64Data);
-        const byteNumbers = Array.from(byteCharacters, (char) =>
-            char.charCodeAt(0),
+        const byteNumbers = Array.from(byteCharacters, char =>
+            char.charCodeAt(0)
         );
         const byteArray = new Uint8Array(byteNumbers);
         const blob = new Blob([byteArray], { type: 'image/jpeg' });
@@ -134,7 +134,7 @@ const AddEditTA = ({ data }) => {
         dispatch(openAssignBatches());
     };
 
-    const onSubmit = async (formData) => {
+    const onSubmit = async formData => {
         // setTAName(formData.name);
 
         const { email, time_zone, ...updatedFormData } = formData;
@@ -146,7 +146,7 @@ const AddEditTA = ({ data }) => {
         if (selectedImage) {
             const base64Data = selectedImage.replace(
                 /^data:image\/(png|jpeg|jpg);base64,/,
-                '',
+                ''
             );
             updatedFormData.profile_picture = base64Data;
         }
@@ -154,7 +154,7 @@ const AddEditTA = ({ data }) => {
         try {
             if (data) {
                 const updateRes = await dispatch(
-                    updateTA({ id: data.id, data: updatedFormData }),
+                    updateTA({ id: data.id, data: updatedFormData })
                 ).unwrap();
                 console.log('UPDATE RES : ', updateRes);
                 dispatch(openSuccessPopup());
@@ -163,7 +163,7 @@ const AddEditTA = ({ data }) => {
                 updatedFormData.email = email;
                 updatedFormData.time_zone = time_zone;
                 const createRes = await dispatch(
-                    createTA(updatedFormData),
+                    createTA(updatedFormData)
                 ).unwrap();
                 dispatch(openSuccessPopup());
                 dispatch(accessTaName(createRes.ta));
@@ -183,7 +183,7 @@ const AddEditTA = ({ data }) => {
     };
 
     return (
-        <Box m={"20px"}>
+        <Box m={'20px'}>
             <DialogActions>
                 <Grid container alignItems="center">
                     {data ? (
@@ -488,7 +488,7 @@ const AddEditTA = ({ data }) => {
                                         label="Date of Birth"
                                         name="date_of_birth"
                                         value={dateOfBirth}
-                                        onChange={(date) =>
+                                        onChange={date =>
                                             handleDateChange(date, field)
                                         }
                                         error={!!errors.date_of_birth}
@@ -592,7 +592,7 @@ const AddEditTA = ({ data }) => {
                                             paddingLeft: '10px',
                                             // boxShadow: errors.phone ? "0 0 0 2px red" : "none",
                                         }}
-                                        onFocus={(e) =>
+                                        onFocus={e =>
                                             (e.target.style.borderColor =
                                                 errors.phone
                                                     ? 'red'

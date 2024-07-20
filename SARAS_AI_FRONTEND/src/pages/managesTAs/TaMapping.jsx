@@ -22,13 +22,13 @@ const actionButtons = [
     // },
     {
         type: 'delete',
-        onClick: (id) => console.log(`Delete clicked for id ${id}`),
+        onClick: id => console.log(`Delete clicked for id ${id}`),
     },
 ];
 
 const TaMapping = () => {
     const dispatch = useDispatch();
-    const { taMapping, loading } = useSelector((state) => state.taModule);
+    const { taMapping, loading } = useSelector(state => state.taModule);
     const [taMappingData, setTaMappingData] = useState([]);
     console.log('tamapping ', taMapping);
 

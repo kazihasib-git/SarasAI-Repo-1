@@ -457,16 +457,16 @@ const CallRequest = () => {
         setOpenDenyDialog(false);
     };
 
-    const handleApprove = (id) => {
+    const handleApprove = id => {
         setCallRequests(
-            callRequests.map((request) =>
-                request.id === id ? { ...request, approved: true } : request,
-            ),
+            callRequests.map(request =>
+                request.id === id ? { ...request, approved: true } : request
+            )
         );
     };
 
-    const toggleShowFullMessage = (id) => {
-        setShowFullMessages((prevState) => ({
+    const toggleShowFullMessage = id => {
+        setShowFullMessages(prevState => ({
             ...prevState,
             [id]: !prevState[id],
         }));
@@ -485,7 +485,7 @@ const CallRequest = () => {
         setOpenCreateMeetingDialog(false);
     };
 
-    const handleCreateMeetingSubmit = (data) => {
+    const handleCreateMeetingSubmit = data => {
         console.log('Create meeting data:', data);
         setOpenCreateMeetingDialog(false);
     };
@@ -521,7 +521,7 @@ const CallRequest = () => {
                 </div>
             </Box>
             <Grid container spacing={2}>
-                {callRequests.map((callRequest) => (
+                {callRequests.map(callRequest => (
                     <Grid item key={callRequest.id} xs={12} sm={6} md={4}>
                         <Card
                             sx={{
@@ -552,14 +552,14 @@ const CallRequest = () => {
                                             ? callRequest.messages
                                             : truncateText(
                                                   callRequest.messages,
-                                                  50,
+                                                  50
                                               )}
                                     </span>
                                     {callRequest.messages.length > 50 && (
                                         <Button
                                             onClick={() =>
                                                 toggleShowFullMessage(
-                                                    callRequest.id,
+                                                    callRequest.id
                                                 )
                                             }
                                             sx={{

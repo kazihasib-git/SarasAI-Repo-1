@@ -53,7 +53,7 @@ const CreateMeetingDialog = ({ open, onClose, onSubmit }) => {
                         select
                         label="Meeting"
                         value={meeting}
-                        onChange={(e) => setMeeting(e.target.value)}
+                        onChange={e => setMeeting(e.target.value)}
                         fullWidth
                         placeholder="select"
                     >
@@ -67,7 +67,7 @@ const CreateMeetingDialog = ({ open, onClose, onSubmit }) => {
                         select
                         label="Duration"
                         value={duration}
-                        onChange={(e) => setDuration(e.target.value)}
+                        onChange={e => setDuration(e.target.value)}
                         fullWidth
                     >
                         {/* <MenuItem value="">30 mins</MenuItem> */}
@@ -80,7 +80,7 @@ const CreateMeetingDialog = ({ open, onClose, onSubmit }) => {
                         label="Number of Participants"
                         placeholder="Enter number of participants"
                         value={participants}
-                        onChange={(e) => setParticipants(e.target.value)}
+                        onChange={e => setParticipants(e.target.value)}
                         fullWidth
                     />
                 </Box>
@@ -89,7 +89,7 @@ const CreateMeetingDialog = ({ open, onClose, onSubmit }) => {
                         label="Date"
                         InputLabelProps={{ shrink: true }}
                         value={date}
-                        onChange={(e) => setDate(e.target.value)}
+                        onChange={e => setDate(e.target.value)}
                         fullWidth
                     />
                 </Box>
@@ -99,7 +99,7 @@ const CreateMeetingDialog = ({ open, onClose, onSubmit }) => {
                         type="time"
                         InputLabelProps={{ shrink: true }}
                         value={time}
-                        onChange={(e) => setTime(e.target.value)}
+                        onChange={e => setTime(e.target.value)}
                         fullWidth
                     />
                 </Box>
@@ -108,7 +108,7 @@ const CreateMeetingDialog = ({ open, onClose, onSubmit }) => {
                         label="Message"
                         placeholder="Enter the message"
                         value={message}
-                        onChange={(e) => setMessage(e.target.value)}
+                        onChange={e => setMessage(e.target.value)}
                         fullWidth
                     />
                 </Box>

@@ -101,8 +101,8 @@ const MarkLeave = ({ componentName }) => {
             break;
     }
 
-    const schedulingState = useSelector((state) =>
-        schedulingStateKey ? state[schedulingStateKey] : {},
+    const schedulingState = useSelector(state =>
+        schedulingStateKey ? state[schedulingStateKey] : {}
     );
     const { [scheduleSessionOpenKey]: markLeaveOpen } = schedulingState;
 
@@ -136,7 +136,7 @@ const MarkLeave = ({ componentName }) => {
                     dispatch(openAvailableSlotsAction(leaveData));
                     dispatch(closeMarkLeaveAction());
                 })
-                .catch((error) => {
+                .catch(error => {
                     console.error('Failed to fetch scheduled slots:', error);
                     dispatch(openAvailableSlotsAction(leaveData));
                 });
