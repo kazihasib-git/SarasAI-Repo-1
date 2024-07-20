@@ -4,7 +4,6 @@ import Sidebar from "../../../components/Sidebar/Sidebar";
 import { Box } from "@mui/material";
 import AddModule from "./TemplateModulePopup/AddModule";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllCoachTemplateModules, openEditModulePopup, openTemplateActivityPopup, openTemplateModulePopup, removeSelectedModule, setSelectedModule } from "../../../redux/features/CoachModule/CoachTemplateSlice";
 import {
   createCoachTemplateModule,
   getAllCoachTemplateModules,
@@ -38,32 +37,32 @@ const TemplateName = () => {
     dispatch(removeSelectedModule());
   }, [dispatch]);
 
-  useEffect(()=>{
-    if(coachTemplates && coachTemplates.length){
-      const currentTemplateData = coachTemplates.find((template) => template.id === selectedCoachTemplate);
-      setTemplateEditName(currentTemplateData.name)
-      console.log("currenteeee",currentTemplateData );
-      if(currentTemplateData && currentTemplateData.length){
-        const tranformData = currentTemplateData.map((item)=>({
-            id: module.id,
-            module_name : item.module_name,
+  // useEffect(()=>{
+  //   if(coachTemplates && coachTemplates.length){
+  //     const currentTemplateData = coachTemplates.find((template) => template.id === selectedCoachTemplate);
+  //     setTemplateEditName(currentTemplateData.name)
+  //     console.log("currenteeee",currentTemplateData );
+  //     if(currentTemplateData && currentTemplateData.length){
+  //       const tranformData = currentTemplateData.map((item)=>({
+  //           id: module.id,
+  //           module_name : item.module_name,
             
-            is_active : item.is_active,
-            activities : item.activities.map((property)=>({
-              id: property.id,
-              "Activity Name": property.activity_name,
-              "Due Date": property.due_date,
-              Activity: property.activity_type.type_name,
-              Points: property.points,
-              Prerequisites: "Activity 1, Activity 2",
-              "After Due Date": property.after_due_date,
-              is_active: property.is_active
-            }))    
-        }));
-        setModulesData1(tranformData);
-      }
-    }
-  },[coachTemplates]);
+  //           is_active : item.is_active,
+  //           activities : item.activities.map((property)=>({
+  //             id: property.id,
+  //             "Activity Name": property.activity_name,
+  //             "Due Date": property.due_date,
+  //             Activity: property.activity_type.type_name,
+  //             Points: property.points,
+  //             Prerequisites: "Activity 1, Activity 2",
+  //             "After Due Date": property.after_due_date,
+  //             is_active: property.is_active
+  //           }))    
+  //       }));
+  //       setModulesData1(tranformData);
+  //     }
+  //   }
+  // },[coachTemplates]);
 
   const handleModule = () => {
     dispatch(openTemplateModulePopup());
@@ -94,7 +93,6 @@ const TemplateName = () => {
     "Actions",
   ];
 
-  const dummyData = [];
   const actionButtons = [
     {
       type: "switch",
@@ -107,6 +105,46 @@ const TemplateName = () => {
     },
   ];
 
+  const dummyData = [
+    {
+      id: 1,
+      module_name: "Module 1",
+      is_active: true,
+      activities: [
+        {
+          id: 1,
+          activity_name: "Activity 1",
+          due_date: "2024-08-01",
+          points: 10,
+          after_due_date: "No",
+          is_active: true,
+        },
+        {
+          id: 2,
+          activity_name: "Activity 2",
+          due_date: "2024-08-15",
+          points: 20,
+          after_due_date: "Yes",
+          is_active: false,
+        },
+      ],
+    },
+    {
+      id: 2,
+      module_name: "Module 2",
+      is_active: false,
+      activities: [
+        {
+          id: 3,
+          activity_name: "Activity 3",
+          due_date: "2024-09-01",
+          points: 15,
+          after_due_date: "No",
+          is_active: true,
+        },
+      ],
+    },
+  ];
   return (
     <>
       <Header />
@@ -130,7 +168,7 @@ const TemplateName = () => {
       
         <>
           <TemplateModuleTable
-            modulesData={modulesData}
+            modulesData={dummyData}
           />
         </>
         

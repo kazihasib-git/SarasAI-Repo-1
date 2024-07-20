@@ -19,6 +19,7 @@ import CustomTextField from "../../../../components/CustomFields/CustomTextField
 import CustomDateField from "../../../../components/CustomFields/CustomDateField";
 import CustomTimeField from "../../../../components/CustomFields/CustomTimeField";
 import { getActivityType } from "../../../../redux/features/ActivityType/activityTypeSlice";
+import { linkActivity } from "../../../../redux/features/ActivityType/LinkActivitySlice";
 
 const CustomButton = ({
   onClick,
@@ -55,39 +56,59 @@ const CustomButton = ({
   );
 };
 
-const LinkActivityPopup = ({ open, handleClose }) => {
+const LinkActivityPopup = ({ open, handleClose,activityId  }) => {
   const dispatch = useDispatch();
-  const {
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = useForm();
+  const { handleSubmit, control, formState: { errors } } = useForm();
   const [activityType, setActivityType] = useState("");
   const [selectedSessionType, setSelectedSessionType] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
   const [askCoach, setAskCoach] = useState(false);
+  const [selectedAssessmentId, setSelectedAssessmentId] = useState("");
+  const [selectedActivityId, setSelectedActivityId] = useState("");
 
-  const onSubmit = (data) => {
-    console.log(data); // Example: Log form data
-    handleClose();
+  const onSubmit = async (data) => {
+    // Prepare the payload
+    console.log("clicked")
+    console.log("activity data", data);
+    console.log("selected assessment id", selectedAssessmentId)
+    const payload = {
+      activity_id: activityId, // Ensure this value is correctly set
+      activity_type_id: activityType === "test" ? selectedAssessmentId : selectedActivityId, // Ensure this value is correctly set
+      link: data.virtualMeetLink // Add other fields if needed
+    };
+    console.log("payload",payload)
+
+    try {
+      await dispatch(linkActivity(payload)).unwrap();
+      handleClose();
+    } catch (error) {
+      console.error("Failed to link activity:", error);
+    }
   };
+
   useEffect(() => {
     dispatch(getActivityType());
   }, [dispatch]);
 
   const { typeList } = useSelector((state) => state.activityType);
 
-  const activityOptions =
-    typeList?.map((type) => ({
+  const activityOptions = typeList
+    .filter((_, index) => index < 5)
+    .map((type) => ({
       value: type.type_name,
       label: type.type_name.charAt(0).toUpperCase() + type.type_name.slice(1), // Capitalize the first letter of each type_name
-    })) || [];
+      id: type.id,
+    }));
 
-  const assessmentOptions = [
-    { value: "wheel_of_life", label: "Wheel of Life" },
-    { value: "core_value", label: "Core Value" },
-    { value: "belief", label: "Belief" },
-  ];
+    const assessmentOptions = typeList
+    .filter((_, index) => index >= 5)
+    .map((type) => ({
+      value: type.type_name,
+      label: type.type_name.charAt(0).toUpperCase() + type.type_name.slice(1), // Capitalize the first letter of each type_name
+      id: type.id,
+    }));
+  
+  
 
   const sessionTypes = [
     { value: "one-on-one", label: "One-on-one session" },
@@ -145,6 +166,9 @@ const LinkActivityPopup = ({ open, handleClose }) => {
               value={field.value}
               onChange={(e) => {
                 setActivityType(e.target.value);
+                const selectedValue = e.target.value;
+                const selectedOption = activityOptions.find(option => option.value === selectedValue);
+                setSelectedActivityId(selectedOption ? selectedOption.id : ""); 
                 field.onChange(e);
               }}
               errors={errors}
@@ -184,34 +208,37 @@ const LinkActivityPopup = ({ open, handleClose }) => {
           />
         </Grid>
       )}
+      
       {activityType === "test" && (
         <Grid
-          item
-          xs={12}
-          sm={6}
-          md={6}
-          style={{ margin: "5px 0px", width: "80%" }}
-        >
-          <Controller
+      item
+      xs={12}
+      sm={6}
+      md={6}
+      style={{ margin: "5px 0px", width: "80%" }}
+    >
+      <Controller
+        name="assessment"
+        control={control}
+        defaultValue=""
+        render={({ field }) => (
+          <CustomFormControl
+            label="Assessment"
             name="assessment"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <CustomFormControl
-                label="Assessment"
-                name="assessment"
-                value={field.value}
-                onChange={(e) => {
-                  field.onChange(e);
-                }}
-                errors={errors}
-                options={assessmentOptions}
-              />
-            )}
+            value={field.value}
+            onChange={(e) => {
+              const selectedValue = e.target.value;
+              field.onChange(e);
+              const selectedOption = assessmentOptions.find(option => option.value === selectedValue);
+              setSelectedAssessmentId(selectedOption ? selectedOption.id : ""); 
+            }}
+            errors={errors}
+            options={assessmentOptions}
           />
-        </Grid>
+        )}
+      />
+    </Grid>
       )}
-
       {activityType === "virtual meet" && (
         <>
           <Grid

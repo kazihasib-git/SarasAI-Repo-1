@@ -70,6 +70,7 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
 const TemplateModuleTable = ({ modulesData }) => {
   const [linkActivityPopupOpen, setLinkActivityPopupOpen] = useState(false);
   const [prerequisitesPopupOpen, setPrerequisitesPopupOpen] = useState(false);
+  const [selectedActivityId, setSelectedActivityId] = useState(null); // State for selected activity ID
   const dispatch = useDispatch();
  
   const handleToggle = (moduleId, activityId) => {
@@ -77,7 +78,8 @@ const TemplateModuleTable = ({ modulesData }) => {
     // Implement toggle action dispatch
   };
  
-  const openLinkActivityPopup = () => {
+  const openLinkActivityPopup = (activityId) => {
+    setSelectedActivityId(activityId); // Set the selected activity ID
     setLinkActivityPopupOpen(true);
   };
  
@@ -160,7 +162,7 @@ const TemplateModuleTable = ({ modulesData }) => {
                         <td style={{ padding: "8px 0", borderBottom: "1px solid #e0e0e0" }}>{activity.activity_name}</td>
                         <td style={{ padding: "8px 0", borderBottom: "1px solid #e0e0e0" }}>{activity.due_date}</td>
                         <td style={{ padding: "8px 0", borderBottom: "1px solid #e0e0e0" }}>
-                          <CustomButton onClick={openLinkActivityPopup} className="linkActivityBtn">
+                          <CustomButton onClick={() => openLinkActivityPopup(activity.id)} className="linkActivityBtn">
                             Link Activity
                           </CustomButton>
                         </td>
@@ -194,7 +196,7 @@ const TemplateModuleTable = ({ modulesData }) => {
           )}
         </Box>
       ))}
-      <LinkActivityPopup open={linkActivityPopupOpen} handleClose={closeLinkActivityPopup} />
+      <LinkActivityPopup open={linkActivityPopupOpen} handleClose={closeLinkActivityPopup} activityId={selectedActivityId}/>
       <PrerequisitesPopup open={prerequisitesPopupOpen} handleClose={closePrerequisitesPopup} />
     </>
   );
