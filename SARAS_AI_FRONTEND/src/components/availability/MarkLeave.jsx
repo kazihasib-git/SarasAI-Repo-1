@@ -11,6 +11,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import CloseIcon from '@mui/icons-material/Close';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import CustomDateField from '../CustomFields/CustomDateField';
+import { toast } from 'react-toastify';
 import Slots from './Slots';
 
 import { useDispatch, useSelector } from 'react-redux';
@@ -105,31 +106,41 @@ const MarkLeave = ({ componentName }) => {
     );
     const { [scheduleSessionOpenKey]: markLeaveOpen } = schedulingState;
 
+    const validateDates = () => {
+        if (!fromDate || !toDate) {
+            toast.error('Please select dates');
+            return false;
+        }
+        return true;
+    };
+
     const handleSubmit = () => {
-        const formattedFromDate = moment(fromDate).format('YYYY-MM-DD');
-        const formattedToDate = moment(toDate).format('YYYY-MM-DD');
+        if (validateDates()) {
+            const formattedFromDate = moment(fromDate).format('YYYY-MM-DD');
+            const formattedToDate = moment(toDate).format('YYYY-MM-DD');
 
-        const leaveData = {
-            admin_user_id: taId, // Ensure taId is correctly extracted
-            start_date: formattedFromDate,
-            end_date:
-                formattedFromDate === formattedToDate
-                    ? formattedFromDate
-                    : formattedToDate,
-            start_time: '00:00:00',
-            end_time: '23:59:59',
-        };
+            const leaveData = {
+                admin_user_id: taId, // Ensure taId is correctly extracted
+                start_date: formattedFromDate,
+                end_date:
+                    formattedFromDate === formattedToDate
+                        ? formattedFromDate
+                        : formattedToDate,
+                start_time: '00:00:00',
+                end_time: '23:59:59',
+            };
 
-        dispatch(getSlotsAction(leaveData))
-            .unwrap()
-            .then(() => {
-                dispatch(openAvailableSlotsAction(leaveData));
-                dispatch(closeMarkLeaveAction());
-            })
-            .catch((error) => {
-                console.error('Failed to fetch scheduled slots:', error);
-                dispatch(openAvailableSlotsAction(leaveData));
-            });
+            dispatch(getSlotsAction(leaveData))
+                .unwrap()
+                .then(() => {
+                    dispatch(openAvailableSlotsAction(leaveData));
+                    dispatch(closeMarkLeaveAction());
+                })
+                .catch((error) => {
+                    console.error('Failed to fetch scheduled slots:', error);
+                    dispatch(openAvailableSlotsAction(leaveData));
+                });
+        }
     };
 
     const content = (

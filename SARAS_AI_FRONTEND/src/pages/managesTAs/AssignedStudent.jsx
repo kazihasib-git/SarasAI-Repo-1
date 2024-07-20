@@ -146,11 +146,12 @@ const DynamicTable = ({
         <div className="table-container">
             <Box display={'flex'} justifyContent={'space-between'}>
                 <Box display="flex" alignItems="center" padding="16px">
+                    {/*
                     <ArrowBackIosIcon
                         style={{ fontSize: '25px', marginBottom: '17px' }}
                         onClick={() => navigate('/ta-mapping')}
                     />
-
+                    */}
                     <p
                         style={{
                             fontSize: '44px',
@@ -321,7 +322,7 @@ const DynamicTable = ({
 const headers = [
     'Sr. No.',
     'Student Name',
-    'Academic Term',
+    'Program',
     'Batch',
     'Actions',
 ];
@@ -351,18 +352,18 @@ const AssignedStudent = () => {
     }, [dispatch, id]);
 
     useEffect(() => {
+        // console.log('Assigned Students:', assignedStudents);
         if (assignedStudents && assignedStudents.length > 0) {
             const transformData = assignedStudents.map((item) => {
                 const studentName = item.student
                     ? item.student.name
                     : 'Unknown Student';
                 const academicTerm = item.student
-                    ? item.student.academic_term
-                    : 'N/A';
+                    ? item.student.packages.map((pack) => pack.name).join(', ') : 'N/A';
                 const batchName =
                     item.student.batches && item.student.batches.length > 0
-                        ? item.student.batches[0].batch_name
-                        : 'N/A';
+                        ? item.student.batches.map((batch) => batch.batch_name)
+                        .join(', ') : 'N/A';
                 const isActive = item.is_active === 1;
 
                 return {

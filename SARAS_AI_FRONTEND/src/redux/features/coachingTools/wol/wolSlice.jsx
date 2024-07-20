@@ -25,7 +25,7 @@ export const createWOLCategory = createAsyncThunk(
 );
 
 // To Update WOL Category
-export const updateeWOLCategory = createAsyncThunk(
+export const updateWOLCategory = createAsyncThunk(
     'wol/updateWOLCategory',
     async ({ id, data }) => {
         const response = await axios.put(
@@ -161,15 +161,65 @@ export const getWolTestConfig = createAsyncThunk(
     },
 );
 
+// Get Wol Question Category Wise
+export const getWolQuestionCategoryWise = createAsyncThunk(
+    'wol/getWolQuestionCategoryWise',
+    async (id) => {
+        const response = await axios.get(
+            `${baseUrl}/admin/wol/wol-question-category-wise/${id}`,
+        );
+        return response.data;
+    },
+);
+
+// Get Wol Test Config Category Wise questions count
+export const getWolTestConfigCategoryWise = createAsyncThunk(
+    'wol/getWolTestConfigCategoryWise',
+    async (id) => {
+        const response = await axios.get(
+            `${baseUrl}/admin/wol/wol-test-config-category-question-count`,
+        );
+        return response.data;
+    },
+);
+
+// Add question to category
+export const addQuestionToCategory = createAsyncThunk(
+    'wol/addQuestionToCategory',
+    async (data) => {
+        const response = await axios.post(
+            `${baseUrl}/admin/wol/wol-test-config-add-question-to-category`,
+            data,
+        );
+        return response.data;
+    },
+);
+
+// Selected Questions list
+export const selectedQuestionsList = createAsyncThunk(
+    'wol/selectedQuestionsList',
+    async (id) => {
+        const response = await axios.get(
+            `${baseUrl}/admin/wol/wol-test-config-selected-question-list/${id}`,
+        );
+        return response.data;
+    },
+);
+
 const initialState = {
     wolCategoryData: [], // to store all WOL Category data
     instructionData: '', // to store all life instruction data
     wolQuestionsData: [], // to store all WOL Questions data
     wolTestConfig: [],
+    wolQuestionCategoryWise: [], // to store WOL Question category wise data
+    wolTestConfigCategoryWise: [], // to store WOL Test Config category wise questions count data
+    addQuestionToCategoryData: [],
+    selectedQuestionsListData: [],
     openAddEditWolCategory: false,
     editData: null, // to store WOL category edit data
     editwolQuestionData: null,
     optionsConfigData: [],
+    categoryIdToSubmitSelectedQuestions: null,
     loading: false,
     error: null,
 };
@@ -186,6 +236,9 @@ const wolSlice = createSlice({
         },
         seteditwolQuestionData: (state, action) => {
             state.editwolQuestionData = action.payload;
+        },
+        handleIdToSubmitSelectedQuestions: (state, action) => {
+            state.categoryIdToSubmitSelectedQuestions = action.payload;
         },
     },
 
@@ -332,10 +385,78 @@ const wolSlice = createSlice({
             state.loading = false;
             state.error = action.payload || action.error.message;
         });
+
+        // getWolQuestionCategoryWise
+        builder.addCase(getWolQuestionCategoryWise.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(
+            getWolQuestionCategoryWise.fulfilled,
+            (state, action) => {
+                state.loading = false;
+                state.wolQuestionCategoryWise = action.payload;
+            },
+        );
+        builder.addCase(
+            getWolQuestionCategoryWise.rejected,
+            (state, action) => {
+                state.loading = false;
+                state.error = action.payload || action.error.message;
+            },
+        );
+
+        // getWolTestConfigCategoryWise
+        builder.addCase(getWolTestConfigCategoryWise.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(
+            getWolTestConfigCategoryWise.fulfilled,
+            (state, action) => {
+                state.loading = false;
+                state.wolTestConfigCategoryWise = action.payload;
+            },
+        );
+        builder.addCase(
+            getWolTestConfigCategoryWise.rejected,
+            (state, action) => {
+                state.loading = false;
+                state.error = action.payload || action.error.message;
+            },
+        );
+
+        // addQuestionToCategory
+        builder.addCase(addQuestionToCategory.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(addQuestionToCategory.fulfilled, (state, action) => {
+            state.loading = false;
+            state.addQuestionToCategoryData = action.payload;
+        });
+        builder.addCase(addQuestionToCategory.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload || action.error.message;
+        });
+
+        // selectedQuestionsList
+        builder.addCase(selectedQuestionsList.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(selectedQuestionsList.fulfilled, (state, action) => {
+            state.loading = false;
+            state.selectedQuestionsListData = action.payload;
+        });
+        builder.addCase(selectedQuestionsList.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload || action.error.message;
+        });
     },
 });
 
-export const { setAddEditWolCategory, setEditData, seteditwolQuestionData } =
-    wolSlice.actions;
+export const {
+    setAddEditWolCategory,
+    setEditData,
+    seteditwolQuestionData,
+    handleIdToSubmitSelectedQuestions,
+} = wolSlice.actions;
 
 export default wolSlice.reducer;

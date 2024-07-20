@@ -6,6 +6,8 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './Context/AuthProvider';
 import { Provider } from 'react-redux';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import store from './redux/store';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -18,6 +20,7 @@ root.render(
                         {/* <App /> */}
                         <Route path="/*" element={<App />}></Route>
                     </Routes>
+                    <ToastContainer />
                 </AuthProvider>
             </BrowserRouter>
         </Provider>

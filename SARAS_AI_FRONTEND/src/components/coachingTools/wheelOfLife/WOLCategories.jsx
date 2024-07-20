@@ -84,7 +84,7 @@ const WOLCategories = () => {
                                 marginRight: '10px',
                                 cursor: 'pointer',
                             }}
-                            onClick={() => navigate(-1)}
+                            onClick={() => navigate('/wheel-of-life')}
                         />
                         <p
                             style={{

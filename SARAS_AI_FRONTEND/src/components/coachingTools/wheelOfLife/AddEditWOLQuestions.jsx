@@ -23,6 +23,7 @@ import {
     getWOLCategory,
     createWOLQuestion,
     updateWOLQuestion,
+    getWOLQuestions,
 } from '../../../redux/features/coachingTools/wol/wolSlice';
 
 const AddEditWOLQuestions = () => {
@@ -138,7 +139,7 @@ const AddEditWOLQuestions = () => {
         } else {
             dispatch(createWOLQuestion(data));
         }
-        //await dispatch(getWOLQuestions());
+        dispatch(getWOLQuestions());
         dispatch(seteditwolQuestionData(null));
         navigate('/wolQuestions');
     };
@@ -186,7 +187,7 @@ const AddEditWOLQuestions = () => {
                     </p>
                 </Box>
             </Box>
-            <Container
+            <Box
                 sx={{
                     backgroundColor: 'white',
                     borderRadius: 2,
@@ -268,7 +269,7 @@ const AddEditWOLQuestions = () => {
                         )}
                     </Box>
                 </form>
-            </Container>
+            </Box>
         </>
     );
 };

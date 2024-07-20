@@ -7,15 +7,6 @@ import {
     Typography,
 } from '@mui/material';
 
-import React from 'react';
-import {
-    FormControl,
-    InputLabel,
-    Select,
-    MenuItem,
-    Typography,
-} from '@mui/material';
-
 const CustomFormControl = ({
     label,
     name,
@@ -23,6 +14,7 @@ const CustomFormControl = ({
     onChange,
     errors,
     options,
+    disabled,
 }) => {
     const hasError = !!errors[name];
 
@@ -71,7 +63,7 @@ const CustomFormControl = ({
                     },
                 }}
             >
-                {options?.map((option) => (
+                {options.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
                         {option.label}
                     </MenuItem>

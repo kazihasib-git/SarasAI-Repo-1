@@ -36,6 +36,7 @@ import {
 import { getTimezone } from '../../redux/features/timezone/timezoneSlice';
 import CustomTimeZoneForm from '../CustomFields/CustomTimeZoneForm';
 import { fetchTAScheduleById } from '../../redux/features/taModule/taAvialability';
+import { toast } from 'react-toastify';
 
 const CustomButton = ({
     onClick,
@@ -73,6 +74,7 @@ const CustomButton = ({
 };
 
 const headers = ['S. No.', 'Slot Date', 'From Time', 'To Time', 'Select'];
+
 const weekDays = [
     'Sunday',
     'Monday',
@@ -99,7 +101,7 @@ const Schedule = ({ componentName }) => {
     const [selectedDays, setSelectedDays] = useState([]);
     const [slotData, setSlotData] = useState([{}]);
     const [selectedSlot, setSelectedSlot] = useState([{}]);
-    const [availableSlotsOptions, setAvailableSlotsOptions] = useState([{}]);
+    const [availableSlotsOptions, setAvailableSlotsOptions] = useState([]);
 
     const dispatch = useDispatch();
     let scheduleSessionOpenKey,
@@ -168,9 +170,10 @@ const Schedule = ({ componentName }) => {
         formState: { errors },
     } = useForm();
 
+    console.log("available slots", availableSlots)
+
     useEffect(() => {
-        if (fromDate && adminUserID) {
-            console.log('ADMIN USER ID failed : ', adminUserID);
+        if (fromDate || !availableSlots.length > 0) {
             dispatch(
                 getAvailableSlotsAction({
                     admin_user_id: adminUserID,
@@ -178,7 +181,7 @@ const Schedule = ({ componentName }) => {
                 }),
             );
         }
-    }, [fromDate, dispatch]);
+    }, [fromDate, dispatch, adminUserID, getAvailableSlotsAction]);
 
     const { timezones } = useSelector((state) => state.timezone);
 
@@ -229,7 +232,6 @@ const Schedule = ({ componentName }) => {
         });
     };
 
-    //
     const handleSelectOption = (e) => {
         const selectedOption = e.target.value;
         console.log('selectedOption : ', selectedOption);
@@ -253,6 +255,8 @@ const Schedule = ({ componentName }) => {
     //     setSelectedSlot([{}]);
     // }
 
+    console.log("adminUserID ", adminUserID)
+
     const handleAssignBatches = () => {
         console.log('COMPONENT NAME  handleAssignBatches : ', componentName);
         if (componentName === 'TASCHEDULE') {
@@ -262,31 +266,53 @@ const Schedule = ({ componentName }) => {
         }
     };
 
-    const onSubmit = async (formData) => {
-        const studentId = students.map((student) => student.id);
-        const batchId = batches.map((batch) => batch.id);
+    const validate = () => {
+        if (!fromTime) {
+            toast.error('Please select from time');
+            return;
+        }
 
-        console.log('studentId : ', studentId, 'batchId : ', batchId);
+        if (!toTime) {
+            toast.error('Please select to time');
+            return;
+        }
+
+        if (students.length === 0) {
+            toast.error('Please assign students');
+            return;
+        } else if (batches.length === 0) {
+            toast.error('Please assign batches');
+            return;
+        }
+
         if (toTime) {
             if (toTime < fromTime) {
-                alert('To time should be greater than from time!');
+                toast.error('To time should be greater than from time!');
             }
         }
 
-        if (!fromDate || !toDate || !fromTime || !toTime) {
-            alert('Please fill in all fields');
+        if (!fromDate || !fromTime || !toTime) {
+            toast.error('Please fill in all fields');
             return;
         }
 
         if (toDate < fromDate) {
-            alert('To Date should be greater than From Date!');
+            toast.error('To Date should be greater than From Date!');
             return;
         }
 
         if (toTime < fromTime) {
-            alert('To Time should be greater than From Time!');
+            toast.error('To Time should be greater than From Time!');
             return;
         }
+    }
+
+    const onSubmit = (formData) => {
+        const studentId = students.map((student) => student.id);
+        const batchId = batches.map((batch) => batch.id);
+
+        console.log('studentId : ', studentId, 'batchId : ', batchId);
+
         let weeksArray = Array(7).fill(0);
         if (repeat === 'recurring') {
             selectedDays.forEach((day) => {
@@ -297,6 +323,7 @@ const Schedule = ({ componentName }) => {
             const index = new Date(fromDate).getDay();
             weeksArray[index] = 1;
         }
+       
 
         console.log('FORM DATA : ', formData);
         console.log('selected slots', selectedSlot);
@@ -331,6 +358,8 @@ const Schedule = ({ componentName }) => {
     */
     };
 
+    console.log('AvailableSlotsOptions :', availableSlotsOptions);
+
     const content = (
         <Box
             display="flex"
@@ -363,14 +392,19 @@ const Schedule = ({ componentName }) => {
                             </Grid>
                             {fromDate && (
                                 <>
-                                    {slotData.length === 0 ? (
+                                    {availableSlotsOptions.length === 0 ? (
                                         <Grid
                                             item
                                             xs={12}
                                             display="flex"
                                             justifyContent="center"
                                         >
-                                            <DialogContent>
+                                            <DialogContent
+                                                sx={{
+                                                    color: 'red',
+                                                    textAlign: 'center',
+                                                }}
+                                            >
                                                 No Slot Available
                                             </DialogContent>
                                         </Grid>

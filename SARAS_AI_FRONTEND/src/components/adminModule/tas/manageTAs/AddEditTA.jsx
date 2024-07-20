@@ -70,6 +70,9 @@ const AddEditTA = ({ data }) => {
     useEffect(() => {
         dispatch(getTimezone());
     }, [dispatch]);
+    useEffect(() => {
+        dispatch(getTimezone());
+    }, [dispatch]);
 
     useEffect(() => {
         if (data) {
@@ -94,6 +97,7 @@ const AddEditTA = ({ data }) => {
             location: data.location,
             address: data.address,
             pincode: data.pincode,
+            phone: data.phone,
             time_zone: data.time_zone,
             gender: data.gender,
             email: data.email,
@@ -105,8 +109,11 @@ const AddEditTA = ({ data }) => {
         Object.entries(formValues).forEach(([key, value]) =>
             setValue(key, value),
         );
+        Object.entries(formValues).forEach(([key, value]) =>
+            setValue(key, value),
+        );
 
-        setPhoneNumber(data.phone);
+        // setPhoneNumber(data.phone);
     };
 
     const base64ToBlobUrl = (base64Data) => {
@@ -130,10 +137,11 @@ const AddEditTA = ({ data }) => {
     const onSubmit = async (formData) => {
         // setTAName(formData.name);
 
-        const { email, time_zone, phone, ...updatedFormData } = formData;
+        const { email, time_zone, ...updatedFormData } = formData;
+
+        console.log('formData :', formData);
 
         updatedFormData.date_of_birth = dateOfBirth;
-        formData.phone = phoneNumber;
 
         if (selectedImage) {
             const base64Data = selectedImage.replace(
@@ -154,7 +162,6 @@ const AddEditTA = ({ data }) => {
             } else {
                 updatedFormData.email = email;
                 updatedFormData.time_zone = time_zone;
-                formData.phone = phoneNumber;
                 const createRes = await dispatch(
                     createTA(updatedFormData),
                 ).unwrap();
@@ -456,7 +463,7 @@ const AddEditTA = ({ data }) => {
                             <Controller
                                 name="time_zone"
                                 control={control}
-                                rules={{ required: 'Time Zone is required' }}
+                                rules={{ required: 'TimeZone is required' }}
                                 render={({ field }) => {
                                     return (
                                         <CustomTimeZoneForm
@@ -558,13 +565,13 @@ const AddEditTA = ({ data }) => {
                             <Controller
                                 name="phone"
                                 control={control}
-                                rules={{ required: 'Phone number is required' }} // Setting validation rules
+                                rules={{ required: 'Phone number is required' }}
                                 render={({ field }) => (
                                     <PhoneInput
+                                        {...field}
                                         country={'in'}
-                                        value={field.value} // Binding the value to the field value
-                                        onChange={field.onChange} // Handling the onChange event
-                                        containerStyle={{ width: '100%' }}
+                                        // containerStyle={{ width: "100%" }}
+
                                         inputStyle={{
                                             width: '100%',
                                             borderRadius: '50px',
@@ -573,6 +580,7 @@ const AddEditTA = ({ data }) => {
                                                 : '#D0D0EC',
                                             outline: 'none',
                                             height: '60px',
+                                            // boxShadow: errors.phone ? "0 0 0 2px red" : "none",
                                         }}
                                         buttonStyle={{
                                             borderRadius: '50px 0 0 50px',
@@ -582,7 +590,15 @@ const AddEditTA = ({ data }) => {
                                             height: '60px',
                                             outline: 'none',
                                             paddingLeft: '10px',
+                                            // boxShadow: errors.phone ? "0 0 0 2px red" : "none",
                                         }}
+                                        onFocus={(e) =>
+                                            (e.target.style.borderColor =
+                                                errors.phone
+                                                    ? 'red'
+                                                    : '#D0D0EC')
+                                        }
+                                        onChange={field.onChange}
                                     />
                                 )}
                             />
@@ -590,7 +606,7 @@ const AddEditTA = ({ data }) => {
                                 <Typography
                                     variant="body2"
                                     color="error"
-                                    style={{ marginTop: '8px' }}
+                                    sx={{ fontSize: '0.75rem' }}
                                 >
                                     {errors.phone.message}
                                 </Typography>

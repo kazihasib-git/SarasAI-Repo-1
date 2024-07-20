@@ -29,6 +29,7 @@ import {
     createCoachSlots,
     closeCoachCreateNewSlots,
 } from '../../redux/features/CoachModule/CoachAvailabilitySlice';
+import { toast } from 'react-toastify';
 const CustomButton = ({
     onClick,
     children,
@@ -161,8 +162,36 @@ const CreateNewSlot = ({ componentName }) => {
         dispatch(getTimezone());
     }, [dispatch]);
 
+    const validate = () => {
+        if (!fromDate) {
+            toast.error('Please select From Date');
+            return false;
+        }
+        if (!fromTime) {
+            toast.error('Please select From Time');
+            return false;
+        }
+        if (!toTime) {
+            toast.error('Please select To Time');
+            return false;
+        }
+        if (repeat === 'recurring' && !toDate) {
+            toast.error('Please select To Date');
+            return false;
+        }
+        if (repeat === 'recurring' && selectedDays.length === 0) {
+            toast.error('Please select at least one day');
+            return false;
+        }
+        return true;
+    };
+
     const onSubmit = (formData) => {
         console.log('form data', formData);
+
+        if (!validate()) {
+            return;
+        }
 
         let weeksArray = Array(7).fill(0);
         if (repeat === 'recurring') {
@@ -285,7 +314,7 @@ const CreateNewSlot = ({ componentName }) => {
                             <Controller
                                 name="time_zone"
                                 control={control}
-                                rules={{ required: 'Time Zone is required' }}
+                                // rules={{ required: 'Time Zone is required' }}
                                 render={({ field }) => (
                                     <CustomTimeZoneForm
                                         label="Time Zone"

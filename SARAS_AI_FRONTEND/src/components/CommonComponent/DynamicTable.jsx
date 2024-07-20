@@ -348,7 +348,6 @@ const DynamicTable = ({
                                                     </IconButton>
                                                 );
                                             }
-
                                             if (button.type === 'delete') {
                                                 return (
                                                     <IconButton

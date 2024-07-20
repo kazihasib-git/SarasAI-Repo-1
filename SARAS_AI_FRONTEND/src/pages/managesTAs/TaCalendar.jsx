@@ -109,6 +109,7 @@ const TaCalender = () => {
 
     //calendar
     const [eventsList, setEventsList] = useState([]);
+    const [slotViewData, setSlotViewData] = useState([]); 
 
     /*
         const addEvent = (title, startDateTime, endDateTime) => {
@@ -161,7 +162,7 @@ const TaCalender = () => {
     useEffect(() => {
         dispatch(fetchCoachSlots(id));
         dispatch(fetchTAScheduleById(id));
-    }, [id, dispatch]);
+    }, [dispatch]);
 
     useEffect(() => {
         if (scheduleData && scheduleData.data) {
@@ -173,8 +174,24 @@ const TaCalender = () => {
                 end: new Date(event.date.split(' ')[0] + 'T' + event.end_time),
             }));
             setEventsList(transformedEvents);
+        }else{
+            setEventsList([]);
         }
     }, [scheduleData]);
+
+
+    useEffect(() => {
+        if (slotData.data && slotData.data.length > 0) {
+            const transformedSlots = slotData.data.map((slot) => ({
+                startDate: new Date(slot.slot_date + 'T' + slot.from_time),
+                endDate: new Date(slot.slot_date + 'T' + slot.to_time),
+            }));
+            setSlotViewData(transformedSlots);
+        }else{
+            setSlotViewData([]);
+        }
+
+    }, [slotData]);
 
     // console.log("slotData", slotData, "scheduleData", scheduleData);
 
@@ -261,7 +278,7 @@ const TaCalender = () => {
 
                 <CalendarComponent
                     eventsList={eventsList}
-                    slotData={slotData}
+                    slotData={slotViewData}
                     componentName={'TACALENDER'}
                 />
                 {scheduleSessionOpen && (

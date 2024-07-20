@@ -56,8 +56,6 @@ function AddEditCoach({ data }) {
         },
     });
 
-    const [isEditing, setIsEditing] = useState(false);
-
     const [selectedImage, setSelectedImage] = useState(null);
     const [dateOfBirth, setDateOfBirth] = useState(null);
     const [phoneNumber, setPhoneNumber] = useState('');
@@ -99,6 +97,7 @@ function AddEditCoach({ data }) {
             location: data.location,
             address: data.address,
             pincode: data.pincode,
+            phone : data.phone,
             time_zone: data.time_zone,
             gender: data.gender,
             email: data.email,
@@ -110,19 +109,8 @@ function AddEditCoach({ data }) {
         Object.entries(formValues).forEach(([key, value]) =>
             setValue(key, value),
         );
-        const onSubmit = (formData) => {
-            if (isEditing) {
-                // Remove phone_number and time_zone from formData if editing
-                delete formData.phone_number;
-                delete formData.time_zone;
-            }
-            // Handle form submission, e.g., send formData to the backend
-            console.log('Submitted data:', formData);
-        };
 
         setPhoneNumber(data.phone);
-        setIsEditing(true);
-        setValue('time_zone', data.time_zone);
     };
 
     const base64ToBlobUrl = (base64Data) => {
@@ -147,7 +135,7 @@ function AddEditCoach({ data }) {
         const { email, time_zone, ...updatedFormData } = coachData;
 
         updatedFormData.date_of_birth = dateOfBirth;
-        updatedFormData.phone = phoneNumber;
+        // updatedFormData.phone = phoneNumber;
 
         if (selectedImage) {
             const base64Data = selectedImage.replace(
@@ -327,21 +315,24 @@ function AddEditCoach({ data }) {
                                     placeholder="Enter Coach Name"
                                     register={register}
                                     validation={{
-                                        required: 'Coach Name is required',
+                                        required: 'Name is required',
                                         minLength: {
                                             value: 3,
                                             message:
-                                                'Coach Name must be at least 3 characters long',
+                                                'Name must be at least 3 characters long',
                                         },
                                         maxLength: {
                                             value: 20,
                                             message:
-                                                'Coach Name cannot exceed 20 characters',
+                                                'Name cannot exceed 20 characters',
+                                        },
+                                        pattern: {
+                                            value: /^[A-Za-z\s]+$/,
+                                            message:
+                                                'Name must contain only letters and spaces',
                                         },
                                     }}
                                     errors={errors}
-                                    error={!!errors.name}
-                                    helperText={errors.name?.message}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6} md={4}>
@@ -506,7 +497,6 @@ function AddEditCoach({ data }) {
                                                 onChange={field.onChange}
                                                 errors={errors}
                                                 options={timezones}
-                                                disabled={isEditing}
                                             />
                                         );
                                     }}

@@ -48,9 +48,13 @@ const WOLInstructions = () => {
         setEditData(true);
     };
 
-    const handleUpdateWOLInstructions = async () => {
+    const handleUpdateWOLInstructions = () => {
         try {
-            await dispatch(editLifeInstruction({ message: value })).unwrap();
+            dispatch(editLifeInstruction({ message: value }))
+                .unwrap()
+                .then(() => {
+                    dispatch(getLifeInstruction());
+                });
             setEditData(false);
         } catch (error) {
             console.log(error.message); //TODO: Show toast message
@@ -166,13 +170,13 @@ const WOLInstructions = () => {
                     </div>
                 )}
             </Box>
-            <Container
+            <Box
                 sx={{
                     mt: 2,
                     mb: 2,
                     backgroundColor: 'white',
                     borderRadius: 2, // 10px border radius
-                    minHeight: 450, // Minimum height of 400px
+                    minHeight: 550, // Minimum height of 400px
                     padding: 2,
                 }}
             >
@@ -234,7 +238,7 @@ const WOLInstructions = () => {
                         ))}
                     </Typography>
                 )}
-            </Container>
+            </Box>
         </>
     );
 };

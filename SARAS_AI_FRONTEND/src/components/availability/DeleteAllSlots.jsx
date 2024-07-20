@@ -10,7 +10,12 @@ import {
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import CustomTextField from '../CustomFields/CustomTextField';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteFutureSlots } from '../../redux/features/taModule/taAvialability';
+import {
+    deleteFutureSlots,
+    fetchCoachSlots,
+    fetchTAScheduleById,
+} from '../../redux/features/taModule/taAvialability';
+
 const CustomButton = ({
     onClick,
     children,
@@ -50,23 +55,35 @@ const CustomButton = ({
 const DeleteAllSlots = ({ open, handleClose, id, name }) => {
     const dispatch = useDispatch();
 
-    const handleSubmit = () => {
-        console.log('TA ID : ', id);
-        console.log('TA NAME : ', name);
-        //get today date in YYYY-MM-DD format
-        const today = new Date();
-        const dd = String(today.getDate()).padStart(2, '0');
-        const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-        const yyyy = today.getFullYear();
+    const handleSubmit = async () => {
 
-        const todayDate = yyyy + '-' + mm + '-' + dd;
+        try {
+            console.log('TA ID : ', id);
+            console.log('TA NAME : ', name);
+            //get today date in YYYY-MM-DD format
+            const today = new Date();
+            const dd = String(today.getDate()).padStart(2, '0');
+            const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+            const yyyy = today.getFullYear();
 
-        const data = {
-            date: todayDate,
-        };
+            const todayDate = yyyy + '-' + mm + '-' + dd;
 
-        dispatch(deleteFutureSlots({ id, data }));
-        handleClose();
+            const data = {
+                date: todayDate,
+            };
+
+            // dispatch actions 
+            dispatch(deleteFutureSlots({ id, data }))
+                .then(() => {
+                    console.log("FEtching data after deleting slots");
+                    handleClose();
+                    dispatch(fetchCoachSlots(id))
+                    dispatch(fetchTAScheduleById(id));
+                });
+
+        } catch (error) {
+            console.log('Error : ', error);
+        }
     };
 
     useEffect(() => {

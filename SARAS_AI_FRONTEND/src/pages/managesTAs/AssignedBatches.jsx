@@ -17,6 +17,7 @@ import {
     toggleAssignBatchStatus,
 } from '../../redux/features/taModule/taSlice';
 import AdminDataTable from '../../components/CommonComponent/AdminDataTable';
+
 const CustomButton = styled(Button)(({ theme, active }) => ({
     borderRadius: '50px',
     border: '1px solid #F56D3B',
@@ -157,14 +158,14 @@ const DynamicTable = ({
             <Box display={'flex'} justifyContent={'space-between'}>
                 <Box display="flex" alignItems="center" padding="16px">
                     {/* <i
-            style={{ fontSize: "25px" }}
-            className="bi bi-caret-left"
-            onClick={() => navigate("/ta-mapping")}
-          ></i> */}
+                            style={{ fontSize: "25px" }}
+                            className="bi bi-caret-left"
+                            onClick={() => navigate("/ta-mapping")}
+                        ></i> */}
                     {/* <ArrowBackIosIcon
-            style={{ fontSize: "25px", marginBottom: "17px" }}
-            onClick={() => navigate("/ta-mapping")}
-          /> */}
+                            style={{ fontSize: "25px", marginBottom: "17px" }}
+                            onClick={() => navigate("/ta-mapping")}
+                        /> */}
                     <p
                         style={{
                             fontSize: '44px',
@@ -345,10 +346,11 @@ const actionButtons = [
 
 const AssignBatches = () => {
     const { id } = useParams();
-    console.log('ID : ', id);
+    console.log('c', id);
     const dispatch = useDispatch();
     const { assignedBatches, loading } = useSelector((state) => state.taModule);
     const [taAssignBatchesData, setTaAssignBatchesData] = useState([]);
+
 
     useEffect(() => {
         if (id) {
@@ -358,7 +360,7 @@ const AssignBatches = () => {
 
     useEffect(() => {
         if (assignedBatches && assignedBatches.length > 0) {
-            console.log('assigned batches', assignedBatches);
+            // console.log('assigned batches', assignedBatches);
             const transformData = assignedBatches.map((item, index) => ({
                 id: item.id,
                 //ta_name: item.ta.name,

@@ -7,41 +7,29 @@ const LOGIN_URL = '/auth';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 const Login = () => {
-    const { setAuth } = useAuth();
-    const { setAuth } = useAuth();
+    const { setAuth } = useAuth()
 
-    const navigate = useNavigate();
-    const location = useLocation();
-    const from = location.state?.from?.pathname || '/';
+
     const navigate = useNavigate();
     const location = useLocation();
     const from = location.state?.from?.pathname || '/';
 
     const userRef = useRef();
     const errRef = useRef();
-    const userRef = useRef();
-    const errRef = useRef();
+ 
 
     const [user, setUser] = useState('');
     const [pwd, setPwd] = useState('');
     const [errMsg, setErrMsg] = useState('');
-    const [user, setUser] = useState('');
-    const [pwd, setPwd] = useState('');
-    const [errMsg, setErrMsg] = useState('');
+ 
 
     useEffect(() => {
         userRef.current.focus();
-    }, []);
-    useEffect(() => {
-        userRef.current.focus();
-    }, []);
+    }, [])
 
     useEffect(() => {
         setErrMsg('');
-    }, [user, pwd]);
-    useEffect(() => {
-        setErrMsg('');
-    }, [user, pwd]);
+    }, [user, pwd])
 
     const handleSubmit = async (e) => {
         e.preventDefault();

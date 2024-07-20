@@ -57,6 +57,7 @@
     "react-router-dom": "^6.23.1",
     "react-scripts": "5.0.1",
     "react-table": "^7.8.0",
+    "react-toastify": "^10.0.5",
     "remixicon": "^4.2.0",
     "toast": "^0.5.4",
     "tus-js-client": "^1.6.0",

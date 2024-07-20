@@ -83,7 +83,7 @@ const ReasonForLeave = ({ componentName }) => {
     );
 
     const handleSubmit = () => {
-        if (slotEventDetails.length > 0) {
+        if (slotEventDetails && slotEventDetails.length > 0) {
             const slots = slotEventDetails?.map((slotId) => {
                 const slot = slotId?.data?.find((s) => s.id === slotId);
                 return {
@@ -110,9 +110,18 @@ const ReasonForLeave = ({ componentName }) => {
                 slot_id: slots.map((slot) => slot.slot_id), // Collect all slot IDs into an array
             };
 
-            console.log('SLOT EVENT DATA: ', slotEventDetails);
+            const requestBody = {
+                admin_user_id: id,
+                approve_status : null,
+                leave_type : null,
+                reason : null,
 
-            dispatch(reasonForLeave(slotEventDetails));
+                data : slots.map((slot) => (slot))
+            }
+
+            console.log('SLOT EVENT DATA: ', requestBody);
+
+            dispatch(reasonForLeave(requestBody));
             dispatch(closeReasonForLeaveAction());
         } else {
             console.log('No slots selected, opening reason for leave');
@@ -127,7 +136,7 @@ const ReasonForLeave = ({ componentName }) => {
                 <CustomTextField
                     label="Reason for Leave"
                     fullWidth
-                    placeholder="Enter reason for deletion"
+                    placeholder="Enter reason for leave"
                     variant="outlined"
                     multiline
                     rows={4}

@@ -241,7 +241,7 @@ export const taSlice = createSlice({
     reducers: {
         accessTaName(state, action) {
             // console.log("ACTION : ", action);
-            console.log('ACTION PAYLOAD TA MODULE: ', action.payload);
+            // console.log("ACTION PAYLOAD : ", action.payload);
             state.ta_name = action.payload.name;
             state.taID = action.payload.id;
         },
@@ -346,6 +346,7 @@ export const taSlice = createSlice({
             state.loading = false;
             state.error = action.payload || action.error.message;
         });
+
         // Get Student-Batch Mapping
         builder.addCase(getStudentBatchMapping.pending, (state) => {
             state.loading = true;
@@ -399,6 +400,7 @@ export const taSlice = createSlice({
         });
         builder.addCase(getAssignStudents.rejected, (state, action) => {
             state.loading = false;
+            state.assignedStudents = [];
             state.error = action.payload || action.error.message;
         });
 
@@ -412,6 +414,7 @@ export const taSlice = createSlice({
         });
         builder.addCase(getAssignBatches.rejected, (state, action) => {
             state.loading = false;
+            state.assignedBatches = [];
             state.error = action.payload || action.error.message;
         });
 

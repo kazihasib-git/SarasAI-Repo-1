@@ -140,7 +140,9 @@ const AssignStudents = ({ componentname }) => {
                 (student, index) => ({
                     'S. No.': index + 1,
                     'Student Name': student.student_name,
-                    'Academic Term': student.academic_term,
+                    Program:
+                        student.packages.map((pack) => pack.name).join(', ') ||
+                        'N/A',
                     Batch:
                         student.batches
                             .map((batch) => batch.batch_name)
@@ -228,13 +230,7 @@ const AssignStudents = ({ componentname }) => {
         dispatch(closeDialogAction());
     };
 
-    const headers = [
-        'S. No.',
-        'Student Name',
-        'Academic Term',
-        'Batch',
-        'Select',
-    ];
+    const headers = ['S. No.', 'Student Name', 'Program', 'Batch', 'Select'];
 
     const content = (
         <>

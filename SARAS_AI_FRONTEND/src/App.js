@@ -58,7 +58,7 @@ import WOLQuestions from './components/coachingTools/wheelOfLife/WOLQuestions';
 import WOLOptionsConfig from './components/coachingTools/wheelOfLife/WOLOptionsConfig';
 import WOLTestConfig from './components/coachingTools/wheelOfLife/WOLTestConfig';
 import AddEditWOLQuestions from './components/coachingTools/wheelOfLife/AddEditWOLQuestions';
-import AddEditTeachingAssistant from './pages/MODULE/TaModule/TaMenuProfile';
+import AddEditTeachingAssistant from './pages/MODULE/TaModule/TeachingAssistant';
 import CreateTaMenu from './pages/MODULE/TaModule/CreateTaMenu';
 
 import CoachMenu from './pages/MODULE/coachModule/CoachMenu';

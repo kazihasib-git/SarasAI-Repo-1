@@ -14,17 +14,21 @@ const CustomTimeZoneForm = ({
     onChange,
     errors,
     options,
-    disabled, // Pass the disabled state
+    disabled,
 }) => {
+    const hasError = !!errors[name];
     // console.log("label", label , name , value )
     return (
-        <FormControl variant="outlined" fullWidth disabled={disabled}>
+        <FormControl variant="outlined" disabled={disabled} fullWidth>
             <InputLabel
                 style={{ margin: 0 }}
                 sx={{
-                    color: '#1A1E3D',
+                    color: hasError ? 'red' : '#1A1E3D',
                     '&.Mui-focused': {
-                        color: '#1A1E3D', // Change label color on focus
+                        color: '#1A1E3D', // Change label color on focus regardless of error
+                    },
+                    '&.MuiFormLabel-filled': {
+                        color: hasError ? 'red' : '#1A1E3D', // Change label color when the field is filled
                     },
                 }}
             >
@@ -36,6 +40,7 @@ const CustomTimeZoneForm = ({
                 value={value}
                 onChange={onChange}
                 error={!!errors[name]}
+                disabled={disabled}
                 MenuProps={{
                     PaperProps: {
                         style: {
@@ -54,7 +59,8 @@ const CustomTimeZoneForm = ({
                         borderColor: '#D0D0EC',
                     },
                     '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: 'rgb(245, 109, 59)', // Change border color on focus
+                        borderColor: hasError ? 'red' : 'rgb(245, 109, 59)', // Change border color on focus based on error
+                        color: '#1A1E3D',
                     },
                 }}
             >
@@ -64,8 +70,12 @@ const CustomTimeZoneForm = ({
                     </MenuItem>
                 ))}
             </Select>
-            {errors[name] && (
-                <Typography variant="body2" color="error">
+            {hasError && (
+                <Typography
+                    variant="body2"
+                    color="error"
+                    sx={{ fontSize: '0.75rem' }}
+                >
                     {errors[name].message}
                 </Typography>
             )}
