@@ -3,14 +3,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers"; // Import TimePicker instead of DateTimePicker
 import moment from "moment";
 
-const CustomTimeField = ({
-  label,
-  name,
-  value,
-  onChange,
-  sx,
-  ...props
-}) => {
+const CustomTimeField = ({ label, name, value, onChange, sx, ...props }) => {
   const momentValue = value ? moment(value, "YYYY-MM-DDTHH:mm:ss") : null; // Adjust parsing format based on input
 
   const handleTimeChange = (date) => {
@@ -44,9 +37,9 @@ const CustomTimeField = ({
           },
           "& .MuiInputLabel-root": {
             margin: 0,
-            color: '#1A1E3D',
-            '&.Mui-focused': {
-                color: '#1A1E3D',
+            color: "#1A1E3D",
+            "&.Mui-focused": {
+              color: "#1A1E3D",
             },
           },
           ...sx,
@@ -57,4 +50,3 @@ const CustomTimeField = ({
 };
 
 export default CustomTimeField;
-

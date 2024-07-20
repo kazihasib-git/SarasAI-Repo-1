@@ -1,22 +1,21 @@
-import React, { useState } from 'react';
-import { Grid, Button, Typography, Box } from '@mui/material';
-import tus from 'tus-js-client';
+import React, { useState } from "react";
+import { Grid, Button, Typography, Box } from "@mui/material";
+import tus from "tus-js-client";
 import { styled } from "@mui/material/styles";
 const VIMEO_ACCESS_TOKEN = process.env.VIMEO_ACCESS_TOKEN;
 
 const UploadBox = styled(Box)(({ theme }) => ({
-    border: "2px dashed #ccc",
-    borderRadius: "10px",
-    padding: "10px", // Reduced padding
-    textAlign: "center",
-    color: "#888",
-    cursor: "pointer",
-    marginTop: "10px",
-    '&:hover': {
-      borderColor: "#888",
-    }
-  }));
-
+  border: "2px dashed #ccc",
+  borderRadius: "10px",
+  padding: "10px", // Reduced padding
+  textAlign: "center",
+  color: "#888",
+  cursor: "pointer",
+  marginTop: "10px",
+  "&:hover": {
+    borderColor: "#888",
+  },
+}));
 
 const VideoUploadComponent = () => {
   const [file, setFile] = useState(null);
@@ -44,7 +43,7 @@ const VideoUploadComponent = () => {
         headers: {
           Authorization: `Bearer ${VIMEO_ACCESS_TOKEN}`,
           Accept: "application/vnd.vimeo.*+json;version=3.4",
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(requestData),
       });
@@ -72,7 +71,7 @@ const VideoUploadComponent = () => {
             setUploadProgress(percentage);
           },
           onSuccess: function () {
-            console.log('Upload complete');
+            console.log("Upload complete");
           },
         });
         upload.start();
@@ -90,7 +89,7 @@ const VideoUploadComponent = () => {
         <input
           type="file"
           accept="video/*"
-          style={{ display: 'none' }}
+          style={{ display: "none" }}
           id="upload-button"
           onChange={handleFileChange}
         />
@@ -106,7 +105,11 @@ const VideoUploadComponent = () => {
           <Button onClick={handleUpload} variant="contained" color="primary">
             Upload
           </Button>
-          {uploadProgress > 0 && <Typography>Upload Progress: {uploadProgress.toFixed(2)}%</Typography>}
+          {uploadProgress > 0 && (
+            <Typography>
+              Upload Progress: {uploadProgress.toFixed(2)}%
+            </Typography>
+          )}
         </div>
       )}
     </Grid>

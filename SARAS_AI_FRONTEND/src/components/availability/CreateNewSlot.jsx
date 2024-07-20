@@ -26,7 +26,7 @@ import {
   fetchCoachSlots,
 } from "../../redux/features/taModule/taAvialability";
 import {
-    createCoachSlots,
+  createCoachSlots,
   closeCoachCreateNewSlots,
 } from "../../redux/features/CoachModule/CoachAvailabilitySlice";
 const CustomButton = ({
@@ -129,16 +129,14 @@ const CreateNewSlot = ({ componentName }) => {
   });
 
   const schedulingState = useSelector((state) =>
-    schedulingStateKey ? state[schedulingStateKey] : {}
+    schedulingStateKey ? state[schedulingStateKey] : {},
   );
-  const {
-    [slotEventKey]: slotEventData,
-  } = schedulingState;
+  const { [slotEventKey]: slotEventData } = schedulingState;
 
-//   console.log("schedulingState", schedulingState);
-//   console.log("createSlotActions", createSlotActions);
-//   console.log("closeCreateNewSlotAction", closeCreateNewSlotAction);
-//   console.log("slotEventData", slotEventData);
+  //   console.log("schedulingState", schedulingState);
+  //   console.log("createSlotActions", createSlotActions);
+  //   console.log("closeCreateNewSlotAction", closeCreateNewSlotAction);
+  //   console.log("slotEventData", slotEventData);
 
   const {
     register,
@@ -176,7 +174,6 @@ const CreateNewSlot = ({ componentName }) => {
       const index = new Date(fromDate).getDay();
       weeksArray[index] = 1;
     }
-
 
     formData.slot_date = fromDate;
     formData.from_time = fromTime;

@@ -28,7 +28,7 @@ import ReschedulingSession from "../../../components/availability/ReschedulingSe
 // import { add } from "date-fns";
 import { useParams } from "react-router-dom";
 import {
- getTAScheduledSessions,
+  getTAScheduledSessions,
   openScheduleSession,
 } from "../../../redux/features/taModule/taScheduling";
 import moment from "moment";
@@ -38,8 +38,6 @@ import Schedule from "../../../components/availability/Schedule";
 import EditBatches from "../../../components/availability/EditBatches";
 import EditStudents from "../../../components/availability/EditStudents";
 import CoachMenu from "./CoachMenu";
-
-
 
 const CustomButton = ({
   onClick,
@@ -51,8 +49,6 @@ const CustomButton = ({
   ...props
 }) => {
   return (
-    
-    
     <Button
       variant="contained"
       onClick={onClick}
@@ -78,17 +74,17 @@ const CustomButton = ({
   );
 };
 
-const  CoachMenuCalendar = () => {
+const CoachMenuCalendar = () => {
   const dispatch = useDispatch();
   const { id, name } = useParams();
 
-  const [sheduleNewSession, setSheduleNewSession] = useState(false)
+  const [sheduleNewSession, setSheduleNewSession] = useState(false);
   //const [deleteFutureSlots, setDeleteFutureSlots] = useState(false);
-  const [createNewSlot, setCreateNewSlot] = useState(false)
+  const [createNewSlot, setCreateNewSlot] = useState(false);
 
-//   const { assignBatchOpen, assignStudentOpen } = useSelector(
-//     (state) => state.taModule
-//   );
+  //   const { assignBatchOpen, assignStudentOpen } = useSelector(
+  //     (state) => state.taModule
+  //   );
 
   const {
     slotData,
@@ -113,8 +109,6 @@ const  CoachMenuCalendar = () => {
   //calendar
   const [eventsList, setEventsList] = useState([]);
 
- 
-
   console.log("ta Id :", id);
 
   useEffect(() => {
@@ -137,7 +131,7 @@ const  CoachMenuCalendar = () => {
 
   const handleScheduleNewSession = () => {
     // console.log("Pressed")
-     setSheduleNewSession()
+    setSheduleNewSession();
     dispatch(openScheduleSession({ id, name }));
   };
 
@@ -145,9 +139,9 @@ const  CoachMenuCalendar = () => {
     dispatch(openMarkLeave());
   };
 
-//   const handleDeleteFutureSlots = () => {
-//     setDeleteFutureSlots(true);
-//   };
+  //   const handleDeleteFutureSlots = () => {
+  //     setDeleteFutureSlots(true);
+  //   };
 
   const handleCreateNewSlot = () => {
     dispatch(openCreateNewSlots());
@@ -157,43 +151,41 @@ const  CoachMenuCalendar = () => {
   console.log("sessiond data", scheduleData.data);
 
   return (
+    <>
+      <CoachMenu />
 
-   <>
-    <CoachMenu/>
-   
-    <Box sx={{ backgroundColor: "#f8f9fa", p: 3 }}>
-      <DialogActions sx={{ p: 2 }}>
-      
-        <Grid container alignItems="center">
-          <Grid item xs>
-            <Typography variant="h4" sx={{ mb: 4 }}>
-              {'My Calendar'}
-            </Typography>
-          </Grid>
-          <Grid item>
-            <Box display="flex" justifyContent="center" gap={2}>
-              <CustomButton
-                onClick={handleScheduleNewSession}
-                color="#FFFFFF"
-                backgroundColor="#4E18A5"
-                borderColor="#4E18A5"
-                style={{ textTransform: "none" }}
-              >
-                <AddCircleOutlineIcon />
-                Schedule New Session
-              </CustomButton>
+      <Box sx={{ backgroundColor: "#f8f9fa", p: 3 }}>
+        <DialogActions sx={{ p: 2 }}>
+          <Grid container alignItems="center">
+            <Grid item xs>
+              <Typography variant="h4" sx={{ mb: 4 }}>
+                {"My Calendar"}
+              </Typography>
+            </Grid>
+            <Grid item>
+              <Box display="flex" justifyContent="center" gap={2}>
+                <CustomButton
+                  onClick={handleScheduleNewSession}
+                  color="#FFFFFF"
+                  backgroundColor="#4E18A5"
+                  borderColor="#4E18A5"
+                  style={{ textTransform: "none" }}
+                >
+                  <AddCircleOutlineIcon />
+                  Schedule New Session
+                </CustomButton>
 
-              <CustomButton
-                onClick={handleMarkLeave}
-                color="#F56D3B"
-                backgroundColor="#FFFFFF"
-                borderColor="#F56D3B"
-                style={{ textTransform: "none" }}
-              >
-                Mark Leave
-              </CustomButton>
+                <CustomButton
+                  onClick={handleMarkLeave}
+                  color="#F56D3B"
+                  backgroundColor="#FFFFFF"
+                  borderColor="#F56D3B"
+                  style={{ textTransform: "none" }}
+                >
+                  Mark Leave
+                </CustomButton>
 
-              {/* <CustomButton
+                {/* <CustomButton
                 onClick={handleDeleteFutureSlots}
                 color="#F56D3B"
                 backgroundColor="#FFFFFF"
@@ -203,49 +195,53 @@ const  CoachMenuCalendar = () => {
                 Delete All Future Slots
               </CustomButton> */}
 
-              <CustomButton
-                color="#FFFFFF"
-                backgroundColor="#F56D3B"
-                borderColor="#F56D3B"
-                onClick={handleCreateNewSlot}
-                style={{ textTransform: "none" }}
-              >
-                {/* <AddCircleOutlineIcon /> */}
-                Create New Slot
-              </CustomButton>
-            </Box>
+                <CustomButton
+                  color="#FFFFFF"
+                  backgroundColor="#F56D3B"
+                  borderColor="#F56D3B"
+                  onClick={handleCreateNewSlot}
+                  style={{ textTransform: "none" }}
+                >
+                  {/* <AddCircleOutlineIcon /> */}
+                  Create New Slot
+                </CustomButton>
+              </Box>
+            </Grid>
           </Grid>
-        </Grid>
-      </DialogActions>
+        </DialogActions>
 
-      <CalendarComponent
-        eventsList={eventsList}
-        slotData={slotData}
-        componentName={"TACALENDER"}
-      />
-      {scheduleSessionOpen && <Schedule componentName={"TASCHEDULE"} />}
-      {openEditBatch && <EditBatches componentname={"ADDEDITTA"} />}
-      {openEditStudent && <EditStudents componentname={"ADDEDITTA"} />}
-      {/*{sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} componentName={"TACALENDER"} />} */}
-      {markLeaveOpen && (
-        <MarkLeave id={id} name={name} componentName={"TACALENDER"} />
-      )}
-      {scheduledSlotsOpen && (
-        <Slots id={id} name={name} componentName={"TACALENDER"} />
-      )}
-      {scheduledSessionOpen && (
-        <ScheduledSessions id={id} name={name} componentName={"TACALENDER"} />
-      )}
-      {cancelSessionOpen && (
-        <CancelSchedule id={id} name={name} componentName={"TACALENDER"} />
-      )}
-      {reasonForLeaveOpen && (
-        <ReasonForLeave id={id} name={name} componentName={"TACALENDER"} />
-      )}
-      {resheduleSessionOpen && (
-        <ReschedulingSession id={id} name={name} componentName={"TACALENDER"} />
-      )}
-      {/* {deleteFutureSlots && (
+        <CalendarComponent
+          eventsList={eventsList}
+          slotData={slotData}
+          componentName={"TACALENDER"}
+        />
+        {scheduleSessionOpen && <Schedule componentName={"TASCHEDULE"} />}
+        {openEditBatch && <EditBatches componentname={"ADDEDITTA"} />}
+        {openEditStudent && <EditStudents componentname={"ADDEDITTA"} />}
+        {/*{sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} componentName={"TACALENDER"} />} */}
+        {markLeaveOpen && (
+          <MarkLeave id={id} name={name} componentName={"TACALENDER"} />
+        )}
+        {scheduledSlotsOpen && (
+          <Slots id={id} name={name} componentName={"TACALENDER"} />
+        )}
+        {scheduledSessionOpen && (
+          <ScheduledSessions id={id} name={name} componentName={"TACALENDER"} />
+        )}
+        {cancelSessionOpen && (
+          <CancelSchedule id={id} name={name} componentName={"TACALENDER"} />
+        )}
+        {reasonForLeaveOpen && (
+          <ReasonForLeave id={id} name={name} componentName={"TACALENDER"} />
+        )}
+        {resheduleSessionOpen && (
+          <ReschedulingSession
+            id={id}
+            name={name}
+            componentName={"TACALENDER"}
+          />
+        )}
+        {/* {deleteFutureSlots && (
         <DeleteAllSlots
           open={deleteFutureSlots}
           handleClose={() => setDeleteFutureSlots(false)}
@@ -254,10 +250,10 @@ const  CoachMenuCalendar = () => {
           componentName={"TACALENDER"}
         />
       )} */}
-      {createNewSlotOpen && <CreateNewSlot componentName={"TACALENDER"} />}
-      {/* {assignStudentOpen && <AssignStudents componentname="ADDEDITTA" />}
+        {createNewSlotOpen && <CreateNewSlot componentName={"TACALENDER"} />}
+        {/* {assignStudentOpen && <AssignStudents componentname="ADDEDITTA" />}
                 {assignBatchOpen && <AssignBatches componentname="ADDEDITTA" />} */}
-    </Box>
+      </Box>
     </>
   );
 };

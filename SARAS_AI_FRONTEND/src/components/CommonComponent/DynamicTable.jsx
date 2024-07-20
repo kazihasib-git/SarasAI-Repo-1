@@ -34,7 +34,7 @@ const DynamicTable = ({
     initialData.map((item) => ({
       ...item,
       is_active: item.is_active !== undefined ? item.is_active : 0,
-    }))
+    })),
   );
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -44,7 +44,7 @@ const DynamicTable = ({
       initialData.map((item) => ({
         ...item,
         is_active: item.is_active !== undefined ? item.is_active : 0,
-      }))
+      })),
     );
     setCurrentPage(1); // Reset to first page whenever initialData changes
   }, [initialData]);
@@ -53,7 +53,7 @@ const DynamicTable = ({
   const totalPages = Math.ceil(data.length / itemsPerPage);
   const currentData = data.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -113,7 +113,7 @@ const DynamicTable = ({
     const updatedData = data.map((item) =>
       item.id === id
         ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
-        : item
+        : item,
     );
     setData(updatedData);
 
@@ -156,7 +156,7 @@ const DynamicTable = ({
           <tr>
             {headers.map(
               (header, index) =>
-                header !== "timezone" && <th key={index}>{header}</th>
+                header !== "timezone" && <th key={index}>{header}</th>,
             )}
           </tr>
         </thead>
@@ -403,7 +403,7 @@ const CustomButton = styled(Button)(({ theme }) => ({
   color: "#F56D3B",
   padding: "8px 16px", // Add padding for horizontal and vertical spacing
   margin: "0 8px", // Add horizontal margin between buttons
-  textTransform:'none',
+  textTransform: "none",
   "&:hover": {
     backgroundColor: "#F56D3B",
     color: "#fff",

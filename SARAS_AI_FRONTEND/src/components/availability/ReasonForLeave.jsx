@@ -79,7 +79,7 @@ const ReasonForLeave = ({ componentName }) => {
     [markLeaveKey]: markLeaveData,
     [slotEventKey]: slotEventDetails,
   } = useSelector(
-    (state) => state.taAvialability || state.coachAvailability || {} // Adjust to access the correct state slice
+    (state) => state.taAvialability || state.coachAvailability || {}, // Adjust to access the correct state slice
   );
 
   const handleSubmit = () => {

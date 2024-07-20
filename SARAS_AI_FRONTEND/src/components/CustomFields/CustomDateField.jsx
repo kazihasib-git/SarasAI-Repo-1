@@ -38,9 +38,9 @@ const CustomDateField = ({ label, name, value, onChange, sx, ...props }) => {
               },
               "& .MuiInputLabel-root": {
                 margin: 0,
-                color: '#1A1E3D',
-                '&.Mui-focused': {
-                    color: '#1A1E3D',
+                color: "#1A1E3D",
+                "&.Mui-focused": {
+                  color: "#1A1E3D",
                 },
               },
               ...sx,
@@ -52,6 +52,5 @@ const CustomDateField = ({ label, name, value, onChange, sx, ...props }) => {
     </LocalizationProvider>
   );
 };
-
 
 export default CustomDateField;

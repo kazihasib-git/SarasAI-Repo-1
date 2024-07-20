@@ -80,7 +80,7 @@ const CustomTemplateTable = ({
     initialData.map((item) => ({
       ...item,
       is_active: item.is_active !== undefined ? item.is_active : 0,
-    }))
+    })),
   );
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -90,7 +90,7 @@ const CustomTemplateTable = ({
       initialData.map((item) => ({
         ...item,
         is_active: item.is_active !== undefined ? item.is_active : 0,
-      }))
+      })),
     );
     setCurrentPage(1); // Reset to first page whenever initialData changes
   }, [initialData]);
@@ -99,7 +99,7 @@ const CustomTemplateTable = ({
   const totalPages = Math.ceil(data.length / itemsPerPage);
   const currentData = data.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -112,7 +112,7 @@ const CustomTemplateTable = ({
     const updatedData = data.map((item) =>
       item.id === id
         ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
-        : item
+        : item,
     );
     setData(updatedData);
 

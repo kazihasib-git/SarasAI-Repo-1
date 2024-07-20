@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Avatar, IconButton, Box } from '@mui/material';
-import { PhotoCamera } from '@mui/icons-material';
+import React, { useState } from "react";
+import { Avatar, IconButton, Box } from "@mui/material";
+import { PhotoCamera } from "@mui/icons-material";
 
 const AvatarInput = ({ selectedImage, setSelectedImage }) => {
   const handleFileChange = (e) => {
@@ -18,19 +18,22 @@ const AvatarInput = ({ selectedImage, setSelectedImage }) => {
 
   return (
     <Box position="relative" display="inline-flex" flexDirection="column">
-      <Avatar
-        src={selectedImage}
-        sx={{ width: 124, height: 124 }}
-      />
+      <Avatar src={selectedImage} sx={{ width: 124, height: 124 }} />
       <input
         type="file"
         id="profilePicture"
-        style={{ display: 'none' }}
+        style={{ display: "none" }}
         accept="image/*"
         onChange={handleFileChange}
       />
-      <label htmlFor="profilePicture" style={{ position: 'absolute', bottom: 4, right: -12 }}>
-        <IconButton component="span" style={{ backgroundColor: '#F56D3B', color: "white" }}>
+      <label
+        htmlFor="profilePicture"
+        style={{ position: "absolute", bottom: 4, right: -12 }}
+      >
+        <IconButton
+          component="span"
+          style={{ backgroundColor: "#F56D3B", color: "white" }}
+        >
           <PhotoCamera />
         </IconButton>
       </label>

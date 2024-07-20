@@ -15,8 +15,13 @@ import {
   openScheduledSession,
 } from "../../redux/features/taModule/taAvialability";
 
-import { closeCoachRescheduleSession, getCoachScheduleSession, openCoachReasonForLeave, openCoachScheduledSession, fetchCoachAvailableSlots } from "../../redux/features/CoachModule/CoachAvailabilitySlice";
-
+import {
+  closeCoachRescheduleSession,
+  getCoachScheduleSession,
+  openCoachReasonForLeave,
+  openCoachScheduledSession,
+  fetchCoachAvailableSlots,
+} from "../../redux/features/CoachModule/CoachAvailabilitySlice";
 
 const CustomButton = ({
   onClick,
@@ -112,7 +117,9 @@ const ReschedulingSession = ({ componentName }) => {
     [sessionEventAction]: sessionEventData,
     [slotEventAction]: slotEventData,
   } = useSelector((state) =>
-    componentName === "TACALENDER" ? state.taAvailability : state.coachAvailability
+    componentName === "TACALENDER"
+      ? state.taAvailability
+      : state.coachAvailability,
   );
 
   useEffect(() => {
@@ -132,7 +139,7 @@ const ReschedulingSession = ({ componentName }) => {
       const transformedData = availableSlotsData.map((slot, index) => ({
         "S. No.": index + 1,
         "Slots Available": `${slot.from_time} - ${slot.to_time}`,
-        id : slot.id
+        id: slot.id,
       }));
       setTransformedSlotsData(transformedData);
     } else {
@@ -141,7 +148,6 @@ const ReschedulingSession = ({ componentName }) => {
   }, [availableSlotsData]);
 
   const handleDateChange = (date) => {
-   
     setSelectDate(date);
     setSelectedSlots([]); // Clear selected slots when date changes
   };
@@ -149,17 +155,17 @@ const ReschedulingSession = ({ componentName }) => {
   const handleSelectSlot = (id) => {
     console.log("Selected Slot ID:", id);
     setSelectedSlots((prev) =>
-      prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id],
     );
   };
 
   const handleSubmit = () => {
     console.log("*** Submitting Reschedule Session....");
     console.log("selectedSlots : ", selectedSlots);
-    console.log("sessionEventData : ", sessionEventData['S. No.'])
+    console.log("sessionEventData : ", sessionEventData["S. No."]);
     dispatch(
       rescheduleSession({
-        id: sessionEventData['S. No.'],
+        id: sessionEventData["S. No."],
         data: {
           admin_user_id: taId.id,
           schedule_date: selectDate,
@@ -169,7 +175,7 @@ const ReschedulingSession = ({ componentName }) => {
           timezone: "IST",
           event_status: "rescheduled",
         },
-      })
+      }),
     )
       .unwrap()
       .then(() => {
@@ -187,7 +193,14 @@ const ReschedulingSession = ({ componentName }) => {
 
   const content = (
     <>
-    <Grid item xs={12} sm={6} mb={2} pt={"16px"} style={{ display: 'flex', justifyContent: 'center' }}>
+      <Grid
+        item
+        xs={12}
+        sm={6}
+        mb={2}
+        pt={"16px"}
+        style={{ display: "flex", justifyContent: "center" }}
+      >
         <CustomDateField
           label="Select Date"
           value={selectDate}

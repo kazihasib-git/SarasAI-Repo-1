@@ -105,7 +105,7 @@ const Slots = ({ componentName }) => {
 
   const schedulingState =
     useSelector((state) =>
-      schedulingStateKey ? state[schedulingStateKey] : {}
+      schedulingStateKey ? state[schedulingStateKey] : {},
     ) || {};
 
   const {
@@ -132,7 +132,9 @@ const Slots = ({ componentName }) => {
 
   const handleSelect = (id) => {
     setSelectedSlots((prev) =>
-      prev.includes(id) ? prev.filter((slotId) => slotId !== id) : [...prev, id]
+      prev.includes(id)
+        ? prev.filter((slotId) => slotId !== id)
+        : [...prev, id],
     );
   };
 

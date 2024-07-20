@@ -1,10 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  IconButton,
-  Switch,
-  Pagination,
-} from "@mui/material";
+import { Button, IconButton, Switch, Pagination } from "@mui/material";
 
 import { styled } from "@mui/material/styles";
 import "./CoachTemplateTable.css";
@@ -13,7 +8,6 @@ import editIcon from "../../../../assets/editIcon.png";
 import bin from "../../../../assets/bin.png";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { useDispatch } from "react-redux";
-
 
 const CoachTemplateTable = ({
   headers,
@@ -25,7 +19,7 @@ const CoachTemplateTable = ({
     initialData.map((item) => ({
       ...item,
       is_active: item.is_active !== undefined ? item.is_active : 0,
-    }))
+    })),
   );
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -35,7 +29,7 @@ const CoachTemplateTable = ({
       initialData.map((item) => ({
         ...item,
         is_active: item.is_active !== undefined ? item.is_active : 0,
-      }))
+      })),
     );
     setCurrentPage(1); // Reset to first page whenever initialData changes
   }, [initialData]);
@@ -44,7 +38,7 @@ const CoachTemplateTable = ({
   const totalPages = Math.ceil(data.length / itemsPerPage);
   const currentData = data.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -60,12 +54,11 @@ const CoachTemplateTable = ({
   const handlePopup = (id, name, timezone) => {
     const data = { id, name, timezone };
     if (componentName === "TAMAPPING") {
-    //   dispatch(openScheduleSession(data));
+      //   dispatch(openScheduleSession(data));
     } else {
-      if (componentName === "COACHMAPPING"){
+      if (componentName === "COACHMAPPING") {
         // dispatch(openCoachScheduleSession(data));
       }
-       
     }
   };
 
@@ -73,7 +66,7 @@ const CoachTemplateTable = ({
     const updatedData = data.map((item) =>
       item.id === id
         ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
-        : item
+        : item,
     );
     setData(updatedData);
 
@@ -90,18 +83,18 @@ const CoachTemplateTable = ({
     }
   };
 
-//   const getColorForAvailability = (availability) => {
-//     switch (availability) {
-//       case "available":
-//         return "#06DD0F";
-//       case "on leave":
-//         return "#F48606";
-//       case "Inactive":
-//         return "#808080";
-//       default:
-//         return "#000000";
-//     }
-//   };
+  //   const getColorForAvailability = (availability) => {
+  //     switch (availability) {
+  //       case "available":
+  //         return "#06DD0F";
+  //       case "on leave":
+  //         return "#F48606";
+  //       case "Inactive":
+  //         return "#808080";
+  //       default:
+  //         return "#000000";
+  //     }
+  //   };
   return (
     <div className="tableContainer">
       <table>
@@ -109,7 +102,7 @@ const CoachTemplateTable = ({
           <tr>
             {headers.map(
               (header, index) =>
-                header !== "timezone" && <th key={index}>{header}</th>
+                header !== "timezone" && <th key={index}>{header}</th>,
             )}
           </tr>
         </thead>
@@ -127,20 +120,20 @@ const CoachTemplateTable = ({
                 <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                 {Object.keys(item).map((key, idx) => {
                   // {console.log("KEY : ", key)}
-                //   if (key === "Availability") {
-                //     return (
-                //       <td
-                //         key={idx}
-                //         style={{
-                //           color: getColorForAvailability(item[key]),
-                //           fontFamily: "Regular",
-                //           letterSpacing: "0.8px",
-                //         }}
-                //       >
-                //         {item[key]}
-                //       </td>
-                //     );
-                //   }  else 
+                  //   if (key === "Availability") {
+                  //     return (
+                  //       <td
+                  //         key={idx}
+                  //         style={{
+                  //           color: getColorForAvailability(item[key]),
+                  //           fontFamily: "Regular",
+                  //           letterSpacing: "0.8px",
+                  //         }}
+                  //       >
+                  //         {item[key]}
+                  //       </td>
+                  //     );
+                  //   }  else
                   if (
                     key !== "id" &&
                     key !== "is_active" &&
@@ -298,7 +291,7 @@ const CustomButton = styled(Button)(({ theme }) => ({
   color: "#F56D3B",
   padding: "8px 16px", // Add padding for horizontal and vertical spacing
   margin: "0 8px", // Add horizontal margin between buttons
-  textTransform:'none',
+  textTransform: "none",
   "&:hover": {
     backgroundColor: "#F56D3B",
     color: "#fff",

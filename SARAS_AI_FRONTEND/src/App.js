@@ -1,14 +1,12 @@
 import "./App.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
-import './assets/fonts/Nohemi-Bold.ttf';
-import './assets/fonts/Nohemi-ExtraLight.ttf';
-import './assets/fonts/Nohemi-Light.ttf';
-import './assets/fonts/Nohemi-Medium.ttf';
-import './assets/fonts/Nohemi-Regular.ttf';
-import './assets/fonts/Nohemi-SemiBold.ttf'
-
-
+import "./assets/fonts/Nohemi-Bold.ttf";
+import "./assets/fonts/Nohemi-ExtraLight.ttf";
+import "./assets/fonts/Nohemi-Light.ttf";
+import "./assets/fonts/Nohemi-Medium.ttf";
+import "./assets/fonts/Nohemi-Regular.ttf";
+import "./assets/fonts/Nohemi-SemiBold.ttf";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
@@ -94,51 +92,43 @@ function App() {
 
             <Route path="ta-manage" element={<ManagesTAs page="Manage TA" />} />
 
-
+            <Route path="coachmenu" element={<CoachMenu page="Coach Menu" />} />
             <Route
-              path="coachmenu"
-              element={<CoachMenu page="Coach Menu" />}
-            />
-             <Route
               path="coachmenu-profile"
               element={<CoachMenuProfile page="Coach Menu" />}
             />
-            <Route 
-            path="coach-call-request"
-            element={<CoachCallRequest page="Call Request"/>}
+            <Route
+              path="coach-call-request"
+              element={<CoachCallRequest page="Call Request" />}
             />
-             <Route
+            <Route
               path="coach-call-records"
               element={<CoachCallRecord page="Call Records" />}
             />
-             <Route
+            <Route
               path="coachmenu-calendar"
               element={<CoachMenuCalendar page="coachmenu" />}
             />
 
-            
             <Route
               path="createta"
               element={<CreateTAPage page="Create TA" />}
             />
-             <Route
+            <Route
               path="call-request"
               element={<CallRequest page="Call-Request" />}
             />
-              <Route
+            <Route
               path="createmenu"
               element={<CreateTaMenu page="Create Menu" />}
             />
-              <Route
+            <Route
               path="call-records"
               element={<CallRecords page="CallRecords" />}
             />
-           
-           
 
-            
             <Route path="AddEditTA" element={<AddEditTA page="Edit Ta" />} />
-       
+
             <Route
               path="ta-mapping"
               element={<TaMapping page="TA Mapping" />}
@@ -153,7 +143,7 @@ function App() {
             />
             <Route
               path="/active-Coach-batches/:id"
-              element={<AssignCoachBatches page="Assigned Coach Batches"/>}
+              element={<AssignCoachBatches page="Assigned Coach Batches" />}
             />
             <Route
               path="/active-Coach-students/:id"
@@ -219,18 +209,23 @@ function App() {
             <Route path="wheel-of-life" element={<WheelOfLife />} />
             <Route path="wolCategories" element={<WOLCategories />} />
             <Route path="wolInstructions" element={<WOLInstructions />} />
-            <Route path="wolQuestions" element={<WOLQuestions/>} />
-            <Route path="wolQuestions/add-Edit" element={<AddEditWOLQuestions/> } />
-            <Route path="wolOptionsConfig" element={<WOLOptionsConfig/>} />
-            <Route path="wolTestConfig" element={<WOLTestConfig/>} />
-            <Route path="WOLTestConfigSelectQuestions" element={<WOLTestConfigSelectQuestions />} />
+            <Route path="wolQuestions" element={<WOLQuestions />} />
             <Route
-          path="schedule-calls"
-          element={<ScheduledCalls page="Schedule Calls" />}
-        />
+              path="wolQuestions/add-Edit"
+              element={<AddEditWOLQuestions />}
+            />
+            <Route path="wolOptionsConfig" element={<WOLOptionsConfig />} />
+            <Route path="wolTestConfig" element={<WOLTestConfig />} />
+            <Route
+              path="WOLTestConfigSelectQuestions"
+              element={<WOLTestConfigSelectQuestions />}
+            />
+            <Route
+              path="schedule-calls"
+              element={<ScheduledCalls page="Schedule Calls" />}
+            />
           </Route>
         </Route>
-        
 
         <Route element={<RequireAuth allowedRoles={[ROLES.Teaching]} />}>
           <Route path="/" element={<Main page="Teaching Assistant" />}>

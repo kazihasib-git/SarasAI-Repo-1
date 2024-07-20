@@ -11,7 +11,14 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { AssignedBatchesData } from "../../fakeData/AssignedBatchesData";
 import bin from "../../assets/bin.png";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteCoachAssignedBatch, deleteCoachAssignedStudent, getCoachAssignBatches, getCoachAssignStudents, toggleCoachAssignBatchStatus, toggleCoachAssignStudentStatus } from "../../redux/features/CoachModule/coachSlice";
+import {
+  deleteCoachAssignedBatch,
+  deleteCoachAssignedStudent,
+  getCoachAssignBatches,
+  getCoachAssignStudents,
+  toggleCoachAssignBatchStatus,
+  toggleCoachAssignStudentStatus,
+} from "../../redux/features/CoachModule/coachSlice";
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
   borderRadius: "50px",
@@ -79,15 +86,14 @@ const AdminDataTable = ({
   actionButtons,
   ta_id,
   dispatch,
-  componentName
+  componentName,
 }) => {
-    console.log("initial data", initialData)
+  console.log("initial data", initialData);
   const [data, setData] = useState(
-    
     initialData.map((item) => ({
       ...item,
       is_active: item.is_active !== undefined ? item.is_active : 0,
-    }))
+    })),
   );
 
   useEffect(() => {
@@ -95,7 +101,7 @@ const AdminDataTable = ({
       initialData.map((item) => ({
         ...item,
         is_active: item.is_active !== undefined ? item.is_active : 0,
-      }))
+      })),
     );
   }, [initialData]);
 
@@ -103,8 +109,8 @@ const AdminDataTable = ({
   const itemsPerPage = 10;
   const totalPages = Math.ceil(data.length / itemsPerPage);
   const currentData = data.slice(
-      (currentPage - 1) * itemsPerPage,
-      currentPage * itemsPerPage
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage,
   );
   const navigate = useNavigate();
 
@@ -116,41 +122,41 @@ const AdminDataTable = ({
     const updatedData = data.map((item) =>
       item.id === id
         ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
-        : item
+        : item,
     );
     setData(updatedData);
-    console.log("ID : handle toggle : ", id)
+    console.log("ID : handle toggle : ", id);
     const toggledItem = updatedData.find((item) => item.id === id);
     const requestData = { is_active: toggledItem.is_active };
     switch (componentName) {
       case "ASSIGNCOACHSTUDENT":
         dispatch(toggleCoachAssignStudentStatus({ id, data: requestData }));
-        dispatch(getCoachAssignStudents(ta_id))
+        dispatch(getCoachAssignStudents(ta_id));
         break;
       case "ASSIGNCOACHBATCH":
         dispatch(toggleCoachAssignBatchStatus({ id, data: requestData }));
-        dispatch(getCoachAssignBatches(ta_id))
+        dispatch(getCoachAssignBatches(ta_id));
         break;
       default:
         console.warn(`No API call defined for component: ${componentName}`);
         break;
     }
-
-   
   };
 
   const handleDelete = (id) => {
     switch (componentName) {
       case "ASSIGNCOACHSTUDENT":
         dispatch(deleteCoachAssignedStudent({ id }));
-        dispatch(getCoachAssignStudents(ta_id))
+        dispatch(getCoachAssignStudents(ta_id));
         break;
       case "ASSIGNCOACHBATCH":
         dispatch(deleteCoachAssignedBatch({ id }));
-        dispatch(getCoachAssignBatches(ta_id))
+        dispatch(getCoachAssignBatches(ta_id));
         break;
       default:
-        console.warn(`No delete action defined for component: ${componentName}`);
+        console.warn(
+          `No delete action defined for component: ${componentName}`,
+        );
         break;
     }
   };

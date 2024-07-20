@@ -115,7 +115,7 @@ const AssignStudents = ({ componentname }) => {
   }
 
   const stateSelector = useSelector((state) =>
-    stateModuleKey ? state[stateModuleKey] : {}
+    stateModuleKey ? state[stateModuleKey] : {},
   );
   const { [nameKeyScheduling]: assignedName, [idKeyScheduling]: assignedId } =
     schedulingState || {};
@@ -172,11 +172,11 @@ const AssignStudents = ({ componentname }) => {
           studentBatchMapping
             .filter(
               (student) =>
-                !selectedTerm || student.academic_term === selectedTerm
+                !selectedTerm || student.academic_term === selectedTerm,
             )
             .flatMap((student) =>
-              student.batches.map((batch) => batch.batch_name)
-            )
+              student.batches.map((batch) => batch.batch_name),
+            ),
         ),
       ]
     : [];
@@ -187,7 +187,7 @@ const AssignStudents = ({ componentname }) => {
 
   const handleSelectStudent = (id) => {
     setSelectedStudents((prev) =>
-      prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id],
     );
   };
 
@@ -207,7 +207,7 @@ const AssignStudents = ({ componentname }) => {
             id: assignedId,
             name: assignedName,
             student: selectedStudents.map((id) => ({ id: id.toString() })),
-          })
+          }),
         );
       }
       dispatch(openSuccessAction());
@@ -225,7 +225,7 @@ const AssignStudents = ({ componentname }) => {
 
   const content = (
     <>
-      <Grid container spacing={2} >
+      <Grid container spacing={2}>
         <Grid item sm={6}>
           <CustomTextField
             select

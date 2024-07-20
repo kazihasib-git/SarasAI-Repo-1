@@ -149,7 +149,7 @@ const Schedule = ({ componentName }) => {
   }
 
   const schedulingState = useSelector((state) =>
-    schedulingStateKey ? state[schedulingStateKey] : {}
+    schedulingStateKey ? state[schedulingStateKey] : {},
   );
   const {
     [scheduleSessionOpenKey]: scheduleSessionOpen,
@@ -170,9 +170,9 @@ const Schedule = ({ componentName }) => {
 
   useEffect(() => {
     if (fromDate && adminUserID) {
-      console.log("ADMIN USER ID failed : ", adminUserID)
+      console.log("ADMIN USER ID failed : ", adminUserID);
       dispatch(
-        getAvailableSlotsAction({ admin_user_id: adminUserID, date: fromDate })
+        getAvailableSlotsAction({ admin_user_id: adminUserID, date: fromDate }),
       );
     }
   }, [fromDate, dispatch]);
@@ -236,7 +236,7 @@ const Schedule = ({ componentName }) => {
   };
 
   const handleAssignStudents = () => {
-    console.log("COMPONENT NAME  handleAssignStudents : ", componentName)
+    console.log("COMPONENT NAME  handleAssignStudents : ", componentName);
     if (componentName === "TASCHEDULE") {
       dispatch(openEditStudent());
     } else if (componentName === "COACHSCHEDULE") {
@@ -249,7 +249,7 @@ const Schedule = ({ componentName }) => {
   // }
 
   const handleAssignBatches = () => {
-    console.log("COMPONENT NAME  handleAssignBatches : ", componentName)
+    console.log("COMPONENT NAME  handleAssignBatches : ", componentName);
     if (componentName === "TASCHEDULE") {
       dispatch(openEditBatch());
     } else if (componentName === "COACHSCHEDULE") {
@@ -269,19 +269,19 @@ const Schedule = ({ componentName }) => {
     }
 
     if (!fromDate || !toDate || !fromTime || !toTime) {
-      alert('Please fill in all fields');
+      alert("Please fill in all fields");
       return;
-  }
+    }
 
-  if (toDate < fromDate) {
-      alert("To Date should be greater than From Date!");;
+    if (toDate < fromDate) {
+      alert("To Date should be greater than From Date!");
       return;
-  }
+    }
 
-  if (toTime < fromTime) {
-      alert('To Time should be greater than From Time!');
+    if (toTime < fromTime) {
+      alert("To Time should be greater than From Time!");
       return;
-  }
+    }
     let weeksArray = Array(7).fill(0);
     if (repeat === "recurring") {
       selectedDays.forEach((day) => {

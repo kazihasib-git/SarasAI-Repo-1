@@ -90,7 +90,7 @@ const PopUpTable = ({
   const totalPages = Math.ceil(data.length / itemsPerPage);
   const currentData = data.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
   return (
@@ -180,7 +180,7 @@ const PopUpTable = ({
                     ) : typeof item[header] === "object" ? (
                       JSON.stringify(item[header])
                     ) : (
-                      item[header] ?? "N/A"
+                      (item[header] ?? "N/A")
                     )}
                   </td>
                 ))}

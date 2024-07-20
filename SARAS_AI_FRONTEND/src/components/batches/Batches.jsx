@@ -34,8 +34,8 @@ const Batches = () => {
   const headers = ["Sr No.", "Batch Name", "Branch"];
 
   // Filter batches based on the search input
-  const filteredBatches = batches.filter(batch => 
-    batch["Batch Name"].toLowerCase().includes(input.toLowerCase())
+  const filteredBatches = batches.filter((batch) =>
+    batch["Batch Name"].toLowerCase().includes(input.toLowerCase()),
   );
 
   return (

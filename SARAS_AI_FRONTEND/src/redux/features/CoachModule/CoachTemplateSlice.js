@@ -7,7 +7,7 @@ export const getAllCoachTemplates = createAsyncThunk(
   async () => {
     const response = await axios.get(`${baseUrl}/admin/coaching-templates`);
     return response.data;
-  }
+  },
 );
 
 export const createCoachTemplate = createAsyncThunk(
@@ -15,20 +15,20 @@ export const createCoachTemplate = createAsyncThunk(
   async (data) => {
     const response = await axios.post(`${baseUrl}/admin/store-template`, data);
     return response.data;
-  }
+  },
 );
 
 export const getAllCoachTemplateModules = createAsyncThunk(
   "coachTemplate/getAllCoachTemplateModules",
-  async (templateId) => {
+  async () => {
     const response = await axios.get(
-      `${baseUrl}/admin/coaching-templates/modules/${templateId}`
+      `${baseUrl}/admin/coaching-templates/modules/${templateId}`,
     );
     const modules = response.data.data.filter(
-      (module) => module.template_id === templateId
+      (module) => module.template_id === templateId,
     );
     return modules;
-  }
+  },
 );
 
 export const createCoachTemplateModule = createAsyncThunk(
@@ -36,19 +36,19 @@ export const createCoachTemplateModule = createAsyncThunk(
   async (data) => {
     const response = await axios.post(
       `${baseUrl}/admin/coaching-templates/store-modules`,
-      data
+      data,
     );
     return response.data;
-  }
+  },
 );
 export const getCoachTemplateModuleId = createAsyncThunk(
   "coachTemplate/getCoachTemplateModuleId",
   async (id) => {
     const response = await axios.get(
-      `${baseUrl}/admin/coaching-templates/modules/${id}`
+      `${baseUrl}/admin/coaching-templates/modules/${id}`,
     );
     return response.data;
-  }
+  },
 );
 
 export const updateCoachTemplateModule = createAsyncThunk(
@@ -56,10 +56,10 @@ export const updateCoachTemplateModule = createAsyncThunk(
   async (data) => {
     const response = await axios.post(
       `${baseUrl}/admin/coaching-templates/update-modules`,
-      data
+      data,
     );
     return response.data;
-  }
+  },
 );
 
 export const updateCoachActivity = createAsyncThunk(
@@ -68,20 +68,20 @@ export const updateCoachActivity = createAsyncThunk(
     try {
       const response = await axios.post(
         `${baseUrl}/admin/coaching-templates/activity-status`,
-        data
+        data,
       );
       console.log("API Response: ", response.data);
       return response.data;
     } catch (error) {
       console.error(
         "API Error: ",
-        error.response ? error.response.data : error.message
+        error.response ? error.response.data : error.message,
       );
       return rejectWithValue(
-        error.response ? error.response.data : error.message
+        error.response ? error.response.data : error.message,
       );
     }
-  }
+  },
 );
 
 export const createCoachTemplateActivity = createAsyncThunk(
@@ -89,10 +89,10 @@ export const createCoachTemplateActivity = createAsyncThunk(
   async (data) => {
     const response = await axios.post(
       `${baseUrl}/admin/coaching-templates/store-activity`,
-      data
+      data,
     );
     return response.data;
-  }
+  },
 );
 
 export const updateEditActivity = createAsyncThunk(
@@ -102,22 +102,21 @@ export const updateEditActivity = createAsyncThunk(
     try {
       const response = await axios.post(
         `${baseUrl}/admin/coaching-templates/update-activity`,
-        data
+        data,
       );
       console.log("API Response: ", response.data);
       return response.data;
     } catch (error) {
       console.error(
         "API Error: ",
-        error.response ? error.response.data : error.message
+        error.response ? error.response.data : error.message,
       );
       return rejectWithValue(
-        error.response ? error.response.data : error.message
+        error.response ? error.response.data : error.message,
       );
     }
-  }
+  },
 );
-
 
 const initialState = {
   coachesTemplateList: [],
@@ -152,6 +151,8 @@ export const coachTemplateSlice = createSlice({
   initialState,
   reducers: {
     accessCoachTemplateName(state, action) {
+      //   console.log("ACTION : ", action);
+      //   console.log("ACTION PAYLOAD : ", action.payload);
       state.template_name = action.payload.name;
       state.templateId = action.payload.id;
     },
@@ -233,9 +234,10 @@ export const coachTemplateSlice = createSlice({
         state.loading = true;
       })
       .addCase(createCoachTemplate.fulfilled, (state, action) => {
+        console.log("action .payload", action.payload);
         state.loading = false;
-        state.newlyCreateTemplate = action.payload;
-        // state.selectedCoachTemplate = action.payload.data.id;
+        state.coachTemplates.push(action.payload.data);
+        state.selectedCoachTemplate = action.payload.data.id;
         state.template_name = action.payload.data.name;
       })
       .addCase(createCoachTemplate.rejected, (state, action) => {
@@ -297,7 +299,7 @@ export const coachTemplateSlice = createSlice({
       .addCase(updateCoachTemplateModule.fulfilled, (state, action) => {
         state.loading = false;
         const index = state.coachTemplates.findIndex(
-          (coachTemplate) => coachTemplate.id === action.payload.id
+          (coachTemplate) => coachTemplate.id === action.payload.id,
         );
         if (index !== -1) {
           state.coachTemplates[index] = action.payload;
@@ -330,7 +332,7 @@ export const coachTemplateSlice = createSlice({
       .addCase(updateEditActivity.fulfilled, (state, action) => {
         state.loading = false;
         // state.coachTemplates.push(action.payload.data);
-        state.editActivityData = action.payload?.data
+        state.editActivityData = action.payload?.data;
       })
       .addCase(updateEditActivity.rejected, (state, action) => {
         state.loading = false;

@@ -102,7 +102,7 @@ const CoachCalender = () => {
     "slotCoachData",
     slotCoachData,
     "scheduleCoachData",
-    scheduleCoachData
+    scheduleCoachData,
   );
 
   // useEffect(() => {

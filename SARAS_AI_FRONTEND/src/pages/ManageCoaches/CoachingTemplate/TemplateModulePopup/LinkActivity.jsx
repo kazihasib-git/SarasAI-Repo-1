@@ -20,6 +20,8 @@ import CustomDateField from "../../../../components/CustomFields/CustomDateField
 import CustomTimeField from "../../../../components/CustomFields/CustomTimeField";
 import { getActivityType } from "../../../../redux/features/ActivityType/activityTypeSlice";
 import { getCoach } from "../../../../redux/features/CoachModule/coachSlice";
+import { linkActivity } from "../../../../redux/features/ActivityType/LinkActivitySlice";
+
 const CustomButton = ({
   onClick,
   children,
@@ -55,7 +57,7 @@ const CustomButton = ({
   );
 };
 
-const LinkActivityPopup = ({ open, handleClose }) => {
+const LinkActivityPopup = ({ open, handleClose, activityId }) => {
   const dispatch = useDispatch();
   const {
     handleSubmit,
@@ -68,42 +70,63 @@ const LinkActivityPopup = ({ open, handleClose }) => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [askCoach, setAskCoach] = useState(false);
   const [selectedCoachId, setSelectedCoachId] = useState("");
+  const [selectedAssessmentId, setSelectedAssessmentId] = useState("");
+  const [selectedActivityId, setSelectedActivityId] = useState("");
 
-  const onSubmit = (data) => {
-    console.log(data); // Example: Log form data
-    handleClose();
+  const onSubmit = async (data) => {
+    // Prepare the payload
+    console.log("clicked");
+    console.log("activity data", data);
+    console.log("selected assessment id", selectedAssessmentId);
+    const payload = {
+      activity_id: activityId, // Ensure this value is correctly set
+      activity_type_id:
+        activityType === "test" ? selectedAssessmentId : selectedActivityId, // Ensure this value is correctly set
+      link: data.virtualMeetLink, // Add other fields if needed
+    };
+    console.log("payload", payload);
+
+    try {
+      await dispatch(linkActivity(payload)).unwrap();
+      handleClose();
+    } catch (error) {
+      console.error("Failed to link activity:", error);
+    }
   };
+
   useEffect(() => {
     dispatch(getActivityType());
     dispatch(getCoach());
   }, [dispatch]);
 
   const { typeList } = useSelector((state) => state.activityType);
-  const { coaches }  = useSelector((state) => state.coachModule);
-   console.log( "coaches", coaches)
-  const activityOptions =
-    typeList?.map((type) => ({
+  const { coaches } = useSelector((state) => state.coachModule);
+  console.log("coaches", coaches);
+  const activityOptions = typeList
+    .filter((_, index) => index < 5)
+    .map((type) => ({
       value: type.type_name,
       label: type.type_name.charAt(0).toUpperCase() + type.type_name.slice(1), // Capitalize the first letter of each type_name
-    })) || [];
+      id: type.id,
+    }));
 
-  const assessmentOptions = [
-    { value: "wheel_of_life", label: "Wheel of Life" },
-    { value: "core_value", label: "Core Value" },
-    { value: "belief", label: "Belief" },
-  ];
+  const assessmentOptions = typeList
+    .filter((_, index) => index >= 5)
+    .map((type) => ({
+      value: type.type_name,
+      label: type.type_name.charAt(0).toUpperCase() + type.type_name.slice(1), // Capitalize the first letter of each type_name
+      id: type.id,
+    }));
 
   const sessionTypes = [
     { value: "one-on-one", label: "One-on-one session" },
     { value: "group", label: "Group session" },
   ];
 
-  const coachOptions = coaches.map(coach => ({
-    
+  const coachOptions = coaches.map((coach) => ({
     value: coach.name,
     label: coach.name,
     id: coach.id,
-   
   }));
 
   const timeSlots = [
@@ -121,22 +144,24 @@ const LinkActivityPopup = ({ open, handleClose }) => {
     { value: "EST", label: "Eastern Standard Time" },
   ];
   const handleCoachChange = (e) => {
-    const selected = coachOptions.find(option => option.value === e.target.value);
+    const selected = coachOptions.find(
+      (option) => option.value === e.target.value,
+    );
 
     if (selected) {
       setSelectedCoachId(selected.id);
       console.log("Selected Coach ID:", selected.id); // Log the selected coach ID
     }
   };
-  
- console.log("hello coach id is", selectedCoachId)
-//  useEffect(() => {
-//   if (fromDate) {
-//     dispatch(
-//       getAvailableSlotsAction({ admin_user_id: selectedCoachId , date: fromDate })
-//     );
-//   }
-// }, [fromDate, dispatch, adminUserID, getAvailableSlotsAction]);
+
+  console.log("hello coach id is", selectedCoachId);
+  //  useEffect(() => {
+  //   if (fromDate) {
+  //     dispatch(
+  //       getAvailableSlotsAction({ admin_user_id: selectedCoachId , date: fromDate })
+  //     );
+  //   }
+  // }, [fromDate, dispatch, adminUserID, getAvailableSlotsAction]);
   const contentComponent = (
     <Grid
       container
@@ -167,6 +192,11 @@ const LinkActivityPopup = ({ open, handleClose }) => {
               value={field.value}
               onChange={(e) => {
                 setActivityType(e.target.value);
+                const selectedValue = e.target.value;
+                const selectedOption = activityOptions.find(
+                  (option) => option.value === selectedValue,
+                );
+                setSelectedActivityId(selectedOption ? selectedOption.id : "");
                 field.onChange(e);
               }}
               errors={errors}
@@ -206,6 +236,7 @@ const LinkActivityPopup = ({ open, handleClose }) => {
           />
         </Grid>
       )}
+
       {activityType === "test" && (
         <Grid
           item
@@ -224,7 +255,14 @@ const LinkActivityPopup = ({ open, handleClose }) => {
                 name="assessment"
                 value={field.value}
                 onChange={(e) => {
+                  const selectedValue = e.target.value;
                   field.onChange(e);
+                  const selectedOption = assessmentOptions.find(
+                    (option) => option.value === selectedValue,
+                  );
+                  setSelectedAssessmentId(
+                    selectedOption ? selectedOption.id : "",
+                  );
                 }}
                 errors={errors}
                 options={assessmentOptions}
@@ -233,7 +271,6 @@ const LinkActivityPopup = ({ open, handleClose }) => {
           />
         </Grid>
       )}
-
       {activityType === "virtual meet" && (
         <>
           <Grid

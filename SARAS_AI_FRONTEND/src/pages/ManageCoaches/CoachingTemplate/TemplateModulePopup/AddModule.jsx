@@ -8,6 +8,7 @@ import {
   getAllCoachTemplateModules,
 } from "../../../../redux/features/CoachModule/CoachTemplateSlice";
 import { useDispatch, useSelector } from "react-redux";
+
 const CustomButton = ({
   onClick,
   children,
@@ -46,7 +47,7 @@ const AddModule = () => {
   const dispatch = useDispatch();
   const [moduleName, setModuleName] = useState("");
   const { openModulePopUp, selectedCoachTemplate } = useSelector(
-    (state) => state.coachTemplate
+    (state) => state.coachTemplate,
   );
 
   const content = (
@@ -57,7 +58,7 @@ const AddModule = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        textAlign: "center", // Add this line if needed
+        textAlign: "center",
       }}
     >
       <Grid item xs={12} sm={6}>
@@ -88,6 +89,7 @@ const AddModule = () => {
           dispatch(getAllCoachTemplateModules(selectedCoachTemplate));
         });
       dispatch(closeTemplateModulePopup());
+      setModuleName(""); // Reset the input field
     }
   };
 
@@ -103,15 +105,13 @@ const AddModule = () => {
   );
 
   return (
-    <>
-      <ReusableDialog
-        open={openModulePopUp}
-        handleClose={() => dispatch(closeTemplateModulePopup())}
-        title="Add Module"
-        content={content}
-        actions={actions}
-      />
-    </>
+    <ReusableDialog
+      open={openModulePopUp}
+      handleClose={() => dispatch(closeTemplateModulePopup())}
+      title="Add Module"
+      content={content}
+      actions={actions}
+    />
   );
 };
 

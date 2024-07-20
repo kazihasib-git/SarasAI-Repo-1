@@ -146,7 +146,7 @@ const EditStudents = ({ componentname }) => {
   }
 
   const stateSelector = useSelector((state) =>
-    stateModuleKey ? state[stateModuleKey] : {}
+    stateModuleKey ? state[stateModuleKey] : {},
   );
   const {
     [nameKeyScheduling]: assignedName,
@@ -165,7 +165,7 @@ const EditStudents = ({ componentname }) => {
   useEffect(() => {
     // dispatch(getAssignStudents(taaId));
     if (stateModuleKey && assignStudentOpen) {
-      console.log("TAID and assign id", assignedId, taID)
+      console.log("TAID and assign id", assignedId, taID);
       dispatch(getAssignStudentAction(assignedId));
     }
   }, [
@@ -219,11 +219,11 @@ const EditStudents = ({ componentname }) => {
               .filter(
                 (student) =>
                   !selectedTerm ||
-                  student.student.academic_term === selectedTerm
+                  student.student.academic_term === selectedTerm,
               )
               .flatMap((student) =>
-                student.student.batches.map((batch) => batch.batch_name)
-              )
+                student.student.batches.map((batch) => batch.batch_name),
+              ),
           ),
         ]
       : [];
@@ -232,7 +232,7 @@ const EditStudents = ({ componentname }) => {
     assignedStudents && Array.isArray(assignedStudents)
       ? [
           ...new Set(
-            assignedStudents.map((student) => student.student.academic_term)
+            assignedStudents.map((student) => student.student.academic_term),
           ),
         ]
       : [];
@@ -245,7 +245,7 @@ const EditStudents = ({ componentname }) => {
 
   const handleSelectStudent = (id) => {
     setSelectedStudents((prev) =>
-      prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id],
     );
   };
 
@@ -264,7 +264,7 @@ const EditStudents = ({ componentname }) => {
         id,
         name: assignedName,
         student: selectedStudents.map((id) => ({ id })),
-      })
+      }),
     );
 
     /*

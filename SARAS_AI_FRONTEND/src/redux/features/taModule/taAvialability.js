@@ -6,27 +6,32 @@ import { baseUrl } from "../../../utils/baseURL";
 export const getTodayTaAvailability = createAsyncThunk(
   "taAvialability/getTodayTaAvailability",
   async () => {
-    const response = await axios.get(`${baseUrl}/admin/TA-availability/get-today-available-ta`);
+    const response = await axios.get(
+      `${baseUrl}/admin/TA-availability/get-today-available-ta`,
+    );
     return response.data;
-  }
+  },
 );
 
 //get slots for ta from date to end date
 export const getSlots = createAsyncThunk(
   "taAvialability/getSlots",
   async (data) => {
-    const response = await axios.post(`${baseUrl}/admin/coach-slots/records`, data);
+    const response = await axios.post(
+      `${baseUrl}/admin/coach-slots/records`,
+      data,
+    );
     return response.data;
-  }
+  },
 );
 
 //for fetching sessions of ta for calendar
 export const fetchTAScheduleById = createAsyncThunk(
-  'taAvialability/fetchTAScheduleById',
+  "taAvialability/fetchTAScheduleById",
   async (id) => {
     const response = await axios.get(`${baseUrl}/admin/taschedules/${id}`);
     return response.data;
-  }
+  },
 );
 
 //for fetching slots of ta for calendar
@@ -35,7 +40,7 @@ export const fetchCoachSlots = createAsyncThunk(
   async (id) => {
     const response = await axios.get(`${baseUrl}/admin/coach-slots/${id}`);
     return response.data;
-  }
+  },
 );
 
 // Create Slots for TA
@@ -43,21 +48,21 @@ export const createSlots = createAsyncThunk(
   "taAvialability/createSlots",
   async (data) => {
     console.log("Data being sent:", data);
-    const response = await axios.post(
-      `${baseUrl}/admin/coach-slots`,
-      data
-    );
+    const response = await axios.post(`${baseUrl}/admin/coach-slots`, data);
     return response.data;
-  }
+  },
 );
 
 // Get Schedule Session for TA
 export const getScheduleSession = createAsyncThunk(
   "taAvialability/getScheduleSession",
   async (data) => {
-    const response = await axios.post(`${baseUrl}/admin/taschedules/get-schedules-records`, data);
+    const response = await axios.post(
+      `${baseUrl}/admin/taschedules/get-schedules-records`,
+      data,
+    );
     return response.data;
-  }
+  },
 );
 
 // Get Available Slots
@@ -66,10 +71,11 @@ export const fetchAvailableSlots = createAsyncThunk(
   async (data) => {
     // console.log("ID : ", id);
     const response = await axios.post(
-      `${baseUrl}/admin/coach-slots/getTACoachSlotForADate`, data
+      `${baseUrl}/admin/coach-slots/getTACoachSlotForADate`,
+      data,
     );
     return response.data;
-  }
+  },
 );
 
 // Delete Future Slots
@@ -78,21 +84,22 @@ export const deleteFutureSlots = createAsyncThunk(
   async ({ id, data }) => {
     // console.log("ID : ", id);
 
-    console.log("Data : ", data , id);
-    const response = await axios.delete(`${baseUrl}/admin/coach-slots/${id}`, { data: data });
+    console.log("Data : ", data, id);
+    const response = await axios.delete(`${baseUrl}/admin/coach-slots/${id}`, {
+      data: data,
+    });
     return response.data;
-  }
+  },
 );
 
 // Reason for Leave
 export const reasonForLeave = createAsyncThunk(
-  'taAvialability/reasonForLeave',
+  "taAvialability/reasonForLeave",
   async (data) => {
     const response = await axios.post(`${baseUrl}/admin/leave`, data);
     return response.data;
-  
-  }
-)
+  },
+);
 
 const initialState = {
   todaysAvailableTa: [],
@@ -114,10 +121,10 @@ const initialState = {
   scheduleNewSession: false,
   createNewSlotOpen: false,
   slotEventData: null, // To Cancel Session
-  sessionEventData : null, // To Reschedule Session
+  sessionEventData: null, // To Reschedule Session
   loading: false,
   error: null,
-  schduldeCancelData: null
+  schduldeCancelData: null,
 };
 
 export const taAvailabilitySlice = createSlice({
@@ -131,13 +138,13 @@ export const taAvailabilitySlice = createSlice({
       state.markLeaveOpen = false;
     },
     openScheduledSlots(state, action) {
-      console.log("OPENSCHEDULE SLOTS : ", action.payload)
+      console.log("OPENSCHEDULE SLOTS : ", action.payload);
       state.scheduledSlotsOpen = true;
-      state.markLeaveData = action.payload
+      state.markLeaveData = action.payload;
     },
     closeScheduledSlots(state) {
       state.scheduledSlotsOpen = false;
-      state.markLeaveData = []
+      state.markLeaveData = [];
     },
     openScheduledSession(state, action) {
       // console.log("Open Action slotEventData : ", action.payload)
@@ -155,21 +162,21 @@ export const taAvailabilitySlice = createSlice({
     },
     openCancelSession(state, action) {
       state.cancelSessionOpen = true;
-      console.log("ACTION : ", action.payload)
-      state.schduldeCancelData = action.payload
+      console.log("ACTION : ", action.payload);
+      state.schduldeCancelData = action.payload;
     },
     closeCancelSession(state) {
       state.cancelSessionOpen = false;
     },
     openReasonForLeave(state, action) {
       state.reasonForLeaveOpen = true;
-      state.markLeaveData = action.payload
+      state.markLeaveData = action.payload;
     },
     closeReasonForLeave(state) {
       state.reasonForLeaveOpen = false;
     },
     openRescheduleSession(state, action) {
-      console.log("Open Action sessionEventData : ", action.payload)
+      console.log("Open Action sessionEventData : ", action.payload);
       state.resheduleSessionOpen = true;
       state.sessionEventData = action.payload;
     },
@@ -270,17 +277,16 @@ export const taAvailabilitySlice = createSlice({
     builder.addCase(fetchAvailableSlots.pending, (state) => {
       state.loading = true;
     });
-  builder.addCase(fetchAvailableSlots.fulfilled, (state, action) => {
+    builder.addCase(fetchAvailableSlots.fulfilled, (state, action) => {
       state.loading = false;
-      console.log("AVIAIAIAI : ", action.payload?.data)
+      console.log("AVIAIAIAI : ", action.payload?.data);
       state.availableSlotsData = action.payload?.data;
     });
     builder.addCase(fetchAvailableSlots.rejected, (state, action) => {
       state.loading = false;
       state.error = action.error.message;
-      state.availableSlotsData = []
+      state.availableSlotsData = [];
     });
-
 
     // Delete Future Slots
     builder.addCase(deleteFutureSlots.pending, (state) => {
@@ -325,7 +331,7 @@ export const {
   openRescheduleSession,
   closeRescheduleSession,
   openStudentsRescheduleSession,
-  closeStudentsRescheduleSession
+  closeStudentsRescheduleSession,
 } = taAvailabilitySlice.actions;
 
 export default taAvailabilitySlice.reducer;

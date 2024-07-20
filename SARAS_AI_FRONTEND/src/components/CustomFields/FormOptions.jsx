@@ -52,7 +52,7 @@ export const genders = [
 export const qualificationOptions = [
   { value: "Secondary School", label: "Secondary School" },
   { value: "Post Secondary School", label: "Post Secondary School" },
-  { value : 'PHD in Computer Science', label: 'PHD in Computer Science' },
+  { value: "PHD in Computer Science", label: "PHD in Computer Science" },
   { value: "Bachelor's Degree", label: "Bachelor's Degree" },
   { value: "Master's Degree", label: "Master's Degree" },
   { value: "Doctorate", label: "Doctorate" },
@@ -60,10 +60,10 @@ export const qualificationOptions = [
 
 export const validateTimeZone = (value) => {
   if (!value) return "Time Zone is required";
-  if (!timeZones.some((tz) => tz.time_zone === value)) return "Invalid time zone selected";
+  if (!timeZones.some((tz) => tz.time_zone === value))
+    return "Invalid time zone selected";
   return true;
 };
-
 
 export const transformedTimeZones = timeZones.map((tz) => ({
   value: tz.time_zone,

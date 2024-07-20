@@ -1,5 +1,11 @@
-import React from 'react';
-import { FormControl, InputLabel, Select, MenuItem, Typography } from '@mui/material';
+import React from "react";
+import {
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Typography,
+} from "@mui/material";
 
 const CustomTimeZoneForm = ({
   label,
@@ -9,7 +15,7 @@ const CustomTimeZoneForm = ({
   errors,
   options,
 }) => {
-  // console.log("label", label , name , value ) 
+  // console.log("label", label , name , value )
   return (
     <FormControl variant="outlined" fullWidth>
       <InputLabel

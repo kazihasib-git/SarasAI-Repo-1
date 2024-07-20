@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import {
-    Box,
+  Box,
   Button,
   DialogContent,
   DialogContentText,
@@ -77,7 +77,6 @@ const DeleteAllSlots = ({ open, handleClose, id, name }) => {
 
   const content = (
     <>
-     
       <DialogContentText
         sx={{
           color: "#1A1E3D",
@@ -89,16 +88,14 @@ const DeleteAllSlots = ({ open, handleClose, id, name }) => {
       </DialogContentText>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-         
-            <CustomTextField
-              label="Delete All Future Slots"
-              fullWidth
-              placeholder="Reason for deletion"
-              variant="outlined"
-              multiline
-              rows={4}
-            />
-        
+          <CustomTextField
+            label="Delete All Future Slots"
+            fullWidth
+            placeholder="Reason for deletion"
+            variant="outlined"
+            multiline
+            rows={4}
+          />
         </Grid>
       </Grid>
     </>

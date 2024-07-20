@@ -77,10 +77,9 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
 const TemplateModuleTable = ({ modulesData }) => {
   const [linkActivityPopupOpen, setLinkActivityPopupOpen] = useState(false);
   const [prerequisitesPopupOpen, setPrerequisitesPopupOpen] = useState(false);
+  const [selectedActivityId, setSelectedActivityId] = useState(null); // State for selected activity ID
   const dispatch = useDispatch();
-  const { selectedCoachTemplate } = useSelector(
-    (state) => state.coachTemplate
-  ); 
+  const { selectedCoachTemplate } = useSelector((state) => state.coachTemplate);
 
   const handleToggle = (moduleId, activityId, currentStatus) => {
     const newStatus = !currentStatus;
@@ -90,11 +89,12 @@ const TemplateModuleTable = ({ modulesData }) => {
     };
 
     // Dispatch the updateCoachActivity action
-    dispatch(updateCoachActivity({ data })).unwrap()
-    .then(() => {
-      // console.log("SLOT EVENT DATA : ", slotEventData)
-      dispatch(getCoachTemplateModuleId(selectedCoachTemplate))
-    })
+    dispatch(updateCoachActivity({ data }))
+      .unwrap()
+      .then(() => {
+        // console.log("SLOT EVENT DATA : ", slotEventData)
+        dispatch(getCoachTemplateModuleId(selectedCoachTemplate));
+      });
   };
 
   const openLinkActivityPopup = () => {
@@ -134,10 +134,10 @@ const TemplateModuleTable = ({ modulesData }) => {
     dispatch(openEditModulePopup(data));
     // Implement your logic for editing module
   };
-  const handleEditActivity = (activity) =>{
+  const handleEditActivity = (activity) => {
     console.log("Clicked Activity !");
-    dispatch(openEditActivityPopup(activity))
-  }
+    dispatch(openEditActivityPopup(activity));
+  };
 
   const headers = [
     "S. No.",
@@ -200,7 +200,7 @@ const TemplateModuleTable = ({ modulesData }) => {
                   handleEditModule(
                     module.id,
                     module.module_name,
-                    module.is_active
+                    module.is_active,
                   )
                 }
               >
@@ -305,7 +305,13 @@ const TemplateModuleTable = ({ modulesData }) => {
                         >
                           <AntSwitch
                             checked={activity.is_active}
-                            onChange={() => handleToggle(module.id, activity.id, activity.is_active)}
+                            onChange={() =>
+                              handleToggle(
+                                module.id,
+                                activity.id,
+                                activity.is_active,
+                              )
+                            }
                             inputProps={{ "aria-label": "ant design" }}
                           />
                         </td>

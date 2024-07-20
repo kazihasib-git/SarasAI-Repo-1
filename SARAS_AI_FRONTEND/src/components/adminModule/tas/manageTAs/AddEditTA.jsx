@@ -63,7 +63,7 @@ const AddEditTA = ({ data }) => {
 
   const dispatch = useDispatch();
   const { successPopup, assignStudentOpen, assignBatchOpen } = useSelector(
-    (state) => state.taModule
+    (state) => state.taModule,
   );
   const { timezones } = useSelector((state) => state.timezone);
 
@@ -110,7 +110,7 @@ const AddEditTA = ({ data }) => {
   const base64ToBlobUrl = (base64Data) => {
     const byteCharacters = atob(base64Data);
     const byteNumbers = Array.from(byteCharacters, (char) =>
-      char.charCodeAt(0)
+      char.charCodeAt(0),
     );
     const byteArray = new Uint8Array(byteNumbers);
     const blob = new Blob([byteArray], { type: "image/jpeg" });
@@ -136,7 +136,7 @@ const AddEditTA = ({ data }) => {
     if (selectedImage) {
       const base64Data = selectedImage.replace(
         /^data:image\/(png|jpeg|jpg);base64,/,
-        ""
+        "",
       );
       updatedFormData.profile_picture = base64Data;
     }
@@ -144,7 +144,7 @@ const AddEditTA = ({ data }) => {
     try {
       if (data) {
         const updateRes = await dispatch(
-          updateTA({ id: data.id, data: updatedFormData })
+          updateTA({ id: data.id, data: updatedFormData }),
         ).unwrap();
         console.log("UPDATE RES : ", updateRes);
         dispatch(openSuccessPopup());
@@ -526,43 +526,43 @@ const AddEditTA = ({ data }) => {
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
-                <Controller
-                  name="phone"
-                  control={control}
-                  rules={{ required: "Phone number is required" }} // Setting validation rules
-                  render={({ field }) => (
-                    <PhoneInput
-                      country={"in"}
-                      value={field.value} // Binding the value to the field value
-                      onChange={field.onChange} // Handling the onChange event
-                      containerStyle={{ width: "100%" }}
-                      inputStyle={{
-                        width: "100%",
-                        borderRadius: "50px",
-                        borderColor: errors.phone ? "red" : "#D0D0EC",
-                        outline: "none",
-                        height: "60px",
-                      }}
-                      buttonStyle={{
-                        borderRadius: "50px 0 0 50px",
-                        borderColor: errors.phone ? "red" : "#D0D0EC",
-                        height: "60px",
-                        outline: "none",
-                        paddingLeft: "10px",
-                      }}
-                    />
-                  )}
-                />
-                {errors.phone && (
-                  <Typography
-                    variant="body2"
-                    color="error"
-                    style={{ marginTop: "8px" }}
-                  >
-                    {errors.phone.message}
-                  </Typography>
+              <Controller
+                name="phone"
+                control={control}
+                rules={{ required: "Phone number is required" }} // Setting validation rules
+                render={({ field }) => (
+                  <PhoneInput
+                    country={"in"}
+                    value={field.value} // Binding the value to the field value
+                    onChange={field.onChange} // Handling the onChange event
+                    containerStyle={{ width: "100%" }}
+                    inputStyle={{
+                      width: "100%",
+                      borderRadius: "50px",
+                      borderColor: errors.phone ? "red" : "#D0D0EC",
+                      outline: "none",
+                      height: "60px",
+                    }}
+                    buttonStyle={{
+                      borderRadius: "50px 0 0 50px",
+                      borderColor: errors.phone ? "red" : "#D0D0EC",
+                      height: "60px",
+                      outline: "none",
+                      paddingLeft: "10px",
+                    }}
+                  />
                 )}
-              </Grid>
+              />
+              {errors.phone && (
+                <Typography
+                  variant="body2"
+                  color="error"
+                  style={{ marginTop: "8px" }}
+                >
+                  {errors.phone.message}
+                </Typography>
+              )}
+            </Grid>
             <Grid item xs={12}>
               <CustomTextField
                 label="About Me"

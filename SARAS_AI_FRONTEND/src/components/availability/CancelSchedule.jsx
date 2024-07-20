@@ -93,7 +93,7 @@ const CancelSchedule = ({ componentName }) => {
   const schedulingState = useSelector((state) =>
     componentName === "TACALENDER"
       ? state.taAvialability
-      : state.coachAvailability
+      : state.coachAvailability,
   );
 
   const { cancelSessionOpen, schduldeCancelData, slotEventData } =
@@ -120,8 +120,8 @@ const CancelSchedule = ({ componentName }) => {
       .then(() => {
         dispatch(
           getSessionAction(
-            componentName === "TACALENDER" ? slotEventData : slotCoachEventData
-          )
+            componentName === "TACALENDER" ? slotEventData : slotCoachEventData,
+          ),
         );
         dispatch(openSessionAction());
       })

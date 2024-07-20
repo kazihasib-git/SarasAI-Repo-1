@@ -117,7 +117,7 @@ const AssignBatches = ({ componentname }) => {
   }
 
   const stateSelector = useSelector((state) =>
-    stateModuleKey ? state[stateModuleKey] : {}
+    stateModuleKey ? state[stateModuleKey] : {},
   );
   const { [nameKeyScheduling]: assignedName, [idKeyScheduling]: assignedId } =
     schedulingState || {};
@@ -170,7 +170,7 @@ const AssignBatches = ({ componentname }) => {
 
   const handleSelectBatch = (id) => {
     setSelectedBatch((prev) =>
-      prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id],
     );
   };
 
@@ -187,7 +187,7 @@ const AssignBatches = ({ componentname }) => {
           Branch: batch.branch.name,
           Select: batch.is_active ? 0 : 1,
           id: batch.id,
-        }))
+        })),
       );
     }
   };
@@ -208,7 +208,7 @@ const AssignBatches = ({ componentname }) => {
             id: assignedId,
             name: assignedName,
             batches: selectedBatch.map((id) => ({ id: id.toString() })),
-          })
+          }),
         );
       }
       dispatch(openSuccessAction());

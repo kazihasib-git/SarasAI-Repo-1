@@ -82,7 +82,7 @@ const TaCalender = () => {
   //const [createNewSlot, setCreateNewSlot] = useState(false)
 
   const { assignBatchOpen, assignStudentOpen } = useSelector(
-    (state) => state.taModule
+    (state) => state.taModule,
   );
 
   const {

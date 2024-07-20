@@ -69,8 +69,13 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
   },
 }));
 
-
-const headers = ["Sr. No.", "TA Name", "Username", "Current Availability", "Calendar"];
+const headers = [
+  "Sr. No.",
+  "TA Name",
+  "Username",
+  "Current Availability",
+  "Calendar",
+];
 
 const TaAvialability = () => {
   const dispatch = useDispatch();

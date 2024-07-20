@@ -1,10 +1,8 @@
-import React from 'react'
-import Batches from '../../components/batches/Batches'
+import React from "react";
+import Batches from "../../components/batches/Batches";
 
 const BatchPage = () => {
-    return (
-        <Batches />
-    )
-}
+  return <Batches />;
+};
 
-export default BatchPage
+export default BatchPage;

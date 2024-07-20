@@ -20,7 +20,7 @@ import {
   openCoachRescheduleSession,
   openCoachScheduledSlots,
   openCoachReasonForLeave,
-  reasonForCoachLeave
+  reasonForCoachLeave,
 } from "../../redux/features/CoachModule/CoachAvailabilitySlice";
 import { useParams } from "react-router-dom";
 
@@ -83,8 +83,8 @@ const ScheduledSessions = ({ componentName }) => {
       openRescheduleAction = openRescheduleSession;
       openSlotsAction = openScheduledSlots;
       slotEventKey = "slotEventData";
-      openReasonAction = openReasonForLeave;;
-      reasonForLeaveAction = reasonForLeave
+      openReasonAction = openReasonForLeave;
+      reasonForLeaveAction = reasonForLeave;
       break;
     case "COACHCALENDER":
       scheduleSessionOpenKey = "scheduledCoachSessionOpen";
@@ -95,8 +95,8 @@ const ScheduledSessions = ({ componentName }) => {
       openRescheduleAction = openCoachRescheduleSession;
       openSlotsAction = openCoachScheduledSlots;
       slotEventKey = "slotCoachEventData";
-      openReasonAction = openCoachReasonForLeave;;
-      reasonForLeaveAction = reasonForCoachLeave
+      openReasonAction = openCoachReasonForLeave;
+      reasonForLeaveAction = reasonForCoachLeave;
       break;
     default:
       scheduleSessionOpenKey = null;
@@ -113,7 +113,7 @@ const ScheduledSessions = ({ componentName }) => {
   }
 
   const schedulingState = useSelector((state) =>
-    schedulingStateKey ? state[schedulingStateKey] : {}
+    schedulingStateKey ? state[schedulingStateKey] : {},
   );
   const {
     [scheduleSessionOpenKey]: scheduledSessionOpen,
@@ -137,7 +137,7 @@ const ScheduledSessions = ({ componentName }) => {
     Time: `${session.start_time} - ${session.end_time}`,
     Students: session.Students.length,
     StudentList: session.Students,
-    id: session.id
+    id: session.id,
   }));
 
   const handleViewClick = (students) => {

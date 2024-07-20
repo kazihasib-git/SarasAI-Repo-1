@@ -4,7 +4,16 @@ import Sidebar from "../../../components/Sidebar/Sidebar";
 import { Box } from "@mui/material";
 import AddModule from "./TemplateModulePopup/AddModule";
 import { useDispatch, useSelector } from "react-redux";
-import { openEditModulePopup, openTemplateActivityPopup, openTemplateModulePopup, removeSelectedModule, setSelectedModule, openEditActivityPopup } from "../../../redux/features/CoachModule/CoachTemplateSlice";
+import {
+  createCoachTemplateModule,
+  openEditModulePopup,
+  openTemplateActivityPopup,
+  openTemplateModulePopup,
+  removeSelectedModule,
+  setSelectedCoachTemplate,
+  setSelectedModule,
+  openEditActivityPopup,
+} from "../../../redux/features/CoachModule/CoachTemplateSlice";
 import TemplateModuleTable from "./TemplateTable/TemplateModuleTable";
 import "./TemplateName.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -17,24 +26,31 @@ import { useLocation } from "react-router-dom";
 import AddEditActivity from "./TemplateModulePopup/EditActivity";
 
 const TemplateName = () => {
-  const { openModulePopUp, openActivityPopUp, template_name ,selectedCoachTemplate, coachTemplates , coachTemplatesId } = useSelector((state) => state.coachTemplate);
-  const templateDumyName = "No Template Name" ;
+  const {
+    openModulePopUp,
+    openActivityPopUp,
+    template_name,
+    selectedCoachTemplate,
+    coachTemplates,
+    coachTemplatesId,
+  } = useSelector((state) => state.coachTemplate);
+  const templateDumyName = "No Template Name";
   const [linkActivityPopupOpen, setLinkActivityPopupOpen] = useState(false); // State for controlling popup
   const [prerequisitesPopupOpen, setPrerequisitesPopupOpen] = useState(false);
   const dispatch = useDispatch();
   const location = useLocation();
-  // newly created name 
+  // newly created name
   const { newTemplateData } = location.state || {};
 
-console.log("Tempete name is", template_name);
-console.log("coach templete", coachTemplates);
-console.log("coachtemplate id", coachTemplatesId);
+  console.log("Tempete name is", template_name);
+  console.log("coach templete", coachTemplates);
+  console.log("coachtemplate id", coachTemplatesId);
 
-//  setTemplateEditName(template_name);
-console.log("selcted coach templete",selectedCoachTemplate)
-  useEffect(()=>{
+  //  setTemplateEditName(template_name);
+  console.log("selcted coach templete", selectedCoachTemplate);
+  useEffect(() => {
     dispatch(removeSelectedModule());
-  },[dispatch]);
+  }, [dispatch]);
 
   const handleModule = () => {
     dispatch(openTemplateModulePopup());
@@ -42,12 +58,21 @@ console.log("selcted coach templete",selectedCoachTemplate)
 
   const handleActivity = () => {
     console.log("Activity module");
-    
+
     dispatch(openTemplateActivityPopup());
   };
 
   const handleEditModule = () => {
     dispatch(openEditModulePopup());
+  };
+
+  const handleAddModule = (moduleData) => {
+    dispatch(
+      createCoachTemplateModule({
+        ...moduleData,
+        template_id: selectedCoachTemplate,
+      }),
+    );
   };
 
   const openLinkActivityPopup = () => {
@@ -78,7 +103,6 @@ console.log("selcted coach templete",selectedCoachTemplate)
     "Actions",
   ];
 
-
   const actionButtons = [
     {
       type: "switch",
@@ -89,15 +113,7 @@ console.log("selcted coach templete",selectedCoachTemplate)
         console.log("CLICKED : ", id);
       },
     },
-    {
-      type: "prerequisites", // Add a new action type for prerequisites
-      onClick: openPrerequisitesPopup, // Set the function to open the prerequisites popup
-    },
-    {
-      type: "linkactivity",
-      onClick: openLinkActivityPopup,
-    }
-  ]; // Define your action buttons if any
+  ];
 
   return (
     <>
@@ -109,8 +125,16 @@ console.log("selcted coach templete",selectedCoachTemplate)
         marginTop={3}
         alignItems={"center"}
       >
-        <p style={{ fontSize: "44px", justifyContent: "center", fontFamily:"ExtraLight" }}>
-        {newTemplateData?.name || template_name || coachTemplatesId[0]?.template.name}
+        <p
+          style={{
+            fontSize: "44px",
+            justifyContent: "center",
+            fontFamily: "ExtraLight",
+          }}
+        >
+          {newTemplateData?.name ||
+            template_name ||
+            coachTemplatesId[0]?.template.name}
         </p>
         <div className="inputBtnContainer">
           <button className="buttonContainer" onClick={handleModule}>
@@ -120,23 +144,22 @@ console.log("selcted coach templete",selectedCoachTemplate)
         </div>
       </Box>
       {!coachTemplatesId || coachTemplatesId.length === 0 ? (
-        <div><p>No Data Available</p></div>
+        <div>
+          <p>No Data Available</p>
+        </div>
       ) : (
         <>
-        {/* {modulesData && modulesData.map((module)=>( */}
-        <>
-          <Box
-            display={"flex"}
-            justifyContent={"space-between"}
-            marginTop={3}
-            alignItems={"center"}
-          > 
-          </Box>
+          {/* {modulesData && modulesData.map((module)=>( */}
+          <>
+            <Box
+              display={"flex"}
+              justifyContent={"space-between"}
+              marginTop={3}
+              alignItems={"center"}
+            ></Box>
 
-          <TemplateModuleTable
-           modulesData={coachTemplatesId}
-          />
-        </>
+            <TemplateModuleTable modulesData={coachTemplatesId} />
+          </>
         </>
       )}
 
@@ -144,8 +167,13 @@ console.log("selcted coach templete",selectedCoachTemplate)
       {openActivityPopUp && <AddActivity />}
       {openEditModulePopup && <EditModule />}
       {openEditActivityPopup && <AddEditActivity />}
-      <LinkActivityPopup open={linkActivityPopupOpen} handleClose={closeLinkActivityPopup} />
-      <PrerequisitesPopup open={prerequisitesPopupOpen} handleClose={closePrerequisitesPopup}
+      <LinkActivityPopup
+        open={linkActivityPopupOpen}
+        handleClose={closeLinkActivityPopup}
+      />
+      <PrerequisitesPopup
+        open={prerequisitesPopupOpen}
+        handleClose={closePrerequisitesPopup}
       />
     </>
   );

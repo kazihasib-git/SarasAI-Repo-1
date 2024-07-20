@@ -101,7 +101,7 @@ const MarkLeave = ({ componentName }) => {
   }
 
   const schedulingState = useSelector((state) =>
-    schedulingStateKey ? state[schedulingStateKey] : {}
+    schedulingStateKey ? state[schedulingStateKey] : {},
   );
   const { [scheduleSessionOpenKey]: markLeaveOpen } = schedulingState;
 

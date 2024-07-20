@@ -1,15 +1,14 @@
-
 // import React, { useState } from "react";
 // import { Typography, Box, Button, Card, CardContent, Grid } from "@mui/material";
 // import Header from "../../../components/Header/Header";
 // import TaMenuSidebar from "./TeachingAssistantSidebar";
 // import DenyDialog from "./DenyDialog"; // Import the DenyDialog component
- 
+
 // const CallRequest = () => {
 //   const [open, setOpen] = useState(false);
-  
+
 //   const [callRequests, setCallRequests] = useState([
- 
+
 //     {
 //       id: 2,
 //       title: "Meeting Request By Aman",
@@ -36,26 +35,26 @@
 //       }
 //   ]);
 //   const [showFullMessages, setShowFullMessages] = useState({});
- 
+
 // //   const handleAddTa = () => {
 // //     // Replace with navigation logic
 // //     console.log("Navigating to create template");
 // //   };
- 
+
 //   const handleClickOpen = () => {
 //     setOpen(true);
 //   };
- 
+
 //   const handleClose = () => {
 //     setOpen(false);
 //   };
- 
+
 //   const handleDenySubmit = () => {
 //     // Add logic for deny action
 //     console.log("Deny action submitted");
 //     setOpen(false);
 //   };
- 
+
 //   const handleApprove = (id) => {
 //     setCallRequests(
 //       callRequests.map((request) =>
@@ -63,19 +62,19 @@
 //       )
 //     );
 //   };
- 
+
 //   const toggleShowFullMessage = (id) => {
 //     setShowFullMessages((prevState) => ({
 //       ...prevState,
 //       [id]: !prevState[id],
 //     }));
 //   };
- 
+
 //   const truncateText = (text, limit) => {
 //     if (text.length <= limit) return text;
 //     return `${text.slice(0, limit)}...`;
 //   };
- 
+
 //   return (
 //     <div>
 //       <Header />
@@ -89,7 +88,7 @@
 //         <Typography variant="h4" gutterBottom sx={{ fontFamily: "ExtraLight" }}>
 //           Call Request
 //         </Typography>
-       
+
 //           <div className="inputBtnContainer">
 //           <button className="buttonContainer" variant="contained" color="warning" onClick={() => console.log("Create New Meeting button clicked")}>
 //             <i className="bi bi-plus-circle"></i>
@@ -145,7 +144,7 @@
 //                     Approved
 //                   </Button>
 //                 ):(
-               
+
 //                   <Box display="flex" mt={2}>
 //                     <Button
 //                       onClick={() => handleApprove(callRequest.id)}
@@ -189,9 +188,8 @@
 //     </div>
 //   );
 // };
- 
-// export default CallRequest;
 
+// export default CallRequest;
 
 // import React, { useState } from "react";
 // import { Typography, Box, Button, Card, CardContent, Grid, IconButton } from "@mui/material";
@@ -398,9 +396,15 @@
 
 // export default CallRequest;
 
-
 import React, { useState } from "react";
-import { Typography, Box, Button, Card, CardContent, Grid } from "@mui/material";
+import {
+  Typography,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Grid,
+} from "@mui/material";
 import Header from "../../../components/Header/Header";
 import TaMenuSidebar from "./TeachingAssistantSidebar";
 import DenyDialog from "./DenyDialog"; // Import the DenyDialog component
@@ -455,8 +459,8 @@ const CallRequest = () => {
   const handleApprove = (id) => {
     setCallRequests(
       callRequests.map((request) =>
-        request.id === id ? { ...request, approved: true } : request
-      )
+        request.id === id ? { ...request, approved: true } : request,
+      ),
     );
   };
 
@@ -500,7 +504,12 @@ const CallRequest = () => {
         </Typography>
 
         <div className="inputBtnContainer">
-          <button className="buttonContainer" variant="contained" color="warning" onClick={handleCreateMeetingOpen}>
+          <button
+            className="buttonContainer"
+            variant="contained"
+            color="warning"
+            onClick={handleCreateMeetingOpen}
+          >
             <i className="bi bi-plus-circle"></i>
             <span>Create New Meeting</span>
           </button>
@@ -515,7 +524,8 @@ const CallRequest = () => {
                   {callRequest.title}
                 </Typography>
                 <Typography gutterBottom sx={{ ml: 2 }}>
-                  For: <span style={{ color: "#5F6383" }}>{callRequest.for}</span>
+                  For:{" "}
+                  <span style={{ color: "#5F6383" }}>{callRequest.for}</span>
                 </Typography>
                 <Typography gutterBottom sx={{ ml: 2 }}>
                   Requested By:{" "}

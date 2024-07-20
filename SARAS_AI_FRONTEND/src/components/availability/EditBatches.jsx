@@ -132,7 +132,7 @@ const EditBatches = ({ componentname }) => {
   }
 
   const stateSelector = useSelector((state) =>
-    stateModuleKey ? state[stateModuleKey] : {}
+    stateModuleKey ? state[stateModuleKey] : {},
   );
 
   const {
@@ -152,7 +152,7 @@ const EditBatches = ({ componentname }) => {
 
   useEffect(() => {
     if (stateModuleKey && assignBatchOpen) {
-      console.log("TAID and assign id", assignedId, taID)
+      console.log("TAID and assign id", assignedId, taID);
       dispatch(getAssignBatchesAction(assignedId));
     }
   }, [
@@ -201,7 +201,7 @@ const EditBatches = ({ componentname }) => {
 
   const handleSelectBatch = (id) => {
     setSelectedBatch((prev) =>
-      prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id],
     );
   };
   const handleBranchChange = (e) => {
@@ -216,7 +216,7 @@ const EditBatches = ({ componentname }) => {
           "Batch Name": batch.batch.name,
           Branch: batch.batch.branch.name,
           id: batch.id,
-        }))
+        })),
       );
     }
   };

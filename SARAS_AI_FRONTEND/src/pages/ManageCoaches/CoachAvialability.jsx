@@ -19,7 +19,7 @@ const headers = [
 const CoachAvialablity = () => {
   const dispatch = useDispatch();
   const { todaysAvailableCoach } = useSelector(
-    (state) => state.coachAvailability
+    (state) => state.coachAvailability,
   );
   const [coachAvailabilityData, setCoachAvailabilityData] = useState([]);
 

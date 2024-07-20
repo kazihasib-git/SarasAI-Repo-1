@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { OnOffSwitch } from "../../components/Switch";
 import editIcon from "../../assets/editIcon.png";
 import DynamicTable from "../../components/CommonComponent/DynamicTable";
-import {  showCoachMapping } from "../../redux/features/CoachModule/coachSlice";
+import { showCoachMapping } from "../../redux/features/CoachModule/coachSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 const headers = [
@@ -57,9 +57,8 @@ const CoachMapping = () => {
   };
 
   const filteredData = caMappingData.filter((item) =>
-    item.name.toLowerCase().includes(searchQuery.toLowerCase())
+    item.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
-
 
   return (
     <>
@@ -78,7 +77,7 @@ const CoachMapping = () => {
         </p>
         <Box display={"flex"}>
           <Box
-          marginTop={1}
+            marginTop={1}
             display={"flex"}
             backgroundColor="#FFF"
             borderRadius={"30px"}
@@ -86,7 +85,7 @@ const CoachMapping = () => {
             height={"5vh"}
             marginRight={"10px"}
           >
-           <InputBase
+            <InputBase
               sx={{ ml: 2, flex: 1 }}
               placeholder="Search here ..."
               value={searchQuery}

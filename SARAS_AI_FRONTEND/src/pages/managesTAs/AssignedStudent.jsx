@@ -24,7 +24,7 @@ const CustomButton = styled(Button)(({ theme, active }) => ({
   backgroundColor: active ? "#F56D3B" : "#FFF",
   padding: "8px 16px", // Add padding for horizontal and vertical spacing
   margin: "0 8px",
-  textTransform:'none',
+  textTransform: "none",
   "&:hover": {
     backgroundColor: "#F56D3B",
     color: "#fff",
@@ -90,7 +90,7 @@ const DynamicTable = ({
     initialData.map((item) => ({
       ...item,
       is_active: item.is_active !== undefined ? item.is_active : 0,
-    }))
+    })),
   );
 
   useEffect(() => {
@@ -98,7 +98,7 @@ const DynamicTable = ({
       initialData.map((item) => ({
         ...item,
         is_active: item.is_active !== undefined ? item.is_active : 0,
-      }))
+      })),
     );
   }, [initialData]);
 
@@ -107,7 +107,7 @@ const DynamicTable = ({
   const totalPages = Math.ceil(data.length / itemsPerPage);
   const currentData = data.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
   const navigate = useNavigate();
 
@@ -120,7 +120,7 @@ const DynamicTable = ({
     const updatedData = data.map((item) =>
       item.id === id
         ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
-        : item
+        : item,
     );
     setData(updatedData);
 
@@ -154,7 +154,7 @@ const DynamicTable = ({
             style={{
               fontSize: "44px",
               // marginLeft: "16px",
-              fontFamily:"ExtraLight"
+              fontFamily: "ExtraLight",
             }}
           >
             {title}
@@ -333,7 +333,7 @@ const AssignedStudent = () => {
         const isActive = item.is_active === 1;
 
         return {
-          id: item.id, 
+          id: item.id,
           // item.student ? item.student.id : null,
           student_name: studentName,
           Acedimic_term: academicTerm,
@@ -346,21 +346,19 @@ const AssignedStudent = () => {
     }
   }, [assignedStudents]);
 
-  
-
   return (
     <>
-    <Box m={"10px"}>
-      <Header />
-      <Sidebar />
-      <DynamicTable
-        headers={headers}
-        initialData={taAssignStudentData}
-        title="Assigned Student"
-        actionButtons={actionButtons}
-        ta_id={id}
-        dispatch={dispatch}
-      />
+      <Box m={"10px"}>
+        <Header />
+        <Sidebar />
+        <DynamicTable
+          headers={headers}
+          initialData={taAssignStudentData}
+          title="Assigned Student"
+          actionButtons={actionButtons}
+          ta_id={id}
+          dispatch={dispatch}
+        />
       </Box>
     </>
   );

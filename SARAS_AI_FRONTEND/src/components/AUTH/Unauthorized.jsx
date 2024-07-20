@@ -1,6 +1,6 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom'
-import './Unauthorized.css'; // Import the CSS file
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import "./Unauthorized.css"; // Import the CSS file
 
 const Unauthorized = () => {
   const navigate = useNavigate();
@@ -13,7 +13,7 @@ const Unauthorized = () => {
         <button onClick={goBack}>Go Back</button>
       </section>
     </div>
-  )
-}
+  );
+};
 
-export default Unauthorized
+export default Unauthorized;

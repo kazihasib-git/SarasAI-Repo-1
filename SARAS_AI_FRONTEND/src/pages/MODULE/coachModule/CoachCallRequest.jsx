@@ -1,9 +1,15 @@
-
-import React, { useState } from 'react';
-import { Typography, Box, Button, Card, CardContent,Grid } from '@mui/material';
+import React, { useState } from "react";
+import {
+  Typography,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Grid,
+} from "@mui/material";
 import CoachMenu from "./CoachMenu";
-import DenyDialog from './DenyDialog';
-import CreateMeetingDialog from './CreateMeetingDialog';
+import DenyDialog from "./DenyDialog";
+import CreateMeetingDialog from "./CreateMeetingDialog";
 
 const CoachCallRequest = () => {
   const [open, setOpen] = useState(false);
@@ -11,25 +17,28 @@ const CoachCallRequest = () => {
   const [callRequests, setCallRequests] = useState([
     {
       id: 1,
-      title: 'Meeting Request By Aman',
-      for: '10 July, 2014 | 12:30 PM',
-      requestedBy: 'Aman',
-      messages: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.'
+      title: "Meeting Request By Aman",
+      for: "10 July, 2014 | 12:30 PM",
+      requestedBy: "Aman",
+      messages:
+        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
     },
     {
       id: 2,
-      title: 'Meeting Request By Aman',
-      for: '10 July, 2014 | 12:30 PM',
-      requestedBy: 'Aman',
-      messages: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.'
+      title: "Meeting Request By Aman",
+      for: "10 July, 2014 | 12:30 PM",
+      requestedBy: "Aman",
+      messages:
+        "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
     },
     {
       id: 3,
-      title: 'Meeting Request By Aman',
-      for: '10 July, 2014 | 12:30 PM',
-      requestedBy: 'Aman',
-      messages: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.'
-    }
+      title: "Meeting Request By Aman",
+      for: "10 July, 2014 | 12:30 PM",
+      requestedBy: "Aman",
+      messages:
+        "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+    },
   ]);
   const [showFullMessages, setShowFullMessages] = useState({});
 
@@ -59,15 +68,17 @@ const CoachCallRequest = () => {
   };
 
   const handleApprove = (id) => {
-    setCallRequests(callRequests.map(request => 
-      request.id === id ? { ...request, approved: true } : request
-    ));
+    setCallRequests(
+      callRequests.map((request) =>
+        request.id === id ? { ...request, approved: true } : request,
+      ),
+    );
   };
 
   const toggleShowFullMessage = (id) => {
-    setShowFullMessages(prevState => ({
+    setShowFullMessages((prevState) => ({
       ...prevState,
-      [id]: !prevState[id]
+      [id]: !prevState[id],
     }));
   };
 
@@ -77,16 +88,34 @@ const CoachCallRequest = () => {
   };
 
   return (
-    <div style={{ }}>
+    <div style={{}}>
       <CoachMenu />
 
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-        <Typography variant="h4" gutterBottom sx={{ width: "274px", height: "40px", justifyContent: "center", fontFamily: "ExtraLight" }}>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={2}
+      >
+        <Typography
+          variant="h4"
+          gutterBottom
+          sx={{
+            width: "274px",
+            height: "40px",
+            justifyContent: "center",
+            fontFamily: "ExtraLight",
+          }}
+        >
           Call Request
         </Typography>
 
         <div className="inputBtnContainer">
-          <button className="buttonContainer" onClick={handleDialogOpen} style={{ backgroundColor: '#F56D3B', color: 'white' }}>
+          <button
+            className="buttonContainer"
+            onClick={handleDialogOpen}
+            style={{ backgroundColor: "#F56D3B", color: "white" }}
+          >
             <i className="bi bi-plus-circle"></i>
             <span>Create New Meeting</span>
           </button>
@@ -102,7 +131,8 @@ const CoachCallRequest = () => {
                   {callRequest.title}
                 </Typography>
                 <Typography gutterBottom sx={{ ml: 2 }}>
-                  For: <span style={{ color: "#5F6383" }}>{callRequest.for}</span>
+                  For:{" "}
+                  <span style={{ color: "#5F6383" }}>{callRequest.for}</span>
                 </Typography>
                 <Typography gutterBottom sx={{ ml: 2 }}>
                   Requested By:{" "}
@@ -156,7 +186,7 @@ const CoachCallRequest = () => {
                       Approve
                     </Button>
                     <Button
-                      onClick={ handleClickOpen} // Open the Deny dialog
+                      onClick={handleClickOpen} // Open the Deny dialog
                       sx={{
                         height: 43,
                         width: 112,
@@ -177,11 +207,19 @@ const CoachCallRequest = () => {
         ))}
       </Grid>
 
-      <DenyDialog open={open} handleClose={handleClose} handleDenySubmit={handleDenySubmit} />
+      <DenyDialog
+        open={open}
+        handleClose={handleClose}
+        handleDenySubmit={handleDenySubmit}
+      />
 
-      <CreateMeetingDialog open={dialogOpen} onClose={handleDialogClose} onSubmit={handleDialogSubmit} />
+      <CreateMeetingDialog
+        open={dialogOpen}
+        onClose={handleDialogClose}
+        onSubmit={handleDialogSubmit}
+      />
     </div>
   );
-}
+};
 
 export default CoachCallRequest;

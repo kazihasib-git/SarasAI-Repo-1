@@ -18,14 +18,11 @@ import EditStudents from "../../components/availability/EditStudents";
 
 const TaScheduling = () => {
   const dispatch = useDispatch();
-  const { assignStudentOpen, taMapping, assignBatchOpen, loading } = useSelector(
-    (state) => state.taModule
-  );
+  const { assignStudentOpen, taMapping, assignBatchOpen, loading } =
+    useSelector((state) => state.taModule);
   const { scheduleSessionOpen, openEditBatch, openEditStudent } = useSelector(
-    (state) => state.taScheduling
+    (state) => state.taScheduling,
   );
-
-
 
   const [taScheduleData, setTaScheduleData] = useState([]);
 
@@ -77,7 +74,7 @@ const TaScheduling = () => {
             fontSize: "44px",
             justifyContent: "center",
             marginBottom: "20px",
-            fontFamily:"ExtraLight"
+            fontFamily: "ExtraLight",
           }}
         >
           <p style={{ fontSize: "44px", justifyContent: "center" }}>
@@ -96,7 +93,6 @@ const TaScheduling = () => {
       {/* {assignBatchOpen && <AssignBatches componentname={"ADDEDITTA"} />} */}
       {openEditBatch && <EditBatches componentname={"TASCHEDULE"} />}
       {openEditStudent && <EditStudents componentname={"TASCHEDULE"} />}
-   
     </>
   );
 };

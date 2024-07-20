@@ -2,13 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import {
-  Box,
-  Button,
-  Typography,
-  Grid,
-  Divider,
-} from "@mui/material";
+import { Box, Button, Typography, Grid, Divider } from "@mui/material";
 import CustomFormControl from "../../../components/CustomFields/CustomFromControl";
 import CustomTextField from "../../../components/CustomFields/CustomTextField";
 import CustomDateField from "../../../components/CustomFields/CustomDateField";
@@ -59,16 +53,16 @@ const AddEditTeachingAssistant = () => {
 
   return (
     <Box sx={{ p: 2 }}>
-          <p
-          style={{
-            fontSize: "44px",
-            justifyContent: "center",
-            marginBottom: "20px",
-            fontFamily:"ExtraLight"
-          }}
-        >
-         My  Profile
-        </p>   
+      <p
+        style={{
+          fontSize: "44px",
+          justifyContent: "center",
+          marginBottom: "20px",
+          fontFamily: "ExtraLight",
+        }}
+      >
+        My Profile
+      </p>
       <Box
         sx={{
           bgcolor: "white",
@@ -78,7 +72,6 @@ const AddEditTeachingAssistant = () => {
           mx: "auto",
         }}
       >
-       
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <Box display="flex " alignItems="center" mb={3}>
             <AvatarInput
@@ -303,7 +296,6 @@ const AddEditTeachingAssistant = () => {
               />
             </Grid>
 
-           
             <Grid item xs={12}>
               <CustomTextField
                 label="About Me"
@@ -321,7 +313,7 @@ const AddEditTeachingAssistant = () => {
                 errors={errors}
               />
             </Grid>
-          </Grid>  
+          </Grid>
           <Button
             type="submit"
             variant="contained"
@@ -346,4 +338,3 @@ const AddEditTeachingAssistant = () => {
 };
 
 export default AddEditTeachingAssistant;
-

@@ -14,15 +14,18 @@ import AssignBatches from "../../components/adminModule/AssignBatches";
 import { showCoachMapping } from "../../redux/features/CoachModule/coachSlice";
 import EditBatches from "../../components/availability/EditBatches";
 import EditStudents from "../../components/availability/EditStudents";
-import { openCoachEditBatch, openCoachEditStudent } from "../../redux/features/CoachModule/coachSchedule";
+import {
+  openCoachEditBatch,
+  openCoachEditStudent,
+} from "../../redux/features/CoachModule/coachSchedule";
 
 const CoachSheduling = () => {
   const dispatch = useDispatch();
   const { assignCoachStudentOpen, assignCoachBatchOpen, loading } = useSelector(
-    (state) => state.coachModule
+    (state) => state.coachModule,
   );
   const { scheduleCoachSessionOpen } = useSelector(
-    (state) => state.coachScheduling
+    (state) => state.coachScheduling,
   );
   const { coachMapping } = useSelector((state) => state.coachModule);
   const [coachScheduleData, setCoachScheduleData] = useState([]);
@@ -55,14 +58,12 @@ const CoachSheduling = () => {
   };
 
   const filteredData = coachScheduleData.filter((item) =>
-    item.name.toLowerCase().includes(searchQuery.toLowerCase())
+    item.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const actionButtons = [
     {
       type: "calendar",
-     
-      
     },
   ];
 

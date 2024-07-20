@@ -1,21 +1,29 @@
-import React, { useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, MenuItem, Box, IconButton } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import CustomTextField from '../../../components/CustomFields/CustomTextField';
-import CustomDateField from '../../../components/CustomFields/CustomDateField';
+import React, { useState } from "react";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField,
+  MenuItem,
+  Box,
+  IconButton,
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import CustomTextField from "../../../components/CustomFields/CustomTextField";
+import CustomDateField from "../../../components/CustomFields/CustomDateField";
 //import CustomFormControl from '../../../components/CustomFields/CustomFromControl';
-
-
 
 //const inputPropsStyle = multiline ? { borderRadius: '25px', padding: '25px 30px 18px 30px' } : { height: '60px', borderRadius: '50px', padding: '18px 2px' };
 
 const CreateTaMeeting = ({ open, onClose, onSubmit }) => {
-  const [meeting, setMeeting] = useState('');
-  const [duration, setDuration] = useState('');
-  const [participants, setParticipants] = useState('');
-  const [date, setDate] = useState('');
-  const [time, setTime] = useState('');
-  const [message, setMessage] = useState('');
+  const [meeting, setMeeting] = useState("");
+  const [duration, setDuration] = useState("");
+  const [participants, setParticipants] = useState("");
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
+  const [message, setMessage] = useState("");
 
   const handleSubmit = () => {
     onSubmit({ meeting, duration, participants, date, time, message });
@@ -30,10 +38,10 @@ const CreateTaMeeting = ({ open, onClose, onSubmit }) => {
           aria-label="close"
           onClick={onClose}
           sx={{
-            position: 'absolute',
+            position: "absolute",
             right: 8,
             top: 8,
-            color: '#F56D3B',
+            color: "#F56D3B",
           }}
         >
           <CloseIcon />
@@ -47,8 +55,6 @@ const CreateTaMeeting = ({ open, onClose, onSubmit }) => {
             value={meeting}
             onChange={(e) => setMeeting(e.target.value)}
             fullWidth
-          
-           
           >
             <MenuItem value="Meeting 1">Meeting 1</MenuItem>
             <MenuItem value="Meeting 2">Meeting 2</MenuItem>
@@ -80,7 +86,6 @@ const CreateTaMeeting = ({ open, onClose, onSubmit }) => {
         <Box mb={2}>
           <CustomDateField
             label="Date"
-            
             InputLabelProps={{ shrink: true }}
             value={date}
             onChange={(e) => setDate(e.target.value)}
@@ -108,7 +113,12 @@ const CreateTaMeeting = ({ open, onClose, onSubmit }) => {
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleSubmit} style={{ backgroundColor: '#F56D3B', color: 'white' }}>Submit</Button>
+        <Button
+          onClick={handleSubmit}
+          style={{ backgroundColor: "#F56D3B", color: "white" }}
+        >
+          Submit
+        </Button>
       </DialogActions>
     </Dialog>
   );

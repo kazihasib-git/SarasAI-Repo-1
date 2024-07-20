@@ -3,10 +3,7 @@ import Header from "../../components/Header/Header";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  
-  getCoachAssignStudents,
-} from "../../redux/features/CoachModule/coachSlice";
+import { getCoachAssignStudents } from "../../redux/features/CoachModule/coachSlice";
 import AdminDataTable from "../../components/CommonComponent/AdminDataTable";
 const headers = [
   "Sr. No.",
@@ -30,7 +27,7 @@ const AssignCoachStudent = () => {
   console.log("ID : ", id);
   const dispatch = useDispatch();
   const { assignedStudents, loading } = useSelector(
-    (state) => state.coachModule
+    (state) => state.coachModule,
   );
   const [CoachAssignBatchesData, setCoachAssignBatchesData] = useState([]);
   console.log("Assigned Students", assignedStudents);

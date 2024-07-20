@@ -11,70 +11,67 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 // import DialogContent from '@mui/material/DialogContent';
-import { styled } from '@mui/material/styles';
+import { styled } from "@mui/material/styles";
 
 const CustomDialogContent = styled(DialogContent)({
   marginTop: 2,
-  paddingTop: '0 !important', // Override padding-top
+  paddingTop: "0 !important", // Override padding-top
 });
 const ReusableDialog = ({ open, handleClose, title, content, actions }) => (
   <Dialog
-  open={open}
-  onClose={handleClose}
-  maxWidth="md" 
-  fullWidth
-  sx={{
-    padding: '50px 0px 50px 0px',
-    borderRadius: '10px',
-    border: '2px solid #F56D38',
-    color: '#FFFFFF',
-  }}
->
-  <IconButton
-    onClick={handleClose}
+    open={open}
+    onClose={handleClose}
+    maxWidth="md"
+    fullWidth
     sx={{
-      color: '#F56D3B',
-      position: 'absolute',
-      top: 10,
-      right: 10,
+      padding: "50px 0px 50px 0px",
+      borderRadius: "10px",
+      border: "2px solid #F56D38",
+      color: "#FFFFFF",
     }}
   >
-    <CloseIcon />
-  </IconButton>
-
-  <DialogTitle
-    id="alert-dialog-title"
-    sx={{
-      m: 0,
-      paddingTop: "16px",
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-    }}
-  >
-    <Typography
-      variant="h6"
+    <IconButton
+      onClick={handleClose}
       sx={{
-        fontWeight: '600',
-        fontSize: '25px',
-        color: '#1A1E3D',
+        color: "#F56D3B",
+        position: "absolute",
+        top: 10,
+        right: 10,
       }}
     >
-      {title}
-    </Typography>
-  </DialogTitle>
+      <CloseIcon />
+    </IconButton>
 
-  <CustomDialogContent>
-    {content}
-  </CustomDialogContent>
+    <DialogTitle
+      id="alert-dialog-title"
+      sx={{
+        m: 0,
+        paddingTop: "16px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Typography
+        variant="h6"
+        sx={{
+          fontWeight: "600",
+          fontSize: "25px",
+          color: "#1A1E3D",
+        }}
+      >
+        {title}
+      </Typography>
+    </DialogTitle>
 
-  <DialogActions sx={{ p: 2, justifyContent: 'center' }}>
-    <Box display="flex" justifyContent="center" width="100%" gap={2}>
-      {actions}
-    </Box>
-  </DialogActions>
-</Dialog>
+    <CustomDialogContent>{content}</CustomDialogContent>
 
+    <DialogActions sx={{ p: 2, justifyContent: "center" }}>
+      <Box display="flex" justifyContent="center" width="100%" gap={2}>
+        {actions}
+      </Box>
+    </DialogActions>
+  </Dialog>
 );
 
 export default ReusableDialog;

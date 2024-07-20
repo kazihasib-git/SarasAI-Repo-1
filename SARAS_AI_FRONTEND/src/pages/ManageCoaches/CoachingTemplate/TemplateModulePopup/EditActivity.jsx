@@ -217,7 +217,7 @@ const AddEditActivity = () => {
             activity_id: editActivityData.id,
             module_id: editActivityData.module_id,
           },
-        })
+        }),
       );
     } else {
       // Create new activity

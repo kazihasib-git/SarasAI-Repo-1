@@ -7,7 +7,7 @@ export const createCoach = createAsyncThunk(
   async (data) => {
     const response = await axios.post(`${baseUrl}/admin/manage_coaches`, data);
     return response.data;
-  }
+  },
 );
 
 export const getCoach = createAsyncThunk("coachModule/getCoach", async () => {
@@ -21,20 +21,20 @@ export const updateCoach = createAsyncThunk(
     try {
       const response = await axios.put(
         `${baseUrl}/admin/manage_coaches/${id}`,
-        data
+        data,
       );
       console.log("API Response: ", response.data);
       return response.data;
     } catch (error) {
       console.error(
         "API Error: ",
-        error.response ? error.response.data : error.message
+        error.response ? error.response.data : error.message,
       );
       return rejectWithValue(
-        error.response ? error.response.data : error.message
+        error.response ? error.response.data : error.message,
       );
     }
-  }
+  },
 );
 
 export const deleteCoach = createAsyncThunk(
@@ -42,17 +42,17 @@ export const deleteCoach = createAsyncThunk(
   async (id) => {
     await axios.delete(`${baseUrl}/admin/manage_coaches/${id}`);
     return id;
-  }
+  },
 );
 
 export const getCoachStudentBatchMapping = createAsyncThunk(
   "coachModule/getCoachStudentBatchMapping",
   async () => {
     const response = await axios.get(
-      `${baseUrl}/admin/student-batch-mapping/getAllStudentWithBatches`
+      `${baseUrl}/admin/student-batch-mapping/getAllStudentWithBatches`,
     );
     return response.data;
-  }
+  },
 );
 
 export const getCoachBatchMapping = createAsyncThunk(
@@ -61,35 +61,35 @@ export const getCoachBatchMapping = createAsyncThunk(
     const response = await axios.get(`${baseUrl}/admin/batches`);
     console.log("Response : ", response);
     return response.data;
-  }
+  },
 );
 
 export const showCoachMapping = createAsyncThunk(
   "coachModule/showCoachMapping",
   async () => {
     const response = await axios.get(
-      `${baseUrl}/admin/CoachMapping/CoachswithActiveStudentnBatches`
+      `${baseUrl}/admin/CoachMapping/CoachswithActiveStudentnBatches`,
     );
     return response.data;
-  }
+  },
 );
 export const getCoachAssignStudents = createAsyncThunk(
   "coachModule/getCoachAssignStudents",
   async (id) => {
     const response = await axios.get(
-      `${baseUrl}/admin/CoachMapping/${id}/AssignStudents`
+      `${baseUrl}/admin/CoachMapping/${id}/AssignStudents`,
     );
     return response.data;
-  }
+  },
 );
 export const getCoachAssignBatches = createAsyncThunk(
   "coachModule/getCoachAssignBatches",
   async (id) => {
     const response = await axios.get(
-      `${baseUrl}/admin/CoachMapping/${id}/AssignBatches`
+      `${baseUrl}/admin/CoachMapping/${id}/AssignBatches`,
     );
     return response.data;
-  }
+  },
 );
 
 export const postCoachAssignStudents = createAsyncThunk(
@@ -97,10 +97,10 @@ export const postCoachAssignStudents = createAsyncThunk(
   async ({ id, data }) => {
     const response = await axios.post(
       `${baseUrl}/admin/CoachMapping/AssignStudents`,
-      data
+      data,
     );
     return response.data;
-  }
+  },
 );
 
 export const postCoachAssignBatches = createAsyncThunk(
@@ -108,10 +108,10 @@ export const postCoachAssignBatches = createAsyncThunk(
   async ({ id, data }) => {
     const response = await axios.post(
       `${baseUrl}/admin/CoachMapping/AssignBatches`,
-      data
+      data,
     );
     return response.data;
-  }
+  },
 );
 
 export const toggleCoachAssignStudentStatus = createAsyncThunk(
@@ -119,10 +119,10 @@ export const toggleCoachAssignStudentStatus = createAsyncThunk(
   async ({ id, studentId }) => {
     const response = await axios.put(
       `${baseUrl}/admin/CoachMapping/${id}/ActiveDeactiveAssignStudent`,
-      { student_id: studentId }
+      { student_id: studentId },
     );
     return response.data;
-  }
+  },
 );
 
 export const toggleCoachAssignBatchStatus = createAsyncThunk(
@@ -130,10 +130,10 @@ export const toggleCoachAssignBatchStatus = createAsyncThunk(
   async ({ id, batchId }) => {
     const response = await axios.put(
       `${baseUrl}/admin/CoachMapping/${id}/ActiveDeactiveAssignBatch`,
-      { batch_id: batchId }
+      { batch_id: batchId },
     );
     return response.data;
-  }
+  },
 );
 
 export const deleteCoachAssignedStudent = createAsyncThunk(
@@ -141,10 +141,10 @@ export const deleteCoachAssignedStudent = createAsyncThunk(
   async (id) => {
     console.log("ID to delete STUDENT : ", id);
     const response = await axios.delete(
-      `${baseUrl}/admin/CoachMapping/${id.id}/deleteStudent`
+      `${baseUrl}/admin/CoachMapping/${id.id}/deleteStudent`,
     );
     return response.data;
-  }
+  },
 );
 
 export const deleteCoachAssignedBatch = createAsyncThunk(
@@ -152,10 +152,10 @@ export const deleteCoachAssignedBatch = createAsyncThunk(
   async (id) => {
     // console.log("ID to delete BATCH : ", id)
     const response = await axios.delete(
-      `${baseUrl}/admin/CoachMapping/${id.id}/deleteBatch`
+      `${baseUrl}/admin/CoachMapping/${id.id}/deleteBatch`,
     );
     return response.data;
-  }
+  },
 );
 
 const initialState = {
@@ -258,7 +258,7 @@ export const coachSlice = createSlice({
     builder.addCase(updateCoach.fulfilled, (state, action) => {
       state.loading = false;
       const index = state.coaches.findIndex(
-        (coach) => coach.id === action.payload.id
+        (coach) => coach.id === action.payload.id,
       );
       if (index !== -1) {
         state.coaches[index] = action.payload;
@@ -276,7 +276,7 @@ export const coachSlice = createSlice({
     builder.addCase(deleteCoach.fulfilled, (state, action) => {
       state.loading = false;
       state.coaches = state.coaches.filter(
-        (coach) => coach.id !== action.payload
+        (coach) => coach.id !== action.payload,
       );
     });
     builder.addCase(deleteCoach.rejected, (state, action) => {
@@ -416,17 +416,17 @@ export const coachSlice = createSlice({
         const updatedStudents = state.assignedStudents.map((student) =>
           student.id === action.payload.id
             ? { ...student, is_active: action.payload.is_active }
-            : student
+            : student,
         );
         state.assignedStudents = updatedStudents;
-      }
+      },
     );
     builder.addCase(
       toggleCoachAssignStudentStatus.rejected,
       (state, action) => {
         state.loading = false;
         state.error = action.payload || action.error.message;
-      }
+      },
     );
 
     // Toggle Assign Batch Status
@@ -438,7 +438,7 @@ export const coachSlice = createSlice({
       const updatedBatches = state.assignedBatches.map((batch) =>
         batch.id === action.payload.id
           ? { ...batch, is_active: action.payload.is_active }
-          : batch
+          : batch,
       );
       state.assignedBatches = updatedBatches;
     });

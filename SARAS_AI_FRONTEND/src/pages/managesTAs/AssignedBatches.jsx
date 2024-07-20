@@ -24,7 +24,7 @@ const CustomButton = styled(Button)(({ theme, active }) => ({
   backgroundColor: active ? "#F56D3B" : "#FFF",
   padding: "8px 16px", // Add padding for horizontal and vertical spacing
   margin: "0 8px",
-  textTransform:"none",
+  textTransform: "none",
   "&:hover": {
     backgroundColor: "#F56D3B",
     color: "#fff",
@@ -89,7 +89,7 @@ const DynamicTable = ({
     initialData.map((item) => ({
       ...item,
       is_active: item.is_active !== undefined ? item.is_active : 0,
-    }))
+    })),
   );
 
   useEffect(() => {
@@ -97,7 +97,7 @@ const DynamicTable = ({
       initialData.map((item) => ({
         ...item,
         is_active: item.is_active !== undefined ? item.is_active : 0,
-      }))
+      })),
     );
   }, [initialData]);
 
@@ -106,7 +106,7 @@ const DynamicTable = ({
   const totalPages = Math.ceil(data.length / itemsPerPage);
   const currentData = data.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
   const navigate = useNavigate();
 
@@ -119,7 +119,7 @@ const DynamicTable = ({
     const updatedData = data.map((item) =>
       item.id === id
         ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
-        : item
+        : item,
     );
     setData(updatedData);
 
@@ -134,8 +134,8 @@ const DynamicTable = ({
         data.map((item) =>
           item.id === id
             ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
-            : item
-        )
+            : item,
+        ),
       );
     }
   };
@@ -168,7 +168,7 @@ const DynamicTable = ({
             style={{
               fontSize: "44px",
               // marginLeft: "16px",
-              fontFamily:"ExtraLight"
+              fontFamily: "ExtraLight",
             }}
           >
             {title}
@@ -329,12 +329,12 @@ const AssignBatches = () => {
 
   useEffect(() => {
     if (assignedBatches && assignedBatches.length > 0) {
-      console.log("assigned batches", assignedBatches)
+      console.log("assigned batches", assignedBatches);
       const transformData = assignedBatches.map((item, index) => ({
         id: item.id,
         //ta_name: item.ta.name,
         batch_name: item.batch.name,
-        branch : item.batch.branch.name,
+        branch: item.batch.branch.name,
         is_active: item.is_active,
       }));
 
@@ -344,21 +344,20 @@ const AssignBatches = () => {
 
   return (
     <>
-    <Box m="10px">
-      <Header />
-      <Sidebar />
-      <DynamicTable
-        headers={headers}
-        initialData={taAssignBatchesData}
-        title="Assigned Batches"
-        actionButtons={actionButtons}
-        ta_id={id}
-        dispatch={dispatch}
-      />
+      <Box m="10px">
+        <Header />
+        <Sidebar />
+        <DynamicTable
+          headers={headers}
+          initialData={taAssignBatchesData}
+          title="Assigned Batches"
+          actionButtons={actionButtons}
+          ta_id={id}
+          dispatch={dispatch}
+        />
       </Box>
     </>
   );
 };
 
 export default AssignBatches;
-  

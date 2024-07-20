@@ -113,7 +113,7 @@ function AddEditCoach({ data }) {
   const base64ToBlobUrl = (base64Data) => {
     const byteCharacters = atob(base64Data);
     const byteNumbers = Array.from(byteCharacters, (char) =>
-      char.charCodeAt(0)
+      char.charCodeAt(0),
     );
     const byteArray = new Uint8Array(byteNumbers);
     const blob = new Blob([byteArray], { type: "image/jpeg" });
@@ -137,14 +137,14 @@ function AddEditCoach({ data }) {
     if (selectedImage) {
       const base64Data = selectedImage.replace(
         /^data:image\/(png|jpeg|jpg);base64,/,
-        ""
+        "",
       );
       updatedFormData.profile_picture = base64Data;
     }
     try {
       if (data) {
         const updateRes = await dispatch(
-          updateCoach({ id: data.id, data: updatedFormData })
+          updateCoach({ id: data.id, data: updatedFormData }),
         ).unwrap();
         dispatch(openCoachSuccessPopup());
         dispatch(accessCoachName(updateRes));
@@ -315,8 +315,7 @@ function AddEditCoach({ data }) {
                     },
                     pattern: {
                       value: /^[A-Za-z\s]+$/,
-                      message:
-                        "Name must contain only letters and spaces",
+                      message: "Name must contain only letters and spaces",
                     },
                   }}
                   errors={errors}
@@ -436,30 +435,30 @@ function AddEditCoach({ data }) {
                 />
               </Grid> */}
               <Grid item xs={12} sm={6} md={4}>
-              <CustomTextField
-                label="PIN Code"
-                name="pincode"
-                type="number"
-                placeholder="Enter PIN Code"
-                register={register}
-                validation={{
-                  required: "PIN Code is required",
-                  pattern: {
-                    value: /^[a-zA-Z0-9-]*$/,
-                    message: "PIN Code must be alphanumeric",
-                  },
-                  minLength: {
-                    value: 3,
-                    message: "PIN Code must be at least 3 characters long",
-                  },
-                  maxLength: {
-                    value: 10,
-                    message: "PIN Code cannot exceed 10 characters",
-                  },
-                }}
-                errors={errors}
-              />
-            </Grid>
+                <CustomTextField
+                  label="PIN Code"
+                  name="pincode"
+                  type="number"
+                  placeholder="Enter PIN Code"
+                  register={register}
+                  validation={{
+                    required: "PIN Code is required",
+                    pattern: {
+                      value: /^[a-zA-Z0-9-]*$/,
+                      message: "PIN Code must be alphanumeric",
+                    },
+                    minLength: {
+                      value: 3,
+                      message: "PIN Code must be at least 3 characters long",
+                    },
+                    maxLength: {
+                      value: 10,
+                      message: "PIN Code cannot exceed 10 characters",
+                    },
+                  }}
+                  errors={errors}
+                />
+              </Grid>
               <Grid item xs={12} sm={6} md={4}>
                 <Controller
                   name="time_zone"
@@ -496,25 +495,25 @@ function AddEditCoach({ data }) {
                   )}
                 />
               </Grid>
-             
+
               <Grid item xs={12} sm={6} md={4}>
-              <Controller
-                control={control}
-                name="date_of_birth"
-                render={({ field }) => (
-                  <CustomDateField
-                    label="Date of Birth"
-                    name="date_of_birth"
-                    value={dateOfBirth}
-                    onChange={(date) => handleDateChange(date, field)}
-                    error={!!errors.date_of_birth}
-                    helperText={errors.date_of_birth?.message}
-                    sx={{ width: "100%" }}
-                  />
-                )}
-                rules={{ required: "Date of Birth is required" }}
-              />
-            </Grid>
+                <Controller
+                  control={control}
+                  name="date_of_birth"
+                  render={({ field }) => (
+                    <CustomDateField
+                      label="Date of Birth"
+                      name="date_of_birth"
+                      value={dateOfBirth}
+                      onChange={(date) => handleDateChange(date, field)}
+                      error={!!errors.date_of_birth}
+                      helperText={errors.date_of_birth?.message}
+                      sx={{ width: "100%" }}
+                    />
+                  )}
+                  rules={{ required: "Date of Birth is required" }}
+                />
+              </Grid>
               <Grid item xs={12} sm={6} md={4}>
                 <Controller
                   name="highest_qualification"
@@ -552,44 +551,51 @@ function AddEditCoach({ data }) {
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={4}>
-                    <Controller
-                        name="phone"
-                        control={control}
-                        rules={{ required: "Phone number is required" }}
-                        render={({ field }) => (
-                            <PhoneInput
-                                {...field}
-                                country={"in"}
-                                // containerStyle={{ width: "100%" }}
-                                
-                                inputStyle={{
-                                  width: "100%",
-                                  borderRadius: "50px",
-                                  borderColor: errors.phone ? "red" : "#D0D0EC",
-                                  outline: "none",
-                                  height: "60px",
-                                  // boxShadow: errors.phone ? "0 0 0 2px red" : "none",
-                              }}
-                              buttonStyle={{
-                                borderRadius: "50px 0 0 50px",
-                                borderColor: errors.phone ? "red" : "#D0D0EC",
-                                height: "60px",
-                                outline: "none",
-                                paddingLeft: "10px",
-                                // boxShadow: errors.phone ? "0 0 0 2px red" : "none",
-                            }}
-                            onFocus={(e) => e.target.style.borderColor = errors.phone ? "red" : "#D0D0EC"}
-                                onChange={field.onChange}
-                                
-                            />
-                        )}
+                <Controller
+                  name="phone"
+                  control={control}
+                  rules={{ required: "Phone number is required" }}
+                  render={({ field }) => (
+                    <PhoneInput
+                      {...field}
+                      country={"in"}
+                      // containerStyle={{ width: "100%" }}
+
+                      inputStyle={{
+                        width: "100%",
+                        borderRadius: "50px",
+                        borderColor: errors.phone ? "red" : "#D0D0EC",
+                        outline: "none",
+                        height: "60px",
+                        // boxShadow: errors.phone ? "0 0 0 2px red" : "none",
+                      }}
+                      buttonStyle={{
+                        borderRadius: "50px 0 0 50px",
+                        borderColor: errors.phone ? "red" : "#D0D0EC",
+                        height: "60px",
+                        outline: "none",
+                        paddingLeft: "10px",
+                        // boxShadow: errors.phone ? "0 0 0 2px red" : "none",
+                      }}
+                      onFocus={(e) =>
+                        (e.target.style.borderColor = errors.phone
+                          ? "red"
+                          : "#D0D0EC")
+                      }
+                      onChange={field.onChange}
                     />
-                    {errors.phone && (
-                        <Typography variant="body2" color="error" style={{ marginTop: '8px' }}>
-                            {errors.phone.message}
-                        </Typography>
-                    )}
-                </Grid>
+                  )}
+                />
+                {errors.phone && (
+                  <Typography
+                    variant="body2"
+                    color="error"
+                    style={{ marginTop: "8px" }}
+                  >
+                    {errors.phone.message}
+                  </Typography>
+                )}
+              </Grid>
               <Grid item xs={12}>
                 <CustomTextField
                   label="About Me"
@@ -621,7 +627,7 @@ function AddEditCoach({ data }) {
               Submit
             </Button>
           </form>
-        
+
           {coachSuccessPopup && <SubmitPopup componentname={"ADDITCOACH"} />}
           {assignCoachStudentOpen && (
             <AssignStudents componentname={"ADDITCOACH"} />

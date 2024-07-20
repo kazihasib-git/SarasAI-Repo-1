@@ -50,7 +50,6 @@ const CustomButton = ({
     </Button>
   );
 };
-
 const AddActivity = () => {
   const dispatch = useDispatch();
   const [activityName, setActivityName] = useState("");
@@ -58,9 +57,13 @@ const AddActivity = () => {
   const [dueDate, setDueDate] = useState("");
   const [points, setPoints] = useState("");
   const [afterDueDate, setAfterDueDate] = useState("");
-  const { openActivityPopUp, selectedModule , coachTemplates, moduleID, selectedCoachTemplate } = useSelector(
-    (state) => state.coachTemplate
-  );
+  const {
+    openActivityPopUp,
+    selectedModule,
+    coachTemplates,
+    moduleID,
+    selectedCoachTemplate,
+  } = useSelector((state) => state.coachTemplate);
 
   const handleAfterDueDateChange = (event) => {
     setAfterDueDate(event.target.value);
@@ -181,7 +184,7 @@ const AddActivity = () => {
       points: points,
       after_due_date: afterDueDate,
     };
-    console.log("Coach TEMPLATE : ", coachTemplates)
+    console.log("Coach TEMPLATE : ", coachTemplates);
 
     dispatch(createCoachTemplateActivity(data));
     dispatch(getCoachTemplateModuleId(selectedCoachTemplate));
@@ -211,5 +214,4 @@ const AddActivity = () => {
     </>
   );
 };
-
 export default AddActivity;
