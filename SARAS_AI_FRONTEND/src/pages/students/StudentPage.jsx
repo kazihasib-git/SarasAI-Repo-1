@@ -1,8 +1,8 @@
-import React from "react";
-import Students from "../../components/students/Students";
+import React from 'react';
+import Students from '../../components/students/Students';
 
 const StudentPage = () => {
-  return <Students />;
+    return <Students />;
 };
 
 export default StudentPage;

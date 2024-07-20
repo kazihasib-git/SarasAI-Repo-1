@@ -1,13 +1,13 @@
-import React from "react";
-import CreateTaMenu from "./CreateTaMenu";
+import React from 'react';
+import CreateTaMenu from './CreateTaMenu';
 
 const TaMenuMessage = () => {
-  return (
-    <div>
-      <CreateTaMenu />
-      <h1>Messages</h1>
-    </div>
-  );
+    return (
+        <div>
+            <CreateTaMenu />
+            <h1>Messages</h1>
+        </div>
+    );
 };
 
 export default TaMenuMessage;
