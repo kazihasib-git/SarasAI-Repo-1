@@ -131,6 +131,7 @@ const AddEditTA = ({ data }) => {
     const { email, time_zone, phone, ...updatedFormData } = formData;
 
     updatedFormData.date_of_birth = dateOfBirth;
+    formData.phone = phoneNumber;
 
     if (selectedImage) {
       const base64Data = selectedImage.replace(
@@ -525,43 +526,43 @@ const AddEditTA = ({ data }) => {
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
-              <Controller
-                name="phone"
-                control={control}
-                rules={{ required: "Phone number is required" }} // Setting validation rules
-                render={({ field }) => (
-                  <PhoneInput
-                    country={"in"}
-                    value={field.value} // Binding the value to the field value
-                    onChange={field.onChange} // Handling the onChange event
-                    containerStyle={{ width: "100%" }}
-                    inputStyle={{
-                      width: "100%",
-                      borderRadius: "50px",
-                      borderColor: errors.phone ? "red" : "#D0D0EC",
-                      outline: "none",
-                      height: "60px",
-                    }}
-                    buttonStyle={{
-                      borderRadius: "50px 0 0 50px",
-                      borderColor: errors.phone ? "red" : "#D0D0EC",
-                      height: "60px",
-                      outline: "none",
-                      paddingLeft: "10px",
-                    }}
-                  />
+                <Controller
+                  name="phone"
+                  control={control}
+                  rules={{ required: "Phone number is required" }} // Setting validation rules
+                  render={({ field }) => (
+                    <PhoneInput
+                      country={"in"}
+                      value={field.value} // Binding the value to the field value
+                      onChange={field.onChange} // Handling the onChange event
+                      containerStyle={{ width: "100%" }}
+                      inputStyle={{
+                        width: "100%",
+                        borderRadius: "50px",
+                        borderColor: errors.phone ? "red" : "#D0D0EC",
+                        outline: "none",
+                        height: "60px",
+                      }}
+                      buttonStyle={{
+                        borderRadius: "50px 0 0 50px",
+                        borderColor: errors.phone ? "red" : "#D0D0EC",
+                        height: "60px",
+                        outline: "none",
+                        paddingLeft: "10px",
+                      }}
+                    />
+                  )}
+                />
+                {errors.phone && (
+                  <Typography
+                    variant="body2"
+                    color="error"
+                    style={{ marginTop: "8px" }}
+                  >
+                    {errors.phone.message}
+                  </Typography>
                 )}
-              />
-              {errors.phone && (
-                <Typography
-                  variant="body2"
-                  color="error"
-                  style={{ marginTop: "8px" }}
-                >
-                  {errors.phone.message}
-                </Typography>
-              )}
-            </Grid>
+              </Grid>
             <Grid item xs={12}>
               <CustomTextField
                 label="About Me"

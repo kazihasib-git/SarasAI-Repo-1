@@ -31,15 +31,22 @@ const TemplateName = () => {
     coachTemplates,
     newlyCreateTemplate,
     modulesData,
-  } = useSelector((state) => state.coachTemplate);
+   , coachTemplatesId } = useSelector((state) => state.coachTemplate);
   const [isActive, setIsActive] = useState(true);
   const [templateEditName, setTemplateEditName] = useState("");
+  const [templateEditName, setTemplateEditName] = useState();
   const [modulesData1, setModulesData1] = useState([]);
   const dispatch = useDispatch();
   const location = useLocation();
   const { newTemplateData } = location.state || {};
 
-  useEffect(() => {
+console.log("Tempete name is", template_name);
+console.log("coach templete", coachTemplates);
+console.log("coachtemplate id", coachTemplatesId);
+
+//  setTemplateEditName(template_name);
+console.log("selcted coach templete",selectedCoachTemplate)
+  useEffect(()=>{
     dispatch(removeSelectedModule());
   }, [dispatch]);
 

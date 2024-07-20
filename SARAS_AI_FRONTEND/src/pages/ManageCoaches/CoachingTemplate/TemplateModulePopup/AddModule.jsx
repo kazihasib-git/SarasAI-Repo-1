@@ -75,6 +75,8 @@ const AddModule = ({ selectedTemplateId }) => {
         template_id: selectedTemplateId,
         module_name: moduleName,
         is_active: true,
+          "created_by": 1,
+          "updated_by":1,
         updated_by: 1,
       };
       dispatch(createCoachTemplateModule(data));
