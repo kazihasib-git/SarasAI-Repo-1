@@ -22,7 +22,7 @@ export const getAllCoachTemplateModules = createAsyncThunk(
   "coachTemplate/getAllCoachTemplateModules",
   async (templateId) => {
     const response = await axios.get(
-      `${baseUrl}/admin/coaching-templates/modules`
+      `${baseUrl}/admin/coaching-templates/modules/${templateId}`
     );
     const modules = response.data.data.filter(module => module.template_id === templateId);
     return modules;
@@ -39,11 +39,22 @@ export const createCoachTemplateModule = createAsyncThunk(
     return response.data;
   }
 );
+export const getCoachTemplateModuleId = createAsyncThunk(
+  "coachTemplate/getCoachTemplateModuleId",
+  async (id) => {
+    const response = await axios.get(
+      `${baseUrl}/admin/coaching-templates/modules/${id}`
+      
+    );
+    return response.data;
+  }
+);
+
 
 export const updateCoachTemplateModule = createAsyncThunk(
   "coachTemplate/updateCoachTemplateModule",
   async (data) => {
-    const response = await axios.put(
+    const response = await axios.post(
       `${baseUrl}/admin/coaching-templates/update-modules`,
       data
     );
@@ -65,6 +76,7 @@ export const createCoachTemplateActivity = createAsyncThunk(
 const initialState = {
   coachesTemplateList: [],
   coachTemplates: [],
+  coachTemplatesId:[],
   loading: false,
   error: null,
   createCoachTemplateOpen: false,
@@ -80,6 +92,7 @@ const initialState = {
   templateId: null,
   createCoachTemplateOpen: false,
   editCoachTemplateOpen: false,
+  createCoachModule:null,
   modulesData: [],
   newlyCreateTemplate: null,
 };
@@ -186,10 +199,27 @@ export const coachTemplateSlice = createSlice({
         state.loading = true;
       })
       .addCase(createCoachTemplateModule.fulfilled, (state, action) => {
+        console.log("ACTION CreateCoachTemplate : ", action.payload)
         state.loading = false;
-        state.coachTemplates.push(action.payload.data);
+        state.createCoachModule = action.payload.data;
       })
       .addCase(createCoachTemplateModule.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      });
+
+      // getCoachTemplateModuleId
+      builder
+      .addCase(getCoachTemplateModuleId.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getCoachTemplateModuleId.fulfilled, (state, action) => {
+        // console.log("ACtion playlod", action.payload)
+        state.loading = false;
+        state.coachTemplatesId = action.payload.data;
+        // state.template_name = action.payload.data.name
+      })
+      .addCase(getCoachTemplateModuleId.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });

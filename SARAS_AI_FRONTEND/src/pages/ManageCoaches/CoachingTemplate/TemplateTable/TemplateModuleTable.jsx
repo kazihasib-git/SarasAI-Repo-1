@@ -7,12 +7,13 @@ import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import LinkActivityPopup from "../TemplateModulePopup/LinkActivity";
 import PrerequisitesPopup from "../TemplateModulePopup/Prerequisites";
 import editIcon from "../../../../assets/editIcon.png"; // Assuming this is the correct path to your edit icon
-
+import { openTemplateActivityPopup } from "../../../../redux/features/CoachModule/CoachTemplateSlice";
+ 
 const CustomButton = styled(Button)(({ theme }) => ({
   borderRadius: "20px",
   border: "1px solid #F56D3B",
   color: "#F56D3B",
-  padding: "8px 16px",
+  padding: "5px 10px",
   margin: "0 8px",
   "&:hover": {
     backgroundColor: "#F56D3B",
@@ -20,7 +21,7 @@ const CustomButton = styled(Button)(({ theme }) => ({
     borderColor: "#F56D3B",
   },
 }));
-
+ 
 const AntSwitch = styled(Switch)(({ theme }) => ({
   width: 36,
   height: 20,
@@ -65,45 +66,47 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
     boxSizing: "border-box",
   },
 }));
-
+ 
 const TemplateModuleTable = ({ modulesData }) => {
   const [linkActivityPopupOpen, setLinkActivityPopupOpen] = useState(false);
   const [prerequisitesPopupOpen, setPrerequisitesPopupOpen] = useState(false);
   const dispatch = useDispatch();
-
+ 
   const handleToggle = (moduleId, activityId) => {
     console.log(`Toggled activity ${activityId} in module ${moduleId}`);
     // Implement toggle action dispatch
   };
-
+ 
   const openLinkActivityPopup = () => {
     setLinkActivityPopupOpen(true);
   };
-
+ 
   const closeLinkActivityPopup = () => {
     setLinkActivityPopupOpen(false);
   };
-
+ 
   const openPrerequisitesPopup = () => {
     setPrerequisitesPopupOpen(true);
   };
-
+ 
   const closePrerequisitesPopup = () => {
     setPrerequisitesPopupOpen(false);
   };
-
-  const handleActivity = (module) => {
-    console.log("Add Activity clicked for module:", module.module_name);
+ 
+  const handleActivity = () => {
+    // console.log("Add Activity clicked for module:", module.module_name);
+    dispatch(openTemplateActivityPopup())
     // Implement your logic for adding activity
   };
-
-  const handleEditModule = () => {
-    console.log("Edit Module clicked");
+ 
+  const handleEditModule = (id) => {
+    console.log("Edit Module clicked", id);
     // Implement your logic for editing module
   };
-
+ 
   return (
     <>
+    {console.log("Module Data : ",modulesData)}
       {modulesData.map((module) => (
         <Box key={module.id} marginTop={3}>
           <Box display="flex" justifyContent="space-between" alignItems="center" padding={2} borderRadius="0px" border="0px solid #e0e0e0">
@@ -123,11 +126,11 @@ const TemplateModuleTable = ({ modulesData }) => {
               </span>
             </p>
             <div className="inputBtnContainer" style={{ display: "flex", alignItems: "center" }}>
-              <CustomButton className="buttonTemplateContainer" onClick={handleActivity(module)}>
+              <CustomButton className="buttonTemplateContainer" onClick={handleActivity}>
                 <i className="bi bi-plus-circle"></i>
                 <span>Add Activity</span>
               </CustomButton>
-
+ 
               <CustomButton className="buttonTemplateContainer" onClick={handleEditModule}>
               <FontAwesomeIcon icon={faPenToSquare} className="bi" />
                 <span >Edit Module</span>
@@ -177,7 +180,7 @@ const TemplateModuleTable = ({ modulesData }) => {
                           />
                         </td>
                         <td style={{ padding: "8px 0", borderBottom: "1px solid #e0e0e0" }}>
-                          <CustomButton onClick={handleEditModule} className="editBtn">
+                          <CustomButton onClick={handleEditModule(module.id)} className="editBtn">
                             <FontAwesomeIcon icon={faPenToSquare} style={{ color: "#F56D3B" }} />
                             <span style={{ fontSize: "14px", marginLeft: "5px", color: "#F56D3B" }}>Edit</span>
                           </CustomButton>
@@ -196,5 +199,5 @@ const TemplateModuleTable = ({ modulesData }) => {
     </>
   );
 };
-
+ 
 export default TemplateModuleTable;

@@ -7,25 +7,25 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllCoachTemplateModules, openEditModulePopup, openTemplateActivityPopup, openTemplateModulePopup, removeSelectedModule, setSelectedModule } from "../../../redux/features/CoachModule/CoachTemplateSlice";
 import TemplateModuleTable from "./TemplateTable/TemplateModuleTable";
 import "./TemplateName.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+
 import AddActivity from "./TemplateModulePopup/AddActivity";
 import EditModule from "./TemplateModulePopup/EditModule";
 import { useLocation } from "react-router-dom";
 
 const TemplateName = () => {
-  const { openModulePopUp, openActivityPopUp, template_name ,selectedCoachTemplate, newlyCreateTemplate, modulesData} = useSelector((state) => state.coachTemplate);
+  const { openModulePopUp, openActivityPopUp, template_name ,selectedCoachTemplate, coachTemplates, modulesData} = useSelector((state) => state.coachTemplate);
   const [isActive, setIsActive] = useState(true);
   const [templateEditName, setTemplateEditName] = useState();
   const [modulesData1, setModulesData1] = useState([]);
   const dispatch = useDispatch();
+  
   const location = useLocation()
   ;
     const { newTemplateData } = location.state || {};
 
-console.log("Template name is", template_name);
-console.log("coach templete", coachTemplates);
-console.log("selcted coach templete",selectedCoachTemplate)
+// console.log("Template name is", template_name);
+// console.log("coach templete", coachTemplates);
+// console.log("selcted coach templete",selectedCoachTemplate)
   useEffect(()=>{
     dispatch(removeSelectedModule());
   },[dispatch]);
@@ -66,11 +66,6 @@ console.log("selcted coach templete",selectedCoachTemplate)
     }
   }, [dispatch, selectedCoachTemplate]);
 
-  const handleActivity = () => {
-    dispatch(setSelectedModule());
-    dispatch(openTemplateActivityPopup());
-  };
-
   const handleEditModule = () => {
     dispatch(openEditModulePopup());
   };
@@ -86,55 +81,69 @@ console.log("selcted coach templete",selectedCoachTemplate)
     "Actions",
   ];
 
-  // const dummyData = [
-  //   {
-  //     id: 1,
-  //     "Activity Name": "Introduction to React",
-  //     "Due Date": "2024-07-15",
-  //     Activity: "Video Name",
-  //     Points: 10,
-  //     Prerequisites: "Activity 1, Activity 2",
-  //     "After Due Date": "Late Submission",
-  //   },
-  //   {
-  //     id: 2,
-  //     "Activity Name": "React Components",
-  //     "Due Date": "2024-07-20",
-  //     Activity: "Link Activity",
-  //     Points: 15,
-  //     Prerequisites: "Prerequisites",
-  //     "After Due Date": "Late Submission",
-  //   },
-  //   {
-  //     id: 3,
-  //     "Activity Name": "State and Props",
-  //     "Due Date": "2024-07-25",
-  //     Activity: "Video Name",
-  //     Points: 20,
-  //     Prerequisites: "Prerequisites",
-  //     "After Due Date": "No Penalty",
-  //   },
-  //   {
-  //     id: 4,
-  //     "Activity Name": "React Lifecycle",
-  //     "Due Date": "2024-07-30",
-  //     Activity: "Link Activity",
-  //     Points: 25,
-  //     Prerequisites: "Prerequisites",
-  //     "After Due Date": "No Penalty",
-  //   },
-  //   {
-  //     id: 5,
-  //     "Activity Name": "Handling Events",
-  //     "Due Date": "2024-08-05",
-  //     Activity: "Video Name",
-  //     Points: 30,
-  //     Prerequisites: "Activity 1, Activity 2",
-  //     "After Due Date": "Late Submission",
-  //   },
-  // ];
-
-  const dummyData =[]
+  const dummyData = [
+    {
+      id: 1,
+      module_name: "Module 1",
+      is_active: true,
+      activities: [
+        {
+          id: 1,
+          activity_name: "Activity 1",
+          due_date: "2024-08-01",
+          points: 10,
+          after_due_date: "Allowed",
+          is_active: true,
+        },
+        {
+          id: 2,
+          activity_name: "Activity 2",
+          due_date: "2024-08-05",
+          points: 15,
+          after_due_date: "Not Allowed",
+          is_active: false,
+        },
+      ],
+    },
+    {
+      id: 2,
+      module_name: "Module 2",
+      is_active: false,
+      activities: [
+        {
+          id: 3,
+          activity_name: "Activity 3",
+          due_date: "2024-08-10",
+          points: 20,
+          after_due_date: "Allowed",
+          is_active: true,
+        },
+        {
+          id: 4,
+          activity_name: "Activity 4",
+          due_date: "2024-08-15",
+          points: 25,
+          after_due_date: "Not Allowed",
+          is_active: true,
+        },
+        {
+          id: 5,
+          activity_name: "Activity 5",
+          due_date: "2024-08-20",
+          points: 30,
+          after_due_date: "Allowed",
+          is_active: false,
+        },
+      ],
+    },
+    {
+      id: 3,
+      module_name: "Module 3",
+      is_active: true,
+      activities: [],
+    },
+  ];
+  // const dummyData = [];
   const actionButtons = [
     {
       type: "switch",
@@ -169,9 +178,6 @@ console.log("selcted coach templete",selectedCoachTemplate)
       </Box>
       
         <>
-        
-        
-
           <TemplateModuleTable
             modulesData={modulesData}
           />
