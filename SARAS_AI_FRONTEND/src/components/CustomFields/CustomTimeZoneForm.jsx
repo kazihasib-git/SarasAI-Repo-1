@@ -14,10 +14,11 @@ const CustomTimeZoneForm = ({
   onChange,
   errors,
   options,
+  disabled, // Pass the disabled state
 }) => {
   // console.log("label", label , name , value )
   return (
-    <FormControl variant="outlined" fullWidth>
+    <FormControl variant="outlined" fullWidth disabled={disabled}>
       <InputLabel
         style={{ margin: 0 }}
         sx={{

@@ -37,7 +37,9 @@ import Schedule from "../../../components/availability/Schedule";
 // import AssignBatches from "../../managesTAs/AssignedBatches";
 import EditBatches from "../../../components/availability/EditBatches";
 import EditStudents from "../../../components/availability/EditStudents";
-import CoachMenu from "./CoachMenu";
+
+import TaMenuSidebar from "./TeachingAssistantSidebar";
+import Header from "../../../components/Header/Header";
 
 const CustomButton = ({
   onClick,
@@ -74,7 +76,7 @@ const CustomButton = ({
   );
 };
 
-const CoachMenuCalendar = () => {
+const TAMenuCalendar = () => {
   const dispatch = useDispatch();
   const { id, name } = useParams();
 
@@ -152,7 +154,8 @@ const CoachMenuCalendar = () => {
 
   return (
     <>
-      <CoachMenu />
+      <Header />
+      <TaMenuSidebar />
 
       <Box sx={{ backgroundColor: "#f8f9fa", p: 3 }}>
         <DialogActions sx={{ p: 2 }}>
@@ -258,4 +261,4 @@ const CoachMenuCalendar = () => {
   );
 };
 
-export default CoachMenuCalendar;
+export default TAMenuCalendar;

@@ -8,14 +8,23 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 
 const Login = () => {
   const { setAuth } = useAuth();
+  const { setAuth } = useAuth();
 
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
 
   const userRef = useRef();
   const errRef = useRef();
+  const userRef = useRef();
+  const errRef = useRef();
 
+  const [user, setUser] = useState("");
+  const [pwd, setPwd] = useState("");
+  const [errMsg, setErrMsg] = useState("");
   const [user, setUser] = useState("");
   const [pwd, setPwd] = useState("");
   const [errMsg, setErrMsg] = useState("");
@@ -23,7 +32,13 @@ const Login = () => {
   useEffect(() => {
     userRef.current.focus();
   }, []);
+  useEffect(() => {
+    userRef.current.focus();
+  }, []);
 
+  useEffect(() => {
+    setErrMsg("");
+  }, [user, pwd]);
   useEffect(() => {
     setErrMsg("");
   }, [user, pwd]);
@@ -45,23 +60,32 @@ const Login = () => {
 
       const response = {
         data: {
-          roles: [5150, 2001, 1984],
+          roles: [5150],
           accessToken: "Heeloo_there_123",
         },
       };
-      console.log(JSON.stringify(response?.data));
-      //console.log(JSON.stringify(response));
+
       const accessToken = response?.data?.accessToken;
       const roles = response?.data?.roles;
-      console.log("USER", user);
-      console.log("pwd : ", pwd);
-      console.log("ROLES", roles);
-      console.log("accessTOken : ", accessToken);
+
       setAuth({ user, pwd, roles, accessToken });
+
       setUser("");
       setPwd("");
-      // setSuccess(true);
-      navigate(from, { replace: true });
+
+      // Redirect
+      if (roles.includes(1984)) {
+        // Coach role
+        navigate("/coachmenu_profile", { replace: true });
+      } else if (roles.includes(2001)) {
+        // Teaching role
+        navigate("/tamenu_profile", { replace: true });
+      } else if (roles.includes(5150)) {
+        // Admin role
+        navigate("/", { replace: true });
+      } else {
+        navigate(from, { replace: true });
+      }
     } catch (err) {
       if (!err?.response) {
         setErrMsg("No Server Response");

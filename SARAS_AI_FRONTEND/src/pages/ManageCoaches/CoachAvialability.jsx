@@ -12,7 +12,7 @@ const headers = [
   "S. No.",
   "Coach Name",
   "Username",
-  "Availability",
+  "Current Availability",
   "Calendar",
 ];
 

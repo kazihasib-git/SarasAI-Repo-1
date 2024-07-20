@@ -38,23 +38,41 @@ const TaMenuSidebar = () => {
         </li>
 
         <li className="nav-item">
-          <a
+          <Link
+            to="/tamenu_profile"
             className={`nav-link ${
-              activeLink.startsWith("/manage-") ? "active" : "collapsed"
+              activeLink.startsWith("/coachmenu-") ? "active" : "collapsed"
             }`}
-            data-bs-target="#manage-tas-nav"
-            data-bs-toggle="collapse"
             href="#"
-            onClick={() => handleLinkClick("/manage")}
+            onClick={() => handleLinkClick("/coachmenu-profile")}
           >
-            {/* <i className='bi bi-menu-button-wide'></i>
-             */}
+            <i className="bi bi-person-circle"></i>
+            <span>My Profile</span>
+            <i className="bi bi-chevron-right ms-auto"></i>
+          </Link>
+          <Divider
+            variant="middle"
+            component="li"
+            sx={{ backgroundColor: "white", opacity: "0.3" }}
+          />
+        </li>
+
+        <li className="nav-item">
+          <Link
+            to={"/tamenu_students"}
+            className={`nav-link ${
+              activeLink.startsWith("/tamenu-") ? "active" : ""
+            }`}
+            onClick={() => handleLinkClick("/")}
+          >
             <img
               src={mystudent}
-              style={{ width: "18px", height: "18px", marginRight: "10px" }}
+              alt="Students"
+              style={{ width: "18px", height: "18px", marginRight: "8px" }}
             />
             <span>My Students</span>
-          </a>
+            <i className="bi bi-chevron-right ms-auto"></i>
+          </Link>
         </li>
         <Divider
           variant="middle"
@@ -64,9 +82,11 @@ const TaMenuSidebar = () => {
 
         <li className="nav-item">
           <Link
-            to={"/coachmenu-calendar"}
-            className={`nav-link ${activeLink.startsWith("/coachmenu-") ? "active" : ""}`}
-            onClick={() => handleLinkClick("/coachmenu-calendar")}
+            to={"/tamenu_calendar"}
+            className={`nav-link ${
+              activeLink.startsWith("/tamenu-") ? "active" : ""
+            }`}
+            onClick={() => handleLinkClick("/tamenu-calendar")}
           >
             <img
               src={calendar}
@@ -84,35 +104,20 @@ const TaMenuSidebar = () => {
         </li>
 
         <li className="nav-item">
-          <a
-            className={`nav-link ${activeLink === "/tools" ? "active" : "collapsed"}`}
-            data-bs-target="#coaching-tools-nav"
-            data-bs-toggle="collapse"
-            href="#"
-            onClick={() => handleLinkClick("/tools")}
+          <Link
+            to={"/tamenu_scheduledcall"}
+            className={`nav-link ${
+              activeLink.startsWith("/tachmenu-") ? "active" : ""
+            }`}
+            onClick={() => handleLinkClick("/ta-manage")}
           >
             <img
               src={schedulecallsicon}
-              style={{ width: "18px", height: "18px", marginRight: "10px" }}
+              alt="Scheduled Calls"
+              style={{ width: "18px", height: "18px", marginRight: "8px" }}
             />
             <span>Scheduled Calls</span>
-          </a>
-        </li>
-        <Divider
-          variant="middle"
-          component="li"
-          sx={{ backgroundColor: "white", opacity: "0.3" }}
-        />
-        <li className="nav-item">
-          <Link
-            to="/call-request"
-            className={`nav-link ${
-              activeLink === "/call-request" ? "active-link" : "collapsed"
-            }`}
-            onClick={() => handleLinkClick("/call-request")}
-          >
-            <i className="bi bi-telephone-plus-fill"></i>
-            <span>Call Requests</span>
+            <i className="bi bi-chevron-right ms-auto"></i>
           </Link>
         </li>
         <Divider
@@ -122,17 +127,37 @@ const TaMenuSidebar = () => {
         />
         <li className="nav-item">
           <Link
-            to="/batches"
+            to="/tamenu_callrequest"
             className={`nav-link ${
-              activeLink === "/batches" ? "active-link" : ""
+              activeLink === "/call-request" ? "active-link" : "collapsed"
             }`}
-            onClick={() => handleLinkClick("/batches")}
+            onClick={() => handleLinkClick("/call-request")}
+          >
+            <i className="bi bi-telephone-plus-fill"></i>
+            <span>Call Requests</span>
+            <i className="bi bi-chevron-right ms-auto"></i>
+          </Link>
+        </li>
+        <Divider
+          variant="middle"
+          component="li"
+          sx={{ backgroundColor: "white", opacity: "0.3" }}
+        />
+        <li className="nav-item">
+          <Link
+            to={"/tamenu_messages"}
+            className={`nav-link ${
+              activeLink.startsWith("/tamenu-") ? "active" : ""
+            }`}
+            onClick={() => handleLinkClick("")}
           >
             <img
               src={message}
-              style={{ width: "18px", height: "13.88px", marginRight: "10px" }}
+              alt="Messages"
+              style={{ width: "18px", height: "18px", marginRight: "8px" }}
             />
             <span>Messages</span>
+            <i className="bi bi-chevron-right ms-auto"></i>
           </Link>
           <Divider
             variant="middle"
@@ -141,7 +166,7 @@ const TaMenuSidebar = () => {
           />
           <li className="nav-item">
             <Link
-              to="/call-records"
+              to="/tamenu_callrecords"
               className={`nav-link ${
                 activeLink === "/call-records" ? "active-link" : "collapsed"
               }`}
@@ -153,6 +178,7 @@ const TaMenuSidebar = () => {
               />
 
               <span>Call Records</span>
+              <i className="bi bi-chevron-right ms-auto"></i>
             </Link>
           </li>
           <Divider

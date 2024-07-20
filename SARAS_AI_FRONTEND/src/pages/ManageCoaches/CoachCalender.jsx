@@ -50,6 +50,7 @@ const CustomButton = ({
         borderRadius: "50px",
         // padding: "18px 25px",
         border: `1.5px solid ${borderColor}`,
+        textTransform: "none",
         "&:hover": {
           backgroundColor: color,
           color: backgroundColor,
@@ -130,12 +131,13 @@ const CoachCalender = () => {
     <>
       <Header />
       <Sidebar />
-      <Box sx={{ backgroundColor: "#f8f9fa" }}>
+
+      <Box sx={{ backgroundColor: "#f8f9fa", p: 3 }}>
         <DialogActions sx={{ p: 2 }}>
           <Grid container alignItems="center">
             <Grid item xs>
-              <Typography variant="h4" sx={{ mb: 4 }}>
-                {name} Calender
+              <Typography variant="h4" sx={{ mb: 4, fontFamily: "ExtraLight" }}>
+                {name}'s Calender
               </Typography>
             </Grid>
             <Grid item>
@@ -190,17 +192,13 @@ const CoachCalender = () => {
             "COACHCALENDER"
           }
         />
-        {openCoachEditBatch && <EditBatches componentname={"COACHSCHEDULE"} />}
-        {openCoachEditStudent && (
-          <EditStudents componentname={"COACHSCHEDULE"} />
-        )}
 
-        {/* {sheduleNewSession && (
-        <ScheduleSession
-          open={sheduleNewSession}
-          handleClose={() => setSheduleNewSession(false)}
-        />
-      )} */}
+        {sheduleNewSession && (
+          <ScheduleSession
+            open={sheduleNewSession}
+            handleClose={() => setSheduleNewSession(false)}
+          />
+        )}
         {coachMarkLeaveOpen && (
           <MarkLeave id={id} name={name} componentName={"COACHCALENDER"} />
         )}

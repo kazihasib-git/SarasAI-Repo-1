@@ -56,6 +56,8 @@ function AddEditCoach({ data }) {
     },
   });
 
+  const [isEditing, setIsEditing] = useState(false);
+
   const [selectedImage, setSelectedImage] = useState(null);
   const [dateOfBirth, setDateOfBirth] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -106,8 +108,19 @@ function AddEditCoach({ data }) {
     };
 
     Object.entries(formValues).forEach(([key, value]) => setValue(key, value));
+    const onSubmit = (formData) => {
+      if (isEditing) {
+        // Remove phone_number and time_zone from formData if editing
+        delete formData.phone_number;
+        delete formData.time_zone;
+      }
+      // Handle form submission, e.g., send formData to the backend
+      console.log("Submitted data:", formData);
+    };
 
     setPhoneNumber(data.phone);
+    setIsEditing(true);
+    setValue("time_zone", data.time_zone);
   };
 
   const base64ToBlobUrl = (base64Data) => {
@@ -304,21 +317,19 @@ function AddEditCoach({ data }) {
                   placeholder="Enter Coach Name"
                   register={register}
                   validation={{
-                    required: "Name is required",
+                    required: "Coach Name is required",
                     minLength: {
                       value: 3,
-                      message: "Name must be at least 3 characters long",
+                      message: "Coach Name must be at least 3 characters long",
                     },
                     maxLength: {
                       value: 20,
-                      message: "Name cannot exceed 20 characters",
-                    },
-                    pattern: {
-                      value: /^[A-Za-z\s]+$/,
-                      message: "Name must contain only letters and spaces",
+                      message: "Coach Name cannot exceed 20 characters",
                     },
                   }}
                   errors={errors}
+                  error={!!errors.name}
+                  helperText={errors.name?.message}
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={4}>
@@ -473,6 +484,7 @@ function AddEditCoach({ data }) {
                         onChange={field.onChange}
                         errors={errors}
                         options={timezones}
+                        disabled={isEditing}
                       />
                     );
                   }}
