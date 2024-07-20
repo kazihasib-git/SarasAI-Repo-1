@@ -132,9 +132,9 @@ const CoachCalender = () => {
 
     return (
         <>
+        <Box m={"20px"}>
             <Header />
             <Sidebar />
-
             <Box sx={{ backgroundColor: '#f8f9fa', p: 3 }}>
                 <DialogActions sx={{ p: 2 }}>
                     <Grid container alignItems="center">
@@ -269,6 +269,7 @@ const CoachCalender = () => {
                         componentName={'COACHCALENDER'}
                     />
                 )}
+            </Box>
             </Box>
         </>
     );

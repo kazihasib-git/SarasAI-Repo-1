@@ -218,6 +218,7 @@ const TaCalender = () => {
 
     return (
         <>
+        <Box m={"20px"}>
             <Header />
             <Sidebar />
             <Box sx={{ backgroundColor: '#f8f9fa', p: 3 }}>
@@ -341,6 +342,7 @@ const TaCalender = () => {
                 )}
                 {/* {assignStudentOpen && <AssignStudents componentname="ADDEDITTA" />}
                 {assignBatchOpen && <AssignBatches componentname="ADDEDITTA" />} */}
+            </Box>
             </Box>
         </>
     );

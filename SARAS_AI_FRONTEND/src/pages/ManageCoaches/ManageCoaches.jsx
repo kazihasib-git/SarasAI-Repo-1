@@ -163,7 +163,7 @@ const ManageCoaches = () => {
     return (
         <>
             {!createCoachOpen && !editCoachOpen && (
-                <Box m="40px">
+                <Box m="20px">
                     <Header />
                     <Sidebar />
                     <Box

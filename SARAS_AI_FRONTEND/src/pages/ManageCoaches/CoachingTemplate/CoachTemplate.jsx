@@ -124,7 +124,7 @@ const CoachTemplate = () => {
 
     return (
         <>
-            <Box m="40px">
+            <Box m="20px">
                 <Header />
                 <Sidebar />
                 <>

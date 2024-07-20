@@ -66,7 +66,7 @@ const TaScheduling = () => {
 
     return (
         <>
-            <Box m="10px">
+            <Box m="20px">
                 <Header />
                 <Sidebar />
                 <Box

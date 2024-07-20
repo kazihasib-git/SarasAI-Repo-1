@@ -183,7 +183,7 @@ const AddEditTA = ({ data }) => {
     };
 
     return (
-        <Box sx={{ p: 3 }}>
+        <Box m={"20px"}>
             <DialogActions>
                 <Grid container alignItems="center">
                     {data ? (

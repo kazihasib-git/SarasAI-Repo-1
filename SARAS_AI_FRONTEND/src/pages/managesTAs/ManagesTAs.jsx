@@ -94,7 +94,7 @@ const ManageTA = () => {
 
     return (
         <>
-            <Box m="10px">
+            <Box m="20px">
                 <Header />
                 <Sidebar />
                 {!createTAOpen && !editTAOpen && (

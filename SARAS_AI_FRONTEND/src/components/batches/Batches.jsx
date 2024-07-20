@@ -15,23 +15,23 @@ const Batches = () => {
         setInput(value);
     };
 
-    const useDummyData = false;
 
     const { data, error, isLoading } = useGetBatchesQuery();
 
     useEffect(() => {
-        const dataToUse = useDummyData ? batchDummyData : data;
-        if (dataToUse) {
-            const transformedData = dataToUse.map((item) => ({
-                id: item.srNo,
+       
+        if (data && data.batches && data.batches.length > 0) {
+            console.log("DATA Batch : ", data.batches)
+            const transformedData = data?.batches?.map((item) => ({
+                id: item.id,
                 'Batch Name': item.name,
-                Branch: item.branch,
+                Branch: item.branch.name,
             }));
             setBatches(transformedData);
         }
-    }, [useDummyData, data]);
+    }, [data]);
 
-    const headers = ['Sr No.', 'Batch Name', 'Branch'];
+    const headers = ['S No.', 'Batch Name', 'Branch'];
 
     // Filter batches based on the search input
     const filteredBatches = batches.filter((batch) =>
