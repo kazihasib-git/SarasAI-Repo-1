@@ -16,7 +16,7 @@ const allViews = Object.keys(Views).map((k) => Views[k]);
 
 const CalendarComponent = ({ eventsList, addEvent, slotData }) => {
     const [myEventsList, setMyEventsList] = useState([]);
-    const [slots, setSlots] = useState([]);
+    // const [slots, setSlots] = useState([]);
 
     /*
   useEffect(() => {
@@ -31,15 +31,15 @@ const CalendarComponent = ({ eventsList, addEvent, slotData }) => {
   }, [eventsList]);
   */
 
-    useEffect(() => {
-        if (slotData && slotData.data?.length > 0) {
-            const transformedSlots = slotData.data.map((slot) => ({
-                startDate: new Date(slot.slot_date + 'T' + slot.from_time),
-                endDate: new Date(slot.slot_date + 'T' + slot.to_time),
-            }));
-            setSlots(transformedSlots);
-        }
-    }, [slotData]);
+    // useEffect(() => {
+    //     if (slotData && slotData.data?.length > 0) {
+    //         const transformedSlots = slotData.data.map((slot) => ({
+    //             startDate: new Date(slot.slot_date + 'T' + slot.from_time),
+    //             endDate: new Date(slot.slot_date + 'T' + slot.to_time),
+    //         }));
+    //         setSlots(transformedSlots);
+    //     }
+    // }, [slotData]);
 
     const showSessionPopUp = () => {
         console.log('clicked');
@@ -62,8 +62,8 @@ const CalendarComponent = ({ eventsList, addEvent, slotData }) => {
         const dateString = moment(date).format('YYYY-MM-DD');
         const timeString = moment(date).format('HH:mm');
 
-        for (let i = 0; i < slots.length; i++) {
-            const slot = slots[i];
+        for (let i = 0; i < slotData.length; i++) {
+            const slot = slotData[i];
             const slotDate = moment(slot.startDate).format('YYYY-MM-DD');
             const slotStartTime = moment(slot.startDate).format('HH:mm');
             const slotEndTime = moment(slot.endDate).format('HH:mm');

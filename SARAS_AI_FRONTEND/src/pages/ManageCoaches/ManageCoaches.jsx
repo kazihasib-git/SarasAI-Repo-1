@@ -194,20 +194,13 @@ const ManageCoaches = () => {
                                     placeholder="Search here ..."
                                 />
                             </Box>
-                            <Button
-                                variant="contained"
+                            <button
+                                className="buttonContainer"
                                 onClick={handleAddCoach}
-                                style={{
-                                    backgroundColor: '#F56D3B',
-                                    borderRadius: '30px',
-                                }}
                             >
-                                <i
-                                    style={{ marginRight: '5px' }}
-                                    className="bi bi-plus-circle"
-                                ></i>{' '}
+                                <i className="bi bi-plus-circle"></i>
                                 <span>Create Coach</span>
-                            </Button>
+                            </button>
                         </Box>
                     </Box>
                     <Box

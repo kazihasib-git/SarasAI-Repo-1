@@ -181,7 +181,8 @@ const EditStudents = ({ componentname }) => {
             const transformedData = assignedStudents.map((stu, index) => ({
                 'S. No.': index + 1,
                 'Student Name': stu.student.name,
-                'Academic Term': stu.student.academic_term,
+                Program : stu.student.packages.map((pack) => pack.name).join(', ') || 'N/A',
+                //'Academic Term': stu.student.academic_term,
                 Batch:
                     stu.student.batches
                         .map((batch) => batch.batch_name)
@@ -189,12 +190,12 @@ const EditStudents = ({ componentname }) => {
                 Select: stu.is_active ? 'Active' : 'Inactive',
                 student_id: stu.student_id,
                 is_active: stu.is_active,
-                id: stu.student.id,
+                id : stu.student.id,
             }));
 
             const filtered = transformedData.filter((student) => {
                 const matchesTerm = selectedTerm
-                    ? student['Academic Term'] === selectedTerm
+                    ? student.Program === selectedTerm
                     : true;
                 const matchesBatch = selectedBatch
                     ? student.Batch.includes(selectedBatch)
@@ -235,18 +236,29 @@ const EditStudents = ({ componentname }) => {
         assignedStudents && Array.isArray(assignedStudents)
             ? [
                   ...new Set(
-                      assignedStudents.map(
-                          (student) => student.student.academic_term,
+                      assignedStudents
+                        //  .filter(
+                        //     (student) =>
+                        //     !selectedBatch ||
+                        //     student.student.batches.some(
+                        //         (batch) => batch.batch_name === selectedBatch
+                        //     )
+                        //  )
+                         .flatMap((student) =>
+                         student.student.packages.map((pack) => pack.name),
                       ),
                   ),
               ]
             : [];
 
     useEffect(() => {
-        if (selectedStudent) {
-            setSelectedStudents(selectedStudent.map((student) => student.id));
+        console.log('Selected Student inside use Effect : ', assignedStudents);
+        if (assignedStudents) {
+            setSelectedStudents(assignedStudents.map((student) => student.id));
         }
     }, [selectedStudent]);
+
+    console.log('selectedStudents : ', selectedStudents);
 
     const handleSelectStudent = (id) => {
         setSelectedStudents((prev) =>
@@ -294,7 +306,7 @@ const EditStudents = ({ componentname }) => {
     const headers = [
         'S. No.',
         'Student Name',
-        'Academic Term',
+        'Program',
         'Batch',
         'Select',
     ];
@@ -305,7 +317,7 @@ const EditStudents = ({ componentname }) => {
                 <Grid item sm={6}>
                     <CustomTextField
                         select
-                        label="Academic Term"
+                        label="Program"
                         value={selectedTerm}
                         onChange={(e) => setSelectedTerm(e.target.value)}
                     >

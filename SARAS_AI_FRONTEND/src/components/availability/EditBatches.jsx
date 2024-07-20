@@ -150,6 +150,8 @@ const EditBatches = ({ componentname }) => {
         loading,
     } = stateSelector || {};
 
+    console.log("assignedId : ", assignedId);
+
     useEffect(() => {
         if (stateModuleKey && assignBatchOpen) {
             dispatch(getAssignBatchesAction(assignedId));
@@ -161,6 +163,8 @@ const EditBatches = ({ componentname }) => {
         assignedId,
         getAssignBatchesAction,
     ]);
+
+    console.log("Assigned Batches", assignedBatches);
 
     useEffect(() => {
         if (assignedBatches) {
@@ -230,9 +234,9 @@ const EditBatches = ({ componentname }) => {
         const data = {
             [componentname === 'COACHSCHEDULE' ? 'Coach_id' : 'ta_id']: id,
             name: assignedName,
-            batches: selectedBatch.map((id) => ({ id })),
+            batches: selectedBatch ? selectedBatch.map((id) => ({ id })) : [],
         };
-
+        console.log('DATA: ', data);
         dispatch(openScheduleSessionAction(data));
         dispatch(closeDialogAction());
     };

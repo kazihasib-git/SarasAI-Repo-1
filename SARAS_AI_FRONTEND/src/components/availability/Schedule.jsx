@@ -170,8 +170,10 @@ const Schedule = ({ componentName }) => {
         formState: { errors },
     } = useForm();
 
+    console.log("available slots", availableSlots)
+
     useEffect(() => {
-        if (fromDate) {
+        if (fromDate || !availableSlots.length > 0) {
             dispatch(
                 getAvailableSlotsAction({
                     admin_user_id: adminUserID,
@@ -253,6 +255,8 @@ const Schedule = ({ componentName }) => {
     //     setSelectedSlot([{}]);
     // }
 
+    console.log("adminUserID ", adminUserID)
+
     const handleAssignBatches = () => {
         console.log('COMPONENT NAME  handleAssignBatches : ', componentName);
         if (componentName === 'TASCHEDULE') {
@@ -262,11 +266,7 @@ const Schedule = ({ componentName }) => {
         }
     };
 
-    const onSubmit = async (formData) => {
-        const studentId = students.map((student) => student.id);
-        const batchId = batches.map((batch) => batch.id);
-
-        console.log('studentId : ', studentId, 'batchId : ', batchId);
+    const validate = () => {
         if (!fromTime) {
             toast.error('Please select from time');
             return;
@@ -277,10 +277,10 @@ const Schedule = ({ componentName }) => {
             return;
         }
 
-        if (studentId.length === 0) {
+        if (students.length === 0) {
             toast.error('Please assign students');
             return;
-        } else if (batchId.length === 0) {
+        } else if (batches.length === 0) {
             toast.error('Please assign batches');
             return;
         }
@@ -291,7 +291,7 @@ const Schedule = ({ componentName }) => {
             }
         }
 
-        if (!fromDate || !toDate || !fromTime || !toTime) {
+        if (!fromDate || !fromTime || !toTime) {
             toast.error('Please fill in all fields');
             return;
         }
@@ -305,6 +305,13 @@ const Schedule = ({ componentName }) => {
             toast.error('To Time should be greater than From Time!');
             return;
         }
+    }
+
+    const onSubmit = (formData) => {
+        const studentId = students.map((student) => student.id);
+        const batchId = batches.map((batch) => batch.id);
+
+        console.log('studentId : ', studentId, 'batchId : ', batchId);
 
         let weeksArray = Array(7).fill(0);
         if (repeat === 'recurring') {
@@ -316,6 +323,7 @@ const Schedule = ({ componentName }) => {
             const index = new Date(fromDate).getDay();
             weeksArray[index] = 1;
         }
+       
 
         console.log('FORM DATA : ', formData);
         console.log('selected slots', selectedSlot);

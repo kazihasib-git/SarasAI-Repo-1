@@ -346,10 +346,11 @@ const actionButtons = [
 
 const AssignBatches = () => {
     const { id } = useParams();
-    console.log('ID : ', id);
+    console.log('c', id);
     const dispatch = useDispatch();
     const { assignedBatches, loading } = useSelector((state) => state.taModule);
     const [taAssignBatchesData, setTaAssignBatchesData] = useState([]);
+
 
     useEffect(() => {
         if (id) {
@@ -359,12 +360,12 @@ const AssignBatches = () => {
 
     useEffect(() => {
         if (assignedBatches && assignedBatches.length > 0) {
-            console.log('assigned batches', assignedBatches);
+            // console.log('assigned batches', assignedBatches);
             const transformData = assignedBatches.map((item, index) => ({
                 id: item.id,
                 //ta_name: item.ta.name,
                 batch_name: item.batch.name,
-                branch: item.batch.branch,
+                branch: item.batch.branch.name,
                 is_active: item.is_active,
             }));
 
