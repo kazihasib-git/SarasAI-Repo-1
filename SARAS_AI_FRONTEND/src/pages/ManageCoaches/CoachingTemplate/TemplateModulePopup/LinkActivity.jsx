@@ -20,6 +20,9 @@ import CustomDateField from "../../../../components/CustomFields/CustomDateField
 import CustomTimeField from "../../../../components/CustomFields/CustomTimeField";
 import { getActivityType } from "../../../../redux/features/ActivityType/activityTypeSlice";
 import { getCoach } from "../../../../redux/features/CoachModule/coachSlice";
+import { getCoachAvailableSlotsFromDate } from "../../../../redux/features/CoachModule/coachSchedule";
+import { getTaAvailableSlotsFromDate } from "../../../../redux/features/taModule/taScheduling";
+import { createCoachSchedule } from "../../../../redux/features/CoachModule/coachSchedule"; 
 const CustomButton = ({
   onClick,
   children,
@@ -76,11 +79,14 @@ const LinkActivityPopup = ({ open, handleClose }) => {
   useEffect(() => {
     dispatch(getActivityType());
     dispatch(getCoach());
+    // dispatch(getSlotsCoachTemplateModule());
   }, [dispatch]);
 
   const { typeList } = useSelector((state) => state.activityType);
   const { coaches }  = useSelector((state) => state.coachModule);
+  const { coachAvailableSlots}  = useSelector((state) => state.coachScheduling);
    console.log( "coaches", coaches)
+   console.log("coachesslot", coachAvailableSlots );
   const activityOptions =
     typeList?.map((type) => ({
       value: type.type_name,
@@ -105,7 +111,7 @@ const LinkActivityPopup = ({ open, handleClose }) => {
     id: coach.id,
    
   }));
-
+ 
   const timeSlots = [
     { value: "slot1", label: "10:00 AM - 11:00 AM" },
     { value: "slot2", label: "11:00 AM - 12:00 PM" },
@@ -113,7 +119,14 @@ const LinkActivityPopup = ({ open, handleClose }) => {
     { value: "slot4", label: "2:00 PM - 3:00 PM" },
     { value: "slot5", label: "3:00 PM - 4:00 PM" },
   ];
-
+  const formatTime = (time) => {
+    const [hours, minutes] = time.split(':');
+    const hour = parseInt(hours, 10);
+    const minute = parseInt(minutes, 10);
+    const ampm = hour >= 12 ? 'pm' : 'am';
+    const formattedHour = hour % 12 || 12;
+    return `${formattedHour}:${minute < 10 ? '0' : ''}${minute} ${ampm}`;
+  };
   const timeZones = [
     { value: "UTC", label: "UTC" },
     { value: "GMT", label: "GMT" },
@@ -130,13 +143,37 @@ const LinkActivityPopup = ({ open, handleClose }) => {
   };
   
  console.log("hello coach id is", selectedCoachId)
-//  useEffect(() => {
-//   if (fromDate) {
-//     dispatch(
-//       getAvailableSlotsAction({ admin_user_id: selectedCoachId , date: fromDate })
-//     );
-//   }
-// }, [fromDate, dispatch, adminUserID, getAvailableSlotsAction]);
+ useEffect(() => {
+  const data={
+    admin_user_id: selectedCoachId,
+    date: fromDate,
+  }
+  console.log("data" ,data);
+  if (fromDate && selectedCoachId) {
+    dispatch(getTaAvailableSlotsFromDate(data));
+    dispatch(getCoachAvailableSlotsFromDate(data));
+
+  const data1=  {
+      "admin_user_id": selectedCoachId,
+      "meeting_name": "Team Meeting",
+      "meeting_url": "http://example.com/meeting",
+      "schedule_date": fromDate,
+      "slot_id": "coachAvailableSlots.id",
+      "start_time": "coachAvailableSlots.from_time",
+      "end_time": "coachAvailableSlots.to_time",
+      "timezone": "IST",
+      "event_status": "scheduled",
+      "end_date": fromDate,
+      "studentId": [1,2,3],
+      "batchId":[12,13],
+      "weeks": "[0,1, 0, 0, 0,1,0]"
+  }
+  if(coachAvailableSlots){
+    dispatch(createCoachSchedule(data1));
+  }
+  }
+
+}, [fromDate, dispatch,]);
   const contentComponent = (
     <Grid
       container
@@ -354,6 +391,7 @@ const LinkActivityPopup = ({ open, handleClose }) => {
               )}
             />
           </Grid>
+          
           <Grid
             item
             xs={12}
@@ -376,16 +414,25 @@ const LinkActivityPopup = ({ open, handleClose }) => {
               )}
             />
           </Grid>
+          
           <Grid item xs={12} style={{ margin: "5px 0px", width: "80%" }}>
-            <Typography variant="h6">Available Slots</Typography>
-            <Grid container spacing={1}>
-              {timeSlots.map((slot) => (
-                <Grid item xs={6} sm={4} key={slot.value}>
-                  <FormControlLabel control={<Checkbox />} label={slot.label} />
-                </Grid>
-              ))}
-            </Grid>
-          </Grid>
+        <Typography variant="h6">Available Slots</Typography>
+        {coachAvailableSlots && coachAvailableSlots.length > 0 ? (
+          
+          <RadioGroup>
+            {coachAvailableSlots.map((slot, index) => (
+              <FormControlLabel
+                key={index}
+                control={<Radio />}
+                label={`${formatTime(slot.from_time)} - ${formatTime(slot.to_time)}`}
+                value={slot.timeFrom}
+              />
+            ))}
+          </RadioGroup>
+        ) : (
+          <Typography>No slots available</Typography>
+        )}
+      </Grid>
           <Grid
             container
             spacing={1}

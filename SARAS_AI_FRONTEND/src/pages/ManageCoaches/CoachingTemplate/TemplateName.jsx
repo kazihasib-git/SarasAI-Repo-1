@@ -167,7 +167,7 @@ const TemplateName = () => {
         alignItems={"center"}
       >
         <p style={{ fontSize: "44px", justifyContent: "center" }}>
-        {/* {coachTemplatesId[0].template.name} */}
+       {/* {coachTemplatesId[0].template.name} */}
         </p>
         <div className="inputBtnContainer">
           <button className="buttonContainer" onClick={handleModule}>
@@ -179,7 +179,7 @@ const TemplateName = () => {
       
         <>
           <TemplateModuleTable
-            modulesData={modulesData}
+            modulesData={dummyData}
           />
         </>
         
@@ -187,7 +187,7 @@ const TemplateName = () => {
 
       {openModulePopUp && <AddModule />}
       {openActivityPopUp && <AddActivity />}
-      {openEditModulePopup && <EditModule />}
+      {openEditModulePopup && <EditModule />} 
     </>
   );
 };
