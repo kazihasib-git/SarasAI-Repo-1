@@ -20,6 +20,12 @@ import {
   fetchCoachScheduleById,
   openCoachCreateNewSlots,
 } from "../../redux/features/CoachModule/CoachAvailabilitySlice";
+import EditBatches from "../../components/availability/EditBatches";
+import EditStudents from "../../components/availability/EditStudents";
+import {
+  openCoachEditBatch,
+  openCoachEditStudent,
+} from "../../redux/features/CoachModule/coachSchedule";
 import Header from "../../components/Header/Header";
 import Sidebar from "../../components/Sidebar/Sidebar";
 

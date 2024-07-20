@@ -136,14 +136,14 @@ const AssignStudents = ({ componentname }) => {
 
   useEffect(() => {
     if (studentBatchMapping) {
-      const transformedData = studentBatchMapping.map((student) => ({
-        "S. No.": student.student_id,
+      const transformedData = studentBatchMapping.map((student, index) => ({
+        "S. No.": index + 1,
         "Student Name": student.student_name,
         "Academic Term": student.academic_term,
         Batch:
           student.batches.map((batch) => batch.batch_name).join(", ") || "N/A",
-        Select: student.is_active ? "Active" : "Inactive",
-        student_id: student.student_id,
+        Select: student.is_active ? 1 : 0,
+        id: student.student_id,
         is_active: student.is_active,
       }));
 
@@ -225,7 +225,7 @@ const AssignStudents = ({ componentname }) => {
 
   const content = (
     <>
-      <Grid container spacing={2} sx={{mt:0}}>
+      <Grid container spacing={2} >
         <Grid item sm={6}>
           <CustomTextField
             select

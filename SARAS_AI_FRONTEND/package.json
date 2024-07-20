@@ -6,7 +6,8 @@
     "@date-io/dayjs": "^3.0.0",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
-    "@fortawesome/free-solid-svg-icons": "^6.5.2",
+    "@fortawesome/fontawesome-svg-core": "^6.6.0",
+    "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/react-fontawesome": "github:fortawesome/react-fontawesome",
     "@fullcalendar/core": "^6.1.14",
     "@fullcalendar/daygrid": "^6.1.14",
@@ -56,6 +57,7 @@
     "react-scripts": "5.0.1",
     "react-table": "^7.8.0",
     "remixicon": "^4.2.0",
+    "tus-js-client": "^1.6.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

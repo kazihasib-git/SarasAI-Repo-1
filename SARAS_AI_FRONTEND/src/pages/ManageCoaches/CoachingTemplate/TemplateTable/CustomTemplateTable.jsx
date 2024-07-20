@@ -1,25 +1,18 @@
-import React, { useEffect, useState } from "react";
-import {
-  Button,
-  IconButton,
-  Switch,
-  Pagination,
-  Box,
-  Checkbox,
-} from "@mui/material";
-import CallMadeOutlinedIcon from "@mui/icons-material/CallMadeOutlined";
-import { styled } from "@mui/material/styles";
-import { useDispatch } from "react-redux";
-import editIcon from "../../../../assets/editIcon.png";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye } from "@fortawesome/free-solid-svg-icons";
+import { useDispatch } from "react-redux";
+import { IconButton, Button, Switch } from "@mui/material";
+import Pagination from "@mui/material/Pagination";
+import { styled } from "@mui/material/styles";
+import editIcon from "../../../../assets/editIcon.png";
+
 const CustomButton = styled(Button)(({ theme }) => ({
   borderRadius: "20px",
   border: "1px solid #F56D3B",
   color: "#F56D3B",
   padding: "8px 16px", // Add padding for horizontal and vertical spacing
   margin: "0 8px", // Add horizontal margin between buttons
+  textTransform: "none",
   "&:hover": {
     backgroundColor: "#F56D3B",
     color: "#fff",
@@ -76,11 +69,12 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
   },
 }));
 
-const TemplateModuleTable = ({
+const CustomTemplateTable = ({
   headers,
   initialData,
   actionButtons,
   componentName,
+  renderers,
 }) => {
   const [data, setData] = useState(
     initialData.map((item) => ({
@@ -89,6 +83,8 @@ const TemplateModuleTable = ({
     }))
   );
 
+  const [currentPage, setCurrentPage] = useState(1);
+
   useEffect(() => {
     setData(
       initialData.map((item) => ({
@@ -96,9 +92,9 @@ const TemplateModuleTable = ({
         is_active: item.is_active !== undefined ? item.is_active : 0,
       }))
     );
+    setCurrentPage(1); // Reset to first page whenever initialData changes
   }, [initialData]);
 
-  const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const totalPages = Math.ceil(data.length / itemsPerPage);
   const currentData = data.slice(
@@ -127,9 +123,12 @@ const TemplateModuleTable = ({
       case "MANAGETA":
         dispatch(updateTA({ id, data: requestData }));
         break;
-      case "TAMAPPING":
-        console.log("TA MAPPING : ", id, requestData);
-        // dispatch(updateTA({ id, data: requestData }));
+      case "MANAGECOACH":
+        dispatch(updateCoach({ id, data: requestData }));
+        break;
+      case "WOLCATEGORY":
+        console.log("WOL Categories : ", id, requestData);
+        dispatch(activeDeactiveWOLCategory(id));
         break;
       default:
         console.warn(`No API call defined for component: ${componentName}`);
@@ -147,7 +146,7 @@ const TemplateModuleTable = ({
             ))}
           </tr>
         </thead>
-        <tbody className="tableBody" >
+        <tbody className="tableBody">
           {currentData.length === 0 ? (
             <tr>
               <td colSpan={headers.length} style={{ textAlign: "center" }}>
@@ -159,45 +158,14 @@ const TemplateModuleTable = ({
               <tr key={item.id} id="tableRow">
                 <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                 {Object.keys(item).map((key, idx) => {
-                  if (key === "Activity" || key === "Prerequisites") {
-                    const value = item[key];
-                    if (
-                      value === "Link Activity" ||
-                      value === "Prerequisites"
-                    ) {
-                      return (
-                        <td
-                          key={idx}
-                          style={{
-                            borderRadius: "50px",
-                            backgroundColor: "#FEEBE3",
-                            color: "#F56D3B",
-                            padding: "8px",
-                            textAlign: "center",
-                          }}
-                        >
-                          {value}
-                        </td>
-                      );
-                    } else if (key === "Activity" && value === "Video Name") {
-                      return (
-                        <td key={idx}>
-                          {value}
-                          <FontAwesomeIcon
-                            icon={faEye}
-                            style={{ marginLeft: "10px" }}
-                          />
-                        </td>
-                      );
-                    } else return <td key={idx}> {value}</td> ;
-                  } else if (key !== "id" && key !== "is_active") {
-                    if (typeof item[key] === "object" && item[key] !== null) {
-                      return <td key={idx}>{JSON.stringify(item[key])}</td>;
+                  if (key !== "id" && key !== "is_active") {
+                    if (renderers && renderers[key]) {
+                      return <td key={idx}>{renderers[key](item)}</td>;
                     } else {
                       return <td key={idx}>{item[key]}</td>;
                     }
                   }
-                  return null;
+                  return null; // Ensure all paths return a value
                 })}
 
                 {actionButtons && (
@@ -240,11 +208,11 @@ const TemplateModuleTable = ({
                                 backgroundColor: "rgba(245, 235, 227, 0.8)",
                               },
                               "& img": {
-                                height: "16px",
-                                width: "16px",
+                                height: "16px", // adjust size as needed
+                                width: "16px", // adjust size as needed
                               },
                               "& small": {
-                                lineHeight: "16px",
+                                lineHeight: "16px", // match this with the image height for better alignment
                               },
                             }}
                             onClick={() => button.onClick(item.id)}
@@ -254,7 +222,7 @@ const TemplateModuleTable = ({
                           </IconButton>
                         );
                       }
-                      return null;
+                      return null; // Handle unexpected button types gracefully
                     })}
                   </td>
                 )}
@@ -270,39 +238,10 @@ const TemplateModuleTable = ({
           onChange={handlePageChange}
           variant="outlined"
           color="primary"
-          sx={{
-            width: "65vw",
-            display: "flex",
-            justifyContent: "center",
-            marginTop: "20px",
-            ".MuiPaginationItem-root": {
-              backgroundColor: "#fff",
-              border: "1px solid #ddd",
-              borderRadius: "50%",
-              width: "40px",
-              height: "40px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              transition: "background-color 0.3s, transform 0.3s",
-              "&:hover": {
-                backgroundColor: "#DFDFF4",
-                transform: "scale(1.1)",
-              },
-              "&.Mui-selected": {
-                backgroundColor: "#F56D3B",
-                color: "#fff",
-              },
-              "&.Mui-disabled": {
-                backgroundColor: "#DFDFF4",
-                cursor: "not-allowed",
-              },
-            },
-          }}
         />
       </div>
     </div>
   );
 };
 
-export default TemplateModuleTable;
+export default CustomTemplateTable;

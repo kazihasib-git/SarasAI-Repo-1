@@ -20,11 +20,7 @@ import {
   updateCoach,
   accessCoachName,
 } from "../../../../redux/features/CoachModule/coachSlice";
-import CloseIcon from "@mui/icons-material/Close";
-import { PhotoCamera } from "@mui/icons-material";
 import AssignStudents from "../../AssignStudents";
-import AssignCoachBatches from "../../../../pages/ManageCoaches/AssignedCoachBatches";
-import dayjs from "dayjs";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import SubmitPopup from "../../SubmitPopup";
@@ -37,7 +33,6 @@ import {
   qualificationOptions,
   transformedTimeZones,
 } from "../../../CustomFields/FormOptions";
-import ReusableDialog from "../../../CustomFields/ReusableDialog";
 import Header from "../../../Header/Header";
 import Sidebar from "../../../Sidebar/Sidebar";
 import { getTimezone } from "../../../../redux/features/timezone/timezoneSlice";
@@ -64,75 +59,78 @@ function AddEditCoach({ data }) {
   const [isEditing, setIsEditing] = useState(false);
 
   const [selectedImage, setSelectedImage] = useState(null);
-  const [open, setOpen] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [edit, setEdit] = useState(false);
-  const dispatch = useDispatch();
   const [dateOfBirth, setDateOfBirth] = useState(null);
-  const [taName, setTAName] = useState();
+  const [phoneNumber, setPhoneNumber] = useState("");
+
+  const dispatch = useDispatch();
+
   const { coachSuccessPopup, assignCoachStudentOpen, assignCoachBatchOpen } =
     useSelector((state) => state.coachModule);
   const { timezones } = useSelector((state) => state.timezone);
-  useEffect(() => {
-    if (data) {
-      console.log("data", data);
-      const formattedDate = moment(data.date_of_birth).format("YYYY-MM-DD");
-      setDateOfBirth(formattedDate);
-      dispatch(accessCoachName(data));
-
-      //convert base64 image to blob
-      if (data.profile_picture) {
-        const byteCharacters = atob(data.profile_picture);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-          byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: "image/jpeg" });
-        const blobUrl = URL.createObjectURL(blob);
-
-        console.log("blobUrl", blobUrl);
-        setSelectedImage(blobUrl);
-      }
-
-      setValue("name", data.name);
-      // setValue("short_description", data.short_description);
-      setValue("username", data.username);
-      setValue("password", data.password);
-      setValue("location", data.location);
-      setValue("address", data.address);
-      setValue("pincode", data.pincode);
-      setValue("time_zone", data.time_zone);
-      setValue("gender", data.gender);
-      setValue("email", data.email);
-      setValue("date_of_birth", data.date_of_birth);
-      setDateOfBirth(data.date_of_birth);
-      setValue("highest_qualification", data.highest_qualification);
-      setValue("about_me", data.about_me);
-      //setPhoneNumber(data.phone);
-
-      setIsEditing(true);
-      setValue("time_zone", data.time_zone);
-      setValue("phone", data.phone);
-      //setPhoneNumber(data.phone || "");
-    }
-  }, [data, setValue, setSelectedImage]);
 
   useEffect(() => {
     dispatch(getTimezone());
   }, [dispatch]);
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    const reader = new FileReader();
+  useEffect(() => {
+    if (data) {
+      populateForm(data);
+    }
+  }, [data]);
 
-    reader.onloadend = () => {
-      setSelectedImage(reader.result);
+  const populateForm = (data) => {
+    // TODO : Neet to format the date in MM/DD/YYYY format
+    // const newDate = dateFormatter(data.date_of_birth)
+    // console.log("NEW DATE : ", newDate)
+
+    const formattedDate = moment(data.date_of_birth).format("YYYY-MM-DD");
+    setDateOfBirth(formattedDate);
+    dispatch(accessCoachName(data));
+
+    if (data.profile_picture) {
+      const blobUrl = base64ToBlobUrl(data.profile_picture);
+      setSelectedImage(blobUrl);
+    }
+
+    const formValues = {
+      name: data.name,
+      username: data.username,
+      password: data.password,
+      location: data.location,
+      address: data.address,
+      pincode: data.pincode,
+      time_zone: data.time_zone,
+      gender: data.gender,
+      email: data.email,
+      date_of_birth: formattedDate,
+      highest_qualification: data.highest_qualification,
+      about_me: data.about_me,
     };
 
-    if (file) {
-      reader.readAsDataURL(file);
-    }
+    Object.entries(formValues).forEach(([key, value]) => setValue(key, value));
+    const onSubmit = (formData) => {
+      if (isEditing) {
+        // Remove phone_number and time_zone from formData if editing
+        delete formData.phone_number;
+        delete formData.time_zone;
+      }
+      // Handle form submission, e.g., send formData to the backend
+      console.log("Submitted data:", formData);
+    };
+
+    setPhoneNumber(data.phone);
+    setIsEditing(true);
+    setValue("time_zone", data.time_zone);
+  };
+
+  const base64ToBlobUrl = (base64Data) => {
+    const byteCharacters = atob(base64Data);
+    const byteNumbers = Array.from(byteCharacters, (char) =>
+      char.charCodeAt(0)
+    );
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: "image/jpeg" });
+    return URL.createObjectURL(blob);
   };
 
   const handleAssignStudents = () => {
@@ -146,7 +144,7 @@ function AddEditCoach({ data }) {
   const onSubmit = async (coachData) => {
     const { email, time_zone, ...updatedFormData } = coachData;
 
-    coachData.date_of_birth = dateOfBirth;
+    updatedFormData.date_of_birth = dateOfBirth;
     updatedFormData.phone = phoneNumber;
 
     if (selectedImage) {
@@ -156,20 +154,22 @@ function AddEditCoach({ data }) {
       );
       updatedFormData.profile_picture = base64Data;
     }
-
-    if (data) {
-      const updateRes = await dispatch(
-        updateCoach({ id: data.id, data: data })
-      ).unwrap();
-      dispatch(openCoachSuccessPopup());
-      dispatch(accessCoachName(updateRes));
-    } else {
-      updatedFormData.email = email;
-      updatedFormData.time_zone = time_zone;
-      const createRes = await dispatch(createCoach(coachData)).unwrap();
-      console.log("Created : ", createRes);
-      dispatch(openCoachSuccessPopup());
-      dispatch(accessCoachName(createRes.coach));
+    try {
+      if (data) {
+        const updateRes = await dispatch(
+          updateCoach({ id: data.id, data: updatedFormData })
+        ).unwrap();
+        dispatch(openCoachSuccessPopup());
+        dispatch(accessCoachName(updateRes));
+      } else {
+        updatedFormData.email = email;
+        updatedFormData.time_zone = time_zone;
+        const createRes = await dispatch(createCoach(updatedFormData)).unwrap();
+        dispatch(openCoachSuccessPopup());
+        dispatch(accessCoachName(createRes.coach));
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
     }
   };
 
@@ -262,47 +262,53 @@ function AddEditCoach({ data }) {
             mx: "auto",
           }}
         >
-          <Box display="flex " alignItems="center" mb={4}>
-            <Box
-              position="relative"
-              display="inline-flex"
-              flexDirection="column"
-            >
+          <form onSubmit={handleSubmit(onSubmit)} noValidate>
+            <Box display="flex " alignItems="center" mb={4}>
               <AvatarInput
                 name="x_picture"
                 selectedImage={selectedImage}
                 setSelectedImage={setSelectedImage}
               />
+              <Box ml={4}>
+                <Typography
+                  variant="h5"
+                  sx={{
+                    fontSize: "24px",
+                    fontWeight: "600",
+                    font: "Nunito Sans",
+                    color: "#1A1E3D",
+                  }}
+                >
+                  {nameValue || "Name of the TA"}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontSize: "16px",
+                    fontWeight: "400",
+                    mb: 4,
+                    color: "#5F6383",
+                    font: "Nunito Sans",
+                  }}
+                >
+                  {aboutMeValue || "Short Description"}
+                </Typography>
+                {/* <CustomTextField
+                label="Short Description"
+                name="short_description"
+                placeholder="Enter About TA"
+                register={register}
+                validation={{ required: "About Me is required" }}
+                errors={errors}
+                multiline
+                rows={2}
+                sx={{ width: "400px" }}
+              /> */}
+              </Box>
             </Box>
-            <Box ml={4}>
-              <Typography
-                variant="h5"
-                sx={{
-                  fontSize: "24px",
-                  fontWeight: "600",
-                  font: "Nohemi",
-                  color: "#1A1E3D",
-                }}
-              >
-                {nameValue || "Name of the Coach"}
-              </Typography>
-              <Typography
-                variant="body2"
-                sx={{
-                  fontSize: "16px",
-                  fontWeight: "400",
-                  mb: 4,
-                  color: "#5F6383",
-                  font: "Nohemi",
-                }}
-              >
-                {aboutMeValue || "Short Description"}
-              </Typography>
-            </Box>
-          </Box>
-          <Divider sx={{ mt: 2, mb: 4, border: "1px solid #C2C2E7" }} />
 
-          <form onSubmit={handleSubmit(onSubmit)} noValidate>
+            <Divider sx={{ mt: 2, mb: 4, border: "1px solid #C2C2E7" }} />
+
             <Grid container spacing={6}>
               <Grid item xs={12} sm={6} md={4}>
                 <CustomTextField
@@ -526,14 +532,17 @@ function AddEditCoach({ data }) {
                   control={control}
                   rules={{ required: "Highest Qualification is required" }}
                   render={({ field }) => (
-                    <CustomFormControl
-                      label="Highest Qualification"
-                      name="highest_qualification"
-                      value={field.value}
-                      onChange={field.onChange}
-                      errors={errors}
-                      options={qualificationOptions}
-                    />
+                    <>
+                      {/* {console.log("DATA highest_qualification : ", field.value)} */}
+                      <CustomFormControl
+                        label="Highest Qualification"
+                        name="highest_qualification"
+                        value={field.value}
+                        onChange={field.onChange}
+                        errors={errors}
+                        options={qualificationOptions}
+                      />
+                    </>
                   )}
                 />
               </Grid>
@@ -596,14 +605,12 @@ function AddEditCoach({ data }) {
                 <CustomTextField
                   label="About Me"
                   name="about_me"
-                  type="text"
-                  placeholder="Enter About Coach"
-                  multiline
-                  rows={4}
+                  placeholder="Enter About TA"
                   register={register}
                   validation={{ required: "About Me is required" }}
                   errors={errors}
-                  helperText={errors.aboutMe?.message}
+                  multiline
+                  rows={4}
                 />
               </Grid>
             </Grid>
@@ -625,12 +632,6 @@ function AddEditCoach({ data }) {
               Submit
             </Button>
           </form>
-          {/* <ReusableDialog
-          open={open}
-          handleClose={handleClose}
-          title="'Coach' successfully created."
-          actions={actions}
-        /> */}
 
           {coachSuccessPopup && <SubmitPopup componentname={"ADDITCOACH"} />}
           {assignCoachStudentOpen && (
