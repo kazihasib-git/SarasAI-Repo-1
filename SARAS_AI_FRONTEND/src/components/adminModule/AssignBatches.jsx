@@ -116,11 +116,11 @@ const AssignBatches = ({ componentname }) => {
             break;
     }
 
-  const stateSelector = useSelector((state) =>
-    stateModuleKey ? state[stateModuleKey] : {}
-  );
-  const { [nameKeyScheduling]: assignedName, [idKeyScheduling]: assignedId } =
-    schedulingState || {};
+    const stateSelector = useSelector((state) =>
+        stateModuleKey ? state[stateModuleKey] : {},
+    );
+    const { [nameKeyScheduling]: assignedName, [idKeyScheduling]: assignedId } =
+        schedulingState || {};
 
     const {
         [assignBatchOpenKey]: assignBatchOpen,
@@ -137,134 +137,140 @@ const AssignBatches = ({ componentname }) => {
         }
     }, [assignBatchOpen, dispatch, getBatchMappingAction]);
 
-  useEffect(() => {
-    if (batchMapping) {
-      console.log("BATCHMAPPING : ", batchMapping);
-      const transformedData = batchMapping.map((batch, index) => ({
-        "S. No.": index + 1,
-        "Batch Name": batch.name,
-        Branch: batch.branch.name,
-        Select: batch.is_active ? 0 : 1,
-        id: batch.id,
-      }));
+    useEffect(() => {
+        if (batchMapping) {
+            console.log('BATCHMAPPING : ', batchMapping);
+            const transformedData = batchMapping.map((batch, index) => ({
+                'S. No.': index + 1,
+                'Batch Name': batch.name,
+                Branch: batch.branch.name,
+                Select: batch.is_active ? 0 : 1,
+                id: batch.id,
+            }));
 
-      const filtered = transformedData.filter((batch) => {
-        const matchesBranch = selectedBranch
-          ? batch.Branch === selectedBranch
-          : true;
-        const matchesQuery = searchQuery
-          ? batch["Batch Name"]
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase())
-          : true;
-        return matchesBranch && matchesQuery;
-      });
+            const filtered = transformedData.filter((batch) => {
+                const matchesBranch = selectedBranch
+                    ? batch.Branch === selectedBranch
+                    : true;
+                const matchesQuery = searchQuery
+                    ? batch['Batch Name']
+                          .toLowerCase()
+                          .includes(searchQuery.toLowerCase())
+                    : true;
+                return matchesBranch && matchesQuery;
+            });
 
             setFilteredBatches(filtered);
         }
     }, [batchMapping, selectedBranch, searchQuery]);
 
-  const batchOptions = batchMapping
-    ? [...new Set(batchMapping.map((batch) => batch.branch.name))]
-    : [];
+    const batchOptions = batchMapping
+        ? [...new Set(batchMapping.map((batch) => batch.branch.name))]
+        : [];
 
-  const handleSelectBatch = (id) => {
-    setSelectedBatch((prev) =>
-      prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id]
-    );
-  };
-
-  const handleBranchChange = (e) => {
-    const selectedBranchValue = e.target.value;
-    setSelectedBranch(selectedBranchValue);
-
-    if (!selectedBranchValue) {
-      // If branch is cleared, reset the filtered batches to all batches
-      setFilteredBatches(
-        batchMapping.map((batch, index) => ({
-          "S. No.": index + 1,
-          "Batch Name": batch.name,
-          Branch: batch.branch.name,
-          Select: batch.is_active ? 0 : 1,
-          id: batch.id,
-        }))
-      );
-    }
-  };
-
-  const handleSubmit = () => {
-    const id =
-      componentname === "ADDITCOACH"
-        ? coachID || assignedId
-        : taID || assignedId;
-    const data = {
-      [componentname === "ADDITCOACH" ? "Coach_id" : "ta_id"]: id,
-      batches: selectedBatch.map((id) => ({ id: id.toString() })),
-    };
-    dispatch(postAssignAction({ id, data })).then(() => {
-      if (assignedId) {
-        dispatch(
-          openScheduleSession({
-            id: assignedId,
-            name: assignedName,
-            batches: selectedBatch.map((id) => ({ id: id.toString() })),
-          })
+    const handleSelectBatch = (id) => {
+        setSelectedBatch((prev) =>
+            prev.includes(id)
+                ? prev.filter((sid) => sid !== id)
+                : [...prev, id],
         );
-      }
-      dispatch(openSuccessAction());
-    });
-    dispatch(closeDialogAction());
-  };
+    };
+
+    const handleBranchChange = (e) => {
+        const selectedBranchValue = e.target.value;
+        setSelectedBranch(selectedBranchValue);
+
+        if (!selectedBranchValue) {
+            // If branch is cleared, reset the filtered batches to all batches
+            setFilteredBatches(
+                batchMapping.map((batch, index) => ({
+                    'S. No.': index + 1,
+                    'Batch Name': batch.name,
+                    Branch: batch.branch.name,
+                    Select: batch.is_active ? 0 : 1,
+                    id: batch.id,
+                })),
+            );
+        }
+    };
+
+    const handleSubmit = () => {
+        const id =
+            componentname === 'ADDITCOACH'
+                ? coachID || assignedId
+                : taID || assignedId;
+        const data = {
+            [componentname === 'ADDITCOACH' ? 'Coach_id' : 'ta_id']: id,
+            batches: selectedBatch.map((id) => ({ id: id.toString() })),
+        };
+        dispatch(postAssignAction({ id, data })).then(() => {
+            if (assignedId) {
+                dispatch(
+                    openScheduleSession({
+                        id: assignedId,
+                        name: assignedName,
+                        batches: selectedBatch.map((id) => ({
+                            id: id.toString(),
+                        })),
+                    }),
+                );
+            }
+            dispatch(openSuccessAction());
+        });
+        dispatch(closeDialogAction());
+    };
 
     const headers = ['S. No.', 'Batch Name', 'Branch', 'Select'];
 
-  const content = (
-    <>
-      <Grid container spacing={2} justifyContent="center" sx={{ mt: 0 }}>
-        <Grid item sm={6}>
-          <CustomTextField
-            select
-            label="Branch"
-            value={selectedBranch}
-            onChange={handleBranchChange}
-            onClear={() => handleBranchChange({ target: { value: "" } })} // Clear functionality
-          >
-            <MenuItem value="">
-              <em>All</em>
-            </MenuItem>
-            {batchOptions.map((branch, index) => (
-              <MenuItem key={index} value={branch}>
-                {branch}
-              </MenuItem>
-            ))}
-          </CustomTextField>
-        </Grid>
-        <Grid item xs={12}>
-          <Divider sx={{ border: "1px solid #C2C2E7" }} />
-        </Grid>
-        <Grid item xs={12} mb={2}>
-          <CustomTextField
-            label="Search By Batch Name"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </Grid>
-      </Grid>
-      <PopUpTable
-        headers={headers}
-        initialData={filteredBatches}
-        onRowClick={handleSelectBatch}
-        selectedBox={selectedBatch}
-      />
-      <Typography
-        variant="subtitle1"
-        gutterBottom
-        sx={{ mt: 2, textAlign: "center" }}
-      >
-        {selectedBatch.length} batch(es) Selected
-      </Typography>
-    </>
-  );
+    const content = (
+        <>
+            <Grid container spacing={2} justifyContent="center" sx={{ mt: 0 }}>
+                <Grid item sm={6}>
+                    <CustomTextField
+                        select
+                        label="Branch"
+                        value={selectedBranch}
+                        onChange={handleBranchChange}
+                        onClear={() =>
+                            handleBranchChange({ target: { value: '' } })
+                        } // Clear functionality
+                    >
+                        <MenuItem value="">
+                            <em>All</em>
+                        </MenuItem>
+                        {batchOptions.map((branch, index) => (
+                            <MenuItem key={index} value={branch}>
+                                {branch}
+                            </MenuItem>
+                        ))}
+                    </CustomTextField>
+                </Grid>
+                <Grid item xs={12}>
+                    <Divider sx={{ border: '1px solid #C2C2E7' }} />
+                </Grid>
+                <Grid item xs={12} mb={2}>
+                    <CustomTextField
+                        label="Search By Batch Name"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                </Grid>
+            </Grid>
+            <PopUpTable
+                headers={headers}
+                initialData={filteredBatches}
+                onRowClick={handleSelectBatch}
+                selectedBox={selectedBatch}
+            />
+            <Typography
+                variant="subtitle1"
+                gutterBottom
+                sx={{ mt: 2, textAlign: 'center' }}
+            >
+                {selectedBatch.length} batch(es) Selected
+            </Typography>
+        </>
+    );
 
     const actions = (
         <CustomButton

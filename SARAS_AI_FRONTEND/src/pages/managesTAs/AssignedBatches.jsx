@@ -162,7 +162,7 @@ const DynamicTable = ({
                             className="bi bi-caret-left"
                             onClick={() => navigate("/ta-mapping")}
                         ></i> */}
-                                    {/* <ArrowBackIosIcon
+                    {/* <ArrowBackIosIcon
                             style={{ fontSize: "25px", marginBottom: "17px" }}
                             onClick={() => navigate("/ta-mapping")}
                         /> */}
@@ -345,7 +345,6 @@ const actionButtons = [
 ];
 
 const AssignBatches = () => {
-
     const { id } = useParams();
     console.log('ID : ', id);
     const dispatch = useDispatch();

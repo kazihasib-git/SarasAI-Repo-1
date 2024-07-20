@@ -360,19 +360,19 @@ export const taSlice = createSlice({
             state.error = action.payload || action.error.message;
         });
 
-    // get batch mapping
-    builder.addCase(getBatchMapping.pending, (state) => {
-      state.loading = true;
-    });
-    builder.addCase(getBatchMapping.fulfilled, (state, action) => {
-      state.loading = false;
-      // console.log("MAPPING PAYLOAD :", action.payload )
-      state.batchMapping = action.payload.batches;
-    });
-    builder.addCase(getBatchMapping.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload || action.error.message;
-    });
+        // get batch mapping
+        builder.addCase(getBatchMapping.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(getBatchMapping.fulfilled, (state, action) => {
+            state.loading = false;
+            // console.log("MAPPING PAYLOAD :", action.payload )
+            state.batchMapping = action.payload.batches;
+        });
+        builder.addCase(getBatchMapping.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload || action.error.message;
+        });
 
         // Show TA Mapping
         builder.addCase(showTAMapping.pending, (state) => {
@@ -388,19 +388,19 @@ export const taSlice = createSlice({
             state.error = action.payload || action.error.message;
         });
 
-    // Get Assigned Students
-    builder.addCase(getAssignStudents.pending, (state) => {
-      state.loading = true;
-    });
-    builder.addCase(getAssignStudents.fulfilled, (state, action) => {
-      console.log("ACTION : ", action.payload)
-      state.loading = false;
-      state.assignedStudents = action.payload;
-    });
-    builder.addCase(getAssignStudents.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload || action.error.message;
-    });
+        // Get Assigned Students
+        builder.addCase(getAssignStudents.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(getAssignStudents.fulfilled, (state, action) => {
+            console.log('ACTION : ', action.payload);
+            state.loading = false;
+            state.assignedStudents = action.payload;
+        });
+        builder.addCase(getAssignStudents.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload || action.error.message;
+        });
 
         // Get Assigned Batches
         builder.addCase(getAssignBatches.pending, (state) => {

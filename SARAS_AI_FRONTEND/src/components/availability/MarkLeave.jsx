@@ -111,11 +111,10 @@ const MarkLeave = ({ componentName }) => {
             toast.error('Please select dates');
             return false;
         }
-        return true
+        return true;
     };
 
     const handleSubmit = () => {
-
         if (validateDates()) {
             const formattedFromDate = moment(fromDate).format('YYYY-MM-DD');
             const formattedToDate = moment(toDate).format('YYYY-MM-DD');
@@ -142,7 +141,6 @@ const MarkLeave = ({ componentName }) => {
                     dispatch(openAvailableSlotsAction(leaveData));
                 });
         }
-
     };
 
     const content = (

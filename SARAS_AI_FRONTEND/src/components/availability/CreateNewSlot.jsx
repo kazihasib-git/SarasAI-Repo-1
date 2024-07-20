@@ -184,7 +184,7 @@ const CreateNewSlot = ({ componentName }) => {
             return false;
         }
         return true;
-    }
+    };
 
     const onSubmit = (formData) => {
         console.log('form data', formData);

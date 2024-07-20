@@ -264,12 +264,20 @@ const TaCalender = () => {
                     slotData={slotData}
                     componentName={'TACALENDER'}
                 />
-                {scheduleSessionOpen && <Schedule componentName={'TASCHEDULE'} />}
+                {scheduleSessionOpen && (
+                    <Schedule componentName={'TASCHEDULE'} />
+                )}
                 {openEditBatch && <EditBatches componentname={'TASCHEDULE'} />}
-                {openEditStudent && <EditStudents componentname={'TASCHEDULE'} />}
+                {openEditStudent && (
+                    <EditStudents componentname={'TASCHEDULE'} />
+                )}
                 {/*{sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} componentName={"TACALENDER"} />} */}
                 {markLeaveOpen && (
-                    <MarkLeave id={id} name={name} componentName={'TACALENDER'} />
+                    <MarkLeave
+                        id={id}
+                        name={name}
+                        componentName={'TACALENDER'}
+                    />
                 )}
                 {scheduledSlotsOpen && (
                     <Slots id={id} name={name} componentName={'TACALENDER'} />

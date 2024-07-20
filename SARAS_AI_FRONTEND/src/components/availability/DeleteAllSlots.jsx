@@ -10,7 +10,11 @@ import {
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import CustomTextField from '../CustomFields/CustomTextField';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteFutureSlots, fetchCoachSlots, fetchTAScheduleById } from '../../redux/features/taModule/taAvialability';
+import {
+    deleteFutureSlots,
+    fetchCoachSlots,
+    fetchTAScheduleById,
+} from '../../redux/features/taModule/taAvialability';
 
 const CustomButton = ({
     onClick,
@@ -66,8 +70,7 @@ const DeleteAllSlots = ({ open, handleClose, id, name }) => {
             date: todayDate,
         };
 
-        dispatch(deleteFutureSlots({ id, data }))
-        .then(() => {
+        dispatch(deleteFutureSlots({ id, data })).then(() => {
             dispatch(fetchCoachSlots(id));
             dispatch(fetchTAScheduleById(id));
         });

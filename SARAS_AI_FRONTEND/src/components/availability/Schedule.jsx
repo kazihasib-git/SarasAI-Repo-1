@@ -230,7 +230,6 @@ const Schedule = ({ componentName }) => {
         });
     };
 
-    
     const handleSelectOption = (e) => {
         const selectedOption = e.target.value;
         console.log('selectedOption : ', selectedOption);
@@ -262,27 +261,26 @@ const Schedule = ({ componentName }) => {
             dispatch(openCoachEditBatch());
         }
     };
-    
 
     const onSubmit = async (formData) => {
         const studentId = students.map((student) => student.id);
         const batchId = batches.map((batch) => batch.id);
 
         console.log('studentId : ', studentId, 'batchId : ', batchId);
-        if(!fromTime){
+        if (!fromTime) {
             toast.error('Please select from time');
             return;
         }
 
-        if(!toTime){
+        if (!toTime) {
             toast.error('Please select to time');
             return;
         }
-        
-        if(studentId.length === 0){
+
+        if (studentId.length === 0) {
             toast.error('Please assign students');
             return;
-        }else if(batchId.length === 0){
+        } else if (batchId.length === 0) {
             toast.error('Please assign batches');
             return;
         }
@@ -352,7 +350,7 @@ const Schedule = ({ componentName }) => {
     */
     };
 
-    console.log("AvailableSlotsOptions :", availableSlotsOptions)
+    console.log('AvailableSlotsOptions :', availableSlotsOptions);
 
     const content = (
         <Box
