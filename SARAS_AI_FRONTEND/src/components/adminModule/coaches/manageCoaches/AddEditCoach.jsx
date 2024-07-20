@@ -97,6 +97,7 @@ function AddEditCoach({ data }) {
             location: data.location,
             address: data.address,
             pincode: data.pincode,
+            phone : data.phone,
             time_zone: data.time_zone,
             gender: data.gender,
             email: data.email,
@@ -134,7 +135,7 @@ function AddEditCoach({ data }) {
         const { email, time_zone, ...updatedFormData } = coachData;
 
         updatedFormData.date_of_birth = dateOfBirth;
-        updatedFormData.phone = phoneNumber;
+        // updatedFormData.phone = phoneNumber;
 
         if (selectedImage) {
             const base64Data = selectedImage.replace(

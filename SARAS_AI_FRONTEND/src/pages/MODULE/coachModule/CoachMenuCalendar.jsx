@@ -160,7 +160,10 @@ const CoachMenuCalendar = () => {
                 <DialogActions sx={{ p: 2 }}>
                     <Grid container alignItems="center">
                         <Grid item xs>
-                            <Typography variant="h4" sx={{ mb: 4 }}>
+                            <Typography
+                                variant="h4"
+                                sx={{ mb: 4, fontFamily: 'ExtraLight' }}
+                            >
                                 {'My Calendar'}
                             </Typography>
                         </Grid>

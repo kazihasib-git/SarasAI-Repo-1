@@ -16,10 +16,10 @@ const CustomFormControl = ({
     options,
     disabled,
 }) => {
-    // const hasError = !!errors[name];
+    const hasError = !!errors[name];
 
     return (
-        <FormControl variant="outlined" disabled={disabled} fullWidth>
+        <FormControl variant="outlined" fullWidth>
             <InputLabel
                 style={{ margin: 0 }}
                 sx={{
@@ -39,8 +39,7 @@ const CustomFormControl = ({
                 name={name}
                 value={value}
                 onChange={onChange}
-                error={!!errors[name]}
-                disabled={disabled}
+                error={hasError}
                 MenuProps={{
                     PaperProps: {
                         style: {

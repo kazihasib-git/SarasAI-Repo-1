@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Header from '../../../components/Header/Header';
 import Sidebar from '../../../components/Sidebar/Sidebar';
 import { Box } from '@mui/material';
-import DynamicTable from '../../../components/CommonComponent/DynamicTable';
+import CoachTemplateTable from './TemplateTable/CoachTemplateTable';
 import {
     closeCreateTemplateCoach,
     closeEditTemplateCoach,
@@ -10,6 +10,7 @@ import {
     openCreateTemplateCoach,
     openEditTemplateCoach,
     setSelectedCoachTemplate,
+    getCoachTemplateModuleId,
 } from '../../../redux/features/CoachModule/CoachTemplateSlice';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -33,8 +34,8 @@ const CoachTemplate = () => {
                 id: item.id,
                 'Template Name': item.name,
                 Duration: item.duration,
-                Activities: item.modules
-                    .map((module) => module.module_name)
+                Activities: item?.modules
+                    ?.map((module) => module?.module_name)
                     .join(', '),
                 'Assigned To': 'John Doe',
                 is_active: item.is_active,
@@ -75,7 +76,31 @@ const CoachTemplate = () => {
             'Assigned To': 'Michael Brown',
         },
     ];
-
+    const data123 = [
+        {
+            id: 1,
+            template_id: 1,
+            module_name: 'Sandeep-Module-1',
+            is_active: 1,
+            created_by: null,
+            updated_by: null,
+            deleted_at: null,
+            created_at: '2024-07-18T12:35:13.000000Z',
+            updated_at: '2024-07-19T11:53:01.000000Z',
+            template: {
+                id: 1,
+                name: 'test-sandeep 5',
+                duration: 7,
+                is_active: 1,
+                created_by: null,
+                updated_by: null,
+                deleted_at: null,
+                created_at: '2024-07-18T12:27:19.000000Z',
+                updated_at: '2024-07-18T12:27:19.000000Z',
+            },
+            activities: [],
+        },
+    ];
     const actionButtons = [
         {
             type: 'switch',
@@ -85,6 +110,7 @@ const CoachTemplate = () => {
             onClick: (id) => {
                 dispatch(openEditTemplateCoach());
                 dispatch(setSelectedCoachTemplate(id));
+                dispatch(getCoachTemplateModuleId(id));
                 navigation('/template-name');
                 console.log('CLICKED : ', id);
             },
@@ -132,7 +158,7 @@ const CoachTemplate = () => {
                             <p>No Data Available</p>
                         </div>
                     ) : (
-                        <DynamicTable
+                        <CoachTemplateTable
                             headers={headers}
                             initialData={coachTemplatesData}
                             actionButtons={actionButtons}

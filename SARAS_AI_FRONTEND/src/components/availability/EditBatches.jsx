@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Button, MenuItem, Typography, Grid, Divider } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
+import CustomTextField from '../CustomFields/CustomTextField';
+import ReusableDialog from '../CustomFields/ReusableDialog';
+import PopUpTable from '../CommonComponent/PopUpTable';
 import {
     closeAssignBatches,
     openSuccessPopup,
@@ -15,9 +18,6 @@ import {
     getCoachAssignBatches,
 } from '../../redux/features/CoachModule/coachSlice';
 
-import CustomTextField from '../CustomFields/CustomTextField';
-import ReusableDialog from '../CustomFields/ReusableDialog';
-import PopUpTable from '../CommonComponent/PopUpTable';
 import {
     closeEditBatch,
     openScheduleSession,
@@ -64,17 +64,12 @@ const CustomButton = ({
 };
 
 const EditBatches = ({ componentname }) => {
+    console.log('COMPONENT NAME EDITBATCH: ', componentname);
     const dispatch = useDispatch();
     const [selectedBatch, setSelectedBatch] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedBranch, setSelectedBranch] = useState('');
     const [filteredBatches, setFilteredBatches] = useState([]);
-
-    //   const {
-    //     openEditBatch,
-    //     taID: taaaId,
-    //     batches,
-    //   } = useSelector((state) => state.taScheduling);
 
     let stateModuleKey,
         nameKey,
@@ -152,34 +147,34 @@ const EditBatches = ({ componentname }) => {
         taID,
         coachID,
         [editBatchKey]: assignedBatches,
-
-        //[editStudentKey]: assignedStudents,
         loading,
     } = stateSelector || {};
 
-    useEffect(() => {
-        // console.log("idKeyScheduling : ", idKeyScheduling, assignedId, taaaId);
+    console.log("assignedId : ", assignedId);
 
+    useEffect(() => {
         if (stateModuleKey && assignBatchOpen) {
             dispatch(getAssignBatchesAction(assignedId));
-            // dispatch(getAssignBatches(taaaId));
-            // dispatch(getAssignBatches(taID || coachID));
         }
-    }, [dispatch]);
+    }, [
+        dispatch,
+        stateModuleKey,
+        assignBatchOpen,
+        assignedId,
+        getAssignBatchesAction,
+    ]);
+
+    console.log("Assigned Batches", assignedBatches);
 
     useEffect(() => {
         if (assignedBatches) {
-            console.log('assignedBatches', assignedBatches);
-
+            console.log('BRANCH NAME : ', assignedBatches);
             const transformedData = assignedBatches.map((batch, index) => ({
                 'S. No.': index + 1,
                 'Batch Name': batch.batch.name,
-                Branch: batch.batch.branch,
-                //Select: batch.is_active ? "Active" : "Inactive",
+                Branch: batch.batch.branch.name,
                 id: batch.id,
             }));
-
-            console.log('transformedData', transformedData);
 
             const filtered = transformedData.filter((batch) => {
                 const matchesBranch = selectedBranch
@@ -198,7 +193,7 @@ const EditBatches = ({ componentname }) => {
     }, [assignedBatches, selectedBranch, searchQuery]);
 
     const batchOptions = assignedBatches
-        ? [...new Set(assignedBatches.map((batch) => batch.branch))]
+        ? [...new Set(assignedBatches.map((batch) => batch.batch.branch.name))]
         : [];
 
     useEffect(() => {
@@ -214,6 +209,22 @@ const EditBatches = ({ componentname }) => {
                 : [...prev, id],
         );
     };
+    const handleBranchChange = (e) => {
+        const selectedBranchValue = e.target.value;
+        setSelectedBranch(selectedBranchValue);
+
+        if (!selectedBranchValue) {
+            // If branch is cleared, reset the filtered batches to all batches
+            setFilteredBatches(
+                assignedBatches.map((batch, index) => ({
+                    'S. No.': index + 1,
+                    'Batch Name': batch.batch.name,
+                    Branch: batch.batch.branch.name,
+                    id: batch.id,
+                })),
+            );
+        }
+    };
 
     const handleSubmit = () => {
         const id =
@@ -223,33 +234,11 @@ const EditBatches = ({ componentname }) => {
         const data = {
             [componentname === 'COACHSCHEDULE' ? 'Coach_id' : 'ta_id']: id,
             name: assignedName,
-            batches: selectedBatch.map((id) => ({ id })),
+            batches: selectedBatch ? selectedBatch.map((id) => ({ id })) : [],
         };
-
-        // dispatch(
-        //     openSessionAction({
-        //     id,
-        //     name: assignedName,
-        //     batches: selectedBatch.map((id) => ({ id })),
-        //   })
-        // );
+        console.log('DATA: ', data);
         dispatch(openScheduleSessionAction(data));
-
-        /*
-        dispatch(postAssignAction({ id, data })).then(() => {
-            if (assignedId) {
-                dispatch(
-                    openScheduleSession({
-                        id: assignedId,
-                        name: assignedName,
-                        batches: selectedBatch.map((id) => ({ id: id.toString() })),
-                    })
-                );
-            }
-            dispatch(openSuccessAction());
-        })
-        */
-        dispatch(closeEditBatch());
+        dispatch(closeDialogAction());
     };
 
     const headers = ['S. No.', 'Batch Name', 'Branch', 'Select'];
@@ -262,10 +251,16 @@ const EditBatches = ({ componentname }) => {
                         select
                         label="Branch"
                         value={selectedBranch}
-                        onChange={(e) => setSelectedBranch(e.target.value)}
+                        onChange={handleBranchChange}
+                        onClear={() =>
+                            handleBranchChange({ target: { value: '' } })
+                        } // Clear functionality
                     >
-                        {batchOptions.map((branch) => (
-                            <MenuItem key={branch} value={branch}>
+                        <MenuItem value="">
+                            <em>All</em>
+                        </MenuItem>
+                        {batchOptions.map((branch, index) => (
+                            <MenuItem key={index} value={branch}>
                                 {branch}
                             </MenuItem>
                         ))}
@@ -321,7 +316,6 @@ const EditBatches = ({ componentname }) => {
         <ReusableDialog
             open={assignBatchOpen}
             handleClose={() => dispatch(closeDialogAction())}
-            //   handleClose={() => dispatch(closeEditBatch())}
             title={`Assign Batches to ${assignedTA}`}
             content={content}
             actions={actions}

@@ -167,11 +167,11 @@ const ReschedulingSession = ({ componentName }) => {
         console.log('sessionEventData : ', sessionEventData['S. No.']);
         dispatch(
             rescheduleSession({
-                id: sessionEventData['S. No.'],
+                id: sessionEventData.id,
                 data: {
                     admin_user_id: taId.id,
                     schedule_date: selectDate,
-                    slot_id: selectedSlots[1], // Assuming only one slot can be selected
+                    slot_id: selectedSlots[0], // Assuming only one slot can be selected
                     start_time: fromTime,
                     end_time: toTime,
                     timezone: 'IST',

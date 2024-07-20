@@ -5,8 +5,10 @@ import CustomTextField from '../../../../components/CustomFields/CustomTextField
 import {
     closeTemplateModulePopup,
     createCoachTemplateModule,
+    getAllCoachTemplateModules,
 } from '../../../../redux/features/CoachModule/CoachTemplateSlice';
 import { useDispatch, useSelector } from 'react-redux';
+
 const CustomButton = ({
     onClick,
     children,
@@ -56,7 +58,7 @@ const AddModule = () => {
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                textAlign: 'center', // Add this line if needed
+                textAlign: 'center',
             }}
         >
             <Grid item xs={12} sm={6}>
@@ -81,8 +83,13 @@ const AddModule = () => {
                 created_by: 1,
                 updated_by: 1,
             };
-            dispatch(createCoachTemplateModule(data));
+            dispatch(createCoachTemplateModule(data))
+                .unwrap()
+                .then(() => {
+                    dispatch(getAllCoachTemplateModules(selectedCoachTemplate));
+                });
             dispatch(closeTemplateModulePopup());
+            setModuleName(''); // Reset the input field
         }
     };
 
@@ -98,15 +105,13 @@ const AddModule = () => {
     );
 
     return (
-        <>
-            <ReusableDialog
-                open={openModulePopUp}
-                handleClose={() => dispatch(closeTemplateModulePopup())}
-                title="Add Module"
-                content={content}
-                actions={actions}
-            />
-        </>
+        <ReusableDialog
+            open={openModulePopUp}
+            handleClose={() => dispatch(closeTemplateModulePopup())}
+            title="Add Module"
+            content={content}
+            actions={actions}
+        />
     );
 };
 

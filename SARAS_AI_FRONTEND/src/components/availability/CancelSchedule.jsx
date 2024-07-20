@@ -114,7 +114,9 @@ const CancelSchedule = ({ componentName }) => {
             componentName === 'TACALENDER'
                 ? schduldeCancelData
                 : schduldeCoachCancelData;
-        const sessionNo = sessionData['S. No.'];
+
+        console.log("session Data : ", sessionData)
+        const sessionNo = sessionData.id;
         dispatch(cancelSessionAction(sessionNo))
             .unwrap()
             .then(() => {

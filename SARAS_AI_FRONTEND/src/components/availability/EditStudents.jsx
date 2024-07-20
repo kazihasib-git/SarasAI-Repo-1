@@ -72,12 +72,12 @@ const EditStudents = ({ componentname }) => {
     const [selectedStudents, setSelectedStudents] = useState([]);
     const [filteredStudents, setFilteredStudents] = useState([]);
 
-    const {
-        openEditStudent,
-        taID: taaId,
-        students,
-    } = useSelector((state) => state.taScheduling);
-    const { assignedStudents } = useSelector((state) => state.taModule);
+    // const {
+    //   openEditStudent,
+    //   taID: taaId,
+    //   students,
+    // } = useSelector((state) => state.taScheduling);
+    // const { assignedStudents } = useSelector((state) => state.taModule);
 
     let stateModuleKey,
         nameKey,
@@ -86,35 +86,41 @@ const EditStudents = ({ componentname }) => {
         closeDialogAction,
         openSuccessAction,
         getAssignStudentAction,
-        postAssignAction;
+        postAssignAction,
+        editStudentKey,
+        selectedStudentKey;
     let schedulingState,
         nameKeyScheduling,
         idKeyScheduling,
         openScheduleSessionAction;
 
     switch (componentname) {
-        case 'ADDITCOACH':
+        case 'COACHSCHEDULE':
             stateModuleKey = 'coachModule';
             nameKey = 'coach_name';
             assignStudentOpenKey = 'openCoachEditStudent';
+            editStudentKey = 'assignedStudents';
+            selectedStudentKey = 'student';
             assignMappingKey = 'coachStudentBatchMapping';
-            closeDialogAction = closeCoachAssignStudents;
+            closeDialogAction = closeCoachEditStudent;
             openSuccessAction = openCoachSuccessPopup;
-            getAssignStudentAction = getCoachStudentBatchMapping;
+            getAssignStudentAction = getCoachAssignStudents;
             postAssignAction = postCoachAssignStudents;
             schedulingState = useSelector((state) => state.coachScheduling);
             nameKeyScheduling = 'coachName';
             idKeyScheduling = 'coachID';
             openScheduleSessionAction = openCoachScheduleSession;
             break;
-        case 'ADDEDITTA':
+        case 'TASCHEDULE':
             stateModuleKey = 'taModule';
             nameKey = 'ta_name';
             assignStudentOpenKey = 'openEditStudent';
+            editStudentKey = 'assignedStudents';
+            selectedStudentKey = 'student';
             assignMappingKey = 'studentBatchMapping';
-            closeDialogAction = closeAssignStudents;
+            closeDialogAction = closeEditStudent;
             openSuccessAction = openSuccessPopup;
-            getAssignStudentAction = getStudentBatchMapping;
+            getAssignStudentAction = getAssignStudents;
             postAssignAction = postAssignStudents;
             schedulingState = useSelector((state) => state.taScheduling);
             nameKeyScheduling = 'taName';
@@ -125,6 +131,8 @@ const EditStudents = ({ componentname }) => {
             stateModuleKey = null;
             nameKey = null;
             assignStudentOpenKey = null;
+            editStudentKey = null;
+            selectedStudentKey = null;
             assignMappingKey = null;
             closeDialogAction = null;
             openSuccessAction = null;
@@ -140,15 +148,18 @@ const EditStudents = ({ componentname }) => {
     const stateSelector = useSelector((state) =>
         stateModuleKey ? state[stateModuleKey] : {},
     );
-    const { [nameKeyScheduling]: assignedName, [idKeyScheduling]: assignedId } =
-        schedulingState || {};
+    const {
+        [nameKeyScheduling]: assignedName,
+        [idKeyScheduling]: assignedId,
+        [assignStudentOpenKey]: assignStudentOpen,
+        [selectedStudentKey]: selectedStudent,
+    } = schedulingState || {};
 
     const {
-        [assignStudentOpenKey]: assignStudentOpen,
         [nameKey]: assignedTAName,
         taID,
         coachID,
-        [assignMappingKey]: studentBatchMapping,
+        [editStudentKey]: assignedStudents,
     } = stateSelector || {};
 
     useEffect(() => {
@@ -156,15 +167,22 @@ const EditStudents = ({ componentname }) => {
         if (stateModuleKey && assignStudentOpen) {
             dispatch(getAssignStudentAction(assignedId));
         }
-    }, [dispatch]);
+    }, [
+        dispatch,
+        stateModuleKey,
+        assignStudentOpen,
+        assignedId,
+        getAssignStudentAction,
+    ]);
 
     useEffect(() => {
-        if (assignedStudents) {
-            console.log('STUDENT BATCH MAPPING : ', assignedStudents);
+        console.log('STUDENT BATCH MAPPING : ', assignedStudents);
+        if (assignedStudents && Array.isArray(assignedStudents)) {
             const transformedData = assignedStudents.map((stu, index) => ({
                 'S. No.': index + 1,
                 'Student Name': stu.student.name,
-                'Academic Term': stu.student.academic_term,
+                Program : stu.student.packages.map((pack) => pack.name).join(', ') || 'N/A',
+                //'Academic Term': stu.student.academic_term,
                 Batch:
                     stu.student.batches
                         .map((batch) => batch.batch_name)
@@ -172,12 +190,12 @@ const EditStudents = ({ componentname }) => {
                 Select: stu.is_active ? 'Active' : 'Inactive',
                 student_id: stu.student_id,
                 is_active: stu.is_active,
-                id: stu.student.id,
+                id : stu.student.id,
             }));
 
             const filtered = transformedData.filter((student) => {
                 const matchesTerm = selectedTerm
-                    ? student['Academic Term'] === selectedTerm
+                    ? student.Program === selectedTerm
                     : true;
                 const matchesBatch = selectedBatch
                     ? student.Batch.includes(selectedBatch)
@@ -192,37 +210,55 @@ const EditStudents = ({ componentname }) => {
 
             setFilteredStudents(filtered);
         }
-    }, [studentBatchMapping, selectedTerm, selectedBatch, searchName]);
+    }, [assignedStudents, selectedTerm, selectedBatch, searchName]);
 
-    const batchOptions = studentBatchMapping
-        ? [
-              ...new Set(
-                  studentBatchMapping
-                      .filter(
-                          (student) =>
-                              !selectedTerm ||
-                              student.academic_term === selectedTerm,
-                      )
-                      .flatMap((student) =>
-                          student.batches.map((batch) => batch.batch_name),
+    const batchOptions =
+        assignedStudents && Array.isArray(assignedStudents)
+            ? [
+                  ...new Set(
+                      assignedStudents
+                          .filter(
+                              (student) =>
+                                  !selectedTerm ||
+                                  student.student.academic_term ===
+                                      selectedTerm,
+                          )
+                          .flatMap((student) =>
+                              student.student.batches.map(
+                                  (batch) => batch.batch_name,
+                              ),
+                          ),
+                  ),
+              ]
+            : [];
+
+    const academicTermOptions =
+        assignedStudents && Array.isArray(assignedStudents)
+            ? [
+                  ...new Set(
+                      assignedStudents
+                        //  .filter(
+                        //     (student) =>
+                        //     !selectedBatch ||
+                        //     student.student.batches.some(
+                        //         (batch) => batch.batch_name === selectedBatch
+                        //     )
+                        //  )
+                         .flatMap((student) =>
+                         student.student.packages.map((pack) => pack.name),
                       ),
-              ),
-          ]
-        : [];
-
-    const academicTermOptions = studentBatchMapping
-        ? [
-              ...new Set(
-                  studentBatchMapping.map((student) => student.academic_term),
-              ),
-          ]
-        : [];
+                  ),
+              ]
+            : [];
 
     useEffect(() => {
-        if (students) {
-            setSelectedStudents(students.map((student) => student.id));
+        console.log('Selected Student inside use Effect : ', assignedStudents);
+        if (assignedStudents) {
+            setSelectedStudents(assignedStudents.map((student) => student.id));
         }
-    }, [students]);
+    }, [selectedStudent]);
+
+    console.log('selectedStudents : ', selectedStudents);
 
     const handleSelectStudent = (id) => {
         setSelectedStudents((prev) =>
@@ -270,7 +306,7 @@ const EditStudents = ({ componentname }) => {
     const headers = [
         'S. No.',
         'Student Name',
-        'Academic Term',
+        'Program',
         'Batch',
         'Select',
     ];
@@ -281,7 +317,7 @@ const EditStudents = ({ componentname }) => {
                 <Grid item sm={6}>
                     <CustomTextField
                         select
-                        label="Academic Term"
+                        label="Program"
                         value={selectedTerm}
                         onChange={(e) => setSelectedTerm(e.target.value)}
                     >
@@ -349,7 +385,7 @@ const EditStudents = ({ componentname }) => {
     const assignedTA = assignedTAName || assignedName;
     return (
         <ReusableDialog
-            open={assignMappingKey}
+            open={assignStudentOpen}
             //   handleClose={() => dispatch(closeEditStudent())}
             handleClose={() => dispatch(closeDialogAction())}
             title={`Assign Students to '${assignedTA}'`}

@@ -139,10 +139,11 @@ const AssignBatches = ({ componentname }) => {
 
     useEffect(() => {
         if (batchMapping) {
+            console.log('BATCHMAPPING : ', batchMapping);
             const transformedData = batchMapping.map((batch, index) => ({
                 'S. No.': index + 1,
                 'Batch Name': batch.name,
-                Branch: batch.branch,
+                Branch: batch.branch.name,
                 Select: batch.is_active ? 0 : 1,
                 id: batch.id,
             }));
@@ -164,7 +165,7 @@ const AssignBatches = ({ componentname }) => {
     }, [batchMapping, selectedBranch, searchQuery]);
 
     const batchOptions = batchMapping
-        ? [...new Set(batchMapping.map((batch) => batch.branch))]
+        ? [...new Set(batchMapping.map((batch) => batch.branch.name))]
         : [];
 
     const handleSelectBatch = (id) => {
@@ -173,6 +174,24 @@ const AssignBatches = ({ componentname }) => {
                 ? prev.filter((sid) => sid !== id)
                 : [...prev, id],
         );
+    };
+
+    const handleBranchChange = (e) => {
+        const selectedBranchValue = e.target.value;
+        setSelectedBranch(selectedBranchValue);
+
+        if (!selectedBranchValue) {
+            // If branch is cleared, reset the filtered batches to all batches
+            setFilteredBatches(
+                batchMapping.map((batch, index) => ({
+                    'S. No.': index + 1,
+                    'Batch Name': batch.name,
+                    Branch: batch.branch.name,
+                    Select: batch.is_active ? 0 : 1,
+                    id: batch.id,
+                })),
+            );
+        }
     };
 
     const handleSubmit = () => {
@@ -211,10 +230,16 @@ const AssignBatches = ({ componentname }) => {
                         select
                         label="Branch"
                         value={selectedBranch}
-                        onChange={(e) => setSelectedBranch(e.target.value)}
+                        onChange={handleBranchChange}
+                        onClear={() =>
+                            handleBranchChange({ target: { value: '' } })
+                        } // Clear functionality
                     >
-                        {batchOptions.map((branch) => (
-                            <MenuItem key={branch} value={branch}>
+                        <MenuItem value="">
+                            <em>All</em>
+                        </MenuItem>
+                        {batchOptions.map((branch, index) => (
+                            <MenuItem key={index} value={branch}>
                                 {branch}
                             </MenuItem>
                         ))}

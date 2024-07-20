@@ -25,7 +25,7 @@ export const createWOLCategory = createAsyncThunk(
 );
 
 // To Update WOL Category
-export const updateeWOLCategory = createAsyncThunk(
+export const updateWOLCategory = createAsyncThunk(
     'wol/updateWOLCategory',
     async ({ id, data }) => {
         const response = await axios.put(
@@ -195,6 +195,17 @@ export const addQuestionToCategory = createAsyncThunk(
     },
 );
 
+// Selected Questions list
+export const selectedQuestionsList = createAsyncThunk(
+    'wol/selectedQuestionsList',
+    async (id) => {
+        const response = await axios.get(
+            `${baseUrl}/admin/wol/wol-test-config-selected-question-list/${id}`,
+        );
+        return response.data;
+    },
+);
+
 const initialState = {
     wolCategoryData: [], // to store all WOL Category data
     instructionData: '', // to store all life instruction data
@@ -203,6 +214,7 @@ const initialState = {
     wolQuestionCategoryWise: [], // to store WOL Question category wise data
     wolTestConfigCategoryWise: [], // to store WOL Test Config category wise questions count data
     addQuestionToCategoryData: [],
+    selectedQuestionsListData: [],
     openAddEditWolCategory: false,
     editData: null, // to store WOL category edit data
     editwolQuestionData: null,
@@ -421,6 +433,19 @@ const wolSlice = createSlice({
             state.addQuestionToCategoryData = action.payload;
         });
         builder.addCase(addQuestionToCategory.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload || action.error.message;
+        });
+
+        // selectedQuestionsList
+        builder.addCase(selectedQuestionsList.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(selectedQuestionsList.fulfilled, (state, action) => {
+            state.loading = false;
+            state.selectedQuestionsListData = action.payload;
+        });
+        builder.addCase(selectedQuestionsList.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload || action.error.message;
         });

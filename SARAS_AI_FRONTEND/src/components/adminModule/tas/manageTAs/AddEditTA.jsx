@@ -70,6 +70,9 @@ const AddEditTA = ({ data }) => {
     useEffect(() => {
         dispatch(getTimezone());
     }, [dispatch]);
+    useEffect(() => {
+        dispatch(getTimezone());
+    }, [dispatch]);
 
     useEffect(() => {
         if (data) {
@@ -94,6 +97,7 @@ const AddEditTA = ({ data }) => {
             location: data.location,
             address: data.address,
             pincode: data.pincode,
+            phone: data.phone,
             time_zone: data.time_zone,
             gender: data.gender,
             email: data.email,
@@ -105,8 +109,11 @@ const AddEditTA = ({ data }) => {
         Object.entries(formValues).forEach(([key, value]) =>
             setValue(key, value),
         );
+        Object.entries(formValues).forEach(([key, value]) =>
+            setValue(key, value),
+        );
 
-        setPhoneNumber(data.phone);
+        // setPhoneNumber(data.phone);
     };
 
     const base64ToBlobUrl = (base64Data) => {
@@ -132,8 +139,9 @@ const AddEditTA = ({ data }) => {
 
         const { email, time_zone, ...updatedFormData } = formData;
 
+        console.log('formData :', formData);
+
         updatedFormData.date_of_birth = dateOfBirth;
-        updatedFormData.phone = phoneNumber;
 
         if (selectedImage) {
             const base64Data = selectedImage.replace(
@@ -455,7 +463,7 @@ const AddEditTA = ({ data }) => {
                             <Controller
                                 name="time_zone"
                                 control={control}
-                                rules={{ required: 'Time Zone is required' }}
+                                rules={{ required: 'TimeZone is required' }}
                                 render={({ field }) => {
                                     return (
                                         <CustomTimeZoneForm
@@ -598,7 +606,7 @@ const AddEditTA = ({ data }) => {
                                 <Typography
                                     variant="body2"
                                     color="error"
-                                    style={{ marginTop: '8px' }}
+                                    sx={{ fontSize: '0.75rem' }}
                                 >
                                     {errors.phone.message}
                                 </Typography>

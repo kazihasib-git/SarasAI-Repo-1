@@ -8,8 +8,6 @@ const CreateTaMenu = () => {
         <>
             <Header />
             <TaMenuSidebar />
-
-            <AddEditTeachingAssistant />
         </>
     );
 };

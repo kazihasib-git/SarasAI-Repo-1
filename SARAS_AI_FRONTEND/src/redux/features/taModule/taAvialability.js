@@ -87,7 +87,9 @@ export const deleteFutureSlots = createAsyncThunk(
         console.log('Data : ', data, id);
         const response = await axios.delete(
             `${baseUrl}/admin/coach-slots/${id}`,
-            { data: data },
+            {
+                data: data,
+            },
         );
         return response.data;
     },

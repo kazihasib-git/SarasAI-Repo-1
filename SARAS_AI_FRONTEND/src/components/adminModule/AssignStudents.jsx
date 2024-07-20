@@ -234,7 +234,7 @@ const AssignStudents = ({ componentname }) => {
 
     const content = (
         <>
-            <Grid container spacing={2} sx={{ mt: 0 }}>
+            <Grid container spacing={2}>
                 <Grid item sm={6}>
                     <CustomTextField
                         select

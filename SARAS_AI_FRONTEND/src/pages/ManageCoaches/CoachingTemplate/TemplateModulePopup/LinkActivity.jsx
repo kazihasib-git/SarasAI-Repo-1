@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReusableDialog from '../../../../components/CustomFields/ReusableDialog';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -12,12 +12,15 @@ import {
     FormControl,
 } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
-import { styled } from '@mui/material/styles';
+import { useDispatch, useSelector } from 'react-redux';
+import VideoUploadComponent from './videoUpload/VideoUploadComponent';
 import CustomFormControl from '../../../../components/CustomFields/CustomFromControl';
 import CustomTextField from '../../../../components/CustomFields/CustomTextField';
 import CustomDateField from '../../../../components/CustomFields/CustomDateField';
 import CustomTimeField from '../../../../components/CustomFields/CustomTimeField';
+import { getActivityType } from '../../../../redux/features/ActivityType/activityTypeSlice';
+import { getCoach } from '../../../../redux/features/CoachModule/coachSlice';
+import { linkActivity } from '../../../../redux/features/ActivityType/LinkActivitySlice';
 
 const CustomButton = ({
     onClick,
@@ -54,59 +57,83 @@ const CustomButton = ({
     );
 };
 
-const UploadBox = styled(Box)(({ theme }) => ({
-    border: '2px dashed #ccc',
-    borderRadius: '10px',
-    padding: '10px', // Reduced padding
-    textAlign: 'center',
-    color: '#888',
-    cursor: 'pointer',
-    marginTop: '10px',
-    '&:hover': {
-        borderColor: '#888',
-    },
-}));
-
-const LinkActivityPopup = ({ open, handleClose }) => {
+const LinkActivityPopup = ({ open, handleClose, activityId }) => {
     const dispatch = useDispatch();
     const {
         handleSubmit,
         control,
         formState: { errors },
     } = useForm();
+    const [fromDate, setFromDate] = useState(null);
     const [activityType, setActivityType] = useState('');
     const [selectedSessionType, setSelectedSessionType] = useState('');
     const [selectedDate, setSelectedDate] = useState(null);
     const [askCoach, setAskCoach] = useState(false);
+    const [selectedCoachId, setSelectedCoachId] = useState('');
+    const [selectedAssessmentId, setSelectedAssessmentId] = useState('');
+    const [selectedActivityId, setSelectedActivityId] = useState('');
 
-    const onSubmit = (data) => {
-        console.log(data); // Example: Log form data
-        handleClose();
+    const onSubmit = async (data) => {
+        // Prepare the payload
+        console.log('clicked');
+        console.log('activity data', data);
+        console.log('selected assessment id', selectedAssessmentId);
+        const payload = {
+            activity_id: activityId, // Ensure this value is correctly set
+            activity_type_id:
+                activityType === 'test'
+                    ? selectedAssessmentId
+                    : selectedActivityId, // Ensure this value is correctly set
+            link: data.virtualMeetLink, // Add other fields if needed
+        };
+        console.log('payload', payload);
+
+        try {
+            await dispatch(linkActivity(payload)).unwrap();
+            handleClose();
+        } catch (error) {
+            console.error('Failed to link activity:', error);
+        }
     };
 
-    const activityOptions = [
-        { value: 'video', label: 'Video' },
-        { value: 'test', label: 'Test' },
-        { value: 'link', label: 'Link' },
-        { value: 'virtual meet', label: 'Virtual Meet' },
-    ];
+    useEffect(() => {
+        dispatch(getActivityType());
+        dispatch(getCoach());
+    }, [dispatch]);
 
-    const assessmentOptions = [
-        { value: 'wheel_of_life', label: 'Wheel of Life' },
-        { value: 'core_value', label: 'Core Value' },
-        { value: 'belief', label: 'Belief' },
-    ];
+    const { typeList } = useSelector((state) => state.activityType);
+    const { coaches } = useSelector((state) => state.coachModule);
+    console.log('coaches', coaches);
+    const activityOptions = typeList
+        .filter((_, index) => index < 5)
+        .map((type) => ({
+            value: type.type_name,
+            label:
+                type.type_name.charAt(0).toUpperCase() +
+                type.type_name.slice(1), // Capitalize the first letter of each type_name
+            id: type.id,
+        }));
+
+    const assessmentOptions = typeList
+        .filter((_, index) => index >= 5)
+        .map((type) => ({
+            value: type.type_name,
+            label:
+                type.type_name.charAt(0).toUpperCase() +
+                type.type_name.slice(1), // Capitalize the first letter of each type_name
+            id: type.id,
+        }));
 
     const sessionTypes = [
         { value: 'one-on-one', label: 'One-on-one session' },
         { value: 'group', label: 'Group session' },
     ];
 
-    const coachOptions = [
-        { value: 'coach1', label: 'Coach A' },
-        { value: 'coach2', label: 'Coach B' },
-        { value: 'coach3', label: 'Coach C' },
-    ];
+    const coachOptions = coaches.map((coach) => ({
+        value: coach.name,
+        label: coach.name,
+        id: coach.id,
+    }));
 
     const timeSlots = [
         { value: 'slot1', label: '10:00 AM - 11:00 AM' },
@@ -122,7 +149,25 @@ const LinkActivityPopup = ({ open, handleClose }) => {
         { value: 'PST', label: 'Pacific Standard Time' },
         { value: 'EST', label: 'Eastern Standard Time' },
     ];
+    const handleCoachChange = (e) => {
+        const selected = coachOptions.find(
+            (option) => option.value === e.target.value,
+        );
 
+        if (selected) {
+            setSelectedCoachId(selected.id);
+            console.log('Selected Coach ID:', selected.id); // Log the selected coach ID
+        }
+    };
+
+    console.log('hello coach id is', selectedCoachId);
+    //  useEffect(() => {
+    //   if (fromDate) {
+    //     dispatch(
+    //       getAvailableSlotsAction({ admin_user_id: selectedCoachId , date: fromDate })
+    //     );
+    //   }
+    // }, [fromDate, dispatch, adminUserID, getAvailableSlotsAction]);
     const contentComponent = (
         <Grid
             container
@@ -145,7 +190,7 @@ const LinkActivityPopup = ({ open, handleClose }) => {
                 <Controller
                     name="activityName"
                     control={control}
-                    defaultValue="name"
+                    defaultValue=""
                     render={({ field }) => (
                         <CustomFormControl
                             label="Activity Type"
@@ -153,6 +198,13 @@ const LinkActivityPopup = ({ open, handleClose }) => {
                             value={field.value}
                             onChange={(e) => {
                                 setActivityType(e.target.value);
+                                const selectedValue = e.target.value;
+                                const selectedOption = activityOptions.find(
+                                    (option) => option.value === selectedValue,
+                                );
+                                setSelectedActivityId(
+                                    selectedOption ? selectedOption.id : '',
+                                );
                                 field.onChange(e);
                             }}
                             errors={errors}
@@ -162,21 +214,7 @@ const LinkActivityPopup = ({ open, handleClose }) => {
                 />
             </Grid>
 
-            {activityType === 'video' && (
-                <Grid item xs={12} sm={6} md={6} style={{ width: '80%' }}>
-                    <UploadBox>
-                        <Typography>Drag and Drop the file</Typography>
-                        <Typography>Or</Typography>
-                        <Button
-                            variant="text"
-                            sx={{ color: '#F56D3B' }}
-                            component="span"
-                        >
-                            Browse File
-                        </Button>
-                    </UploadBox>
-                </Grid>
-            )}
+            {activityType === 'videos' && <VideoUploadComponent />}
 
             {activityType === 'link' && (
                 <Grid
@@ -206,6 +244,7 @@ const LinkActivityPopup = ({ open, handleClose }) => {
                     />
                 </Grid>
             )}
+
             {activityType === 'test' && (
                 <Grid
                     item
@@ -224,7 +263,16 @@ const LinkActivityPopup = ({ open, handleClose }) => {
                                 name="assessment"
                                 value={field.value}
                                 onChange={(e) => {
+                                    const selectedValue = e.target.value;
                                     field.onChange(e);
+                                    const selectedOption =
+                                        assessmentOptions.find(
+                                            (option) =>
+                                                option.value === selectedValue,
+                                        );
+                                    setSelectedAssessmentId(
+                                        selectedOption ? selectedOption.id : '',
+                                    );
                                 }}
                                 errors={errors}
                                 options={assessmentOptions}
@@ -233,7 +281,6 @@ const LinkActivityPopup = ({ open, handleClose }) => {
                     />
                 </Grid>
             )}
-
             {activityType === 'virtual meet' && (
                 <>
                     <Grid
@@ -356,6 +403,7 @@ const LinkActivityPopup = ({ open, handleClose }) => {
                                         value={field.value}
                                         onChange={(e) => {
                                             field.onChange(e);
+                                            handleCoachChange(e);
                                             // handleCoachChange(e); // Uncomment if you have a handleCoachChange function
                                         }}
                                         errors={errors}
@@ -379,11 +427,8 @@ const LinkActivityPopup = ({ open, handleClose }) => {
                                     <CustomDateField
                                         label="Select Date"
                                         name="date"
-                                        value={selectedDate}
-                                        onChange={(newValue) => {
-                                            setSelectedDate(newValue);
-                                            field.onChange(newValue);
-                                        }}
+                                        value={fromDate}
+                                        onChange={setFromDate}
                                         fullWidth
                                     />
                                 )}

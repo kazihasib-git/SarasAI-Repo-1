@@ -346,6 +346,7 @@ export const taSlice = createSlice({
             state.loading = false;
             state.error = action.payload || action.error.message;
         });
+
         // Get Student-Batch Mapping
         builder.addCase(getStudentBatchMapping.pending, (state) => {
             state.loading = true;
@@ -367,7 +368,7 @@ export const taSlice = createSlice({
         builder.addCase(getBatchMapping.fulfilled, (state, action) => {
             state.loading = false;
             // console.log("MAPPING PAYLOAD :", action.payload )
-            state.batchMapping = action.payload;
+            state.batchMapping = action.payload.batches;
         });
         builder.addCase(getBatchMapping.rejected, (state, action) => {
             state.loading = false;
@@ -393,11 +394,13 @@ export const taSlice = createSlice({
             state.loading = true;
         });
         builder.addCase(getAssignStudents.fulfilled, (state, action) => {
+            console.log('ACTION : ', action.payload);
             state.loading = false;
             state.assignedStudents = action.payload;
         });
         builder.addCase(getAssignStudents.rejected, (state, action) => {
             state.loading = false;
+            state.assignedStudents = [];
             state.error = action.payload || action.error.message;
         });
 
@@ -411,6 +414,7 @@ export const taSlice = createSlice({
         });
         builder.addCase(getAssignBatches.rejected, (state, action) => {
             state.loading = false;
+            state.assignedBatches = [];
             state.error = action.payload || action.error.message;
         });
 

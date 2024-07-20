@@ -25,9 +25,12 @@ export const getAllCoachTemplateModules = createAsyncThunk(
     'coachTemplate/getAllCoachTemplateModules',
     async () => {
         const response = await axios.get(
-            `${baseUrl}/admin/coaching-templates/modules`,
+            `${baseUrl}/admin/coaching-templates/modules/${templateId}`,
         );
-        return response.data;
+        const modules = response.data.data.filter(
+            (module) => module.template_id === templateId,
+        );
+        return modules;
     },
 );
 
@@ -41,15 +44,46 @@ export const createCoachTemplateModule = createAsyncThunk(
         return response.data;
     },
 );
+export const getCoachTemplateModuleId = createAsyncThunk(
+    'coachTemplate/getCoachTemplateModuleId',
+    async (id) => {
+        const response = await axios.get(
+            `${baseUrl}/admin/coaching-templates/modules/${id}`,
+        );
+        return response.data;
+    },
+);
 
 export const updateCoachTemplateModule = createAsyncThunk(
     'coachTemplate/updateCoachTemplateModule',
     async (data) => {
-        const response = await axios.put(
+        const response = await axios.post(
             `${baseUrl}/admin/coaching-templates/update-modules`,
             data,
         );
         return response.data;
+    },
+);
+
+export const updateCoachActivity = createAsyncThunk(
+    'coachTemplate/updateCoachActivity',
+    async ({ data }, { rejectWithValue }) => {
+        try {
+            const response = await axios.post(
+                `${baseUrl}/admin/coaching-templates/activity-status`,
+                data,
+            );
+            console.log('API Response: ', response.data);
+            return response.data;
+        } catch (error) {
+            console.error(
+                'API Error: ',
+                error.response ? error.response.data : error.message,
+            );
+            return rejectWithValue(
+                error.response ? error.response.data : error.message,
+            );
+        }
     },
 );
 
@@ -63,9 +97,37 @@ export const createCoachTemplateActivity = createAsyncThunk(
         return response.data;
     },
 );
+
+export const updateEditActivity = createAsyncThunk(
+    'coachTemplate/updateEditActivity',
+    async ({ data }, { rejectWithValue }) => {
+        console.log('DATA : ', data);
+        try {
+            const response = await axios.post(
+                `${baseUrl}/admin/coaching-templates/update-activity`,
+                data,
+            );
+            console.log('API Response: ', response.data);
+            return response.data;
+        } catch (error) {
+            console.error(
+                'API Error: ',
+                error.response ? error.response.data : error.message,
+            );
+            return rejectWithValue(
+                error.response ? error.response.data : error.message,
+            );
+        }
+    },
+);
+
 const initialState = {
     coachesTemplateList: [],
     coachTemplates: [],
+    coachTemplatesId: [],
+    moduleID: null,
+    editModuleData: null,
+    editActivityData: null,
     loading: false,
     error: null,
     createCoachTemplateOpen: false,
@@ -75,12 +137,16 @@ const initialState = {
     openModulePopUp: false,
     openActivityPopUp: false,
     openEditModulePopUp: false,
+    openEditActivityPopUp: false,
     assignStudentOpen: false,
     assignBatchOpen: false,
     template_name: null,
     templateId: null,
     createCoachTemplateOpen: false,
     editCoachTemplateOpen: false,
+    createCoachModule: null,
+    modulesData: [],
+    newlyCreateTemplate: null,
 };
 
 export const coachTemplateSlice = createSlice({
@@ -112,6 +178,7 @@ export const coachTemplateSlice = createSlice({
             state.createCoachTemplateOpen = false;
         },
         openEditTemplateCoach(state) {
+            console.log('CLICKED !');
             state.editCoachTemplateOpen = true;
         },
         closeEditTemplateCoach(state) {
@@ -123,19 +190,29 @@ export const coachTemplateSlice = createSlice({
         closeTemplateModulePopup(state) {
             state.openModulePopUp = false;
         },
-
-        openTemplateActivityPopup(state) {
+        openTemplateActivityPopup(state, action) {
             state.openActivityPopUp = true;
+            console.log('Action payload : ', action.payload);
+            state.moduleID = action.payload;
         },
         closeTemplateActivityPopup(state) {
             state.openActivityPopUp = false;
         },
-
-        openEditModulePopup(state) {
+        openEditModulePopup(state, action) {
             state.openEditModulePopUp = true;
+            console.log('EDIT MODULE DATA  : ', action.payload);
+            state.editModuleData = action.payload;
         },
         closeEditModulePopup(state) {
             state.openEditModulePopUp = false;
+        },
+        openEditActivityPopup(state, action) {
+            state.openEditActivityPopUp = true;
+            console.log('EDIT Activity DATA  : ', action.payload);
+            state.editActivityData = action.payload;
+        },
+        closeEditActivityPopup(state) {
+            state.openEditActivityPopUp = false;
         },
     },
     extraReducers: (builder) => {
@@ -145,6 +222,7 @@ export const coachTemplateSlice = createSlice({
                 state.loading = true;
             })
             .addCase(getAllCoachTemplates.fulfilled, (state, action) => {
+                console.log('ACTION  getAllCOachTemplate: ', action.payload);
                 state.loading = false;
                 state.coachTemplates = action.payload.data;
             })
@@ -159,9 +237,11 @@ export const coachTemplateSlice = createSlice({
                 state.loading = true;
             })
             .addCase(createCoachTemplate.fulfilled, (state, action) => {
+                console.log('action .payload', action.payload);
                 state.loading = false;
                 state.coachTemplates.push(action.payload.data);
                 state.selectedCoachTemplate = action.payload.data.id;
+                state.template_name = action.payload.data.name;
             })
             .addCase(createCoachTemplate.rejected, (state, action) => {
                 state.loading = false;
@@ -175,7 +255,8 @@ export const coachTemplateSlice = createSlice({
             })
             .addCase(getAllCoachTemplateModules.fulfilled, (state, action) => {
                 state.loading = false;
-                state.coachTemplates = action.payload.data;
+                console.log('MODULE DATA  : ', action.payload);
+                state.modulesData = action.payload;
             })
             .addCase(getAllCoachTemplateModules.rejected, (state, action) => {
                 state.loading = false;
@@ -188,10 +269,27 @@ export const coachTemplateSlice = createSlice({
                 state.loading = true;
             })
             .addCase(createCoachTemplateModule.fulfilled, (state, action) => {
+                console.log('ACTION CreateCoachTemplate : ', action.payload);
                 state.loading = false;
-                state.coachTemplates.push(action.payload.data);
+                state.createCoachModule = action.payload.data;
             })
             .addCase(createCoachTemplateModule.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+            });
+
+        // getCoachTemplateModuleId
+        builder
+            .addCase(getCoachTemplateModuleId.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(getCoachTemplateModuleId.fulfilled, (state, action) => {
+                // console.log("ACtion playlod", action.payload)
+                state.loading = false;
+                state.coachTemplatesId = action.payload.data;
+                // state.template_name = action.payload.data.name
+            })
+            .addCase(getCoachTemplateModuleId.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
             });
@@ -211,6 +309,35 @@ export const coachTemplateSlice = createSlice({
                 }
             })
             .addCase(updateCoachTemplateModule.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+            });
+
+        // Update Coach Activity
+        builder
+            .addCase(updateCoachActivity.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(updateCoachActivity.fulfilled, (state, action) => {
+                state.loading = false;
+                // state.coachTemplates.push(action.payload.data);
+            })
+            .addCase(updateCoachActivity.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+            });
+
+        // Update Coach edit Activity
+        builder
+            .addCase(updateEditActivity.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(updateEditActivity.fulfilled, (state, action) => {
+                state.loading = false;
+                // state.coachTemplates.push(action.payload.data);
+                state.editActivityData = action.payload?.data;
+            })
+            .addCase(updateEditActivity.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
             });
@@ -247,6 +374,8 @@ export const {
     closeTemplateActivityPopup,
     openEditModulePopup,
     closeEditModulePopup,
+    openEditActivityPopup,
+    closeEditActivityPopup,
 } = coachTemplateSlice.actions;
 
 export default coachTemplateSlice.reducer;

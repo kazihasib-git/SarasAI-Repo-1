@@ -32,8 +32,13 @@ const CoachMenu = () => {
             <aside id="sidebar" className="sidebar">
                 <ul className="sidebar-nav" id="sidebar-nav">
                     <li className="nav-item">
-                        <a
-                            className={`nav-link ${activeLink.startsWith('/coachmenu-') ? 'active' : 'collapsed'}`}
+                        <Link
+                            to={'/coachmenu_profile'}
+                            className={`nav-link ${
+                                activeLink.startsWith('/coachmenu-')
+                                    ? 'active'
+                                    : 'collapsed'
+                            }`}
                             href="#"
                             onClick={() =>
                                 handleLinkClick('/coachmenu-profile')
@@ -42,7 +47,7 @@ const CoachMenu = () => {
                             <i className="bi bi-person-circle"></i>
                             <span>My Profile</span>
                             <i className="bi bi-chevron-right ms-auto"></i>
-                        </a>
+                        </Link>
                         <Divider
                             variant="middle"
                             component="li"
@@ -51,8 +56,12 @@ const CoachMenu = () => {
                     </li>
                     <li className="nav-item">
                         <Link
-                            to={'/'}
-                            className={`nav-link ${activeLink.startsWith('/coachmenu-') ? 'active' : ''}`}
+                            to={'/coachmenu_students'}
+                            className={`nav-link ${
+                                activeLink.startsWith('/coachmenu-')
+                                    ? 'active'
+                                    : ''
+                            }`}
                             onClick={() => handleLinkClick('/')}
                         >
                             <img
@@ -75,8 +84,12 @@ const CoachMenu = () => {
                     </li>
                     <li className="nav-item">
                         <Link
-                            to={'/coachmenu-calendar'}
-                            className={`nav-link ${activeLink === '/coachmenu-calendar' ? 'active orange-text' : ''}`}
+                            to={'/coachmenu_calendar'}
+                            className={`nav-link ${
+                                activeLink === '/coachmenu-calendar'
+                                    ? 'active orange-text'
+                                    : ''
+                            }`}
                             onClick={() => handleLinkClick('/calendar')}
                         >
                             <img
@@ -99,8 +112,12 @@ const CoachMenu = () => {
                     </li>
                     <li className="nav-item">
                         <Link
-                            to={'/ta-manage'}
-                            className={`nav-link ${activeLink.startsWith('/coachmenu-') ? 'active' : ''}`}
+                            to={'/coachmenu_scheduledcall'}
+                            className={`nav-link ${
+                                activeLink.startsWith('/coachmenu-')
+                                    ? 'active'
+                                    : ''
+                            }`}
                             onClick={() => handleLinkClick('/ta-manage')}
                         >
                             <img
@@ -123,8 +140,12 @@ const CoachMenu = () => {
                     </li>
                     <li className="nav-item">
                         <Link
-                            to={'/coach-call-request'}
-                            className={`nav-link ${activeLink === '/coach-call-request' ? 'active orange-text' : ''}`}
+                            to={'/coachmenu_callrequest'}
+                            className={`nav-link ${
+                                activeLink === '/coach-call-request'
+                                    ? 'active orange-text'
+                                    : ''
+                            }`}
                             onClick={() => handleLinkClick('/callrequest')}
                         >
                             <img
@@ -147,8 +168,12 @@ const CoachMenu = () => {
                     </li>
                     <li className="nav-item">
                         <Link
-                            to={'/ta-manage'}
-                            className={`nav-link ${activeLink.startsWith('/coachmenu-') ? 'active' : ''}`}
+                            to={'/coachmenu_messages'}
+                            className={`nav-link ${
+                                activeLink.startsWith('/coachmenu-')
+                                    ? 'active'
+                                    : ''
+                            }`}
                             onClick={() => handleLinkClick('/ta-manage')}
                         >
                             <img
@@ -171,8 +196,12 @@ const CoachMenu = () => {
                     </li>
                     <li className="nav-item">
                         <Link
-                            to={'/coach-call-records'}
-                            className={`nav-link ${activeLink.startsWith('/coachmenu-') ? 'active' : ''}`}
+                            to={'/coachmenu_callrecords'}
+                            className={`nav-link ${
+                                activeLink.startsWith('/coachmenu-')
+                                    ? 'active'
+                                    : ''
+                            }`}
                             onClick={() => handleLinkClick('/call-records')}
                         >
                             <img
@@ -195,8 +224,12 @@ const CoachMenu = () => {
                     </li>
                     <li className="nav-item">
                         <Link
-                            to={'/ta-manage'}
-                            className={`nav-link ${activeLink.startsWith('/coachmenu-') ? 'active' : ''}`}
+                            to={'/coachmenu_assessments'}
+                            className={`nav-link ${
+                                activeLink.startsWith('/coachmenu-')
+                                    ? 'active'
+                                    : ''
+                            }`}
                             onClick={() => handleLinkClick('/ta-manage')}
                         >
                             <img

@@ -1,9 +1,21 @@
 import React, { useState } from 'react';
 import ReusableDialog from '../../../../components/CustomFields/ReusableDialog';
-import { Button, Grid } from '@mui/material';
+import {
+    Button,
+    Grid,
+    MenuItem,
+    Select,
+    InputLabel,
+    FormControl,
+} from '@mui/material';
 import CustomTextField from '../../../../components/CustomFields/CustomTextField';
-import { closeTemplateActivityPopup } from '../../../../redux/features/CoachModule/CoachTemplateSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import {
+    closeTemplateActivityPopup,
+    createCoachTemplateActivity,
+    getCoachTemplateModuleId,
+} from '../../../../redux/features/CoachModule/CoachTemplateSlice';
+
 const CustomButton = ({
     onClick,
     children,
@@ -42,9 +54,21 @@ const AddActivity = () => {
     const dispatch = useDispatch();
     const [activityName, setActivityName] = useState('');
     const [activityType, setActivityType] = useState('');
-    const { openActivityPopUp, selectedModule } = useSelector(
-        (state) => state.coachTemplate,
-    );
+    const [dueDate, setDueDate] = useState('');
+    const [points, setPoints] = useState('');
+    const [afterDueDate, setAfterDueDate] = useState('');
+    const {
+        openActivityPopUp,
+        selectedModule,
+        coachTemplates,
+        moduleID,
+        selectedCoachTemplate,
+    } = useSelector((state) => state.coachTemplate);
+
+    const handleAfterDueDateChange = (event) => {
+        setAfterDueDate(event.target.value);
+    };
+
     const content = (
         <Grid
             container
@@ -73,6 +97,7 @@ const AddActivity = () => {
                     fullWidth
                 />
             </Grid>
+
             <Grid
                 item
                 xs={12}
@@ -81,30 +106,95 @@ const AddActivity = () => {
                 style={{ margin: '10px 0px', width: '80%' }}
             >
                 <CustomTextField
-                    label="Activity Type"
+                    label="Due Date"
+                    type="date"
                     variant="outlined"
-                    value={activityType}
-                    onChange={(e) => setActivityType(e.target.value)}
-                    placeholder="Enter Activity Type"
-                    name="activityType"
+                    value={dueDate}
+                    onChange={(e) => setDueDate(e.target.value)}
+                    placeholder="Enter Due Date"
+                    name="dueDate"
+                />
+            </Grid>
+            <Grid
+                item
+                xs={12}
+                sm={6}
+                md={6}
+                style={{ margin: '10px 0px', width: '80%' }}
+            >
+                <CustomTextField
+                    label="Points"
+                    variant="outlined"
+                    value={points}
+                    onChange={(e) => setPoints(e.target.value)}
+                    placeholder="Enter Points"
+                    name="points"
                     fullWidth
                 />
+            </Grid>
+            <Grid
+                item
+                xs={12}
+                sm={6}
+                md={6}
+                style={{ margin: '10px 0px', width: '80%' }}
+            >
+                <FormControl
+                    fullWidth
+                    variant="outlined"
+                    sx={{ borderRadius: '50px' }}
+                >
+                    <InputLabel
+                        id="after-due-date-label"
+                        sx={{
+                            color: 'black',
+                            '&.Mui-focused': {
+                                color: 'black',
+                            },
+                        }}
+                    >
+                        After Due Date
+                    </InputLabel>
+                    <Select
+                        labelId="after-due-date-label"
+                        id="after-due-date"
+                        value={afterDueDate}
+                        onChange={handleAfterDueDateChange}
+                        label="After Due Date"
+                        sx={{
+                            borderRadius: '50px',
+                            '& .MuiOutlinedInput-root': {
+                                borderRadius: '50px',
+                            },
+                            '& .MuiInputBase-input': {
+                                borderRadius: '50px',
+                            },
+                        }}
+                    >
+                        <MenuItem value={'Close Activity'}>
+                            Close Activity
+                        </MenuItem>
+                        <MenuItem value={'No Points'}>No Penalty</MenuItem>
+                        <MenuItem value={'No Effect'}>No Effect</MenuItem>
+                    </Select>
+                </FormControl>
             </Grid>
         </Grid>
     );
 
     const handleSubmit = () => {
         const data = {
-            module_id: selectedModule,
-            activity_type_id: 1,
+            module_id: moduleID?.id,
             activity_name: activityName,
-            due_date: '2024-07-29',
-            points: 100,
-            after_due_date: '2024-07-30',
-            is_active: true,
-            created_by: null,
-            updated_by: null,
+            due_date: dueDate,
+            points: points,
+            after_due_date: afterDueDate,
         };
+        console.log('Coach TEMPLATE : ', coachTemplates);
+
+        dispatch(createCoachTemplateActivity(data));
+        dispatch(getCoachTemplateModuleId(selectedCoachTemplate));
+        dispatch(closeTemplateActivityPopup());
     };
 
     const actions = (
@@ -130,5 +220,4 @@ const AddActivity = () => {
         </>
     );
 };
-
 export default AddActivity;
