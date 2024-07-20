@@ -30,7 +30,7 @@ const CoachTemplate = () => {
         id: item.id,
         "Template Name": item.name,
         Duration: item.duration,
-        Activities: item?.modules?.map((module)=> module.module_name).join(', '),
+        Activities: item?.modules?.map((module)=> module?.module_name).join(', '),
         "Assigned To": "John Doe",
         is_active: item.is_active
       }));

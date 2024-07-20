@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReusableDialog from "../../../../components/CustomFields/ReusableDialog";
 import {
   Button,
@@ -11,9 +11,12 @@ import {
 import CustomTextField from "../../../../components/CustomFields/CustomTextField";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  closeTemplateActivityPopup,
   createCoachTemplateActivity,
   getCoachTemplateModuleId,
+  closeEditActivityPopup,
+  updateEditActivity,
+  getAllCoachTemplateModules,
+  getAllCoachTemplates,
 } from "../../../../redux/features/CoachModule/CoachTemplateSlice";
 
 const CustomButton = ({
@@ -50,17 +53,29 @@ const CustomButton = ({
     </Button>
   );
 };
-
-const AddActivity = () => {
+const AddEditActivity = () => {
   const dispatch = useDispatch();
+  const {
+    openEditActivityPopUp,
+    editActivityData,
+    coachTemplates,
+    moduleID,
+    selectedCoachTemplate,
+  } = useSelector((state) => state.coachTemplate);
+
   const [activityName, setActivityName] = useState("");
-  const [activityType, setActivityType] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [points, setPoints] = useState("");
   const [afterDueDate, setAfterDueDate] = useState("");
-  const { openActivityPopUp, selectedModule , coachTemplates, moduleID, selectedCoachTemplate } = useSelector(
-    (state) => state.coachTemplate
-  );
+
+  useEffect(() => {
+    if (editActivityData) {
+      setActivityName(editActivityData.activity_name || "");
+      setDueDate(editActivityData.due_date || "");
+      setPoints(editActivityData.points || "");
+      setAfterDueDate(editActivityData.after_due_date || "");
+    }
+  }, [editActivityData]);
 
   const handleAfterDueDateChange = (event) => {
     setAfterDueDate(event.target.value);
@@ -144,6 +159,7 @@ const AddActivity = () => {
               "&.Mui-focused": {
                 color: "black",
               },
+              margin: 0,
             }}
           >
             After Due Date
@@ -156,8 +172,18 @@ const AddActivity = () => {
             label="After Due Date"
             sx={{
               borderRadius: "50px",
+              border: "2px solid transparent", // Default border
               "& .MuiOutlinedInput-root": {
                 borderRadius: "50px",
+                "& fieldset": {
+                  border: "2px solid transparent", // Default border
+                },
+                "&:hover fieldset": {
+                  border: "2px solid #F56D38", // Border color on hover
+                },
+                "&.Mui-focused fieldset": {
+                  border: "2px solid #F56D38", // Border color when focused
+                },
               },
               "& .MuiInputBase-input": {
                 borderRadius: "50px",
@@ -181,11 +207,26 @@ const AddActivity = () => {
       points: points,
       after_due_date: afterDueDate,
     };
-    console.log("Coach TEMPLATE : ", coachTemplates)
 
-    dispatch(createCoachTemplateActivity(data));
-    dispatch(getCoachTemplateModuleId(selectedCoachTemplate));
-    dispatch(closeTemplateActivityPopup());
+    if (editActivityData) {
+      // Update activity
+      dispatch(
+        updateEditActivity({
+          data: {
+            ...data,
+            activity_id: editActivityData.id,
+            module_id: editActivityData.module_id,
+          },
+        })
+      );
+    } else {
+      // Create new activity
+      dispatch(createCoachTemplateActivity(data));
+    }
+
+    dispatch(getAllCoachTemplateModules(selectedCoachTemplate));
+    dispatch(getAllCoachTemplates());
+    dispatch(closeEditActivityPopup());
   };
 
   const actions = (
@@ -195,16 +236,16 @@ const AddActivity = () => {
       borderColor="#F56D3B"
       color="#FFFFFF"
     >
-      Submit
+      Update
     </CustomButton>
   );
 
   return (
     <>
       <ReusableDialog
-        open={openActivityPopUp}
-        handleClose={() => dispatch(closeTemplateActivityPopup())}
-        title="Add Activity"
+        open={openEditActivityPopUp}
+        handleClose={() => dispatch(closeEditActivityPopup())}
+        title="Edit Activity"
         content={content}
         actions={actions}
       />
@@ -212,4 +253,4 @@ const AddActivity = () => {
   );
 };
 
-export default AddActivity;
+export default AddEditActivity;

@@ -165,6 +165,7 @@ const EditStudents = ({ componentname }) => {
   useEffect(() => {
     // dispatch(getAssignStudents(taaId));
     if (stateModuleKey && assignStudentOpen) {
+      console.log("TAID and assign id", assignedId, taID)
       dispatch(getAssignStudentAction(assignedId));
     }
   }, [

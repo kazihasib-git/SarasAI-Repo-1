@@ -4,70 +4,67 @@ import Sidebar from "../../../components/Sidebar/Sidebar";
 import { Box } from "@mui/material";
 import AddModule from "./TemplateModulePopup/AddModule";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllCoachTemplateModules, openEditModulePopup, openTemplateActivityPopup, openTemplateModulePopup, removeSelectedModule, setSelectedModule } from "../../../redux/features/CoachModule/CoachTemplateSlice";
+import { openEditModulePopup, openTemplateActivityPopup, openTemplateModulePopup, removeSelectedModule, setSelectedModule, openEditActivityPopup } from "../../../redux/features/CoachModule/CoachTemplateSlice";
 import TemplateModuleTable from "./TemplateTable/TemplateModuleTable";
 import "./TemplateName.css";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import AddActivity from "./TemplateModulePopup/AddActivity";
 import EditModule from "./TemplateModulePopup/EditModule";
+import LinkActivityPopup from "./TemplateModulePopup/LinkActivity"; // Import the new component
+import PrerequisitesPopup from "./TemplateModulePopup/Prerequisites";
 import { useLocation } from "react-router-dom";
+import AddEditActivity from "./TemplateModulePopup/EditActivity";
 
 const TemplateName = () => {
-  const { openModulePopUp, openActivityPopUp, template_name ,selectedCoachTemplate, coachTemplates, modulesData} = useSelector((state) => state.coachTemplate);
-  const [isActive, setIsActive] = useState(true);
-  const [templateEditName, setTemplateEditName] = useState();
-  const [modulesData1, setModulesData1] = useState([]);
+  const { openModulePopUp, openActivityPopUp, template_name ,selectedCoachTemplate, coachTemplates , coachTemplatesId } = useSelector((state) => state.coachTemplate);
+  const templateDumyName = "No Template Name" ;
+  const [linkActivityPopupOpen, setLinkActivityPopupOpen] = useState(false); // State for controlling popup
+  const [prerequisitesPopupOpen, setPrerequisitesPopupOpen] = useState(false);
   const dispatch = useDispatch();
-  
-  const location = useLocation()
-  ;
-    const { newTemplateData } = location.state || {};
+  const location = useLocation();
+  // newly created name 
+  const { newTemplateData } = location.state || {};
 
-// console.log("Template name is", template_name);
-// console.log("coach templete", coachTemplates);
-// console.log("selcted coach templete",selectedCoachTemplate)
+console.log("Tempete name is", template_name);
+console.log("coach templete", coachTemplates);
+console.log("coachtemplate id", coachTemplatesId);
+
+//  setTemplateEditName(template_name);
+console.log("selcted coach templete",selectedCoachTemplate)
   useEffect(()=>{
     dispatch(removeSelectedModule());
   },[dispatch]);
 
-  useEffect(()=>{
-    if(coachTemplates && coachTemplates.length){
-      const currentTemplateData = coachTemplates.find((template) => template.id === selectedCoachTemplate);
-      setTemplateEditName(currentTemplateData.name)
-      console.log("currenteeee",currentTemplateData );
-      if(currentTemplateData && currentTemplateData.length){
-        const tranformData = currentTemplateData.map((item)=>({
-            id: module.id,
-            module_name : item.module_name,
-            
-            is_active : item.is_active,
-            activities : item.activities.map((property)=>({
-              id: property.id,
-              "Activity Name": property.activity_name,
-              "Due Date": property.due_date,
-              Activity: property.activity_type.type_name,
-              Points: property.points,
-              Prerequisites: "Activity 1, Activity 2",
-              "After Due Date": property.after_due_date,
-              is_active: property.is_active
-            }))    
-        }));
-        setModulesData1(tranformData);
-      }
-    }
-  },[coachTemplates]);
-
   const handleModule = () => {
     dispatch(openTemplateModulePopup());
   };
-  useEffect(() => {
-    if (selectedCoachTemplate) {
-      dispatch(getAllCoachTemplateModules(selectedCoachTemplate));
-    }
-  }, [dispatch, selectedCoachTemplate]);
+
+  const handleActivity = () => {
+    console.log("Activity module");
+    
+    dispatch(openTemplateActivityPopup());
+  };
 
   const handleEditModule = () => {
     dispatch(openEditModulePopup());
+  };
+
+  const openLinkActivityPopup = () => {
+    setLinkActivityPopupOpen(true);
+  };
+
+  const closeLinkActivityPopup = () => {
+    console.log("Closing Link Activity Popup");
+    setLinkActivityPopupOpen(false);
+  };
+  const openPrerequisitesPopup = () => {
+    setPrerequisitesPopupOpen(true);
+  };
+
+  const closePrerequisitesPopup = () => {
+    console.log("Closing Prerequisites Popup");
+    setPrerequisitesPopupOpen(false);
   };
 
   const headers = [
@@ -81,69 +78,7 @@ const TemplateName = () => {
     "Actions",
   ];
 
-  const dummyData = [
-    {
-      id: 1,
-      module_name: "Module 1",
-      is_active: true,
-      activities: [
-        {
-          id: 1,
-          activity_name: "Activity 1",
-          due_date: "2024-08-01",
-          points: 10,
-          after_due_date: "Allowed",
-          is_active: true,
-        },
-        {
-          id: 2,
-          activity_name: "Activity 2",
-          due_date: "2024-08-05",
-          points: 15,
-          after_due_date: "Not Allowed",
-          is_active: false,
-        },
-      ],
-    },
-    {
-      id: 2,
-      module_name: "Module 2",
-      is_active: false,
-      activities: [
-        {
-          id: 3,
-          activity_name: "Activity 3",
-          due_date: "2024-08-10",
-          points: 20,
-          after_due_date: "Allowed",
-          is_active: true,
-        },
-        {
-          id: 4,
-          activity_name: "Activity 4",
-          due_date: "2024-08-15",
-          points: 25,
-          after_due_date: "Not Allowed",
-          is_active: true,
-        },
-        {
-          id: 5,
-          activity_name: "Activity 5",
-          due_date: "2024-08-20",
-          points: 30,
-          after_due_date: "Allowed",
-          is_active: false,
-        },
-      ],
-    },
-    {
-      id: 3,
-      module_name: "Module 3",
-      is_active: true,
-      activities: [],
-    },
-  ];
-  // const dummyData = [];
+
   const actionButtons = [
     {
       type: "switch",
@@ -154,6 +89,14 @@ const TemplateName = () => {
         console.log("CLICKED : ", id);
       },
     },
+    {
+      type: "prerequisites", // Add a new action type for prerequisites
+      onClick: openPrerequisitesPopup, // Set the function to open the prerequisites popup
+    },
+    {
+      type: "linkactivity",
+      onClick: openLinkActivityPopup,
+    }
   ]; // Define your action buttons if any
 
   return (
@@ -166,8 +109,8 @@ const TemplateName = () => {
         marginTop={3}
         alignItems={"center"}
       >
-        <p style={{ fontSize: "44px", justifyContent: "center" }}>
-       {templateEditName || template_name}
+        <p style={{ fontSize: "44px", justifyContent: "center", fontFamily:"ExtraLight" }}>
+        {newTemplateData?.name || template_name || coachTemplatesId[0]?.template.name}
         </p>
         <div className="inputBtnContainer">
           <button className="buttonContainer" onClick={handleModule}>
@@ -176,18 +119,34 @@ const TemplateName = () => {
           </button>
         </div>
       </Box>
-      
+      {!coachTemplatesId || coachTemplatesId.length === 0 ? (
+        <div><p>No Data Available</p></div>
+      ) : (
         <>
+        {/* {modulesData && modulesData.map((module)=>( */}
+        <>
+          <Box
+            display={"flex"}
+            justifyContent={"space-between"}
+            marginTop={3}
+            alignItems={"center"}
+          > 
+          </Box>
+
           <TemplateModuleTable
-            modulesData={modulesData}
+           modulesData={coachTemplatesId}
           />
         </>
-        
-      
+        </>
+      )}
 
       {openModulePopUp && <AddModule />}
       {openActivityPopUp && <AddActivity />}
       {openEditModulePopup && <EditModule />}
+      {openEditActivityPopup && <AddEditActivity />}
+      <LinkActivityPopup open={linkActivityPopupOpen} handleClose={closeLinkActivityPopup} />
+      <PrerequisitesPopup open={prerequisitesPopupOpen} handleClose={closePrerequisitesPopup}
+      />
     </>
   );
 };

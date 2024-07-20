@@ -152,6 +152,7 @@ const EditBatches = ({ componentname }) => {
 
   useEffect(() => {
     if (stateModuleKey && assignBatchOpen) {
+      console.log("TAID and assign id", assignedId, taID)
       dispatch(getAssignBatchesAction(assignedId));
     }
   }, [

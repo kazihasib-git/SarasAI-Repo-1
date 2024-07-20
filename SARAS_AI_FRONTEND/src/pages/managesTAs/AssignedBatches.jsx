@@ -334,7 +334,7 @@ const AssignBatches = () => {
         id: item.id,
         //ta_name: item.ta.name,
         batch_name: item.batch.name,
-        branch : item.batch.branch,
+        branch : item.batch.branch.name,
         is_active: item.is_active,
       }));
 

@@ -240,7 +240,7 @@ export const taSlice = createSlice({
   reducers: {
     accessTaName(state, action) {
       // console.log("ACTION : ", action);
-      // console.log("ACTION PAYLOAD : ", action.payload);
+      console.log("ACTION PAYLOAD TA MODULE: ", action.payload);
       state.ta_name = action.payload.name;
       state.taID = action.payload.id;
     },

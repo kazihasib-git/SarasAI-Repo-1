@@ -169,12 +169,13 @@ const Schedule = ({ componentName }) => {
   } = useForm();
 
   useEffect(() => {
-    if (fromDate) {
+    if (fromDate && adminUserID) {
+      console.log("ADMIN USER ID failed : ", adminUserID)
       dispatch(
         getAvailableSlotsAction({ admin_user_id: adminUserID, date: fromDate })
       );
     }
-  }, [fromDate, dispatch, adminUserID, getAvailableSlotsAction]);
+  }, [fromDate, dispatch]);
 
   const { timezones } = useSelector((state) => state.timezone);
 

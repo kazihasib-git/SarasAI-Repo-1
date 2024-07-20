@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReusableDialog from "../../../../components/CustomFields/ReusableDialog";
 import {
   Button,
@@ -9,7 +9,11 @@ import {
   Select,
 } from "@mui/material";
 import CustomTextField from "../../../../components/CustomFields/CustomTextField";
-import { closeEditModulePopup } from "../../../../redux/features/CoachModule/CoachTemplateSlice";
+import {
+  closeEditModulePopup,
+  getCoachTemplateModuleId,
+  updateCoachTemplateModule,
+} from "../../../../redux/features/CoachModule/CoachTemplateSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Controller, useForm } from "react-hook-form";
 import CustomFormControl from "../../../../components/CustomFields/CustomFromControl";
@@ -49,22 +53,51 @@ const CustomButton = ({
 };
 const EditModule = () => {
   const dispatch = useDispatch();
-  const [moduleName, setModuleName] = useState("");
-  const [status, setStatus] = useState("Active"); // State for status
-  const { handleSubmit, control, formState: { errors } } = useForm();
-  const { openEditModulePopUp } = useSelector((state) => state.coachTemplate);
+  const { openEditModulePopUp, editModuleData, selectedCoachTemplate } =
+    useSelector((state) => state.coachTemplate);
+
+  const {
+    handleSubmit,
+    control,
+    setValue,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      moduleName: "",
+      status: 1,
+    },
+  });
 
   const statusOptions = [
-    { value: "Active", label: "Active" },
-    { value: "Inactive", label: "Inactive" },
+    { value: 1, label: "Active" },
+    { value: 0, label: "Inactive" },
   ];
 
+  useEffect(() => {
+    if (editModuleData) {
+      setValue("moduleName", editModuleData.name);
+      setValue("status", editModuleData.is_active ? 1 : 0);
+    }
+  }, [editModuleData, setValue]);
+
   const handleStatusChange = (event) => {
-    setStatus(event.target.value); // Update status state on change
+    setValue("status", event.target.value);
   };
 
   const onSubmit = (data) => {
-    console.log(data); // Example: Log form data
+    const updatedData = {
+      module_id: editModuleData?.id,
+      template_id: selectedCoachTemplate,
+      is_active: data.status === 1,
+    };
+    dispatch(updateCoachTemplateModule(updatedData))
+      .unwrap()
+      .then(() => {
+        dispatch(getCoachTemplateModuleId(selectedCoachTemplate));
+        dispatch(closeEditModulePopup());
+      });
+
+    console.log(updatedData);
   };
 
   const content = (
@@ -75,7 +108,7 @@ const EditModule = () => {
         flexDirection: "column",
         alignItems: "center",
         textAlign: "center",
-        width: "100%", // Ensure the container takes the full width
+        width: "100%",
       }}
     >
       <Grid
@@ -85,14 +118,20 @@ const EditModule = () => {
         md={6}
         style={{ margin: "10px 0px", width: "80%" }}
       >
-        <CustomTextField
-          label="Module Name"
-          variant="outlined"
-          value={moduleName}
-          onChange={(e) => setModuleName(e.target.value)}
-          placeholder="Enter Module Name"
+        <Controller
           name="moduleName"
-          fullWidth
+          control={control}
+          render={({ field }) => (
+            <CustomTextField
+              label="Module Name"
+              variant="outlined"
+              value={field.value}
+              onChange={field.onChange}
+              placeholder="Enter Module Name"
+              name="moduleName"
+              fullWidth
+            />
+          )}
         />
       </Grid>
       <Grid
@@ -105,7 +144,6 @@ const EditModule = () => {
         <Controller
           name="status"
           control={control}
-          defaultValue="Active" // Set default value
           render={({ field }) => (
             <CustomFormControl
               label="Status"
