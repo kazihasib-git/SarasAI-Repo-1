@@ -285,6 +285,7 @@ const DynamicTable = ({
                           </IconButton>
                         );
                       }
+
                       if (button.type === "delete") {
                         return (
                           <IconButton
@@ -403,7 +404,7 @@ const CustomButton = styled(Button)(({ theme }) => ({
   color: "#F56D3B",
   padding: "8px 16px", // Add padding for horizontal and vertical spacing
   margin: "0 8px", // Add horizontal margin between buttons
-  textTransform:'none',
+  textTransform: "none",
   "&:hover": {
     backgroundColor: "#F56D3B",
     color: "#fff",

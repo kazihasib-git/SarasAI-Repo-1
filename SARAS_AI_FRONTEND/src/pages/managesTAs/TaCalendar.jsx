@@ -37,6 +37,8 @@ import AssignStudents from "../../components/adminModule/AssignStudents";
 import AssignBatches from "../../components/adminModule/AssignBatches";
 import EditBatches from "../../components/availability/EditBatches";
 import EditStudents from "../../components/availability/EditStudents";
+import Header from "../../components/Header/Header";
+import Sidebar from "../../components/Sidebar/Sidebar";
 
 const CustomButton = ({
   onClick,
@@ -196,102 +198,110 @@ const TaCalender = () => {
   console.log("sessiond data", scheduleData.data);
 
   return (
-    <Box sx={{ backgroundColor: "#f8f9fa", p: 3 }}>
-      <DialogActions sx={{ p: 2 }}>
-        <Grid container alignItems="center">
-          <Grid item xs>
-            <Typography variant="h4" sx={{ mb: 4 }}>
-              {`${name}'s Calendar`}
-            </Typography>
+    <>
+      <Header />
+      <Sidebar />
+      <Box sx={{ backgroundColor: "#f8f9fa", p: 3 }}>
+        <DialogActions sx={{ p: 2 }}>
+          <Grid container alignItems="center">
+            <Grid item xs>
+              <Typography variant="h4" sx={{ mb: 4 }}>
+                {`${name}'s Calendar`}
+              </Typography>
+            </Grid>
+            <Grid item>
+              <Box display="flex" justifyContent="center" gap={2}>
+                <CustomButton
+                  onClick={handleScheduleNewSession}
+                  color="#FFFFFF"
+                  backgroundColor="#4E18A5"
+                  borderColor="#4E18A5"
+                  style={{ textTransform: "none" }}
+                >
+                  <AddCircleOutlineIcon />
+                  Schedule New Session
+                </CustomButton>
+
+                <CustomButton
+                  onClick={handleMarkLeave}
+                  color="#F56D3B"
+                  backgroundColor="#FFFFFF"
+                  borderColor="#F56D3B"
+                  style={{ textTransform: "none" }}
+                >
+                  Mark Leave
+                </CustomButton>
+
+                <CustomButton
+                  onClick={handleDeleteFutureSlots}
+                  color="#F56D3B"
+                  backgroundColor="#FFFFFF"
+                  borderColor="#F56D3B"
+                  style={{ textTransform: "none" }}
+                >
+                  Delete All Future Slots
+                </CustomButton>
+
+                <CustomButton
+                  color="#FFFFFF"
+                  backgroundColor="#F56D3B"
+                  borderColor="#F56D3B"
+                  onClick={handleCreateNewSlot}
+                  style={{ textTransform: "none" }}
+                >
+                  {/* <AddCircleOutlineIcon /> */}
+                  Create New Slot
+                </CustomButton>
+              </Box>
+            </Grid>
           </Grid>
-          <Grid item>
-            <Box display="flex" justifyContent="center" gap={2}>
-              <CustomButton
-                onClick={handleScheduleNewSession}
-                color="#FFFFFF"
-                backgroundColor="#4E18A5"
-                borderColor="#4E18A5"
-                style={{ textTransform: "none" }}
-              >
-                <AddCircleOutlineIcon />
-                Schedule New Session
-              </CustomButton>
+        </DialogActions>
 
-              <CustomButton
-                onClick={handleMarkLeave}
-                color="#F56D3B"
-                backgroundColor="#FFFFFF"
-                borderColor="#F56D3B"
-                style={{ textTransform: "none" }}
-              >
-                Mark Leave
-              </CustomButton>
-
-              <CustomButton
-                onClick={handleDeleteFutureSlots}
-                color="#F56D3B"
-                backgroundColor="#FFFFFF"
-                borderColor="#F56D3B"
-                style={{ textTransform: "none" }}
-              >
-                Delete All Future Slots
-              </CustomButton>
-
-              <CustomButton
-                color="#FFFFFF"
-                backgroundColor="#F56D3B"
-                borderColor="#F56D3B"
-                onClick={handleCreateNewSlot}
-                style={{ textTransform: "none" }}
-              >
-                {/* <AddCircleOutlineIcon /> */}
-                Create New Slot
-              </CustomButton>
-            </Box>
-          </Grid>
-        </Grid>
-      </DialogActions>
-
-      <CalendarComponent
-        eventsList={eventsList}
-        slotData={slotData}
-        componentName={"TACALENDER"}
-      />
-      {scheduleSessionOpen && <Schedule componentName={"TASCHEDULE"} />}
-      {openEditBatch && <EditBatches componentname={"ADDEDITTA"} />}
-      {openEditStudent && <EditStudents componentname={"ADDEDITTA"} />}
-      {/*{sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} componentName={"TACALENDER"} />} */}
-      {markLeaveOpen && (
-        <MarkLeave id={id} name={name} componentName={"TACALENDER"} />
-      )}
-      {scheduledSlotsOpen && (
-        <Slots id={id} name={name} componentName={"TACALENDER"} />
-      )}
-      {scheduledSessionOpen && (
-        <ScheduledSessions id={id} name={name} componentName={"TACALENDER"} />
-      )}
-      {cancelSessionOpen && (
-        <CancelSchedule id={id} name={name} componentName={"TACALENDER"} />
-      )}
-      {reasonForLeaveOpen && (
-        <ReasonForLeave id={id} name={name} componentName={"TACALENDER"} />
-      )}
-      {resheduleSessionOpen && (
-        <ReschedulingSession id={id} name={name} componentName={"TACALENDER"} />
-      )}
-      {deleteFutureSlots && (
-        <DeleteAllSlots
-          open={deleteFutureSlots}
-          handleClose={() => setDeleteFutureSlots(false)}
-          id={id}
-          name={name}
+        <CalendarComponent
+          eventsList={eventsList}
+          slotData={slotData}
           componentName={"TACALENDER"}
         />
-      )}
-      {createNewSlotOpen && <CreateNewSlot componentName={"TACALENDER"} />}
-      {/* {assignStudentOpen && <AssignStudents componentname="ADDEDITTA" />}
+        {scheduleSessionOpen && <Schedule componentName={"TASCHEDULE"} />}
+        {openEditBatch && <EditBatches componentname={"ADDEDITTA"} />}
+        {openEditStudent && <EditStudents componentname={"ADDEDITTA"} />}
+        {/*{sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} componentName={"TACALENDER"} />} */}
+        {markLeaveOpen && (
+          <MarkLeave id={id} name={name} componentName={"TACALENDER"} />
+        )}
+        {scheduledSlotsOpen && (
+          <Slots id={id} name={name} componentName={"TACALENDER"} />
+        )}
+        {scheduledSessionOpen && (
+          <ScheduledSessions id={id} name={name} componentName={"TACALENDER"} />
+        )}
+        {cancelSessionOpen && (
+          <CancelSchedule id={id} name={name} componentName={"TACALENDER"} />
+        )}
+        {reasonForLeaveOpen && (
+          <ReasonForLeave id={id} name={name} componentName={"TACALENDER"} />
+        )}
+        {resheduleSessionOpen && (
+          <ReschedulingSession
+            id={id}
+            name={name}
+            componentName={"TACALENDER"}
+          />
+        )}
+        {deleteFutureSlots && (
+          <DeleteAllSlots
+            open={deleteFutureSlots}
+            handleClose={() => setDeleteFutureSlots(false)}
+            id={id}
+            name={name}
+            componentName={"TACALENDER"}
+          />
+        )}
+        {createNewSlotOpen && <CreateNewSlot componentName={"TACALENDER"} />}
+        {/* {assignStudentOpen && <AssignStudents componentname="ADDEDITTA" />}
                 {assignBatchOpen && <AssignBatches componentname="ADDEDITTA" />} */}
-    </Box>
+      </Box>
+    </>
   );
 };
 

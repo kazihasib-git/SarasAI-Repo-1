@@ -135,13 +135,14 @@ const CoachCallRequest = () => {
                       backgroundColor: "#19B420",
                       color: "white",
                       mt: 2,
+                      ml:6,
                       "&:hover": { backgroundColor: "#19B420" },
                     }}
                   >
                     Approved
                   </Button>
                 ) : (
-                  <Box display="flex" mt={2}>
+                  <Box display="flex" mt={2} ml={6}>
                     <Button
                       onClick={() => handleApprove(callRequest.id)}
                       sx={{
@@ -161,10 +162,12 @@ const CoachCallRequest = () => {
                         height: 43,
                         width: 112,
                         borderRadius: 40,
-                        backgroundColor: "#F56D3B",
-                        color: "white",
+                        color: "#F56D3B", // Font color
+                        border: "2px solid #F56D3B", // Border color
                         ml: 1,
-                        "&:hover": { backgroundColor: "#F56D3B" },
+                        "&:hover": {
+                          backgroundColor: "#F56D3B",
+                          color: "white",}
                       }}
                     >
                       Deny
