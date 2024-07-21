@@ -76,4 +76,4 @@ const actionButtons = [ {
   );
 }
 
-export default Mystudents
+export default Mystudents;
