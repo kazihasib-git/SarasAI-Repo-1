@@ -56,20 +56,20 @@ const Login = () => {
 
             setUser('');
             setPwd('');
-            navigate(from, { replace: true });
+
             // Redirect
-            // if (roles.includes(1984)) {
-            //     // Coach role
-            //     navigate('/coachmenu-profile', { replace: true });
-            // } else if (roles.includes(2001)) {
-            //     // Teaching role
-            //     navigate('/tamenu_profile', { replace: true });
-            // } else if (roles.includes(5150)) {
-            //     // Admin role
-            //     navigate('/', { replace: true });
-            // } else {
-            //     navigate(from, { replace: true });
-            // }
+            if (roles.includes(1984)) {
+                // Coach role
+                navigate('/coachmenu_profile', { replace: true });
+            } else if (roles.includes(2001)) {
+                // Teaching role
+                navigate('/tamenu_profile', { replace: true });
+            } else if (roles.includes(5150)) {
+                // Admin role
+                navigate('/', { replace: true });
+            } else {
+                navigate(from, { replace: true });
+            }
         } catch (err) {
             if (!err?.response) {
                 setErrMsg('No Server Response');

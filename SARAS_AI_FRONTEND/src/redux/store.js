@@ -13,6 +13,7 @@ import coachReducer from './features/CoachModule/coachSlice';
 import coachAvailabilityReducer from './features/CoachModule/CoachAvailabilitySlice';
 import coachSchedulingReducer from './features/CoachModule/coachSchedule';
 import activityTypeReducer from './features/ActivityType/activityTypeSlice';
+import coachMenuSliceReducer from './features/CoachModule/coachmenuprofileSilce';
 const store = configureStore({
     reducer: {
         taModule: taReducer,
@@ -26,6 +27,7 @@ const store = configureStore({
         coachAvailability: coachAvailabilityReducer,
         coachScheduling: coachSchedulingReducer,
         activityType: activityTypeReducer,
+        coachMenu : coachMenuSliceReducer,
         [studentsApi.reducerPath]: studentsApi.reducer,
         [batchesApi.reducerPath]: batchesApi.reducer,
         [coursesApi.reducerPath]: coursesApi.reducer,

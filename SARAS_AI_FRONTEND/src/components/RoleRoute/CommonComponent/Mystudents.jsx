@@ -7,6 +7,7 @@ import Header from '../../Header/Header';
 import Sidebar from '../../Sidebar/Sidebar';
 import { studentDummyDatadata } from '../../../fakeData/studentData';
 import DynamicTable from '../../CommonComponent/DynamicTable';
+import CoachMenu from '../../../pages/MODULE/coachModule/CoachMenu';
 
 const Mystudents = () => {
   const [input, setInput] = useState('');
@@ -52,7 +53,7 @@ const actionButtons = [ {
   return (
       <>
           <Header />
-          <Sidebar />
+          <CoachMenu />
           <Box display={"flex"} justifyContent={"space-between"} marginTop={3} alignItems={"center"}>
               <p style={{ fontSize: "44px", justifyContent: "center" }}>My Students</p>
               <div className='inputBtnContainer'>
