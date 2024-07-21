@@ -156,11 +156,10 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
 
         if (selected) {
             setSelectedCoachId(selected.id);
-            console.log('Selected Coach ID:', selected.id); // Log the selected coach ID
+            console.log('Selected Coach ID:',  selected.id); // Log the selected coach ID
         }
     };
 
-    console.log('hello coach id is', selectedCoachId);
     //  useEffect(() => {
     //   if (fromDate) {
     //     dispatch(
