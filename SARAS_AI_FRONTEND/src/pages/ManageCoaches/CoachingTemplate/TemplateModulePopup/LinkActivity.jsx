@@ -105,9 +105,11 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
         // dispatch(getSlotsCoachTemplateModule());
     }, [dispatch]);
 
-    const { typeList } = useSelector(state => state.activityType);
-    const { coaches } = useSelector(state => state.coachModule);
-    const { coachAvailableSlots } = useSelector(state => state.coachScheduling);
+    const { typeList } = useSelector((state) => state.activityType);
+    const { coaches } = useSelector((state) => state.coachModule);
+    const { coachAvailableSlots } = useSelector(
+        (state) => state.coachScheduling,
+    );
     console.log('coaches', coaches);
     console.log('coachesslot', coachAvailableSlots);
     const activityOptions = typeList
@@ -148,7 +150,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
         { value: 'slot4', label: '2:00 PM - 3:00 PM' },
         { value: 'slot5', label: '3:00 PM - 4:00 PM' },
     ];
-    const formatTime = time => {
+    const formatTime = (time) => {
         const [hours, minutes] = time.split(':');
         const hour = parseInt(hours, 10);
         const minute = parseInt(minutes, 10);
@@ -232,7 +234,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
                             label="Activity Type"
                             name="activityType"
                             value={field.value}
-                            onChange={e => {
+                            onChange={(e) => {
                                 setActivityType(e.target.value);
                                 field.onChange(e);
                             }}
@@ -398,7 +400,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
                         control={
                             <Checkbox
                                 checked={askCoach}
-                                onChange={e => setAskCoach(e.target.checked)}
+                                onChange={(e) => setAskCoach(e.target.checked)}
                                 sx={{
                                     color: 'black',
                                     '&.Mui-checked': {
@@ -430,7 +432,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
                                         label="Select Coach"
                                         name="coach"
                                         value={field.value}
-                                        onChange={e => {
+                                        onChange={(e) => {
                                             field.onChange(e);
                                             handleCoachChange(e);
                                             // handleCoachChange(e); // Uncomment if you have a handleCoachChange function
@@ -539,11 +541,11 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
                                         label="Time Zone"
                                         name="timezone"
                                         value={field.value}
-                                        onChange={e => {
+                                        onChange={(e) => {
                                             field.onChange(e);
                                         }}
                                         errors={errors}
-                                        options={timeZones.map(zone => ({
+                                        options={timeZones.map((zone) => ({
                                             value: zone.value,
                                             label: zone.label,
                                         }))}
