@@ -324,9 +324,7 @@ function App() {
                         />
                         <Route
                             path="coachmenu_students"
-                            element={
-                                <Mystudents page="Coach Menu Students" />
-                            }
+                            element={<Mystudents page="Coach Menu Students" />}
                         />
                         <Route
                             path="coachmenu_messages"

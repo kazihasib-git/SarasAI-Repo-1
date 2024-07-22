@@ -51,9 +51,9 @@ const CustomButton = ({
 const ScheduledCall = () => {
     const [newMeetingPopUpOpen, setNewMeetingPopUpOpen] = useState(false);
 
-    const handleClose = () =>{
+    const handleClose = () => {
         setNewMeetingPopUpOpen(false);
-    }
+    };
 
     const [scheduledCalls, setScheduledCalls] = useState([
         {
@@ -82,15 +82,20 @@ const ScheduledCall = () => {
         },
     ]);
 
-    const onNewMeetingSubmit = (props) =>{
+    const onNewMeetingSubmit = props => {
         console.log(props);
         setNewMeetingPopUpOpen(false);
-    }
+    };
 
     return (
-
         <div style={{ padding: '20px' }}>
-            {newMeetingPopUpOpen && (<CreateMeetingDialog open={newMeetingPopUpOpen} onClose={handleClose} onSubmit={onNewMeetingSubmit}/>)}
+            {newMeetingPopUpOpen && (
+                <CreateMeetingDialog
+                    open={newMeetingPopUpOpen}
+                    onClose={handleClose}
+                    onSubmit={onNewMeetingSubmit}
+                />
+            )}
             <Box
                 display="flex"
                 justifyContent="space-between"
@@ -111,7 +116,7 @@ const ScheduledCall = () => {
                     backgroundColor="#F56D3B"
                     borderColor="#F56D3B"
                     style={{ textTransform: 'none' }}
-                    onClick={()=> setNewMeetingPopUpOpen(true)}
+                    onClick={() => setNewMeetingPopUpOpen(true)}
                 >
                     <AddCircleOutlineIcon />
                     Create New Meeting
@@ -129,56 +134,50 @@ const ScheduledCall = () => {
                                 position: 'relative',
                             }}
                         >
-                                <IconButton
-                                    color="primary"
-                                    sx={{
-                                        position: 'absolute',
-                                        top: '10px',
-                                        right: '10px',
-                                        marginLeft: '10px',
-                                        display: 'flex',
-                                        alignItems:
-                                            'center',
-                                        justifyContent:
-                                            'center',
-                                        color: '#F56D3B',
+                            <IconButton
+                                color="primary"
+                                sx={{
+                                    position: 'absolute',
+                                    top: '10px',
+                                    right: '10px',
+                                    marginLeft: '10px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: '#F56D3B',
+                                    backgroundColor: '#FEEBE3',
+                                    gap: '4px',
+                                    height: '30px',
+                                    width: '70px',
+                                    borderRadius: '15px',
+                                    padding: '5px',
+                                    '&:hover': {
                                         backgroundColor:
-                                            '#FEEBE3',
-                                        gap: '4px',
-                                        height: '30px',
-                                        width: '70px',
-                                        borderRadius:
-                                            '15px',
-                                        padding: '5px',
-                                        '&:hover': {
-                                            backgroundColor:
-                                                'rgba(245, 235, 227, 0.8)',
-                                        },
-                                        '& img': {
-                                            height: '16px', // adjust size as needed
-                                            width: '16px', // adjust size as needed
-                                        },
-                                        '& small': {
-                                            lineHeight:
-                                                '16px', // match this with the image height for better alignment
-                                        },
+                                            'rgba(245, 235, 227, 0.8)',
+                                    },
+                                    '& img': {
+                                        height: '16px', // adjust size as needed
+                                        width: '16px', // adjust size as needed
+                                    },
+                                    '& small': {
+                                        lineHeight: '16px', // match this with the image height for better alignment
+                                    },
+                                }}
+                            >
+                                <img src={editIcon} alt="" />
+                                <small
+                                    style={{
+                                        fontSize: '14px',
                                     }}
                                 >
-                                    <img
-                                        src={editIcon}
-                                        alt=""
-                                    />
-                                    <small
-                                        style={{
-                                            fontSize:
-                                                '14px',
-                                        }}
-                                    >
-                                        Edit
-                                    </small>
-                                </IconButton>
+                                    Edit
+                                </small>
+                            </IconButton>
                             <CardContent>
-                                <Typography gutterBottom sx={{ fontWeight: 'bold' }}>
+                                <Typography
+                                    gutterBottom
+                                    sx={{ fontWeight: 'bold' }}
+                                >
                                     {call.title}
                                 </Typography>
                                 <Typography gutterBottom>
@@ -200,13 +199,12 @@ const ScheduledCall = () => {
                                     >
                                         {call.status}
                                     </CustomButton>
-                                 </Box>
+                                </Box>
                             </CardContent>
                         </Card>
                     </Grid>
                 ))}
             </Grid>
-             
         </div>
     );
 };

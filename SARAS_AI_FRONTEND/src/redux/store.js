@@ -27,7 +27,7 @@ const store = configureStore({
         coachAvailability: coachAvailabilityReducer,
         coachScheduling: coachSchedulingReducer,
         activityType: activityTypeReducer,
-        coachMenu : coachMenuSliceReducer,
+        coachMenu: coachMenuSliceReducer,
         [studentsApi.reducerPath]: studentsApi.reducer,
         [batchesApi.reducerPath]: batchesApi.reducer,
         [coursesApi.reducerPath]: coursesApi.reducer,

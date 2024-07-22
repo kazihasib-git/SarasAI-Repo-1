@@ -6,7 +6,7 @@ const CoachMenuScheduledcall = () => {
     return (
         <div>
             <CoachMenu />
-            <ScheduledCall/>
+            <ScheduledCall />
         </div>
     );
 };
