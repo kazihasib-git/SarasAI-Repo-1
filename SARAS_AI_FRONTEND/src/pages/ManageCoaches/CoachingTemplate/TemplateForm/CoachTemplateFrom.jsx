@@ -31,7 +31,7 @@ const CoachTemplateForm = () => {
   const [templateName, setTemplateName] = useState("");
   const [duration, setDuration] = useState("");
   const navigation = useNavigate();
-
+  
 
 
   const handleSubmit = (e) => {
@@ -47,7 +47,6 @@ const CoachTemplateForm = () => {
 
     dispatch(createCoachTemplate(newTemplateData));
     navigation("/template-name");
-
   };
 
   return (

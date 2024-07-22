@@ -103,8 +103,6 @@ const AddActivity = () => {
         "created_by": null,
         "updated_by": null
     };
-
-
   };
 
   const actions = (
