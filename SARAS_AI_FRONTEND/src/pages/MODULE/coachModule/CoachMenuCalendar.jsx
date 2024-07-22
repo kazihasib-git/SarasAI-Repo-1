@@ -38,6 +38,7 @@ import Schedule from '../../../components/availability/Schedule';
 import EditBatches from '../../../components/availability/EditBatches';
 import EditStudents from '../../../components/availability/EditStudents';
 import CoachMenu from './CoachMenu';
+import { getCoachSessions, getCoachSlots } from '../../../redux/features/coach/coachmenuprofileSilce';
 
 const CustomButton = ({
     onClick,
@@ -76,10 +77,8 @@ const CustomButton = ({
 
 const CoachMenuCalendar = () => {
     const dispatch = useDispatch();
-    const { id, name } = useParams();
 
     const [sheduleNewSession, setSheduleNewSession] = useState(false);
-    //const [deleteFutureSlots, setDeleteFutureSlots] = useState(false);
     const [createNewSlot, setCreateNewSlot] = useState(false);
 
     //   const { assignBatchOpen, assignStudentOpen } = useSelector(
@@ -109,12 +108,10 @@ const CoachMenuCalendar = () => {
     //calendar
     const [eventsList, setEventsList] = useState([]);
 
-    console.log('ta Id :', id);
-
     useEffect(() => {
-        dispatch(fetchCoachSlots(id));
-        dispatch(fetchTAScheduleById(id));
-    }, [id, dispatch]);
+        dispatch(getCoachSlots());
+        dispatch(getCoachSessions());
+    }, [dispatch]);
 
     useEffect(() => {
         if (scheduleData && scheduleData.data) {
@@ -134,7 +131,7 @@ const CoachMenuCalendar = () => {
     const handleScheduleNewSession = () => {
         // console.log("Pressed")
         setSheduleNewSession();
-        dispatch(openScheduleSession({ id, name }));
+        dispatch(openScheduleSession());
     };
 
     const handleMarkLeave = () => {
@@ -230,40 +227,42 @@ const CoachMenuCalendar = () => {
                 {/*{sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} componentName={"TACALENDER"} />} */}
                 {markLeaveOpen && (
                     <MarkLeave
-                        id={id}
-                        name={name}
-                        componentName={'TACALENDER'}
+                        // id={id}
+                        // name={name}
+                        // componentName={'TACALENDER'}
                     />
                 )}
                 {scheduledSlotsOpen && (
-                    <Slots id={id} name={name} componentName={'TACALENDER'} />
+                    <Slots 
+                    // id={id} name={name} componentName={'TACALENDER'}
+                     />
                 )}
                 {scheduledSessionOpen && (
                     <ScheduledSessions
-                        id={id}
-                        name={name}
-                        componentName={'TACALENDER'}
+                        // id={id}
+                        // name={name}
+                        // componentName={'TACALENDER'}
                     />
                 )}
                 {cancelSessionOpen && (
                     <CancelSchedule
-                        id={id}
-                        name={name}
-                        componentName={'TACALENDER'}
+                        // id={id}
+                        // name={name}
+                        // componentName={'TACALENDER'}
                     />
                 )}
                 {reasonForLeaveOpen && (
                     <ReasonForLeave
-                        id={id}
-                        name={name}
-                        componentName={'TACALENDER'}
+                        // id={id}
+                        // name={name}
+                        // componentName={'TACALENDER'}
                     />
                 )}
                 {resheduleSessionOpen && (
                     <ReschedulingSession
-                        id={id}
-                        name={name}
-                        componentName={'TACALENDER'}
+                        // id={id}
+                        // name={name}
+                        // componentName={'TACALENDER'}
                     />
                 )}
                 {/* {deleteFutureSlots && (

@@ -13,9 +13,13 @@ import coachReducer from './features/CoachModule/coachSlice';
 import coachAvailabilityReducer from './features/CoachModule/CoachAvailabilitySlice';
 import coachSchedulingReducer from './features/CoachModule/coachSchedule';
 import activityTypeReducer from './features/ActivityType/activityTypeSlice';
-import coachMenuSliceReducer from './features/CoachModule/coachmenuprofileSilce';
+import coachMenuSliceReducer from './features/coach/coachmenuprofileSilce';
+import taMenuSliceReducer from './features/teachingAssistant/tamenuSlice';
+import loginReducer from './features/auth/loginSlice';
+
 const store = configureStore({
     reducer: {
+        login : loginReducer,
         taModule: taReducer,
         taAvailability: taAvailabilityReducer,
         taScheduling: taSchedulingReducer,
@@ -28,6 +32,7 @@ const store = configureStore({
         coachScheduling: coachSchedulingReducer,
         activityType: activityTypeReducer,
         coachMenu : coachMenuSliceReducer,
+        taMenu : taMenuSliceReducer,
         [studentsApi.reducerPath]: studentsApi.reducer,
         [batchesApi.reducerPath]: batchesApi.reducer,
         [coursesApi.reducerPath]: coursesApi.reducer,

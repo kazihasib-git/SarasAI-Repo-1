@@ -88,7 +88,7 @@ const ROLES = {
     Admin: 5150,
 };
 
-function App() {
+function LoginApp() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -127,7 +127,7 @@ function App() {
             }
         }
     },[login, role, accessToken])
-    
+
     return (
         <Routes>
             <Route path="/" element={<Layout />}>
@@ -328,121 +328,117 @@ function App() {
                 {/* Missed */}
 
                 {/* Routes for Coachemenu */}
-                <Route element={<RequireAuth allowedRoles={[ROLES.Coaches]} />}>
+                { login && role == 1984 && (
                     <Route path="/" element={<Main page="Coach Menu" />}>
-                        <Route
-                            path="coachmenu"
-                            element={<CoachMenu page="Coach Menu" />}
-                        />
-                        <Route
-                            path="coachmenu_profile"
-                            element={
-                                <CoachMenuProfile page="Coach Menu Profile" />
-                            }
-                        />
-                        <Route
-                            path="coachmenu_callrequest"
-                            element={
-                                <CoachCallRequest page="Coach Call Request" />
-                            }
-                        />
-                        <Route
-                            path="coachmenu_callrecords"
-                            element={
-                                <CoachCallRecord page="Coach Call Records" />
-                            }
-                        />
-                        <Route
-                            path="coachmenu_calendar"
-                            element={
-                                <CoachMenuCalendar page="Coach Menu Calendar" />
-                            }
-                        />
-                        <Route
-                            path="coachmenu_scheduledcall"
-                            element={
-                                <CoachMenuScheduledcall page="Coach Menu ScheduledCall" />
-                            }
-                        />
-                        <Route
-                            path="coachmenu_students"
-                            element={
-                                <Mystudents page="Coach Menu Students" />
-                            }
-                        />
-                        <Route
-                            path="coachmenu_messages"
-                            element={
-                                <CoachMenuMessages page="Coach Menu Messages" />
-                            }
-                        />
-                        <Route
-                            path="coachmenu_assessments"
-                            element={
-                                <CoachMenuAssessments page="Coach Menu Assessemets" />
-                            }
-                        />
-                    </Route>
+                    <Route
+                        path="coachmenu"
+                        element={<CoachMenu page="Coach Menu" />}
+                    />
+                    <Route
+                        path="coachmenu_profile"
+                        element={
+                            <CoachMenuProfile page="Coach Menu Profile" />
+                        }
+                    />
+                    <Route
+                        path="coachmenu_callrequest"
+                        element={
+                            <CoachCallRequest page="Coach Call Request" />
+                        }
+                    />
+                    <Route
+                        path="coachmenu_callrecords"
+                        element={
+                            <CoachCallRecord page="Coach Call Records" />
+                        }
+                    />
+                    <Route
+                        path="coachmenu_calendar"
+                        element={
+                            <CoachMenuCalendar page="Coach Menu Calendar" />
+                        }
+                    />
+                    <Route
+                        path="coachmenu_scheduledcall"
+                        element={
+                            <CoachMenuScheduledcall page="Coach Menu ScheduledCall" />
+                        }
+                    />
+                    <Route
+                        path="coachmenu_students"
+                        element={
+                            <Mystudents page="Coach Menu Students" />
+                        }
+                    />
+                    <Route
+                        path="coachmenu_messages"
+                        element={
+                            <CoachMenuMessages page="Coach Menu Messages" />
+                        }
+                    />
+                    <Route
+                        path="coachmenu_assessments"
+                        element={
+                            <CoachMenuAssessments page="Coach Menu Assessemets" />
+                        }
+                    />
                 </Route>
+                )}
 
                 {/* Routes for Tamenu */}
-            
-                <Route
-                    element={<RequireAuth allowedRoles={[ROLES.Teaching]} />}
-                >
-                    <Route
-                        path="/"
-                        element={<Main page="Teaching Assistant Menu" />}
-                    >
-                        <Route
-                            path="tamenu_profile"
-                            element={<TaMenuProfile page="My Profile" />}
-                        />
-                        <Route
-                            path="tamenu_students"
-                            element={<TaMenuStudents page="My Students" />}
-                        />
-                        <Route
-                            path="tamenu_scheduledcall"
-                            element={
-                                <TaMenuScheduledCall page="Schedule Calls" />
-                            }
-                        />
-                        <Route
-                            path="tamenu_callrequest"
-                            element={<CallRequest page="Call Request" />}
-                        />
-                        <Route
-                            path="tamenu_messages"
-                            element={<TaMenuMessage page="Messages" />}
-                        />
-                        <Route
-                            path="tamenu_callrecords"
-                            element={<CallRecords page="Call Records" />}
-                        />
-                        <Route
-                            path="create_ta"
-                            element={<CreateTAPage page="Create TA" />}
-                        />
-                        <Route
-                            path="create_menu"
-                            element={<CreateTaMenu page="Create Menu" />}
-                        />
-                        <Route
-                            path="tamenu_calendar"
-                            element={<TAMenuCalendar page="TA Menu Calendar" />}
-                        />
-                    </Route>
-                </Route>
-            
+                { login && role == 2001 && (
+                     <Route
+                     path="/"
+                     element={<Main page="Teaching Assistant Menu" />}
+                 >
+                     <Route
+                         path="tamenu_profile"
+                         element={<TaMenuProfile page="My Profile" />}
+                     />
+                     <Route
+                         path="tamenu_students"
+                         element={<TaMenuStudents page="My Students" />}
+                     />
+                     <Route
+                         path="tamenu_scheduledcall"
+                         element={
+                             <TaMenuScheduledCall page="Schedule Calls" />
+                         }
+                     />
+                     <Route
+                         path="tamenu_callrequest"
+                         element={<CallRequest page="Call Request" />}
+                     />
+                     <Route
+                         path="tamenu_messages"
+                         element={<TaMenuMessage page="Messages" />}
+                     />
+                     <Route
+                         path="tamenu_callrecords"
+                         element={<CallRecords page="Call Records" />}
+                     />
+                     <Route
+                         path="create_ta"
+                         element={<CreateTAPage page="Create TA" />}
+                     />
+                     <Route
+                         path="create_menu"
+                         element={<CreateTaMenu page="Create Menu" />}
+                     />
+                     <Route
+                         path="tamenu_calendar"
+                         element={<TAMenuCalendar page="TA Menu Calendar" />}
+                     />
+                 </Route>
+                )}
+
                 <Route path="*" element={<AllRoutes />} />
             </Route>
         </Routes>
-        
     );
 }
 
-export default App;
+export default LoginApp;
 
 // Previous changes
 

@@ -39,28 +39,6 @@ const TaMenuSidebar = () => {
 
                 <li className="nav-item">
                     <Link
-                        to="/tamenu_profile"
-                        className={`nav-link ${
-                            activeLink.startsWith('/coachmenu-')
-                                ? 'active'
-                                : 'collapsed'
-                        }`}
-                        href="#"
-                        onClick={() => handleLinkClick('/coachmenu-profile')}
-                    >
-                        <i className="bi bi-person-circle"></i>
-                        <span>My Profile</span>
-                        <i className="bi bi-chevron-right ms-auto"></i>
-                    </Link>
-                    <Divider
-                        variant="middle"
-                        component="li"
-                        sx={{ backgroundColor: 'white', opacity: '0.3' }}
-                    />
-                </li>
-
-                <li className="nav-item">
-                    <Link
                         to={'/tamenu_students'}
                         className={`nav-link ${
                             activeLink.startsWith('/tamenu-') ? 'active' : ''

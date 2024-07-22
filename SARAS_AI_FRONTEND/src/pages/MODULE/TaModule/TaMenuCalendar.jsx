@@ -40,6 +40,7 @@ import EditStudents from '../../../components/availability/EditStudents';
 
 import TaMenuSidebar from './TeachingAssistantSidebar';
 import Header from '../../../components/Header/Header';
+import { getTaSessions, getTaSlots } from '../../../redux/features/teachingAssistant/tamenuSlice';
 
 const CustomButton = ({
     onClick,
@@ -78,7 +79,6 @@ const CustomButton = ({
 
 const TAMenuCalendar = () => {
     const dispatch = useDispatch();
-    const { id, name } = useParams();
 
     const [sheduleNewSession, setSheduleNewSession] = useState(false);
     //const [deleteFutureSlots, setDeleteFutureSlots] = useState(false);
@@ -111,12 +111,11 @@ const TAMenuCalendar = () => {
     //calendar
     const [eventsList, setEventsList] = useState([]);
 
-    console.log('ta Id :', id);
 
     useEffect(() => {
-        dispatch(fetchCoachSlots(id));
-        dispatch(fetchTAScheduleById(id));
-    }, [id, dispatch]);
+        dispatch(getTaSlots())
+        dispatch(getTaSessions())
+    }, [dispatch]);
 
     useEffect(() => {
         if (scheduleData && scheduleData.data) {

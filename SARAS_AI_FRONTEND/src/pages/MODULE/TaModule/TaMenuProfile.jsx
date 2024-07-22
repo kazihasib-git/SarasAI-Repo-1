@@ -18,8 +18,15 @@ import {
     qualificationOptions,
     validateTimeZone,
 } from '../../../components/CustomFields/FormOptions';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+    getTaProfile,
+    updateTaProfile,
+} from '../../../redux/features/teachingAssistant/tamenuSlice';
+import moment from 'moment';
 
 const TaMenuProfile = () => {
+    const dispatch = useDispatch();
     const {
         register,
         handleSubmit,
@@ -36,6 +43,8 @@ const TaMenuProfile = () => {
         },
     });
 
+    const { taProfileData } = useSelector(state => state.taMenu);
+
     const [selectedImage, setSelectedImage] = useState(null);
     const [dateOfBirth, setDateOfBirth] = useState(null);
     const [phoneNumber, setPhoneNumber] = useState('');
@@ -49,8 +58,77 @@ const TaMenuProfile = () => {
         field.onChange(formattedDate);
     };
 
-    const onSubmit = async formData => {
+    useEffect(() => {
+        dispatch(getTaProfile());
+    }, [dispatch]);
+
+    useEffect(() => {
+        if (taProfileData) {
+            populateForm(taProfileData);
+        }
+    }, [taProfileData]);
+
+    const populateForm = data => {
+        const formattedDate = moment(data.date_of_birth).format('YYYY-MM-DD');
+        setDateOfBirth(formattedDate);
+
+        if (data.profile_picture) {
+            const blobUrl = base64ToBlobUrl(data.profile_picture);
+            setSelectedImage(blobUrl);
+        }
+
+        const formValues = {
+            name: data.name,
+            username: data.username,
+            password: data.password,
+            location: data.location,
+            address: data.address,
+            pincode: data.pincode,
+            phone: data.phone,
+            time_zone: data.time_zone,
+            gender: data.gender,
+            email: data.email,
+            date_of_birth: formattedDate,
+            highest_qualification: data.highest_qualification,
+            about_me: data.about_me,
+        };
+
+        Object.entries(formValues).forEach(([key, value]) =>
+            setValue(key, value)
+        );
+        Object.entries(formValues).forEach(([key, value]) =>
+            setValue(key, value)
+        );
+
+        // setPhoneNumber(data.phone);
+    };
+
+    const base64ToBlobUrl = base64Data => {
+        const byteCharacters = atob(base64Data);
+        const byteNumbers = Array.from(byteCharacters, char =>
+            char.charCodeAt(0)
+        );
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'image/jpeg' });
+        return URL.createObjectURL(blob);
+    };
+
+    const onSubmit = async (formData) => {
         // Handle form submission
+        const { email, time_zone , ...updatedFormData } = formData;
+
+        updatedFormData.date_of_birth = dateOfBirth;
+
+        if (selectedImage) {
+            const base64Data = selectedImage.replace(
+                /^data:image\/(png|jpeg|jpg);base64,/,
+                ''
+            );
+            updatedFormData.profile_picture = base64Data;
+        }
+
+        console.log('updatedFormData', updatedFormData);
+        dispatch(updateTaProfile(updatedFormData)); 
     };
 
     return (
@@ -84,30 +162,6 @@ const TaMenuProfile = () => {
                                 selectedImage={selectedImage}
                                 setSelectedImage={setSelectedImage}
                             />
-                            <Box ml={3}>
-                                <Typography
-                                    variant="h5"
-                                    sx={{
-                                        fontSize: '20px',
-                                        fontWeight: '600',
-                                        color: '#1A1E3D',
-                                    }}
-                                >
-                                    {nameValue ||
-                                        'Name of the Teaching Assistant'}
-                                </Typography>
-                                <Typography
-                                    variant="body2"
-                                    sx={{
-                                        fontSize: '14px',
-                                        fontWeight: '400',
-                                        mb: 3,
-                                        color: '#5F6383',
-                                    }}
-                                >
-                                    {aboutMeValue || 'Short Description'}
-                                </Typography>
-                            </Box>
                         </Box>
                         <Divider
                             sx={{ mt: 1, mb: 3, border: '1px solid #C2C2E7' }}
@@ -164,6 +218,7 @@ const TaMenuProfile = () => {
                                 />
                             </Grid>
 
+                            {/*
                             <Grid item xs={12} sm={6} md={4}>
                                 <CustomTextField
                                     label="Password"
@@ -192,6 +247,100 @@ const TaMenuProfile = () => {
                                     errors={errors}
                                 />
                             </Grid>
+                            */}
+
+                            <Grid item xs={12} sm={6} md={4}>
+                                <CustomTextField
+                                    label="Email Address"
+                                    name="email"
+                                    placeholder="Enter Email Address"
+                                    register={register}
+                                    validation={{
+                                        required: 'Email is required',
+                                        pattern: {
+                                            value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                                            message: 'Invalid email address',
+                                        },
+                                    }}
+                                    errors={errors}
+                                />
+                            </Grid>
+
+                            <Grid item xs={12} sm={6} md={4}>
+                                <Controller
+                                    name="phone"
+                                    control={control}
+                                    rules={{
+                                        required: 'Phone number is required',
+                                    }}
+                                    render={({ field }) => (
+                                        <PhoneInput
+                                            {...field}
+                                            country={'in'}
+                                            // containerStyle={{ width: "100%" }}
+
+                                            inputStyle={{
+                                                width: '100%',
+                                                borderRadius: '50px',
+                                                borderColor: errors.phone
+                                                    ? 'red'
+                                                    : '#D0D0EC',
+                                                outline: 'none',
+                                                height: '60px',
+                                                // boxShadow: errors.phone ? "0 0 0 2px red" : "none",
+                                            }}
+                                            buttonStyle={{
+                                                borderRadius: '50px 0 0 50px',
+                                                borderColor: errors.phone
+                                                    ? 'red'
+                                                    : '#D0D0EC',
+                                                height: '60px',
+                                                outline: 'none',
+                                                paddingLeft: '10px',
+                                                // boxShadow: errors.phone ? "0 0 0 2px red" : "none",
+                                            }}
+                                            onFocus={e =>
+                                                (e.target.style.borderColor =
+                                                    errors.phone
+                                                        ? 'red'
+                                                        : '#D0D0EC')
+                                            }
+                                            onChange={field.onChange}
+                                        />
+                                    )}
+                                />
+                                {errors.phone && (
+                                    <Typography
+                                        variant="body2"
+                                        color="error"
+                                        sx={{ fontSize: '0.75rem' }}
+                                    >
+                                        {errors.phone.message}
+                                    </Typography>
+                                )}
+                            </Grid>
+
+                            <Grid item xs={12} sm={6} md={4}>
+                                <Controller
+                                    name="time_zone"
+                                    control={control}
+                                    rules={{
+                                        required: 'Time Zone is required',
+                                    }}
+                                    render={({ field }) => {
+                                        return (
+                                            <CustomFormControl
+                                                label="Time Zone"
+                                                name="time_zone"
+                                                value={field.value}
+                                                onChange={field.onChange}
+                                                errors={errors}
+                                                options={transformedTimeZones}
+                                            />
+                                        );
+                                    }}
+                                />
+                            </Grid>
 
                             <Grid item xs={12} sm={6} md={4}>
                                 <CustomTextField
@@ -205,6 +354,24 @@ const TaMenuProfile = () => {
                                             value: 200,
                                             message:
                                                 'Address must not exceed 200 characters',
+                                        },
+                                    }}
+                                    errors={errors}
+                                />
+                            </Grid>
+
+                            <Grid item xs={12} sm={6} md={4}>
+                                <CustomTextField
+                                    label="Location"
+                                    name="location"
+                                    placeholder="Enter Location"
+                                    register={register}
+                                    validation={{
+                                        required: 'Location is required',
+                                        maxLength: {
+                                            value: 200,
+                                            message:
+                                                'Location must not exceed 200 characters',
                                         },
                                     }}
                                     errors={errors}
