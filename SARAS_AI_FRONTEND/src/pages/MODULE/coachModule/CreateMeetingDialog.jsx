@@ -13,6 +13,7 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import CustomTextField from '../../../components/CustomFields/CustomTextField';
 import CustomDateField from '../../../components/CustomFields/CustomDateField';
+import CustomTimeField from '../../../components/CustomFields/CustomTimeField';
 //import CustomFormControl from '../../../components/CustomFields/CustomFromControl';
 
 //const inputPropsStyle = multiline ? { borderRadius: '25px', padding: '25px 30px 18px 30px' } : { height: '60px', borderRadius: '50px', padding: '18px 2px' };
@@ -57,7 +58,7 @@ const CreateMeetingDialog = ({ open, onClose, onSubmit }) => {
                         fullWidth
                         placeholder="select"
                     >
-                        <MenuItem value="meeting">Meeting 1</MenuItem>
+                        <MenuItem value="Meeting 1">Meeting 1</MenuItem>
 
                         {/* Add more options as needed */}
                     </CustomTextField>
@@ -70,7 +71,9 @@ const CreateMeetingDialog = ({ open, onClose, onSubmit }) => {
                         onChange={e => setDuration(e.target.value)}
                         fullWidth
                     >
-                        {/* <MenuItem value="">30 mins</MenuItem> */}
+                        <MenuItem value="30 mins">30 mins</MenuItem>
+                        <MenuItem value="45 mins">45 mins</MenuItem>
+                        <MenuItem value="60 mins">60 mins</MenuItem>
 
                         {/* Add more options as needed */}
                     </CustomTextField>
@@ -89,17 +92,17 @@ const CreateMeetingDialog = ({ open, onClose, onSubmit }) => {
                         label="Date"
                         InputLabelProps={{ shrink: true }}
                         value={date}
-                        onChange={e => setDate(e.target.value)}
+                        onChange={date => setDate(date)}
                         fullWidth
                     />
                 </Box>
                 <Box mb={2}>
-                    <CustomTextField
+                    <CustomTimeField
                         label="Time"
                         type="time"
                         InputLabelProps={{ shrink: true }}
                         value={time}
-                        onChange={e => setTime(e.target.value)}
+                        onChange={time => setTime(time)}
                         fullWidth
                     />
                 </Box>
