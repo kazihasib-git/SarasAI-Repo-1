@@ -22,7 +22,7 @@ import moment from 'moment';
 import { updateCoachmenuprofile } from '../../../redux/features/CoachModule/coachmenuprofileSilce';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCoachProfile } from '../../../redux/features/coach/coachmenuprofileSilce';
-import { format, utcToZonedTime } from 'date-fns-tz';
+import { formatInTimeZone } from 'date-fns-tz';
 
 const CoachMenuProfile = () => {
     const dispatch = useDispatch();
@@ -81,8 +81,8 @@ const CoachMenuProfile = () => {
     fetchIP();
   }, []);
   const convertTimezone = (time, fromTimeZone, toTimeZone) => {
-    const zonedTime = utcToZonedTime(time, fromTimeZone);
-    return format(zonedTime, 'yyyy-MM-dd HH:mm:ssXXX', { timeZone: toTimeZone });
+    const formattedTime = formatInTimeZone(time, fromTimeZone, 'yyyy-MM-dd HH:mm:ssXXX', { timeZone: toTimeZone });
+    return formattedTime;
 };
 const getConvertedTime = () => {
   if (ipData && ipData.timezone) {
