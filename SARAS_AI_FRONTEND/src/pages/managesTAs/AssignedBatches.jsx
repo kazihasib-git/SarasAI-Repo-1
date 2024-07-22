@@ -351,7 +351,6 @@ const AssignBatches = () => {
     const { assignedBatches, loading } = useSelector((state) => state.taModule);
     const [taAssignBatchesData, setTaAssignBatchesData] = useState([]);
 
-
     useEffect(() => {
         if (id) {
             dispatch(getAssignBatches(id));

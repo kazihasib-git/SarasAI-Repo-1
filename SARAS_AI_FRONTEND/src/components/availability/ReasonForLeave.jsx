@@ -112,12 +112,12 @@ const ReasonForLeave = ({ componentName }) => {
 
             const requestBody = {
                 admin_user_id: id,
-                approve_status : null,
-                leave_type : null,
-                reason : null,
+                approve_status: null,
+                leave_type: null,
+                reason: null,
 
-                data : slots.map((slot) => (slot))
-            }
+                data: slots.map((slot) => slot),
+            };
 
             console.log('SLOT EVENT DATA: ', requestBody);
 

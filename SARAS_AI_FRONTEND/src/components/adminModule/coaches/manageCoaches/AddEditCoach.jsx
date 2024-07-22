@@ -97,7 +97,7 @@ function AddEditCoach({ data }) {
             location: data.location,
             address: data.address,
             pincode: data.pincode,
-            phone : data.phone,
+            phone: data.phone,
             time_zone: data.time_zone,
             gender: data.gender,
             email: data.email,

@@ -170,7 +170,7 @@ const Schedule = ({ componentName }) => {
         formState: { errors },
     } = useForm();
 
-    console.log("available slots", availableSlots)
+    console.log('available slots', availableSlots);
 
     useEffect(() => {
         if (fromDate || !availableSlots.length > 0) {
@@ -255,7 +255,7 @@ const Schedule = ({ componentName }) => {
     //     setSelectedSlot([{}]);
     // }
 
-    console.log("adminUserID ", adminUserID)
+    console.log('adminUserID ', adminUserID);
 
     const handleAssignBatches = () => {
         console.log('COMPONENT NAME  handleAssignBatches : ', componentName);
@@ -305,7 +305,7 @@ const Schedule = ({ componentName }) => {
             toast.error('To Time should be greater than From Time!');
             return;
         }
-    }
+    };
 
     const onSubmit = (formData) => {
         const studentId = students.map((student) => student.id);
@@ -323,7 +323,6 @@ const Schedule = ({ componentName }) => {
             const index = new Date(fromDate).getDay();
             weeksArray[index] = 1;
         }
-       
 
         console.log('FORM DATA : ', formData);
         console.log('selected slots', selectedSlot);

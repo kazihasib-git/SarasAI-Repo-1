@@ -181,7 +181,9 @@ const EditStudents = ({ componentname }) => {
             const transformedData = assignedStudents.map((stu, index) => ({
                 'S. No.': index + 1,
                 'Student Name': stu.student.name,
-                Program : stu.student.packages.map((pack) => pack.name).join(', ') || 'N/A',
+                Program:
+                    stu.student.packages.map((pack) => pack.name).join(', ') ||
+                    'N/A',
                 //'Academic Term': stu.student.academic_term,
                 Batch:
                     stu.student.batches
@@ -190,7 +192,7 @@ const EditStudents = ({ componentname }) => {
                 Select: stu.is_active ? 'Active' : 'Inactive',
                 student_id: stu.student_id,
                 is_active: stu.is_active,
-                id : stu.student.id,
+                id: stu.student.id,
             }));
 
             const filtered = transformedData.filter((student) => {
@@ -237,16 +239,16 @@ const EditStudents = ({ componentname }) => {
             ? [
                   ...new Set(
                       assignedStudents
-                        //  .filter(
-                        //     (student) =>
-                        //     !selectedBatch ||
-                        //     student.student.batches.some(
-                        //         (batch) => batch.batch_name === selectedBatch
-                        //     )
-                        //  )
-                         .flatMap((student) =>
-                         student.student.packages.map((pack) => pack.name),
-                      ),
+                          //  .filter(
+                          //     (student) =>
+                          //     !selectedBatch ||
+                          //     student.student.batches.some(
+                          //         (batch) => batch.batch_name === selectedBatch
+                          //     )
+                          //  )
+                          .flatMap((student) =>
+                              student.student.packages.map((pack) => pack.name),
+                          ),
                   ),
               ]
             : [];
@@ -303,13 +305,7 @@ const EditStudents = ({ componentname }) => {
         dispatch(closeEditStudent());
     };
 
-    const headers = [
-        'S. No.',
-        'Student Name',
-        'Program',
-        'Batch',
-        'Select',
-    ];
+    const headers = ['S. No.', 'Student Name', 'Program', 'Batch', 'Select'];
 
     const content = (
         <>

@@ -150,7 +150,7 @@ const EditBatches = ({ componentname }) => {
         loading,
     } = stateSelector || {};
 
-    console.log("assignedId : ", assignedId);
+    console.log('assignedId : ', assignedId);
 
     useEffect(() => {
         if (stateModuleKey && assignBatchOpen) {
@@ -164,7 +164,7 @@ const EditBatches = ({ componentname }) => {
         getAssignBatchesAction,
     ]);
 
-    console.log("Assigned Batches", assignedBatches);
+    console.log('Assigned Batches', assignedBatches);
 
     useEffect(() => {
         if (assignedBatches) {

@@ -319,13 +319,7 @@ const DynamicTable = ({
     );
 };
 
-const headers = [
-    'Sr. No.',
-    'Student Name',
-    'Program',
-    'Batch',
-    'Actions',
-];
+const headers = ['Sr. No.', 'Student Name', 'Program', 'Batch', 'Actions'];
 
 const actionButtons = [
     {
@@ -359,11 +353,14 @@ const AssignedStudent = () => {
                     ? item.student.name
                     : 'Unknown Student';
                 const academicTerm = item.student
-                    ? item.student.packages.map((pack) => pack.name).join(', ') : 'N/A';
+                    ? item.student.packages.map((pack) => pack.name).join(', ')
+                    : 'N/A';
                 const batchName =
                     item.student.batches && item.student.batches.length > 0
-                        ? item.student.batches.map((batch) => batch.batch_name)
-                        .join(', ') : 'N/A';
+                        ? item.student.batches
+                              .map((batch) => batch.batch_name)
+                              .join(', ')
+                        : 'N/A';
                 const isActive = item.is_active === 1;
 
                 return {

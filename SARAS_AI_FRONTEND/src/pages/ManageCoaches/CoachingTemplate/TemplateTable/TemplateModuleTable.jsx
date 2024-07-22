@@ -155,10 +155,9 @@ const TemplateModuleTable = ({ modulesData }) => {
 
     return (
         <>
-        {console.log("MODULE DATA : ", modulesData)}
+            {console.log('MODULE DATA : ', modulesData)}
             {modulesData?.modules.map((module) => (
                 <Box key={module.id}>
-                    
                     <Box
                         display="flex"
                         justifyContent="space-between"
