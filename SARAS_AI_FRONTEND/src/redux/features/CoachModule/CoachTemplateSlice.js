@@ -256,7 +256,7 @@ export const coachTemplateSlice = createSlice({
             .addCase(getAllCoachTemplateModules.fulfilled, (state, action) => {
                 state.loading = false;
                 console.log('MODULE DATA  : ', action.payload);
-                state.modulesData = action.payload;
+                state.modulesData = action.payload?.data;
             })
             .addCase(getAllCoachTemplateModules.rejected, (state, action) => {
                 state.loading = false;
