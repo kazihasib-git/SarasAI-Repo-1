@@ -1,18 +1,15 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { baseUrl } from '../../../utils/baseURL';
+import axiosInstance from '../../services/httpService';
 const accessToken = localStorage.getItem('accessToken');
 
 // Get Coach profile
 export const getCoachProfile = createAsyncThunk(
     'coach/getProfile',
     async () => {
-        const response = await axios.get(`${baseUrl}/coach/coach-profile`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`,
-                'Content-Type': 'application/json',
-            },
-        });
+        console.log(accessToken,'accessToken in function');
+        const response = await axiosInstance.get(`${baseUrl}/coach/coach-profile`);
         console.log(response.data, 'response.data');
         return response.data;
     }
@@ -22,15 +19,9 @@ export const getCoachProfile = createAsyncThunk(
 export const updateCoachmenuprofile = createAsyncThunk(
     'coachMenu/updateprofile',
     async data => {
-        const response = await axios.put(
+        const response = await axiosInstance.put(
             `${baseUrl}/coach/coach-profile`,
-            data,
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json',
-                },
-            }
+            data
         );
         console.log(response.data, 'response.data');
         return response.data;

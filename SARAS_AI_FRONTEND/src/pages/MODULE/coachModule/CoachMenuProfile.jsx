@@ -22,6 +22,7 @@ import moment from 'moment';
 import { updateCoachmenuprofile } from '../../../redux/features/CoachModule/coachmenuprofileSilce';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCoachProfile } from '../../../redux/features/coach/coachmenuprofileSilce';
+import { format, utcToZonedTime } from 'date-fns-tz';
 
 const CoachMenuProfile = () => {
     const dispatch = useDispatch();
@@ -46,7 +47,8 @@ const CoachMenuProfile = () => {
     const [selectedImage, setSelectedImage] = useState(null);
     const [dateOfBirth, setDateOfBirth] = useState(null);
     const [phoneNumber, setPhoneNumber] = useState('');
-
+    const [ipData, setIpData] = useState(null);
+    const [error, setError] = useState(null);
     const nameValue = watch('name', '');
     const aboutMeValue = watch('about_me', '');
 
@@ -65,7 +67,30 @@ const CoachMenuProfile = () => {
             populateForm(coachProfileData);
         }
     }, [coachProfileData]);
+    useEffect(() => {
+      const fetchIP = async () => {
+        try {
+            // Fetch IP data from ipapi
+            const response = await axios.get('https://ipapi.co/json/');
+            setIpData(response.data);
+        } catch (err) {
+            setError(err.message);
+        }
+    };
 
+    fetchIP();
+  }, []);
+  const convertTimezone = (time, fromTimeZone, toTimeZone) => {
+    const zonedTime = utcToZonedTime(time, fromTimeZone);
+    return format(zonedTime, 'yyyy-MM-dd HH:mm:ssXXX', { timeZone: toTimeZone });
+};
+const getConvertedTime = () => {
+  if (ipData && ipData.timezone) {
+      const currentTime = new Date();
+      return convertTimezone(currentTime, ipData.timezone, coachProfileData.time_zone);
+  }
+  return null;
+};
     const populateForm = data => {
         const formattedDate = moment(data.date_of_birth).format('YYYY-MM-DD');
         setDateOfBirth(formattedDate);

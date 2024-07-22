@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { baseUrl } from '../../../utils/baseURL';
 import axios from 'axios';
+import axiosInstance from '../../services/httpService';
 const accessToken = localStorage.getItem('accessToken');
 
 console.log('accessToken', accessToken);
@@ -8,7 +9,7 @@ console.log('accessToken', accessToken);
 // Get Ta Profile
 export const getTaProfile = createAsyncThunk('taMenu/getProfile', async () => {
     try {
-        const response = await axios.get(`${baseUrl}/ta/ta-profile`, {
+        const response = await axiosInstance.get(`${baseUrl}/ta/ta-profile`, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
                 'Content-Type': 'application/json',
@@ -26,7 +27,7 @@ export const getTaProfile = createAsyncThunk('taMenu/getProfile', async () => {
 export const updateTaProfile = createAsyncThunk(
     'taMenu/updateProfile',
     async data => {
-        const response = await axios.put(`${baseUrl}/ta/ta-profile`, data, {
+        const response = await axiosInstance.put(`${baseUrl}/ta/ta-profile`, data, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
                 'Content-Type': 'application/json',
