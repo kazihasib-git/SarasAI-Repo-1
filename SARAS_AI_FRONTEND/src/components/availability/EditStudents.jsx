@@ -182,7 +182,7 @@ const EditStudents = ({ componentname }) => {
                 'S. No.': index + 1,
                 'Student Name': stu.student.name,
                 Program:
-                    stu.student.packages.map((pack) => pack.name).join(', ') ||
+                    stu.student.packages.map(pack => pack.name).join(', ') ||
                     'N/A',
                 //'Academic Term': stu.student.academic_term,
                 Batch:
@@ -245,9 +245,9 @@ const EditStudents = ({ componentname }) => {
                           //         (batch) => batch.batch_name === selectedBatch
                           //     )
                           //  )
-                          .flatMap((student) =>
-                              student.student.packages.map((pack) => pack.name),
-                          ),
+                          .flatMap(student =>
+                              student.student.packages.map(pack => pack.name)
+                          )
                   ),
               ]
             : [];

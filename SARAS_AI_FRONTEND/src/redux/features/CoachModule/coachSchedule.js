@@ -155,7 +155,7 @@ const coachScheduling = createSlice({
         });
 
         // Get TA Available Slots From Date
-        builder.addCase(getCoachAvailableSlotsFromDate.pending, (state) => {
+        builder.addCase(getCoachAvailableSlotsFromDate.pending, state => {
             state.loading = true;
         });
         builder.addCase(
