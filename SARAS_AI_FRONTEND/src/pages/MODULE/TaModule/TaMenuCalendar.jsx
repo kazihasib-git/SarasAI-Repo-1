@@ -40,7 +40,10 @@ import EditStudents from '../../../components/availability/EditStudents';
 
 import TaMenuSidebar from './TeachingAssistantSidebar';
 import Header from '../../../components/Header/Header';
-import { getTaSessions, getTaSlots } from '../../../redux/features/teachingAssistant/tamenuSlice';
+import {
+    getTaSessions,
+    getTaSlots,
+} from '../../../redux/features/teachingAssistant/tamenuSlice';
 
 const CustomButton = ({
     onClick,
@@ -111,10 +114,9 @@ const TAMenuCalendar = () => {
     //calendar
     const [eventsList, setEventsList] = useState([]);
 
-
     useEffect(() => {
-        dispatch(getTaSlots())
-        dispatch(getTaSessions())
+        dispatch(getTaSlots());
+        dispatch(getTaSessions());
     }, [dispatch]);
 
     useEffect(() => {

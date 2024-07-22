@@ -10,71 +10,87 @@ import DynamicTable from '../../CommonComponent/DynamicTable';
 import CoachMenu from '../../../pages/MODULE/coachModule/CoachMenu';
 
 const Mystudents = () => {
-  const [input, setInput] = useState('');
-  const [students, setStudents] = useState([]);
+    const [input, setInput] = useState('');
+    const [students, setStudents] = useState([]);
 
-  const handleChange = (value) => {
-      setInput(value);
-  };
+    const handleChange = value => {
+        setInput(value);
+    };
 
-  const useDummyData = false;
+    const useDummyData = false;
 
-  const { data: apiData, error, isLoading } = useGetStudentsQuery();
+    const { data: apiData, error, isLoading } = useGetStudentsQuery();
 
-  useEffect(() => {
-      const dataToUse = useDummyData ? studentDummyDatadata : apiData;
-      if (dataToUse) {
-          const transformedData = dataToUse.map(item => ({
-              id: item.id,
-              Name: item.name,
-              "Lms Id": item.student_lms_id,
-              'Acedemic Term': item.academic_term,
-              Batch: item.primary_phone,
-          }));
-          setStudents(transformedData);
-      }
-  }, [apiData, useDummyData]);
+    useEffect(() => {
+        const dataToUse = useDummyData ? studentDummyDatadata : apiData;
+        if (dataToUse) {
+            const transformedData = dataToUse.map(item => ({
+                id: item.id,
+                Name: item.name,
+                'Lms Id': item.student_lms_id,
+                'Acedemic Term': item.academic_term,
+                Batch: item.primary_phone,
+            }));
+            setStudents(transformedData);
+        }
+    }, [apiData, useDummyData]);
 
-  if (isLoading) {
-      return <div>Loading....</div>;
-  }
+    if (isLoading) {
+        return <div>Loading....</div>;
+    }
 
-  // const headers = ['S.No', 'Student Name', 'Acadamic Term', 'Batch', 'Live Sesions Scheduled', 'Live Sessions Attended', 'Status'];
-  const headers = ['S.No', 'Student Name', 'Acadamic Term', 'Batch', 'Live Sesions Scheduled', 'Status'];
+    // const headers = ['S.No', 'Student Name', 'Acadamic Term', 'Batch', 'Live Sesions Scheduled', 'Live Sessions Attended', 'Status'];
+    const headers = [
+        'S.No',
+        'Student Name',
+        'Acadamic Term',
+        'Batch',
+        'Live Sesions Scheduled',
+        'Status',
+    ];
 
-const actionButtons = [ {
-  type: "view",
-},]
-  // Filter students based on the search input
-  const filteredStudents = students.filter(student => 
-      student.Name.toLowerCase().includes(input.toLowerCase())
-  );
+    const actionButtons = [
+        {
+            type: 'view',
+        },
+    ];
+    // Filter students based on the search input
+    const filteredStudents = students.filter(student =>
+        student.Name.toLowerCase().includes(input.toLowerCase())
+    );
 
-  return (
-      <>
-          <Header />
-          <CoachMenu />
-          <Box display={"flex"} justifyContent={"space-between"} marginTop={3} alignItems={"center"}>
-              <p style={{ fontSize: "44px", justifyContent: "center" }}>My Students</p>
-              <div className='inputBtnContainer'>
-                  <div className="inputContainer">
-                      <input 
-                          className="inputField" 
-                          placeholder="Search Here ..." 
-                          value={input} 
-                          onChange={(e) => handleChange(e.target.value)} 
-                      />
-                  </div>
-              </div>
-          </Box>
-          <DynamicTable
-              headers={headers}
-              initialData={filteredStudents}
-              actionButtons={actionButtons}
-              componentName={"MYSTUDENTS"}
-          />
-      </>
-  );
-}
+    return (
+        <>
+            <Header />
+            <CoachMenu />
+            <Box
+                display={'flex'}
+                justifyContent={'space-between'}
+                marginTop={3}
+                alignItems={'center'}
+            >
+                <p style={{ fontSize: '44px', justifyContent: 'center' }}>
+                    My Students
+                </p>
+                <div className="inputBtnContainer">
+                    <div className="inputContainer">
+                        <input
+                            className="inputField"
+                            placeholder="Search Here ..."
+                            value={input}
+                            onChange={e => handleChange(e.target.value)}
+                        />
+                    </div>
+                </div>
+            </Box>
+            <DynamicTable
+                headers={headers}
+                initialData={filteredStudents}
+                actionButtons={actionButtons}
+                componentName={'MYSTUDENTS'}
+            />
+        </>
+    );
+};
 
 export default Mystudents;

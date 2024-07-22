@@ -111,9 +111,9 @@ const CoachMenuProfile = () => {
         return URL.createObjectURL(blob);
     };
 
-    const onSubmit = async (formData) => {
+    const onSubmit = async formData => {
         // Handle form submission
-        const { email, time_zone , ...updatedFormData } = formData;
+        const { email, time_zone, ...updatedFormData } = formData;
 
         updatedFormData.date_of_birth = dateOfBirth;
 
@@ -126,7 +126,7 @@ const CoachMenuProfile = () => {
         }
 
         console.log('updatedFormData', updatedFormData);
-        dispatch(updateCoachmenuprofile(updatedFormData)); 
+        dispatch(updateCoachmenuprofile(updatedFormData));
     };
 
     return (

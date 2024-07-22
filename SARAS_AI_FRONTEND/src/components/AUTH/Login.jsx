@@ -93,25 +93,23 @@ const Login = () => {
     */
 
     // using redux toolkit
-    const onSubmit = async (e) => {
+    const onSubmit = async e => {
         e.preventDefault();
-        try{
+        try {
             const requestBody = {
                 username: user,
-                password: pwd
+                password: pwd,
             };
 
             dispatch(login(requestBody));
 
             setUser('');
             setPwd('');
-
-        }catch(error){
-            console.log(error)
+        } catch (error) {
+            console.log(error);
         }
     };
-    
-    
+
     return (
         <div id="loginPage" className="login_Container">
             <section>

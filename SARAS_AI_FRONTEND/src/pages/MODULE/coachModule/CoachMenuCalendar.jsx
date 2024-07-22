@@ -38,7 +38,10 @@ import Schedule from '../../../components/availability/Schedule';
 import EditBatches from '../../../components/availability/EditBatches';
 import EditStudents from '../../../components/availability/EditStudents';
 import CoachMenu from './CoachMenu';
-import { getCoachSessions, getCoachSlots } from '../../../redux/features/coach/coachmenuprofileSilce';
+import {
+    getCoachSessions,
+    getCoachSlots,
+} from '../../../redux/features/coach/coachmenuprofileSilce';
 
 const CustomButton = ({
     onClick,
@@ -227,42 +230,42 @@ const CoachMenuCalendar = () => {
                 {/*{sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} componentName={"TACALENDER"} />} */}
                 {markLeaveOpen && (
                     <MarkLeave
-                        // id={id}
-                        // name={name}
-                        // componentName={'TACALENDER'}
+                    // id={id}
+                    // name={name}
+                    // componentName={'TACALENDER'}
                     />
                 )}
                 {scheduledSlotsOpen && (
-                    <Slots 
+                    <Slots
                     // id={id} name={name} componentName={'TACALENDER'}
-                     />
+                    />
                 )}
                 {scheduledSessionOpen && (
                     <ScheduledSessions
-                        // id={id}
-                        // name={name}
-                        // componentName={'TACALENDER'}
+                    // id={id}
+                    // name={name}
+                    // componentName={'TACALENDER'}
                     />
                 )}
                 {cancelSessionOpen && (
                     <CancelSchedule
-                        // id={id}
-                        // name={name}
-                        // componentName={'TACALENDER'}
+                    // id={id}
+                    // name={name}
+                    // componentName={'TACALENDER'}
                     />
                 )}
                 {reasonForLeaveOpen && (
                     <ReasonForLeave
-                        // id={id}
-                        // name={name}
-                        // componentName={'TACALENDER'}
+                    // id={id}
+                    // name={name}
+                    // componentName={'TACALENDER'}
                     />
                 )}
                 {resheduleSessionOpen && (
                     <ReschedulingSession
-                        // id={id}
-                        // name={name}
-                        // componentName={'TACALENDER'}
+                    // id={id}
+                    // name={name}
+                    // componentName={'TACALENDER'}
                     />
                 )}
                 {/* {deleteFutureSlots && (

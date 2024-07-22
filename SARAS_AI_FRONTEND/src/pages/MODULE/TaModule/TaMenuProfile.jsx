@@ -113,9 +113,9 @@ const TaMenuProfile = () => {
         return URL.createObjectURL(blob);
     };
 
-    const onSubmit = async (formData) => {
+    const onSubmit = async formData => {
         // Handle form submission
-        const { email, time_zone , ...updatedFormData } = formData;
+        const { email, time_zone, ...updatedFormData } = formData;
 
         updatedFormData.date_of_birth = dateOfBirth;
 
@@ -128,7 +128,7 @@ const TaMenuProfile = () => {
         }
 
         console.log('updatedFormData', updatedFormData);
-        dispatch(updateTaProfile(updatedFormData)); 
+        dispatch(updateTaProfile(updatedFormData));
     };
 
     return (

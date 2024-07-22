@@ -19,7 +19,7 @@ import loginReducer from './features/auth/loginSlice';
 
 const store = configureStore({
     reducer: {
-        login : loginReducer,
+        login: loginReducer,
         taModule: taReducer,
         taAvailability: taAvailabilityReducer,
         taScheduling: taSchedulingReducer,
@@ -31,8 +31,8 @@ const store = configureStore({
         coachAvailability: coachAvailabilityReducer,
         coachScheduling: coachSchedulingReducer,
         activityType: activityTypeReducer,
-        coachMenu : coachMenuSliceReducer,
-        taMenu : taMenuSliceReducer,
+        coachMenu: coachMenuSliceReducer,
+        taMenu: taMenuSliceReducer,
         [studentsApi.reducerPath]: studentsApi.reducer,
         [batchesApi.reducerPath]: batchesApi.reducer,
         [coursesApi.reducerPath]: coursesApi.reducer,

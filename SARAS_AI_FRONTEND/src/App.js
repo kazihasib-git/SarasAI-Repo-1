@@ -92,25 +92,27 @@ function App() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const { userData, login, role, accessToken } = useSelector((state) => state.login);
+    const { userData, login, role, accessToken } = useSelector(
+        state => state.login
+    );
 
     const access_token = localStorage.getItem('accessToken');
     const userRole = localStorage.getItem('role');
 
-     useEffect(() => {
+    useEffect(() => {
         if (access_token) {
-            dispatch(setLogin({ 
-                login: true, 
-                role: userRole, 
-                accessToken: access_token 
-            }));
+            dispatch(
+                setLogin({
+                    login: true,
+                    role: userRole,
+                    accessToken: access_token,
+                })
+            );
         }
-     },[access_token])
-
+    }, [access_token]);
 
     useEffect(() => {
-        if(login){
-
+        if (login) {
             console.log('inside user Effect in app.js', role);
 
             if (role.includes(1984)) {
@@ -126,8 +128,8 @@ function App() {
                 navigate(from, { replace: true });
             }
         }
-    },[login, role, accessToken])
-    
+    }, [login, role, accessToken]);
+
     return (
         <Routes>
             <Route path="/" element={<Layout />}>
@@ -366,9 +368,7 @@ function App() {
                         />
                         <Route
                             path="coachmenu_students"
-                            element={
-                                <Mystudents page="Coach Menu Students" />
-                            }
+                            element={<Mystudents page="Coach Menu Students" />}
                         />
                         <Route
                             path="coachmenu_messages"
@@ -386,7 +386,7 @@ function App() {
                 </Route>
 
                 {/* Routes for Tamenu */}
-            
+
                 <Route
                     element={<RequireAuth allowedRoles={[ROLES.Teaching]} />}
                 >
@@ -434,11 +434,10 @@ function App() {
                         />
                     </Route>
                 </Route>
-            
+
                 <Route path="*" element={<AllRoutes />} />
             </Route>
         </Routes>
-        
     );
 }
 

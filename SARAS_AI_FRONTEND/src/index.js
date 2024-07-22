@@ -12,7 +12,8 @@ import store from './redux/store';
 import LoginApp from './loginApp';
 // console.log = function () {};
 const root = ReactDOM.createRoot(document.getElementById('root'));
-{/* 
+{
+    /* 
 root.render(
     <React.StrictMode>
         <Provider store={store}>
@@ -28,7 +29,8 @@ root.render(
         </Provider>
     </React.StrictMode>
 );
-*/}
+*/
+}
 
 root.render(
     <React.StrictMode>
@@ -43,6 +45,5 @@ root.render(
         </Provider>
     </React.StrictMode>
 );
-
 
 reportWebVitals();
