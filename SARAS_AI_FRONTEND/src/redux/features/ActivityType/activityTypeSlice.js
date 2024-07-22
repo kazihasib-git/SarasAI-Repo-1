@@ -6,10 +6,10 @@ export const getActivityType = createAsyncThunk(
     'activityType/getActivityType',
     async () => {
         const response = await axios.get(
-            `${baseUrl}/admin/coaching-templates/activity-type`,
+            `${baseUrl}/admin/coaching-templates/activity-type`
         );
         return response.data;
-    },
+    }
 );
 
 const initialState = {
@@ -22,9 +22,9 @@ const activityTypeSlice = createSlice({
     name: 'activityType',
     initialState,
     reducers: {},
-    extraReducers: (builder) => {
+    extraReducers: builder => {
         builder
-            .addCase(getActivityType.pending, (state) => {
+            .addCase(getActivityType.pending, state => {
                 state.loading = true;
             })
             .addCase(getActivityType.fulfilled, (state, action) => {

@@ -105,7 +105,7 @@ const SubmitPopup = ({ componentname }) => {
         ta_name,
         coach_name,
     } =
-        useSelector((state) => (stateModuleKey ? state[stateModuleKey] : {})) ||
+        useSelector(state => (stateModuleKey ? state[stateModuleKey] : {})) ||
         {};
 
     const displayName = nameKey === 'ta_name' ? ta_name : coach_name;

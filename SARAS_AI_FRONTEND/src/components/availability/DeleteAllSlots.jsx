@@ -56,7 +56,6 @@ const DeleteAllSlots = ({ open, handleClose, id, name }) => {
     const dispatch = useDispatch();
 
     const handleSubmit = async () => {
-
         try {
             console.log('TA ID : ', id);
             console.log('TA NAME : ', name);
@@ -72,15 +71,13 @@ const DeleteAllSlots = ({ open, handleClose, id, name }) => {
                 date: todayDate,
             };
 
-            // dispatch actions 
-            dispatch(deleteFutureSlots({ id, data }))
-                .then(() => {
-                    console.log("FEtching data after deleting slots");
-                    handleClose();
-                    dispatch(fetchCoachSlots(id))
-                    dispatch(fetchTAScheduleById(id));
-                });
-
+            // dispatch actions
+            dispatch(deleteFutureSlots({ id, data })).then(() => {
+                console.log('FEtching data after deleting slots');
+                handleClose();
+                dispatch(fetchCoachSlots(id));
+                dispatch(fetchTAScheduleById(id));
+            });
         } catch (error) {
             console.log('Error : ', error);
         }

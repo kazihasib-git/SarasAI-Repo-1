@@ -54,7 +54,7 @@ const CustomButton = ({
 const EditModule = () => {
     const dispatch = useDispatch();
     const { openEditModulePopUp, editModuleData, selectedCoachTemplate } =
-        useSelector((state) => state.coachTemplate);
+        useSelector(state => state.coachTemplate);
 
     const {
         handleSubmit,
@@ -80,11 +80,11 @@ const EditModule = () => {
         }
     }, [editModuleData, setValue]);
 
-    const handleStatusChange = (event) => {
+    const handleStatusChange = event => {
         setValue('status', event.target.value);
     };
 
-    const onSubmit = (data) => {
+    const onSubmit = data => {
         const updatedData = {
             module_id: editModuleData?.id,
             template_id: selectedCoachTemplate,
@@ -149,7 +149,7 @@ const EditModule = () => {
                             label="Status"
                             name="status"
                             value={field.value}
-                            onChange={(e) => {
+                            onChange={e => {
                                 field.onChange(e);
                                 handleStatusChange(e);
                             }}

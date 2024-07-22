@@ -1,4 +1,4 @@
-export const dateFormatter = (date) => {
+export const dateFormatter = date => {
     // Ensure the date is a Date object
     if (!(date instanceof Date)) {
         date = new Date(date);

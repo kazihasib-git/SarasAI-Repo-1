@@ -59,12 +59,12 @@ const PrerequisitesPopup = ({ open, handleClose }) => {
     } = useForm();
     const [activityDependence, setActivityDependence] = useState(false);
 
-    const onSubmit = (data) => {
+    const onSubmit = data => {
         console.log(data);
         handleClose();
     };
 
-    const handleCheckboxChange = (event) => {
+    const handleCheckboxChange = event => {
         setActivityDependence(event.target.checked);
     };
 
@@ -152,7 +152,7 @@ const PrerequisitesPopup = ({ open, handleClose }) => {
                                     label="Module"
                                     name={field.name}
                                     value={field.value}
-                                    onChange={(e) => {
+                                    onChange={e => {
                                         field.onChange(e);
                                         // handleCoachChange(e); // Uncomment if you have a handleCoachChange function
                                     }}
@@ -179,7 +179,7 @@ const PrerequisitesPopup = ({ open, handleClose }) => {
                                     label="Activity"
                                     name={field.name}
                                     value={field.value}
-                                    onChange={(e) => {
+                                    onChange={e => {
                                         field.onChange(e);
                                         // handleCoachChange(e); // Uncomment if you have a handleCoachChange function
                                     }}

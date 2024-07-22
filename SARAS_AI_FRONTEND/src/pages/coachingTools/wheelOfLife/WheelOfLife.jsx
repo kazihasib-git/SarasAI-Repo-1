@@ -36,7 +36,7 @@ const WheelOfLife = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const { wolTestConfig } = useSelector((state) => state.wol);
+    const { wolTestConfig } = useSelector(state => state.wol);
 
     useEffect(() => {
         dispatch(getWolTestConfig());
@@ -45,7 +45,7 @@ const WheelOfLife = () => {
     const actionButtons = [
         {
             type: 'view',
-            onClick: (id) => {
+            onClick: id => {
                 console.log('View Report', id);
             },
         },

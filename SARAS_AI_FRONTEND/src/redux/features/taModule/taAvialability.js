@@ -7,75 +7,75 @@ export const getTodayTaAvailability = createAsyncThunk(
     'taAvialability/getTodayTaAvailability',
     async () => {
         const response = await axios.get(
-            `${baseUrl}/admin/TA-availability/get-today-available-ta`,
+            `${baseUrl}/admin/TA-availability/get-today-available-ta`
         );
         return response.data;
-    },
+    }
 );
 
 //get slots for ta from date to end date
 export const getSlots = createAsyncThunk(
     'taAvialability/getSlots',
-    async (data) => {
+    async data => {
         const response = await axios.post(
             `${baseUrl}/admin/coach-slots/records`,
-            data,
+            data
         );
         return response.data;
-    },
+    }
 );
 
 //for fetching sessions of ta for calendar
 export const fetchTAScheduleById = createAsyncThunk(
     'taAvialability/fetchTAScheduleById',
-    async (id) => {
+    async id => {
         const response = await axios.get(`${baseUrl}/admin/taschedules/${id}`);
         return response.data;
-    },
+    }
 );
 
 //for fetching slots of ta for calendar
 export const fetchCoachSlots = createAsyncThunk(
     'taAvialability/fetchCoachSlots',
-    async (id) => {
+    async id => {
         const response = await axios.get(`${baseUrl}/admin/coach-slots/${id}`);
         return response.data;
-    },
+    }
 );
 
 // Create Slots for TA
 export const createSlots = createAsyncThunk(
     'taAvialability/createSlots',
-    async (data) => {
+    async data => {
         console.log('Data being sent:', data);
         const response = await axios.post(`${baseUrl}/admin/coach-slots`, data);
         return response.data;
-    },
+    }
 );
 
 // Get Schedule Session for TA
 export const getScheduleSession = createAsyncThunk(
     'taAvialability/getScheduleSession',
-    async (data) => {
+    async data => {
         const response = await axios.post(
             `${baseUrl}/admin/taschedules/get-schedules-records`,
-            data,
+            data
         );
         return response.data;
-    },
+    }
 );
 
 // Get Available Slots
 export const fetchAvailableSlots = createAsyncThunk(
     'taAvialability/fetchAvailableSlots',
-    async (data) => {
+    async data => {
         // console.log("ID : ", id);
         const response = await axios.post(
             `${baseUrl}/admin/coach-slots/getTACoachSlotForADate`,
-            data,
+            data
         );
         return response.data;
-    },
+    }
 );
 
 // Delete Future Slots
@@ -89,19 +89,19 @@ export const deleteFutureSlots = createAsyncThunk(
             `${baseUrl}/admin/coach-slots/${id}`,
             {
                 data: data,
-            },
+            }
         );
         return response.data;
-    },
+    }
 );
 
 // Reason for Leave
 export const reasonForLeave = createAsyncThunk(
     'taAvialability/reasonForLeave',
-    async (data) => {
+    async data => {
         const response = await axios.post(`${baseUrl}/admin/leave`, data);
         return response.data;
-    },
+    }
 );
 
 const initialState = {
@@ -194,9 +194,9 @@ export const taAvailabilitySlice = createSlice({
             state.customResheduleSessionOpen = false;
         },
     },
-    extraReducers: (builder) => {
+    extraReducers: builder => {
         //for sessions ta for calendar
-        builder.addCase(fetchTAScheduleById.pending, (state) => {
+        builder.addCase(fetchTAScheduleById.pending, state => {
             state.loading = true;
         });
         builder.addCase(fetchTAScheduleById.fulfilled, (state, action) => {
@@ -209,7 +209,7 @@ export const taAvailabilitySlice = createSlice({
         });
 
         //for slots of ta for calendar
-        builder.addCase(fetchCoachSlots.pending, (state) => {
+        builder.addCase(fetchCoachSlots.pending, state => {
             state.loading = true;
         });
         builder.addCase(fetchCoachSlots.fulfilled, (state, action) => {
@@ -223,7 +223,7 @@ export const taAvailabilitySlice = createSlice({
         });
 
         // Get Today Available Ta
-        builder.addCase(getTodayTaAvailability.pending, (state) => {
+        builder.addCase(getTodayTaAvailability.pending, state => {
             state.loading = true;
         });
         builder.addCase(getTodayTaAvailability.fulfilled, (state, action) => {
@@ -236,7 +236,7 @@ export const taAvailabilitySlice = createSlice({
         });
 
         // Get Slots
-        builder.addCase(getSlots.pending, (state) => {
+        builder.addCase(getSlots.pending, state => {
             state.loading = true;
         });
         builder.addCase(getSlots.fulfilled, (state, action) => {
@@ -250,7 +250,7 @@ export const taAvailabilitySlice = createSlice({
         });
 
         // Create Slots
-        builder.addCase(createSlots.pending, (state) => {
+        builder.addCase(createSlots.pending, state => {
             state.loading = true;
         });
         builder.addCase(createSlots.fulfilled, (state, action) => {
@@ -263,7 +263,7 @@ export const taAvailabilitySlice = createSlice({
         });
 
         // Get Schedule Session
-        builder.addCase(getScheduleSession.pending, (state) => {
+        builder.addCase(getScheduleSession.pending, state => {
             state.loading = true;
         });
         builder.addCase(getScheduleSession.fulfilled, (state, action) => {
@@ -277,7 +277,7 @@ export const taAvailabilitySlice = createSlice({
         });
 
         // Get Available Slots
-        builder.addCase(fetchAvailableSlots.pending, (state) => {
+        builder.addCase(fetchAvailableSlots.pending, state => {
             state.loading = true;
         });
         builder.addCase(fetchAvailableSlots.fulfilled, (state, action) => {
@@ -292,7 +292,7 @@ export const taAvailabilitySlice = createSlice({
         });
 
         // Delete Future Slots
-        builder.addCase(deleteFutureSlots.pending, (state) => {
+        builder.addCase(deleteFutureSlots.pending, state => {
             state.loading = true;
         });
         builder.addCase(deleteFutureSlots.fulfilled, (state, action) => {
@@ -304,7 +304,7 @@ export const taAvailabilitySlice = createSlice({
         });
 
         // Reason for Leave
-        builder.addCase(reasonForLeave.pending, (state) => {
+        builder.addCase(reasonForLeave.pending, state => {
             state.loading = true;
         });
         builder.addCase(reasonForLeave.fulfilled, (state, action) => {

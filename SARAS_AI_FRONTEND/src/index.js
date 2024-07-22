@@ -9,7 +9,7 @@ import { Provider } from 'react-redux';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import store from './redux/store';
-
+console.log = function () {};
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <React.StrictMode>
@@ -18,12 +18,13 @@ root.render(
                 <AuthProvider>
                     <Routes>
                         {/* <App /> */}
-                        <Route path="/*" element={<App />}></Route>
+                        <Route path="/*" element={<App />} />
                     </Routes>
                     <ToastContainer />
                 </AuthProvider>
             </BrowserRouter>
         </Provider>
-    </React.StrictMode>,
+    </React.StrictMode>
 );
+
 reportWebVitals();

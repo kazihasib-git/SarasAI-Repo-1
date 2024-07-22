@@ -3,7 +3,7 @@ import { Avatar, IconButton, Box } from '@mui/material';
 import { PhotoCamera } from '@mui/icons-material';
 
 const AvatarInput = ({ selectedImage, setSelectedImage }) => {
-    const handleFileChange = (e) => {
+    const handleFileChange = e => {
         const file = e.target.files[0];
         const reader = new FileReader();
 

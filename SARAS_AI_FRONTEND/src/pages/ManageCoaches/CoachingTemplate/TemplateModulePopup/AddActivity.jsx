@@ -63,9 +63,9 @@ const AddActivity = () => {
         coachTemplates,
         moduleID,
         selectedCoachTemplate,
-    } = useSelector((state) => state.coachTemplate);
+    } = useSelector(state => state.coachTemplate);
 
-    const handleAfterDueDateChange = (event) => {
+    const handleAfterDueDateChange = event => {
         setAfterDueDate(event.target.value);
     };
 
@@ -91,7 +91,7 @@ const AddActivity = () => {
                     label="Activity Name"
                     variant="outlined"
                     value={activityName}
-                    onChange={(e) => setActivityName(e.target.value)}
+                    onChange={e => setActivityName(e.target.value)}
                     placeholder="Enter Activity Name"
                     name="activityName"
                     fullWidth
@@ -110,7 +110,7 @@ const AddActivity = () => {
                     type="date"
                     variant="outlined"
                     value={dueDate}
-                    onChange={(e) => setDueDate(e.target.value)}
+                    onChange={e => setDueDate(e.target.value)}
                     placeholder="Enter Due Date"
                     name="dueDate"
                 />
@@ -126,7 +126,7 @@ const AddActivity = () => {
                     label="Points"
                     variant="outlined"
                     value={points}
-                    onChange={(e) => setPoints(e.target.value)}
+                    onChange={e => setPoints(e.target.value)}
                     placeholder="Enter Points"
                     name="points"
                     fullWidth

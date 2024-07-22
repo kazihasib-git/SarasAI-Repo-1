@@ -129,8 +129,8 @@ const CreateNewSlot = ({ componentName }) => {
         openCreateNewSlotAction,
     });
 
-    const schedulingState = useSelector((state) =>
-        schedulingStateKey ? state[schedulingStateKey] : {},
+    const schedulingState = useSelector(state =>
+        schedulingStateKey ? state[schedulingStateKey] : {}
     );
     const { [slotEventKey]: slotEventData } = schedulingState;
 
@@ -146,12 +146,12 @@ const CreateNewSlot = ({ componentName }) => {
         formState: { errors },
     } = useForm();
 
-    const { timezones } = useSelector((state) => state.timezone);
+    const { timezones } = useSelector(state => state.timezone);
 
-    const handleDayChange = (day) => {
-        setSelectedDays((prev) => {
+    const handleDayChange = day => {
+        setSelectedDays(prev => {
             if (prev.includes(day)) {
-                return prev.filter((d) => d !== day);
+                return prev.filter(d => d !== day);
             } else {
                 return [...prev, day];
             }
@@ -186,7 +186,7 @@ const CreateNewSlot = ({ componentName }) => {
         return true;
     };
 
-    const onSubmit = (formData) => {
+    const onSubmit = formData => {
         console.log('form data', formData);
 
         if (!validate()) {
@@ -195,7 +195,7 @@ const CreateNewSlot = ({ componentName }) => {
 
         let weeksArray = Array(7).fill(0);
         if (repeat === 'recurring') {
-            selectedDays.forEach((day) => {
+            selectedDays.forEach(day => {
                 const index = weekDays.indexOf(day);
                 weeksArray[index] = 1;
             });
@@ -217,7 +217,7 @@ const CreateNewSlot = ({ componentName }) => {
                 dispatch(closeCreateNewSlotAction());
                 return dispatch(fetchCoachSlots(taId.id));
             })
-            .catch((error) => {
+            .catch(error => {
                 console.error('Error:', error);
             });
     };
@@ -251,7 +251,7 @@ const CreateNewSlot = ({ componentName }) => {
                             <CustomDateField
                                 label="From Date"
                                 value={fromDate}
-                                onChange={(date) => setFromDate(date)}
+                                onChange={date => setFromDate(date)}
                                 name="fromDate"
                                 register={register}
                                 validation={{
@@ -277,7 +277,7 @@ const CreateNewSlot = ({ componentName }) => {
                                     label="From Time"
                                     name="fromTime"
                                     value={fromTime}
-                                    onChange={(time) => setFromTime(time)}
+                                    onChange={time => setFromTime(time)}
                                     register={register}
                                     validation={{
                                         required: 'From Time is required',
@@ -296,7 +296,7 @@ const CreateNewSlot = ({ componentName }) => {
                                     label="To Time"
                                     name="toTime"
                                     value={toTime}
-                                    onChange={(time) => setToTime(time)}
+                                    onChange={time => setToTime(time)}
                                     register={register}
                                     validation={{
                                         required: 'To Time is required',
@@ -343,7 +343,7 @@ const CreateNewSlot = ({ componentName }) => {
                                     <RadioGroup
                                         row
                                         value={repeat}
-                                        onChange={(e) =>
+                                        onChange={e =>
                                             setRepeat(e.target.value)
                                         }
                                         sx={{ justifyContent: 'center' }}
@@ -373,17 +373,17 @@ const CreateNewSlot = ({ componentName }) => {
                                     <Grid item xs={12}>
                                         <FormControl component="fieldset">
                                             <FormGroup row>
-                                                {weekDays.map((day) => (
+                                                {weekDays.map(day => (
                                                     <FormControlLabel
                                                         key={day}
                                                         control={
                                                             <Checkbox
                                                                 checked={selectedDays.includes(
-                                                                    day,
+                                                                    day
                                                                 )}
                                                                 onChange={() =>
                                                                     handleDayChange(
-                                                                        day,
+                                                                        day
                                                                     )
                                                                 }
                                                                 name={day}
@@ -407,7 +407,7 @@ const CreateNewSlot = ({ componentName }) => {
                                     <CustomDateField
                                         label="To Date"
                                         value={toDate}
-                                        onChange={(date) => setToDate(date)}
+                                        onChange={date => setToDate(date)}
                                         name="end_date"
                                         register={register}
                                         validation={{

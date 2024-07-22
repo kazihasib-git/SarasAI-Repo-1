@@ -80,7 +80,7 @@ const headers = [
 
 const TaAvialability = () => {
     const dispatch = useDispatch();
-    const { todaysAvailableTa } = useSelector((state) => state.taAvailability);
+    const { todaysAvailableTa } = useSelector(state => state.taAvailability);
     const [taAvailabilityData, setTaAvailabilityData] = useState([]);
 
     useEffect(() => {
@@ -110,7 +110,7 @@ const TaAvialability = () => {
 
     return (
         <>
-            <Box m="10px">
+            <Box m="20px">
                 <Header />
                 <Sidebar />
                 <Box display={'flex'} justifyContent={'space-between'}>

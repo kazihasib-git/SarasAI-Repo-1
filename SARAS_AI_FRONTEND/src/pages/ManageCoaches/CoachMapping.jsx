@@ -24,13 +24,13 @@ const actionButtons = [
     // },
     {
         type: 'delete',
-        onClick: (id) => console.log(`Delete clicked for id ${id}`),
+        onClick: id => console.log(`Delete clicked for id ${id}`),
     },
 ];
 
 const CoachMapping = () => {
     const dispatch = useDispatch();
-    const { coachMapping, loading } = useSelector((state) => state.coachModule);
+    const { coachMapping, loading } = useSelector(state => state.coachModule);
     const [caMappingData, setcaMappingData] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     // console.log("camapping" , coachMapping);
@@ -52,59 +52,61 @@ const CoachMapping = () => {
         }
     }, [coachMapping]);
 
-    const handleSearch = (event) => {
+    const handleSearch = event => {
         setSearchQuery(event.target.value);
     };
 
-    const filteredData = caMappingData.filter((item) =>
-        item.name.toLowerCase().includes(searchQuery.toLowerCase()),
+    const filteredData = caMappingData.filter(item =>
+        item.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     return (
         <>
-            <Header />
-            <Sidebar />
-            <Box
-                display={'flex'}
-                justifyContent={'space-between'}
-                marginTop={3}
-            >
-                <p
-                    style={{
-                        fontSize: '44px',
-                        justifyContent: 'center',
-                        marginBottom: '20px',
-                        fontFamily: 'ExtraLight',
-                    }}
+            <Box m={'10px'}>
+                <Header />
+                <Sidebar />
+                <Box
+                    display={'flex'}
+                    justifyContent={'space-between'}
+                    marginTop={3}
                 >
-                    Coach Mapping
-                </p>
-                <Box display={'flex'}>
-                    <Box
-                        marginTop={1}
-                        display={'flex'}
-                        backgroundColor="#FFF"
-                        borderRadius={'30px'}
-                        width={'20vw'}
-                        height={'5vh'}
-                        marginRight={'10px'}
+                    <p
+                        style={{
+                            fontSize: '44px',
+                            justifyContent: 'center',
+                            marginBottom: '20px',
+                            fontFamily: 'ExtraLight',
+                        }}
                     >
-                        <InputBase
-                            sx={{ ml: 2, flex: 1 }}
-                            placeholder="Search here ..."
-                            value={searchQuery}
-                            onChange={handleSearch}
-                        />
+                        Coach Mapping
+                    </p>
+                    <Box display={'flex'}>
+                        <Box
+                            marginTop={1}
+                            display={'flex'}
+                            backgroundColor="#FFF"
+                            borderRadius={'30px'}
+                            width={'20vw'}
+                            height={'5vh'}
+                            marginRight={'10px'}
+                        >
+                            <InputBase
+                                sx={{ ml: 2, flex: 1 }}
+                                placeholder="Search here ..."
+                                value={searchQuery}
+                                onChange={handleSearch}
+                            />
+                        </Box>
                     </Box>
                 </Box>
-            </Box>
 
-            <DynamicTable
-                headers={headers}
-                initialData={filteredData}
-                actionButtons={actionButtons}
-                componentName={'COACHMAPPING'}
-            />
+                <DynamicTable
+                    headers={headers}
+                    initialData={filteredData}
+                    actionButtons={actionButtons}
+                    componentName={'COACHMAPPING'}
+                />
+            </Box>
         </>
     );
 };

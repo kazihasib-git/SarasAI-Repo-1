@@ -116,10 +116,10 @@ const ReschedulingSession = ({ componentName }) => {
         [availableSlotsAction]: availableSlotsData,
         [sessionEventAction]: sessionEventData,
         [slotEventAction]: slotEventData,
-    } = useSelector((state) =>
+    } = useSelector(state =>
         componentName === 'TACALENDER'
             ? state.taAvailability
-            : state.coachAvailability,
+            : state.coachAvailability
     );
 
     useEffect(() => {
@@ -147,17 +147,15 @@ const ReschedulingSession = ({ componentName }) => {
         }
     }, [availableSlotsData]);
 
-    const handleDateChange = (date) => {
+    const handleDateChange = date => {
         setSelectDate(date);
         setSelectedSlots([]); // Clear selected slots when date changes
     };
 
-    const handleSelectSlot = (id) => {
+    const handleSelectSlot = id => {
         console.log('Selected Slot ID:', id);
-        setSelectedSlots((prev) =>
-            prev.includes(id)
-                ? prev.filter((sid) => sid !== id)
-                : [...prev, id],
+        setSelectedSlots(prev =>
+            prev.includes(id) ? prev.filter(sid => sid !== id) : [...prev, id]
         );
     };
 
@@ -177,7 +175,7 @@ const ReschedulingSession = ({ componentName }) => {
                     timezone: 'IST',
                     event_status: 'rescheduled',
                 },
-            }),
+            })
         )
             .unwrap()
             .then(() => {
@@ -186,7 +184,7 @@ const ReschedulingSession = ({ componentName }) => {
                 dispatch(getScheduleSessionAction(slotEventData));
                 dispatch(openScheduledSessionAction());
             })
-            .catch((error) => {
+            .catch(error => {
                 console.error('Error rescheduling session:', error);
             });
     };
@@ -246,14 +244,14 @@ const ReschedulingSession = ({ componentName }) => {
                                 <CustomTimeField
                                     label="From Time"
                                     value={fromTime}
-                                    onChange={(time) => setFromTime(time)}
+                                    onChange={time => setFromTime(time)}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <CustomTimeField
                                     label="End Time"
                                     value={toTime}
-                                    onChange={(time) => setToTime(time)}
+                                    onChange={time => setToTime(time)}
                                 />
                             </Grid>
                         </Grid>

@@ -33,7 +33,7 @@ const CoachTemplateForm = () => {
     const [errors, setErrors] = useState({});
     const navigation = useNavigate();
 
-    const validateTemplateName = (name) => {
+    const validateTemplateName = name => {
         // Regex to ensure the template name is more than 4 characters and contains at least one space between words
         const regex = /^(?=.*\s).{5,}$/;
         if (!regex.test(name)) {
@@ -50,7 +50,7 @@ const CoachTemplateForm = () => {
         return newErrors;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = e => {
         e.preventDefault();
         const formErrors = validateForm();
         if (Object.keys(formErrors).length > 0) {
@@ -68,16 +68,16 @@ const CoachTemplateForm = () => {
         navigation('/template-name', { state: { newTemplateData } });
     };
 
-    const handleTemplateNameChange = (e) => {
+    const handleTemplateNameChange = e => {
         setTemplateName(e.target.value);
         const error = validateTemplateName(e.target.value);
-        setErrors((prevErrors) => ({ ...prevErrors, templateName: error }));
+        setErrors(prevErrors => ({ ...prevErrors, templateName: error }));
     };
 
-    const handleDurationChange = (e) => {
+    const handleDurationChange = e => {
         setDuration(e.target.value);
         if (errors.duration) {
-            setErrors((prevErrors) => ({ ...prevErrors, duration: '' }));
+            setErrors(prevErrors => ({ ...prevErrors, duration: '' }));
         }
     };
 
@@ -117,7 +117,7 @@ const CoachTemplateForm = () => {
                         error={!!errors.duration}
                         helperText={errors.duration}
                     >
-                        {durations.map((option) => (
+                        {durations.map(option => (
                             <MenuItem key={option.value} value={option.value}>
                                 {option.label}
                             </MenuItem>

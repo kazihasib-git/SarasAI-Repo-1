@@ -43,9 +43,7 @@ const CustomButton = styled(Button)(({ theme, active }) => ({
 const WOLTestConfig = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { wolCategoryData, wolTestConfig } = useSelector(
-        (state) => state.wol,
-    );
+    const { wolCategoryData, wolTestConfig } = useSelector(state => state.wol);
 
     const [edit, setEdit] = useState(false);
     const [numberOfWolCategoriesOptions, setNumberOfWolCategoriesOptions] =
@@ -66,7 +64,7 @@ const WOLTestConfig = () => {
             const testConfig = wolTestConfig.data[0];
             setFormValues({
                 numberOfWolCategories: testConfig.number_of_categories,
-                categories: testConfig.test_categories.map((item) => ({
+                categories: testConfig.test_categories.map(item => ({
                     category_name: item.wol_category_id,
                     no_of_questions: item.number_of_questions,
                 })),
@@ -82,7 +80,7 @@ const WOLTestConfig = () => {
                 (_, i) => ({
                     value: i + 1,
                     label: i + 1,
-                }),
+                })
             );
             setNumberOfWolCategoriesOptions(numberOfWolCategories);
         }
@@ -90,7 +88,7 @@ const WOLTestConfig = () => {
 
     const WOLCategoriesOptions =
         wolCategoryData.data && wolCategoryData.data.length > 0
-            ? wolCategoryData.data.map((item) => ({
+            ? wolCategoryData.data.map(item => ({
                   value: item.id,
                   label: item.name,
               }))
@@ -101,7 +99,7 @@ const WOLTestConfig = () => {
         label: i + 1,
     }));
 
-    const handleSubmit = (e) => {
+    const handleSubmit = e => {
         e.preventDefault();
 
         if (edit) {
@@ -125,7 +123,7 @@ const WOLTestConfig = () => {
         setErrors({});
     };
 
-    const handleFormSubmit = (e) => {
+    const handleFormSubmit = e => {
         e.preventDefault();
         const newErrors = {};
         const selectedNumberOfWolCategories = formValues.numberOfWolCategories;
@@ -151,7 +149,7 @@ const WOLTestConfig = () => {
                     wol_category_id: categoryName,
                     number_of_questions: noOfQuestions,
                 };
-            },
+            }
         );
 
         if (Object.keys(newErrors).length > 0) {
@@ -219,7 +217,7 @@ const WOLTestConfig = () => {
                                     label="Number of WOL Categories"
                                     name="numberOfWolCategories"
                                     value={formValues.numberOfWolCategories}
-                                    onChange={(e) =>
+                                    onChange={e =>
                                         setFormValues({
                                             ...formValues,
                                             numberOfWolCategories:
@@ -281,7 +279,7 @@ const WOLTestConfig = () => {
                                                     formValues.categories[index]
                                                         ?.category_name || ''
                                                 }
-                                                onChange={(e) => {
+                                                onChange={e => {
                                                     const newCategories = [
                                                         ...formValues.categories,
                                                     ];
@@ -308,7 +306,7 @@ const WOLTestConfig = () => {
                                                     formValues.categories[index]
                                                         ?.no_of_questions || ''
                                                 }
-                                                onChange={(e) => {
+                                                onChange={e => {
                                                     const newCategories = [
                                                         ...formValues.categories,
                                                     ];

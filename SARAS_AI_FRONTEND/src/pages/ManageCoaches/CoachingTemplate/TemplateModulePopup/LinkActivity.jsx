@@ -22,6 +22,9 @@ import { getActivityType } from '../../../../redux/features/ActivityType/activit
 import { getCoach } from '../../../../redux/features/CoachModule/coachSlice';
 import { linkActivity } from '../../../../redux/features/ActivityType/LinkActivitySlice';
 
+import { getCoachAvailableSlotsFromDate } from '../../../../redux/features/CoachModule/coachSchedule';
+import { getTaAvailableSlotsFromDate } from '../../../../redux/features/taModule/taScheduling';
+import { createCoachSchedule } from '../../../../redux/features/CoachModule/coachSchedule';
 const CustomButton = ({
     onClick,
     children,
@@ -73,7 +76,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
     const [selectedAssessmentId, setSelectedAssessmentId] = useState('');
     const [selectedActivityId, setSelectedActivityId] = useState('');
 
-    const onSubmit = async (data) => {
+    const onSubmit = async data => {
         // Prepare the payload
         console.log('clicked');
         console.log('activity data', data);
@@ -99,14 +102,17 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
     useEffect(() => {
         dispatch(getActivityType());
         dispatch(getCoach());
+        // dispatch(getSlotsCoachTemplateModule());
     }, [dispatch]);
 
-    const { typeList } = useSelector((state) => state.activityType);
-    const { coaches } = useSelector((state) => state.coachModule);
+    const { typeList } = useSelector(state => state.activityType);
+    const { coaches } = useSelector(state => state.coachModule);
+    const { coachAvailableSlots } = useSelector(state => state.coachScheduling);
     console.log('coaches', coaches);
+    console.log('coachesslot', coachAvailableSlots);
     const activityOptions = typeList
         .filter((_, index) => index < 5)
-        .map((type) => ({
+        .map(type => ({
             value: type.type_name,
             label:
                 type.type_name.charAt(0).toUpperCase() +
@@ -116,7 +122,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
 
     const assessmentOptions = typeList
         .filter((_, index) => index >= 5)
-        .map((type) => ({
+        .map(type => ({
             value: type.type_name,
             label:
                 type.type_name.charAt(0).toUpperCase() +
@@ -129,7 +135,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
         { value: 'group', label: 'Group session' },
     ];
 
-    const coachOptions = coaches.map((coach) => ({
+    const coachOptions = coaches.map(coach => ({
         value: coach.name,
         label: coach.name,
         id: coach.id,
@@ -142,16 +148,23 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
         { value: 'slot4', label: '2:00 PM - 3:00 PM' },
         { value: 'slot5', label: '3:00 PM - 4:00 PM' },
     ];
-
+    const formatTime = time => {
+        const [hours, minutes] = time.split(':');
+        const hour = parseInt(hours, 10);
+        const minute = parseInt(minutes, 10);
+        const ampm = hour >= 12 ? 'pm' : 'am';
+        const formattedHour = hour % 12 || 12;
+        return `${formattedHour}:${minute < 10 ? '0' : ''}${minute} ${ampm}`;
+    };
     const timeZones = [
         { value: 'UTC', label: 'UTC' },
         { value: 'GMT', label: 'GMT' },
         { value: 'PST', label: 'Pacific Standard Time' },
         { value: 'EST', label: 'Eastern Standard Time' },
     ];
-    const handleCoachChange = (e) => {
+    const handleCoachChange = e => {
         const selected = coachOptions.find(
-            (option) => option.value === e.target.value,
+            option => option.value === e.target.value
         );
 
         if (selected) {
@@ -160,13 +173,37 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
         }
     };
 
-    //  useEffect(() => {
-    //   if (fromDate) {
-    //     dispatch(
-    //       getAvailableSlotsAction({ admin_user_id: selectedCoachId , date: fromDate })
-    //     );
-    //   }
-    // }, [fromDate, dispatch, adminUserID, getAvailableSlotsAction]);
+    console.log('hello coach id is', selectedCoachId);
+    useEffect(() => {
+        const data = {
+            admin_user_id: selectedCoachId,
+            date: fromDate,
+        };
+        console.log('data', data);
+        if (fromDate && selectedCoachId) {
+            dispatch(getTaAvailableSlotsFromDate(data));
+            dispatch(getCoachAvailableSlotsFromDate(data));
+
+            const data1 = {
+                admin_user_id: selectedCoachId,
+                meeting_name: 'Team Meeting',
+                meeting_url: 'http://example.com/meeting',
+                schedule_date: fromDate,
+                slot_id: 'coachAvailableSlots.id',
+                start_time: 'coachAvailableSlots.from_time',
+                end_time: 'coachAvailableSlots.to_time',
+                timezone: 'IST',
+                event_status: 'scheduled',
+                end_date: fromDate,
+                studentId: [1, 2, 3],
+                batchId: [12, 13],
+                weeks: '[0,1, 0, 0, 0,1,0]',
+            };
+            if (coachAvailableSlots) {
+                dispatch(createCoachSchedule(data1));
+            }
+        }
+    }, [fromDate, dispatch]);
     const contentComponent = (
         <Grid
             container
@@ -195,15 +232,8 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
                             label="Activity Type"
                             name="activityType"
                             value={field.value}
-                            onChange={(e) => {
+                            onChange={e => {
                                 setActivityType(e.target.value);
-                                const selectedValue = e.target.value;
-                                const selectedOption = activityOptions.find(
-                                    (option) => option.value === selectedValue,
-                                );
-                                setSelectedActivityId(
-                                    selectedOption ? selectedOption.id : '',
-                                );
                                 field.onChange(e);
                             }}
                             errors={errors}
@@ -233,7 +263,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
                                 name="link"
                                 variant="outlined"
                                 value={field.value}
-                                onChange={(e) => {
+                                onChange={e => {
                                     field.onChange(e);
                                 }}
                                 placeholder="Enter Link"
@@ -261,16 +291,16 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
                                 label="Assessment"
                                 name="assessment"
                                 value={field.value}
-                                onChange={(e) => {
+                                onChange={e => {
                                     const selectedValue = e.target.value;
                                     field.onChange(e);
                                     const selectedOption =
                                         assessmentOptions.find(
-                                            (option) =>
-                                                option.value === selectedValue,
+                                            option =>
+                                                option.value === selectedValue
                                         );
                                     setSelectedAssessmentId(
-                                        selectedOption ? selectedOption.id : '',
+                                        selectedOption ? selectedOption.id : ''
                                     );
                                 }}
                                 errors={errors}
@@ -299,7 +329,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
                                     name="virtualMeetLink"
                                     variant="outlined"
                                     value={field.value}
-                                    onChange={(e) => {
+                                    onChange={e => {
                                         field.onChange(e);
                                     }}
                                     placeholder="Enter Link"
@@ -329,9 +359,9 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
                                     <RadioGroup
                                         row
                                         value={field.value}
-                                        onChange={(e) => {
+                                        onChange={e => {
                                             setSelectedSessionType(
-                                                e.target.value,
+                                                e.target.value
                                             );
                                             field.onChange(e.target.value);
                                         }}
@@ -368,7 +398,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
                         control={
                             <Checkbox
                                 checked={askCoach}
-                                onChange={(e) => setAskCoach(e.target.checked)}
+                                onChange={e => setAskCoach(e.target.checked)}
                                 sx={{
                                     color: 'black',
                                     '&.Mui-checked': {
@@ -400,7 +430,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
                                         label="Select Coach"
                                         name="coach"
                                         value={field.value}
-                                        onChange={(e) => {
+                                        onChange={e => {
                                             field.onChange(e);
                                             handleCoachChange(e);
                                             // handleCoachChange(e); // Uncomment if you have a handleCoachChange function
@@ -411,6 +441,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
                                 )}
                             />
                         </Grid>
+
                         <Grid
                             item
                             xs={12}
@@ -433,6 +464,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
                                 )}
                             />
                         </Grid>
+
                         <Grid
                             item
                             xs={12}
@@ -441,16 +473,21 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
                             <Typography variant="h6">
                                 Available Slots
                             </Typography>
-                            <Grid container spacing={1}>
-                                {timeSlots.map((slot) => (
-                                    <Grid item xs={6} sm={4} key={slot.value}>
+                            {coachAvailableSlots &&
+                            coachAvailableSlots.length > 0 ? (
+                                <RadioGroup>
+                                    {coachAvailableSlots.map((slot, index) => (
                                         <FormControlLabel
-                                            control={<Checkbox />}
-                                            label={slot.label}
+                                            key={index}
+                                            control={<Radio />}
+                                            label={`${formatTime(slot.from_time)} - ${formatTime(slot.to_time)}`}
+                                            value={slot.timeFrom}
                                         />
-                                    </Grid>
-                                ))}
-                            </Grid>
+                                    ))}
+                                </RadioGroup>
+                            ) : (
+                                <Typography>No slots available</Typography>
+                            )}
                         </Grid>
                         <Grid
                             container
@@ -502,11 +539,11 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
                                         label="Time Zone"
                                         name="timezone"
                                         value={field.value}
-                                        onChange={(e) => {
+                                        onChange={e => {
                                             field.onChange(e);
                                         }}
                                         errors={errors}
-                                        options={timeZones.map((zone) => ({
+                                        options={timeZones.map(zone => ({
                                             value: zone.value,
                                             label: zone.label,
                                         }))}

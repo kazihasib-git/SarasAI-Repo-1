@@ -104,8 +104,8 @@ const Slots = ({ componentName }) => {
     }
 
     const schedulingState =
-        useSelector((state) =>
-            schedulingStateKey ? state[schedulingStateKey] : {},
+        useSelector(state =>
+            schedulingStateKey ? state[schedulingStateKey] : {}
         ) || {};
 
     const {
@@ -130,18 +130,18 @@ const Slots = ({ componentName }) => {
         }
     }, [scheduledSlotsData]);
 
-    const handleSelect = (id) => {
-        setSelectedSlots((prev) =>
+    const handleSelect = id => {
+        setSelectedSlots(prev =>
             prev.includes(id)
-                ? prev.filter((slotId) => slotId !== id)
-                : [...prev, id],
+                ? prev.filter(slotId => slotId !== id)
+                : [...prev, id]
         );
     };
 
     const handleSubmit = () => {
         if (selectedSlots.length > 0) {
-            const data = selectedSlots.map((slotId) => {
-                const slot = scheduledSlotsData.find((s) => s.id === slotId);
+            const data = selectedSlots.map(slotId => {
+                const slot = scheduledSlotsData.find(s => s.id === slotId);
                 return {
                     slot_id: slot.id,
                     date: slot.slot_date,
@@ -158,12 +158,12 @@ const Slots = ({ componentName }) => {
             console.log('Submitting selected slots:', requestData);
 
             dispatch(getScheduleSessionAction(requestData))
-                .then((response) => {
+                .then(response => {
                     console.log('API response:', response);
                     dispatch(closeScheduleSessionAction());
                     dispatch(getAvailableSlotsAction(requestData));
                 })
-                .catch((error) => {
+                .catch(error => {
                     console.error('API error:', error);
                 });
         } else {

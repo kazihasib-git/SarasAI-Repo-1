@@ -83,7 +83,7 @@ const ScheduledCalls = () => {
                 </Box>
 
                 <Box display="flex" gap="20px">
-                    {calls.map((call) => (
+                    {calls.map(call => (
                         <Card
                             key={call.id}
                             sx={{ minWidth: 275, backgroundColor: 'white' }}

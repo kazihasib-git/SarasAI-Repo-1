@@ -48,7 +48,7 @@ const WOLTestConfigSelectQuestions = () => {
     const [totalQuestions, setTotalQuestions] = useState(0);
     const [selectedQuestions, setSelectedQuestions] = useState([]);
     const { wolCategoryData, wolTestConfig, wolTestConfigCategoryWise } =
-        useSelector((state) => state.wol);
+        useSelector(state => state.wol);
 
     const [category, setCategory] = useState([]);
 
@@ -61,7 +61,7 @@ const WOLTestConfigSelectQuestions = () => {
             // console.log("Wol Test Config Category Wise", wolTestConfigCategoryWise.data)
             setTotalQuestions(wolTestConfigCategoryWise.data.total_questions);
             setSelectedQuestions(
-                wolTestConfigCategoryWise.data.selected_questions,
+                wolTestConfigCategoryWise.data.selected_questions
             );
             setCategory(wolTestConfigCategoryWise.data.questions);
         }
@@ -74,7 +74,7 @@ const WOLTestConfigSelectQuestions = () => {
         navigate('/WolselectQuestions');
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = e => {
         e.preventDefault();
 
         console.log('Submit');
@@ -217,7 +217,7 @@ const WOLTestConfigSelectQuestions = () => {
                                             onClick={() =>
                                                 handleSelectQuestions(
                                                     category.wol_category_id,
-                                                    category.id,
+                                                    category.id
                                                 )
                                             }
                                         >

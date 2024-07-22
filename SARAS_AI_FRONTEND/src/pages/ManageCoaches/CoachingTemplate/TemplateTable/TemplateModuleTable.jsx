@@ -80,9 +80,7 @@ const TemplateModuleTable = ({ modulesData }) => {
     const [prerequisitesPopupOpen, setPrerequisitesPopupOpen] = useState(false);
     const [selectedActivityId, setSelectedActivityId] = useState(null); // State for selected activity ID
     const dispatch = useDispatch();
-    const { selectedCoachTemplate } = useSelector(
-        (state) => state.coachTemplate,
-    );
+    const { selectedCoachTemplate } = useSelector(state => state.coachTemplate);
 
     const handleToggle = (moduleId, activityId, currentStatus) => {
         const newStatus = !currentStatus;
@@ -137,7 +135,7 @@ const TemplateModuleTable = ({ modulesData }) => {
         dispatch(openEditModulePopup(data));
         // Implement your logic for editing module
     };
-    const handleEditActivity = (activity) => {
+    const handleEditActivity = activity => {
         console.log('Clicked Activity !');
         dispatch(openEditActivityPopup(activity));
     };
@@ -155,7 +153,7 @@ const TemplateModuleTable = ({ modulesData }) => {
 
     return (
         <>
-            {modulesData.map((module) => (
+            {modulesData.map(module => (
                 <Box key={module.id}>
                     {/* {console.log("MODULE DATA : ", modulesData)} */}
                     <Box
@@ -198,7 +196,7 @@ const TemplateModuleTable = ({ modulesData }) => {
                                 onClick={() =>
                                     handleActivity(
                                         module.id,
-                                        module?.template[0]?.id,
+                                        module?.template[0]?.id
                                     )
                                 }
                             >
@@ -214,7 +212,7 @@ const TemplateModuleTable = ({ modulesData }) => {
                                     handleEditModule(
                                         module.id,
                                         module.module_name,
-                                        module.is_active,
+                                        module.is_active
                                     )
                                 }
                             >
@@ -353,7 +351,7 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                                 handleToggle(
                                                                     module.id,
                                                                     activity.id,
-                                                                    activity.is_active,
+                                                                    activity.is_active
                                                                 )
                                                             }
                                                             inputProps={{
@@ -372,7 +370,7 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                         <CustomButton
                                                             onClick={() =>
                                                                 handleEditActivity(
-                                                                    activity,
+                                                                    activity
                                                                 )
                                                             }
                                                             className="editBtn"
@@ -401,7 +399,7 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                         </CustomButton>
                                                     </td>
                                                 </tr>
-                                            ),
+                                            )
                                         )}
                                     </tbody>
                                 </table>

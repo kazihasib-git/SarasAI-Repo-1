@@ -150,8 +150,8 @@ const Schedule = ({ componentName }) => {
             break;
     }
 
-    const schedulingState = useSelector((state) =>
-        schedulingStateKey ? state[schedulingStateKey] : {},
+    const schedulingState = useSelector(state =>
+        schedulingStateKey ? state[schedulingStateKey] : {}
     );
     const {
         [scheduleSessionOpenKey]: scheduleSessionOpen,
@@ -170,7 +170,7 @@ const Schedule = ({ componentName }) => {
         formState: { errors },
     } = useForm();
 
-    console.log("available slots", availableSlots)
+    console.log('available slots', availableSlots);
 
     useEffect(() => {
         if (fromDate || !availableSlots.length > 0) {
@@ -178,12 +178,12 @@ const Schedule = ({ componentName }) => {
                 getAvailableSlotsAction({
                     admin_user_id: adminUserID,
                     date: fromDate,
-                }),
+                })
             );
         }
     }, [fromDate, dispatch, adminUserID, getAvailableSlotsAction]);
 
-    const { timezones } = useSelector((state) => state.timezone);
+    const { timezones } = useSelector(state => state.timezone);
 
     useEffect(() => {
         dispatch(getTimezone());
@@ -201,7 +201,7 @@ const Schedule = ({ componentName }) => {
                 id: item.id,
             }));
 
-            const options = availableSlots.map((item) => ({
+            const options = availableSlots.map(item => ({
                 label: `${item.from_time} - ${item.to_time}`,
                 value: item.id,
             }));
@@ -212,31 +212,31 @@ const Schedule = ({ componentName }) => {
         }
     }, [availableSlots]);
 
-    const handleDayChange = (day) => {
-        setSelectedDays((prev) => {
+    const handleDayChange = day => {
+        setSelectedDays(prev => {
             if (prev.includes(day)) {
-                return prev.filter((d) => d !== day);
+                return prev.filter(d => d !== day);
             } else {
                 return [...prev, day];
             }
         });
     };
 
-    const handleSelectSlots = (id) => {
-        setSelectedSlot((prev) => {
+    const handleSelectSlots = id => {
+        setSelectedSlot(prev => {
             if (prev.includes(id)) {
-                return prev.filter((sid) => sid !== id);
+                return prev.filter(sid => sid !== id);
             } else {
                 return [...prev, id];
             }
         });
     };
 
-    const handleSelectOption = (e) => {
+    const handleSelectOption = e => {
         const selectedOption = e.target.value;
         console.log('selectedOption : ', selectedOption);
         const selectedSlot = slotData.filter(
-            (slot) => slot.id === selectedOption,
+            slot => slot.id === selectedOption
         );
         console.log('selectedSlot : ', selectedSlot);
         setSelectedSlot(selectedSlot);
@@ -255,7 +255,7 @@ const Schedule = ({ componentName }) => {
     //     setSelectedSlot([{}]);
     // }
 
-    console.log("adminUserID ", adminUserID)
+    console.log('adminUserID ', adminUserID);
 
     const handleAssignBatches = () => {
         console.log('COMPONENT NAME  handleAssignBatches : ', componentName);
@@ -305,17 +305,17 @@ const Schedule = ({ componentName }) => {
             toast.error('To Time should be greater than From Time!');
             return;
         }
-    }
+    };
 
-    const onSubmit = (formData) => {
-        const studentId = students.map((student) => student.id);
-        const batchId = batches.map((batch) => batch.id);
+    const onSubmit = formData => {
+        const studentId = students.map(student => student.id);
+        const batchId = batches.map(batch => batch.id);
 
         console.log('studentId : ', studentId, 'batchId : ', batchId);
 
         let weeksArray = Array(7).fill(0);
         if (repeat === 'recurring') {
-            selectedDays.forEach((day) => {
+            selectedDays.forEach(day => {
                 const index = weekDays.indexOf(day);
                 weeksArray[index] = 1;
             });
@@ -323,7 +323,6 @@ const Schedule = ({ componentName }) => {
             const index = new Date(fromDate).getDay();
             weeksArray[index] = 1;
         }
-       
 
         console.log('FORM DATA : ', formData);
         console.log('selected slots', selectedSlot);
@@ -347,7 +346,7 @@ const Schedule = ({ componentName }) => {
                 dispatch(closeScheduleSessionAction());
                 return dispatch(fetchTAScheduleById(adminUserID));
             })
-            .catch((error) => {
+            .catch(error => {
                 console.error('Error:', error);
             });
 
@@ -658,10 +657,10 @@ const Schedule = ({ componentName }) => {
                                                         <RadioGroup
                                                             row
                                                             value={repeat}
-                                                            onChange={(e) =>
+                                                            onChange={e =>
                                                                 setRepeat(
                                                                     e.target
-                                                                        .value,
+                                                                        .value
                                                                 )
                                                             }
                                                             sx={{
@@ -699,9 +698,7 @@ const Schedule = ({ componentName }) => {
                                                             <FormControl component="fieldset">
                                                                 <FormGroup row>
                                                                     {weekDays.map(
-                                                                        (
-                                                                            day,
-                                                                        ) => (
+                                                                        day => (
                                                                             <FormControlLabel
                                                                                 key={
                                                                                     day
@@ -709,11 +706,11 @@ const Schedule = ({ componentName }) => {
                                                                                 control={
                                                                                     <Checkbox
                                                                                         checked={selectedDays.includes(
-                                                                                            day,
+                                                                                            day
                                                                                         )}
                                                                                         onChange={() =>
                                                                                             handleDayChange(
-                                                                                                day,
+                                                                                                day
                                                                                             )
                                                                                         }
                                                                                         name={
@@ -725,7 +722,7 @@ const Schedule = ({ componentName }) => {
                                                                                     day
                                                                                 }
                                                                             />
-                                                                        ),
+                                                                        )
                                                                     )}
                                                                 </FormGroup>
                                                             </FormControl>

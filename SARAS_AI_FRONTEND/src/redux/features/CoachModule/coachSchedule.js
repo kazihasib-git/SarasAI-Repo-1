@@ -7,7 +7,7 @@ export const showTASchedule = createAsyncThunk(
     async () => {
         const response = await axios.get(`${baseUrl}/admin/taschedules`);
         return response.data;
-    },
+    }
 );
 
 export const getTAScheduledSessions = createAsyncThunk(
@@ -15,32 +15,32 @@ export const getTAScheduledSessions = createAsyncThunk(
     async ({ id, data }) => {
         const response = await axios.post(
             `${baseUrl}/admin/taschedules/${id}`,
-            data,
+            data
         );
         return response.data;
-    },
+    }
 );
 
 export const createCoachSchedule = createAsyncThunk(
     'coachScheduling/createCoachSchedule',
-    async (data) => {
+    async data => {
         const response = await axios.post(
             `${baseUrl}/admin/coachschedules`,
-            data,
+            data
         );
         return response.data;
-    },
+    }
 );
 
 export const getCoachAvailableSlotsFromDate = createAsyncThunk(
     'coachScheduling/getCoachAvailableSlotsFromDate',
-    async (data) => {
+    async data => {
         const response = await axios.post(
             `${baseUrl}/admin/coach-slots/getTACoachSlotForADate`,
-            data,
+            data
         );
         return response.data;
-    },
+    }
 );
 
 // Reschedule Session
@@ -49,21 +49,21 @@ export const rescheduleSession = createAsyncThunk(
     async ({ id, data }) => {
         const response = await axios.put(
             `${baseUrl}/admin/taschedules/${id}`,
-            data,
+            data
         );
         return response.data;
-    },
+    }
 );
 
 // Cancel Scheduled Sessions
 export const cancelCoachScheduledSession = createAsyncThunk(
     'coachAvailability/cancelCoachScheduledSession',
-    async (id) => {
+    async id => {
         const response = await axios.put(
-            `${baseUrl}/admin/taschedules/${id}/cancel`,
+            `${baseUrl}/admin/taschedules/${id}/cancel`
         );
         return response.data;
-    },
+    }
 );
 
 const initialState = {
@@ -127,9 +127,9 @@ const coachScheduling = createSlice({
             state.coachAvailableSlots = [];
         },
     },
-    extraReducers: (builder) => {
+    extraReducers: builder => {
         // Get TA Scheduled Sessions
-        builder.addCase(getTAScheduledSessions.pending, (state) => {
+        builder.addCase(getTAScheduledSessions.pending, state => {
             state.loading = true;
         });
         builder.addCase(getTAScheduledSessions.fulfilled, (state, action) => {
@@ -142,7 +142,7 @@ const coachScheduling = createSlice({
         });
 
         // Create TA Schedule
-        builder.addCase(createCoachSchedule.pending, (state) => {
+        builder.addCase(createCoachSchedule.pending, state => {
             state.loading = true;
         });
         builder.addCase(createCoachSchedule.fulfilled, (state, action) => {
@@ -155,15 +155,16 @@ const coachScheduling = createSlice({
         });
 
         // Get TA Available Slots From Date
-        builder.addCase(getCoachAvailableSlotsFromDate.pending, (state) => {
+        builder.addCase(getCoachAvailableSlotsFromDate.pending, state => {
             state.loading = true;
         });
         builder.addCase(
             getCoachAvailableSlotsFromDate.fulfilled,
             (state, action) => {
+                console.log('action', action.payload.data);
                 state.loading = false;
                 state.coachAvailableSlots = action.payload.data;
-            },
+            }
         );
         builder.addCase(
             getCoachAvailableSlotsFromDate.rejected,
@@ -171,11 +172,11 @@ const coachScheduling = createSlice({
                 state.loading = false;
                 state.error = action.error.message;
                 state.coachAvailableSlots = [];
-            },
+            }
         );
 
         // Cancel Scheduled Sessions
-        builder.addCase(cancelCoachScheduledSession.pending, (state) => {
+        builder.addCase(cancelCoachScheduledSession.pending, state => {
             state.loading = true;
         });
         builder.addCase(
@@ -183,18 +184,18 @@ const coachScheduling = createSlice({
             (state, action) => {
                 state.loading = false;
                 state.coachScheduledSessions = action.payload.data;
-            },
+            }
         );
         builder.addCase(
             cancelCoachScheduledSession.rejected,
             (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
-            },
+            }
         );
 
         // Reschedule Session // TODO : Check this
-        builder.addCase(rescheduleSession.pending, (state) => {
+        builder.addCase(rescheduleSession.pending, state => {
             state.loading = true;
         });
         builder.addCase(rescheduleSession.fulfilled, (state, action) => {

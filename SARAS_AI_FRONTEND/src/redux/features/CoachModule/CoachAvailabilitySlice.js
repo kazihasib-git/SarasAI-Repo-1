@@ -7,96 +7,96 @@ export const getTodayCoachAvailability = createAsyncThunk(
     'coachAvailability/getTodayCoachAvailability',
     async () => {
         const response = await axios.get(
-            `${baseUrl}/admin/Coach-availability/get-today-available-coach`,
+            `${baseUrl}/admin/Coach-availability/get-today-available-coach`
         );
         return response.data;
-    },
+    }
 );
 
 //get slots for Coach from date to end date
 export const getCoachSlots = createAsyncThunk(
     'coachAvailability/getCoachSlots',
-    async (data) => {
+    async data => {
         const response = await axios.post(
             `${baseUrl}/admin/coach-slots/records`,
-            data,
+            data
         );
         return response.data;
-    },
+    }
 );
 
 //for fetching sessions of Coach for calendar
 export const fetchCoachScheduleById = createAsyncThunk(
     'coachAvailability/fetchCoachScheduleById',
-    async (id) => {
+    async id => {
         const response = await axios.get(
-            `${baseUrl}/admin/coachschedules/${id}`,
+            `${baseUrl}/admin/coachschedules/${id}`
         );
         return response.data;
-    },
+    }
 );
 
 //for fetching slots of Coach for calendar
 export const fetchCoachSlots = createAsyncThunk(
     'coachAvailability/fetchCoachSlots',
-    async (id) => {
+    async id => {
         const response = await axios.get(`${baseUrl}/admin/coach-slots/${id}`);
         return response.data;
-    },
+    }
 );
 
 // Create Slots for Coach
 export const createCoachSlots = createAsyncThunk(
     'coachAvailability/createCoachSlots',
-    async (data) => {
+    async data => {
         console.log('Data being sent:', data);
         const response = await axios.post(`${baseUrl}/admin/coach-slots`, data);
         return response.data;
-    },
+    }
 );
 
 // Get Schedule Session for Coach
 export const getCoachScheduleSession = createAsyncThunk(
     'coachAvailability/getScheduleSession',
-    async (data) => {
+    async data => {
         const response = await axios.post(
             `${baseUrl}/admin/coachschedules/get-schedules-records`,
-            data,
+            data
         );
         return response.data;
-    },
+    }
 );
 
 export const fetchCoachAvailableSlots = createAsyncThunk(
     'coachAvailability/fetchCoachAvailableSlots',
-    async (data) => {
+    async data => {
         // console.log("ID : ", id);
         const response = await axios.post(
             `${baseUrl}/admin/coach-slots/getTACoachSlotForADate`,
-            data,
+            data
         );
         return response.data;
-    },
+    }
 );
 
 export const deleteFutureSlots = createAsyncThunk(
     'coachAvailability/deleteFutureSlots',
-    async (id) => {
+    async id => {
         console.log('ID : ', id);
         const response = await axios.delete(
-            `${baseUrl}/admin/coach-slots/${id.id}`,
+            `${baseUrl}/admin/coach-slots/${id.id}`
         );
         return response.data;
-    },
+    }
 );
 
 // Reason for Coach Leave
 export const reasonForCoachLeave = createAsyncThunk(
     'taAvialability/reasonForCoachLeave',
-    async (data) => {
+    async data => {
         const response = await axios.post(`${baseUrl}/admin/leave`, data);
         return response.data;
-    },
+    }
 );
 
 const initialState = {
@@ -184,9 +184,9 @@ export const coachAvailabilitySlice = createSlice({
         //   state.customResheduleSessionOpen = false;
         // },
     },
-    extraReducers: (builder) => {
+    extraReducers: builder => {
         //for sessions Coach for calendar
-        builder.addCase(fetchCoachScheduleById.pending, (state) => {
+        builder.addCase(fetchCoachScheduleById.pending, state => {
             state.loading = true;
         });
         builder.addCase(fetchCoachScheduleById.fulfilled, (state, action) => {
@@ -199,7 +199,7 @@ export const coachAvailabilitySlice = createSlice({
         });
 
         //for slots of Coach for calendar
-        builder.addCase(fetchCoachSlots.pending, (state) => {
+        builder.addCase(fetchCoachSlots.pending, state => {
             state.loading = true;
         });
         builder.addCase(fetchCoachSlots.fulfilled, (state, action) => {
@@ -213,7 +213,7 @@ export const coachAvailabilitySlice = createSlice({
         });
 
         // Get Today Available Ta
-        builder.addCase(getTodayCoachAvailability.pending, (state) => {
+        builder.addCase(getTodayCoachAvailability.pending, state => {
             state.loading = true;
         });
         builder.addCase(
@@ -221,7 +221,7 @@ export const coachAvailabilitySlice = createSlice({
             (state, action) => {
                 state.loading = false;
                 state.todaysAvailableCoach = action.payload?.data;
-            },
+            }
         );
         builder.addCase(getTodayCoachAvailability.rejected, (state, action) => {
             state.loading = false;
@@ -229,7 +229,7 @@ export const coachAvailabilitySlice = createSlice({
         });
 
         // Get Slots
-        builder.addCase(getCoachSlots.pending, (state) => {
+        builder.addCase(getCoachSlots.pending, state => {
             state.loading = true;
         });
         builder.addCase(getCoachSlots.fulfilled, (state, action) => {
@@ -242,7 +242,7 @@ export const coachAvailabilitySlice = createSlice({
         });
 
         // Create Coach Slots
-        builder.addCase(createCoachSlots.pending, (state) => {
+        builder.addCase(createCoachSlots.pending, state => {
             state.loading = true;
         });
         builder.addCase(createCoachSlots.fulfilled, (state, action) => {
@@ -254,7 +254,7 @@ export const coachAvailabilitySlice = createSlice({
             state.error = action.error.message;
         });
 
-        builder.addCase(getCoachScheduleSession.pending, (state) => {
+        builder.addCase(getCoachScheduleSession.pending, state => {
             state.loading = true;
         });
         builder.addCase(getCoachScheduleSession.fulfilled, (state, action) => {
@@ -266,7 +266,7 @@ export const coachAvailabilitySlice = createSlice({
             state.error = action.error.message;
         });
 
-        builder.addCase(fetchCoachAvailableSlots.pending, (state) => {
+        builder.addCase(fetchCoachAvailableSlots.pending, state => {
             state.loading = true;
         });
         builder.addCase(fetchCoachAvailableSlots.fulfilled, (state, action) => {
@@ -279,7 +279,7 @@ export const coachAvailabilitySlice = createSlice({
             state.error = action.error.message;
         });
 
-        builder.addCase(deleteFutureSlots.pending, (state) => {
+        builder.addCase(deleteFutureSlots.pending, state => {
             state.loading = true;
         });
         builder.addCase(deleteFutureSlots.fulfilled, (state, action) => {
@@ -291,7 +291,7 @@ export const coachAvailabilitySlice = createSlice({
         });
 
         // Reason for Leave
-        builder.addCase(reasonForCoachLeave.pending, (state) => {
+        builder.addCase(reasonForCoachLeave.pending, state => {
             state.loading = true;
         });
         builder.addCase(reasonForCoachLeave.fulfilled, (state, action) => {
