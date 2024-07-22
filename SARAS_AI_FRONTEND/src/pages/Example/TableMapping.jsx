@@ -190,18 +190,18 @@ const TableMapping = () => {
         setCurrentPage(pageNumber);
     };
 
-    const handleToggle = (id) => {
-        setData((prevData) =>
-            prevData.map((item) =>
-                item.id === id ? { ...item, isActive: !item.isActive } : item,
-            ),
+    const handleToggle = id => {
+        setData(prevData =>
+            prevData.map(item =>
+                item.id === id ? { ...item, isActive: !item.isActive } : item
+            )
         );
     };
 
     const totalPages = Math.ceil(data.length / itemsPerPage);
     const currentData = data.slice(
         (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage,
+        currentPage * itemsPerPage
     );
 
     const AntSwitch = styled(Switch)(({ theme }) => ({

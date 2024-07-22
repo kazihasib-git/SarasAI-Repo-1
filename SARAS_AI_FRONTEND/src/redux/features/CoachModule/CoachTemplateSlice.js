@@ -7,62 +7,62 @@ export const getAllCoachTemplates = createAsyncThunk(
     async () => {
         const response = await axios.get(`${baseUrl}/admin/coaching-templates`);
         return response.data;
-    },
+    }
 );
 
 export const createCoachTemplate = createAsyncThunk(
     'coachTemplate/createCoachTemplate',
-    async (data) => {
+    async data => {
         const response = await axios.post(
             `${baseUrl}/admin/store-template`,
-            data,
+            data
         );
         return response.data;
-    },
+    }
 );
 
 export const getAllCoachTemplateModules = createAsyncThunk(
     'coachTemplate/getAllCoachTemplateModules',
     async () => {
         const response = await axios.get(
-            `${baseUrl}/admin/coaching-templates/modules/${templateId}`,
+            `${baseUrl}/admin/coaching-templates/modules/${templateId}`
         );
         const modules = response.data.data.filter(
-            (module) => module.template_id === templateId,
+            module => module.template_id === templateId
         );
         return modules;
-    },
+    }
 );
 
 export const createCoachTemplateModule = createAsyncThunk(
     'coachTemplate/createCoachTemplateModule',
-    async (data) => {
+    async data => {
         const response = await axios.post(
             `${baseUrl}/admin/coaching-templates/store-modules`,
-            data,
+            data
         );
         return response.data;
-    },
+    }
 );
 export const getCoachTemplateModuleId = createAsyncThunk(
     'coachTemplate/getCoachTemplateModuleId',
-    async (id) => {
+    async id => {
         const response = await axios.get(
-            `${baseUrl}/admin/coaching-templates/modules/${id}`,
+            `${baseUrl}/admin/coaching-templates/modules/${id}`
         );
         return response.data;
-    },
+    }
 );
 
 export const updateCoachTemplateModule = createAsyncThunk(
     'coachTemplate/updateCoachTemplateModule',
-    async (data) => {
+    async data => {
         const response = await axios.post(
             `${baseUrl}/admin/coaching-templates/update-modules`,
-            data,
+            data
         );
         return response.data;
-    },
+    }
 );
 
 export const updateCoachActivity = createAsyncThunk(
@@ -71,31 +71,31 @@ export const updateCoachActivity = createAsyncThunk(
         try {
             const response = await axios.post(
                 `${baseUrl}/admin/coaching-templates/activity-status`,
-                data,
+                data
             );
             console.log('API Response: ', response.data);
             return response.data;
         } catch (error) {
             console.error(
                 'API Error: ',
-                error.response ? error.response.data : error.message,
+                error.response ? error.response.data : error.message
             );
             return rejectWithValue(
-                error.response ? error.response.data : error.message,
+                error.response ? error.response.data : error.message
             );
         }
-    },
+    }
 );
 
 export const createCoachTemplateActivity = createAsyncThunk(
     'coachTemplate/createCoachTemplateActivity',
-    async (data) => {
+    async data => {
         const response = await axios.post(
             `${baseUrl}/admin/coaching-templates/store-activity`,
-            data,
+            data
         );
         return response.data;
-    },
+    }
 );
 
 export const updateEditActivity = createAsyncThunk(
@@ -105,20 +105,20 @@ export const updateEditActivity = createAsyncThunk(
         try {
             const response = await axios.post(
                 `${baseUrl}/admin/coaching-templates/update-activity`,
-                data,
+                data
             );
             console.log('API Response: ', response.data);
             return response.data;
         } catch (error) {
             console.error(
                 'API Error: ',
-                error.response ? error.response.data : error.message,
+                error.response ? error.response.data : error.message
             );
             return rejectWithValue(
-                error.response ? error.response.data : error.message,
+                error.response ? error.response.data : error.message
             );
         }
-    },
+    }
 );
 
 const initialState = {
@@ -215,10 +215,10 @@ export const coachTemplateSlice = createSlice({
             state.openEditActivityPopUp = false;
         },
     },
-    extraReducers: (builder) => {
+    extraReducers: builder => {
         // getAllCoachTemplates
         builder
-            .addCase(getAllCoachTemplates.pending, (state) => {
+            .addCase(getAllCoachTemplates.pending, state => {
                 state.loading = true;
             })
             .addCase(getAllCoachTemplates.fulfilled, (state, action) => {
@@ -233,7 +233,7 @@ export const coachTemplateSlice = createSlice({
 
         // createCoachTemplate
         builder
-            .addCase(createCoachTemplate.pending, (state) => {
+            .addCase(createCoachTemplate.pending, state => {
                 state.loading = true;
             })
             .addCase(createCoachTemplate.fulfilled, (state, action) => {
@@ -250,7 +250,7 @@ export const coachTemplateSlice = createSlice({
 
         // getAllCoachTemplateModules
         builder
-            .addCase(getAllCoachTemplateModules.pending, (state) => {
+            .addCase(getAllCoachTemplateModules.pending, state => {
                 state.loading = true;
             })
             .addCase(getAllCoachTemplateModules.fulfilled, (state, action) => {
@@ -265,7 +265,7 @@ export const coachTemplateSlice = createSlice({
 
         // createCoachTemplateModule
         builder
-            .addCase(createCoachTemplateModule.pending, (state) => {
+            .addCase(createCoachTemplateModule.pending, state => {
                 state.loading = true;
             })
             .addCase(createCoachTemplateModule.fulfilled, (state, action) => {
@@ -280,7 +280,7 @@ export const coachTemplateSlice = createSlice({
 
         // getCoachTemplateModuleId
         builder
-            .addCase(getCoachTemplateModuleId.pending, (state) => {
+            .addCase(getCoachTemplateModuleId.pending, state => {
                 state.loading = true;
             })
             .addCase(getCoachTemplateModuleId.fulfilled, (state, action) => {
@@ -296,13 +296,13 @@ export const coachTemplateSlice = createSlice({
 
         // updateCoachTemplateModule
         builder
-            .addCase(updateCoachTemplateModule.pending, (state) => {
+            .addCase(updateCoachTemplateModule.pending, state => {
                 state.loading = true;
             })
             .addCase(updateCoachTemplateModule.fulfilled, (state, action) => {
                 state.loading = false;
                 const index = state.coachTemplates.findIndex(
-                    (coachTemplate) => coachTemplate.id === action.payload.id,
+                    coachTemplate => coachTemplate.id === action.payload.id
                 );
                 if (index !== -1) {
                     state.coachTemplates[index] = action.payload;
@@ -315,7 +315,7 @@ export const coachTemplateSlice = createSlice({
 
         // Update Coach Activity
         builder
-            .addCase(updateCoachActivity.pending, (state) => {
+            .addCase(updateCoachActivity.pending, state => {
                 state.loading = true;
             })
             .addCase(updateCoachActivity.fulfilled, (state, action) => {
@@ -329,7 +329,7 @@ export const coachTemplateSlice = createSlice({
 
         // Update Coach edit Activity
         builder
-            .addCase(updateEditActivity.pending, (state) => {
+            .addCase(updateEditActivity.pending, state => {
                 state.loading = true;
             })
             .addCase(updateEditActivity.fulfilled, (state, action) => {
@@ -344,7 +344,7 @@ export const coachTemplateSlice = createSlice({
 
         // createCoachTemplateActivity
         builder
-            .addCase(createCoachTemplateActivity.pending, (state) => {
+            .addCase(createCoachTemplateActivity.pending, state => {
                 state.loading = true;
             })
             .addCase(createCoachTemplateActivity.fulfilled, (state, action) => {

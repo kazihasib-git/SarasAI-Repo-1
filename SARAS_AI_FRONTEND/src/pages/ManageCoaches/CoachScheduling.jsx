@@ -22,11 +22,11 @@ import {
 const CoachSheduling = () => {
     const dispatch = useDispatch();
     const { assignCoachStudentOpen, assignCoachBatchOpen, loading } =
-        useSelector((state) => state.coachModule);
+        useSelector(state => state.coachModule);
     const { scheduleCoachSessionOpen } = useSelector(
-        (state) => state.coachScheduling,
+        state => state.coachScheduling
     );
-    const { coachMapping } = useSelector((state) => state.coachModule);
+    const { coachMapping } = useSelector(state => state.coachModule);
     const [coachScheduleData, setCoachScheduleData] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -52,12 +52,12 @@ const CoachSheduling = () => {
         }
     }, [coachMapping]);
 
-    const handleSearch = (event) => {
+    const handleSearch = event => {
         setSearchQuery(event.target.value);
     };
 
-    const filteredData = coachScheduleData.filter((item) =>
-        item.name.toLowerCase().includes(searchQuery.toLowerCase()),
+    const filteredData = coachScheduleData.filter(item =>
+        item.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     const actionButtons = [

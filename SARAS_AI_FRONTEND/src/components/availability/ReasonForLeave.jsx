@@ -79,13 +79,13 @@ const ReasonForLeave = ({ componentName }) => {
         [markLeaveKey]: markLeaveData,
         [slotEventKey]: slotEventDetails,
     } = useSelector(
-        (state) => state.taAvialability || state.coachAvailability || {}, // Adjust to access the correct state slice
+        state => state.taAvialability || state.coachAvailability || {} // Adjust to access the correct state slice
     );
 
     const handleSubmit = () => {
         if (slotEventDetails && slotEventDetails.length > 0) {
-            const slots = slotEventDetails?.map((slotId) => {
-                const slot = slotId?.data?.find((s) => s.id === slotId);
+            const slots = slotEventDetails?.map(slotId => {
+                const slot = slotId?.data?.find(s => s.id === slotId);
                 return {
                     slot_id: slot.id,
                     date: slot.slot_date,
@@ -107,11 +107,14 @@ const ReasonForLeave = ({ componentName }) => {
                 approve_status: 1,
                 leave_type: 'full',
                 reason: '',
-                slot_id: slots.map((slot) => slot.slot_id), // Collect all slot IDs into an array
+                slot_id: slots.map(slot => slot.slot_id), // Collect all slot IDs into an array
             };
 
             const requestBody = {
                 admin_user_id: id,
+                approve_status: null,
+                leave_type: null,
+                reason: null,
                 approve_status: null,
                 leave_type: null,
                 reason: null,

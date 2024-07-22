@@ -90,10 +90,10 @@ const CancelSchedule = ({ componentName }) => {
             break;
     }
 
-    const schedulingState = useSelector((state) =>
+    const schedulingState = useSelector(state =>
         componentName === 'TACALENDER'
             ? state.taAvialability
-            : state.coachAvailability,
+            : state.coachAvailability
     );
 
     const { cancelSessionOpen, schduldeCancelData, slotEventData } =
@@ -124,12 +124,12 @@ const CancelSchedule = ({ componentName }) => {
                     getSessionAction(
                         componentName === 'TACALENDER'
                             ? slotEventData
-                            : slotCoachEventData,
-                    ),
+                            : slotCoachEventData
+                    )
                 );
                 dispatch(openSessionAction());
             })
-            .catch((error) => {
+            .catch(error => {
                 console.error('Failed to cancel the session:', error);
             });
     };

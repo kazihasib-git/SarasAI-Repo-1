@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { baseUrl } from '../../../utils/baseURL';
 
-export const createTA = createAsyncThunk('taModule/createTA', async (data) => {
+export const createTA = createAsyncThunk('taModule/createTA', async data => {
     const response = await axios.post(`${baseUrl}/admin/manage_tas`, data);
     return response.data;
 });
@@ -18,23 +18,23 @@ export const updateTA = createAsyncThunk(
         try {
             const response = await axios.put(
                 `${baseUrl}/admin/manage_tas/${id}`,
-                data,
+                data
             );
             console.log('API Response: ', response.data);
             return response.data;
         } catch (error) {
             console.error(
                 'API Error: ',
-                error.response ? error.response.data : error.message,
+                error.response ? error.response.data : error.message
             );
             return rejectWithValue(
-                error.response ? error.response.data : error.message,
+                error.response ? error.response.data : error.message
             );
         }
-    },
+    }
 );
 
-export const deleteTA = createAsyncThunk('taModule/deleteTA', async (id) => {
+export const deleteTA = createAsyncThunk('taModule/deleteTA', async id => {
     await axios.delete(`${baseUrl}/admin/manage_tas/${id}`);
     return id;
 });
@@ -43,11 +43,11 @@ export const getStudentBatchMapping = createAsyncThunk(
     'taModule/getStudentBatchMapping',
     async () => {
         const response = await axios.get(
-            `${baseUrl}/admin/student-batch-mapping/getAllStudentWithBatches`,
+            `${baseUrl}/admin/student-batch-mapping/getAllStudentWithBatches`
         );
         console.log('Response : ', response);
         return response.data;
-    },
+    }
 );
 
 export const getBatchMapping = createAsyncThunk(
@@ -94,14 +94,14 @@ export const getBatchMapping = createAsyncThunk(
         //     batch_name: "Saras USA",
         //   },
         // ];
-    },
+    }
 );
 
 export const showTAMapping = createAsyncThunk(
     'taModule/showTAMapping',
     async () => {
         const response = await axios.get(
-            `${baseUrl}/admin/TAMapping/TAswithActiveStudentnBatches`,
+            `${baseUrl}/admin/TAMapping/TAswithActiveStudentnBatches`
         );
         return response.data;
         // return [
@@ -127,27 +127,27 @@ export const showTAMapping = createAsyncThunk(
         //     Active_Students: 1,
         //   },
         // ];
-    },
+    }
 );
 
 export const getAssignStudents = createAsyncThunk(
     'taModule/getAssignStudents',
-    async (id) => {
+    async id => {
         const response = await axios.get(
-            `${baseUrl}/admin/TAMapping/${id}/AssignStudents`,
+            `${baseUrl}/admin/TAMapping/${id}/AssignStudents`
         );
         return response.data;
-    },
+    }
 );
 
 export const getAssignBatches = createAsyncThunk(
     'taModule/getAssignBatches',
-    async (id) => {
+    async id => {
         const response = await axios.get(
-            `${baseUrl}/admin/TAMapping/${id}/AssignBatches`,
+            `${baseUrl}/admin/TAMapping/${id}/AssignBatches`
         );
         return response.data;
-    },
+    }
 );
 
 export const toggleAssignStudentStatus = createAsyncThunk(
@@ -155,10 +155,10 @@ export const toggleAssignStudentStatus = createAsyncThunk(
     async ({ id, studentId }) => {
         const response = await axios.put(
             `${baseUrl}/admin/TAMapping/${id}/ActiveDeactiveAssignStudent`,
-            { student_id: studentId },
+            { student_id: studentId }
         );
         return response.data;
-    },
+    }
 );
 
 export const toggleAssignBatchStatus = createAsyncThunk(
@@ -166,10 +166,10 @@ export const toggleAssignBatchStatus = createAsyncThunk(
     async ({ id, batchId }) => {
         const response = await axios.put(
             `${baseUrl}/admin/TAMapping/${id}/ActiveDeactiveAssignBatch`,
-            { batch_id: batchId },
+            { batch_id: batchId }
         );
         return response.data;
-    },
+    }
 );
 
 export const postAssignStudents = createAsyncThunk(
@@ -177,10 +177,10 @@ export const postAssignStudents = createAsyncThunk(
     async ({ id, data }) => {
         const response = await axios.post(
             `${baseUrl}/admin/TAMapping/AssignStudents`,
-            data,
+            data
         );
         return response.data;
-    },
+    }
 );
 
 export const postAssignBatches = createAsyncThunk(
@@ -188,32 +188,32 @@ export const postAssignBatches = createAsyncThunk(
     async ({ id, data }) => {
         const response = await axios.post(
             `${baseUrl}/admin/TAMapping/AssignBatches`,
-            data,
+            data
         );
         return response.data;
-    },
+    }
 );
 
 export const deleteAssignedStudent = createAsyncThunk(
     'taModule/deleteAssignedStudent',
-    async (id) => {
+    async id => {
         console.log('ID to delete STUDENT : ', id);
         const response = await axios.delete(
-            `${baseUrl}/admin/TAMapping/${id.id}/deleteStudent`,
+            `${baseUrl}/admin/TAMapping/${id.id}/deleteStudent`
         );
         return response.data;
-    },
+    }
 );
 
 export const deleteAssignedBatch = createAsyncThunk(
     'taModule/deleteAssignedBatch',
-    async (id) => {
+    async id => {
         console.log('ID to delete BATCH : ', id);
         const response = await axios.delete(
-            `${baseUrl}/admin/TAMapping/${id.id}/deleteBatch`,
+            `${baseUrl}/admin/TAMapping/${id.id}/deleteBatch`
         );
         return response.data;
-    },
+    }
 );
 
 const initialState = {
@@ -288,9 +288,9 @@ export const taSlice = createSlice({
             state.selectedBatches = action.payload;
         },
     },
-    extraReducers: (builder) => {
+    extraReducers: builder => {
         // Create TA
-        builder.addCase(createTA.pending, (state) => {
+        builder.addCase(createTA.pending, state => {
             state.loading = true;
         });
         builder.addCase(createTA.fulfilled, (state, action) => {
@@ -303,7 +303,7 @@ export const taSlice = createSlice({
         });
 
         // Get All TA
-        builder.addCase(getTA.pending, (state) => {
+        builder.addCase(getTA.pending, state => {
             state.loading = true;
         });
         builder.addCase(getTA.fulfilled, (state, action) => {
@@ -316,13 +316,13 @@ export const taSlice = createSlice({
         });
 
         // Update TA
-        builder.addCase(updateTA.pending, (state) => {
+        builder.addCase(updateTA.pending, state => {
             state.loading = true;
         });
         builder.addCase(updateTA.fulfilled, (state, action) => {
             state.loading = false;
             const index = state.tas.findIndex(
-                (ta) => ta.id === action.payload.id,
+                ta => ta.id === action.payload.id
             );
             if (index !== -1) {
                 state.tas[index] = action.payload;
@@ -335,12 +335,12 @@ export const taSlice = createSlice({
         });
 
         // Delete TA
-        builder.addCase(deleteTA.pending, (state) => {
+        builder.addCase(deleteTA.pending, state => {
             state.loading = true;
         });
         builder.addCase(deleteTA.fulfilled, (state, action) => {
             state.loading = false;
-            state.tas = state.tas.filter((ta) => ta.id !== action.payload);
+            state.tas = state.tas.filter(ta => ta.id !== action.payload);
         });
         builder.addCase(deleteTA.rejected, (state, action) => {
             state.loading = false;
@@ -348,7 +348,7 @@ export const taSlice = createSlice({
         });
 
         // Get Student-Batch Mapping
-        builder.addCase(getStudentBatchMapping.pending, (state) => {
+        builder.addCase(getStudentBatchMapping.pending, state => {
             state.loading = true;
         });
         builder.addCase(getStudentBatchMapping.fulfilled, (state, action) => {
@@ -362,7 +362,7 @@ export const taSlice = createSlice({
         });
 
         // get batch mapping
-        builder.addCase(getBatchMapping.pending, (state) => {
+        builder.addCase(getBatchMapping.pending, state => {
             state.loading = true;
         });
         builder.addCase(getBatchMapping.fulfilled, (state, action) => {
@@ -376,7 +376,7 @@ export const taSlice = createSlice({
         });
 
         // Show TA Mapping
-        builder.addCase(showTAMapping.pending, (state) => {
+        builder.addCase(showTAMapping.pending, state => {
             state.loading = true;
         });
         builder.addCase(showTAMapping.fulfilled, (state, action) => {
@@ -390,7 +390,7 @@ export const taSlice = createSlice({
         });
 
         // Get Assigned Students
-        builder.addCase(getAssignStudents.pending, (state) => {
+        builder.addCase(getAssignStudents.pending, state => {
             state.loading = true;
         });
         builder.addCase(getAssignStudents.fulfilled, (state, action) => {
@@ -405,7 +405,7 @@ export const taSlice = createSlice({
         });
 
         // Get Assigned Batches
-        builder.addCase(getAssignBatches.pending, (state) => {
+        builder.addCase(getAssignBatches.pending, state => {
             state.loading = true;
         });
         builder.addCase(getAssignBatches.fulfilled, (state, action) => {
@@ -419,20 +419,20 @@ export const taSlice = createSlice({
         });
 
         // Toggle Assign Student Status
-        builder.addCase(toggleAssignStudentStatus.pending, (state) => {
+        builder.addCase(toggleAssignStudentStatus.pending, state => {
             state.loading = true;
         });
         builder.addCase(
             toggleAssignStudentStatus.fulfilled,
             (state, action) => {
                 state.loading = false;
-                const updatedStudents = state.assignedStudents.map((student) =>
+                const updatedStudents = state.assignedStudents.map(student =>
                     student.id === action.payload.id
                         ? { ...student, is_active: action.payload.is_active }
-                        : student,
+                        : student
                 );
                 state.assignedStudents = updatedStudents;
-            },
+            }
         );
         builder.addCase(toggleAssignStudentStatus.rejected, (state, action) => {
             state.loading = false;
@@ -440,15 +440,15 @@ export const taSlice = createSlice({
         });
 
         // Toggle Assign Batch Status
-        builder.addCase(toggleAssignBatchStatus.pending, (state) => {
+        builder.addCase(toggleAssignBatchStatus.pending, state => {
             state.loading = true;
         });
         builder.addCase(toggleAssignBatchStatus.fulfilled, (state, action) => {
             state.loading = false;
-            const updatedBatches = state.assignedBatches.map((batch) =>
+            const updatedBatches = state.assignedBatches.map(batch =>
                 batch.id === action.payload.id
                     ? { ...batch, is_active: action.payload.is_active }
-                    : batch,
+                    : batch
             );
             state.assignedBatches = updatedBatches;
         });
@@ -458,7 +458,7 @@ export const taSlice = createSlice({
         });
 
         // Post Assign Students
-        builder.addCase(postAssignStudents.pending, (state) => {
+        builder.addCase(postAssignStudents.pending, state => {
             state.loading = true;
         });
         builder.addCase(postAssignStudents.fulfilled, (state, action) => {
@@ -471,7 +471,7 @@ export const taSlice = createSlice({
         });
 
         // Post Assign Batches
-        builder.addCase(postAssignBatches.pending, (state) => {
+        builder.addCase(postAssignBatches.pending, state => {
             state.loading = true;
         });
         builder.addCase(postAssignBatches.fulfilled, (state, action) => {
@@ -484,7 +484,7 @@ export const taSlice = createSlice({
         });
 
         // delete assigned student
-        builder.addCase(deleteAssignedStudent.pending, (state) => {
+        builder.addCase(deleteAssignedStudent.pending, state => {
             state.loading = true;
         });
         builder.addCase(deleteAssignedStudent.fulfilled, (state, action) => {
@@ -497,7 +497,7 @@ export const taSlice = createSlice({
         });
 
         // delete assigned Batches
-        builder.addCase(deleteAssignedBatch.pending, (state) => {
+        builder.addCase(deleteAssignedBatch.pending, state => {
             state.loading = true;
         });
         builder.addCase(deleteAssignedBatch.fulfilled, (state, action) => {

@@ -40,7 +40,7 @@ const WOLInstructions = () => {
     const [editData, setEditData] = useState(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { instructionData } = useSelector((state) => state.wol);
+    const { instructionData } = useSelector(state => state.wol);
     const [instruction, setInstruction] = useState('');
 
     const handleEditWOLInstructions = () => {

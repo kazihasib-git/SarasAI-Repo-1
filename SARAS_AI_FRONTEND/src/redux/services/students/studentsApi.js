@@ -4,7 +4,7 @@ import { baseUrl } from '../../../utils/baseURL';
 export const studentsApi = createApi({
     reducerPath: 'studentsApi',
     baseQuery: fetchBaseQuery({ baseUrl }),
-    endpoints: (builder) => ({
+    endpoints: builder => ({
         getStudents: builder.query({
             query: () => `/admin/students`,
         }),

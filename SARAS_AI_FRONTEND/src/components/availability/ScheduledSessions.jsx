@@ -112,8 +112,8 @@ const ScheduledSessions = ({ componentName }) => {
             break;
     }
 
-    const schedulingState = useSelector((state) =>
-        schedulingStateKey ? state[schedulingStateKey] : {},
+    const schedulingState = useSelector(state =>
+        schedulingStateKey ? state[schedulingStateKey] : {}
     );
     const {
         [scheduleSessionOpenKey]: scheduledSessionOpen,
@@ -140,19 +140,19 @@ const ScheduledSessions = ({ componentName }) => {
         id: session.id,
     }));
 
-    const handleViewClick = (students) => {
+    const handleViewClick = students => {
         // Open a popup to view the students
         console.log('View clicked!', students);
     };
 
-    const handleRescheduleClick = (session) => {
+    const handleRescheduleClick = session => {
         dispatch(closeSessionAction());
         console.log('SESSION : ', session);
         dispatch(openRescheduleAction(session));
         console.log('Reschedule clicked!', session);
     };
 
-    const handleCancelClick = (session) => {
+    const handleCancelClick = session => {
         dispatch(closeSessionAction());
         dispatch(openCancelAction(session));
         console.log('Cancel clicked!', session);

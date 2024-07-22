@@ -48,7 +48,7 @@ const Courses = () => {
                 cellClassName: 'name-column--cell',
             },
         ],
-        [],
+        []
     );
 
     return (

@@ -54,7 +54,7 @@ const ManageCoaches = () => {
     const [editData, setEditData] = useState();
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const { coaches, loading, error, createCoachOpen, editCoachOpen } =
-        useSelector((state) => state.coachModule);
+        useSelector(state => state.coachModule);
 
     // console.log("coachess " , coaches);
     // Fetch coach data on component mount
@@ -71,14 +71,14 @@ const ManageCoaches = () => {
         },
         {
             type: 'edit',
-            onClick: (id) => {
+            onClick: id => {
                 handleEditCoaches(id);
             },
         },
     ];
     useEffect(() => {
         if (coaches.length > 0) {
-            const transformData = coaches.map((item) => ({
+            const transformData = coaches.map(item => ({
                 id: item.id,
                 'TA Name': item.name,
                 Username: item.username,
@@ -95,10 +95,10 @@ const ManageCoaches = () => {
         dispatch(openCreateCoach());
     };
 
-    const handleEditCoaches = (id) => {
+    const handleEditCoaches = id => {
         console.log('coachesssss', coaches);
         console.log('id', id);
-        const coachData = coaches.find((ta) => ta.id === id);
+        const coachData = coaches.find(ta => ta.id === id);
 
         console.log('coachData', coachData);
         setSelectedCoachData(coachData);
@@ -109,8 +109,8 @@ const ManageCoaches = () => {
         navigate('/createcoach');
     };
     // console.log("EditData" , editCoachOpen);
-    const handleEdit = (id) => {
-        const coachData = tasData.find((ta) => ta.id === id);
+    const handleEdit = id => {
+        const coachData = tasData.find(ta => ta.id === id);
         setSelectedCoachData(coachData);
         setIsAddEditCoachOpen(true);
     };
@@ -136,14 +136,14 @@ const ManageCoaches = () => {
         'Action',
     ];
 
-    const handleSubmitForm = (event) => {
+    const handleSubmitForm = event => {
         event.preventDefault();
         console.log(formValues);
         setOpenSnackbar(true); // Show the success popup
         handleCloseModal();
     };
 
-    const handleInputChange = (event) => {
+    const handleInputChange = event => {
         const { name, value } = event.target;
         setFormValues({
             ...formValues,
@@ -151,7 +151,7 @@ const ManageCoaches = () => {
         });
     };
 
-    const handleToggle = (id) => {
+    const handleToggle = id => {
         console.log(`Toggle TA with ID: ${id}`);
     };
 
@@ -163,7 +163,7 @@ const ManageCoaches = () => {
     return (
         <>
             {!createCoachOpen && !editCoachOpen && (
-                <Box m="40px">
+                <Box m="20px">
                     <Header />
                     <Sidebar />
                     <Box

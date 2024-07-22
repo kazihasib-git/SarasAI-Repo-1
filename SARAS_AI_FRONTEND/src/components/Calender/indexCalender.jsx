@@ -22,7 +22,7 @@ const Calendar = () => {
     //   const colors = tokens(theme.palette.mode);
     const [currentEvents, setCurrentEvents] = useState([]);
 
-    const handleDateClick = (selected) => {
+    const handleDateClick = selected => {
         const title = prompt('Please enter a new title for your event');
         const calendarApi = selected.view.calendar;
         calendarApi.unselect();
@@ -38,17 +38,17 @@ const Calendar = () => {
         }
     };
 
-    const handleEventClick = (selected) => {
+    const handleEventClick = selected => {
         if (
             window.confirm(
-                `Are you sure you want to delete the event '${selected.event.title}'`,
+                `Are you sure you want to delete the event '${selected.event.title}'`
             )
         ) {
             selected.event.remove();
         }
     };
 
-    const formatDate = (date) => {
+    const formatDate = date => {
         return new Intl.DateTimeFormat('en-US', {
             year: 'numeric',
             month: 'short',
@@ -71,7 +71,7 @@ const Calendar = () => {
                     >
                         <Typography variant="h5">Events</Typography>
                         <List>
-                            {currentEvents.map((event) => (
+                            {currentEvents.map(event => (
                                 <ListItem
                                     key={event.id}
                                     sx={{
@@ -119,7 +119,7 @@ const Calendar = () => {
                             dayMaxEvents={true}
                             select={handleDateClick}
                             eventClick={handleEventClick}
-                            eventsSet={(events) => setCurrentEvents(events)}
+                            eventsSet={events => setCurrentEvents(events)}
                             initialEvents={[
                                 {
                                     id: '12315',

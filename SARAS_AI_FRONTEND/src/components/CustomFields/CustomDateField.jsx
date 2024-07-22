@@ -5,7 +5,7 @@ import { TextField } from '@mui/material';
 import moment from 'moment';
 
 const CustomDateField = ({ label, name, value, onChange, sx, ...props }) => {
-    const handleDateChange = (date) => {
+    const handleDateChange = date => {
         const formattedDate = date ? moment(date).format('YYYY-MM-DD') : '';
         onChange(formattedDate);
     };

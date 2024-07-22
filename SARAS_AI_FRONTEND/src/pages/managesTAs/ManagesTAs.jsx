@@ -26,7 +26,7 @@ const headers = [
 const ManageTA = () => {
     const dispatch = useDispatch();
     const { tas, loading, error, createTAOpen, editTAOpen } = useSelector(
-        (state) => state.taModule,
+        state => state.taModule
     );
     const [tasData, setTasData] = useState([]);
     const [editData, setEditData] = useState();
@@ -40,7 +40,7 @@ const ManageTA = () => {
 
     useEffect(() => {
         if (tas.length > 0) {
-            const transformData = tas.map((item) => ({
+            const transformData = tas.map(item => ({
                 id: item.id,
                 'TA Name': item.name,
                 Username: item.username,
@@ -62,7 +62,7 @@ const ManageTA = () => {
         },
         {
             type: 'edit',
-            onClick: (id) => {
+            onClick: id => {
                 handleEditTa(id);
             },
         },
@@ -72,29 +72,29 @@ const ManageTA = () => {
         dispatch(openCreateTa());
     };
 
-    const handleEditTa = (id) => {
-        const dataToEdit = tas.find((ta) => ta.id === id);
+    const handleEditTa = id => {
+        const dataToEdit = tas.find(ta => ta.id === id);
         setEditData(dataToEdit);
         dispatch(openEditTa());
     };
     console.log('Editta isisisi', editData);
 
-    const handleChange = (value) => {
+    const handleChange = value => {
         setSearchQuery(value);
     };
 
     // Filter tasData based on the search query
     const filteredTasData = tasData?.filter(
-        (ta) =>
+        ta =>
             ta['TA Name']?.toLowerCase().includes(searchQuery.toLowerCase()) ||
             ta.Username?.toLowerCase().includes(searchQuery.toLowerCase()) ||
             ta.Location?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            ta['Time Zone']?.toLowerCase().includes(searchQuery.toLowerCase()),
+            ta['Time Zone']?.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     return (
         <>
-            <Box m="10px">
+            <Box m="20px">
                 <Header />
                 <Sidebar />
                 {!createTAOpen && !editTAOpen && (
@@ -120,7 +120,7 @@ const ManageTA = () => {
                                         className="inputField"
                                         placeholder="Search Here ..."
                                         value={searchQuery}
-                                        onChange={(e) =>
+                                        onChange={e =>
                                             handleChange(e.target.value)
                                         }
                                     />

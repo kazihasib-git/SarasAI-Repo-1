@@ -8,13 +8,13 @@ export const linkActivity = createAsyncThunk(
         try {
             const response = await axios.post(
                 `${baseUrl}/admin/coaching-templates/link-activity`,
-                activityData,
+                activityData
             );
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response.data);
         }
-    },
+    }
 );
 
 const linkActivitySlice = createSlice({
@@ -25,14 +25,14 @@ const linkActivitySlice = createSlice({
         error: null,
     },
     reducers: {},
-    extraReducers: (builder) => {
+    extraReducers: builder => {
         builder
-            .addCase(linkActivity.pending, (state) => {
+            .addCase(linkActivity.pending, state => {
                 state.loading = true;
                 state.success = false;
                 state.error = null;
             })
-            .addCase(linkActivity.fulfilled, (state) => {
+            .addCase(linkActivity.fulfilled, state => {
                 state.loading = false;
                 state.success = true;
             })

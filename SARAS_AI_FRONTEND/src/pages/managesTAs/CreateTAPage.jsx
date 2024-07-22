@@ -7,11 +7,9 @@ import { Box } from '@mui/material';
 const CreateTAPage = () => {
     return (
         <>
-            <Box m={'10px'}>
-                <Header />
-                <Sidebar />
-                <AddEditTA />
-            </Box>
+            <Header />
+            <Sidebar />
+            <AddEditTA />
         </>
     );
 };

@@ -63,8 +63,8 @@ function AddEditCoach({ data }) {
     const dispatch = useDispatch();
 
     const { coachSuccessPopup, assignCoachStudentOpen, assignCoachBatchOpen } =
-        useSelector((state) => state.coachModule);
-    const { timezones } = useSelector((state) => state.timezone);
+        useSelector(state => state.coachModule);
+    const { timezones } = useSelector(state => state.timezone);
 
     useEffect(() => {
         dispatch(getTimezone());
@@ -76,7 +76,7 @@ function AddEditCoach({ data }) {
         }
     }, [data]);
 
-    const populateForm = (data) => {
+    const populateForm = data => {
         // TODO : Neet to format the date in MM/DD/YYYY format
         // const newDate = dateFormatter(data.date_of_birth)
         // console.log("NEW DATE : ", newDate)
@@ -107,16 +107,16 @@ function AddEditCoach({ data }) {
         };
 
         Object.entries(formValues).forEach(([key, value]) =>
-            setValue(key, value),
+            setValue(key, value)
         );
 
         setPhoneNumber(data.phone);
     };
 
-    const base64ToBlobUrl = (base64Data) => {
+    const base64ToBlobUrl = base64Data => {
         const byteCharacters = atob(base64Data);
-        const byteNumbers = Array.from(byteCharacters, (char) =>
-            char.charCodeAt(0),
+        const byteNumbers = Array.from(byteCharacters, char =>
+            char.charCodeAt(0)
         );
         const byteArray = new Uint8Array(byteNumbers);
         const blob = new Blob([byteArray], { type: 'image/jpeg' });
@@ -131,7 +131,7 @@ function AddEditCoach({ data }) {
         dispatch(openCoachAssignBatches());
     };
 
-    const onSubmit = async (coachData) => {
+    const onSubmit = async coachData => {
         const { email, time_zone, ...updatedFormData } = coachData;
 
         updatedFormData.date_of_birth = dateOfBirth;
@@ -140,14 +140,14 @@ function AddEditCoach({ data }) {
         if (selectedImage) {
             const base64Data = selectedImage.replace(
                 /^data:image\/(png|jpeg|jpg);base64,/,
-                '',
+                ''
             );
             updatedFormData.profile_picture = base64Data;
         }
         try {
             if (data) {
                 const updateRes = await dispatch(
-                    updateCoach({ id: data.id, data: updatedFormData }),
+                    updateCoach({ id: data.id, data: updatedFormData })
                 ).unwrap();
                 dispatch(openCoachSuccessPopup());
                 dispatch(accessCoachName(updateRes));
@@ -155,7 +155,7 @@ function AddEditCoach({ data }) {
                 updatedFormData.email = email;
                 updatedFormData.time_zone = time_zone;
                 const createRes = await dispatch(
-                    createCoach(updatedFormData),
+                    createCoach(updatedFormData)
                 ).unwrap();
                 dispatch(openCoachSuccessPopup());
                 dispatch(accessCoachName(createRes.coach));
@@ -529,7 +529,7 @@ function AddEditCoach({ data }) {
                                             label="Date of Birth"
                                             name="date_of_birth"
                                             value={dateOfBirth}
-                                            onChange={(date) =>
+                                            onChange={date =>
                                                 handleDateChange(date, field)
                                             }
                                             error={!!errors.date_of_birth}
@@ -616,7 +616,7 @@ function AddEditCoach({ data }) {
                                                 paddingLeft: '10px',
                                                 // boxShadow: errors.phone ? "0 0 0 2px red" : "none",
                                             }}
-                                            onFocus={(e) =>
+                                            onFocus={e =>
                                                 (e.target.style.borderColor =
                                                     errors.phone
                                                         ? 'red'

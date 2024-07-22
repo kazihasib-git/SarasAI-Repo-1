@@ -47,7 +47,7 @@ const AddModule = () => {
     const dispatch = useDispatch();
     const [moduleName, setModuleName] = useState('');
     const { openModulePopUp, selectedCoachTemplate } = useSelector(
-        (state) => state.coachTemplate,
+        state => state.coachTemplate
     );
 
     const content = (
@@ -66,7 +66,7 @@ const AddModule = () => {
                     label="Module Name"
                     variant="outlined"
                     value={moduleName}
-                    onChange={(e) => setModuleName(e.target.value)}
+                    onChange={e => setModuleName(e.target.value)}
                     placeholder="Enter Module Name"
                     name="moduleName"
                 />

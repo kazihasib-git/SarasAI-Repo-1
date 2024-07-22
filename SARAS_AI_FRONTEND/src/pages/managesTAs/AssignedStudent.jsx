@@ -88,18 +88,18 @@ const DynamicTable = ({
 }) => {
     // console.log("INITAL DATA : ", initialData);
     const [data, setData] = useState(
-        initialData.map((item) => ({
+        initialData.map(item => ({
             ...item,
             is_active: item.is_active !== undefined ? item.is_active : 0,
-        })),
+        }))
     );
 
     useEffect(() => {
         setData(
-            initialData.map((item) => ({
+            initialData.map(item => ({
                 ...item,
                 is_active: item.is_active !== undefined ? item.is_active : 0,
-            })),
+            }))
         );
     }, [initialData]);
 
@@ -108,7 +108,7 @@ const DynamicTable = ({
     const totalPages = Math.ceil(data.length / itemsPerPage);
     const currentData = data.slice(
         (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage,
+        currentPage * itemsPerPage
     );
     const navigate = useNavigate();
 
@@ -116,16 +116,16 @@ const DynamicTable = ({
         setCurrentPage(pageNumber);
     };
 
-    const handleToggle = async (id) => {
+    const handleToggle = async id => {
         console.log('id : ', id);
-        const updatedData = data.map((item) =>
+        const updatedData = data.map(item =>
             item.id === id
                 ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
-                : item,
+                : item
         );
         setData(updatedData);
 
-        const toggledItem = updatedData.find((item) => item.id === id);
+        const toggledItem = updatedData.find(item => item.id === id);
         const requestData = { is_active: toggledItem.is_active };
         await dispatch(toggleAssignStudentStatus({ id, data: requestData }));
         await dispatch(getAssignStudents(ta_id));
@@ -138,7 +138,7 @@ const DynamicTable = ({
         dispatch(getAssignStudents(ta_id));
     };
 
-    const handleNavigate = (path) => {
+    const handleNavigate = path => {
         navigate(path);
     };
 
@@ -223,7 +223,7 @@ const DynamicTable = ({
                                                     onChange={() =>
                                                         handleToggle(
                                                             item.id,
-                                                            ta_id,
+                                                            ta_id
                                                         )
                                                     }
                                                     inputProps={{
@@ -254,7 +254,7 @@ const DynamicTable = ({
                                                     onClick={() =>
                                                         handleDelete(
                                                             item.id,
-                                                            ta_id,
+                                                            ta_id
                                                         )
                                                     }
                                                 >
@@ -327,16 +327,14 @@ const actionButtons = [
     },
     {
         type: 'delete',
-        onClick: (id) => console.log(`Edit clicked for id ${id}`),
+        onClick: id => console.log(`Edit clicked for id ${id}`),
     },
 ];
 
 const AssignedStudent = () => {
     const { id } = useParams();
     const dispatch = useDispatch();
-    const { assignedStudents, loading } = useSelector(
-        (state) => state.taModule,
-    );
+    const { assignedStudents, loading } = useSelector(state => state.taModule);
     const [taAssignStudentData, setTaAssignStudentData] = useState([]);
 
     useEffect(() => {
@@ -348,7 +346,7 @@ const AssignedStudent = () => {
     useEffect(() => {
         // console.log('Assigned Students:', assignedStudents);
         if (assignedStudents && assignedStudents.length > 0) {
-            const transformData = assignedStudents.map((item) => {
+            const transformData = assignedStudents.map(item => {
                 const studentName = item.student
                     ? item.student.name
                     : 'Unknown Student';

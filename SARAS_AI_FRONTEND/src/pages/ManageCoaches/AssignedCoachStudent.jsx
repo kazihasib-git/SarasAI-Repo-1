@@ -18,7 +18,7 @@ const actionButtons = [
     },
     {
         type: 'delete',
-        onClick: (id) => console.log(`Edit clicked for id ${id}`),
+        onClick: id => console.log(`Edit clicked for id ${id}`),
     },
 ];
 
@@ -27,7 +27,7 @@ const AssignCoachStudent = () => {
     console.log('ID : ', id);
     const dispatch = useDispatch();
     const { assignedStudents, loading } = useSelector(
-        (state) => state.coachModule,
+        state => state.coachModule
     );
     const [CoachAssignBatchesData, setCoachAssignBatchesData] = useState([]);
     console.log('Assigned Students', assignedStudents);
@@ -39,7 +39,7 @@ const AssignCoachStudent = () => {
 
     useEffect(() => {
         if (assignedStudents && assignedStudents.length > 0) {
-            const transformData = assignedStudents.map((item) => {
+            const transformData = assignedStudents.map(item => {
                 const studentName = item.student
                     ? item.student.name
                     : 'Unknown Student';

@@ -8,7 +8,7 @@ export const showTASchedule = createAsyncThunk(
     async () => {
         const response = await axios.get(`${baseUrl}/admin/taschedules`);
         return response.data;
-    },
+    }
 );
 
 // Get TA Scheduled Sessions
@@ -17,31 +17,31 @@ export const getTAScheduledSessions = createAsyncThunk(
     async ({ id, data }) => {
         const response = await axios.post(
             `${baseUrl}/admin/taschedules/${id}`,
-            data,
+            data
         );
         return response.data;
-    },
+    }
 );
 
 // Create TA Schedule
 export const createTASchedule = createAsyncThunk(
     'taScheduling/createTASchedule',
-    async (data) => {
+    async data => {
         const response = await axios.post(`${baseUrl}/admin/taschedules`, data);
         return response.data;
-    },
+    }
 );
 
 // Get TA Available Slots From Date
 export const getTaAvailableSlotsFromDate = createAsyncThunk(
     'taScheduling/getTaAvailableSlotsFromDate',
-    async (data) => {
+    async data => {
         const response = await axios.post(
             `${baseUrl}/admin/coach-slots/getTACoachSlotForADate`,
-            data,
+            data
         );
         return response.data;
-    },
+    }
 );
 
 // Reschedule Session
@@ -50,21 +50,21 @@ export const rescheduleSession = createAsyncThunk(
     async ({ id, data }) => {
         const response = await axios.put(
             `${baseUrl}/admin/taschedules/${id}`,
-            data,
+            data
         );
         return response.data;
-    },
+    }
 );
 
 // Cancel Scheduled Sessions
 export const cancelScheduledSession = createAsyncThunk(
     'taAvialability/cancelScheduledSession',
-    async (id) => {
+    async id => {
         const response = await axios.put(
-            `${baseUrl}/admin/taschedules/${id}/cancel`,
+            `${baseUrl}/admin/taschedules/${id}/cancel`
         );
         return response.data;
-    },
+    }
 );
 
 const initialState = {
@@ -134,9 +134,9 @@ const taScheduling = createSlice({
             state.taAvailableSlots = [];
         },
     },
-    extraReducers: (builder) => {
+    extraReducers: builder => {
         // Show TA Schedule
-        builder.addCase(showTASchedule.pending, (state) => {
+        builder.addCase(showTASchedule.pending, state => {
             state.loading = true;
         });
         builder.addCase(showTASchedule.fulfilled, (state, action) => {
@@ -149,7 +149,7 @@ const taScheduling = createSlice({
         });
 
         // Get TA Scheduled Sessions
-        builder.addCase(getTAScheduledSessions.pending, (state) => {
+        builder.addCase(getTAScheduledSessions.pending, state => {
             state.loading = true;
         });
         builder.addCase(getTAScheduledSessions.fulfilled, (state, action) => {
@@ -162,7 +162,7 @@ const taScheduling = createSlice({
         });
 
         // Create TA Schedule
-        builder.addCase(createTASchedule.pending, (state) => {
+        builder.addCase(createTASchedule.pending, state => {
             state.loading = true;
         });
         builder.addCase(createTASchedule.fulfilled, (state, action) => {
@@ -175,7 +175,7 @@ const taScheduling = createSlice({
         });
 
         // Get TA Available Slots From Date
-        builder.addCase(getTaAvailableSlotsFromDate.pending, (state) => {
+        builder.addCase(getTaAvailableSlotsFromDate.pending, state => {
             state.loading = true;
         });
         builder.addCase(
@@ -183,18 +183,18 @@ const taScheduling = createSlice({
             (state, action) => {
                 state.loading = false;
                 state.taAvailableSlots = action.payload.data;
-            },
+            }
         );
         builder.addCase(
             getTaAvailableSlotsFromDate.rejected,
             (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
-            },
+            }
         );
 
         // Cancel Scheduled Sessions
-        builder.addCase(cancelScheduledSession.pending, (state) => {
+        builder.addCase(cancelScheduledSession.pending, state => {
             state.loading = true;
         });
         builder.addCase(cancelScheduledSession.fulfilled, (state, action) => {
@@ -207,7 +207,7 @@ const taScheduling = createSlice({
         });
 
         // Reschedule Session // TODO : Check this
-        builder.addCase(rescheduleSession.pending, (state) => {
+        builder.addCase(rescheduleSession.pending, state => {
             state.loading = true;
         });
         builder.addCase(rescheduleSession.fulfilled, (state, action) => {

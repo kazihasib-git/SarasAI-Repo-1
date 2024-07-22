@@ -61,7 +61,7 @@ const AddEditActivity = () => {
         coachTemplates,
         moduleID,
         selectedCoachTemplate,
-    } = useSelector((state) => state.coachTemplate);
+    } = useSelector(state => state.coachTemplate);
 
     const [activityName, setActivityName] = useState('');
     const [dueDate, setDueDate] = useState('');
@@ -77,7 +77,7 @@ const AddEditActivity = () => {
         }
     }, [editActivityData]);
 
-    const handleAfterDueDateChange = (event) => {
+    const handleAfterDueDateChange = event => {
         setAfterDueDate(event.target.value);
     };
 
@@ -103,7 +103,7 @@ const AddEditActivity = () => {
                     label="Activity Name"
                     variant="outlined"
                     value={activityName}
-                    onChange={(e) => setActivityName(e.target.value)}
+                    onChange={e => setActivityName(e.target.value)}
                     placeholder="Enter Activity Name"
                     name="activityName"
                     fullWidth
@@ -122,7 +122,7 @@ const AddEditActivity = () => {
                     type="date"
                     variant="outlined"
                     value={dueDate}
-                    onChange={(e) => setDueDate(e.target.value)}
+                    onChange={e => setDueDate(e.target.value)}
                     placeholder="Enter Due Date"
                     name="dueDate"
                 />
@@ -138,7 +138,7 @@ const AddEditActivity = () => {
                     label="Points"
                     variant="outlined"
                     value={points}
-                    onChange={(e) => setPoints(e.target.value)}
+                    onChange={e => setPoints(e.target.value)}
                     placeholder="Enter Points"
                     name="points"
                     fullWidth
@@ -223,7 +223,7 @@ const AddEditActivity = () => {
                         activity_id: editActivityData.id,
                         module_id: editActivityData.module_id,
                     },
-                }),
+                })
             );
         } else {
             // Create new activity

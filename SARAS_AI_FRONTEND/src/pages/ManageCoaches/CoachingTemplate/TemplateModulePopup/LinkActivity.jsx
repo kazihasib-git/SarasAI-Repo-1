@@ -76,7 +76,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
     const [selectedAssessmentId, setSelectedAssessmentId] = useState('');
     const [selectedActivityId, setSelectedActivityId] = useState('');
 
-    const onSubmit = async (data) => {
+    const onSubmit = async data => {
         // Prepare the payload
         console.log('clicked');
         console.log('activity data', data);
@@ -114,7 +114,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
     console.log('coachesslot', coachAvailableSlots);
     const activityOptions = typeList
         .filter((_, index) => index < 5)
-        .map((type) => ({
+        .map(type => ({
             value: type.type_name,
             label:
                 type.type_name.charAt(0).toUpperCase() +
@@ -124,7 +124,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
 
     const assessmentOptions = typeList
         .filter((_, index) => index >= 5)
-        .map((type) => ({
+        .map(type => ({
             value: type.type_name,
             label:
                 type.type_name.charAt(0).toUpperCase() +
@@ -137,7 +137,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
         { value: 'group', label: 'Group session' },
     ];
 
-    const coachOptions = coaches.map((coach) => ({
+    const coachOptions = coaches.map(coach => ({
         value: coach.name,
         label: coach.name,
         id: coach.id,
@@ -164,9 +164,9 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
         { value: 'PST', label: 'Pacific Standard Time' },
         { value: 'EST', label: 'Eastern Standard Time' },
     ];
-    const handleCoachChange = (e) => {
+    const handleCoachChange = e => {
         const selected = coachOptions.find(
-            (option) => option.value === e.target.value,
+            option => option.value === e.target.value
         );
 
         if (selected) {
@@ -265,7 +265,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
                                 name="link"
                                 variant="outlined"
                                 value={field.value}
-                                onChange={(e) => {
+                                onChange={e => {
                                     field.onChange(e);
                                 }}
                                 placeholder="Enter Link"
@@ -293,16 +293,16 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
                                 label="Assessment"
                                 name="assessment"
                                 value={field.value}
-                                onChange={(e) => {
+                                onChange={e => {
                                     const selectedValue = e.target.value;
                                     field.onChange(e);
                                     const selectedOption =
                                         assessmentOptions.find(
-                                            (option) =>
-                                                option.value === selectedValue,
+                                            option =>
+                                                option.value === selectedValue
                                         );
                                     setSelectedAssessmentId(
-                                        selectedOption ? selectedOption.id : '',
+                                        selectedOption ? selectedOption.id : ''
                                     );
                                 }}
                                 errors={errors}
@@ -331,7 +331,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
                                     name="virtualMeetLink"
                                     variant="outlined"
                                     value={field.value}
-                                    onChange={(e) => {
+                                    onChange={e => {
                                         field.onChange(e);
                                     }}
                                     placeholder="Enter Link"
@@ -361,9 +361,9 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
                                     <RadioGroup
                                         row
                                         value={field.value}
-                                        onChange={(e) => {
+                                        onChange={e => {
                                             setSelectedSessionType(
-                                                e.target.value,
+                                                e.target.value
                                             );
                                             field.onChange(e.target.value);
                                         }}

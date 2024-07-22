@@ -80,7 +80,7 @@ const feedbackIcons = [
 const WOLOptionsConfig = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { optionsConfigData } = useSelector((state) => state.wol);
+    const { optionsConfigData } = useSelector(state => state.wol);
 
     const [edit, setEdit] = useState(false);
     const [formValues, setFormValues] = useState({
@@ -104,7 +104,7 @@ const WOLOptionsConfig = () => {
             setFormValues({
                 minScale: minimum_scale,
                 maxScale: maximum_scale,
-                details: get_config_details.map((detail) => ({
+                details: get_config_details.map(detail => ({
                     point: detail.point,
                     text: detail.text,
                     icon: detail.icon,
@@ -116,7 +116,7 @@ const WOLOptionsConfig = () => {
 
     ////////////////////////////////////////////////////////////////////////////////
 
-    const handleChange = (e) => {
+    const handleChange = e => {
         const { name, value } = e.target;
         setFormValues({ ...formValues, [name]: value });
     };
@@ -124,7 +124,7 @@ const WOLOptionsConfig = () => {
     const handleDetailChange = (e, index) => {
         const { name, value } = e.target;
         const updatedDetails = formValues.details.map((detail, i) =>
-            i === index ? { ...detail, [name]: value } : detail,
+            i === index ? { ...detail, [name]: value } : detail
         );
         setFormValues({ ...formValues, details: updatedDetails });
     };
@@ -153,7 +153,7 @@ const WOLOptionsConfig = () => {
         return Object.keys(tempErrors).length === 0;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = e => {
         e.preventDefault();
 
         console.log('handleSubmit', 'edit : ', edit);
@@ -177,7 +177,7 @@ const WOLOptionsConfig = () => {
         }
     };
 
-    const handleFormSubmit = (e) => {
+    const handleFormSubmit = e => {
         e.preventDefault();
         if (validate()) {
             const { minScale, maxScale, details } = formValues;
@@ -328,7 +328,7 @@ const WOLOptionsConfig = () => {
                                                         ? detail.text
                                                         : ''
                                                 }
-                                                onChange={(e) =>
+                                                onChange={e =>
                                                     handleDetailChange(e, index)
                                                 }
                                                 error={
@@ -346,7 +346,7 @@ const WOLOptionsConfig = () => {
                                                         ? detail.icon
                                                         : ''
                                                 }
-                                                onChange={(e) =>
+                                                onChange={e =>
                                                     handleDetailChange(e, index)
                                                 }
                                                 errors={errors}

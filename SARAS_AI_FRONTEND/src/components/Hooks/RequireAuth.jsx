@@ -7,7 +7,7 @@ const RequireAuth = ({ allowedRoles }) => {
 
     // Ensure roles and allowedRoles are both arrays of numbers
     const userRoles = auth?.roles || [];
-    const isAuthorized = userRoles.find((role) => allowedRoles.includes(role));
+    const isAuthorized = userRoles.find(role => allowedRoles.includes(role));
 
     console.log('Auth Roles: ', userRoles);
     console.log('Allowed Roles: ', allowedRoles);

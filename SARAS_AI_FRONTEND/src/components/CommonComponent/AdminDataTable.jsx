@@ -91,18 +91,18 @@ const AdminDataTable = ({
 }) => {
     console.log('initial data', initialData);
     const [data, setData] = useState(
-        initialData.map((item) => ({
+        initialData.map(item => ({
             ...item,
             is_active: item.is_active !== undefined ? item.is_active : 0,
-        })),
+        }))
     );
 
     useEffect(() => {
         setData(
-            initialData.map((item) => ({
+            initialData.map(item => ({
                 ...item,
                 is_active: item.is_active !== undefined ? item.is_active : 0,
-            })),
+            }))
         );
     }, [initialData]);
 
@@ -111,7 +111,7 @@ const AdminDataTable = ({
     const totalPages = Math.ceil(data.length / itemsPerPage);
     const currentData = data.slice(
         (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage,
+        currentPage * itemsPerPage
     );
     const navigate = useNavigate();
 
@@ -119,38 +119,38 @@ const AdminDataTable = ({
         setCurrentPage(pageNumber);
     };
 
-    const handleToggle = (id) => {
-        const updatedData = data.map((item) =>
+    const handleToggle = id => {
+        const updatedData = data.map(item =>
             item.id === id
                 ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
-                : item,
+                : item
         );
         setData(updatedData);
         console.log('ID : handle toggle : ', id);
-        const toggledItem = updatedData.find((item) => item.id === id);
+        const toggledItem = updatedData.find(item => item.id === id);
         const requestData = { is_active: toggledItem.is_active };
         switch (componentName) {
             case 'ASSIGNCOACHSTUDENT':
                 dispatch(
-                    toggleCoachAssignStudentStatus({ id, data: requestData }),
+                    toggleCoachAssignStudentStatus({ id, data: requestData })
                 );
                 dispatch(getCoachAssignStudents(ta_id));
                 break;
             case 'ASSIGNCOACHBATCH':
                 dispatch(
-                    toggleCoachAssignBatchStatus({ id, data: requestData }),
+                    toggleCoachAssignBatchStatus({ id, data: requestData })
                 );
                 dispatch(getCoachAssignBatches(ta_id));
                 break;
             default:
                 console.warn(
-                    `No API call defined for component: ${componentName}`,
+                    `No API call defined for component: ${componentName}`
                 );
                 break;
         }
     };
 
-    const handleDelete = (id) => {
+    const handleDelete = id => {
         switch (componentName) {
             case 'ASSIGNCOACHSTUDENT':
                 dispatch(deleteCoachAssignedStudent({ id }));
@@ -162,13 +162,13 @@ const AdminDataTable = ({
                 break;
             default:
                 console.warn(
-                    `No delete action defined for component: ${componentName}`,
+                    `No delete action defined for component: ${componentName}`
                 );
                 break;
         }
     };
 
-    const handleNavigate = (path) => {
+    const handleNavigate = path => {
         navigate(path);
     };
 

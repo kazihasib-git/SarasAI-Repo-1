@@ -8,20 +8,20 @@ export const getWOLCategory = createAsyncThunk(
     async () => {
         const response = await axios.get(`${baseUrl}/admin/wol/wol-category`);
         return response.data;
-    },
+    }
 );
 
 // To Create WOL Category
 export const createWOLCategory = createAsyncThunk(
     'wol/createWOLCategory',
-    async (data) => {
+    async data => {
         console.log(data);
         const response = await axios.post(
             `${baseUrl}/admin/wol/wol-category`,
-            data,
+            data
         );
         return response.data;
-    },
+    }
 );
 
 // To Update WOL Category
@@ -30,33 +30,33 @@ export const updateWOLCategory = createAsyncThunk(
     async ({ id, data }) => {
         const response = await axios.put(
             `${baseUrl}/admin/wol/wol-category/${id}`,
-            data,
+            data
         );
         return response.data;
-    },
+    }
 );
 
 // To Delete WOL Category
 export const deleteWOLCategory = createAsyncThunk(
     'wol/deleteWOLCategory',
-    async (id) => {
+    async id => {
         const response = await axios.delete(
-            `${baseUrl}/admin/wol/wol-category/${id}`,
+            `${baseUrl}/admin/wol/wol-category/${id}`
         );
         return response.data;
-    },
+    }
 );
 
 // To active deactive WOL Category
 export const activeDeactiveWOLCategory = createAsyncThunk(
     'wol/activeDeactiveWOLCategory',
-    async (id) => {
+    async id => {
         console.log('in activeDeactiveWOLCategory', id);
         const response = await axios.get(
-            `${baseUrl}/admin/wol/wol-category/${id}`,
+            `${baseUrl}/admin/wol/wol-category/${id}`
         );
         return response.data;
-    },
+    }
 );
 
 // Get all life instruction data
@@ -64,22 +64,22 @@ export const getLifeInstruction = createAsyncThunk(
     'wol/getLifeInstruction',
     async () => {
         const response = await axios.get(
-            `${baseUrl}/admin/wol/wol-life-instruction`,
+            `${baseUrl}/admin/wol/wol-life-instruction`
         );
         return response.data;
-    },
+    }
 );
 
 // edit instructions data
 export const editLifeInstruction = createAsyncThunk(
     'wol/editLifeInstruction',
-    async (data) => {
+    async data => {
         const response = await axios.put(
             `${baseUrl}/admin/wol/wol-life-instruction`,
-            data,
+            data
         );
         return response.data;
-    },
+    }
 );
 
 // Get WOL Questions
@@ -88,19 +88,19 @@ export const getWOLQuestions = createAsyncThunk(
     async () => {
         const response = await axios.get(`${baseUrl}/admin/wol/wol-question`);
         return response.data;
-    },
+    }
 );
 
 // Create WOL Question
 export const createWOLQuestion = createAsyncThunk(
     'wol/createWOLQuestion',
-    async (data) => {
+    async data => {
         const response = await axios.post(
             `${baseUrl}/admin/wol/wol-question`,
-            data,
+            data
         );
         return response.data;
-    },
+    }
 );
 
 // Update WOL Question
@@ -109,10 +109,10 @@ export const updateWOLQuestion = createAsyncThunk(
     async ({ id, data }) => {
         const response = await axios.put(
             `${baseUrl}/admin/wol/wol-question/${id}`,
-            data,
+            data
         );
         return response.data;
-    },
+    }
 );
 
 // Get WOL Options Config
@@ -120,34 +120,34 @@ export const getWOLOptionConfig = createAsyncThunk(
     'wol/getWOLOptionConfig',
     async () => {
         const response = await axios.get(
-            `${baseUrl}/admin/wol/wol-option-config`,
+            `${baseUrl}/admin/wol/wol-option-config`
         );
         return response.data;
-    },
+    }
 );
 
 // Add WOL Options Config
 export const addWOLOptionConfig = createAsyncThunk(
     'wol/addWOLOptionConfig',
-    async (data) => {
+    async data => {
         const response = await axios.post(
             `${baseUrl}/admin/wol/wol-option-config`,
-            data,
+            data
         );
         return response.data;
-    },
+    }
 );
 
 // Add WOL Test Config
 export const addWOLTestConfig = createAsyncThunk(
     'wol/addWOLTestConfig',
-    async (data) => {
+    async data => {
         const response = await axios.post(
             `${baseUrl}/admin/wol/wol-test-config`,
-            data,
+            data
         );
         return response.data;
-    },
+    }
 );
 
 // Get All Wol Test Config
@@ -155,55 +155,55 @@ export const getWolTestConfig = createAsyncThunk(
     'wol/getWolTestConfig',
     async () => {
         const response = await axios.get(
-            `${baseUrl}/admin/wol/wol-test-config`,
+            `${baseUrl}/admin/wol/wol-test-config`
         );
         return response.data;
-    },
+    }
 );
 
 // Get Wol Question Category Wise
 export const getWolQuestionCategoryWise = createAsyncThunk(
     'wol/getWolQuestionCategoryWise',
-    async (id) => {
+    async id => {
         const response = await axios.get(
-            `${baseUrl}/admin/wol/wol-question-category-wise/${id}`,
+            `${baseUrl}/admin/wol/wol-question-category-wise/${id}`
         );
         return response.data;
-    },
+    }
 );
 
 // Get Wol Test Config Category Wise questions count
 export const getWolTestConfigCategoryWise = createAsyncThunk(
     'wol/getWolTestConfigCategoryWise',
-    async (id) => {
+    async id => {
         const response = await axios.get(
-            `${baseUrl}/admin/wol/wol-test-config-category-question-count`,
+            `${baseUrl}/admin/wol/wol-test-config-category-question-count`
         );
         return response.data;
-    },
+    }
 );
 
 // Add question to category
 export const addQuestionToCategory = createAsyncThunk(
     'wol/addQuestionToCategory',
-    async (data) => {
+    async data => {
         const response = await axios.post(
             `${baseUrl}/admin/wol/wol-test-config-add-question-to-category`,
-            data,
+            data
         );
         return response.data;
-    },
+    }
 );
 
 // Selected Questions list
 export const selectedQuestionsList = createAsyncThunk(
     'wol/selectedQuestionsList',
-    async (id) => {
+    async id => {
         const response = await axios.get(
-            `${baseUrl}/admin/wol/wol-test-config-selected-question-list/${id}`,
+            `${baseUrl}/admin/wol/wol-test-config-selected-question-list/${id}`
         );
         return response.data;
-    },
+    }
 );
 
 const initialState = {
@@ -242,9 +242,9 @@ const wolSlice = createSlice({
         },
     },
 
-    extraReducers: (builder) => {
+    extraReducers: builder => {
         // getWOLCategory
-        builder.addCase(getWOLCategory.pending, (state) => {
+        builder.addCase(getWOLCategory.pending, state => {
             state.loading = true;
         });
         builder.addCase(getWOLCategory.fulfilled, (state, action) => {
@@ -257,7 +257,7 @@ const wolSlice = createSlice({
         });
 
         // createWOLCategory
-        builder.addCase(createWOLCategory.pending, (state) => {
+        builder.addCase(createWOLCategory.pending, state => {
             state.loading = true;
         });
         builder.addCase(createWOLCategory.fulfilled, (state, action) => {
@@ -270,7 +270,7 @@ const wolSlice = createSlice({
         });
 
         // getLifeInstruction
-        builder.addCase(getLifeInstruction.pending, (state) => {
+        builder.addCase(getLifeInstruction.pending, state => {
             state.loading = true;
         });
         builder.addCase(getLifeInstruction.fulfilled, (state, action) => {
@@ -283,7 +283,7 @@ const wolSlice = createSlice({
         });
 
         // editLifeInstruction
-        builder.addCase(editLifeInstruction.pending, (state) => {
+        builder.addCase(editLifeInstruction.pending, state => {
             state.loading = true;
         });
         builder.addCase(editLifeInstruction.fulfilled, (state, action) => {
@@ -296,7 +296,7 @@ const wolSlice = createSlice({
         });
 
         // getWOLQuestions
-        builder.addCase(getWOLQuestions.pending, (state) => {
+        builder.addCase(getWOLQuestions.pending, state => {
             state.loading = true;
         });
         builder.addCase(getWOLQuestions.fulfilled, (state, action) => {
@@ -309,7 +309,7 @@ const wolSlice = createSlice({
         });
 
         // createWOLQuestion
-        builder.addCase(createWOLQuestion.pending, (state) => {
+        builder.addCase(createWOLQuestion.pending, state => {
             state.loading = true;
         });
         builder.addCase(createWOLQuestion.fulfilled, (state, action) => {
@@ -322,7 +322,7 @@ const wolSlice = createSlice({
         });
 
         // updateWOLQuestion
-        builder.addCase(updateWOLQuestion.pending, (state) => {
+        builder.addCase(updateWOLQuestion.pending, state => {
             state.loading = true;
         });
         builder.addCase(updateWOLQuestion.fulfilled, (state, action) => {
@@ -335,7 +335,7 @@ const wolSlice = createSlice({
         });
 
         // getWOLOptionConfig
-        builder.addCase(getWOLOptionConfig.pending, (state) => {
+        builder.addCase(getWOLOptionConfig.pending, state => {
             state.loading = true;
         });
         builder.addCase(getWOLOptionConfig.fulfilled, (state, action) => {
@@ -348,7 +348,7 @@ const wolSlice = createSlice({
         });
 
         // addWOLOptionConfig
-        builder.addCase(addWOLOptionConfig.pending, (state) => {
+        builder.addCase(addWOLOptionConfig.pending, state => {
             state.loading = true;
         });
         builder.addCase(addWOLOptionConfig.fulfilled, (state, action) => {
@@ -361,7 +361,7 @@ const wolSlice = createSlice({
         });
 
         // addWOLTestConfig
-        builder.addCase(addWOLTestConfig.pending, (state) => {
+        builder.addCase(addWOLTestConfig.pending, state => {
             state.loading = true;
         });
         builder.addCase(addWOLTestConfig.fulfilled, (state, action) => {
@@ -374,7 +374,7 @@ const wolSlice = createSlice({
         });
 
         // getWolTestConfig
-        builder.addCase(getWolTestConfig.pending, (state) => {
+        builder.addCase(getWolTestConfig.pending, state => {
             state.loading = true;
         });
         builder.addCase(getWolTestConfig.fulfilled, (state, action) => {
@@ -387,7 +387,7 @@ const wolSlice = createSlice({
         });
 
         // getWolQuestionCategoryWise
-        builder.addCase(getWolQuestionCategoryWise.pending, (state) => {
+        builder.addCase(getWolQuestionCategoryWise.pending, state => {
             state.loading = true;
         });
         builder.addCase(
@@ -395,18 +395,18 @@ const wolSlice = createSlice({
             (state, action) => {
                 state.loading = false;
                 state.wolQuestionCategoryWise = action.payload;
-            },
+            }
         );
         builder.addCase(
             getWolQuestionCategoryWise.rejected,
             (state, action) => {
                 state.loading = false;
                 state.error = action.payload || action.error.message;
-            },
+            }
         );
 
         // getWolTestConfigCategoryWise
-        builder.addCase(getWolTestConfigCategoryWise.pending, (state) => {
+        builder.addCase(getWolTestConfigCategoryWise.pending, state => {
             state.loading = true;
         });
         builder.addCase(
@@ -414,18 +414,18 @@ const wolSlice = createSlice({
             (state, action) => {
                 state.loading = false;
                 state.wolTestConfigCategoryWise = action.payload;
-            },
+            }
         );
         builder.addCase(
             getWolTestConfigCategoryWise.rejected,
             (state, action) => {
                 state.loading = false;
                 state.error = action.payload || action.error.message;
-            },
+            }
         );
 
         // addQuestionToCategory
-        builder.addCase(addQuestionToCategory.pending, (state) => {
+        builder.addCase(addQuestionToCategory.pending, state => {
             state.loading = true;
         });
         builder.addCase(addQuestionToCategory.fulfilled, (state, action) => {
@@ -438,7 +438,7 @@ const wolSlice = createSlice({
         });
 
         // selectedQuestionsList
-        builder.addCase(selectedQuestionsList.pending, (state) => {
+        builder.addCase(selectedQuestionsList.pending, state => {
             state.loading = true;
         });
         builder.addCase(selectedQuestionsList.fulfilled, (state, action) => {

@@ -11,7 +11,7 @@ const TaMenuSidebar = () => {
     const location = useLocation();
     const [activeLink, setActiveLink] = useState(location.pathname);
 
-    const handleLinkClick = (path) => {
+    const handleLinkClick = path => {
         console.log(path);
         console.log(activeLink);
         setActiveLink(path);

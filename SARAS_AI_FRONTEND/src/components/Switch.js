@@ -4,7 +4,7 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 
-const IOSSwitch = styled((props) => (
+const IOSSwitch = styled(props => (
     <Switch
         focusVisibleClassName=".Mui-focusVisible"
         disableRipple
@@ -60,6 +60,6 @@ const IOSSwitch = styled((props) => (
     },
 }));
 
-export const OnOffSwitch = (props) => {
+export const OnOffSwitch = props => {
     return <IOSSwitch sx={{ m: 0 }} defaultChecked />;
 };

@@ -122,7 +122,7 @@ const TAtable = () => {
                 ),
             },
         ],
-        [validationErrors],
+        [validationErrors]
     );
 
     //call CREATE hook
@@ -146,7 +146,7 @@ const TAtable = () => {
     const handleCreateUser = async ({ values, table }) => {
         console.log('in handleCreateUser -- ', values);
         const newValidationErrors = validateUser(values);
-        if (Object.values(newValidationErrors).some((error) => error)) {
+        if (Object.values(newValidationErrors).some(error => error)) {
             setValidationErrors(newValidationErrors);
             return;
         }
@@ -158,7 +158,7 @@ const TAtable = () => {
     //UPDATE action
     const handleSaveUser = async ({ values, table }) => {
         const newValidationErrors = validateUser(values);
-        if (Object.values(newValidationErrors).some((error) => error)) {
+        if (Object.values(newValidationErrors).some(error => error)) {
             setValidationErrors(newValidationErrors);
             return;
         }
@@ -184,7 +184,7 @@ const TAtable = () => {
         enableDensityToggle: false,
         enableHiding: false,
         enableFullScreenToggle: false,
-        getRowId: (row) => row.id, //unique id for each row
+        getRowId: row => row.id, //unique id for each row
         muiToolbarAlertBannerProps: isLoadingUsersError
             ? {
                   color: 'error',
@@ -248,8 +248,7 @@ const TAtable = () => {
                     }}
                 >
                     {internalEditComponents.filter(
-                        (component) =>
-                            component.key !== 'mrt-row-create_actions',
+                        component => component.key !== 'mrt-row-create_actions'
                     )}{' '}
                     {/* or render custom edit components here */}
                 </DialogContent>
@@ -278,7 +277,7 @@ const TAtable = () => {
                     }}
                 >
                     {internalEditComponents.filter(
-                        (component) => component.key !== '0_actions',
+                        component => component.key !== '0_actions'
                     )}{' '}
                     {/* or render custom edit components here */}
                 </DialogContent>
@@ -349,14 +348,14 @@ function useCreateUser() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async (managetas) => {
+        mutationFn: async managetas => {
             // Send API update request here
-            await new Promise((resolve) => setTimeout(resolve, 1000)); // Fake API call
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Fake API call
             return Promise.resolve();
         },
         // Client-side optimistic update
-        onMutate: (managetas) => {
-            queryClient.setQueryData(['users'], (prevUsers) => [
+        onMutate: managetas => {
+            queryClient.setQueryData(['users'], prevUsers => [
                 ...prevUsers,
                 {
                     ...managetas,
@@ -374,7 +373,7 @@ function useGetUsers() {
         queryKey: ['users'],
         queryFn: async () => {
             //send api request here
-            await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
+            await new Promise(resolve => setTimeout(resolve, 1000)); //fake api call
             return Promise.resolve(managetas['userdata']);
         },
         refetchOnWindowFocus: false,
@@ -386,20 +385,20 @@ function useUpdateUser() {
     const queryClient = useQueryClient();
     console.log('in useCreateUser --', queryClient.getQueryData['users']);
     return useMutation({
-        mutationFn: async (user) => {
+        mutationFn: async user => {
             //send api update request here
-            await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
+            await new Promise(resolve => setTimeout(resolve, 1000)); //fake api call
             return Promise.resolve();
         },
         //client side optimistic update
-        onMutate: (newUserInfo) => {
+        onMutate: newUserInfo => {
             console.log(' update INFO : ', newUserInfo);
-            queryClient.setQueryData(['users'], (prevUsers) =>
-                prevUsers?.map((prevUser) =>
+            queryClient.setQueryData(['users'], prevUsers =>
+                prevUsers?.map(prevUser =>
                     prevUser.username === newUserInfo.username
                         ? newUserInfo
-                        : prevUser,
-                ),
+                        : prevUser
+                )
             );
         },
         // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
@@ -440,7 +439,7 @@ const ManagesTAs = () => (
 
 export default ManagesTAs;
 
-const validateRequired = (value) => !!value.length;
+const validateRequired = value => !!value.length;
 // const validateEmail = (email) =>
 //   !!email.length &&
 //   email

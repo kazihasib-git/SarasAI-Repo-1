@@ -21,7 +21,7 @@ const VideoUploadComponent = () => {
     const [file, setFile] = useState(null);
     const [uploadProgress, setUploadProgress] = useState(0);
 
-    const handleFileChange = (event) => {
+    const handleFileChange = event => {
         setFile(event.target.files[0]);
     };
 

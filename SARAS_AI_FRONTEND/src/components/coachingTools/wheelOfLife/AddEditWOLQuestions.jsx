@@ -32,7 +32,7 @@ const AddEditWOLQuestions = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { editwolQuestionData, wolCategoryData } = useSelector(
-        (state) => state.wol,
+        state => state.wol
     );
 
     const {
@@ -54,7 +54,7 @@ const AddEditWOLQuestions = () => {
     useEffect(() => {
         if (wolCategoryData.data && wolCategoryData.data.length > 0) {
             console.log(wolCategoryData.message);
-            const transformData = wolCategoryData.data.map((item) => ({
+            const transformData = wolCategoryData.data.map(item => ({
                 id: item.id,
                 name: item.name,
             }));
@@ -64,7 +64,7 @@ const AddEditWOLQuestions = () => {
 
     const WOLCategoriesOptions =
         wolCategoryData.data && wolCategoryData.data.length > 0
-            ? wolCategoryData.data.map((item) => ({
+            ? wolCategoryData.data.map(item => ({
                   value: item.id,
                   label: item.name,
               }))
@@ -124,7 +124,7 @@ const AddEditWOLQuestions = () => {
 
     const formats = ['bold', 'italic', 'underline', 'align', 'link'];
 
-    const onSubmit = (formData) => {
+    const onSubmit = formData => {
         console.log('formData', formData.category);
         console.log('questionValue', questionValue);
 

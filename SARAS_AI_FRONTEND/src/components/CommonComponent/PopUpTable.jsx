@@ -82,7 +82,7 @@ const PopUpTable = ({
         setData(initialData ?? []);
     }, [initialData]);
 
-    const handleCheckboxChange = (id) => {
+    const handleCheckboxChange = id => {
         onRowClick(id);
     };
 
@@ -90,7 +90,7 @@ const PopUpTable = ({
     const totalPages = Math.ceil(data.length / itemsPerPage);
     const currentData = data.slice(
         (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage,
+        currentPage * itemsPerPage
     );
 
     return (
@@ -112,11 +112,11 @@ const PopUpTable = ({
                                         {header === 'Select' ? (
                                             <Checkbox
                                                 checked={selectedBox.includes(
-                                                    item.id,
+                                                    item.id
                                                 )}
                                                 onChange={() =>
                                                     handleCheckboxChange(
-                                                        item.id,
+                                                        item.id
                                                     )
                                                 }
                                                 sx={{
@@ -181,7 +181,7 @@ const PopUpTable = ({
                                                     onClick={() =>
                                                         onViewClick(
                                                             'calendar',
-                                                            item.StudentList,
+                                                            item.StudentList
                                                         )
                                                     }
                                                     style={{

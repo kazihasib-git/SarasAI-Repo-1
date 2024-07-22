@@ -88,18 +88,18 @@ const DynamicTable = ({
     dispatch,
 }) => {
     const [data, setData] = useState(
-        initialData.map((item) => ({
+        initialData.map(item => ({
             ...item,
             is_active: item.is_active !== undefined ? item.is_active : 0,
-        })),
+        }))
     );
 
     useEffect(() => {
         setData(
-            initialData.map((item) => ({
+            initialData.map(item => ({
                 ...item,
                 is_active: item.is_active !== undefined ? item.is_active : 0,
-            })),
+            }))
         );
     }, [initialData]);
 
@@ -108,7 +108,7 @@ const DynamicTable = ({
     const totalPages = Math.ceil(data.length / itemsPerPage);
     const currentData = data.slice(
         (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage,
+        currentPage * itemsPerPage
     );
     const navigate = useNavigate();
 
@@ -118,14 +118,14 @@ const DynamicTable = ({
 
     const handleToggle = async (id, ta_id) => {
         console.log('id : ', id);
-        const updatedData = data.map((item) =>
+        const updatedData = data.map(item =>
             item.id === id
                 ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
-                : item,
+                : item
         );
         setData(updatedData);
 
-        const toggledItem = updatedData.find((item) => item.id === id);
+        const toggledItem = updatedData.find(item => item.id === id);
         const requestData = { is_active: toggledItem.is_active };
         try {
             await dispatch(toggleAssignBatchStatus({ id, data: requestData }));
@@ -133,11 +133,11 @@ const DynamicTable = ({
         } catch (error) {
             // Revert state if the API call fails
             setData(
-                data.map((item) =>
+                data.map(item =>
                     item.id === id
                         ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
-                        : item,
-                ),
+                        : item
+                )
             );
         }
     };
@@ -149,7 +149,7 @@ const DynamicTable = ({
         dispatch(getAssignBatches(ta_id));
     };
 
-    const handleNavigate = (path) => {
+    const handleNavigate = path => {
         navigate(path);
     };
 
@@ -237,7 +237,7 @@ const DynamicTable = ({
                                                     onChange={() =>
                                                         handleToggle(
                                                             item.id,
-                                                            ta_id,
+                                                            ta_id
                                                         )
                                                     }
                                                     inputProps={{
@@ -268,7 +268,7 @@ const DynamicTable = ({
                                                     onClick={() =>
                                                         handleDelete(
                                                             item.id,
-                                                            ta_id,
+                                                            ta_id
                                                         )
                                                     }
                                                 >
@@ -340,7 +340,7 @@ const actionButtons = [
     },
     {
         type: 'delete',
-        onClick: (id) => console.log(`Edit clicked for id ${id}`),
+        onClick: id => console.log(`Edit clicked for id ${id}`),
     },
 ];
 
@@ -348,7 +348,7 @@ const AssignBatches = () => {
     const { id } = useParams();
     console.log('c', id);
     const dispatch = useDispatch();
-    const { assignedBatches, loading } = useSelector((state) => state.taModule);
+    const { assignedBatches, loading } = useSelector(state => state.taModule);
     const [taAssignBatchesData, setTaAssignBatchesData] = useState([]);
 
     useEffect(() => {

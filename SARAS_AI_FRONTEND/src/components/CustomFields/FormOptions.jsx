@@ -58,14 +58,14 @@ export const qualificationOptions = [
     { value: 'Doctorate', label: 'Doctorate' },
 ];
 
-export const validateTimeZone = (value) => {
+export const validateTimeZone = value => {
     if (!value) return 'Time Zone is required';
-    if (!timeZones.some((tz) => tz.time_zone === value))
+    if (!timeZones.some(tz => tz.time_zone === value))
         return 'Invalid time zone selected';
     return true;
 };
 
-export const transformedTimeZones = timeZones.map((tz) => ({
+export const transformedTimeZones = timeZones.map(tz => ({
     value: tz.time_zone,
     label: `${tz.country}`,
 }));

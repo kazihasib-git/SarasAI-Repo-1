@@ -82,7 +82,7 @@ const AssignStudents = ({ componentname }) => {
             openSuccessAction = openCoachSuccessPopup;
             getBatchMappingAction = getCoachStudentBatchMapping;
             postAssignAction = postCoachAssignStudents;
-            schedulingState = useSelector((state) => state.coachScheduling);
+            schedulingState = useSelector(state => state.coachScheduling);
             nameKeyScheduling = 'coachName';
             idKeyScheduling = 'coachID';
             break;
@@ -95,7 +95,7 @@ const AssignStudents = ({ componentname }) => {
             openSuccessAction = openSuccessPopup;
             getBatchMappingAction = getStudentBatchMapping;
             postAssignAction = postAssignStudents;
-            schedulingState = useSelector((state) => state.taScheduling);
+            schedulingState = useSelector(state => state.taScheduling);
             nameKeyScheduling = 'taName';
             idKeyScheduling = 'taID';
             break;
@@ -114,8 +114,8 @@ const AssignStudents = ({ componentname }) => {
             break;
     }
 
-    const stateSelector = useSelector((state) =>
-        stateModuleKey ? state[stateModuleKey] : {},
+    const stateSelector = useSelector(state =>
+        stateModuleKey ? state[stateModuleKey] : {}
     );
     const { [nameKeyScheduling]: assignedName, [idKeyScheduling]: assignedId } =
         schedulingState || {};
@@ -141,19 +141,19 @@ const AssignStudents = ({ componentname }) => {
                     'S. No.': index + 1,
                     'Student Name': student.student_name,
                     Program:
-                        student.packages.map((pack) => pack.name).join(', ') ||
+                        student.packages.map(pack => pack.name).join(', ') ||
                         'N/A',
                     Batch:
                         student.batches
-                            .map((batch) => batch.batch_name)
+                            .map(batch => batch.batch_name)
                             .join(', ') || 'N/A',
                     Select: student.is_active ? 1 : 0,
                     id: student.student_id,
                     is_active: student.is_active,
-                }),
+                })
             );
 
-            const filtered = transformedData.filter((student) => {
+            const filtered = transformedData.filter(student => {
                 const matchesTerm = selectedTerm
                     ? student['Academic Term'] === selectedTerm
                     : true;
@@ -177,13 +177,13 @@ const AssignStudents = ({ componentname }) => {
               ...new Set(
                   studentBatchMapping
                       .filter(
-                          (student) =>
+                          student =>
                               !selectedTerm ||
-                              student.academic_term === selectedTerm,
+                              student.academic_term === selectedTerm
                       )
-                      .flatMap((student) =>
-                          student.batches.map((batch) => batch.batch_name),
-                      ),
+                      .flatMap(student =>
+                          student.batches.map(batch => batch.batch_name)
+                      )
               ),
           ]
         : [];
@@ -191,16 +191,14 @@ const AssignStudents = ({ componentname }) => {
     const academicTermOptions = studentBatchMapping
         ? [
               ...new Set(
-                  studentBatchMapping.map((student) => student.academic_term),
+                  studentBatchMapping.map(student => student.academic_term)
               ),
           ]
         : [];
 
-    const handleSelectStudent = (id) => {
-        setSelectedStudents((prev) =>
-            prev.includes(id)
-                ? prev.filter((sid) => sid !== id)
-                : [...prev, id],
+    const handleSelectStudent = id => {
+        setSelectedStudents(prev =>
+            prev.includes(id) ? prev.filter(sid => sid !== id) : [...prev, id]
         );
     };
 
@@ -211,7 +209,7 @@ const AssignStudents = ({ componentname }) => {
                 : taID || assignedId;
         const data = {
             [componentname === 'ADDITCOACH' ? 'Coach_id' : 'ta_id']: id,
-            student: selectedStudents.map((id) => ({ id: id.toString() })),
+            student: selectedStudents.map(id => ({ id: id.toString() })),
         };
         dispatch(postAssignAction({ id, data })).then(() => {
             if (assignedId) {
@@ -219,10 +217,10 @@ const AssignStudents = ({ componentname }) => {
                     openScheduleSession({
                         id: assignedId,
                         name: assignedName,
-                        student: selectedStudents.map((id) => ({
+                        student: selectedStudents.map(id => ({
                             id: id.toString(),
                         })),
-                    }),
+                    })
                 );
             }
             dispatch(openSuccessAction());
@@ -240,9 +238,9 @@ const AssignStudents = ({ componentname }) => {
                         select
                         label="Academic Term"
                         value={selectedTerm}
-                        onChange={(e) => setSelectedTerm(e.target.value)}
+                        onChange={e => setSelectedTerm(e.target.value)}
                     >
-                        {academicTermOptions.map((term) => (
+                        {academicTermOptions.map(term => (
                             <MenuItem key={term} value={term}>
                                 {term}
                             </MenuItem>
@@ -254,9 +252,9 @@ const AssignStudents = ({ componentname }) => {
                         select
                         label="Batch"
                         value={selectedBatch}
-                        onChange={(e) => setSelectedBatch(e.target.value)}
+                        onChange={e => setSelectedBatch(e.target.value)}
                     >
-                        {batchOptions.map((batch) => (
+                        {batchOptions.map(batch => (
                             <MenuItem key={batch} value={batch}>
                                 {batch}
                             </MenuItem>
@@ -270,7 +268,7 @@ const AssignStudents = ({ componentname }) => {
                     <CustomTextField
                         label="Search By Student Name"
                         value={searchName}
-                        onChange={(e) => setSearchName(e.target.value)}
+                        onChange={e => setSearchName(e.target.value)}
                     />
                 </Grid>
             </Grid>
