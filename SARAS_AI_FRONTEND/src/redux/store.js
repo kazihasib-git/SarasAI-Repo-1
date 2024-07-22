@@ -10,23 +10,31 @@ import coachTemplateReducer from './features/CoachModule/CoachTemplateSlice';
 import wolSliceReducer from './features/coachingTools/wol/wolSlice';
 import timezoneSliceReducer from './features/timezone/timezoneSlice';
 import coachReducer from './features/CoachModule/coachSlice';
+import coachAvailabilityReducer from './features/CoachModule/CoachAvailabilitySlice';
+import coachSchedulingReducer from './features/CoachModule/coachSchedule';
+import activityTypeReducer from './features/ActivityType/activityTypeSlice';
 const store = configureStore({
-
     reducer: {
         taModule: taReducer,
-        taAvailability : taAvailabilityReducer,
-        taScheduling : taSchedulingReducer,
-        taAvialability : taAvailabilityReducer,
-        coachTemplate : coachTemplateReducer,
-        wol : wolSliceReducer,
-        timezone : timezoneSliceReducer,
-        coachModule : coachReducer,
+        taAvailability: taAvailabilityReducer,
+        taScheduling: taSchedulingReducer,
+        taAvialability: taAvailabilityReducer,
+        coachTemplate: coachTemplateReducer,
+        wol: wolSliceReducer,
+        timezone: timezoneSliceReducer,
+        coachModule: coachReducer,
+        coachAvailability: coachAvailabilityReducer,
+        coachScheduling: coachSchedulingReducer,
+        activityType: activityTypeReducer,
         [studentsApi.reducerPath]: studentsApi.reducer,
         [batchesApi.reducerPath]: batchesApi.reducer,
         [coursesApi.reducerPath]: coursesApi.reducer,
     },
-    middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware().concat(studentsApi.middleware).concat(batchesApi.middleware).concat(coursesApi.middleware),
+    middleware: getDefaultMiddleware =>
+        getDefaultMiddleware()
+            .concat(studentsApi.middleware)
+            .concat(batchesApi.middleware)
+            .concat(coursesApi.middleware),
 });
 
 setupListeners(store.dispatch);

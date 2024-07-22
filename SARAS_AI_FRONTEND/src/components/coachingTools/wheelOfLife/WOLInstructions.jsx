@@ -1,63 +1,204 @@
-import { Box, Button, Container, Typography, Paper } from '@mui/material'
-import React, { useState } from 'react'
-import Header from '../../Header/Header'
-import Sidebar from '../../Sidebar/Sidebar'
-import ReactQuill from 'react-quill'
+import {
+    Box,
+    Button,
+    Container,
+    Typography,
+    Paper,
+    styled,
+} from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import Header from '../../Header/Header';
+import Sidebar from '../../Sidebar/Sidebar';
+import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { Navigate } from 'react-router-dom'
+import editIcon_White from '../../../assets/editIcon_White.png';
+import { Navigate } from 'react-router-dom';
+import {
+    getLifeInstruction,
+    editLifeInstruction,
+} from '../../../redux/features/coachingTools/wol/wolSlice';
+
+const CustomButton = styled(Button)(({ theme, active }) => ({
+    borderRadius: '50px',
+    border: '1px solid #F56D3B',
+    color: active ? '#fff' : '#F56D3B',
+    backgroundColor: active ? '#F56D3B' : '#FFF',
+    padding: '8px 16px',
+    margin: '0 8px',
+    '&:hover': {
+        backgroundColor: '#F56D3B',
+        color: '#fff',
+        borderColor: '#F56D3B',
+    },
+}));
 
 const WOLInstructions = () => {
     const [value, setValue] = useState();
-    const [editData, setEditData] = useState(false)
+    const [editData, setEditData] = useState(false);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const { instructionData } = useSelector(state => state.wol);
+    const [instruction, setInstruction] = useState('');
 
     const handleEditWOLInstructions = () => {
-        setEditData(true)
-    }
+        setValue(instruction);
+        setEditData(true);
+    };
+
+    const handleUpdateWOLInstructions = () => {
+        try {
+            dispatch(editLifeInstruction({ message: value }))
+                .unwrap()
+                .then(() => {
+                    dispatch(getLifeInstruction());
+                });
+            setEditData(false);
+        } catch (error) {
+            console.log(error.message); //TODO: Show toast message
+        }
+    };
+
+    useEffect(() => {
+        dispatch(getLifeInstruction());
+    }, [dispatch]);
+
+    useEffect(() => {
+        if (instructionData && instructionData.data.length > 0) {
+            console.log(instructionData.message);
+            setInstruction(instructionData.data[0].message);
+        }
+    }, [instructionData]);
 
     const modules = {
         toolbar: [
-            [{ 'header': '1' }, { 'header': '2' }, { 'font': [] }],
+            [{ header: '1' }, { header: '2' }, { font: [] }],
             [{ size: [] }],
             ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-            [{ 'list': 'ordered' }, { 'list': 'bullet' },
-            { 'indent': '-1' }, { 'indent': '+1' }],
+            [
+                { list: 'ordered' },
+                { list: 'bullet' },
+                { indent: '-1' },
+                { indent: '+1' },
+            ],
             ['link'], //, 'image', 'video'],
             ['clean'],
-            [{ 'undo': 'undo' }, { 'redo': 'redo' }] // Add undo and redo buttons
+            [{ undo: 'undo' }, { redo: 'redo' }], // Add undo and redo buttons
         ],
         history: {
             delay: 2000,
             maxStack: 500,
-            userOnly: true
-        }
+            userOnly: true,
+        },
     };
 
     const formats = [
-        'header', 'font', 'size',
-        'bold', 'italic', 'underline', 'strike', 'blockquote',
-        'list', 'bullet', 'indent',
-        'link', 'image', 'video'
+        'header',
+        'font',
+        'size',
+        'bold',
+        'italic',
+        'underline',
+        'strike',
+        'blockquote',
+        'list',
+        'bullet',
+        'indent',
+        'link',
+        'image',
+        'video',
     ];
-
 
     return (
         <>
             <Header />
             <Sidebar />
-            <Container maxWidth="md" sx={{ mt: 4, mb: 2 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                    <Typography variant="h4" component="h1" gutterBottom>
-                        {editData ? "Edit Instructions" : "Wheel of Life Instructions"}
-                    </Typography>
-                    {!editData && (
-                        <Button variant="contained" color="primary" onClick={handleEditWOLInstructions}>
-                            Edit
-                        </Button>
-                    )}
+            <Box
+                display="flex"
+                justifyContent="space-between"
+                marginTop={3}
+                alignItems={'center'}
+            >
+                <Box display="flex" alignItems="center" padding="16px">
+                    <ArrowBackIosIcon
+                        style={{
+                            fontSize: '25px',
+                            marginBottom: '16px',
+                            marginRight: '10px',
+                            cursor: 'pointer',
+                        }}
+                        onClick={() => navigate(-1)}
+                    />
+                    <p
+                        style={{
+                            fontSize: '40px',
+                            fontWeight: 200,
+                            justifyContent: 'center',
+                        }}
+                    >
+                        {editData
+                            ? 'Edit Instructions'
+                            : 'Wheel of Life Instructions'}
+                    </p>
                 </Box>
+                {!editData && (
+                    <div
+                        className="inputBtnContainer"
+                        style={{ marginRight: '20px', paddingBottom: '16px' }}
+                    >
+                        <button
+                            className="buttonContainer"
+                            onClick={handleEditWOLInstructions}
+                        >
+                            <img
+                                src={editIcon_White}
+                                backgroundColor="white"
+                                alt=""
+                            />
+                            <small
+                                style={{
+                                    fontSize: '16px',
+                                    fontWeight: 700,
+                                    marginLeft: '5px',
+                                }}
+                            >
+                                Edit
+                            </small>
+                        </button>
+                    </div>
+                )}
+            </Box>
+            <Box
+                sx={{
+                    mt: 2,
+                    mb: 2,
+                    backgroundColor: 'white',
+                    borderRadius: 2, // 10px border radius
+                    minHeight: 550, // Minimum height of 400px
+                    padding: 2,
+                }}
+            >
+                <Typography
+                    variant="h7"
+                    sx={{
+                        color: '#1A1E3D',
+                        fontSize: '16px',
+                        fontWeight: 500,
+                        marginBottom: '20px',
+                    }}
+                    component="h4"
+                    gutterBottom
+                >
+                    Instructions
+                </Typography>
                 {editData ? (
                     <>
-                        <Paper elevation={3} sx={{ padding: 2, borderRadius: 2 }}>
+                        <Paper
+                            elevation={3}
+                            sx={{ padding: 2, borderRadius: 2 }}
+                        >
                             <ReactQuill
                                 value={value}
                                 onChange={setValue}
@@ -65,24 +206,41 @@ const WOLInstructions = () => {
                                 formats={formats}
                             />
                         </Paper>
-                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: 2 }}>
-                            <Button variant="contained" color="primary">
-                                Update
-                            </Button>
+                        <Box
+                            className="inputBtnContainer"
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'flex-start',
+                                marginTop: 2,
+                            }}
+                        >
+                            <button
+                                className="buttonContainer"
+                                onClick={handleUpdateWOLInstructions}
+                            >
+                                <small style={{ fontSize: '14px' }}>
+                                    Update
+                                </small>
+                            </button>
                         </Box>
-
                     </>
                 ) : (
-                    <Typography variant="body1" gutterBottom>
-                        1. Use the statement provided on each category to help you think through how satisfied you are in each of your areas of life.
-                        2. Rate each statement on a scale from 1 to 10, where 1 means "Strongly Disagree" and 10 means "Strongly Agree".
-                        3. After completing, visualize your ratings on the Wheel of Life chart to assess your current satisfaction in each area.
-                        4. Reflect on the areas with lower scores and think about actionable steps you can take to improve them.
+                    <Typography
+                        sx={{ color: '#5F6383' }}
+                        variant="body1"
+                        gutterBottom
+                    >
+                        {instruction.split('\n').map((line, index) => (
+                            <span key={index}>
+                                {line}
+                                <br />
+                            </span>
+                        ))}
                     </Typography>
                 )}
-            </Container>
+            </Box>
         </>
-    )
-}
+    );
+};
 
-export default WOLInstructions
+export default WOLInstructions;

@@ -9,19 +9,17 @@ const RequireAuth = ({ allowedRoles }) => {
     const userRoles = auth?.roles || [];
     const isAuthorized = userRoles.find(role => allowedRoles.includes(role));
 
-    console.log("Auth Roles: ", userRoles);
-    console.log("Allowed Roles: ", allowedRoles);
-    console.log("Is Authorized: ", isAuthorized);
+    console.log('Auth Roles: ', userRoles);
+    console.log('Allowed Roles: ', allowedRoles);
+    console.log('Is Authorized: ', isAuthorized);
 
-    return (
-        isAuthorized ? (
-            <Outlet />
-        ) : auth?.user ? (
-            <Navigate to='/unauthorized' state={{ from: location }} replace />
-        ) : (
-            <Navigate to='/login' state={{ from: location }} replace />
-        )
+    return isAuthorized ? (
+        <Outlet />
+    ) : auth?.user ? (
+        <Navigate to="/unauthorized" state={{ from: location }} replace />
+    ) : (
+        <Navigate to="/login" state={{ from: location }} replace />
     );
-}
+};
 
 export default RequireAuth;

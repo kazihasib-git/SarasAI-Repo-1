@@ -1,145 +1,210 @@
-import React from "react";
-import ReusableDialog from "../CustomFields/ReusableDialog";
-import { Box, Button, DialogContent, Typography } from "@mui/material";
-import DynamicTable from "../CommonComponent/DynamicTable";
-import { useDispatch, useSelector } from "react-redux";
+import React from 'react';
+import ReusableDialog from '../CustomFields/ReusableDialog';
+import { Box, Button, DialogContent, Typography } from '@mui/material';
+import DynamicTable from '../CommonComponent/DynamicTable';
+import { useDispatch, useSelector } from 'react-redux';
+import PopUpTable from '../CommonComponent/PopUpTable';
+
 import {
-  closeScheduledSession,
-  openCancelSession,
-  openRescheduleSession,
-  openScheduledSlots,
-  reasonForLeave,
-} from "../../redux/features/taModule/taAvialability";
-import PopUpTable from "../CommonComponent/PopUpTable";
+    closeScheduledSession,
+    openCancelSession,
+    openRescheduleSession,
+    openScheduledSlots,
+    reasonForLeave,
+    openReasonForLeave,
+} from '../../redux/features/taModule/taAvialability';
+
+import {
+    closeCoachScheduledSession,
+    openCoachCancelSession,
+    openCoachRescheduleSession,
+    openCoachScheduledSlots,
+    openCoachReasonForLeave,
+    reasonForCoachLeave,
+} from '../../redux/features/CoachModule/CoachAvailabilitySlice';
+import { useParams } from 'react-router-dom';
 
 const CustomButton = ({
-  onClick,
-  children,
-  color = "#FFFFFF",
-  backgroundColor = "#4E18A5",
-  borderColor = "#FFFFFF",
-  sx,
-  ...props
+    onClick,
+    children,
+    color = '#FFFFFF',
+    backgroundColor = '#4E18A5',
+    borderColor = '#FFFFFF',
+    sx,
+    ...props
 }) => {
-  return (
-    <Button
-      variant="contained"
-      onClick={onClick}
-      sx={{
-        backgroundColor: backgroundColor,
-        color: color,
-        fontWeight: "700",
-        fontSize: "16px",
-        borderRadius: "50px",
-        padding: "10px 20px",
-        border: `2px solid ${borderColor}`,
-        "&:hover": {
-          backgroundColor: color,
-          color: backgroundColor,
-          borderColor: color,
-        },
-        ...sx,
-      }}
-      {...props}
-    >
-      {children}
-    </Button>
-  );
+    return (
+        <Button
+            variant="contained"
+            onClick={onClick}
+            sx={{
+                backgroundColor: backgroundColor,
+                color: color,
+                fontWeight: '700',
+                fontSize: '16px',
+                borderRadius: '50px',
+                padding: '10px 20px',
+                border: `2px solid ${borderColor}`,
+                '&:hover': {
+                    backgroundColor: color,
+                    color: backgroundColor,
+                    borderColor: color,
+                },
+                ...sx,
+            }}
+            {...props}
+        >
+            {children}
+        </Button>
+    );
 };
 
-const ScheduledSessions = () => {
-  const dispatch = useDispatch();
-  const { scheduledSessionOpen, scheduledSessionData, slotEventData } = useSelector(
-    (state) => state.taAvialability
-  );
+const ScheduledSessions = ({ componentName }) => {
+    const dispatch = useDispatch();
+    const { id } = useParams();
+    let scheduleSessionOpenKey,
+        scheduledSessionDataKey,
+        schedulingStateKey,
+        closeSessionAction,
+        openCancelAction,
+        openRescheduleAction,
+        openSlotsAction,
+        slotEventKey,
+        openReasonAction,
+        reasonForLeaveAction;
 
-  const headers = [
-    "S. No.",
-    "Session Name",
-    "Date",
-    "Time",
-    "Students",
-    "Actions",
-  ];
+    switch (componentName) {
+        case 'TACALENDER':
+            scheduleSessionOpenKey = 'scheduledSessionOpen';
+            scheduledSessionDataKey = 'scheduledSessionData';
+            schedulingStateKey = 'taAvialability';
+            closeSessionAction = closeScheduledSession;
+            openCancelAction = openCancelSession;
+            openRescheduleAction = openRescheduleSession;
+            openSlotsAction = openScheduledSlots;
+            slotEventKey = 'slotEventData';
+            openReasonAction = openReasonForLeave;
+            reasonForLeaveAction = reasonForLeave;
+            break;
+        case 'COACHCALENDER':
+            scheduleSessionOpenKey = 'scheduledCoachSessionOpen';
+            scheduledSessionDataKey = 'scheduledCoachSessionData';
+            schedulingStateKey = 'coachAvailability';
+            closeSessionAction = closeCoachScheduledSession;
+            openCancelAction = openCoachCancelSession;
+            openRescheduleAction = openCoachRescheduleSession;
+            openSlotsAction = openCoachScheduledSlots;
+            slotEventKey = 'slotCoachEventData';
+            openReasonAction = openCoachReasonForLeave;
+            reasonForLeaveAction = reasonForCoachLeave;
+            break;
+        default:
+            scheduleSessionOpenKey = null;
+            scheduledSessionDataKey = null;
+            schedulingStateKey = null;
+            closeSessionAction = null;
+            openCancelAction = null;
+            openRescheduleAction = null;
+            openSlotsAction = null;
+            slotEventKey = null;
+            openReasonAction = null;
+            reasonForLeaveAction = null;
+            break;
+    }
 
-  console.log("Scheduled Session Data: ", scheduledSessionData);
+    const schedulingState = useSelector(state =>
+        schedulingStateKey ? state[schedulingStateKey] : {}
+    );
+    const {
+        [scheduleSessionOpenKey]: scheduledSessionOpen,
+        [scheduledSessionDataKey]: scheduledSessionData = [],
+        [slotEventKey]: slotEventData,
+    } = schedulingState;
 
-  const formattedData = scheduledSessionData.map((session, index) => ({
-    "S. No.": session.id,
-    "Session Name": session.meeting_name,
-    Date: session.date.split(" ")[0],
-    Time: `${session.start_time} - ${session.end_time}`,
-    Students: session.Students.length,
-    StudentList: session.Students,
-  }));
+    const headers = [
+        'S. No.',
+        'Session Name',
+        'Date',
+        'Time',
+        'Students',
+        'Actions',
+    ];
 
-  const handleViewClick = (students) => {
-    // Open a popup to view the students
-    console.log("View clicked!", students);
-  };
+    const formattedData = scheduledSessionData.map((session, index) => ({
+        'S. No.': index + 1,
+        'Session Name': session.meeting_name,
+        Date: session.date.split(' ')[0],
+        Time: `${session.start_time} - ${session.end_time}`,
+        Students: session.Students.length,
+        StudentList: session.Students,
+        id: session.id,
+    }));
 
-  const handleRescheduleClick = (session) => {
-    dispatch(closeScheduledSession());
-    dispatch(openRescheduleSession(session));
-    console.log("Reschedule clicked!", session);
-  };
+    const handleViewClick = students => {
+        // Open a popup to view the students
+        console.log('View clicked!', students);
+    };
 
-  const handleCancelClick = (session) => {
-    dispatch(closeScheduledSession());
-    dispatch(openCancelSession(session));
-    console.log("Cancel clicked!", session);
-  };
+    const handleRescheduleClick = session => {
+        dispatch(closeSessionAction());
+        console.log('SESSION : ', session);
+        dispatch(openRescheduleAction(session));
+        console.log('Reschedule clicked!', session);
+    };
 
-  const handleSubmit = () => {
-    console.log("*** ScheduledSessions");
-    // dispatch(reasonForLeave(slotEventData);
-  };
+    const handleCancelClick = session => {
+        dispatch(closeSessionAction());
+        dispatch(openCancelAction(session));
+        console.log('Cancel clicked!', session);
+    };
 
-  const content = (
-    formattedData.length === 0 ? (
-      <DialogContent style={{ justifyContent: "center", display: "flex" }}>
-        <Typography>
-          No scheduled sessions.
-        </Typography>
-      </DialogContent>
-    ) : (
-      <PopUpTable
-        headers={headers}
-        initialData={formattedData}
-        onViewClick={handleViewClick}
-        onRescheduleClick={handleRescheduleClick}
-        onCancelClick={handleCancelClick}
-      />
-    )
-  );
+    const handleSubmit = () => {
+        console.log('*** ScheduledSessions');
+        dispatch(openReasonAction(slotEventData));
+    };
 
-  const actions = (
-    <Box>
-      <CustomButton
-        onClick={handleSubmit}
-        backgroundColor="#F56D3B"
-        borderColor="#F56D3B"
-        color="#FFFFFF"
-      >
-        Submit
-      </CustomButton>
-    </Box>
-  );
+    const content =
+        formattedData.length === 0 ? (
+            <DialogContent
+                style={{ justifyContent: 'center', display: 'flex' }}
+            >
+                <Typography>No scheduled sessions.</Typography>
+            </DialogContent>
+        ) : (
+            <PopUpTable
+                headers={headers}
+                initialData={formattedData}
+                onViewClick={handleViewClick}
+                onRescheduleClick={handleRescheduleClick}
+                onCancelClick={handleCancelClick}
+            />
+        );
 
-  return (
-    <ReusableDialog
-      open={scheduledSessionOpen}
-      handleClose={() => {
-        dispatch(openScheduledSlots())
-        dispatch(closeScheduledSession())
-      }}
-      title="Scheduled Sessions"
-      content={content}
-      actions={scheduledSessionData.length === 0 ? actions : undefined}
-    />
-  );
+    const actions = (
+        <Box>
+            <CustomButton
+                onClick={handleSubmit}
+                backgroundColor="#F56D3B"
+                borderColor="#F56D3B"
+                color="#FFFFFF"
+            >
+                Submit
+            </CustomButton>
+        </Box>
+    );
+
+    return (
+        <ReusableDialog
+            open={scheduledSessionOpen}
+            handleClose={() => {
+                dispatch(openSlotsAction());
+                dispatch(closeSessionAction());
+            }}
+            title="Scheduled Sessions"
+            content={content}
+            actions={scheduledSessionData.length === 0 ? actions : undefined}
+        />
+    );
 };
 
 export default ScheduledSessions;
-
-

@@ -1,5 +1,5 @@
-import { Box, DialogActions, Grid, Typography, Button } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import { Box, DialogActions, Grid, Typography, Button } from '@mui/material';
+import React, { useEffect, useState } from 'react';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import Calendar from '../../components/Calender/indexCalender';
 import CalendarNew from '../../components/Calender/IndexCalenderNew';
@@ -8,7 +8,15 @@ import MarkLeave from '../../components/availability/MarkLeave';
 import DeleteAllSlots from '../../components/availability/DeleteAllSlots';
 import CreateNewSlot from '../../components/availability/CreateNewSlot';
 import ScheduleSession from '../../components/availability/ScheduleSession';
-import { openMarkLeave, closeMarkLeave, getSlots, fetchCoachSlots, fetchTAScheduleById, selectTAScheduleData, openCreateNewSlots } from '../../redux/features/taModule/taAvialability';
+import {
+    openMarkLeave,
+    closeMarkLeave,
+    getSlots,
+    fetchCoachSlots,
+    fetchTAScheduleById,
+    selectTAScheduleData,
+    openCreateNewSlots,
+} from '../../redux/features/taModule/taAvialability';
 import { useDispatch, useSelector } from 'react-redux';
 import Slots from '../../components/availability/Slots';
 import ScheduledSessions from '../../components/availability/ScheduledSessions';
@@ -19,13 +27,28 @@ import { PickersInputBaseSectionsContainer } from '@mui/x-date-pickers/PickersTe
 import NewCal from '../../components/Calender/IndexCalenderNew';
 import { add } from 'date-fns';
 import { useParams } from 'react-router-dom';
-import { getTAScheduledSessions, openScheduleSession } from '../../redux/features/taModule/taScheduling';
+import {
+    getTAScheduledSessions,
+    openScheduleSession,
+} from '../../redux/features/taModule/taScheduling';
 import moment from 'moment';
 import Schedule from '../../components/availability/Schedule';
 import AssignStudents from '../../components/adminModule/AssignStudents';
 import AssignBatches from '../../components/adminModule/AssignBatches';
+import EditBatches from '../../components/availability/EditBatches';
+import EditStudents from '../../components/availability/EditStudents';
+import Header from '../../components/Header/Header';
+import Sidebar from '../../components/Sidebar/Sidebar';
 
-const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = '#4E18A5', borderColor = '#FFFFFF', sx, ...props }) => {
+const CustomButton = ({
+    onClick,
+    children,
+    color = '#FFFFFF',
+    backgroundColor = '#4E18A5',
+    borderColor = '#FFFFFF',
+    sx,
+    ...props
+}) => {
     return (
         <Button
             variant="contained"
@@ -43,7 +66,7 @@ const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = 
                     color: backgroundColor,
                     borderColor: color,
                 },
-                ...sx
+                ...sx,
             }}
             {...props}
         >
@@ -52,50 +75,61 @@ const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = 
     );
 };
 
-const TaCalender
-    = () => {
-        const dispatch = useDispatch();
-        const { id, name } = useParams();
-        
-        const [sheduleNewSession, setSheduleNewSession] = useState(false)
-        const [deleteFutureSlots, setDeleteFutureSlots] = useState(false)
-        //const [createNewSlot, setCreateNewSlot] = useState(false)
+const TaCalender = () => {
+    const dispatch = useDispatch();
+    const { id, name } = useParams();
 
-        const { assignBatchOpen, assignStudentOpen } = useSelector((state) => state.taModule);
+    //const [sheduleNewSession, setSheduleNewSession] = useState(false)
+    const [deleteFutureSlots, setDeleteFutureSlots] = useState(false);
+    //const [createNewSlot, setCreateNewSlot] = useState(false)
 
-        const {
-            slotData, 
-            scheduleData,
-            markLeaveOpen,
-            scheduledSlotsOpen,
-            scheduledSessionOpen,
-            cancelSessionOpen,
-            reasonForLeaveOpen,
-            resheduleSessionOpen,
-            createNewSlotOpen,
-        } = useSelector((state) => state.taAvialability);
+    const { assignBatchOpen, assignStudentOpen } = useSelector(
+        state => state.taModule
+    );
 
-        const { taScheduledSessions, scheduleSessionOpen } = useSelector((state) => state.taScheduling);
-        //calendar
-        const [eventsList, setEventsList] = useState([]);
+    const {
+        slotData,
+        scheduleData,
+        markLeaveOpen,
+        scheduledSlotsOpen,
+        scheduledSessionOpen,
+        cancelSessionOpen,
+        reasonForLeaveOpen,
+        resheduleSessionOpen,
+        createNewSlotOpen,
+        scheduledSlotsData,
+    } = useSelector(state => state.taAvialability);
 
+    const {
+        taScheduledSessions,
+        scheduleSessionOpen,
+        openEditBatch,
+        openEditStudent,
+    } = useSelector(state => state.taScheduling);
 
+    //calendar
+    const [eventsList, setEventsList] = useState([]);
+    const [slotViewData, setSlotViewData] = useState([]);
+
+    /*
         const addEvent = (title, startDateTime, endDateTime) => {
             const newStart = new Date(startDateTime);
             const newEnd = new Date(endDateTime);
             setEventsList(prev => [...prev, { title, start: newStart, end: newEnd }]);
         };
 
-        // const handleSelectEvent = event => {
-        //     if (window.confirm(`Are you sure you want to delete the event '${event.title}'?`)) {
-        //         setEventsList(prev => {
-        //             const updatedEvents = prev.filter(e => e.start !== event.start || e.end !== event.end || e.title !== event.title);
-        //             return updatedEvents;
-        //           });
-        //     }
-        //   };
+        */
 
-        /*
+    // const handleSelectEvent = event => {
+    //     if (window.confirm(`Are you sure you want to delete the event '${event.title}'?`)) {
+    //         setEventsList(prev => {
+    //             const updatedEvents = prev.filter(e => e.start !== event.start || e.end !== event.end || e.title !== event.title);
+    //             return updatedEvents;
+    //           });
+    //     }
+    //   };
+
+    /*
         useEffect(() => {
 
             // Get the current date
@@ -123,132 +157,203 @@ const TaCalender
         }, [id]);
         */
 
-        // console.log("taScheduledSessions", taScheduledSessions)
-        // useEffect(() => {
-        //     dispatch(getSlots());
-        // }, [slotEventData])
+    // console.log("ta Id :", id);
 
-        console.log("ta Id :", id)
+    useEffect(() => {
+        dispatch(fetchCoachSlots(id));
+        dispatch(fetchTAScheduleById(id));
+    }, [dispatch]);
 
-        useEffect(() => {
-            dispatch(fetchCoachSlots(id));
-            dispatch(fetchTAScheduleById(id));
-        }, [id]);
-
-        console.log("slotData", slotData, "scheduleData", scheduleData);
-
-        // useEffect(() => {
-        //     ); // Replace `2` with the actual ID you need
-        // }, [dispatch]);
-
-        const handleScheduleNewSession = () => {
-            // console.log("Pressed")
-            // setSheduleNewSession()
-            dispatch(openScheduleSession({ id, name }));
+    useEffect(() => {
+        if (scheduleData && scheduleData.data) {
+            const transformedEvents = scheduleData.data.map(event => ({
+                title: event.meeting_name,
+                start: new Date(
+                    event.date.split(' ')[0] + 'T' + event.start_time
+                ),
+                end: new Date(event.date.split(' ')[0] + 'T' + event.end_time),
+            }));
+            setEventsList(transformedEvents);
+        } else {
+            setEventsList([]);
         }
+    }, [scheduleData]);
 
-        const handleMarkLeave = () => {
-            dispatch(openMarkLeave());
+    useEffect(() => {
+        if (slotData.data && slotData.data.length > 0) {
+            const transformedSlots = slotData.data.map(slot => ({
+                startDate: new Date(slot.slot_date + 'T' + slot.from_time),
+                endDate: new Date(slot.slot_date + 'T' + slot.to_time),
+            }));
+            setSlotViewData(transformedSlots);
+        } else {
+            setSlotViewData([]);
         }
+    }, [slotData]);
 
-        const handleDeleteFutureSlots = () => {
-            setDeleteFutureSlots(true)
-        }
+    // console.log("slotData", slotData, "scheduleData", scheduleData);
 
-        const handleCreateNewSlot = () => {
-            dispatch(openCreateNewSlots());
-        }
+    const handleScheduleNewSession = () => {
+        // console.log("Pressed")
+        // setSheduleNewSession()
+        dispatch(openScheduleSession({ id, name }));
+    };
 
-        // console.log("markLeaveOpen", markLeaveOpen);
-        // console.log("scheduledSlotsOpen", scheduledSlotsOpen)
-        // console.log("scheduledSessionOpen", scheduledSessionOpen)
-        // console.log("cancelSessionOpen", cancelSessionOpen)
+    const handleMarkLeave = () => {
+        dispatch(openMarkLeave());
+    };
 
-        // const timeSlots = [
-        // {
-        //     start: moment("2024-07-10 09:00", "YYYY-MM-DD HH:mm").toDate(), 
-        //     end: moment("2024-07-10 10:00", "YYYY-MM-DD HH:mm").toDate()
-        // },
-        // {
-        //     start: moment("2024-07-11 14:00", "YYYY-MM-DD HH:mm").toDate(), 
-        //     end: moment("2024-07-11 15:00", "YYYY-MM-DD HH:mm").toDate()
-        // },
-        // {
-        //     start: moment("2024-07-12 11:30", "YYYY-MM-DD HH:mm").toDate(), 
-        //     end: moment("2024-07-12 12:30", "YYYY-MM-DD HH:mm").toDate()
-        // }
-        // ];
+    const handleDeleteFutureSlots = () => {
+        setDeleteFutureSlots(true);
+    };
 
+    const handleCreateNewSlot = () => {
+        dispatch(openCreateNewSlots());
+    };
 
-        // console.log("session data",scheduleData);
-        return (
-            <Box sx={{ backgroundColor: '#f8f9fa', p: 3 }}>
-                <DialogActions sx={{ p: 2 }}>
-                    <Grid container alignItems="center">
-                        <Grid item xs>
-                            <Typography variant='h4' sx={{ mb: 4 }}>
-                                {name} Calender
-                            </Typography>
+    // console.log("session", scheduleData);
+    // console.log("sessiond data", scheduleData.data);
+
+    return (
+        <>
+            <Box m={'20px'}>
+                <Header />
+                <Sidebar />
+                <Box sx={{ backgroundColor: '#f8f9fa', p: 3 }}>
+                    <DialogActions sx={{ p: 2 }}>
+                        <Grid container alignItems="center">
+                            <Grid item xs>
+                                <Typography variant="h4" sx={{ mb: 4 }}>
+                                    {`${name}'s Calendar`}
+                                </Typography>
+                            </Grid>
+                            <Grid item>
+                                <Box
+                                    display="flex"
+                                    justifyContent="center"
+                                    gap={2}
+                                >
+                                    <CustomButton
+                                        onClick={handleScheduleNewSession}
+                                        color="#FFFFFF"
+                                        backgroundColor="#4E18A5"
+                                        borderColor="#4E18A5"
+                                        style={{ textTransform: 'none' }}
+                                    >
+                                        <AddCircleOutlineIcon />
+                                        Schedule New Session
+                                    </CustomButton>
+
+                                    <CustomButton
+                                        onClick={handleMarkLeave}
+                                        color="#F56D3B"
+                                        backgroundColor="#FFFFFF"
+                                        borderColor="#F56D3B"
+                                        style={{ textTransform: 'none' }}
+                                    >
+                                        Mark Leave
+                                    </CustomButton>
+
+                                    <CustomButton
+                                        onClick={handleDeleteFutureSlots}
+                                        color="#F56D3B"
+                                        backgroundColor="#FFFFFF"
+                                        borderColor="#F56D3B"
+                                        style={{ textTransform: 'none' }}
+                                    >
+                                        Delete All Future Slots
+                                    </CustomButton>
+
+                                    <CustomButton
+                                        color="#FFFFFF"
+                                        backgroundColor="#F56D3B"
+                                        borderColor="#F56D3B"
+                                        onClick={handleCreateNewSlot}
+                                        style={{ textTransform: 'none' }}
+                                    >
+                                        {/* <AddCircleOutlineIcon /> */}
+                                        Create New Slot
+                                    </CustomButton>
+                                </Box>
+                            </Grid>
                         </Grid>
-                        <Grid item>
-                            <Box display="flex" justifyContent="center" gap={2}>
-                                <CustomButton
-                                    onClick={handleScheduleNewSession}
-                                    color='#FFFFFF'
-                                    backgroundColor='#4E18A5'
-                                    borderColor='#4E18A5'
-                                >
-                                    <AddCircleOutlineIcon />
-                                    Schedule New Session
-                                </CustomButton>
+                    </DialogActions>
 
-                                <CustomButton
-                                    onClick={handleMarkLeave}
-                                    color='#F56D3B'
-                                    backgroundColor='#FFFFFF'
-                                    borderColor='#F56D3B'
-                                >
-                                    Mark Leave
-                                </CustomButton>
-
-                                <CustomButton
-                                    onClick={handleDeleteFutureSlots}
-                                    color='#F56D3B'
-                                    backgroundColor='#FFFFFF'
-                                    borderColor='#F56D3B'
-                                >
-                                    Delete All Future Slots
-                                </CustomButton>
-
-                                <CustomButton
-                                    color='#FFFFFF'
-                                    backgroundColor='#F56D3B'
-                                    borderColor='#F56D3B'
-                                    onClick={handleCreateNewSlot}
-                                >
-                                    {/* <AddCircleOutlineIcon /> */}
-                                    Create New Slot
-                                </CustomButton>
-                            </Box>
-                        </Grid>
-                    </Grid>
-                </DialogActions>
-                <CalendarComponent eventsList={scheduleData.data} addEvent={addEvent} slotData={slotData}/*handleSelectEvent={handleSelectEvent}*/ />
-                {scheduleSessionOpen && <Schedule />}
-                {sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} />}
-                {markLeaveOpen && <MarkLeave id={id} name={name} />}
-                {scheduledSlotsOpen && <Slots id={id} name={name} />}
-                {scheduledSessionOpen && <ScheduledSessions id={id} name={name} />}
-                {cancelSessionOpen && <CancelSchedule id={id} name={name} />}
-                {reasonForLeaveOpen && <ReasonForLeave id={id} name={name} />}
-                {resheduleSessionOpen && <ReschedulingSession id={id} name={name} />}
-                {deleteFutureSlots && <DeleteAllSlots open={deleteFutureSlots} handleClose={() => setDeleteFutureSlots(false)} id={id} name={name} />}
-                {createNewSlotOpen && <CreateNewSlot addEvent={addEvent} />}
-                {assignStudentOpen && <AssignStudents componentname="ADDEDITTA" />}
-                {assignBatchOpen && <AssignBatches componentname="ADDEDITTA" />}
+                    <CalendarComponent
+                        eventsList={eventsList}
+                        slotData={slotViewData}
+                        componentName={'TACALENDER'}
+                    />
+                    {scheduleSessionOpen && (
+                        <Schedule componentName={'TASCHEDULE'} />
+                    )}
+                    {openEditBatch && (
+                        <EditBatches componentname={'TASCHEDULE'} />
+                    )}
+                    {openEditStudent && (
+                        <EditStudents componentname={'TASCHEDULE'} />
+                    )}
+                    {/*{sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} componentName={"TACALENDER"} />} */}
+                    {markLeaveOpen && (
+                        <MarkLeave
+                            id={id}
+                            name={name}
+                            componentName={'TACALENDER'}
+                        />
+                    )}
+                    {scheduledSlotsOpen && (
+                        <Slots
+                            id={id}
+                            name={name}
+                            componentName={'TACALENDER'}
+                        />
+                    )}
+                    {scheduledSessionOpen && (
+                        <ScheduledSessions
+                            id={id}
+                            name={name}
+                            componentName={'TACALENDER'}
+                        />
+                    )}
+                    {cancelSessionOpen && (
+                        <CancelSchedule
+                            id={id}
+                            name={name}
+                            componentName={'TACALENDER'}
+                        />
+                    )}
+                    {reasonForLeaveOpen && (
+                        <ReasonForLeave
+                            id={id}
+                            name={name}
+                            componentName={'TACALENDER'}
+                        />
+                    )}
+                    {resheduleSessionOpen && (
+                        <ReschedulingSession
+                            id={id}
+                            name={name}
+                            componentName={'TACALENDER'}
+                        />
+                    )}
+                    {deleteFutureSlots && (
+                        <DeleteAllSlots
+                            open={deleteFutureSlots}
+                            handleClose={() => setDeleteFutureSlots(false)}
+                            id={id}
+                            name={name}
+                            componentName={'TACALENDER'}
+                        />
+                    )}
+                    {createNewSlotOpen && (
+                        <CreateNewSlot componentName={'TACALENDER'} />
+                    )}
+                    {/* {assignStudentOpen && <AssignStudents componentname="ADDEDITTA" />}
+                {assignBatchOpen && <AssignBatches componentname="ADDEDITTA" />} */}
+                </Box>
             </Box>
-        )
-    }
+        </>
+    );
+};
 
-export default TaCalender
-
+export default TaCalender;

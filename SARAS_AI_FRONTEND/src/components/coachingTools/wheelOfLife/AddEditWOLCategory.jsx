@@ -1,77 +1,127 @@
-import React, { useEffect, useState } from 'react'
-import ReusableDialog from '../../CustomFields/ReusableDialog'
-import { Button, Grid } from '@mui/material'
-import CustomTextField from '../../CustomFields/CustomTextField'
-import { useDispatch, useSelector } from 'react-redux'
-import { setAddEditWolCategory } from '../../../redux/features/coachingTools/wol/wolSlice'
+import React, { useEffect, useState } from 'react';
+import ReusableDialog from '../../CustomFields/ReusableDialog';
+import { Button, Grid, styled } from '@mui/material';
+import CustomTextField from '../../CustomFields/CustomTextField';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+    setAddEditWolCategory,
+    setEditData,
+    updateWOLCategory,
+} from '../../../redux/features/coachingTools/wol/wolSlice';
+import {
+    createWOLCategory,
+    updateeWOLCategory,
+    getWOLCategory,
+} from '../../../redux/features/coachingTools/wol/wolSlice';
 
-const AddEditWOLCategory = (editData) => {
+const CustomButton = styled(Button)(({ theme, active }) => ({
+    borderRadius: '50px',
+    border: '1px solid #F56D3B',
+    color: active ? '#fff' : '#F56D3B',
+    backgroundColor: active ? '#F56D3B' : '#FFF',
+    padding: '8px 16px',
+    margin: '0 8px',
+    '&:hover': {
+        backgroundColor: '#F56D3B',
+        color: '#fff',
+        borderColor: '#F56D3B',
+    },
+}));
+
+const AddEditWOLCategory = () => {
     const dispatch = useDispatch();
-    const { openAddEditWolCategory } = useSelector((state) => state.wol);
-    const [categoryName, setCategoryName] = useState("")
+    const { openAddEditWolCategory, editData } = useSelector(
+        state => state.wol
+    );
+    const [categoryName, setCategoryName] = useState('');
 
-    const handleSubmit = () => {
-        console.log('Submit')
+    const handleSubmit = async () => {
         if (editData) {
-            setCategoryName(editData.categoryName);
-            console.log('Edit')
+            //setCategoryName(editData.name);
+            console.log('Edit');
+            try {
+                const updatedWOL = await dispatch(
+                    updateWOLCategory({
+                        id: editData.id,
+                        data: { name: categoryName },
+                    })
+                ).unwrap();
+            } catch (error) {
+                console.log(error.message); //TODO: Show toast message
+            }
+        } else {
+            try {
+                const createdWOL = await dispatch(
+                    createWOLCategory({ name: categoryName })
+                ).unwrap();
+            } catch (error) {
+                console.log(error.message); //TODO: Show toast message
+            }
         }
-        console.log('Add')
-    }
+        dispatch(getWOLCategory()).then(() => {
+            dispatch(setAddEditWolCategory(false));
+            dispatch(setEditData(null));
+        });
+    };
+
+    const handlepopupClose = () => {
+        dispatch(setAddEditWolCategory(false));
+        dispatch(setEditData(null));
+    };
 
     useEffect(() => {
-        console.log(editData)
+        console.log(editData);
         if (editData) {
-            setCategoryName(editData.category)
+            setCategoryName(editData.name);
         }
-    }, [editData])
+    }, [editData]);
 
     const actions = editData ? (
-        <Button
+        <CustomButton
             onClick={handleSubmit}
             style={{
-                backgroundColor: "#F56D3B",
-                borderColor: "#F56D3B",
-                color: "#FFFFFF",
-            }}>
+                backgroundColor: '#F56D3B',
+                borderColor: '#F56D3B',
+                color: '#FFFFFF',
+            }}
+        >
             Update
-        </Button >
+        </CustomButton>
     ) : (
-        <Button
+        <CustomButton
             onClick={handleSubmit}
             style={{
-                backgroundColor: "#F56D3B",
-                borderColor: "#F56D3B",
-                color: "#FFFFFF",
+                backgroundColor: '#F56D3B',
+                borderColor: '#F56D3B',
+                color: '#FFFFFF',
             }}
         >
             Submit
-        </Button>
-    )
+        </CustomButton>
+    );
 
     const content = (
         <Grid container spacing={2} justifyContent="center">
             <Grid item sm={6}>
-
                 <CustomTextField
                     label="WOL Category"
                     placeholder="Enter WOL Category"
                     value={categoryName}
-                    onChange={(e) => setCategoryName(e.target.value)}
+                    onChange={e => setCategoryName(e.target.value)}
                 />
             </Grid>
         </Grid>
-    )
+    );
 
     return (
         <ReusableDialog
             open={openAddEditWolCategory}
-            handleClose={() => dispatch(setAddEditWolCategory(false))}
-            title={editData ? "Edit New WOL Category" : "Add New WOL Category"}
+            handleClose={handlepopupClose}
+            title={editData ? 'Edit New WOL Category' : 'Add New WOL Category'}
             content={content}
             actions={actions}
         />
-    )
-}
+    );
+};
 
-export default AddEditWOLCategory
+export default AddEditWOLCategory;

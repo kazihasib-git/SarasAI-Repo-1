@@ -1,11 +1,11 @@
-import React from 'react'
+import React from 'react';
 
 function Student() {
-  return (
-    <div>
-      <h1>STUDENTS</h1>
-    </div>
-  )
+    return (
+        <div>
+            <h1>STUDENTS</h1>
+        </div>
+    );
 }
 
-export default Student
+export default Student;
