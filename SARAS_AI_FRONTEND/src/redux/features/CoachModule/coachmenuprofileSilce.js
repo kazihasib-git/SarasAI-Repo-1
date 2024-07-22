@@ -5,21 +5,20 @@ import { baseUrl } from '../../../utils/baseURL';
 // Get Today Available Ta
 export const updateCoachmenuprofile = createAsyncThunk(
     'coachMenu/updateprofile',
-    async (data) => {
+    async data => {
         const response = await axios.put(
-            `${baseUrl}/coach/coach-profile`,data
+            `${baseUrl}/coach/coach-profile`,
+            data
         );
-        console.log(response.data,'response.data');
+        console.log(response.data, 'response.data');
         return response.data;
     }
 );
 
 //get slots for ta from date to end date
 
-
 const initialState = {
     profileData: [],
-   
 };
 
 export const coachMenuSlice = createSlice({
@@ -28,7 +27,6 @@ export const coachMenuSlice = createSlice({
     reducers: {},
     extraReducers: builder => {
         //for sessions ta for calendar
-       
 
         // Get Today Available Ta
         builder.addCase(updateCoachmenuprofile.pending, state => {
@@ -42,11 +40,7 @@ export const coachMenuSlice = createSlice({
             state.loading = false;
             state.error = action.error.message;
         });
-
-      
     },
 });
-
-
 
 export default coachMenuSlice.reducer;
