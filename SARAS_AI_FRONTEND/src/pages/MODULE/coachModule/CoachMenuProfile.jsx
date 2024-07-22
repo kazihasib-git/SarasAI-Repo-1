@@ -18,8 +18,13 @@ import {
     qualificationOptions,
     validateTimeZone,
 } from '../../../components/CustomFields/FormOptions';
+import moment from 'moment';
+import { updateCoachmenuprofile } from '../../../redux/features/CoachModule/coachmenuprofileSilce';
+import { useDispatch } from 'react-redux';
+
 
 const CoachMenuProfile = () => {
+  const dispatch = useDispatch()
     const {
         register,
         handleSubmit,
@@ -50,7 +55,10 @@ const CoachMenuProfile = () => {
     };
 
     const onSubmit = async formData => {
+      console.log('coachmenu profile calling');
+      console.log(formData,'formData');
         // Handle form submission
+        dispatch(updateCoachmenuprofile({formData}));
     };
 
     return (
