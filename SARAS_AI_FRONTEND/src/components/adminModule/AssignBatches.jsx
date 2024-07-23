@@ -138,7 +138,7 @@ const AssignBatches = ({ componentname }) => {
     }, [assignBatchOpen, dispatch, getBatchMappingAction]);
 
     useEffect(() => {
-        if (batchMapping) {
+        if (Array.isArray(batchMapping)) {
             console.log('BATCHMAPPING : ', batchMapping);
             const transformedData = batchMapping.map((batch, index) => ({
                 'S. No.': index + 1,
@@ -164,7 +164,7 @@ const AssignBatches = ({ componentname }) => {
         }
     }, [batchMapping, selectedBranch, searchQuery]);
 
-    const batchOptions = batchMapping
+    const batchOptions = Array.isArray(batchMapping)
         ? [...new Set(batchMapping.map(batch => batch.branch.name))]
         : [];
 
