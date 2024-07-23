@@ -277,7 +277,6 @@ function AddEditCoach({ data }) {
                                     sx={{
                                         fontSize: '24px',
                                         fontWeight: '600',
-                                        font: 'Nunito Sans',
                                         color: '#1A1E3D',
                                     }}
                                 >
