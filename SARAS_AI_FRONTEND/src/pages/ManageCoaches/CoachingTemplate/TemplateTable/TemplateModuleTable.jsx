@@ -330,7 +330,7 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                                     style={{
                                                                         marginLeft:
                                                                             '5px',
-                                                                        color: 'orange',
+                                                                        color: '#F56D3B',
                                                                     }}
                                                                 />
                                                             </Button>
