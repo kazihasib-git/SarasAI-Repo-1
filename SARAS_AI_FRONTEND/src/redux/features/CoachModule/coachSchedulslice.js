@@ -128,6 +128,7 @@ const coachScheduling = createSlice({
             (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
+                state.taAvailableSlots = [];
             }
         );
     },

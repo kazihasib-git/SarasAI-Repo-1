@@ -509,6 +509,7 @@ const CalenderButton = styled(Button)(({ theme }) => ({
     border: 'none',
     color: '#F56D3B',
     backgroundColor: '#FEEBE3',
+    textTransform: 'none',
     transition: 'all 0.3s ease', // Corrected transition syntax
     '&:hover': {
         backgroundColor: '#FEEBE3',

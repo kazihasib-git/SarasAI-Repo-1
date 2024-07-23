@@ -182,7 +182,7 @@ const EditStudents = ({ componentname }) => {
                 'S. No.': index + 1,
                 'Student Name': stu.student.name,
                 Program:
-                    stu.student.packages.map((pack) => pack.name).join(', ') ||
+                    stu.student.packages.map(pack => pack.name).join(', ') ||
                     'N/A',
                 //'Academic Term': stu.student.academic_term,
                 Batch:
@@ -254,9 +254,9 @@ const EditStudents = ({ componentname }) => {
                           //         (batch) => batch.batch_name === selectedBatch
                           //     )
                           //  )
-                          .flatMap((student) =>
-                              student.student.packages.map((pack) => pack.name),
-                          ),
+                          .flatMap(student =>
+                              student.student.packages.map(pack => pack.name)
+                          )
                   ),
               ]
             : [];
@@ -264,12 +264,11 @@ const EditStudents = ({ componentname }) => {
     useEffect(() => {
         console.log('Selected Student inside use Effect : ', selectedStudent);
         if (selectedStudent) {
-            setSelectedStudents(selectedStudent.map(id =>   id));
+            setSelectedStudents(selectedStudent.map(prev => prev.id));
         }
     }, [selectedStudent]);
 
-    console.log("already selected students: ", selectedStudent);
-
+    console.log('already selected students: ', selectedStudent);
 
     const handleSelectStudent = id => {
         setSelectedStudents(prev =>
@@ -287,13 +286,15 @@ const EditStudents = ({ componentname }) => {
 
         const data = {
             [componentname === 'ADDITCOACH' ? 'Coach_id' : 'ta_id']: id,
-            name : assignedName,
-            student: selectedStudents ? selectedStudents.map(id => (id )) : [],
+            name: assignedName,
+            student: selectedStudents
+                ? selectedStudents.map(id => ({ id }))
+                : [],
         };
 
         console.log('Data  292: ', data);
 
-        dispatch(openScheduleSessionAction(data ))
+        dispatch(openScheduleSessionAction(data));
         dispatch(closeDialogAction());
         /*
         dispatch(
@@ -325,7 +326,7 @@ const EditStudents = ({ componentname }) => {
 
     const content = (
         <>
-            <Grid container spacing={2}>
+            <Grid container spacing={2} justifyContent="center" sx={{ mt: 0 }}>
                 <Grid item sm={6}>
                     <CustomTextField
                         select

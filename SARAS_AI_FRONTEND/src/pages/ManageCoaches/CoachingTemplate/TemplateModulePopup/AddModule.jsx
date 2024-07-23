@@ -87,8 +87,8 @@ const AddModule = () => {
                 .unwrap()
                 .then(() => {
                     dispatch(getAllCoachTemplateModules(selectedCoachTemplate));
+                    dispatch(closeTemplateModulePopup());
                 });
-            dispatch(closeTemplateModulePopup());
             setModuleName(''); // Reset the input field
         }
     };

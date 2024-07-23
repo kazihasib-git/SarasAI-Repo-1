@@ -190,6 +190,7 @@ const taScheduling = createSlice({
             (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
+                state.taAvailableSlots = [];
             }
         );
 
