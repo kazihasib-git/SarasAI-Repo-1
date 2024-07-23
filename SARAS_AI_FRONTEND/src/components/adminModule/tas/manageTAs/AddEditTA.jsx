@@ -40,6 +40,7 @@ import 'react-phone-input-2/lib/style.css';
 import { getTimezone } from '../../../../redux/features/timezone/timezoneSlice';
 import CustomTimeZoneForm from '../../../CustomFields/CustomTimeZoneForm';
 import { dateFormatter } from '../../../../utils/dateFormatter';
+import CustomDateOfBirth from '../../../CustomFields/CustomDateOfBirth';
 const AddEditTA = ({ data }) => {
     const {
         register,
@@ -486,7 +487,7 @@ const AddEditTA = ({ data }) => {
                                 control={control}
                                 name="date_of_birth"
                                 render={({ field }) => (
-                                    <CustomDateField
+                                    <CustomDateOfBirth
                                         label="Date of Birth"
                                         name="date_of_birth"
                                         value={dateOfBirth}
@@ -497,6 +498,7 @@ const AddEditTA = ({ data }) => {
                                         helperText={
                                             errors.date_of_birth?.message
                                         }
+                                        sx={{ width: '100%' }}
                                     />
                                 )}
                                 rules={{

@@ -142,11 +142,13 @@ const DynamicTable = ({
     const getColorForAvailability = availability => {
         switch (availability) {
             case 'available':
-                return '#06DD0F';
-            case 'on leave':
+                return '#00C808';
+            case 'On leave':
                 return '#F48606';
-            case 'Inactive':
-                return '#808080';
+            case 'In active':
+                return '#060FDD';
+            case 'Active':
+                return '#06DD0F';
             default:
                 return '#000000';
         }

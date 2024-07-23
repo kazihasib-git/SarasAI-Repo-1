@@ -11,7 +11,6 @@ import CustomTextField from '../CustomFields/CustomTextField';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import PopUpTable from '../CommonComponent/PopUpTable';
 import { openScheduleSession } from '../../redux/features/taModule/taScheduling';
-
 import {
     closeCoachAssignStudents,
     openCoachSuccessPopup,
@@ -155,7 +154,7 @@ const AssignStudents = ({ componentname }) => {
 
             const filtered = transformedData.filter(student => {
                 const matchesTerm = selectedTerm
-                    ? student['Academic Term'] === selectedTerm
+                    ? student.Program.includes(selectedTerm)
                     : true;
                 const matchesBatch = selectedBatch
                     ? student.Batch.includes(selectedBatch)
@@ -172,6 +171,7 @@ const AssignStudents = ({ componentname }) => {
         }
     }, [studentBatchMapping, selectedTerm, selectedBatch, searchName]);
 
+    // Generate unique batch options and program options
     const batchOptions = studentBatchMapping
         ? [
               ...new Set(
@@ -179,7 +179,9 @@ const AssignStudents = ({ componentname }) => {
                       .filter(
                           student =>
                               !selectedTerm ||
-                              student.academic_term === selectedTerm
+                              student.packages
+                                  .map(pack => pack.name)
+                                  .includes(selectedTerm)
                       )
                       .flatMap(student =>
                           student.batches.map(batch => batch.batch_name)
@@ -191,7 +193,9 @@ const AssignStudents = ({ componentname }) => {
     const academicTermOptions = studentBatchMapping
         ? [
               ...new Set(
-                  studentBatchMapping.map(student => student.academic_term)
+                  studentBatchMapping.flatMap(student =>
+                      student.packages.map(pack => pack.name)
+                  )
               ),
           ]
         : [];
@@ -236,7 +240,7 @@ const AssignStudents = ({ componentname }) => {
                 <Grid item sm={6}>
                     <CustomTextField
                         select
-                        label="Academic Term"
+                        label="Program"
                         value={selectedTerm}
                         onChange={e => setSelectedTerm(e.target.value)}
                     >

@@ -31,6 +31,7 @@ const ManageTA = () => {
     const [tasData, setTasData] = useState([]);
     const [editData, setEditData] = useState();
     const [searchQuery, setSearchQuery] = useState('');
+    const [actionButtonToggled, setActionButtonToggled] = useState(false); // Track toggle state
 
     useEffect(() => {
         dispatch(closeCreateTa());
@@ -53,18 +54,17 @@ const ManageTA = () => {
         }
     }, [tas]);
 
-    // if (loading) return <div>Loading...</div>;
-    // if (error) return <div>Error: {error}</div>;
-
     const actionButtons = [
         {
             type: 'switch',
+            onChange: () => setActionButtonToggled(prev => !prev), // Toggle state
         },
         {
             type: 'edit',
             onClick: id => {
                 handleEditTa(id);
             },
+            disabled: actionButtonToggled, // Disable edit button based on toggle state
         },
     ];
 
@@ -77,7 +77,6 @@ const ManageTA = () => {
         setEditData(dataToEdit);
         dispatch(openEditTa());
     };
-    console.log('Editta isisisi', editData);
 
     const handleChange = value => {
         setSearchQuery(value);

@@ -38,6 +38,7 @@ import Sidebar from '../../../Sidebar/Sidebar';
 import { getTimezone } from '../../../../redux/features/timezone/timezoneSlice';
 import CustomTimeZoneForm from '../../../CustomFields/CustomTimeZoneForm';
 import AssignBatches from '../../AssignBatches';
+import CustomDateOfBirth from '../../../CustomFields/CustomDateOfBirth';
 
 function AddEditCoach({ data }) {
     const {
@@ -530,7 +531,7 @@ function AddEditCoach({ data }) {
                                     control={control}
                                     name="date_of_birth"
                                     render={({ field }) => (
-                                        <CustomDateField
+                                        <CustomDateOfBirth
                                             label="Date of Birth"
                                             name="date_of_birth"
                                             value={dateOfBirth}
