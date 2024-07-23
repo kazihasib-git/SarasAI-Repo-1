@@ -9,10 +9,19 @@
     left: 6% !important;
     bottom: 0% !important;
 }
+.custom-override
+    .rbc-time-content
+    .rbc-time-gutter
+    .rbc-time-column
+    .rbc-timeslot-group
+    .rbc-time-slot {
+    background-color: #fff !important;
+}
 
 .rbc-timeslot-group {
     min-height: 75px;
 }
+
 .rbc-event-session {
     background-color: #28a745; /* Dark green for sessions */
     color: #fff;
@@ -25,7 +34,7 @@
 }
 
 .rbc-toolbar-label {
-    color: #fff; /* Toolbar label color */
+    color: #121d22; /* Toolbar label color */
 }
 
 .rbc-today {
@@ -45,11 +54,11 @@
 }
 
 .rbc-header {
-    background-color: #ecebff;
+    background-color: #f1f1fb;
     color: #5f6368;
     border: 1px solid #eee;
 }
+
 .rbc-day-slot .rbc-time-slot {
     border: 0px;
 }
-/* Custom bottom border for rbc-timeslot-group */

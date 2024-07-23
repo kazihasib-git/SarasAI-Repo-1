@@ -156,7 +156,7 @@ const DynamicTable = ({
     return (
         <div className="table-container">
             <Box display={'flex'} justifyContent={'space-between'}>
-                <Box display="flex" alignItems="center" padding="16px">
+                <Box>
                     {/* <i
                             style={{ fontSize: "25px" }}
                             className="bi bi-caret-left"

@@ -7,6 +7,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import PopUpTable from '../CommonComponent/PopUpTable';
 import { useParams } from 'react-router-dom';
 import { rescheduleSession } from '../../redux/features/taModule/taScheduling';
+import { rescheduleCoachSession } from '../../redux/features/CoachModule/coachSchedule';
+
 import {
     closeRescheduleSession,
     fetchAvailableSlots,
@@ -61,6 +63,7 @@ const CustomButton = ({
 const headers = ['S. No.', 'Slots Available', 'Select'];
 
 const ReschedulingSession = ({ componentName }) => {
+    console.log('COach name : ', componentName);
     const taId = useParams();
     const dispatch = useDispatch();
     const [selectDate, setSelectDate] = useState(null);
@@ -76,7 +79,8 @@ const ReschedulingSession = ({ componentName }) => {
         openScheduledSessionAction,
         availableSlotsAction,
         sessionEventAction,
-        slotEventAction;
+        slotEventAction,
+        reschduleSessionAction;
 
     switch (componentName) {
         case 'TACALENDER':
@@ -88,6 +92,7 @@ const ReschedulingSession = ({ componentName }) => {
             availableSlotsAction = 'availableSlotsData';
             sessionEventAction = 'sessionEventData';
             slotEventAction = 'slotEventData';
+            reschduleSessionAction = rescheduleSession;
             break;
         case 'COACHCALENDER':
             rescheduleSessionOpenKey = 'resheduleCoachSessionOpen';
@@ -98,6 +103,7 @@ const ReschedulingSession = ({ componentName }) => {
             availableSlotsAction = 'availableCoachSlotsData';
             sessionEventAction = 'sessionCoachEventData';
             slotEventAction = 'slotCoachEventData';
+            reschduleSessionAction = rescheduleCoachSession;
             break;
         default:
             rescheduleSessionOpenKey = null;
@@ -108,6 +114,7 @@ const ReschedulingSession = ({ componentName }) => {
             availableSlotsAction = null;
             sessionEventAction = null;
             slotEventAction = null;
+            reschduleSessionAction;
             break;
     }
 
@@ -164,7 +171,7 @@ const ReschedulingSession = ({ componentName }) => {
         console.log('selectedSlots : ', selectedSlots);
         console.log('sessionEventData : ', sessionEventData['S. No.']);
         dispatch(
-            rescheduleSession({
+            reschduleSessionAction({
                 id: sessionEventData.id,
                 data: {
                     admin_user_id: taId.id,
@@ -242,7 +249,7 @@ const ReschedulingSession = ({ componentName }) => {
                         >
                             <Grid item xs={12} sm={6}>
                                 <CustomTimeField
-                                    label="From Time"
+                                    label="Start Time"
                                     value={fromTime}
                                     onChange={time => setFromTime(time)}
                                 />

@@ -27,6 +27,7 @@ const CustomButton = styled(Button)(({ theme, active }) => ({
     backgroundColor: active ? '#F56D3B' : '#FFF',
     padding: '8px 16px',
     margin: '0 8px',
+    textTransform: 'none',
     '&:hover': {
         backgroundColor: '#F56D3B',
         color: '#fff',
@@ -175,7 +176,7 @@ const AdminDataTable = ({
     return (
         <div className="table-container">
             <Box display={'flex'} justifyContent={'space-between'}>
-                <Box display="flex" alignItems="center" padding="16px">
+                <Box>
                     {/* <ArrowBackIosIcon
             style={{ fontSize: "25px", marginBottom: "17px" }}
             onClick={() => navigate("/coach-mapping")}
@@ -184,7 +185,7 @@ const AdminDataTable = ({
                     <p
                         style={{
                             fontSize: '44px',
-                            marginLeft: '16px',
+                            fontFamily: 'ExtraLight',
                         }}
                     >
                         {title}

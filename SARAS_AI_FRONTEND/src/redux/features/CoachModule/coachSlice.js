@@ -387,7 +387,7 @@ export const coachSlice = createSlice({
         builder.addCase(getCoachBatchMapping.fulfilled, (state, action) => {
             state.loading = false;
             // console.log("MAPPING PAYLOAD :", action.payload )
-            state.coachBatchMapping = action.payload;
+            state.coachBatchMapping = action.payload?.batches;
         });
         builder.addCase(getCoachBatchMapping.rejected, (state, action) => {
             state.loading = false;

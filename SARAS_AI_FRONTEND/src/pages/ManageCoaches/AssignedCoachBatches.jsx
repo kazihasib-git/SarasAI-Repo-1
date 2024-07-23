@@ -8,7 +8,7 @@ import {
     getAssignStudents,
 } from '../../redux/features/CoachModule/coachSlice';
 import AdminDataTable from '../../components/CommonComponent/AdminDataTable';
-const headers = ['Sr. No.', 'Student Name', 'Batch', 'Actions'];
+const headers = ['Sr. No.', 'Batch Name', 'Branch', 'Actions'];
 const actionButtons = [
     {
         type: 'switch',
@@ -38,8 +38,8 @@ const AssignCoachBatches = () => {
         if (assignedBatches && assignedBatches.length > 0) {
             const transformData = assignedBatches.map((item, index) => ({
                 id: item.id,
-                coach_name: item.coach.name,
                 batch_name: item.batch.name,
+                branch: item.batch.branch.name,
                 is_active: item.is_active,
             }));
             console.log('TRANSFORM DATA : ', transformData);

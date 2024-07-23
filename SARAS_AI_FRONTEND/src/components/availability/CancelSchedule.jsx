@@ -105,7 +105,7 @@ const CancelSchedule = ({ componentName }) => {
         schduldeCoachCancelData,
         slotCoachEventData,
     } = schedulingState;
-
+    console.log('schduldeCancelData ', schduldeCancelData);
     const handleCancel = () => {
         // console.log("SLOT EVENT DATA : ", slotEventData)
         // console.log("SLOT COACH EVENT DATA : ", slotCoachEventData)
@@ -163,14 +163,18 @@ const CancelSchedule = ({ componentName }) => {
         <>
             <DialogTitle>
                 {componentName === 'TACALENDER'
-                    ? schduldeCancelData['Session Name']
-                    : schduldeCoachCancelData['Session Name']}
+                    ? `'${schduldeCancelData['Session Name']}'`
+                    : `'${schduldeCoachCancelData['Session Name']}'`}
             </DialogTitle>
             <DialogContent
                 style={{ display: 'flex', justifyContent: 'center' }}
             >
                 <Typography>
-                    Scheduled for Date from{' '}
+                    Scheduled for
+                    {componentName === 'TACALENDER'
+                        ? schduldeCancelData.date
+                        : schduldeCoachCancelData.date}{' '}
+                    ? from{' '}
                     {componentName === 'TACALENDER'
                         ? schduldeCancelData.Time
                         : schduldeCoachCancelData.Time}{' '}
