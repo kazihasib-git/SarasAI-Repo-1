@@ -4,7 +4,15 @@ import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { TextField } from '@mui/material';
 import moment from 'moment';
 
-const CustomDateField = ({ label, name, value, onChange, sx, ...props }) => {
+const CustomDateField = ({
+    label,
+    name,
+    value,
+    onChange,
+    disableFutureDates,
+    sx,
+    ...props
+}) => {
     const handleDateChange = date => {
         const formattedDate = date ? moment(date).format('YYYY-MM-DD') : '';
         onChange(formattedDate);
@@ -17,6 +25,7 @@ const CustomDateField = ({ label, name, value, onChange, sx, ...props }) => {
                 name={name}
                 value={value ? moment(value, 'YYYY-MM-DD') : null}
                 onChange={handleDateChange}
+                disableFuture={disableFutureDates} // Apply the restriction conditionally
                 format="MMMM-DD-YYYY"
                 slotProps={{
                     textField: {
