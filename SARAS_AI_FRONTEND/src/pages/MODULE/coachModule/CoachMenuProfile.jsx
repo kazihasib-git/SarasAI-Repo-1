@@ -204,12 +204,12 @@ const CoachMenuProfile = () => {
                                         minLength: {
                                             value: 3,
                                             message:
-                                                'PIN Code must be at least 3 characters long',
+                                                'PIN Code must be at least 3 digits long',
                                         },
                                         maxLength: {
-                                            value: 10,
+                                            value: 6,
                                             message:
-                                                'PIN Code cannot exceed 10 characters',
+                                                'PIN Code cannot exceed 6 digits',
                                         },
                                     }}
                                     errors={errors}

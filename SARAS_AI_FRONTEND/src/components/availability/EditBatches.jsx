@@ -243,7 +243,7 @@ const EditBatches = ({ componentname }) => {
 
     const content = (
         <>
-            <Grid container spacing={2} justifyContent="center">
+            <Grid container spacing={2} justifyContent="center" sx={{ mt: 0 }}>
                 <Grid item sm={6}>
                     <CustomTextField
                         select
@@ -314,7 +314,7 @@ const EditBatches = ({ componentname }) => {
         <ReusableDialog
             open={assignBatchOpen}
             handleClose={() => dispatch(closeDialogAction())}
-            title={`Assign Batches to ${assignedTA}`}
+            title={`Assign Batches to '${assignedTA}'`}
             content={content}
             actions={actions}
         />

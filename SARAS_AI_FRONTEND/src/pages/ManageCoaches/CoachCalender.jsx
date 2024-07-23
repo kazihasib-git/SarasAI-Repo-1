@@ -7,7 +7,7 @@ import CalendarComponent from '../../components/Calender/BigCalendar';
 import MarkLeave from '../../components/availability/MarkLeave';
 import DeleteAllSlots from '../../components/availability/DeleteAllSlots';
 import CreateNewSlot from '../../components/availability/CreateNewSlot';
-import ScheduleSession from '../../components/availability/ScheduleSession';
+// import ScheduleSession from '../../components/availability/ScheduleSession';
 import Slots from '../../components/availability/Slots';
 import CancelSchedule from '../../components/availability/CancelSchedule';
 import ReasonForLeave from '../../components/availability/ReasonForLeave';
@@ -22,12 +22,10 @@ import {
 } from '../../redux/features/CoachModule/CoachAvailabilitySlice';
 import EditBatches from '../../components/availability/EditBatches';
 import EditStudents from '../../components/availability/EditStudents';
-import {
-    openCoachEditBatch,
-    openCoachEditStudent,
-} from '../../redux/features/CoachModule/coachSchedule';
+import { openCoachScheduleSession } from '../../redux/features/CoachModule/coachSchedule';
 import Header from '../../components/Header/Header';
 import Sidebar from '../../components/Sidebar/Sidebar';
+import Schedule from '../../components/availability/Schedule';
 
 const CustomButton = ({
     onClick,
@@ -71,6 +69,7 @@ const CoachCalender = () => {
     const [sheduleNewSession, setSheduleNewSession] = useState(false);
     const [deleteFutureSlots, setDeleteFutureSlots] = useState(false);
     //const [createNewSlot, setCreateNewSlot] = useState(false)
+    const [slotViewData, setSlotViewData] = useState([]);
 
     const {
         coachMarkLeaveOpen,
@@ -83,17 +82,18 @@ const CoachCalender = () => {
         slotCoachData,
         scheduleCoachData,
     } = useSelector(state => state.coachAvailability);
+
     //calendar
     const [eventsList, setEventsList] = useState([]);
 
-    const addEvent = (title, startDateTime, endDateTime) => {
-        const newStart = new Date(startDateTime);
-        const newEnd = new Date(endDateTime);
-        setEventsList(prev => [
-            ...prev,
-            { title, start: newStart, end: newEnd },
-        ]);
-    };
+    // const addEvent = (title, startDateTime, endDateTime) => {
+    //     const newStart = new Date(startDateTime);
+    //     const newEnd = new Date(endDateTime);
+    //     setEventsList(prev => [
+    //         ...prev,
+    //         { title, start: newStart, end: newEnd },
+    //     ]);
+    // };
 
     console.log('ta Id :', id);
 
@@ -101,6 +101,32 @@ const CoachCalender = () => {
         dispatch(fetchCoachSlots(id));
         dispatch(fetchCoachScheduleById(id));
     }, [id]);
+    useEffect(() => {
+        if (scheduleCoachData && scheduleCoachData.data) {
+            const transformedEvents = scheduleCoachData.data.map(event => ({
+                title: event.meeting_name,
+                start: new Date(
+                    event.date.split(' ')[0] + 'T' + event.start_time
+                ),
+                end: new Date(event.date.split(' ')[0] + 'T' + event.end_time),
+            }));
+            setEventsList(transformedEvents);
+        } else {
+            setEventsList([]);
+        }
+    }, [scheduleCoachData]);
+
+    useEffect(() => {
+        if (slotCoachData.data && slotCoachData.data.length > 0) {
+            const transformedSlots = slotCoachData.data.map(slot => ({
+                startDate: new Date(slot.slot_date + 'T' + slot.from_time),
+                endDate: new Date(slot.slot_date + 'T' + slot.to_time),
+            }));
+            setSlotViewData(transformedSlots);
+        } else {
+            setSlotViewData([]);
+        }
+    }, [slotCoachData]);
 
     console.log(
         'slotCoachData',
@@ -115,7 +141,8 @@ const CoachCalender = () => {
 
     const handleScheduleNewSession = () => {
         console.log('Pressed');
-        setSheduleNewSession();
+        // setSheduleNewSession();
+        dispatch(openCoachScheduleSession({ id, name }));
     };
 
     const handleMarkLeave = () => {
@@ -143,7 +170,7 @@ const CoachCalender = () => {
                                     variant="h4"
                                     sx={{ mb: 4, fontFamily: 'ExtraLight' }}
                                 >
-                                    {name}'s Calender
+                                    {name}'s Calendar
                                 </Typography>
                             </Grid>
                             <Grid item>
@@ -195,19 +222,21 @@ const CoachCalender = () => {
                     </DialogActions>
 
                     <CalendarComponent
-                        eventsList={scheduleCoachData.data}
-                        addEvent={addEvent}
-                        slotData={slotCoachData}
-                        /*handleSelectEvent={handleSelectEvent}*/ componentName={
-                            'COACHCALENDER'
-                        }
+                        eventsList={eventsList}
+                        // addEvent={   }
+                        slotData={slotViewData}
+                        componentName={'COACHCALENDER'}
                     />
 
-                    {sheduleNewSession && (
+                    {/* {scheduledCoachSessionOpen && (
                         <ScheduleSession
                             open={sheduleNewSession}
                             handleClose={() => setSheduleNewSession(false)}
                         />
+                    )} */}
+
+                    {scheduledCoachSessionOpen && (
+                        <Schedule componentName={'COACHSCHEDULE'} />
                     )}
                     {coachMarkLeaveOpen && (
                         <MarkLeave
@@ -269,7 +298,7 @@ const CoachCalender = () => {
 
                     {createNewCoachSlotOpen && (
                         <CreateNewSlot
-                            addEvent={addEvent}
+                            // addEvent={addEvent}
                             componentName={'COACHCALENDER'}
                         />
                     )}

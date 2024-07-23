@@ -40,6 +40,7 @@ import 'react-phone-input-2/lib/style.css';
 import { getTimezone } from '../../../../redux/features/timezone/timezoneSlice';
 import CustomTimeZoneForm from '../../../CustomFields/CustomTimeZoneForm';
 import { dateFormatter } from '../../../../utils/dateFormatter';
+import CustomDateOfBirth from '../../../CustomFields/CustomDateOfBirth';
 const AddEditTA = ({ data }) => {
     const {
         register,
@@ -203,24 +204,26 @@ const AddEditTA = ({ data }) => {
                                         variant="contained"
                                         onClick={handleAssignStudents}
                                         sx={{
-                                            backgroundColor: '#F56D3B',
-                                            color: 'white',
+                                            backgroundColor: 'white',
+                                            color: '#F56D3B',
                                             height: '60px',
-                                            width: '201px',
+                                            width: '194px',
+                                            border: '2px solid #F56D3B',
                                             borderRadius: '50px',
                                             textTransform: 'none',
-                                            padding: '18px 30px',
                                             fontWeight: '700',
                                             fontSize: '16px',
+                                            padding: '18px 30px',
                                             '&:hover': {
-                                                //backgroundColor: '#D4522A'
+                                                backgroundColor: '#F56D3B',
+                                                color: 'white',
                                             },
                                         }}
                                     >
                                         Assign Students
                                     </Button>
                                     <Button
-                                        variant="outlined"
+                                        variant="contained"
                                         onClick={handleAssignBatches}
                                         sx={{
                                             backgroundColor: 'white',
@@ -234,8 +237,8 @@ const AddEditTA = ({ data }) => {
                                             fontSize: '16px',
                                             padding: '18px 30px',
                                             '&:hover': {
-                                                //backgroundColor: '#F56D3B',
-                                                //color: 'white'
+                                                backgroundColor: '#F56D3B',
+                                                color: 'white',
                                             },
                                         }}
                                     >
@@ -484,7 +487,7 @@ const AddEditTA = ({ data }) => {
                                 control={control}
                                 name="date_of_birth"
                                 render={({ field }) => (
-                                    <CustomDateField
+                                    <CustomDateOfBirth
                                         label="Date of Birth"
                                         name="date_of_birth"
                                         value={dateOfBirth}
@@ -495,6 +498,7 @@ const AddEditTA = ({ data }) => {
                                         helperText={
                                             errors.date_of_birth?.message
                                         }
+                                        sx={{ width: '100%' }}
                                     />
                                 )}
                                 rules={{

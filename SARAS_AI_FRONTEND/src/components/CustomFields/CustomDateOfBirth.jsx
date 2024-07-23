@@ -17,6 +17,7 @@ const CustomDateOfBirth = ({ label, name, value, onChange, ...props }) => {
             name={name}
             value={value}
             onChange={handleDateChange}
+            disableFutureDates={true}
             {...props}
         />
     );

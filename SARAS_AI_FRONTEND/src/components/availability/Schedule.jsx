@@ -209,6 +209,9 @@ const Schedule = ({ componentName }) => {
             setAvailableSlotsOptions(options);
 
             setSlotData(transformData);
+        } else {
+            setAvailableSlotsOptions([]);
+            setSlotData([{}]);
         }
     }, [availableSlots]);
 
@@ -308,6 +311,7 @@ const Schedule = ({ componentName }) => {
     };
 
     const onSubmit = formData => {
+        console.log('SCEDULE STUDENTS : ', students);
         const studentId = students.map(student => student.id);
         const batchId = batches.map(batch => batch.id);
 

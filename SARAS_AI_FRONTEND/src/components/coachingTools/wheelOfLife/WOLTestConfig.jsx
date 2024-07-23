@@ -330,7 +330,7 @@ const WOLTestConfig = () => {
                             </TableBody>
                         </Table>
                     </TableContainer>
-                    <Box display="flex" mt={2}>
+                    {/* <Box display="flex" mt={2}>
                         <CustomButton
                             type="submit"
                             active={true}
@@ -343,7 +343,7 @@ const WOLTestConfig = () => {
                         >
                             Submit
                         </CustomButton>
-                    </Box>
+                    </Box> */}
                 </form>
             )}
         </>

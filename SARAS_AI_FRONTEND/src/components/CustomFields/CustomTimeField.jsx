@@ -6,7 +6,7 @@ import moment from 'moment';
 const CustomTimeField = ({ label, name, value, onChange, sx, ...props }) => {
     const momentValue = value ? moment(value, 'YYYY-MM-DDTHH:mm:ss') : null; // Adjust parsing format based on input
 
-    const handleTimeChange = (date) => {
+    const handleTimeChange = date => {
         onChange(date.format('HH:mm:ss')); // Update onChange to only pass time
     };
 

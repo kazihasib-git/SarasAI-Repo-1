@@ -44,8 +44,8 @@ export const getCoachAvailableSlotsFromDate = createAsyncThunk(
 );
 
 // Reschedule Session
-export const rescheduleSession = createAsyncThunk(
-    'coachAvailability/rescheduleSession',
+export const rescheduleCoachSession = createAsyncThunk(
+    'coachAvailability/rescheduleCoachSession',
     async ({ id, data }) => {
         const response = await axios.put(
             `${baseUrl}/admin/taschedules/${id}`,
@@ -155,7 +155,7 @@ const coachScheduling = createSlice({
         });
 
         // Get TA Available Slots From Date
-        builder.addCase(getCoachAvailableSlotsFromDate.pending, (state) => {
+        builder.addCase(getCoachAvailableSlotsFromDate.pending, state => {
             state.loading = true;
         });
         builder.addCase(
@@ -195,14 +195,14 @@ const coachScheduling = createSlice({
         );
 
         // Reschedule Session // TODO : Check this
-        builder.addCase(rescheduleSession.pending, state => {
+        builder.addCase(rescheduleCoachSession.pending, state => {
             state.loading = true;
         });
-        builder.addCase(rescheduleSession.fulfilled, (state, action) => {
+        builder.addCase(rescheduleCoachSession.fulfilled, (state, action) => {
             state.loading = false;
             state.coachScheduledSessions = action.payload.data;
         });
-        builder.addCase(rescheduleSession.rejected, (state, action) => {
+        builder.addCase(rescheduleCoachSession.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
         });
