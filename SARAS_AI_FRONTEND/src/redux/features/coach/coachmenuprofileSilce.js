@@ -23,8 +23,7 @@ export const updateCoachmenuprofile = createAsyncThunk(
     'coachMenu/updateprofile',
     async data => {
         const response = await axiosInstance.put(
-            `${baseUrl}/coach/coach-profile`,
-            data
+            `${baseUrl}/coach/coach-profile`, data
         );
         console.log(response.data, 'response.data');
         return response.data;
@@ -129,7 +128,9 @@ export const createCoachMenuLeave = createAsyncThunk(
 export const getSlotsForLeave = createAsyncThunk(
     'coachMenu/getSlotsForLeave',
     async (data) => {
-        const response = await axiosInstance.post(`${baseUrl}/`, data)
+        const response = await axiosInstance.post(`${baseUrl}/coach/calendar/slot-between-dates`, 
+            data
+        )
         return response.data;
     }
 )
@@ -252,6 +253,7 @@ const initialState = {
     selectStudent: false, // Select to Schedule Sessions
     selectBatches: false, // Select to Schedule Sessions 
     LeaveSlotsPopup : false,
+    leaveScheduledSessionPopup : false,
 
     loading: false,
     error: null,
@@ -312,6 +314,12 @@ export const coachMenuSlice = createSlice({
         },
         closeSlotsForLeave : (state, action) => {
             state.LeaveSlotsPopup = false;
+        },
+        openScheduledSessionForLeave : (state, action) => {
+            state.leaveScheduledSessionPopup = true
+        },
+        closeScheduledSessionForLeave : (state, action ) => {
+            state.leaveScheduledSessionPopup = false 
         }
 
     },

@@ -29,7 +29,7 @@ import {
     closeCoachMarkLeave,
     getCoachSlots,
 } from '../../redux/features/CoachModule/CoachAvailabilitySlice';
-import { closeMarkLeavePopup, getCoachMenuSlotsByData, openMarkLeavePopup } from '../../redux/features/coach/coachmenuprofileSilce';
+import { closeMarkLeavePopup, getCoachMenuSlotsByData, getSlotsForLeave, openMarkLeavePopup } from '../../redux/features/coach/coachmenuprofileSilce';
 
 const CustomButton = ({
     onClick,
@@ -98,9 +98,9 @@ const MarkLeave = ({ componentName }) => {
         case 'COACHMENU_CALENDER':
             scheduleSessionOpenKey = 'createCoachLeavePopup';
             schedulingStateKey = 'coachMenu';
-            openAvailableSlotsAction = openMarkLeavePopup;
+            openAvailableSlotsAction = openScheduledSessionForLeave;
             closeMarkLeaveAction = closeMarkLeavePopup;
-            getSlotsAction = getCoachMenuSlotsByData;
+            getSlotsAction = getSlotsForLeave;
             break;
 
         case 'TAMENU_CALENDER':
@@ -149,20 +149,22 @@ const MarkLeave = ({ componentName }) => {
                 end_time: '23:59:59',
             };
 
-            openAvailableSlotsAction(leaveData)
-            
-            /*
             dispatch(getSlotsAction(leaveData))
                 .unwrap()
                 .then(() => {
-                    dispatch(openAvailableSlotsAction(leaveData));
-                    dispatch(closeMarkLeaveAction());
+                    if(componentName === 'COACHMENU_CALENDER'){
+                        dispatch(openAvailableSlotsAction());
+                    }else{
+                        dispatch(openAvailableSlotsAction(leaveData));
+                        dispatch(closeMarkLeaveAction());
+                    }
+
+                    
                 })
                 .catch(error => {
                     console.error('Failed to fetch scheduled slots:', error);
                     dispatch(openAvailableSlotsAction(leaveData));
                 });
-            */
         }
     };
 
