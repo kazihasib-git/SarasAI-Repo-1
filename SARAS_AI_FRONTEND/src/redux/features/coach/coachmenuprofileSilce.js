@@ -10,11 +10,6 @@ const accessToken = localStorage.getItem('accessToken');
 export const getCoachMenuProfile = createAsyncThunk(
     'coach/getProfile',
     async () => {
-        console.log(accessToken, 'accessToken in function');
-        const response = await axiosInstance.get(
-            `${baseUrl}/coach/coach-profile`
-        );
-        console.log(accessToken, 'accessToken in function');
         const response = await axiosInstance.get(
             `${baseUrl}/coach/coach-profile`
         );
