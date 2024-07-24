@@ -14,6 +14,10 @@ export const getCoachMenuProfile = createAsyncThunk(
         const response = await axiosInstance.get(
             `${baseUrl}/coach/coach-profile`
         );
+        console.log(accessToken, 'accessToken in function');
+        const response = await axiosInstance.get(
+            `${baseUrl}/coach/coach-profile`
+        );
         console.log(response.data, 'response.data');
         return response.data;
     }
@@ -256,6 +260,8 @@ const initialState = {
 
     loading: false,
     error: null,
+    coachCallRequests: [],
+    coachScheduledCalls: [],
 };
 
 export const coachMenuSlice = createSlice({
