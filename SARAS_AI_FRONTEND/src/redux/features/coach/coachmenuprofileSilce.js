@@ -126,6 +126,32 @@ export const createCoachMenuLeave = createAsyncThunk(
     }
 );
 
+// Get Slots for Leave
+export const getSlotsForLeave = createAsyncThunk(
+    'coachMenu/getSlotsForLeave',
+    async (data) => {
+        const response = await axiosInstance.post(`${baseUrl}/`, data)
+        return response.data;
+    }
+)
+
+export const getSessionForLeave = createAsyncThunk(
+    'coachMenu/getSessionForLeave',
+    async (data) => {
+        const response = await axiosInstance.post(`${baseUrl}/`, data)
+        return response.data;
+    }
+)
+
+// Reason for Coach Leave
+export const reasonForCoachMenuLeave = createAsyncThunk(
+    'coachMenu/reasonForLeave',
+    async (data) => {
+        const response = await axiosInstance.post(`${baseUrl}/`, data)
+        return response.data;
+    }
+)
+
 // get Coach call requests
 export const getCoachCallRequests = createAsyncThunk(
     'coachMenu/getCallRequests',
@@ -204,6 +230,7 @@ export const getCoachScheduledCalls = createAsyncThunk(
     }
 );
 
+
 const initialState = {
     coachProfileData: [], // Coach Profile Data
     coachSlots: [], // Coach Slots
@@ -213,7 +240,10 @@ const initialState = {
     assignedCoachBatches: [], // Assigned Students to Batch
     selectedCoachStudents: [], // Selected Students for creating Schedules
     selectedCoachBatches: [], // Selected Batches for creating Schedules
+    coachSlotsForLeave : [], // Slots For Leave
+    coachSessionsForLeave : [], // Sessions for Leave
     coachLeave: [],
+
     coachCallRequests: [],
     coachScheduledCalls: [],
 
@@ -221,10 +251,8 @@ const initialState = {
     createCoachSessionPopup: false,
     createCoachLeavePopup: false,
     selectStudent: false, // Select to Schedule Sessions
-    selectBatches: false, // Select to Schedule Sessions
-
-    editStudent: false,
-    editBatches: false,
+    selectBatches: false, // Select to Schedule Sessions 
+    LeaveSlotsPopup : false,
 
     loading: false,
     error: null,
@@ -259,12 +287,12 @@ export const coachMenuSlice = createSlice({
             state.selectedCoachStudents = [];
         },
         openMarkLeavePopup: (state, action) => {
-            state.createCoachLeavePopup = action.payload;
+            state.createCoachLeavePopup = true;
             state.createCoachSessionPopup = false;
             state.createCoachSlotsPopup = false;
         },
         closeMarkLeavePopup: (state, action) => {
-            state.createCoachLeavePopup = action.payload;
+            state.createCoachLeavePopup = false;
         },
         openSelectStudents: (state, action) => {
             state.selectStudent = true;
@@ -278,6 +306,13 @@ export const coachMenuSlice = createSlice({
         closeSelectBatches: (state, action) => {
             state.selectBatches = false;
         },
+        openSlotsForLeave : (state, action) => {
+            state.LeaveSlotsPopup = true;
+        },
+        closeSlotsForLeave : (state, action) => {
+            state.LeaveSlotsPopup = false;
+        }
+
     },
     extraReducers: builder => {
         // Get Coach Profile Data
@@ -350,14 +385,14 @@ export const coachMenuSlice = createSlice({
         });
 
         // Get Coach Sessions
-        builder.addCase(createCoachMenuSession.pending, state => {
+        builder.addCase(getCoachMenuSessions.pending, state => {
             state.loading = true;
         });
-        builder.addCase(createCoachMenuSession.fulfilled, (state, action) => {
+        builder.addCase(getCoachMenuSessions.fulfilled, (state, action) => {
             state.loading = false;
             state.coachSessions = action.payload.data;
         });
-        builder.addCase(createCoachMenuSession.rejected, (state, action) => {
+        builder.addCase(getCoachMenuSessions.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
             state.coachSessions = [];
@@ -402,6 +437,34 @@ export const coachMenuSlice = createSlice({
                 state.assignedCoachBatches = [];
             }
         );
+
+        // Get Slots for Leave
+        builder.addCase(getSlotsForLeave.pending, state => {
+            state.loading = true;
+        })
+        builder.addCase(getSlotsForLeave.fulfilled, (state, action) => {
+            state.loading = false;
+            state.coachSlotsForLeave = action.payload.data;
+        })
+        builder.addCase(getSlotsForLeave.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message
+            state.coachSlotsForLeave = []
+        })
+
+        // Get Sessions For Leave
+        builder.addCase(getSessionForLeave.pending, state => {
+            state.loading = true;
+        })
+        builder.addCase(getSessionForLeave.fulfilled, (state, action) => {
+            state.loading = false;
+            state.coachSessionsForLeave = action.payload.data;
+        })
+        builder.addCase(getSessionForLeave.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message
+            state.coachSessionsForLeave = []
+        })
 
         // Create Coach Leave
         builder.addCase(createCoachMenuLeave.pending, state => {
@@ -489,6 +552,8 @@ export const {
     closeSelectStudents,
     openSelectBatches,
     closeSelectBatches,
+    openSlotsForLeave,
+    closeSlotsForLeave,
 } = coachMenuSlice.actions;
 
 export default coachMenuSlice.reducer;
