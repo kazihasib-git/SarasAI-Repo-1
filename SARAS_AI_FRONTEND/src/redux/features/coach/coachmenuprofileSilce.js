@@ -126,6 +126,84 @@ export const createCoachMenuLeave = createAsyncThunk(
     }
 );
 
+// get Coach call requests
+export const getCoachCallRequests = createAsyncThunk(
+    'coachMenu/getCallRequests',
+    async () => {
+        const response = await axios.get(
+            `${baseUrl}/coach/call-request/get-call-request`,
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+        console.log(response.data, 'response.data');
+        return response.data;
+    }
+);
+ 
+// approve call request
+export const approveCallRequest = createAsyncThunk(
+    'coachMenu/approveCallRequest',
+    async id => {
+        const response = await axios.get(
+            `${baseUrl}/coach/call-request/approve-call-request/${id}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+        console.log(response.data, 'response.data');
+        return response.data;
+    }
+);
+ 
+//deny call request
+export const denyCallRequest = createAsyncThunk(
+    'coachMenu/denyCallRequest',
+    async (id, reason) => {
+        const response = await axios.put(
+            `${baseUrl}/coach/call-request/denie-call-request/${id}`,
+            {
+                'reject-reason': reason,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+        console.log(response.data, 'response.data');
+        return response.data;
+    }
+);
+ 
+//get Coach scheduled Calls
+export const getCoachScheduledCalls = createAsyncThunk(
+    'coachMenu/getScheduledCalls',
+    async date => {
+        const response = await axios.post(
+            `${baseUrl}/coach/schedule-call/get-schedule-call`,
+            {
+                date: date,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+        console.log(response.data, 'response.data');
+        return response.data;
+    }
+);
+
 const initialState = {
     coachProfileData: [], // Coach Profile Data
     coachSlots: [], // Coach Slots
@@ -136,6 +214,8 @@ const initialState = {
     selectedCoachStudents: [], // Selected Students for creating Schedules
     selectedCoachBatches: [], // Selected Batches for creating Schedules
     coachLeave: [],
+    coachCallRequests: [],
+    coachScheduledCalls: [],
 
     createCoachSlotsPopup: false,
     createCoachSessionPopup: false,
@@ -334,6 +414,66 @@ export const coachMenuSlice = createSlice({
         builder.addCase(createCoachMenuLeave.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+        });
+
+        //get coach call requests
+        builder.addCase(getCoachCallRequests.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(getCoachCallRequests.fulfilled, (state, action) => {
+            state.loading = false;
+            state.coachCallRequests = action.payload.data;
+        });
+        builder.addCase(getCoachCallRequests.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+            state.coachCallRequests = [];
+        });
+ 
+        //approve call request
+        builder.addCase(approveCallRequest.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(approveCallRequest.fulfilled, (state, action) => {
+            state.loading = false;
+            state.coachCallRequests = state.coachCallRequests.map(request =>
+                request.id === action.payload.data.id
+                    ? { ...request, status: 'Approved' }
+                    : request
+            );
+        });
+        builder.addCase(approveCallRequest.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+        });
+ 
+        //deny Call Request
+        builder.addCase(denyCallRequest.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(denyCallRequest.fulfilled, (state, action) => {
+            state.loading = false;
+            state.coachCallRequests = state.coachCallRequests.filter(
+                request => request.id !== action.payload.data.id
+            );
+        });
+        builder.addCase(denyCallRequest.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+        });
+ 
+        //get coach scheduled calls
+        builder.addCase(getCoachScheduledCalls.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(getCoachScheduledCalls.fulfilled, (state, action) => {
+            state.loading = false;
+            state.coachScheduledCalls = action.payload.data;
+        });
+        builder.addCase(getCoachScheduledCalls.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+            state.coachScheduledCalls = [];
         });
     },
 });
