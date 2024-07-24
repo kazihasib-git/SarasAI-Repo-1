@@ -21,7 +21,8 @@ import {
 } from '../../redux/features/CoachModule/CoachAvailabilitySlice';
 import { getSessionForLeave,
     openSlotsForLeave,
-    closeSlotsForLeave
+    closeSlotsForLeave,
+    openScheduledSessionForLeave
  } from '../../redux/features/coach/coachmenuprofileSilce';
 
 const CustomButton = ({
@@ -98,7 +99,7 @@ const Slots = ({ componentName }) => {
             scheduleSessionOpenKey = 'LeaveSlotsPopup';
             scheduledSlotsDataKey = 'coachSlotsForLeave';
             schedulingStateKey = 'coachMenu';
-            getAvailableSlotsAction = openSlotsForLeave;
+            getAvailableSlotsAction = openScheduledSessionForLeave;
             closeScheduleSessionAction = closeSlotsForLeave;
             getScheduleSessionAction = getSessionForLeave;
             markLeaveKey = '';

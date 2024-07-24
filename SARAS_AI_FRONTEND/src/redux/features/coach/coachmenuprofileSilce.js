@@ -138,7 +138,9 @@ export const getSlotsForLeave = createAsyncThunk(
 export const getSessionForLeave = createAsyncThunk(
     'coachMenu/getSessionForLeave',
     async (data) => {
-        const response = await axiosInstance.post(`${baseUrl}/`, data)
+        const response = await axiosInstance.post(`${baseUrl}/coach/calendar/schedule-by-slots`, 
+            data
+        )
         return response.data;
     }
 )
@@ -169,7 +171,7 @@ export const getCoachCallRequests = createAsyncThunk(
         return response.data;
     }
 );
- 
+
 // approve call request
 export const approveCallRequest = createAsyncThunk(
     'coachMenu/approveCallRequest',
@@ -187,7 +189,7 @@ export const approveCallRequest = createAsyncThunk(
         return response.data;
     }
 );
- 
+
 //deny call request
 export const denyCallRequest = createAsyncThunk(
     'coachMenu/denyCallRequest',
@@ -208,7 +210,7 @@ export const denyCallRequest = createAsyncThunk(
         return response.data;
     }
 );
- 
+
 //get Coach scheduled Calls
 export const getCoachScheduledCalls = createAsyncThunk(
     'coachMenu/getScheduledCalls',
@@ -321,7 +323,6 @@ export const coachMenuSlice = createSlice({
         closeScheduledSessionForLeave : (state, action ) => {
             state.leaveScheduledSessionPopup = false 
         }
-
     },
     extraReducers: builder => {
         // Get Coach Profile Data
@@ -501,7 +502,7 @@ export const coachMenuSlice = createSlice({
             state.error = action.error.message;
             state.coachCallRequests = [];
         });
- 
+
         //approve call request
         builder.addCase(approveCallRequest.pending, state => {
             state.loading = true;
@@ -518,7 +519,7 @@ export const coachMenuSlice = createSlice({
             state.loading = false;
             state.error = action.error.message;
         });
- 
+
         //deny Call Request
         builder.addCase(denyCallRequest.pending, state => {
             state.loading = true;
@@ -533,7 +534,7 @@ export const coachMenuSlice = createSlice({
             state.loading = false;
             state.error = action.error.message;
         });
- 
+
         //get coach scheduled calls
         builder.addCase(getCoachScheduledCalls.pending, state => {
             state.loading = true;
@@ -563,6 +564,8 @@ export const {
     closeSelectBatches,
     openSlotsForLeave,
     closeSlotsForLeave,
+    openScheduledSessionForLeave,
+    closeScheduledSessionForLeave,
 } = coachMenuSlice.actions;
 
 export default coachMenuSlice.reducer;

@@ -90,6 +90,7 @@ const CoachMenuCalendar = () => {
         selectStudent,
         selectBatches,
         createCoachLeavePopup,
+        LeaveSlotsPopup,
         leaveScheduledSessionPopup,
     } = useSelector(state => state.coachMenu);
 
@@ -209,22 +210,17 @@ const CoachMenuCalendar = () => {
                 {selectBatches && (
                     <EditBatches componentname={'COACHMENU_CALENDER'} />
                 )}
+                {LeaveSlotsPopup && (
+                    <Slots componentName={'COACHMENU_CALENDER'} />
+                )}
                 {leaveScheduledSessionPopup && (
-                    <Slots
-                        componentName={'COACHMENU_CALENDER'}
-                    />
+                    <ScheduledSessions componentName={'COACHMENU_CALENDER'} />
                 )}
 
                 {/*{sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} componentName={"TACALENDER"} />}
                 
                 
-                {scheduledSessionOpen && (
-                    <ScheduledSessions
-                    // id={id}
-                    // name={name}
-                    // componentName={'TACALENDER'}
-                    />
-                )}
+                
                 {cancelSessionOpen && (
                     <CancelSchedule
                     // id={id}

@@ -29,7 +29,7 @@ import {
     closeCoachMarkLeave,
     getCoachSlots,
 } from '../../redux/features/CoachModule/CoachAvailabilitySlice';
-import { closeMarkLeavePopup, getCoachMenuSlotsByData, getSlotsForLeave, openMarkLeavePopup } from '../../redux/features/coach/coachmenuprofileSilce';
+import { closeMarkLeavePopup, getCoachMenuSlotsByData, getSlotsForLeave, openMarkLeavePopup, openScheduledSessionForLeave, openSlotsForLeave } from '../../redux/features/coach/coachmenuprofileSilce';
 
 const CustomButton = ({
     onClick,
@@ -98,7 +98,7 @@ const MarkLeave = ({ componentName }) => {
         case 'COACHMENU_CALENDER':
             scheduleSessionOpenKey = 'createCoachLeavePopup';
             schedulingStateKey = 'coachMenu';
-            openAvailableSlotsAction = openScheduledSessionForLeave;
+            openAvailableSlotsAction = openSlotsForLeave;
             closeMarkLeaveAction = closeMarkLeavePopup;
             getSlotsAction = getSlotsForLeave;
             break;
@@ -153,6 +153,7 @@ const MarkLeave = ({ componentName }) => {
                 .unwrap()
                 .then(() => {
                     if(componentName === 'COACHMENU_CALENDER'){
+                        console.log("ComponetName :", componentName)
                         dispatch(openAvailableSlotsAction());
                     }else{
                         dispatch(openAvailableSlotsAction(leaveData));
