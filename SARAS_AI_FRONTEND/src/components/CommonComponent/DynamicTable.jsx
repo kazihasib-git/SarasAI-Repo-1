@@ -6,7 +6,11 @@ import {
     Pagination,
     Box,
     Checkbox,
+    Modal,
+    Grid,
+    Typography,
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import CallMadeOutlinedIcon from '@mui/icons-material/CallMadeOutlined';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
@@ -38,6 +42,8 @@ const DynamicTable = ({
     );
 
     const [currentPage, setCurrentPage] = useState(1);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [modalData, setModalData] = useState(null);
 
     useEffect(() => {
         setData(
@@ -88,6 +94,10 @@ const DynamicTable = ({
             } else if (type === 'view report') {
                 navigate(`/view-report/${id}`); // Append id as a parameter
             }
+        } else if (componentName === 'MYSTUDENTS') {
+            const item = data.find(item => item.id === id);
+            setModalData(item);
+            setModalOpen(true);
         } else {
             if (componentName === 'COACHMAPPING') {
                 if (type === 'students') {
@@ -152,6 +162,10 @@ const DynamicTable = ({
             default:
                 return '#000000';
         }
+    };
+    const handleCloseModal = () => {
+        setModalOpen(false);
+        setModalData(null);
     };
     return (
         <div className="tableContainer">
@@ -484,6 +498,157 @@ const DynamicTable = ({
                     }}
                 />
             </div>
+            {/* Modal Component */}
+            <Modal
+                open={modalOpen}
+                onClose={handleCloseModal}
+                aria-labelledby="modal-title"
+                aria-describedby="modal-description"
+            >
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        width: 600,
+                        bgcolor: 'background.paper',
+                        border: '2px solid #000',
+                        boxShadow: 24,
+                        p: 4,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 2,
+                    }}
+                >
+                    <IconButton
+                        sx={{ alignSelf: 'flex-end' }}
+                        onClick={handleCloseModal}
+                    >
+                        <CloseIcon />
+                    </IconButton>
+                    <Typography id="modal-title" variant="h6" component="h2">
+                        View Detail
+                    </Typography>
+
+                    <Grid container spacing={2}>
+                        <Grid item xs={6}>
+                            <Box
+                                sx={{
+                                    height: 80,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    padding: 4,
+                                    backgroundColor: '#edf0f0',
+                                }}
+                            >
+                                <div>
+                                    <h5>Student Name</h5>
+                                    <h6 style={{ textAlign: 'center' }}>
+                                        Ankit Sharma
+                                    </h6>
+                                </div>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Box
+                                sx={{
+                                    height: 80,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    padding: 4,
+                                    backgroundColor: '#edf0f0',
+                                }}
+                            >
+                                <div>
+                                    <h5>Academic Term</h5>
+                                    <h6 style={{ textAlign: 'center' }}>
+                                        Lorem Ipsum
+                                    </h6>
+                                </div>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Box
+                                sx={{
+                                    height: 80,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    padding: 4,
+                                    backgroundColor: '#edf0f0',
+                                }}
+                            >
+                                <div>
+                                    <h5>Batch</h5>
+                                    <h6 style={{ textAlign: 'center' }}>
+                                        Batch 1
+                                    </h6>
+                                </div>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Box
+                                sx={{
+                                    height: 80,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    padding: 4,
+                                    backgroundColor: '#edf0f0',
+                                }}
+                            >
+                                <div>
+                                    <h5>Activities Scheduled</h5>
+                                    <h6 style={{ textAlign: 'center' }}>
+                                        Friday June 21, 11:00 to 11:30 AM
+                                    </h6>
+                                </div>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Box
+                                sx={{
+                                    height: 80,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    padding: 4,
+                                    backgroundColor: '#edf0f0',
+                                }}
+                            >
+                                <div>
+                                    <h5>Student Name</h5>
+                                    <h6 style={{ textAlign: 'center' }}>
+                                        Student Name
+                                    </h6>
+                                </div>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Box
+                                sx={{
+                                    height: 80,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    padding: 4,
+                                    backgroundColor: '#edf0f0',
+                                }}
+                            >
+                                <div>
+                                    <h5>Student Name</h5>
+                                    <h6 style={{ textAlign: 'center' }}>
+                                        Student Name
+                                    </h6>
+                                </div>
+                            </Box>
+                        </Grid>
+                    </Grid>
+                </Box>
+            </Modal>
         </div>
     );
 };

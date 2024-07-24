@@ -27,6 +27,11 @@ import {
     closeCoachEditBatch,
     openCoachScheduleSession,
 } from '../../redux/features/CoachModule/coachSchedule';
+import {
+    closeSelectBatches,
+    getCoachMenuAssignedBatches,
+    openCreateSessionPopup,
+} from '../../redux/features/coach/coachmenuprofileSilce';
 
 const CustomButton = ({
     onClick,
@@ -74,13 +79,11 @@ const EditBatches = ({ componentname }) => {
     let stateModuleKey,
         nameKey,
         assignBatchOpenKey,
-        editBatchKey,
-        selectedBatchKey,
-        openScheduleSessionAction,
         closeDialogAction,
-        openSuccessAction,
         getAssignBatchesAction,
-        postAssignAction;
+        editBatchKey,
+        selectedBatchKey;
+
     let schedulingState, nameKeyScheduling, idKeyScheduling;
 
     switch (componentname) {
@@ -91,14 +94,12 @@ const EditBatches = ({ componentname }) => {
             editBatchKey = 'assignedBatches';
             selectedBatchKey = 'batches';
             closeDialogAction = closeCoachEditBatch;
-            openSuccessAction = openCoachSuccessPopup;
             getAssignBatchesAction = getCoachAssignBatches;
-            postAssignAction = postCoachAssignBatches;
             schedulingState = useSelector(state => state.coachScheduling);
             nameKeyScheduling = 'coachName';
             idKeyScheduling = 'coachID';
-            openScheduleSessionAction = openCoachScheduleSession;
             break;
+
         case 'TASCHEDULE':
             stateModuleKey = 'taModule';
             nameKey = 'ta_name';
@@ -106,14 +107,38 @@ const EditBatches = ({ componentname }) => {
             editBatchKey = 'assignedBatches';
             selectedBatchKey = 'batches';
             closeDialogAction = closeEditBatch;
-            openSuccessAction = openSuccessPopup;
             getAssignBatchesAction = getAssignBatches;
-            postAssignAction = postAssignBatches;
             schedulingState = useSelector(state => state.taScheduling);
             nameKeyScheduling = 'taName';
             idKeyScheduling = 'taID';
-            openScheduleSessionAction = openScheduleSession;
             break;
+
+        case 'COACHMENU_CALENDER':
+            stateModuleKey = 'coachMenu';
+            nameKey = '';
+            assignBatchOpenKey = 'selectBatches';
+            editBatchKey = 'assignedCoachBatches';
+            selectedBatchKey = 'selectedCoachBatches';
+            closeDialogAction = closeSelectBatches;
+            getAssignBatchesAction = getCoachMenuAssignedBatches;
+            schedulingState = useSelector(state => state.coachMenu);
+            nameKeyScheduling = '';
+            idKeyScheduling = '';
+            break;
+
+        case 'TAMENU_CALENDER':
+            stateModuleKey = '';
+            nameKey = '';
+            assignBatchOpenKey = '';
+            editBatchKey = '';
+            selectedBatchKey = '';
+            closeDialogAction = '';
+            getAssignBatchesAction = '';
+            schedulingState = useSelector(state => state.taMenu);
+            nameKeyScheduling = '';
+            idKeyScheduling = '';
+            break;
+
         default:
             stateModuleKey = null;
             assignBatchOpenKey = null;
@@ -121,13 +146,10 @@ const EditBatches = ({ componentname }) => {
             editBatchKey = null;
             selectedBatchKey = null;
             closeDialogAction = null;
-            openSuccessAction = null;
             getAssignBatchesAction = null;
-            postAssignAction = null;
             schedulingState = null;
             nameKeyScheduling = null;
             idKeyScheduling = null;
-            openScheduleSessionAction = null;
             break;
     }
 
@@ -154,7 +176,11 @@ const EditBatches = ({ componentname }) => {
 
     useEffect(() => {
         if (stateModuleKey && assignBatchOpen) {
-            dispatch(getAssignBatchesAction(assignedId));
+            if (stateModuleKey === 'coachMenu' || stateModuleKey === 'taMenu') {
+                dispatch(getAssignBatchesAction());
+            } else {
+                dispatch(getAssignBatchesAction(assignedId));
+            }
         }
     }, [
         dispatch,
@@ -235,8 +261,15 @@ const EditBatches = ({ componentname }) => {
             batches: selectedBatch ? selectedBatch.map(id => ({ id })) : [],
         };
         console.log('DATA: ', data);
-        dispatch(openScheduleSessionAction(data));
-        dispatch(closeDialogAction());
+
+        if (componentname === 'COACHMENU_CALENDER') {
+            const batches = selectedBatch.map(id => ({ id }));
+            dispatch(openCreateSessionPopup({ batches }));
+            dispatch(closeDialogAction());
+        } else {
+            dispatch(openScheduleSessionAction(data));
+            dispatch(closeDialogAction());
+        }
     };
 
     const headers = ['S. No.', 'Batch Name', 'Branch', 'Select'];
@@ -310,15 +343,30 @@ const EditBatches = ({ componentname }) => {
 
     const assignedTA = assignedTAName || assignedName;
 
-    return (
-        <ReusableDialog
-            open={assignBatchOpen}
-            handleClose={() => dispatch(closeDialogAction())}
-            title={`Assign Batches to '${assignedTA}'`}
-            content={content}
-            actions={actions}
-        />
-    );
+    if (
+        componentname === 'COACHMENU_CALENDER' ||
+        componentname === 'TAMENU_CALENDER'
+    ) {
+        return (
+            <ReusableDialog
+                open={assignBatchOpen}
+                handleClose={() => dispatch(closeDialogAction())}
+                title={`Assign Batches`}
+                content={content}
+                actions={actions}
+            />
+        );
+    } else {
+        return (
+            <ReusableDialog
+                open={assignBatchOpen}
+                handleClose={() => dispatch(closeDialogAction())}
+                title={`Assign Batches to ${assignedTA}`}
+                content={content}
+                actions={actions}
+            />
+        );
+    }
 };
 
 export default EditBatches;

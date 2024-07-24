@@ -29,6 +29,7 @@ import {
     closeCoachMarkLeave,
     getCoachSlots,
 } from '../../redux/features/CoachModule/CoachAvailabilitySlice';
+import { closeMarkLeavePopup, getCoachMenuSlotsByData, openMarkLeavePopup } from '../../redux/features/coach/coachmenuprofileSilce';
 
 const CustomButton = ({
     onClick,
@@ -85,6 +86,7 @@ const MarkLeave = ({ componentName }) => {
             closeMarkLeaveAction = closeMarkLeave;
             getSlotsAction = getSlots;
             break;
+
         case 'COACHCALENDER':
             scheduleSessionOpenKey = 'coachMarkLeaveOpen';
             schedulingStateKey = 'coachAvailability';
@@ -92,6 +94,23 @@ const MarkLeave = ({ componentName }) => {
             closeMarkLeaveAction = closeCoachMarkLeave;
             getSlotsAction = getCoachSlots;
             break;
+
+        case 'COACHMENU_CALENDER':
+            scheduleSessionOpenKey = 'createCoachLeavePopup';
+            schedulingStateKey = 'coachMenu';
+            openAvailableSlotsAction = openMarkLeavePopup;
+            closeMarkLeaveAction = closeMarkLeavePopup;
+            getSlotsAction = getCoachMenuSlotsByData;
+            break;
+
+        case 'TAMENU_CALENDER':
+            scheduleSessionOpenKey = '';
+            schedulingStateKey = 'taMenu';
+            openAvailableSlotsAction = '';
+            closeMarkLeaveAction = '';
+            getSlotsAction = '';
+            break;
+
         default:
             scheduleSessionOpenKey = null;
             schedulingStateKey = null;
@@ -130,6 +149,9 @@ const MarkLeave = ({ componentName }) => {
                 end_time: '23:59:59',
             };
 
+            openAvailableSlotsAction(leaveData)
+            
+            /*
             dispatch(getSlotsAction(leaveData))
                 .unwrap()
                 .then(() => {
@@ -140,6 +162,7 @@ const MarkLeave = ({ componentName }) => {
                     console.error('Failed to fetch scheduled slots:', error);
                     dispatch(openAvailableSlotsAction(leaveData));
                 });
+            */
         }
     };
 

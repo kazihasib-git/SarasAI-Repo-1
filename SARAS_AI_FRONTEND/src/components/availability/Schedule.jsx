@@ -37,6 +37,15 @@ import { getTimezone } from '../../redux/features/timezone/timezoneSlice';
 import CustomTimeZoneForm from '../CustomFields/CustomTimeZoneForm';
 import { fetchTAScheduleById } from '../../redux/features/taModule/taAvialability';
 import { toast } from 'react-toastify';
+import {
+    closeCreateSessionPopup,
+    createCoachMenuSession,
+    getCoachMenuSessions,
+    getCoachMenuSlotsByData,
+    openCreateSessionPopup,
+    openSelectBatches,
+    openSelectStudents,
+} from '../../redux/features/coach/coachmenuprofileSilce';
 
 const CustomButton = ({
     onClick,
@@ -110,6 +119,8 @@ const Schedule = ({ componentName }) => {
         idKey,
         nameKey,
         timezoneKey,
+        studentKey,
+        batchKey,
         getAvailableSlotsAction,
         closeScheduleSessionAction,
         createScheduleAction;
@@ -122,6 +133,7 @@ const Schedule = ({ componentName }) => {
             idKey = 'taID';
             nameKey = 'taName';
             timezoneKey = 'taTimezone';
+            (studentKey = 'students'), (batchKey = 'batches');
             getAvailableSlotsAction = getTaAvailableSlotsFromDate;
             closeScheduleSessionAction = closeScheduleSession;
             createScheduleAction = createTASchedule;
@@ -133,9 +145,36 @@ const Schedule = ({ componentName }) => {
             idKey = 'coachID';
             nameKey = 'coachName';
             timezoneKey = 'coachTimezone';
+            (studentKey = 'students'), (batchKey = 'batches');
             getAvailableSlotsAction = getCoachAvailableSlotsFromDate;
             closeScheduleSessionAction = closeCoachScheduleSession;
             createScheduleAction = createCoachSchedule;
+            break;
+        case 'COACHMENU_CALENDER':
+            scheduleSessionOpenKey = 'createCoachSlotsPopup';
+            schedulingStateKey = 'coachMenu';
+            availableKey = 'coachSlotsByDate';
+            idKey = '';
+            nameKey = '';
+            timezoneKey = '';
+            (studentKey = 'selectedCoachStudents'),
+                (batchKey = 'selectedCoachBatches');
+            getAvailableSlotsAction = getCoachMenuSlotsByData;
+            closeScheduleSessionAction = closeCreateSessionPopup;
+            createScheduleAction = createCoachMenuSession;
+            break;
+        case 'TAMENU_CALENDER':
+            scheduleSessionOpenKey = '';
+            schedulingStateKey = 'taMenu';
+            availableKey = '';
+            idKey = '';
+            nameKey = '';
+            timezoneKey = '';
+            studentKey = '';
+            batchKey = '';
+            getAvailableSlotsAction = '';
+            closeScheduleSessionAction = '';
+            createScheduleAction = '';
             break;
         default:
             scheduleSessionOpenKey = null;
@@ -144,6 +183,8 @@ const Schedule = ({ componentName }) => {
             idKey = null;
             nameKey = null;
             timezoneKey = null;
+            studentKey = null;
+            batchKey = null;
             getAvailableSlotsAction = null;
             closeScheduleSessionAction = null;
             createScheduleAction = null;
@@ -159,8 +200,8 @@ const Schedule = ({ componentName }) => {
         [nameKey]: adminUserName,
         [timezoneKey]: adminUserTimezone,
         [availableKey]: availableSlots,
-        students,
-        batches,
+        [studentKey]: students,
+        [batchKey]: batches,
     } = schedulingState;
 
     const {
@@ -251,14 +292,11 @@ const Schedule = ({ componentName }) => {
             dispatch(openEditStudent());
         } else if (componentName === 'COACHSCHEDULE') {
             dispatch(openCoachEditStudent());
+        } else if (componentName === 'COACHMENU_CALENDER') {
+            dispatch(openSelectStudents());
+        } else if (componentName === 'TAMENU_CALENDER') {
         }
     };
-
-    // const handleClear = () => {
-    //     setSelectedSlot([{}]);
-    // }
-
-    console.log('adminUserID ', adminUserID);
 
     const handleAssignBatches = () => {
         console.log('COMPONENT NAME  handleAssignBatches : ', componentName);
@@ -266,6 +304,9 @@ const Schedule = ({ componentName }) => {
             dispatch(openEditBatch());
         } else if (componentName === 'COACHSCHEDULE') {
             dispatch(openCoachEditBatch());
+        } else if (componentName === 'COACHMENU_CALENDER') {
+            dispatch(openSelectBatches());
+        } else if (componentName === 'TAMENU_CALENDER') {
         }
     };
 
@@ -311,7 +352,11 @@ const Schedule = ({ componentName }) => {
     };
 
     const onSubmit = formData => {
-        console.log('SCEDULE STUDENTS : ', students);
+        console.log('formData --> ', formData);
+
+        console.log('students :', students);
+        console.log('batches', batches);
+
         const studentId = students.map(student => student.id);
         const batchId = batches.map(batch => batch.id);
 
@@ -345,10 +390,15 @@ const Schedule = ({ componentName }) => {
         formData.studentId = studentId;
         formData.batchId = batchId;
 
-        dispatch(createScheduleAction({ ...formData }))
+        console.log('form Data :', formData);
+        dispatch(createScheduleAction(formData))
             .then(() => {
                 dispatch(closeScheduleSessionAction());
-                return dispatch(fetchTAScheduleById(adminUserID));
+                if (componentName === 'COACHMENU_CALENDER') {
+                    return dispatch(getCoachMenuSessions());
+                } else {
+                    return dispatch(fetchTAScheduleById(adminUserID));
+                }
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -805,7 +855,7 @@ const Schedule = ({ componentName }) => {
 
     return (
         <ReusableDialog
-            open={scheduleSessionOpen}
+            open={createScheduleAction}
             handleClose={() => {
                 dispatch(closeScheduleSessionAction());
             }}
