@@ -117,6 +117,28 @@ export const denyCallRequest = createAsyncThunk(
     }
 );
 
+//get Coach scheduled Calls
+export const getCoachScheduledCalls = createAsyncThunk(
+    'coachMenu/getScheduledCalls',
+    async (date) => {
+        const response = await axios.post(
+            `${baseUrl}/coach/schedule-call/get-schedule-call`,
+            {
+                'date':date,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+        console.log(response.data, 'response.data');
+        return response.data;
+    }
+);
+
+
 //get slots for ta from date to end date
 
 const initialState = {
@@ -126,6 +148,7 @@ const initialState = {
     loading: false,
     error: null,
     coachCallRequests: [],
+    coachScheduledCalls: [],
 };
 
 export const coachMenuSlice = createSlice({
@@ -232,6 +255,20 @@ export const coachMenuSlice = createSlice({
         builder.addCase(denyCallRequest.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+        });
+
+        //get coach scheduled calls
+        builder.addCase(getCoachScheduledCalls.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(getCoachScheduledCalls.fulfilled, (state, action) => {
+            state.loading = false;
+            state.coachScheduledCalls = action.payload.data;
+        });
+        builder.addCase(getCoachScheduledCalls.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+            state.coachScheduledCalls = [];
         });
     },
 });

@@ -7,11 +7,18 @@ import {
     CardContent,
     Grid,
     IconButton,
+    Popover
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import editIcon from '../../../assets/editIcon.png';
 import CreateMeetingDialog from '../../../pages/MODULE/coachModule/CreateMeetingDialog';
+import calender from '../../../assets/calender.svg';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
+import moment from 'moment';
 
 const CustomButton = ({
     onClick,
@@ -50,6 +57,33 @@ const CustomButton = ({
 
 const ScheduledCall = () => {
     const [newMeetingPopUpOpen, setNewMeetingPopUpOpen] = useState(false);
+    const [date, setDate] = useState(moment());
+    const [anchorEl, setAnchorEl] = useState(null);
+
+    const handleDateChange = (newDate) => {
+        if (newDate && newDate.isValid()) {
+        setDate(newDate);
+        }
+    };
+
+    const handleIncrement = () => {
+        setDate((prevDate) => moment(prevDate).add(1, 'days'));
+    };
+
+    const handleDecrement = () => {
+        setDate((prevDate) => moment(prevDate).subtract(1, 'days'));
+    };
+
+    const handleCalendarOpen = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleCalendarClose = () => {
+        setAnchorEl(null);
+    };
+
+    const open = Boolean(anchorEl);
+    const id = open ? 'calendar-popover' : undefined;
 
     const handleClose = () => {
         setNewMeetingPopUpOpen(false);
@@ -123,13 +157,58 @@ const ScheduledCall = () => {
                 </CustomButton>
             </Box>
 
+            <LocalizationProvider dateAdapter={AdapterMoment}>
+            <Box display="flex" alignItems="center" mb="20px">
+                <Typography variant="h6" mx="20px">
+                <img
+                    src={calender}
+                    style={{
+                    width: '32px',
+                    height: '32px',
+                    marginRight: '10px',
+                    cursor: 'pointer',
+                    }}
+                    onClick={handleCalendarOpen}
+                />
+                {date.format('MMMM DD, YYYY')}
+                </Typography>
+                <IconButton onClick={handleDecrement}>
+                <ArrowBackIosIcon />
+                </IconButton>
+                <IconButton onClick={handleIncrement}>
+                <ArrowForwardIosIcon />
+                </IconButton>
+                <Popover
+                id={id}
+                open={open}
+                anchorEl={anchorEl}
+                onClose={handleCalendarClose}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left',
+                }}
+                >
+                <DatePicker
+                    value={date}
+                    onChange={handleDateChange}
+                    disableOpenPicker
+                    open 
+                    onClose={handleCalendarClose}
+                />
+                </Popover>
+            </Box>
+            </LocalizationProvider>
+
             <Grid container spacing={2}>
                 {scheduledCalls.map(call => (
                     <Grid item key={call.id} xs={12} sm={6} md={4}>
                         <Card
                             sx={{
                                 minHeight: '150px',
-                                minWidth: '300px',
                                 backgroundColor: 'white',
                                 position: 'relative',
                             }}

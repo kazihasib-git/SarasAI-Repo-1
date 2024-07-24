@@ -28,11 +28,24 @@ const CoachCallRequest = () => {
         dispatch(getCoachCallRequests());
     }, [dispatch]);
 
+    function convertTo12HourFormat(time24) {
+        // Split the time into hours, minutes, and seconds
+        const [hours, minutes, seconds] = time24.split(':').map(Number);
+        
+        const suffix = hours >= 12 ? 'PM' : 'AM';
+
+        const hours12 = hours % 12 || 12;
+        
+        const formattedMinutes = minutes.toString().padStart(2, '0');
+        
+        return `${hours12}:${formattedMinutes} ${suffix}`;
+    }
+
     const processCoachCallRequests = requests => {
         const processedRequests = requests.map(request => ({
             ...request,
             title: `Meeting request by ${request.sender.name}`,
-            For: `${request.date} | ${request.start_time}`,
+            For: `${request.date} | ${convertTo12HourFormat(request.start_time)}`,
         }));
         setCallRequests(processedRequests);
     };
