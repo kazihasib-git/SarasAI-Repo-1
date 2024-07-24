@@ -119,7 +119,7 @@ const ReasonForLeave = ({ componentName }) => {
                 leave_type: null,
                 reason: null,
 
-                data: slots.map((slot) => slot),
+                data: slots.map(slot => slot),
             };
 
             console.log('SLOT EVENT DATA: ', requestBody);

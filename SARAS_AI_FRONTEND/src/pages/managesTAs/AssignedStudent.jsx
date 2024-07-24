@@ -351,12 +351,12 @@ const AssignedStudent = () => {
                     ? item.student.name
                     : 'Unknown Student';
                 const academicTerm = item.student
-                    ? item.student.packages.map((pack) => pack.name).join(', ')
+                    ? item.student.packages.map(pack => pack.name).join(', ')
                     : 'N/A';
                 const batchName =
                     item.student.batches && item.student.batches.length > 0
                         ? item.student.batches
-                              .map((batch) => batch.batch_name)
+                              .map(batch => batch.batch_name)
                               .join(', ')
                         : 'N/A';
                 const isActive = item.is_active === 1;

@@ -21,7 +21,7 @@ import {
 import moment from 'moment';
 import { updateCoachmenuprofile } from '../../../redux/features/CoachModule/coachmenuprofileSilce';
 import { useDispatch, useSelector } from 'react-redux';
-import { getCoachProfile } from '../../../redux/features/coach/coachmenuprofileSilce';
+import { getCoachMenuProfile } from '../../../redux/features/coach/coachmenuprofileSilce';
 import { formatInTimeZone } from 'date-fns-tz';
 
 const CoachMenuProfile = () => {
@@ -59,7 +59,7 @@ const CoachMenuProfile = () => {
     };
 
     useEffect(() => {
-        dispatch(getCoachProfile());
+        dispatch(getCoachMenuProfile());
     }, [dispatch]);
 
     useEffect(() => {
@@ -67,30 +67,43 @@ const CoachMenuProfile = () => {
             populateForm(coachProfileData);
         }
     }, [coachProfileData]);
+
     useEffect(() => {
-      const fetchIP = async () => {
-        try {
-            // Fetch IP data from ipapi
-            const response = await axios.get('https://ipapi.co/json/');
-            setIpData(response.data);
-        } catch (err) {
-            setError(err.message);
-        }
+        const fetchIP = async () => {
+            try {
+                // Fetch IP data from ipapi
+                const response = await axios.get('https://ipapi.co/json/');
+                setIpData(response.data);
+            } catch (err) {
+                setError(err.message);
+            }
+        };
+
+        fetchIP();
+    }, []);
+
+    const convertTimezone = (time, fromTimeZone, toTimeZone) => {
+        const formattedTime = formatInTimeZone(
+            time,
+            fromTimeZone,
+            'yyyy-MM-dd HH:mm:ssXXX',
+            { timeZone: toTimeZone }
+        );
+        return formattedTime;
     };
 
-    fetchIP();
-  }, []);
-  const convertTimezone = (time, fromTimeZone, toTimeZone) => {
-    const formattedTime = formatInTimeZone(time, fromTimeZone, 'yyyy-MM-dd HH:mm:ssXXX', { timeZone: toTimeZone });
-    return formattedTime;
-};
-const getConvertedTime = () => {
-  if (ipData && ipData.timezone) {
-      const currentTime = new Date();
-      return convertTimezone(currentTime, ipData.timezone, coachProfileData.time_zone);
-  }
-  return null;
-};
+    const getConvertedTime = () => {
+        if (ipData && ipData.timezone) {
+            const currentTime = new Date();
+            return convertTimezone(
+                currentTime,
+                ipData.timezone,
+                coachProfileData.time_zone
+            );
+        }
+        return null;
+    };
+
     const populateForm = data => {
         const formattedDate = moment(data.date_of_birth).format('YYYY-MM-DD');
         setDateOfBirth(formattedDate);

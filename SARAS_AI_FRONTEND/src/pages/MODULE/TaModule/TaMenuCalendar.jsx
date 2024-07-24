@@ -41,6 +41,7 @@ import EditStudents from '../../../components/availability/EditStudents';
 import TaMenuSidebar from './TeachingAssistantSidebar';
 import Header from '../../../components/Header/Header';
 import {
+    getTaMenuSlots,
     getTaSessions,
     getTaSlots,
 } from '../../../redux/features/teachingAssistant/tamenuSlice';
@@ -115,8 +116,8 @@ const TAMenuCalendar = () => {
     const [eventsList, setEventsList] = useState([]);
 
     useEffect(() => {
-        dispatch(getTaSlots());
-        dispatch(getTaSessions());
+        dispatch(getTaMenuSlots());
+        dispatch(getTa());
     }, [dispatch]);
 
     useEffect(() => {
