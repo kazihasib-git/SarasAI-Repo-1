@@ -120,11 +120,11 @@ export const denyCallRequest = createAsyncThunk(
 //get Coach scheduled Calls
 export const getCoachScheduledCalls = createAsyncThunk(
     'coachMenu/getScheduledCalls',
-    async (date) => {
+    async date => {
         const response = await axios.post(
             `${baseUrl}/coach/schedule-call/get-schedule-call`,
             {
-                'date':date,
+                date: date,
             },
             {
                 headers: {
@@ -137,7 +137,6 @@ export const getCoachScheduledCalls = createAsyncThunk(
         return response.data;
     }
 );
-
 
 //get slots for ta from date to end date
 

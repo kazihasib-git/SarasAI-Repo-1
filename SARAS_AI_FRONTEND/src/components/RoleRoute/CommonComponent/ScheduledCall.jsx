@@ -7,7 +7,7 @@ import {
     CardContent,
     Grid,
     IconButton,
-    Popover
+    Popover,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
@@ -60,21 +60,21 @@ const ScheduledCall = () => {
     const [date, setDate] = useState(moment());
     const [anchorEl, setAnchorEl] = useState(null);
 
-    const handleDateChange = (newDate) => {
+    const handleDateChange = newDate => {
         if (newDate && newDate.isValid()) {
-        setDate(newDate);
+            setDate(newDate);
         }
     };
 
     const handleIncrement = () => {
-        setDate((prevDate) => moment(prevDate).add(1, 'days'));
+        setDate(prevDate => moment(prevDate).add(1, 'days'));
     };
 
     const handleDecrement = () => {
-        setDate((prevDate) => moment(prevDate).subtract(1, 'days'));
+        setDate(prevDate => moment(prevDate).subtract(1, 'days'));
     };
 
-    const handleCalendarOpen = (event) => {
+    const handleCalendarOpen = event => {
         setAnchorEl(event.currentTarget);
     };
 
@@ -158,49 +158,49 @@ const ScheduledCall = () => {
             </Box>
 
             <LocalizationProvider dateAdapter={AdapterMoment}>
-            <Box display="flex" alignItems="center" mb="20px">
-                <Typography variant="h6" mx="20px">
-                <img
-                    src={calender}
-                    style={{
-                    width: '32px',
-                    height: '32px',
-                    marginRight: '10px',
-                    cursor: 'pointer',
-                    }}
-                    onClick={handleCalendarOpen}
-                />
-                {date.format('MMMM DD, YYYY')}
-                </Typography>
-                <IconButton onClick={handleDecrement}>
-                <ArrowBackIosIcon />
-                </IconButton>
-                <IconButton onClick={handleIncrement}>
-                <ArrowForwardIosIcon />
-                </IconButton>
-                <Popover
-                id={id}
-                open={open}
-                anchorEl={anchorEl}
-                onClose={handleCalendarClose}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                }}
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'left',
-                }}
-                >
-                <DatePicker
-                    value={date}
-                    onChange={handleDateChange}
-                    disableOpenPicker
-                    open 
-                    onClose={handleCalendarClose}
-                />
-                </Popover>
-            </Box>
+                <Box display="flex" alignItems="center" mb="20px">
+                    <Typography variant="h6" mx="20px">
+                        <img
+                            src={calender}
+                            style={{
+                                width: '32px',
+                                height: '32px',
+                                marginRight: '10px',
+                                cursor: 'pointer',
+                            }}
+                            onClick={handleCalendarOpen}
+                        />
+                        {date.format('MMMM DD, YYYY')}
+                    </Typography>
+                    <IconButton onClick={handleDecrement}>
+                        <ArrowBackIosIcon />
+                    </IconButton>
+                    <IconButton onClick={handleIncrement}>
+                        <ArrowForwardIosIcon />
+                    </IconButton>
+                    <Popover
+                        id={id}
+                        open={open}
+                        anchorEl={anchorEl}
+                        onClose={handleCalendarClose}
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'left',
+                        }}
+                        transformOrigin={{
+                            vertical: 'top',
+                            horizontal: 'left',
+                        }}
+                    >
+                        <DatePicker
+                            value={date}
+                            onChange={handleDateChange}
+                            disableOpenPicker
+                            open
+                            onClose={handleCalendarClose}
+                        />
+                    </Popover>
+                </Box>
             </LocalizationProvider>
 
             <Grid container spacing={2}>
