@@ -60,6 +60,43 @@ const CustomTimeField = ({
             />
         </LocalizationProvider>
     );
+    return (
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <TimePicker
+                label={label}
+                name={name}
+                value={momentValue}
+                onChange={handleTimeChange}
+                inputFormat="HH:mm:ss" // Specify the desired time format
+                InputLabelProps={{
+                    shrink: true,
+                }}
+                {...props}
+                sx={{
+                    '& .MuiOutlinedInput-root': {
+                        borderRadius: '50px',
+                        '& fieldset': {
+                            borderColor: '#D0D0EC',
+                        },
+                        '&:hover fieldset': {
+                            borderColor: '#D0D0EC',
+                        },
+                        '&.Mui-focused fieldset': {
+                            borderColor: 'rgb(245, 109, 59)',
+                        },
+                    },
+                    '& .MuiInputLabel-root': {
+                        margin: 0,
+                        color: '#1A1E3D',
+                        '&.Mui-focused': {
+                            color: '#1A1E3D',
+                        },
+                    },
+                    ...sx,
+                }}
+            />
+        </LocalizationProvider>
+    );
 };
 
 export default CustomTimeField;

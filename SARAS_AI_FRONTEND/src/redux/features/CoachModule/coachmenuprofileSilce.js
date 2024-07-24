@@ -1,12 +1,13 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { baseUrl } from '../../../utils/baseURL';
+import axiosInstance from '../../services/httpService';
 
 // Get Today Available Ta
 export const updateCoachmenuprofile = createAsyncThunk(
     'coachMenu/updateprofile',
     async data => {
-        const response = await axios.put(
+        const response = await axiosInstance.put(
             `${baseUrl}/coach/coach-profile`,
             data
         );

@@ -115,6 +115,9 @@ const ReasonForLeave = ({ componentName }) => {
                 approve_status: null,
                 leave_type: null,
                 reason: null,
+                approve_status: null,
+                leave_type: null,
+                reason: null,
 
                 data: slots.map(slot => slot),
             };

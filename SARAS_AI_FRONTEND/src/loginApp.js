@@ -88,7 +88,7 @@ const ROLES = {
     Admin: 5150,
 };
 
-function App() {
+function LoginApp() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -330,7 +330,7 @@ function App() {
                 {/* Missed */}
 
                 {/* Routes for Coachemenu */}
-                <Route element={<RequireAuth allowedRoles={[ROLES.Coaches]} />}>
+                {login && role == 1984 && (
                     <Route path="/" element={<Main page="Coach Menu" />}>
                         <Route
                             path="coachmenu"
@@ -383,13 +383,10 @@ function App() {
                             }
                         />
                     </Route>
-                </Route>
+                )}
 
                 {/* Routes for Tamenu */}
-
-                <Route
-                    element={<RequireAuth allowedRoles={[ROLES.Teaching]} />}
-                >
+                {login && role == 2001 && (
                     <Route
                         path="/"
                         element={<Main page="Teaching Assistant Menu" />}
@@ -433,7 +430,7 @@ function App() {
                             element={<TAMenuCalendar page="TA Menu Calendar" />}
                         />
                     </Route>
-                </Route>
+                )}
 
                 <Route path="*" element={<AllRoutes />} />
             </Route>
@@ -441,7 +438,7 @@ function App() {
     );
 }
 
-export default App;
+export default LoginApp;
 
 // Previous changes
 
