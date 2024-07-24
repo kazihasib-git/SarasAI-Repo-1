@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Typography,
     Box,
@@ -17,8 +17,10 @@ import calender from '../../../assets/calender.svg';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
+import { DateCalendar, LocalizationProvider } from '@mui/x-date-pickers';
 import moment from 'moment';
+import { useDispatch, useSelector } from 'react-redux';
+import { getCoachScheduledCalls } from '../../../redux/features/coach/coachmenuprofileSilce';
 
 const CustomButton = ({
     onClick,
@@ -55,14 +57,83 @@ const CustomButton = ({
     );
 };
 
-const ScheduledCall = () => {
+const ScheduledCall = ({ role }) => {
+    const dispatch = useDispatch();
     const [newMeetingPopUpOpen, setNewMeetingPopUpOpen] = useState(false);
     const [date, setDate] = useState(moment());
     const [anchorEl, setAnchorEl] = useState(null);
+    const { coachScheduledCalls } = useSelector(state => state.coachMenu);
+
+    const [scheduledCalls, setScheduledCalls] = useState([]);
+
+    function formatDate(date) {
+        const localDate = new Date(date);
+        const offset = 5.5 * 60 * 60000;
+        const adjustedDate = new Date(localDate.getTime() + offset);
+        return adjustedDate.toISOString().split('T')[0];
+    }
+
+    useEffect(() => {
+        if (role == 'Coach') {
+            dispatch(getCoachScheduledCalls(formatDate(date)));
+        }
+    }, [dispatch, date]);
+
+    function convertTo12HourFormat(time24) {
+        // Split the time into hours, minutes, and seconds
+        const [hours, minutes, seconds] = time24.split(':').map(Number);
+
+        const suffix = hours >= 12 ? 'PM' : 'AM';
+
+        const hours12 = hours % 12 || 12;
+
+        const formattedMinutes = minutes.toString().padStart(2, '0');
+
+        return `${hours12}:${formattedMinutes} ${suffix}`;
+    }
+
+    const isCallActive = (startTime, endTime) => {
+        const nowUtc = new Date();
+        const offset = 5.5 * 60 * 60 * 1000;
+        const nowIst = new Date(nowUtc.getTime() + offset);
+        const currentTime = nowIst.toISOString().split('T')[1].split('.')[0];
+
+        return currentTime >= startTime && currentTime <= endTime;
+    };
+
+    const processScheduledCalls = requests => {
+        const now = new Date();
+        const offset = 5.5 * 60 * 60 * 1000;
+        const currentTime = new Date(now.getTime() + offset)
+            .toISOString()
+            .split('T')[1]
+            .split('.')[0];
+        const filteredRequests = requests.filter(
+            request => request.end_time >= currentTime
+        );
+
+        const sortedRequests = filteredRequests.sort((a, b) => {
+            return a.start_time.localeCompare(b.start_time);
+        });
+
+        const processedCalls = sortedRequests.map(request => ({
+            ...request,
+            time: `${convertTo12HourFormat(request.start_time)} - ${convertTo12HourFormat(request.end_time)}`,
+            callActive: isCallActive(request.start_time, request.end_time),
+        }));
+        setScheduledCalls(processedCalls);
+    };
+
+    useEffect(() => {
+        if (role == 'Coach') {
+            processScheduledCalls(coachScheduledCalls);
+        }
+    }, [coachScheduledCalls]);
 
     const handleDateChange = newDate => {
         if (newDate && newDate.isValid()) {
             setDate(newDate);
+            handleCalendarClose();
         }
     };
 
@@ -89,36 +160,17 @@ const ScheduledCall = () => {
         setNewMeetingPopUpOpen(false);
     };
 
-    const [scheduledCalls, setScheduledCalls] = useState([
-        {
-            id: 1,
-            title: 'Meeting Flow > Aman Gupta',
-            participants: 'Participants',
-            time: '12:30 PM - 01:30 PM',
-            status: 'Join Meeting',
-            statusColor: '#19B420',
-        },
-        {
-            id: 2,
-            title: 'Lorem Ipsum is simply dummy',
-            participants: 'No Booking Yet',
-            time: '12:30 PM - 01:30 PM',
-            status: 'Scheduled',
-            statusColor: '#F56D3B',
-        },
-        {
-            id: 3,
-            title: 'Lorem Ipsum is simply dummy',
-            participants: 'No Booking Yet',
-            time: '12:30 PM - 01:30 PM',
-            status: 'Scheduled',
-            statusColor: '#F56D3B',
-        },
-    ]);
-
     const onNewMeetingSubmit = props => {
         console.log(props);
         setNewMeetingPopUpOpen(false);
+    };
+
+    const handleClickJoinMeeting = meetingUrl => {
+        if (meetingUrl) {
+            window.open(meetingUrl, '_blank');
+        } else {
+            console.error('Meeting URL is not provided');
+        }
     };
 
     return (
@@ -153,7 +205,7 @@ const ScheduledCall = () => {
                     onClick={() => setNewMeetingPopUpOpen(true)}
                 >
                     <AddCircleOutlineIcon />
-                    Create New Meeting
+                    Create New Session
                 </CustomButton>
             </Box>
 
@@ -192,13 +244,7 @@ const ScheduledCall = () => {
                             horizontal: 'left',
                         }}
                     >
-                        <DatePicker
-                            value={date}
-                            onChange={handleDateChange}
-                            disableOpenPicker
-                            open
-                            onClose={handleCalendarClose}
-                        />
+                        <DateCalendar date={date} onChange={handleDateChange} />
                     </Popover>
                 </Box>
             </LocalizationProvider>
@@ -257,10 +303,22 @@ const ScheduledCall = () => {
                                     gutterBottom
                                     sx={{ fontWeight: 'bold' }}
                                 >
-                                    {call.title}
+                                    {call.meeting_name}
                                 </Typography>
                                 <Typography gutterBottom>
-                                    {call.participants}
+                                    {call.students.length > 0 ? (
+                                        <a
+                                            href="#"
+                                            style={{
+                                                textDecoration: 'underline',
+                                                color: '#F56D3B',
+                                            }}
+                                        >
+                                            Participants
+                                        </a>
+                                    ) : (
+                                        'No bookings yet'
+                                    )}
                                 </Typography>
                                 <Typography gutterBottom>
                                     {call.time}
@@ -270,14 +328,30 @@ const ScheduledCall = () => {
                                     justifyContent="flex-end"
                                     mt={2}
                                 >
-                                    <CustomButton
-                                        color="#FFFFFF"
-                                        backgroundColor={call.statusColor}
-                                        borderColor={call.statusColor}
-                                        style={{ textTransform: 'none' }}
-                                    >
-                                        {call.status}
-                                    </CustomButton>
+                                    {call.callActive ? (
+                                        <CustomButton
+                                            color="#FFFFFF"
+                                            backgroundColor="#19B420"
+                                            borderColor="#19B420"
+                                            style={{ textTransform: 'none' }}
+                                            onClick={() =>
+                                                handleClickJoinMeeting(
+                                                    call.meeting_url
+                                                )
+                                            }
+                                        >
+                                            Join Session
+                                        </CustomButton>
+                                    ) : (
+                                        <CustomButton
+                                            color="#FFFFFF"
+                                            backgroundColor="#F56D3B"
+                                            borderColor="#F56D3B"
+                                            style={{ textTransform: 'none' }}
+                                        >
+                                            Scheduled
+                                        </CustomButton>
+                                    )}
                                 </Box>
                             </CardContent>
                         </Card>

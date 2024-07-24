@@ -21,7 +21,7 @@ import {
 import moment from 'moment';
 import { updateCoachmenuprofile } from '../../../redux/features/CoachModule/coachmenuprofileSilce';
 import { useDispatch, useSelector } from 'react-redux';
-import { getCoachProfile } from '../../../redux/features/coach/coachmenuprofileSilce';
+import { getCoachMenuProfile } from '../../../redux/features/coach/coachmenuprofileSilce';
 import { formatInTimeZone } from 'date-fns-tz';
 
 const CoachMenuProfile = () => {
@@ -59,7 +59,7 @@ const CoachMenuProfile = () => {
     };
 
     useEffect(() => {
-        dispatch(getCoachProfile());
+        dispatch(getCoachMenuProfile());
     }, [dispatch]);
 
     useEffect(() => {
@@ -67,6 +67,7 @@ const CoachMenuProfile = () => {
             populateForm(coachProfileData);
         }
     }, [coachProfileData]);
+
     useEffect(() => {
         const fetchIP = async () => {
             try {
@@ -80,6 +81,7 @@ const CoachMenuProfile = () => {
 
         fetchIP();
     }, []);
+
     const convertTimezone = (time, fromTimeZone, toTimeZone) => {
         const formattedTime = formatInTimeZone(
             time,
@@ -89,6 +91,7 @@ const CoachMenuProfile = () => {
         );
         return formattedTime;
     };
+
     const getConvertedTime = () => {
         if (ipData && ipData.timezone) {
             const currentTime = new Date();
@@ -100,6 +103,7 @@ const CoachMenuProfile = () => {
         }
         return null;
     };
+
     const populateForm = data => {
         const formattedDate = moment(data.date_of_birth).format('YYYY-MM-DD');
         setDateOfBirth(formattedDate);

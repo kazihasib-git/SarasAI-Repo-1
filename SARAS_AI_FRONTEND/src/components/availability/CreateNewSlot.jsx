@@ -30,6 +30,12 @@ import {
     closeCoachCreateNewSlots,
 } from '../../redux/features/CoachModule/CoachAvailabilitySlice';
 import { toast } from 'react-toastify';
+import {
+    closeCreateSlotsPopup,
+    createCoachMenuSlot,
+    createCoachSlot,
+    getCoachSlots,
+} from '../../redux/features/coach/coachmenuprofileSilce';
 const CustomButton = ({
     onClick,
     children,
@@ -110,6 +116,22 @@ const CreateNewSlot = ({ componentName }) => {
             closeCreateNewSlotAction = closeCoachCreateNewSlots;
             openCreateNewSlotAction = 'createNewCoachSlotOpen';
             break;
+        case 'COACHMENU_CALENDER':
+            schedulingStateKey = 'coachMenu';
+            slotEventKey = '';
+            createNewSlotAction = '';
+            createSlotActions = createCoachMenuSlot;
+            closeCreateNewSlotAction = closeCreateSlotsPopup;
+            openCreateNewSlotAction = 'openCreteSlotsPopup';
+            break;
+        case 'TAMENU_CALENDER':
+            schedulingStateKey = 'taMenu';
+            slotEventKey = '';
+            createNewSlotAction = '';
+            createSlotActions = '';
+            closeCreateNewSlotAction = '';
+            openCreateNewSlotAction = '';
+            break;
         default:
             schedulingStateKey = null;
             slotEventKey = null;
@@ -133,11 +155,6 @@ const CreateNewSlot = ({ componentName }) => {
         schedulingStateKey ? state[schedulingStateKey] : {}
     );
     const { [slotEventKey]: slotEventData } = schedulingState;
-
-    //   console.log("schedulingState", schedulingState);
-    //   console.log("createSlotActions", createSlotActions);
-    //   console.log("closeCreateNewSlotAction", closeCreateNewSlotAction);
-    //   console.log("slotEventData", slotEventData);
 
     const {
         register,

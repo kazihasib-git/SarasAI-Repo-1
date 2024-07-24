@@ -20,8 +20,8 @@ import {
 } from '../../../components/CustomFields/FormOptions';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-    getTaProfile,
-    updateTaProfile,
+    getTaMenuProfile,
+    updateTaMenuProfile,
 } from '../../../redux/features/teachingAssistant/tamenuSlice';
 import moment from 'moment';
 
@@ -59,7 +59,7 @@ const TaMenuProfile = () => {
     };
 
     useEffect(() => {
-        dispatch(getTaProfile());
+        dispatch(getTaMenuProfile());
     }, [dispatch]);
 
     useEffect(() => {
@@ -128,7 +128,7 @@ const TaMenuProfile = () => {
         }
 
         console.log('updatedFormData', updatedFormData);
-        dispatch(updateTaProfile(updatedFormData));
+        dispatch(updateTaMenuProfile(updatedFormData));
     };
 
     return (
