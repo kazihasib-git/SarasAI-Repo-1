@@ -217,9 +217,7 @@ const CreateNewSlot = ({ componentName }) => {
                 dispatch(closeCreateNewSlotAction());
                 return dispatch(fetchCoachSlots(taId.id));
             })
-            .catch(error => {
-                console.error('Error:', error);
-            });
+            
     };
 
     const content = (

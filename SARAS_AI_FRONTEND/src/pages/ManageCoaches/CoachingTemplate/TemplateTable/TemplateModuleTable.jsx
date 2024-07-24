@@ -337,10 +337,12 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                         ) : (
                                                             <CustomButton
                                                                 backgroundColor="#FEEBE3"
-                                                                onClick={() =>
+                                                                    onClick={() =>{
+                                                                    console.log("selectedcoachtemplate",selectedCoachTemplate)
                                                                     openLinkActivityPopup(
                                                                         activity.id
-                                                                    )
+                                                                        )
+                                                                        }
                                                                 }
                                                             >
                                                                 Link Activity
@@ -459,6 +461,8 @@ const TemplateModuleTable = ({ modulesData }) => {
                 open={linkActivityPopupOpen}
                 handleClose={closeLinkActivityPopup}
                 activityId={selectedActivityId}
+                templateId={selectedCoachTemplate}
+                
             />
             <PrerequisitesPopup
                 open={prerequisitesPopupOpen}

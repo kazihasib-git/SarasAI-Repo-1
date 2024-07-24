@@ -28,6 +28,7 @@ import { createCoachSchedule } from '../../../../redux/features/CoachModule/coac
 import TestActivityComponent from './Components/TestActivityComponent';
 import OneOnOneSessionComponent from './Components/OneonOneSessionComponent';
 import PDFUploadComponent from './Components/PDFUploadComponent';
+import { getCoachTemplateModuleId } from '../../../../redux/features/CoachModule/CoachTemplateSlice';
 const CustomButton = ({
     onClick,
     children,
@@ -63,8 +64,9 @@ const CustomButton = ({
     );
 };
 
-const LinkActivityPopup = ({ open, handleClose, activityId }) => {
+const LinkActivityPopup = ({ open, handleClose, activityId , templateId}) => {
     const dispatch = useDispatch();
+    console.log("template id",templateId)
     const {
         handleSubmit,
         control,
@@ -96,7 +98,10 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
         console.log('payload', payload);
 
         try {
-            await dispatch(linkActivity(payload)).unwrap();
+            await dispatch(linkActivity(payload)).unwrap().then(() => {
+                // Refetch the data to update the table
+                dispatch(getCoachTemplateModuleId(templateId));
+            });
             handleClose();
         } catch (error) {
             console.error('Failed to link activity:', error);
@@ -549,3 +554,4 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
 };
 
 export default LinkActivityPopup;
+
