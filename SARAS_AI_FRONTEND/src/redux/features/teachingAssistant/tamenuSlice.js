@@ -69,6 +69,84 @@ export const getTaMenuSessions = createAsyncThunk(
     }
 );
 
+// ta menu call request
+export const getTaCallRequests = createAsyncThunk(
+    'taMenu/getCallRequests',
+    async () => {
+        const response = await axios.get(
+            `${baseUrl}/ta/call-request/get-call-request`,
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+        console.log(response.data, 'response.data');
+        return response.data;
+    }
+);
+
+// ta approve call request
+export const approveCallRequest = createAsyncThunk(
+    'taMenu/approveCallRequest',
+    async id => {
+        const response = await axios.get(
+            `${baseUrl}/ta/call-request/approve-call-request/${id}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+        console.log(response.data, 'response.data');
+        return response.data;
+    }
+);
+
+//ta deny call
+export const denyCallRequest = createAsyncThunk(
+    'taMenu/denyCallRequest',
+    async (id, reason) => {
+        const response = await axios.put(
+            `${baseUrl}/ta/call-request/denie-call-request/${id}`,
+            {
+                'reject-reason': reason,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+        console.log(response.data, 'response.data');
+        return response.data;
+    }
+);
+
+//ta scheduled Calls
+export const getTaScheduledCalls = createAsyncThunk(
+    'taMenu/getTaScheduledCalls',
+    async date => {
+        const response = await axios.post(
+            `${baseUrl}/ta/schedule-call/get-schedule-call`,
+            {
+                date: date,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+        console.log(response.data, 'response.data');
+        return response.data;
+    }
+);
+
 // Create TA Sessions
 export const createTaMenuSessions = createAsyncThunk(
     'taMenu/createTaMenuSessions',
@@ -86,6 +164,8 @@ const initialState = {
     taSlots: [], // TA Slots
     taSlotsByDate: [], // TA Slots by Date
     taSessions: [], // TA Sessions
+    taCallRequests: [], //Ta call request
+    taScheduledCalls: [], // scheduled call
 
     createTaSlotsPopup: false,
     createTaSessionPopup: false,
@@ -198,6 +278,65 @@ export const taMenuSlice = createSlice({
         builder.addCase(createTaMenuSessions.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+        });
+        //get tamenu call requests
+        builder.addCase(getTaCallRequests.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(getTaCallRequests.fulfilled, (state, action) => {
+            state.loading = false;
+            state.taCallRequests = action.payload.data;
+        });
+        builder.addCase(getTaCallRequests.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+            state.taCallRequests = [];
+        });
+
+        //approve call request
+        builder.addCase(approveCallRequest.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(approveCallRequest.fulfilled, (state, action) => {
+            state.loading = false;
+            state.taCallRequests = state.taCallRequests.map(request =>
+                request.id === action.payload.data.id
+                    ? { ...request, status: 'Approved' }
+                    : request
+            );
+        });
+        builder.addCase(approveCallRequest.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+        });
+
+        //deny Call Request
+        builder.addCase(denyCallRequest.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(denyCallRequest.fulfilled, (state, action) => {
+            state.loading = false;
+            state.taCallRequests = state.taCallRequests.filter(
+                request => request.id !== action.payload.data.id
+            );
+        });
+        builder.addCase(denyCallRequest.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+        });
+
+        //get coach scheduled calls
+        builder.addCase(getTaScheduledCalls.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(getTaScheduledCalls.fulfilled, (state, action) => {
+            state.loading = false;
+            state.taScheduledCalls = action.payload.data;
+        });
+        builder.addCase(getTaScheduledCalls.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+            state.taScheduledCalls = [];
         });
     },
 });

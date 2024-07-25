@@ -20,7 +20,8 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { DateCalendar, LocalizationProvider } from '@mui/x-date-pickers';
 import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
-import { getCoachScheduledCalls } from '../../../redux/features/coach/coachmenuprofileSilce';
+//import { getCoachScheduledCalls } from '../../../redux/features/coach/coachmenuprofileSilce';
+import { getTaScheduledCalls } from '../../../redux/features/teachingAssistant/tamenuSlice';
 
 const CustomButton = ({
     onClick,
@@ -63,6 +64,7 @@ const ScheduledCall = ({ role }) => {
     const [date, setDate] = useState(moment());
     const [anchorEl, setAnchorEl] = useState(null);
     const { coachScheduledCalls } = useSelector(state => state.coachMenu);
+    const { taScheduledCalls } = useSelector(state => state.taMenu);
 
     const [scheduledCalls, setScheduledCalls] = useState([]);
 
@@ -76,8 +78,12 @@ const ScheduledCall = ({ role }) => {
     useEffect(() => {
         if (role == 'Coach') {
             dispatch(getCoachScheduledCalls(formatDate(date)));
+        } else if (role == 'TA') {
+            dispatch(getTaScheduledCalls(formatDate(date)))
+                .then(response => console.log(response))
+                .catch(error => console.error(error));
         }
-    }, [dispatch, date]);
+    }, [dispatch, date, role]);
 
     function convertTo12HourFormat(time24) {
         // Split the time into hours, minutes, and seconds
@@ -127,8 +133,10 @@ const ScheduledCall = ({ role }) => {
     useEffect(() => {
         if (role == 'Coach') {
             processScheduledCalls(coachScheduledCalls);
+        } else if (role == 'TA') {
+            processScheduledCalls(taScheduledCalls);
         }
-    }, [coachScheduledCalls]);
+    }, [coachScheduledCalls, taScheduledCalls]);
 
     const handleDateChange = newDate => {
         if (newDate && newDate.isValid()) {

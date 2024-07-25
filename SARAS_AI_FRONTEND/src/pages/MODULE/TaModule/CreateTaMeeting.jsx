@@ -13,6 +13,7 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import CustomTextField from '../../../components/CustomFields/CustomTextField';
 import CustomDateField from '../../../components/CustomFields/CustomDateField';
+import CustomTimeField from '../../../components/CustomFields/CustomTimeField';
 //import CustomFormControl from '../../../components/CustomFields/CustomFromControl';
 
 //const inputPropsStyle = multiline ? { borderRadius: '25px', padding: '25px 30px 18px 30px' } : { height: '60px', borderRadius: '50px', padding: '18px 2px' };
@@ -48,8 +49,8 @@ const CreateTaMeeting = ({ open, onClose, onSubmit }) => {
                 </IconButton>
             </DialogTitle>
             <DialogContent>
-                <Box mb={2}>
-                    <TextField
+                <Box mt={2} mb={2}>
+                    <CustomTextField
                         select
                         label="Meeting"
                         value={meeting}
@@ -59,10 +60,10 @@ const CreateTaMeeting = ({ open, onClose, onSubmit }) => {
                         <MenuItem value="Meeting 1">Meeting 1</MenuItem>
                         <MenuItem value="Meeting 2">Meeting 2</MenuItem>
                         {/* Add more options as needed */}
-                    </TextField>
+                    </CustomTextField>
                 </Box>
                 <Box mb={2}>
-                    <TextField
+                    <CustomTextField
                         select
                         label="Duration"
                         value={duration}
@@ -70,9 +71,9 @@ const CreateTaMeeting = ({ open, onClose, onSubmit }) => {
                         fullWidth
                     >
                         <MenuItem value="30 mins">30 mins</MenuItem>
-                        <MenuItem value="1 hour">1 hour</MenuItem>
+                        <MenuItem value="60 mins">60 mins</MenuItem>
                         {/* Add more options as needed */}
-                    </TextField>
+                    </CustomTextField>
                 </Box>
                 <Box mb={2}>
                     <CustomTextField
@@ -93,12 +94,12 @@ const CreateTaMeeting = ({ open, onClose, onSubmit }) => {
                     />
                 </Box>
                 <Box mb={2}>
-                    <TextField
+                    <CustomTimeField
                         label="Time"
                         type="time"
                         InputLabelProps={{ shrink: true }}
                         value={time}
-                        onChange={e => setTime(e.target.value)}
+                        onChange={time => setTime(time)}
                         fullWidth
                     />
                 </Box>
@@ -115,7 +116,12 @@ const CreateTaMeeting = ({ open, onClose, onSubmit }) => {
             <DialogActions>
                 <Button
                     onClick={handleSubmit}
-                    style={{ backgroundColor: '#F56D3B', color: 'white' }}
+                    style={{
+                        backgroundColor: '#F56D3B',
+                        color: 'white',
+                        borderRadius: '50px',
+                        fontSize: '16px',
+                    }}
                 >
                     Submit
                 </Button>
