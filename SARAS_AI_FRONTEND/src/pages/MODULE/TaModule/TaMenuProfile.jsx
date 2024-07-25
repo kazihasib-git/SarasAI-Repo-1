@@ -24,6 +24,7 @@ import {
     updateTaMenuProfile,
 } from '../../../redux/features/teachingAssistant/tamenuSlice';
 import moment from 'moment';
+import CustomDateOfBirth from '../../../components/CustomFields/CustomDateOfBirth';
 
 const TaMenuProfile = () => {
     const dispatch = useDispatch();
@@ -44,6 +45,11 @@ const TaMenuProfile = () => {
     });
 
     const { taProfileData } = useSelector(state => state.taMenu);
+    const [isEditing, setIsEditing] = useState(false);
+
+    const toggleEdit = () => {
+        setIsEditing(true);
+    };
 
     const [selectedImage, setSelectedImage] = useState(null);
     const [dateOfBirth, setDateOfBirth] = useState(null);
@@ -118,6 +124,7 @@ const TaMenuProfile = () => {
         const { email, time_zone, ...updatedFormData } = formData;
 
         updatedFormData.date_of_birth = dateOfBirth;
+        setIsEditing(false); // Disable edit mode after submit
 
         if (selectedImage) {
             const base64Data = selectedImage.replace(
@@ -162,6 +169,25 @@ const TaMenuProfile = () => {
                                 selectedImage={selectedImage}
                                 setSelectedImage={setSelectedImage}
                             />
+
+                            {!isEditing && (
+                                <Button
+                                    onClick={toggleEdit}
+                                    sx={{
+                                        top: 3,
+                                        left: 799,
+                                        borderRadius: 40,
+                                        textTransform: 'none',
+                                        backgroundColor: '#F56D3B',
+                                        color: 'white',
+                                        '&:hover': {
+                                            backgroundColor: '#F56D3B',
+                                        },
+                                    }}
+                                >
+                                    Edit
+                                </Button>
+                            )}
                         </Box>
                         <Divider
                             sx={{ mt: 1, mb: 3, border: '1px solid #C2C2E7' }}
@@ -188,6 +214,7 @@ const TaMenuProfile = () => {
                                         },
                                     }}
                                     errors={errors}
+                                    disabled={!isEditing}
                                 />
                             </Grid>
 
@@ -215,6 +242,7 @@ const TaMenuProfile = () => {
                                         },
                                     }}
                                     errors={errors}
+                                    disabled={!isEditing}
                                 />
                             </Grid>
 
@@ -263,6 +291,7 @@ const TaMenuProfile = () => {
                                         },
                                     }}
                                     errors={errors}
+                                    disabled={!isEditing}
                                 />
                             </Grid>
 
@@ -299,6 +328,7 @@ const TaMenuProfile = () => {
                                                 paddingLeft: '10px',
                                                 // boxShadow: errors.phone ? "0 0 0 2px red" : "none",
                                             }}
+                                            disabled={!isEditing}
                                             onFocus={e =>
                                                 (e.target.style.borderColor =
                                                     errors.phone
@@ -336,6 +366,7 @@ const TaMenuProfile = () => {
                                                 onChange={field.onChange}
                                                 errors={errors}
                                                 options={transformedTimeZones}
+                                                disabled={!isEditing}
                                             />
                                         );
                                     }}
@@ -357,6 +388,7 @@ const TaMenuProfile = () => {
                                         },
                                     }}
                                     errors={errors}
+                                    disabled={!isEditing}
                                 />
                             </Grid>
 
@@ -375,6 +407,7 @@ const TaMenuProfile = () => {
                                         },
                                     }}
                                     errors={errors}
+                                    disabled={!isEditing}
                                 />
                             </Grid>
 
@@ -404,10 +437,11 @@ const TaMenuProfile = () => {
                                         },
                                     }}
                                     errors={errors}
+                                    disabled={!isEditing}
                                 />
                             </Grid>
 
-                            <Grid item xs={12} sm={6} md={4}>
+                            {/* <Grid item xs={12} sm={6} md={4}>
                                 <Controller
                                     name="time_zone"
                                     control={control}
@@ -423,11 +457,12 @@ const TaMenuProfile = () => {
                                                 onChange={field.onChange}
                                                 errors={errors}
                                                 options={transformedTimeZones}
+                                                disabled={!isEditing}
                                             />
                                         );
                                     }}
                                 />
-                            </Grid>
+                            </Grid> */}
 
                             <Grid item xs={12} sm={6} md={4}>
                                 <Controller
@@ -442,6 +477,7 @@ const TaMenuProfile = () => {
                                             onChange={field.onChange}
                                             errors={errors}
                                             options={genders}
+                                            disabled={!isEditing}
                                         />
                                     )}
                                 />
@@ -451,14 +487,16 @@ const TaMenuProfile = () => {
                                     control={control}
                                     name="date_of_birth"
                                     render={({ field }) => (
-                                        <CustomDateField
+                                        <CustomDateOfBirth
                                             label="Date of Birth"
                                             name="date_of_birth"
                                             value={dateOfBirth}
                                             onChange={date =>
                                                 handleDateChange(date, field)
                                             }
+                                            disableFutureDates={true}
                                             error={!!errors.date_of_birth}
+                                            disabled={!isEditing}
                                             helperText={
                                                 errors.date_of_birth?.message
                                             }
@@ -486,6 +524,7 @@ const TaMenuProfile = () => {
                                             onChange={field.onChange}
                                             errors={errors}
                                             options={qualificationOptions}
+                                            disabled={!isEditing}
                                         />
                                     )}
                                 />
@@ -507,26 +546,29 @@ const TaMenuProfile = () => {
                                         },
                                     }}
                                     errors={errors}
+                                    disabled={!isEditing}
                                 />
                             </Grid>
                         </Grid>
-                        <Button
-                            type="submit"
-                            variant="contained"
-                            style={{
-                                borderRadius: '50px',
-                                padding: '15px 25px',
-                                marginTop: 20,
-                                backgroundColor: '#F56D3B',
-                                height: '50px',
-                                width: '110px',
-                                fontSize: '14px',
-                                fontWeight: '700',
-                                text: '#FFFFFF',
-                            }}
-                        >
-                            Submit
-                        </Button>
+                        {isEditing && (
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                style={{
+                                    borderRadius: '50px',
+                                    padding: '15px 25px',
+                                    marginTop: 20,
+                                    backgroundColor: '#F56D3B',
+                                    height: '50px',
+                                    width: '110px',
+                                    fontSize: '14px',
+                                    fontWeight: '700',
+                                    text: '#FFFFFF',
+                                }}
+                            >
+                                Submit
+                            </Button>
+                        )}
                     </form>
                 </Box>
             </Box>

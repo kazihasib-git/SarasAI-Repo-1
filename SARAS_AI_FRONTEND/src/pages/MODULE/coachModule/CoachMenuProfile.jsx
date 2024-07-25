@@ -44,6 +44,12 @@ const CoachMenuProfile = () => {
 
     const { coachProfileData } = useSelector(state => state.coachMenu);
 
+    //edit button
+    const [isEditing, setIsEditing] = useState(false);
+    const toggleEdit = () => {
+        setIsEditing(true);
+    };
+
     const [selectedImage, setSelectedImage] = useState(null);
     const [dateOfBirth, setDateOfBirth] = useState(null);
     const [phoneNumber, setPhoneNumber] = useState('');
@@ -152,6 +158,7 @@ const CoachMenuProfile = () => {
     const onSubmit = async formData => {
         // Handle form submission
         const { email, time_zone, ...updatedFormData } = formData;
+        setIsEditing(false); // Disable edit mode after submit
 
         updatedFormData.date_of_birth = dateOfBirth;
 
@@ -198,6 +205,25 @@ const CoachMenuProfile = () => {
                                 selectedImage={selectedImage}
                                 setSelectedImage={setSelectedImage}
                             />
+
+                            {!isEditing && (
+                                <Button
+                                    onClick={toggleEdit}
+                                    sx={{
+                                        top: 3,
+                                        left: 799,
+                                        borderRadius: 40,
+                                        textTransform: 'none',
+                                        backgroundColor: '#F56D3B',
+                                        color: 'white',
+                                        '&:hover': {
+                                            backgroundColor: '#F56D3B',
+                                        },
+                                    }}
+                                >
+                                    Edit
+                                </Button>
+                            )}
                         </Box>
                         <Divider
                             sx={{ mt: 1, mb: 3, border: '1px solid #C2C2E7' }}
@@ -224,6 +250,7 @@ const CoachMenuProfile = () => {
                                         },
                                     }}
                                     errors={errors}
+                                    disabled={!isEditing}
                                 />
                             </Grid>
 
@@ -251,6 +278,7 @@ const CoachMenuProfile = () => {
                                         },
                                     }}
                                     errors={errors}
+                                    disabled={!isEditing}
                                 />
                             </Grid>
                             {/*
@@ -298,6 +326,7 @@ const CoachMenuProfile = () => {
                                         },
                                     }}
                                     errors={errors}
+                                    disabled={!isEditing}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6} md={4}>
@@ -340,6 +369,7 @@ const CoachMenuProfile = () => {
                                                         : '#D0D0EC')
                                             }
                                             onChange={field.onChange}
+                                            disabled={!isEditing}
                                         />
                                     )}
                                 />
@@ -370,6 +400,7 @@ const CoachMenuProfile = () => {
                                                 onChange={field.onChange}
                                                 errors={errors}
                                                 options={transformedTimeZones}
+                                                disabled={!isEditing}
                                             />
                                         );
                                     }}
@@ -391,6 +422,7 @@ const CoachMenuProfile = () => {
                                         },
                                     }}
                                     errors={errors}
+                                    disabled={!isEditing}
                                 />
                             </Grid>
 
@@ -409,6 +441,7 @@ const CoachMenuProfile = () => {
                                         },
                                     }}
                                     errors={errors}
+                                    disabled={!isEditing}
                                 />
                             </Grid>
 
@@ -438,6 +471,7 @@ const CoachMenuProfile = () => {
                                         },
                                     }}
                                     errors={errors}
+                                    disabled={!isEditing}
                                 />
                             </Grid>
 
@@ -454,6 +488,7 @@ const CoachMenuProfile = () => {
                                             onChange={field.onChange}
                                             errors={errors}
                                             options={genders}
+                                            disabled={!isEditing}
                                         />
                                     )}
                                 />
@@ -474,6 +509,7 @@ const CoachMenuProfile = () => {
                                             helperText={
                                                 errors.date_of_birth?.message
                                             }
+                                            disabled={!isEditing}
                                         />
                                     )}
                                     rules={{
@@ -498,6 +534,7 @@ const CoachMenuProfile = () => {
                                             onChange={field.onChange}
                                             errors={errors}
                                             options={qualificationOptions}
+                                            disabled={!isEditing}
                                         />
                                     )}
                                 />
@@ -519,26 +556,29 @@ const CoachMenuProfile = () => {
                                         },
                                     }}
                                     errors={errors}
+                                    disabled={!isEditing}
                                 />
                             </Grid>
                         </Grid>
-                        <Button
-                            type="submit"
-                            variant="contained"
-                            style={{
-                                borderRadius: '50px',
-                                padding: '15px 25px',
-                                marginTop: 20,
-                                backgroundColor: '#F56D3B',
-                                height: '50px',
-                                width: '110px',
-                                fontSize: '14px',
-                                fontWeight: '700',
-                                text: '#FFFFFF',
-                            }}
-                        >
-                            Submit
-                        </Button>
+                        {isEditing && (
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                style={{
+                                    borderRadius: '50px',
+                                    padding: '15px 25px',
+                                    marginTop: 20,
+                                    backgroundColor: '#F56D3B',
+                                    height: '50px',
+                                    width: '110px',
+                                    fontSize: '14px',
+                                    fontWeight: '700',
+                                    text: '#FFFFFF',
+                                }}
+                            >
+                                Submit
+                            </Button>
+                        )}
                     </form>
                 </Box>
             </Box>
