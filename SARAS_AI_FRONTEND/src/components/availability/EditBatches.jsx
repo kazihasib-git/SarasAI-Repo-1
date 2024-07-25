@@ -271,11 +271,11 @@ const EditBatches = ({ componentname }) => {
             const batches = selectedBatch.map(id => ({ id }));
             dispatch(openCreateSessionPopup({ batches }));
             dispatch(closeDialogAction());
-        } else if(componentname === 'TAMENU_CALENDER'){
+        } else if (componentname === 'TAMENU_CALENDER') {
             const batches = selectedBatch.map(id => ({ id }));
             dispatch(openTaMenuCreateSessionsPopup({ batches }));
             dispatch(closeDialogAction());
-        }else {
+        } else {
             dispatch(openScheduleSessionAction(data));
             dispatch(closeDialogAction());
         }

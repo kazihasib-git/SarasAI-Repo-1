@@ -8,7 +8,7 @@ import Sidebar from '../../Sidebar/Sidebar';
 import { studentDummyDatadata } from '../../../fakeData/studentData';
 import DynamicTable from '../../CommonComponent/DynamicTable';
 
-const Mystudents = ({role}) => {
+const Mystudents = ({ role }) => {
     const [input, setInput] = useState('');
     const [students, setStudents] = useState([]);
 

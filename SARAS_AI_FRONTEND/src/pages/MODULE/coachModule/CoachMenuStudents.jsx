@@ -6,7 +6,7 @@ const CoachMenuStudents = () => {
     return (
         <div>
             <CoachMenu />
-            <Mystudents role='Coach'/>
+            <Mystudents role="Coach" />
         </div>
     );
 };

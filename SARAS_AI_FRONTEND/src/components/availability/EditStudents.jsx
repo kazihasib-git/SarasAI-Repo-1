@@ -322,12 +322,11 @@ const EditStudents = ({ componentname }) => {
             const student = selectedStudents.map(id => ({ id }));
             dispatch(openCreateSessionPopup({ student }));
             dispatch(closeDialogAction());
-        } else if(componentname === 'TAMENU_CALENDER'){
+        } else if (componentname === 'TAMENU_CALENDER') {
             const student = selectedStudents.map(id => ({ id }));
             dispatch(openTaMenuCreateSessionsPopup({ student }));
             dispatch(closeDialogAction());
-        }
-        else {
+        } else {
             dispatch(
                 openScheduleSession({
                     id,

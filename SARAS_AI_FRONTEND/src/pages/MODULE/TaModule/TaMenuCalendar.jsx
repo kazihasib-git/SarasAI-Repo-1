@@ -94,8 +94,14 @@ const TAMenuCalendar = () => {
     //     (state) => state.taModule
     //   );
 
-    const {createTaSlotsPopup, createTaSessionPopup, taSlots, taSessions , selectTaStudent, selectTaBatches,} = useSelector(state => state.taMenu);
-
+    const {
+        createTaSlotsPopup,
+        createTaSessionPopup,
+        taSlots,
+        taSessions,
+        selectTaStudent,
+        selectTaBatches,
+    } = useSelector(state => state.taMenu);
 
     //calendar
     const [eventsList, setEventsList] = useState([]);
@@ -106,7 +112,7 @@ const TAMenuCalendar = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        if (taSessions && taSessions.length>0) {
+        if (taSessions && taSessions.length > 0) {
             const transformedEvents = taSessions.map(event => ({
                 title: event.meeting_name,
                 start: new Date(
@@ -265,7 +271,7 @@ const TAMenuCalendar = () => {
                         name={name}
                         componentName={'TACALENDER'}
                     />
-                )} */} 
+                )} */}
                 {/* {deleteFutureSlots && (
         <DeleteAllSlots
           open={deleteFutureSlots}

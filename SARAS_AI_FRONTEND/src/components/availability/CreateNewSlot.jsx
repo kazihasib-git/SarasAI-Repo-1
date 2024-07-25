@@ -36,7 +36,10 @@ import {
     createCoachSlot,
     getCoachSlots,
 } from '../../redux/features/coach/coachmenuprofileSilce';
-import { closeTaMenuCreateSlotsPopup, createTaMenuSlots } from '../../redux/features/teachingAssistant/tamenuSlice';
+import {
+    closeTaMenuCreateSlotsPopup,
+    createTaMenuSlots,
+} from '../../redux/features/teachingAssistant/tamenuSlice';
 const CustomButton = ({
     onClick,
     children,

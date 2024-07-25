@@ -36,7 +36,7 @@ export const getTaMenuSlots = createAsyncThunk('taMenu/getSlots', async () => {
 // Create TA Slots
 export const createTaMenuSlots = createAsyncThunk(
     'taMenu/createTaSlot',
-    async (data) => {
+    async data => {
         const response = await axiosInstance.post(
             `${baseUrl}/ta/calendar/create-slots`,
             data
@@ -48,7 +48,7 @@ export const createTaMenuSlots = createAsyncThunk(
 // Get TA Slots by Date
 export const getTaMenuSlotsByDate = createAsyncThunk(
     'taMenu/createTaSlotByDate',
-    async (data) => {
+    async data => {
         const response = await axiosInstance.post(
             `${baseUrl}/ta/calendar/slots-by-date`,
             data
@@ -72,7 +72,7 @@ export const getTaMenuSessions = createAsyncThunk(
 // Create TA Sessions
 export const createTaMenuSessions = createAsyncThunk(
     'taMenu/createTaMenuSessions',
-    async (data) => {
+    async data => {
         const response = await axiosInstance.post(
             `${baseUrl}/ta/calendar/create-sessions`,
             data
@@ -81,14 +81,11 @@ export const createTaMenuSessions = createAsyncThunk(
     }
 );
 
-
 //Get assigned students
 export const getTaMenuAssignedStudents = createAsyncThunk(
     'coachMenu/getAssignedStudents',
     async () => {
-        const response = await axiosInstance.get(
-            `${baseUrl}/ta/get-students`
-        );
+        const response = await axiosInstance.get(`${baseUrl}/ta/get-students`);
         return response.data;
     }
 );
@@ -97,9 +94,7 @@ export const getTaMenuAssignedStudents = createAsyncThunk(
 export const getTaMenuAssignedBatches = createAsyncThunk(
     'coachMenu/getAssignedBatches',
     async () => {
-        const response = await axiosInstance.get(
-            `${baseUrl}/ta/get-batches`
-        );
+        const response = await axiosInstance.get(`${baseUrl}/ta/get-batches`);
         return response.data;
     }
 );
@@ -109,14 +104,13 @@ const initialState = {
     taSlots: [], // TA Slots
     taSlotsByDate: [], // TA Slots by Date
     taSessions: [], // TA Sessions
-    selectedTaStudents: [], 
+    selectedTaStudents: [],
     selectedTaBatches: [],
-    assignedTaStudents: [], 
-    assignedTaBatches: [], 
+    assignedTaStudents: [],
+    assignedTaBatches: [],
 
     selectTaStudent: false,
     selectTaBatches: false,
-
 
     createTaSlotsPopup: false,
     createTaSessionPopup: false,
@@ -210,14 +204,14 @@ export const taMenuSlice = createSlice({
         builder.addCase(getTaMenuSlotsByDate.pending, state => {
             state.loading = true;
         });
-        builder.addCase(getTaMenuSlotsByDate.fulfilled, (state,action) => {
+        builder.addCase(getTaMenuSlotsByDate.fulfilled, (state, action) => {
             state.loading = false;
             state.taSlotsByDate = action.payload.data;
         });
-        builder.addCase(getTaMenuSlotsByDate.rejected, (state,action)=> {
+        builder.addCase(getTaMenuSlotsByDate.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
-            state.taSlotsByDate=[];
+            state.taSlotsByDate = [];
         });
 
         // Create Ta Slots
@@ -270,39 +264,30 @@ export const taMenuSlice = createSlice({
                 state.assignedTaStudents = action.payload;
             }
         );
-        builder.addCase(
-            getTaMenuAssignedStudents.rejected,
-            (state, action) => {
-                state.loading = false;
-                state.assignedTaStudents = [];
-                state.error = action.error.message;
-            }
-        );
+        builder.addCase(getTaMenuAssignedStudents.rejected, (state, action) => {
+            state.loading = false;
+            state.assignedTaStudents = [];
+            state.error = action.error.message;
+        });
 
         // Get ta Assigned Batches
         builder.addCase(getTaMenuAssignedBatches.pending, state => {
             state.loading = true;
         });
-        builder.addCase(
-            getTaMenuAssignedBatches.fulfilled,
-            (state, action) => {
-                state.loading = false;
-                state.assignedTaBatches = action.payload;
-            }
-        );
-        builder.addCase(
-            getTaMenuAssignedBatches.rejected,
-            (state, action) => {
-                state.loading = false;
-                state.error = action.error.message;
-                state.assignedTaBatches = [];
-            }
-        );
+        builder.addCase(getTaMenuAssignedBatches.fulfilled, (state, action) => {
+            state.loading = false;
+            state.assignedTaBatches = action.payload;
+        });
+        builder.addCase(getTaMenuAssignedBatches.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+            state.assignedTaBatches = [];
+        });
     },
 });
 
-export  const {
-    openTaMenuCreateSlotsPopup, 
+export const {
+    openTaMenuCreateSlotsPopup,
     closeTaMenuCreateSlotsPopup,
     openTaMenuCreateSessionsPopup,
     closeTaMenuCreateSessionsPopup,
@@ -310,6 +295,5 @@ export  const {
     closeTaMenuSelectStudents,
     openTaMenuSelectBatches,
     closeTaMenuSelectBatches,
-
 } = taMenuSlice.actions;
 export default taMenuSlice.reducer;

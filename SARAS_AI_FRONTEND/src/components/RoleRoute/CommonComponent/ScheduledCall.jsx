@@ -108,7 +108,7 @@ const ScheduledCall = ({ role }) => {
             .toISOString()
             .split('T')[1]
             .split('.')[0];
-        let filteredRequests=[];
+        let filteredRequests = [];
 
         if (date > now) {
             filteredRequests = requests;
