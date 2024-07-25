@@ -127,6 +127,8 @@ function LoginApp() {
             } else {
                 navigate(from, { replace: true });
             }
+        }else{
+            navigate('/login', { replace : true })
         }
     }, [login, role, accessToken]);
 
@@ -138,6 +140,10 @@ function LoginApp() {
                 <Route path="login" element={<Login />} />
                 <Route path="linkpage" element={<LinkPage />} />
                 <Route path="unauthorized" element={<Unauthorized />} />
+
+                {!login}{
+                    <Route path="login" element={<Login />} />
+                }
 
                 {/* Protected Routes */}
                 {login && role == 5150 && (

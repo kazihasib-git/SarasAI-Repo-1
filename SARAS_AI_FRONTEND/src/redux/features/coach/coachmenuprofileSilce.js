@@ -145,6 +145,14 @@ export const getSessionForLeave = createAsyncThunk(
     }
 )
 
+export const cancelScheduledSessionForLeave = createAsyncThunk(
+    'coachMenu/cancelScheduledSession',
+    async (id) => {
+        const response = await axiosInstance.put(`${baseUrl}/coach/calendar/cancel-schedule/${id}`)
+        return response.data;
+    }
+)
+
 // Reason for Coach Leave
 export const reasonForCoachMenuLeave = createAsyncThunk(
     'coachMenu/reasonForLeave',
@@ -256,6 +264,11 @@ const initialState = {
     selectBatches: false, // Select to Schedule Sessions 
     LeaveSlotsPopup : false,
     leaveScheduledSessionPopup : false,
+    leaveRescheduleSessionPopup : false,
+    reasonForLeavePopup : false,
+    cancelSessionOnLeave : false,
+    viewStudentsOnReschedule : false,
+    viewBatchesOnReschedule : false,
 
     loading: false,
     error: null,
@@ -322,7 +335,38 @@ export const coachMenuSlice = createSlice({
         },
         closeScheduledSessionForLeave : (state, action ) => {
             state.leaveScheduledSessionPopup = false 
+        },
+        openCancelSessionForLeave : (state, action) => {
+            state.cancelSessionOnLeave = true;
+        },
+        closeCancelSessionForLeave : (state, action) => {
+            state.cancelSessionOnLeave = false;
+        },
+        openReasonForLeavePopup : (state, action) => {
+            state.reasonForLeavePopup = true;
+        },
+        closeReasonForLeavePopup : (state, action) => {
+            state.reasonForLeavePopup = false;
+        },
+        openRescheduleSessionForLeave : (state, action) => {
+            state.leaveRescheduleSessionPopup = true;
+        },
+        closeRescheduleSessionForLeave : (state, action) => {
+            state.leaveRescheduleSessionPopup = false;
+        },
+        openStudentsOfRescheduleSessionForLeave : (state, action) => {
+            state.viewStudentsOnReschedule = true
+        },
+        closeStudentsOfRescheduleSessionForLeave : (state, action) => {
+            state.viewStudentsOnReschedule = false;
+        },
+        openBatchesOfRescheduleSessionForLeave : (state, action) => {
+            state.viewBatchesOnReschedule = true;
+        },
+        closeBatchesOfRescheduleSessionForLeave : (state, action) => {
+            state.viewBatchesOnReschedule = false;
         }
+
     },
     extraReducers: builder => {
         // Get Coach Profile Data
@@ -476,6 +520,19 @@ export const coachMenuSlice = createSlice({
             state.coachSessionsForLeave = []
         })
 
+        // Cancel Scheduled Sessions for Leave
+        builder.addCase(cancelScheduledSessionForLeave.pending, (state) => {
+            state.loading = true;
+        })
+        builder.addCase(cancelScheduledSessionForLeave.fulfilled, (state, action) => {
+            state.loading = false;
+            // TODO : Handle case of cancel Scheduled Session
+        })
+        builder.addCase(cancelScheduledSessionForLeave.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message
+        })
+
         // Create Coach Leave
         builder.addCase(createCoachMenuLeave.pending, state => {
             state.loading = true;
@@ -566,6 +623,17 @@ export const {
     closeSlotsForLeave,
     openScheduledSessionForLeave,
     closeScheduledSessionForLeave,
+    openCancelSessionForLeave,
+    closeCancelSessionForLeave,
+    openReasonForLeavePopup,
+    closeReasonForLeavePopup,
+    openRescheduleSessionForLeave,
+    closeRescheduleSessionForLeave,
+    openStudentsOfRescheduleSessionForLeave,
+    closeStudentsOfRescheduleSessionForLeave,
+    openBatchesOfRescheduleSessionForLeave,
+    closeBatchesOfRescheduleSessionForLeave,
+
 } = coachMenuSlice.actions;
 
 export default coachMenuSlice.reducer;
