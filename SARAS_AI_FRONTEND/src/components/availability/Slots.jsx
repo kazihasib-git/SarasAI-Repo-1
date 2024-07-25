@@ -73,10 +73,12 @@ const Slots = ({ componentName }) => {
         getAvailableSlotsAction,
         closeScheduleSessionAction,
         getScheduleSessionAction,
-        markLeaveKey;
+        markLeaveKey,
+        sliceName;
 
     switch (componentName) {
         case 'TACALENDER':
+            sliceName = 'taAvailability';
             scheduleSessionOpenKey = 'scheduledSlotsOpen';
             scheduledSlotsDataKey = 'scheduledSlotsData';
             schedulingStateKey = 'taAvailability';
@@ -87,6 +89,7 @@ const Slots = ({ componentName }) => {
             break;
 
         case 'COACHCALENDER':
+            sliceName = 'coachAvailability';
             scheduleSessionOpenKey = 'scheduledCoachSlotsOpen';
             scheduledSlotsDataKey = 'scheduledCoachSlotsData';
             schedulingStateKey = 'coachAvailability';
@@ -97,26 +100,29 @@ const Slots = ({ componentName }) => {
             break;
 
         case 'COACHMENU_CALENDER':
+            sliceName = 'coachMenu';
             scheduleSessionOpenKey = 'LeaveSlotsPopup';
             scheduledSlotsDataKey = 'coachSlotsForLeave';
             schedulingStateKey = 'coachMenu';
             getAvailableSlotsAction = openScheduledSessionForLeave;
             closeScheduleSessionAction = closeSlotsForLeave;
             getScheduleSessionAction = getSessionForLeave;
-            markLeaveKey = '';
+            markLeaveKey = 'markForLeaveData';
             break;
 
         case 'TAMENU_CALENDER':
+            sliceName = 'taMenu';
             scheduleSessionOpenKey = '';
             scheduledSlotsDataKey = '';
             schedulingStateKey = '';
-            getAvailableSlotsAction = 'taMenu';
+            getAvailableSlotsAction = '';
             closeScheduleSessionAction = '';
             getScheduleSessionAction = '';
             markLeaveKey = '';
             break;
 
         default:
+            sliceName = null;
             scheduleSessionOpenKey = null;
             scheduledSlotsDataKey = null;
             schedulingStateKey = null;
@@ -127,10 +133,7 @@ const Slots = ({ componentName }) => {
             break;
     }
 
-    const schedulingState =
-        useSelector(state =>
-            schedulingStateKey ? state[schedulingStateKey] : {}
-        ) || {};
+    const schedulingState = useSelector(state => state[sliceName]);
 
     const {
         [scheduleSessionOpenKey]: scheduledSlotsOpen,

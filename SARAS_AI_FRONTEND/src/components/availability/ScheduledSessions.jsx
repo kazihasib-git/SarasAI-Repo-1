@@ -26,6 +26,7 @@ import { useParams } from 'react-router-dom';
 import {
     closeReasonForLeavePopup,
     closeScheduledSessionForLeave,
+    openCancelSessionForLeave,
     openReasonForLeavePopup,
     openRescheduleSessionForLeave,
     openScheduledSessionForLeave,
@@ -111,10 +112,10 @@ const ScheduledSessions = ({ componentName }) => {
             scheduledSessionDataKey = 'coachSessionsForLeave';
             schedulingStateKey = 'coachMenu';
             closeSessionAction = closeScheduledSessionForLeave;
-            openCancelAction = openScheduledSessionForLeave;
+            openCancelAction = openCancelSessionForLeave;
             openRescheduleAction = openRescheduleSessionForLeave;
             openSlotsAction = openScheduledSessionForLeave;
-            slotEventKey = '';
+            slotEventKey = 'slotsEventDataForLeave';
             openReasonAction = openReasonForLeavePopup;
             reasonForLeaveAction = closeReasonForLeavePopup;
             break;
@@ -187,13 +188,15 @@ const ScheduledSessions = ({ componentName }) => {
     };
 
     const handleCancelClick = session => {
+        console.log('Handle Cancel Sessions');
+        console.log('component Name :', componentName, session);
         dispatch(closeSessionAction());
         dispatch(openCancelAction(session));
         console.log('Cancel clicked!', session);
     };
 
     const handleSubmit = () => {
-        console.log('*** ScheduledSessions');
+        console.log('*** ScheduledSessions', slotEventData);
         dispatch(openReasonAction(slotEventData));
     };
 

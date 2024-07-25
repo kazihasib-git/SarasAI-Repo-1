@@ -108,6 +108,7 @@ const CreateNewSlot = ({ componentName }) => {
             closeCreateNewSlotAction = closeCreateNewSlots;
             openCreateNewSlotAction = 'createNewSlotOpen';
             break;
+
         case 'COACHCALENDER':
             schedulingStateKey = 'coachAvailability';
             slotEventKey = 'slotCoachEventData';
@@ -116,14 +117,16 @@ const CreateNewSlot = ({ componentName }) => {
             closeCreateNewSlotAction = closeCoachCreateNewSlots;
             openCreateNewSlotAction = 'createNewCoachSlotOpen';
             break;
+
         case 'COACHMENU_CALENDER':
             schedulingStateKey = 'coachMenu';
-            slotEventKey = '';
+            slotEventKey = 'slotsEventDataForLeave';
             createNewSlotAction = '';
             createSlotActions = createCoachMenuSlot;
             closeCreateNewSlotAction = closeCreateSlotsPopup;
             openCreateNewSlotAction = 'openCreteSlotsPopup';
             break;
+
         case 'TAMENU_CALENDER':
             schedulingStateKey = 'taMenu';
             slotEventKey = '';
@@ -132,6 +135,7 @@ const CreateNewSlot = ({ componentName }) => {
             closeCreateNewSlotAction = '';
             openCreateNewSlotAction = '';
             break;
+
         default:
             schedulingStateKey = null;
             slotEventKey = null;
@@ -154,6 +158,7 @@ const CreateNewSlot = ({ componentName }) => {
     const schedulingState = useSelector(state =>
         schedulingStateKey ? state[schedulingStateKey] : {}
     );
+
     const { [slotEventKey]: slotEventData } = schedulingState;
 
     const {

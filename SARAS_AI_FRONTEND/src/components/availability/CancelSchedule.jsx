@@ -30,6 +30,7 @@ import {
     closeCancelSessionForLeave,
     getSessionForLeave,
     openCancelSessionForLeave,
+    openScheduledSessionForLeave,
 } from '../../redux/features/coach/coachmenuprofileSilce';
 
 const CustomButton = ({
@@ -74,38 +75,53 @@ const CancelSchedule = ({ componentName }) => {
         cancelSessionAction,
         getSessionAction,
         openSessionAction,
+        sliceName,
+        eventSlotData,
+        cancelScheduledData,
         cancelSessionState;
 
     switch (componentName) {
         case 'TACALENDER':
-            closeSessionAction = closeCancelSession;
+            (sliceName = 'taAvialability'),
+                (closeSessionAction = closeCancelSession);
             cancelSessionAction = cancelScheduledSession;
             getSessionAction = getScheduleSession;
-            openSessionAction = openScheduledSession;
+            (eventSlotData = 'slotEventData'),
+                (cancelScheduledData = 'schduldeCancelData'),
+                (openSessionAction = openScheduledSession);
             cancelSessionState = 'cancelSessionOpen';
             break;
 
         case 'COACHCALENDER':
+            sliceName = 'coachAvailability';
             closeSessionAction = closeCoachCancelSession;
             cancelSessionAction = cancelCoachScheduledSession;
             getSessionAction = getCoachScheduleSession;
+            eventSlotData = 'slotCoachEventData';
+            cancelScheduledData = 'schduldeCoachCancelData';
             openSessionAction = openCoachScheduledSession;
             cancelSessionState = 'cancelCoachSessionOpen';
             break;
 
         case 'COACHMENU_CALENDER':
+            sliceName = 'coachMenu';
             closeSessionAction = closeCancelSessionForLeave;
             cancelSessionAction = cancelScheduledSessionForLeave;
             getSessionAction = getSessionForLeave;
-            openSessionAction = openCancelSessionForLeave;
+            (eventSlotData = 'slotsEventDataForLeave'),
+                (cancelScheduledData = 'sessionsEventDataForLeave'),
+                (openSessionAction = openScheduledSessionForLeave);
             cancelSessionState = 'cancelSessionOnLeave';
             break;
 
-        case 'COACHMENU_CALENDER':
-            closeSessionAction = closeCancelSessionForLeave;
-            cancelSessionAction = cancelScheduledSessionForLeave;
-            getSessionAction = getSessionForLeave;
-            openSessionAction = openCancelSessionForLeave;
+        case 'TAMENU_CALENDER':
+            sliceName = 'taMenu';
+            closeSessionAction = '';
+            cancelSessionAction = '';
+            getSessionAction = '';
+            eventSlotData = '';
+            cancelScheduledData = '';
+            openSessionAction = '';
             cancelSessionState = '';
             break;
 
@@ -114,46 +130,48 @@ const CancelSchedule = ({ componentName }) => {
             cancelSessionAction = null;
             getSessionAction = null;
             openSessionAction = null;
+            eventSlotData = null;
+            cancelScheduledData = null;
             break;
     }
 
-    const schedulingState = useSelector(state =>
-        componentName === 'TACALENDER'
-            ? state.taAvialability
-            : state.coachAvailability
+    const schedulingState = useSelector(state => state[sliceName]);
+
+    const {
+        cancelSessionOpen,
+        [cancelScheduledData]: schduldeCancelData,
+        [eventSlotData]: slotEventData,
+    } = schedulingState;
+
+    console.log(
+        'scheduleCande Data : ',
+        schduldeCancelData,
+        'slotEventData :',
+        slotEventData
     );
-
-    const { cancelSessionOpen, schduldeCancelData, slotEventData } =
-        schedulingState;
-
     // For coachAvailability specific data
     const {
         cancelCoachSessionOpen,
         schduldeCoachCancelData,
         slotCoachEventData,
     } = schedulingState;
-    console.log('schduldeCancelData ', schduldeCancelData);
+
+    console.log('schduldeCancelData ', schduldeCancelData, slotEventData);
+
     const handleCancel = () => {
         // console.log("SLOT EVENT DATA : ", slotEventData)
         // console.log("SLOT COACH EVENT DATA : ", slotCoachEventData)
         dispatch(closeSessionAction());
-        const sessionData =
-            componentName === 'TACALENDER'
-                ? schduldeCancelData
-                : schduldeCoachCancelData;
+        const sessionData = schduldeCancelData;
 
-        console.log('session Data : ', sessionData);
+        console.log('session Data : ', sessionData, slotEventData);
+
         const sessionNo = sessionData.id;
+        console.log('sessionNO :', sessionNo);
         dispatch(cancelSessionAction(sessionNo))
             .unwrap()
             .then(() => {
-                dispatch(
-                    getSessionAction(
-                        componentName === 'TACALENDER'
-                            ? slotEventData
-                            : slotCoachEventData
-                    )
-                );
+                dispatch(getSessionAction(slotEventData));
                 dispatch(openSessionAction());
             })
             .catch(error => {
@@ -189,23 +207,14 @@ const CancelSchedule = ({ componentName }) => {
     const content = (
         <>
             <DialogTitle>
-                {componentName === 'TACALENDER'
-                    ? `'${schduldeCancelData['Session Name']}'`
-                    : `'${schduldeCoachCancelData['Session Name']}'`}
+                {`'${schduldeCancelData['Session Name']}'`}
             </DialogTitle>
             <DialogContent
                 style={{ display: 'flex', justifyContent: 'center' }}
             >
                 <Typography>
                     Scheduled for
-                    {componentName === 'TACALENDER'
-                        ? schduldeCancelData.date
-                        : schduldeCoachCancelData.date}{' '}
-                    ? from{' '}
-                    {componentName === 'TACALENDER'
-                        ? schduldeCancelData.Time
-                        : schduldeCoachCancelData.Time}{' '}
-                    ?
+                    {schduldeCancelData.Date} from {schduldeCancelData.Time}{' '}
                 </Typography>
             </DialogContent>
         </>

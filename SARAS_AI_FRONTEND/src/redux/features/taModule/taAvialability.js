@@ -106,8 +106,7 @@ export const reasonForLeave = createAsyncThunk(
 
 const initialState = {
     todaysAvailableTa: [],
-    markLeaveOpen: false,
-    scheduledSlotsOpen: false,
+
     markLeaveData: [],
     slotData: [],
     scheduleData: [],
@@ -115,16 +114,22 @@ const initialState = {
     scheduledSessionData: [], // Ensure this is correctly named and initialized
     availableSlotsData: [],
     reasonForLeaveData: [],
+
+    scheduleNewSession: false,
+    createNewSlotOpen: false,
+    deleteFutureSlotOpen: false,
+
+    markLeaveOpen: false,
+    scheduledSlotsOpen: false,
     scheduledSessionOpen: false,
     cancelSessionOpen: false,
     resheduleSessionOpen: false,
     customResheduleSessionOpen: false,
     reasonForLeaveOpen: false,
-    deleteFutureSlotOpen: false,
-    scheduleNewSession: false,
-    createNewSlotOpen: false,
+
     slotEventData: null, // To Cancel Session
     sessionEventData: null, // To Reschedule Session
+
     loading: false,
     error: null,
     schduldeCancelData: null,
@@ -134,6 +139,12 @@ export const taAvailabilitySlice = createSlice({
     name: 'taAvialability',
     initialState,
     reducers: {
+        openCreateNewSlots(state) {
+            state.createNewSlotOpen = true;
+        },
+        closeCreateNewSlots(state) {
+            state.createNewSlotOpen = false;
+        },
         openMarkLeave(state) {
             state.markLeaveOpen = true;
         },
@@ -156,12 +167,6 @@ export const taAvailabilitySlice = createSlice({
         },
         closeScheduledSession(state) {
             state.scheduledSessionOpen = false;
-        },
-        openCreateNewSlots(state) {
-            state.createNewSlotOpen = true;
-        },
-        closeCreateNewSlots(state) {
-            state.createNewSlotOpen = false;
         },
         openCancelSession(state, action) {
             state.cancelSessionOpen = true;

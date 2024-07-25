@@ -91,7 +91,10 @@ const CoachMenuCalendar = () => {
         selectBatches,
         createCoachLeavePopup,
         LeaveSlotsPopup,
+        cancelSessionOnLeave,
         leaveScheduledSessionPopup,
+        leaveRescheduleSessionPopup,
+        reasonForLeavePopup,
     } = useSelector(state => state.coachMenu);
 
     useEffect(() => {
@@ -216,32 +219,17 @@ const CoachMenuCalendar = () => {
                 {leaveScheduledSessionPopup && (
                     <ScheduledSessions componentName={'COACHMENU_CALENDER'} />
                 )}
+                {cancelSessionOnLeave && (
+                    <CancelSchedule componentName={'COACHMENU_CALENDER'} />
+                )}
+                {leaveRescheduleSessionPopup && (
+                    <ReschedulingSession componentName={'COACHMENU_CALENDER'} />
+                )}
+                {reasonForLeavePopup && (
+                    <ReasonForLeave componentName={'COACHMENU_CALENDER'} />
+                )}
 
                 {/*{sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} componentName={"TACALENDER"} />}
-                
-                
-                
-                {cancelSessionOpen && (
-                    <CancelSchedule
-                    // id={id}
-                    // name={name}
-                    // componentName={'TACALENDER'}
-                    />
-                )}
-                {reasonForLeaveOpen && (
-                    <ReasonForLeave
-                    // id={id}
-                    // name={name}
-                    // componentName={'TACALENDER'}
-                    />
-                )}
-                {resheduleSessionOpen && (
-                    <ReschedulingSession
-                    // id={id}
-                    // name={name}
-                    // componentName={'TACALENDER'}
-                    />
-                )}
                  */}
             </Box>
         </>

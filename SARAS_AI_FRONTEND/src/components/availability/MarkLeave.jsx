@@ -83,10 +83,12 @@ const MarkLeave = ({ componentName }) => {
         schedulingStateKey,
         openAvailableSlotsAction,
         closeMarkLeaveAction,
-        getSlotsAction;
+        getSlotsAction,
+        sliceName;
 
     switch (componentName) {
         case 'TACALENDER':
+            sliceName = 'taAvialability';
             scheduleSessionOpenKey = 'markLeaveOpen';
             schedulingStateKey = 'taAvialability';
             openAvailableSlotsAction = openScheduledSlots;
@@ -95,6 +97,7 @@ const MarkLeave = ({ componentName }) => {
             break;
 
         case 'COACHCALENDER':
+            sliceName = 'coachAvailability';
             scheduleSessionOpenKey = 'coachMarkLeaveOpen';
             schedulingStateKey = 'coachAvailability';
             openAvailableSlotsAction = openCoachScheduledSlots;
@@ -103,7 +106,8 @@ const MarkLeave = ({ componentName }) => {
             break;
 
         case 'COACHMENU_CALENDER':
-            scheduleSessionOpenKey = 'createCoachLeavePopup';
+            (sliceName = 'coachMenu'),
+                (scheduleSessionOpenKey = 'createCoachLeavePopup');
             schedulingStateKey = 'coachMenu';
             openAvailableSlotsAction = openSlotsForLeave;
             closeMarkLeaveAction = closeMarkLeavePopup;
@@ -111,6 +115,7 @@ const MarkLeave = ({ componentName }) => {
             break;
 
         case 'TAMENU_CALENDER':
+            sliceName = 'taMenu';
             scheduleSessionOpenKey = '';
             schedulingStateKey = 'taMenu';
             openAvailableSlotsAction = '';
@@ -119,6 +124,7 @@ const MarkLeave = ({ componentName }) => {
             break;
 
         default:
+            sliceName = null;
             scheduleSessionOpenKey = null;
             schedulingStateKey = null;
             openAvailableSlotsAction = null;
@@ -159,9 +165,10 @@ const MarkLeave = ({ componentName }) => {
             dispatch(getSlotsAction(leaveData))
                 .unwrap()
                 .then(() => {
-                    if (componentName === 'COACHMENU_CALENDER') {
+                    if (sliceName === 'coachMenu') {
                         console.log('ComponetName :', componentName);
                         dispatch(openAvailableSlotsAction());
+                        dispatch(closeMarkLeaveAction());
                     } else {
                         dispatch(openAvailableSlotsAction(leaveData));
                         dispatch(closeMarkLeaveAction());

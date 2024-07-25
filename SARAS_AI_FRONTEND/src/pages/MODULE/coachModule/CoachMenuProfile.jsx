@@ -151,7 +151,7 @@ const CoachMenuProfile = () => {
 
     const onSubmit = async formData => {
         // Handle form submission
-        const { email, time_zone, ...updatedFormData } = formData;
+        const { email, ...updatedFormData } = formData;
 
         updatedFormData.date_of_birth = dateOfBirth;
 
