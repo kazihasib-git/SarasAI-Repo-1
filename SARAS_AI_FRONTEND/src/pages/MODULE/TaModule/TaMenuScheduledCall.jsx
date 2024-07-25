@@ -1,11 +1,12 @@
 import React from 'react';
 import CreateTaMenu from './CreateTaMenu';
+import ScheduledCall from '../../../components/RoleRoute/CommonComponent/ScheduledCall';
 
 const TaMenuScheduledCall = () => {
     return (
         <div>
             <CreateTaMenu />
-            <h1>Scheduled Calls</h1>
+            <ScheduledCall role="TA" />
         </div>
     );
 };
