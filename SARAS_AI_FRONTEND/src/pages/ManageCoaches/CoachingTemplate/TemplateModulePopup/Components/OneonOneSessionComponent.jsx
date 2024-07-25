@@ -2,7 +2,6 @@
 import React from 'react';
 import { Checkbox, FormControlLabel, Grid } from '@mui/material';
 
-
 const OneOnOneSessionComponent = ({ askCoach, setAskCoach }) => {
     return (
         <Grid
@@ -18,7 +17,7 @@ const OneOnOneSessionComponent = ({ askCoach, setAskCoach }) => {
                 control={
                     <Checkbox
                         checked={askCoach}
-                        onChange={(e) => setAskCoach(e.target.checked)}
+                        onChange={e => setAskCoach(e.target.checked)}
                         sx={{
                             color: 'black',
                             '&.Mui-checked': {

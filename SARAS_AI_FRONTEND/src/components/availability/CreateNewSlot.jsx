@@ -212,12 +212,10 @@ const CreateNewSlot = ({ componentName }) => {
         formData.weeks = weeksArray;
         formData.admin_user_id = taId.id;
 
-        dispatch(createSlotActions(formData))
-            .then(() => {
-                dispatch(closeCreateNewSlotAction());
-                return dispatch(fetchCoachSlots(taId.id));
-            })
-            
+        dispatch(createSlotActions(formData)).then(() => {
+            dispatch(closeCreateNewSlotAction());
+            return dispatch(fetchCoachSlots(taId.id));
+        });
     };
 
     const content = (

@@ -53,8 +53,8 @@ const TaMapping = () => {
     const handleSearch = event => {
         setSearchQuery(event.target.value); // Handle search input change
     };
-    const filteredData = taMappingData.filter(item =>
-        item.name.toLowerCase().includes(searchQuery.toLowerCase()) // Filter data based on search query
+    const filteredData = taMappingData.filter(
+        item => item.name.toLowerCase().includes(searchQuery.toLowerCase()) // Filter data based on search query
     );
 
     return (
@@ -90,7 +90,7 @@ const TaMapping = () => {
                                 onChange={handleSearch} // Added search box
                             />
                         </Box>
-                        </Box>
+                    </Box>
                 </Box>
                 <DynamicTable
                     headers={headers}

@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
     getWOLQuestions,
     seteditwolQuestionData,
+    toggleWOLQuestionStatus,
 } from '../../../redux/features/coachingTools/wol/wolSlice';
 
 const WOLQuestions = () => {
@@ -22,6 +23,12 @@ const WOLQuestions = () => {
     const actionButtons = [
         {
             type: 'switch',
+            onChange: id => {
+                {
+                    console.log('toggled');
+                    dispatch(toggleWOLQuestionStatus(id));
+                }
+            },
         },
         {
             type: 'edit',

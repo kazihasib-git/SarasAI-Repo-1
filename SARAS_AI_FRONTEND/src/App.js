@@ -78,6 +78,7 @@ import TaMenuProfile from './pages/MODULE/TaModule/TaMenuProfile';
 import TaMenuStudents from './pages/MODULE/TaModule/TaMenuStudents';
 import TaMenuScheduledCall from './pages/MODULE/TaModule/TaMenuScheduledCall';
 import TaMenuMessage from './pages/MODULE/TaModule/TaMenuMessage';
+import WOLSelectQuestions from './components/coachingTools/wheelOfLife/WOLSelectQuestions';
 
 const ROLES = {
     Teaching: 2001,
@@ -230,6 +231,10 @@ function App() {
                         <Route
                             path="schedule-calls"
                             element={<ScheduledCalls page="Schedule Calls" />}
+                        />
+                        <Route
+                            path="WolselectQuestions"
+                            element={<WOLSelectQuestions />}
                         />
                     </Route>
                 </Route>

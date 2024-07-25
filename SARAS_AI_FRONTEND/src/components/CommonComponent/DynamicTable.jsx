@@ -116,6 +116,12 @@ const DynamicTable = ({
                 : item
         );
         setData(updatedData);
+        const toggleButton = actionButtons.find(
+            action => action.type === 'switch'
+        );
+        if (toggleButton && toggleButton.onChange) {
+            toggleButton.onChange(id);
+        }
 
         const toggledItem = updatedData.find(item => item.id === id);
         const requestData = { is_active: toggledItem.is_active };
@@ -153,6 +159,7 @@ const DynamicTable = ({
                 return '#000000';
         }
     };
+
     return (
         <div className="tableContainer">
             <table>

@@ -98,10 +98,10 @@ const TemplateModuleTable = ({ modulesData }) => {
             });
     };
 
-    const openLinkActivityPopup = (activityId) => {
+    const openLinkActivityPopup = activityId => {
         setSelectedActivityId(activityId); // Set the selected activity ID
         setLinkActivityPopupOpen(true);
-      };
+    };
 
     const closeLinkActivityPopup = () => {
         setLinkActivityPopupOpen(false);
@@ -140,9 +140,9 @@ const TemplateModuleTable = ({ modulesData }) => {
         console.log('Clicked Activity !');
         dispatch(openEditActivityPopup(activity));
     };
-    const handleActivityClick = (activity) => {
-        console.log('clicked')
-    }
+    const handleActivityClick = activity => {
+        console.log('clicked');
+    };
 
     const headers = [
         'S. No.',
@@ -154,18 +154,15 @@ const TemplateModuleTable = ({ modulesData }) => {
         'After Due Date',
         'Actions',
     ];
-    
-    const { typeList } = useSelector((state) => state.activityType);
-    const activityOptions = typeList
-        .map(type => ({
-            value: type.type_name,
-            label:
-                type.type_name.charAt(0).toUpperCase() +
-                type.type_name.slice(1), // Capitalize the first letter of each type_name
-            id: type.id,
-        }));
 
-    const getActivityLabel = (activityTypeId) => {
+    const { typeList } = useSelector(state => state.activityType);
+    const activityOptions = typeList.map(type => ({
+        value: type.type_name,
+        label: type.type_name.charAt(0).toUpperCase() + type.type_name.slice(1), // Capitalize the first letter of each type_name
+        id: type.id,
+    }));
+
+    const getActivityLabel = activityTypeId => {
         const option = activityOptions.find(opt => opt.id === activityTypeId);
         return option ? option.label : 'Unknown';
     };
@@ -313,18 +310,21 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                         {activity.activity_type_id ? (
                                                             <Button
                                                                 onClick={() =>
-                                                                    handleActivityClick(activity)
+                                                                    handleActivityClick(
+                                                                        activity
+                                                                    )
                                                                 }
                                                                 style={{
                                                                     backgroundColor:
                                                                         'transparent',
-                                                                    border:
-                                                                        'none',
+                                                                    border: 'none',
                                                                     cursor: 'pointer',
-                                                                    color:'black'
+                                                                    color: 'black',
                                                                 }}
                                                             >
-                                                                {getActivityLabel(activity.activity_type_id)}
+                                                                {getActivityLabel(
+                                                                    activity.activity_type_id
+                                                                )}
                                                                 <FontAwesomeIcon
                                                                     icon={faEye}
                                                                     style={{
@@ -337,13 +337,15 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                         ) : (
                                                             <CustomButton
                                                                 backgroundColor="#FEEBE3"
-                                                                    onClick={() =>{
-                                                                    console.log("selectedcoachtemplate",selectedCoachTemplate)
+                                                                onClick={() => {
+                                                                    console.log(
+                                                                        'selectedcoachtemplate',
+                                                                        selectedCoachTemplate
+                                                                    );
                                                                     openLinkActivityPopup(
                                                                         activity.id
-                                                                        )
-                                                                        }
-                                                                }
+                                                                    );
+                                                                }}
                                                             >
                                                                 Link Activity
                                                             </CustomButton>
@@ -462,7 +464,6 @@ const TemplateModuleTable = ({ modulesData }) => {
                 handleClose={closeLinkActivityPopup}
                 activityId={selectedActivityId}
                 templateId={selectedCoachTemplate}
-                
             />
             <PrerequisitesPopup
                 open={prerequisitesPopupOpen}

@@ -3,7 +3,12 @@ import { Controller } from 'react-hook-form';
 import { Grid } from '@mui/material';
 import CustomFormControl from '../../../../../components/CustomFields/CustomFromControl';
 
-const TestActivityComponent = ({ control, errors, assessmentOptions, setSelectedAssessmentId }) => {
+const TestActivityComponent = ({
+    control,
+    errors,
+    assessmentOptions,
+    setSelectedAssessmentId,
+}) => {
     return (
         <Grid
             item

@@ -18,7 +18,7 @@ const UploadBox = styled(Box)(({ theme }) => ({
 const PDFUploadComponent = () => {
     const [fileName, setFileName] = useState('');
 
-    const handleFileChange = (event) => {
+    const handleFileChange = event => {
         const file = event.target.files[0];
         if (file) {
             setFileName(file.name);
@@ -138,4 +138,3 @@ export default PDFUploadComponent;
 // };
 
 // export default PDFUploadComponent;
-

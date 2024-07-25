@@ -115,6 +115,17 @@ export const updateWOLQuestion = createAsyncThunk(
     }
 );
 
+//Update active status
+export const toggleWOLQuestionStatus = createAsyncThunk(
+    'wol/toggleWOLQuestionStatus',
+    async id => {
+        const response = await axios.get(
+            `${baseUrl}/admin/wol/wol-question/${id}`
+        );
+        return response.data;
+    }
+);
+
 // Get WOL Options Config
 export const getWOLOptionConfig = createAsyncThunk(
     'wol/getWOLOptionConfig',
@@ -423,6 +434,25 @@ const wolSlice = createSlice({
                 state.error = action.payload || action.error.message;
             }
         );
+
+        // toggleWOLQuestionStatus
+        builder.addCase(toggleWOLQuestionStatus.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(toggleWOLQuestionStatus.fulfilled, (state, action) => {
+            state.loading = false;
+            const updatedQuestion = action.payload;
+            const index = state.wolQuestionsData.data.findIndex(
+                q => q.id === updatedQuestion.id
+            );
+            if (index !== -1) {
+                state.wolQuestionsData.data[index] = updatedQuestion;
+            }
+        });
+        builder.addCase(toggleWOLQuestionStatus.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload || action.error.message;
+        });
 
         // addQuestionToCategory
         builder.addCase(addQuestionToCategory.pending, state => {

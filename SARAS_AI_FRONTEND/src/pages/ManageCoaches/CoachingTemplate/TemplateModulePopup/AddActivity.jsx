@@ -50,13 +50,15 @@ const CustomButton = ({
 
 const AddActivity = () => {
     const dispatch = useDispatch();
-    const { control, handleSubmit, formState: { errors } } = useForm();
-    const [afterDueDate, setAfterDueDate] = useState('');
     const {
-        openActivityPopUp,
-        moduleID,
-        selectedCoachTemplate,
-    } = useSelector(state => state.coachTemplate);
+        control,
+        handleSubmit,
+        formState: { errors },
+    } = useForm();
+    const [afterDueDate, setAfterDueDate] = useState('');
+    const { openActivityPopUp, moduleID, selectedCoachTemplate } = useSelector(
+        state => state.coachTemplate
+    );
 
     const handleAfterDueDateChange = event => {
         setAfterDueDate(event.target.value);
@@ -120,7 +122,7 @@ const AddActivity = () => {
                             disableFutureDates={false} // Adjust this as needed
                             error={!!errors.dueDate}
                             helperText={errors.dueDate?.message}
-                            sx={{ width:'100%' }}
+                            sx={{ width: '100%' }}
                         />
                     )}
                 />
@@ -172,9 +174,12 @@ const AddActivity = () => {
                             onChange={field.onChange}
                             errors={errors}
                             options={[
-                                { value: 'Close Activity', label: 'Close Activity' },
+                                {
+                                    value: 'Close Activity',
+                                    label: 'Close Activity',
+                                },
                                 { value: 'No Points', label: 'No Penalty' },
-                                { value: 'No Effect', label: 'No Effect' }
+                                { value: 'No Effect', label: 'No Effect' },
                             ]}
                         />
                     )}
@@ -192,11 +197,11 @@ const AddActivity = () => {
             after_due_date: data.afterDueDate,
         };
 
-        dispatch(createCoachTemplateActivity(formData)).unwrap()
-        .then(() => {
-            dispatch(getCoachTemplateModuleId(selectedCoachTemplate));
-            
-        });
+        dispatch(createCoachTemplateActivity(formData))
+            .unwrap()
+            .then(() => {
+                dispatch(getCoachTemplateModuleId(selectedCoachTemplate));
+            });
         dispatch(closeTemplateActivityPopup());
     };
 

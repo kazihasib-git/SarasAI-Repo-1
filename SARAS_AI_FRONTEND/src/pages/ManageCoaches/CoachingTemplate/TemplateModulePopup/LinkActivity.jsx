@@ -64,9 +64,9 @@ const CustomButton = ({
     );
 };
 
-const LinkActivityPopup = ({ open, handleClose, activityId , templateId}) => {
+const LinkActivityPopup = ({ open, handleClose, activityId, templateId }) => {
     const dispatch = useDispatch();
-    console.log("template id",templateId)
+    console.log('template id', templateId);
     const {
         handleSubmit,
         control,
@@ -98,10 +98,12 @@ const LinkActivityPopup = ({ open, handleClose, activityId , templateId}) => {
         console.log('payload', payload);
 
         try {
-            await dispatch(linkActivity(payload)).unwrap().then(() => {
-                // Refetch the data to update the table
-                dispatch(getCoachTemplateModuleId(templateId));
-            });
+            await dispatch(linkActivity(payload))
+                .unwrap()
+                .then(() => {
+                    // Refetch the data to update the table
+                    dispatch(getCoachTemplateModuleId(templateId));
+                });
             handleClose();
         } catch (error) {
             console.error('Failed to link activity:', error);
@@ -178,7 +180,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId , templateId}) => {
 
         if (selected) {
             setSelectedCoachId(selected.id);
-            console.log('Selected Coach ID:',  selected.id); // Log the selected coach ID
+            console.log('Selected Coach ID:', selected.id); // Log the selected coach ID
         }
     };
 
@@ -213,12 +215,11 @@ const LinkActivityPopup = ({ open, handleClose, activityId , templateId}) => {
             }
         }
     }, [fromDate, dispatch]);
-    
+
     useEffect(() => {
         // Reset `askCoach` when `activityType` or `selectedSessionType` changes
         setAskCoach(false);
         setSelectedSessionType('');
-       
     }, [activityType]);
     const contentComponent = (
         <Grid
@@ -248,10 +249,14 @@ const LinkActivityPopup = ({ open, handleClose, activityId , templateId}) => {
                             label="Activity Type"
                             name="activityType"
                             value={field.value}
-                            onChange={(e) => {
-                                const selectedOption = activityOptions.find(option => option.value === e.target.value);
+                            onChange={e => {
+                                const selectedOption = activityOptions.find(
+                                    option => option.value === e.target.value
+                                );
                                 setActivityType(e.target.value);
-                                setSelectedActivityId(selectedOption ? selectedOption.id : '');
+                                setSelectedActivityId(
+                                    selectedOption ? selectedOption.id : ''
+                                );
                                 field.onChange(e);
                             }}
                             errors={errors}
@@ -262,8 +267,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId , templateId}) => {
             </Grid>
 
             {activityType === 'videos' && <VideoUploadComponent />}
-            {activityType === 'pdf' && <PDFUploadComponent/>}
-
+            {activityType === 'pdf' && <PDFUploadComponent />}
 
             {activityType === 'link' && (
                 <Grid
@@ -294,16 +298,15 @@ const LinkActivityPopup = ({ open, handleClose, activityId , templateId}) => {
                 </Grid>
             )}
 
-            { activityType === 'test' && (
-                        <TestActivityComponent
-                            control={control}
-                            errors={errors}
-                            assessmentOptions={assessmentOptions}
-                            setSelectedAssessmentId={setSelectedAssessmentId}
-                        />
-                    )}
-                
-                
+            {activityType === 'test' && (
+                <TestActivityComponent
+                    control={control}
+                    errors={errors}
+                    assessmentOptions={assessmentOptions}
+                    setSelectedAssessmentId={setSelectedAssessmentId}
+                />
+            )}
+
             {activityType === 'virtual meet' && (
                 <>
                     <Grid
@@ -379,11 +382,11 @@ const LinkActivityPopup = ({ open, handleClose, activityId , templateId}) => {
             )}
 
             {selectedSessionType === 'one-on-one' && (
-                        <OneOnOneSessionComponent
-                            askCoach={askCoach}
-                            setAskCoach={setAskCoach}
-                        />
-                    )}
+                <OneOnOneSessionComponent
+                    askCoach={askCoach}
+                    setAskCoach={setAskCoach}
+                />
+            )}
             {selectedSessionType === 'group' &&
                 activityType === 'virtual meet' && (
                     <>
@@ -554,4 +557,3 @@ const LinkActivityPopup = ({ open, handleClose, activityId , templateId}) => {
 };
 
 export default LinkActivityPopup;
-
