@@ -1,13 +1,10 @@
 import { Box, DialogActions, Grid, Typography, Button } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import Calendar from '../../components/Calender/indexCalender';
-import CalendarNew from '../../components/Calender/IndexCalenderNew';
 import CalendarComponent from '../../components/Calender/BigCalendar';
 import MarkLeave from '../../components/availability/MarkLeave';
 import DeleteAllSlots from '../../components/availability/DeleteAllSlots';
 import CreateNewSlot from '../../components/availability/CreateNewSlot';
-import ScheduleSession from '../../components/availability/ScheduleSession';
 import {
     openMarkLeave,
     closeMarkLeave,
@@ -23,18 +20,12 @@ import ScheduledSessions from '../../components/availability/ScheduledSessions';
 import CancelSchedule from '../../components/availability/CancelSchedule';
 import ReasonForLeave from '../../components/availability/ReasonForLeave';
 import ReschedulingSession from '../../components/availability/ReschedulingSession';
-import { PickersInputBaseSectionsContainer } from '@mui/x-date-pickers/PickersTextField/PickersInputBase/PickersInputBase';
-import NewCal from '../../components/Calender/IndexCalenderNew';
-import { add } from 'date-fns';
 import { useParams } from 'react-router-dom';
 import {
     getTAScheduledSessions,
     openScheduleSession,
 } from '../../redux/features/taModule/taScheduling';
-import moment from 'moment';
 import Schedule from '../../components/availability/Schedule';
-import AssignStudents from '../../components/adminModule/AssignStudents';
-import AssignBatches from '../../components/adminModule/AssignBatches';
 import EditBatches from '../../components/availability/EditBatches';
 import EditStudents from '../../components/availability/EditStudents';
 import Header from '../../components/Header/Header';
@@ -79,13 +70,7 @@ const TaCalender = () => {
     const dispatch = useDispatch();
     const { id, name } = useParams();
 
-    //const [sheduleNewSession, setSheduleNewSession] = useState(false)
     const [deleteFutureSlots, setDeleteFutureSlots] = useState(false);
-    //const [createNewSlot, setCreateNewSlot] = useState(false)
-
-    const { assignBatchOpen, assignStudentOpen } = useSelector(
-        state => state.taModule
-    );
 
     const {
         slotData,
@@ -110,54 +95,6 @@ const TaCalender = () => {
     //calendar
     const [eventsList, setEventsList] = useState([]);
     const [slotViewData, setSlotViewData] = useState([]);
-
-    /*
-        const addEvent = (title, startDateTime, endDateTime) => {
-            const newStart = new Date(startDateTime);
-            const newEnd = new Date(endDateTime);
-            setEventsList(prev => [...prev, { title, start: newStart, end: newEnd }]);
-        };
-
-        */
-
-    // const handleSelectEvent = event => {
-    //     if (window.confirm(`Are you sure you want to delete the event '${event.title}'?`)) {
-    //         setEventsList(prev => {
-    //             const updatedEvents = prev.filter(e => e.start !== event.start || e.end !== event.end || e.title !== event.title);
-    //             return updatedEvents;
-    //           });
-    //     }
-    //   };
-
-    /*
-        useEffect(() => {
-
-            // Get the current date
-            const currentDate = new Date();
-    
-            // Get the start date of the current month
-            const start_date = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-    
-            // Get the end date of the current month
-            const end_date = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
-    
-            // Format dates as DD/MM/YYYY
-            const formatDate = (date) => {
-                const day = String(date.getDate()).padStart(2, '0');
-                const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-                const year = date.getFullYear();
-                return `${day}/${month}/${year}`;
-            };
-    
-            const formattedStartDate = formatDate(start_date);
-            const formattedEndDate = formatDate(end_date);
-    
-            // Dispatch the action with the formatted dates
-            dispatch(getTAScheduledSessions({ id, data: { start_date: formattedStartDate, end_date: formattedEndDate } }));
-        }, [id]);
-        */
-
-    // console.log("ta Id :", id);
 
     useEffect(() => {
         dispatch(fetchCoachSlots(id));
@@ -348,8 +285,6 @@ const TaCalender = () => {
                     {createNewSlotOpen && (
                         <CreateNewSlot componentName={'TACALENDER'} />
                     )}
-                    {/* {assignStudentOpen && <AssignStudents componentname="ADDEDITTA" />}
-                {assignBatchOpen && <AssignBatches componentname="ADDEDITTA" />} */}
                 </Box>
             </Box>
         </>

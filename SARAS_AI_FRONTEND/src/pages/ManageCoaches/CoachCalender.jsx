@@ -68,7 +68,8 @@ const CoachCalender = () => {
     const { id, name } = useParams();
     const [sheduleNewSession, setSheduleNewSession] = useState(false);
     const [deleteFutureSlots, setDeleteFutureSlots] = useState(false);
-    //const [createNewSlot, setCreateNewSlot] = useState(false)
+
+    const [eventsList, setEventsList] = useState([]);
     const [slotViewData, setSlotViewData] = useState([]);
 
     const {
@@ -83,24 +84,13 @@ const CoachCalender = () => {
         scheduleCoachData,
     } = useSelector(state => state.coachAvailability);
 
-    //calendar
-    const [eventsList, setEventsList] = useState([]);
-
-    // const addEvent = (title, startDateTime, endDateTime) => {
-    //     const newStart = new Date(startDateTime);
-    //     const newEnd = new Date(endDateTime);
-    //     setEventsList(prev => [
-    //         ...prev,
-    //         { title, start: newStart, end: newEnd },
-    //     ]);
-    // };
-
     console.log('ta Id :', id);
 
     useEffect(() => {
         dispatch(fetchCoachSlots(id));
         dispatch(fetchCoachScheduleById(id));
     }, [id]);
+
     useEffect(() => {
         if (scheduleCoachData && scheduleCoachData.data) {
             const transformedEvents = scheduleCoachData.data.map(event => ({
