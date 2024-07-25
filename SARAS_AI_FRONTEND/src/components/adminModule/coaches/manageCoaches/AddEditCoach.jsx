@@ -198,24 +198,26 @@ function AddEditCoach({ data }) {
                                             variant="contained"
                                             onClick={handleAssignStudents}
                                             sx={{
-                                                backgroundColor: '#F56D3B',
-                                                color: 'white',
+                                                backgroundColor: 'white',
+                                                color: '#F56D3B',
                                                 height: '60px',
-                                                width: '201px',
+                                                width: '194px',
+                                                border: '2px solid #F56D3B',
                                                 borderRadius: '50px',
                                                 textTransform: 'none',
-                                                padding: '18px 30px',
                                                 fontWeight: '700',
                                                 fontSize: '16px',
+                                                padding: '18px 30px',
                                                 '&:hover': {
-                                                    //backgroundColor: '#D4522A'
+                                                    backgroundColor: '#F56D3B',
+                                                    color: 'white',
                                                 },
                                             }}
                                         >
                                             Assign Students
                                         </Button>
                                         <Button
-                                            variant="outlined"
+                                            variant="contained"
                                             onClick={handleAssignBatches}
                                             sx={{
                                                 backgroundColor: 'white',
@@ -229,8 +231,8 @@ function AddEditCoach({ data }) {
                                                 fontSize: '16px',
                                                 padding: '18px 30px',
                                                 '&:hover': {
-                                                    //backgroundColor: '#F56D3B',
-                                                    //color: 'white'
+                                                    backgroundColor: '#F56D3B',
+                                                    color: 'white',
                                                 },
                                             }}
                                         >
@@ -241,7 +243,10 @@ function AddEditCoach({ data }) {
                             </>
                         ) : (
                             <Grid item xs>
-                                <Typography variant="h4" sx={{ mb: 4 }}>
+                                <Typography
+                                    variant="h4"
+                                    sx={{ mb: 4, textTransform: 'none' }}
+                                >
                                     Create Coach
                                 </Typography>
                             </Grid>
@@ -272,7 +277,6 @@ function AddEditCoach({ data }) {
                                     sx={{
                                         fontSize: '24px',
                                         fontWeight: '600',
-                                        font: 'Nunito Sans',
                                         color: '#1A1E3D',
                                     }}
                                 >

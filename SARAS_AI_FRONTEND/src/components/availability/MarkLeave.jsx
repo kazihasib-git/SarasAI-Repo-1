@@ -29,6 +29,14 @@ import {
     closeCoachMarkLeave,
     getCoachSlots,
 } from '../../redux/features/CoachModule/CoachAvailabilitySlice';
+import {
+    closeMarkLeavePopup,
+    getCoachMenuSlotsByData,
+    getSlotsForLeave,
+    openMarkLeavePopup,
+    openScheduledSessionForLeave,
+    openSlotsForLeave,
+} from '../../redux/features/coach/coachmenuprofileSilce';
 
 const CustomButton = ({
     onClick,
@@ -85,6 +93,7 @@ const MarkLeave = ({ componentName }) => {
             closeMarkLeaveAction = closeMarkLeave;
             getSlotsAction = getSlots;
             break;
+
         case 'COACHCALENDER':
             scheduleSessionOpenKey = 'coachMarkLeaveOpen';
             schedulingStateKey = 'coachAvailability';
@@ -92,6 +101,23 @@ const MarkLeave = ({ componentName }) => {
             closeMarkLeaveAction = closeCoachMarkLeave;
             getSlotsAction = getCoachSlots;
             break;
+
+        case 'COACHMENU_CALENDER':
+            scheduleSessionOpenKey = 'createCoachLeavePopup';
+            schedulingStateKey = 'coachMenu';
+            openAvailableSlotsAction = openSlotsForLeave;
+            closeMarkLeaveAction = closeMarkLeavePopup;
+            getSlotsAction = getSlotsForLeave;
+            break;
+
+        case 'TAMENU_CALENDER':
+            scheduleSessionOpenKey = '';
+            schedulingStateKey = 'taMenu';
+            openAvailableSlotsAction = '';
+            closeMarkLeaveAction = '';
+            getSlotsAction = '';
+            break;
+
         default:
             scheduleSessionOpenKey = null;
             schedulingStateKey = null;
@@ -133,8 +159,13 @@ const MarkLeave = ({ componentName }) => {
             dispatch(getSlotsAction(leaveData))
                 .unwrap()
                 .then(() => {
-                    dispatch(openAvailableSlotsAction(leaveData));
-                    dispatch(closeMarkLeaveAction());
+                    if (componentName === 'COACHMENU_CALENDER') {
+                        console.log('ComponetName :', componentName);
+                        dispatch(openAvailableSlotsAction());
+                    } else {
+                        dispatch(openAvailableSlotsAction(leaveData));
+                        dispatch(closeMarkLeaveAction());
+                    }
                 })
                 .catch(error => {
                     console.error('Failed to fetch scheduled slots:', error);

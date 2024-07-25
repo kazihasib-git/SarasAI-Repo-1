@@ -19,6 +19,12 @@ import {
     getCoachScheduleSession,
     openCoachReasonForLeave,
 } from '../../redux/features/CoachModule/CoachAvailabilitySlice';
+import {
+    getSessionForLeave,
+    openSlotsForLeave,
+    closeSlotsForLeave,
+    openScheduledSessionForLeave,
+} from '../../redux/features/coach/coachmenuprofileSilce';
 
 const CustomButton = ({
     onClick,
@@ -67,8 +73,7 @@ const Slots = ({ componentName }) => {
         getAvailableSlotsAction,
         closeScheduleSessionAction,
         getScheduleSessionAction,
-        markLeaveKey,
-        openMarkLeaveAction;
+        markLeaveKey;
 
     switch (componentName) {
         case 'TACALENDER':
@@ -79,8 +84,8 @@ const Slots = ({ componentName }) => {
             closeScheduleSessionAction = closeScheduledSlots;
             getScheduleSessionAction = getScheduleSession;
             markLeaveKey = 'markLeaveData';
-            openMarkLeaveAction = openReasonForLeave;
             break;
+
         case 'COACHCALENDER':
             scheduleSessionOpenKey = 'scheduledCoachSlotsOpen';
             scheduledSlotsDataKey = 'scheduledCoachSlotsData';
@@ -89,8 +94,28 @@ const Slots = ({ componentName }) => {
             closeScheduleSessionAction = closeCoachScheduledSlots;
             getScheduleSessionAction = getCoachScheduleSession;
             markLeaveKey = 'markLeaveData';
-            openMarkLeaveAction = openCoachReasonForLeave;
             break;
+
+        case 'COACHMENU_CALENDER':
+            scheduleSessionOpenKey = 'LeaveSlotsPopup';
+            scheduledSlotsDataKey = 'coachSlotsForLeave';
+            schedulingStateKey = 'coachMenu';
+            getAvailableSlotsAction = openScheduledSessionForLeave;
+            closeScheduleSessionAction = closeSlotsForLeave;
+            getScheduleSessionAction = getSessionForLeave;
+            markLeaveKey = '';
+            break;
+
+        case 'TAMENU_CALENDER':
+            scheduleSessionOpenKey = '';
+            scheduledSlotsDataKey = '';
+            schedulingStateKey = '';
+            getAvailableSlotsAction = 'taMenu';
+            closeScheduleSessionAction = '';
+            getScheduleSessionAction = '';
+            markLeaveKey = '';
+            break;
+
         default:
             scheduleSessionOpenKey = null;
             scheduledSlotsDataKey = null;
@@ -99,7 +124,6 @@ const Slots = ({ componentName }) => {
             closeScheduleSessionAction = null;
             getScheduleSessionAction = null;
             markLeaveKey = null;
-            openMarkLeaveAction = null;
             break;
     }
 

@@ -127,6 +127,8 @@ function LoginApp() {
             } else {
                 navigate(from, { replace: true });
             }
+        } else {
+            navigate('/login', { replace: true });
         }
     }, [login, role, accessToken]);
 
@@ -138,8 +140,11 @@ function LoginApp() {
                 <Route path="linkpage" element={<LinkPage />} />
                 <Route path="unauthorized" element={<Unauthorized />} />
 
+                {!login}
+                {<Route path="login" element={<Login />} />}
+
                 {/* Protected Routes */}
-                <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
+                {login && role == 5150 && (
                     <Route path="/" element={<Main page="Dashboard" />}>
                         <Route index element={<Dashboard />} />
                         <Route path="dashboard" element={<Dashboard />} />
@@ -276,56 +281,7 @@ function LoginApp() {
                             element={<ScheduledCalls page="Schedule Calls" />}
                         />
                     </Route>
-                </Route>
-
-                <Route
-                    element={<RequireAuth allowedRoles={[ROLES.Teaching]} />}
-                >
-                    <Route
-                        path="/"
-                        element={<Main page="Teaching Assistant" />}
-                    >
-                        <Route
-                            path="my-profile"
-                            element={<MyProfile page="My Profile" />}
-                        />
-                        <Route
-                            path="my-student"
-                            element={<Mystudents page="My Students" />}
-                        />
-                        <Route
-                            path="my-calender"
-                            element={<MyCalender page="My Calender" />}
-                        />
-                        <Route
-                            path="schedule-calls"
-                            element={<ScheduledCalls page="Schedule Calls" />}
-                        />
-                        <Route
-                            path="call-requests"
-                            element={<CallRequest page="Call Request" />}
-                        />
-                        <Route
-                            path="messages"
-                            element={<Messages page="Messages" />}
-                        />
-                        <Route
-                            path="call-records"
-                            element={<CallRecords page="Call Records" />}
-                        />
-                    </Route>
-                </Route>
-
-                <Route element={<RequireAuth allowedRoles={[ROLES.Coaches]} />}>
-                    <Route
-                        path="/"
-                        element={<Main page="Manage Coaches" />}
-                    ></Route>
-                </Route>
-
-                <Route
-                    element={<RequireAuth allowedRoles={[ROLES.Coaches]} />}
-                ></Route>
+                )}
 
                 {/* Missed */}
 

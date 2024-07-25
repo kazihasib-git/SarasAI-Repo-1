@@ -134,7 +134,7 @@ const ReasonForLeave = ({ componentName }) => {
     };
 
     const content = (
-        <Grid container spacing={2}>
+        <Grid container spacing={2} justifyContent="center" sx={{ mt: 0 }}>
             <Grid item xs={120}>
                 <CustomTextField
                     label="Reason for Leave"

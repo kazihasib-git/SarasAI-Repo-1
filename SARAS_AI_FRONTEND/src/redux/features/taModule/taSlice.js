@@ -56,44 +56,6 @@ export const getBatchMapping = createAsyncThunk(
         const response = await axios.get(`${baseUrl}/admin/batches`);
         console.log('Response : ', response);
         return response.data;
-        // return [
-        //   {
-        //     Student_id: 1,
-        //     student_name: "John Doe",
-        //     academic_term: "2024",
-        //     batch_name: "SARA",
-        //   },
-        //   {
-        //     Student_id: 1,
-        //     student_name: "John Doe",
-        //     academic_term: "2024",
-        //     batch_name: "Ai Course",
-        //   },
-        //   {
-        //     Student_id: 2,
-        //     student_name: "John Doe",
-        //     academic_term: "2023",
-        //     batch_name: "SARA",
-        //   },
-        //   {
-        //     Student_id: 2,
-        //     student_name: "John Doe",
-        //     academic_term: "2023",
-        //     batch_name: "Ai Course",
-        //   },
-        //   {
-        //     Student_id: 3,
-        //     student_name: "John Doe",
-        //     academic_term: "2023",
-        //     batch_name: "Saras Institute",
-        //   },
-        //   {
-        //     Student_id: 4,
-        //     student_name: "John Doe",
-        //     academic_term: "2024",
-        //     batch_name: "Saras USA",
-        //   },
-        // ];
     }
 );
 
@@ -104,29 +66,6 @@ export const showTAMapping = createAsyncThunk(
             `${baseUrl}/admin/TAMapping/TAswithActiveStudentnBatches`
         );
         return response.data;
-        // return [
-        //   {
-        //     id: 1,
-        //     name: "Admin1",
-        //     username: "admin123",
-        //     password: "password123",
-        //     location: "delhi",
-        //     time_zone: "IST",
-        //     gender: "Male",
-        //     date_of_birth: "1999-06-15",
-        //     highest_qualification: "bachelors",
-        //     profile_picture: null,
-        //     profile: "i am an admin",
-        //     about_me: "hello i am admin1",
-        //     is_active: 1,
-        //     created_by: 45464,
-        //     updated_by: 32144444,
-        //     created_at: "2024-06-11T13:43:21.000000Z",
-        //     updated_at: "2024-06-25T12:32:24.000000Z",
-        //     Active_Batches: 9,
-        //     Active_Students: 1,
-        //   },
-        // ];
     }
 );
 
@@ -368,7 +307,7 @@ export const taSlice = createSlice({
         builder.addCase(getBatchMapping.fulfilled, (state, action) => {
             state.loading = false;
             // console.log("MAPPING PAYLOAD :", action.payload )
-            state.batchMapping = action.payload.batches;
+            state.batchMapping = action.payload?.batches;
         });
         builder.addCase(getBatchMapping.rejected, (state, action) => {
             state.loading = false;

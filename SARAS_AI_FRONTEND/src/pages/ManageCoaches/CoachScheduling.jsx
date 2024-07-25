@@ -41,10 +41,10 @@ const CoachSheduling = () => {
                 id: item.id,
                 name: item.name,
                 Username: item.username,
-                Active_Students: item.Active_Batches,
-                Active_Batches: item.Active_Students,
-                // Active_Students: item.Active_Students,
-                // Active_Batches: item.Active_Batches,
+                // Active_Students: item.Active_Batches,
+                // Active_Batches: item.Active_Students,
+                Active_Students: item.Active_Students,
+                Active_Batches: item.Active_Batches,
                 timezone: item.time_zone,
             }));
 

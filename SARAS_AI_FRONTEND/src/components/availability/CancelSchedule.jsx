@@ -25,6 +25,12 @@ import {
 import { cancelScheduledSession } from '../../redux/features/taModule/taScheduling';
 
 import { cancelCoachScheduledSession } from '../../redux/features/CoachModule/coachSchedule';
+import {
+    cancelScheduledSessionForLeave,
+    closeCancelSessionForLeave,
+    getSessionForLeave,
+    openCancelSessionForLeave,
+} from '../../redux/features/coach/coachmenuprofileSilce';
 
 const CustomButton = ({
     onClick,
@@ -67,7 +73,8 @@ const CancelSchedule = ({ componentName }) => {
     let closeSessionAction,
         cancelSessionAction,
         getSessionAction,
-        openSessionAction;
+        openSessionAction,
+        cancelSessionState;
 
     switch (componentName) {
         case 'TACALENDER':
@@ -75,13 +82,33 @@ const CancelSchedule = ({ componentName }) => {
             cancelSessionAction = cancelScheduledSession;
             getSessionAction = getScheduleSession;
             openSessionAction = openScheduledSession;
+            cancelSessionState = 'cancelSessionOpen';
             break;
+
         case 'COACHCALENDER':
             closeSessionAction = closeCoachCancelSession;
             cancelSessionAction = cancelCoachScheduledSession;
             getSessionAction = getCoachScheduleSession;
             openSessionAction = openCoachScheduledSession;
+            cancelSessionState = 'cancelCoachSessionOpen';
             break;
+
+        case 'COACHMENU_CALENDER':
+            closeSessionAction = closeCancelSessionForLeave;
+            cancelSessionAction = cancelScheduledSessionForLeave;
+            getSessionAction = getSessionForLeave;
+            openSessionAction = openCancelSessionForLeave;
+            cancelSessionState = 'cancelSessionOnLeave';
+            break;
+
+        case 'COACHMENU_CALENDER':
+            closeSessionAction = closeCancelSessionForLeave;
+            cancelSessionAction = cancelScheduledSessionForLeave;
+            getSessionAction = getSessionForLeave;
+            openSessionAction = openCancelSessionForLeave;
+            cancelSessionState = '';
+            break;
+
         default:
             closeSessionAction = null;
             cancelSessionAction = null;
@@ -105,7 +132,7 @@ const CancelSchedule = ({ componentName }) => {
         schduldeCoachCancelData,
         slotCoachEventData,
     } = schedulingState;
-
+    console.log('schduldeCancelData ', schduldeCancelData);
     const handleCancel = () => {
         // console.log("SLOT EVENT DATA : ", slotEventData)
         // console.log("SLOT COACH EVENT DATA : ", slotCoachEventData)
@@ -163,14 +190,18 @@ const CancelSchedule = ({ componentName }) => {
         <>
             <DialogTitle>
                 {componentName === 'TACALENDER'
-                    ? schduldeCancelData['Session Name']
-                    : schduldeCoachCancelData['Session Name']}
+                    ? `'${schduldeCancelData['Session Name']}'`
+                    : `'${schduldeCoachCancelData['Session Name']}'`}
             </DialogTitle>
             <DialogContent
                 style={{ display: 'flex', justifyContent: 'center' }}
             >
                 <Typography>
-                    Scheduled for Date from{' '}
+                    Scheduled for
+                    {componentName === 'TACALENDER'
+                        ? schduldeCancelData.date
+                        : schduldeCoachCancelData.date}{' '}
+                    ? from{' '}
                     {componentName === 'TACALENDER'
                         ? schduldeCancelData.Time
                         : schduldeCoachCancelData.Time}{' '}
@@ -182,11 +213,7 @@ const CancelSchedule = ({ componentName }) => {
 
     return (
         <ReusableDialog
-            open={
-                componentName === 'TACALENDER'
-                    ? cancelSessionOpen
-                    : cancelCoachSessionOpen
-            }
+            open={cancelSessionState}
             handleClose={() => {
                 dispatch(closeSessionAction());
                 dispatch(openSessionAction());

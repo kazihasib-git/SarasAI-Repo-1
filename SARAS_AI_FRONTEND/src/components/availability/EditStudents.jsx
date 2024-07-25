@@ -28,6 +28,11 @@ import {
     postCoachAssignStudents,
     getCoachAssignStudents,
 } from '../../redux/features/CoachModule/coachSlice';
+import {
+    closeSelectStudents,
+    getCoachMenuAssignedStudents,
+    openCreateSessionPopup,
+} from '../../redux/features/coach/coachmenuprofileSilce';
 
 const CustomButton = ({
     onClick,
@@ -65,34 +70,23 @@ const CustomButton = ({
 };
 
 const EditStudents = ({ componentname }) => {
+    console.log('Component Name :', componentname);
     const dispatch = useDispatch();
-    const [selectedTerm, setSelectedTerm] = useState('');
+    const [selectedTerm, setSelectedTerm] = useState([]);
     const [selectedBatch, setSelectedBatch] = useState('');
     const [searchName, setSearchName] = useState('');
     const [selectedStudents, setSelectedStudents] = useState([]);
     const [filteredStudents, setFilteredStudents] = useState([]);
 
-    // const {
-    //   openEditStudent,
-    //   taID: taaId,
-    //   students,
-    // } = useSelector((state) => state.taScheduling);
-    // const { assignedStudents } = useSelector((state) => state.taModule);
-
     let stateModuleKey,
         nameKey,
         assignStudentOpenKey,
-        assignMappingKey,
         closeDialogAction,
-        openSuccessAction,
         getAssignStudentAction,
-        postAssignAction,
         editStudentKey,
         selectedStudentKey;
-    let schedulingState,
-        nameKeyScheduling,
-        idKeyScheduling,
-        openScheduleSessionAction;
+
+    let schedulingState, nameKeyScheduling, idKeyScheduling;
 
     switch (componentname) {
         case 'COACHSCHEDULE':
@@ -101,47 +95,63 @@ const EditStudents = ({ componentname }) => {
             assignStudentOpenKey = 'openCoachEditStudent';
             editStudentKey = 'assignedStudents';
             selectedStudentKey = 'student';
-            assignMappingKey = 'coachStudentBatchMapping';
             closeDialogAction = closeCoachEditStudent;
-            openSuccessAction = openCoachSuccessPopup;
             getAssignStudentAction = getCoachAssignStudents;
-            postAssignAction = postCoachAssignStudents;
             schedulingState = useSelector(state => state.coachScheduling);
             nameKeyScheduling = 'coachName';
             idKeyScheduling = 'coachID';
-            openScheduleSessionAction = openCoachScheduleSession;
             break;
+
         case 'TASCHEDULE':
             stateModuleKey = 'taModule';
             nameKey = 'ta_name';
             assignStudentOpenKey = 'openEditStudent';
             editStudentKey = 'assignedStudents';
             selectedStudentKey = 'student';
-            assignMappingKey = 'studentBatchMapping';
             closeDialogAction = closeEditStudent;
-            openSuccessAction = openSuccessPopup;
             getAssignStudentAction = getAssignStudents;
-            postAssignAction = postAssignStudents;
             schedulingState = useSelector(state => state.taScheduling);
             nameKeyScheduling = 'taName';
             idKeyScheduling = 'taID';
-            openScheduleSessionAction = openScheduleSession;
             break;
+
+        case 'COACHMENU_CALENDER':
+            stateModuleKey = 'coachMenu';
+            nameKey = '';
+            assignStudentOpenKey = 'selectStudent';
+            editStudentKey = 'assignedCoachStudents';
+            selectedStudentKey = 'selectedCoachStudents';
+            closeDialogAction = closeSelectStudents;
+            getAssignStudentAction = getCoachMenuAssignedStudents;
+            schedulingState = useSelector(state => state.coachMenu);
+            nameKeyScheduling = '';
+            idKeyScheduling = '';
+            break;
+
+        case 'TAMENU_CALENDER':
+            stateModuleKey = '';
+            nameKey = '';
+            assignStudentOpenKey = '';
+            editStudentKey = '';
+            selectedStudentKey = '';
+            closeDialogAction = '';
+            getAssignStudentAction = '';
+            schedulingState = useSelector(state => state.taMenu);
+            nameKeyScheduling = '';
+            idKeyScheduling = '';
+            break;
+
         default:
             stateModuleKey = null;
             nameKey = null;
             assignStudentOpenKey = null;
             editStudentKey = null;
             selectedStudentKey = null;
-            assignMappingKey = null;
             closeDialogAction = null;
-            openSuccessAction = null;
             getAssignStudentAction = null;
-            postAssignAction = null;
             schedulingState = null;
             nameKeyScheduling = null;
             idKeyScheduling = null;
-            openScheduleSessionAction = null;
             break;
     }
 
@@ -163,9 +173,19 @@ const EditStudents = ({ componentname }) => {
     } = stateSelector || {};
 
     useEffect(() => {
+        console.log(
+            'stateModuleKey :',
+            stateModuleKey,
+            'assignStudentOpen :',
+            assignStudentOpen
+        );
         // dispatch(getAssignStudents(taaId));
         if (stateModuleKey && assignStudentOpen) {
-            dispatch(getAssignStudentAction(assignedId));
+            if (stateModuleKey == 'coachMenu' || stateModuleKey === 'taMenu') {
+                dispatch(getAssignStudentAction());
+            } else {
+                dispatch(getAssignStudentAction(assignedId));
+            }
         }
     }, [
         dispatch,
@@ -177,7 +197,7 @@ const EditStudents = ({ componentname }) => {
 
     useEffect(() => {
         console.log('STUDENT BATCH MAPPING : ', assignedStudents);
-        if (assignedStudents && Array.isArray(assignedStudents)) {
+        if (assignedStudents) {
             const transformedData = assignedStudents.map((stu, index) => ({
                 'S. No.': index + 1,
                 'Student Name': stu.student.name,
@@ -190,19 +210,24 @@ const EditStudents = ({ componentname }) => {
                         .map(batch => batch.batch_name)
                         .join(', ') || 'N/A',
                 Select: stu.is_active ? 'Active' : 'Inactive',
-                student_id: stu.student_id,
+                // student_id: stu.student_id,
                 is_active: stu.is_active,
                 id: stu.student.id,
             }));
 
+            console.log('Transformed Data : ', transformedData);
+
+            /*
             const filtered = transformedData.filter(student => {
                 const matchesTerm = selectedTerm
                     ? student.Program === selectedTerm
                     : true;
+            
                 const matchesBatch = selectedBatch
                     ? student.Batch.includes(selectedBatch)
                     : true;
-                const matchesName = searchName
+                
+                    const matchesName = searchName
                     ? student['Student Name']
                           .toLowerCase()
                           .includes(searchName.toLowerCase())
@@ -210,7 +235,11 @@ const EditStudents = ({ componentname }) => {
                 return matchesTerm && matchesBatch && matchesName;
             });
 
+            console.log('Filtered Data : ', filtered);
+
             setFilteredStudents(filtered);
+            */
+            setFilteredStudents(transformedData);
         }
     }, [assignedStudents, selectedTerm, selectedBatch, searchName]);
 
@@ -253,13 +282,13 @@ const EditStudents = ({ componentname }) => {
             : [];
 
     useEffect(() => {
-        console.log('Selected Student inside use Effect : ', assignedStudents);
-        if (assignedStudents) {
-            setSelectedStudents(assignedStudents.map(student => student.id));
+        console.log('Selected Student inside use Effect : ', selectedStudent);
+        if (selectedStudent) {
+            setSelectedStudents(selectedStudent.map(student => student.id));
         }
     }, [selectedStudent]);
 
-    console.log('selectedStudents : ', selectedStudents);
+    console.log('already selected students: ', selectedStudent);
 
     const handleSelectStudent = id => {
         setSelectedStudents(prev =>
@@ -267,46 +296,45 @@ const EditStudents = ({ componentname }) => {
         );
     };
 
+    console.log('selectedStudents 278: ', selectedStudents);
+
     const handleSubmit = () => {
         const id =
             componentname === 'ADDITCOACH'
                 ? coachID || assignedId
                 : taID || assignedId;
+
         const data = {
             [componentname === 'ADDITCOACH' ? 'Coach_id' : 'ta_id']: id,
-            student: selectedStudents.map(id => ({ id })),
+            name: assignedName,
+            student: selectedStudents
+                ? selectedStudents.map(id => ({ id }))
+                : [],
         };
 
-        dispatch(
-            openScheduleSession({
-                id,
-                name: assignedName,
-                student: selectedStudents.map(id => ({ id })),
-            })
-        );
-
-        /*
-        dispatch(postAssignAction({ id, data })).then(() => {
-          if (assignedId) {
+        console.log('SUBMIT DATA :', data);
+        if (componentname === 'COACHMENU_CALENDER') {
+            const student = selectedStudents.map(id => ({ id }));
+            dispatch(openCreateSessionPopup({ student }));
+            dispatch(closeDialogAction());
+        } else {
             dispatch(
-              openScheduleSession({
-                id: assignedId,
-                name: assignedName,
-                student: selectedStudents.map((id) => ({ id: id.toString() })),
-              })
+                openScheduleSession({
+                    id,
+                    name: assignedName,
+                    student: selectedStudents.map(id => ({ id })),
+                })
             );
-          }
-          dispatch(openSuccessAction());
-        });
-         */
-        dispatch(closeEditStudent());
+        }
+
+        dispatch(closeDialogAction());
     };
 
     const headers = ['S. No.', 'Student Name', 'Program', 'Batch', 'Select'];
 
     const content = (
         <>
-            <Grid container spacing={2}>
+            <Grid container spacing={2} justifyContent="center" sx={{ mt: 0 }}>
                 <Grid item sm={6}>
                     <CustomTextField
                         select
@@ -376,16 +404,31 @@ const EditStudents = ({ componentname }) => {
     );
 
     const assignedTA = assignedTAName || assignedName;
-    return (
-        <ReusableDialog
-            open={assignStudentOpen}
-            //   handleClose={() => dispatch(closeEditStudent())}
-            handleClose={() => dispatch(closeDialogAction())}
-            title={`Assign Students to '${assignedTA}'`}
-            content={content}
-            actions={actions}
-        />
-    );
+
+    if (
+        componentname === 'COACHMENU_CALENDER' ||
+        componentname === 'TAMENU_CALENDER'
+    ) {
+        return (
+            <ReusableDialog
+                open={assignStudentOpen}
+                handleClose={() => dispatch(closeDialogAction())}
+                title={`Assign Students`}
+                content={content}
+                actions={actions}
+            />
+        );
+    } else {
+        return (
+            <ReusableDialog
+                open={assignStudentOpen}
+                handleClose={() => dispatch(closeDialogAction())}
+                title={`Assign Students to '${assignedTA}'`}
+                content={content}
+                actions={actions}
+            />
+        );
+    }
 };
 
 export default EditStudents;

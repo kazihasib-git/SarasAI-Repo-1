@@ -18,42 +18,21 @@ const CalendarComponent = ({ eventsList, addEvent, slotData }) => {
     const [myEventsList, setMyEventsList] = useState([]);
     // const [slots, setSlots] = useState([]);
 
-    /*
-  useEffect(() => {
-    if (eventsList && eventsList.length > 0) {
-      const transformedEvents = eventsList.map(event => ({
-        title: event.meeting_name,
-        start: new Date(event.date.split(" ")[0] + 'T' + event.start_time),
-        end: new Date(event.date.split(" ")[0] + 'T' + event.end_time),
-      }));
-      setMyEventsList(transformedEvents);
-    }
-  }, [eventsList]);
-  */
-
-    // useEffect(() => {
-    //     if (slotData && slotData.data?.length > 0) {
-    //         const transformedSlots = slotData.data.map((slot) => ({
-    //             startDate: new Date(slot.slot_date + 'T' + slot.from_time),
-    //             endDate: new Date(slot.slot_date + 'T' + slot.to_time),
-    //         }));
-    //         setSlots(transformedSlots);
-    //     }
-    // }, [slotData]);
-
     const showSessionPopUp = () => {
         console.log('clicked');
     };
 
     const eventStyleGetter = event => {
+        console.log('EVENT : ', event);
         return {
             style: {
-                backgroundColor: 'green',
-                opacity: 1,
-                borderRadius: '5px',
+                backgroundColor: '#28a745', // Match the green color in your design
                 color: 'white',
-                border: '0px',
-                display: 'block',
+                borderRadius: '5px',
+                border: '1px solid #caffd8',
+                width: '95%',
+                left: '6%',
+                bottom: '0%',
             },
         };
     };
@@ -68,7 +47,6 @@ const CalendarComponent = ({ eventsList, addEvent, slotData }) => {
             const slotStartTime = moment(slot.startDate).format('HH:mm');
             const slotEndTime = moment(slot.endDate).format('HH:mm');
 
-            // Check if the date matches and the time is within the slot's range
             if (
                 dateString === slotDate &&
                 timeString >= slotStartTime &&
@@ -78,7 +56,7 @@ const CalendarComponent = ({ eventsList, addEvent, slotData }) => {
                     style: {
                         backgroundColor: '#B0FC38',
                         opacity: 0.5,
-                        border: '0px',
+                        border: 'none',
                     },
                 };
             }

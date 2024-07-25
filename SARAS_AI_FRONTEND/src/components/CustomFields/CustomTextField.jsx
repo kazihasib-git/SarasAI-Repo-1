@@ -31,7 +31,7 @@ const CustomTextField = ({
             helperText={errors[name]?.message}
             variant="outlined"
             InputProps={{ style: inputPropsStyle }}
-            InputLabelProps={{ style: { margin: 0 } }}
+            InputLabelProps={{ style: { margin: 0 }, shrink: true }}
             sx={{
                 '& .MuiOutlinedInput-root': {
                     '& fieldset': {
@@ -52,10 +52,8 @@ const CustomTextField = ({
                 },
                 '& .MuiInputLabel-root': {
                     color: '#1A1E3D',
-                    // fontSize:"17px" ,
                     '&.Mui-focused': {
-                        color: '#1A1E3D',
-                        // Change label color on focus
+                        color: '#1A1E3D', // Change label color on focus
                     },
                 },
             }}

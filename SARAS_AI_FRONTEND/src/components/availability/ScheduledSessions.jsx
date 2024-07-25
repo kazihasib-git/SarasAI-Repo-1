@@ -23,6 +23,13 @@ import {
     reasonForCoachLeave,
 } from '../../redux/features/CoachModule/CoachAvailabilitySlice';
 import { useParams } from 'react-router-dom';
+import {
+    closeReasonForLeavePopup,
+    closeScheduledSessionForLeave,
+    openReasonForLeavePopup,
+    openRescheduleSessionForLeave,
+    openScheduledSessionForLeave,
+} from '../../redux/features/coach/coachmenuprofileSilce';
 
 const CustomButton = ({
     onClick,
@@ -98,6 +105,33 @@ const ScheduledSessions = ({ componentName }) => {
             openReasonAction = openCoachReasonForLeave;
             reasonForLeaveAction = reasonForCoachLeave;
             break;
+
+        case 'COACHMENU_CALENDER':
+            scheduleSessionOpenKey = 'leaveScheduledSessionPopup';
+            scheduledSessionDataKey = 'coachSessionsForLeave';
+            schedulingStateKey = 'coachMenu';
+            closeSessionAction = closeScheduledSessionForLeave;
+            openCancelAction = openScheduledSessionForLeave;
+            openRescheduleAction = openRescheduleSessionForLeave;
+            openSlotsAction = openScheduledSessionForLeave;
+            slotEventKey = '';
+            openReasonAction = openReasonForLeavePopup;
+            reasonForLeaveAction = closeReasonForLeavePopup;
+            break;
+
+        case 'TAMENU_CALENDER':
+            scheduleSessionOpenKey = '';
+            scheduledSessionDataKey = '';
+            schedulingStateKey = '';
+            closeSessionAction = '';
+            openCancelAction = '';
+            openRescheduleAction = '';
+            openSlotsAction = '';
+            slotEventKey = '';
+            openReasonAction = '';
+            reasonForLeaveAction = '';
+            break;
+
         default:
             scheduleSessionOpenKey = null;
             scheduledSessionDataKey = null;

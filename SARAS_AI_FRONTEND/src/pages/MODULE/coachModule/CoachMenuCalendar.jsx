@@ -23,9 +23,6 @@ import ScheduledSessions from '../../../components/availability/ScheduledSession
 import CancelSchedule from '../../../components/availability/CancelSchedule';
 import ReasonForLeave from '../../../components/availability/ReasonForLeave';
 import ReschedulingSession from '../../../components/availability/ReschedulingSession';
-// import { PickersInputBaseSectionsContainer } from "@mui/x-date-pickers/PickersTextField/PickersInputBase/PickersInputBase";
-// import NewCal from "../../../components/Calender/IndexCalenderNew";
-// import { add } from "date-fns";
 import { useParams } from 'react-router-dom';
 import {
     getTAScheduledSessions,
@@ -33,14 +30,15 @@ import {
 } from '../../../redux/features/taModule/taScheduling';
 import moment from 'moment';
 import Schedule from '../../../components/availability/Schedule';
-// import AssignStudents from "../../../components/adminModule/AssignStudents";
-// import AssignBatches from "../../managesTAs/AssignedBatches";
 import EditBatches from '../../../components/availability/EditBatches';
 import EditStudents from '../../../components/availability/EditStudents';
 import CoachMenu from './CoachMenu';
 import {
-    getCoachSessions,
-    getCoachSlots,
+    getCoachMenuSessions,
+    getCoachMenuSlots,
+    openCreateSessionPopup,
+    openCreteSlotsPopup,
+    openMarkLeavePopup,
 } from '../../../redux/features/coach/coachmenuprofileSilce';
 
 const CustomButton = ({
@@ -80,77 +78,64 @@ const CustomButton = ({
 
 const CoachMenuCalendar = () => {
     const dispatch = useDispatch();
-
-    const [sheduleNewSession, setSheduleNewSession] = useState(false);
-    const [createNewSlot, setCreateNewSlot] = useState(false);
-
-    //   const { assignBatchOpen, assignStudentOpen } = useSelector(
-    //     (state) => state.taModule
-    //   );
+    const [slotEvent, setSlotEvent] = useState([]);
+    const [sessionEvent, setSessionEvent] = useState([]);
 
     const {
-        slotData,
-        scheduleData,
-        markLeaveOpen,
-        scheduledSlotsOpen,
-        scheduledSessionOpen,
-        cancelSessionOpen,
-        reasonForLeaveOpen,
-        resheduleSessionOpen,
-        createNewSlotOpen,
-        scheduledSlotsData,
-    } = useSelector(state => state.taAvialability);
-
-    const {
-        taScheduledSessions,
-        scheduleSessionOpen,
-        openEditBatch,
-        openEditStudent,
-    } = useSelector(state => state.taScheduling);
-
-    //calendar
-    const [eventsList, setEventsList] = useState([]);
+        coachSlots,
+        coachSessions,
+        createCoachSlotsPopup,
+        createCoachSessionPopup,
+        coachSlotsByDate,
+        selectStudent,
+        selectBatches,
+        createCoachLeavePopup,
+        LeaveSlotsPopup,
+        leaveScheduledSessionPopup,
+    } = useSelector(state => state.coachMenu);
 
     useEffect(() => {
-        dispatch(getCoachSlots());
-        dispatch(getCoachSessions());
+        dispatch(getCoachMenuSlots());
+        dispatch(getCoachMenuSessions());
     }, [dispatch]);
 
+    console.log('coach slots :', coachSlots);
+    console.log('coachSessions', coachSessions);
+
     useEffect(() => {
-        if (scheduleData && scheduleData.data) {
-            const transformedEvents = scheduleData.data.map(event => ({
+        if (coachSessions && coachSessions.length > 0) {
+            const transformedEvents = coachSessions.map(event => ({
                 title: event.meeting_name,
                 start: new Date(
                     event.date.split(' ')[0] + 'T' + event.start_time
                 ),
                 end: new Date(event.date.split(' ')[0] + 'T' + event.end_time),
             }));
-            setEventsList(transformedEvents);
+            setSessionEvent(transformedEvents);
         }
-    }, [scheduleData]);
+    }, [coachSessions]);
 
-    console.log('slotData', slotData, 'scheduleData', scheduleData);
+    useEffect(() => {
+        if (coachSlots && coachSlots.length > 0) {
+            const transformedSlots = coachSlots.map(slot => ({
+                startDate: new Date(slot.slot_date + 'T' + slot.from_time),
+                endDate: new Date(slot.slot_date + 'T' + slot.to_time),
+            }));
+            setSlotEvent(transformedSlots);
+        }
+    }, [coachSlots]);
 
     const handleScheduleNewSession = () => {
-        // console.log("Pressed")
-        setSheduleNewSession();
-        dispatch(openScheduleSession());
+        dispatch(openCreateSessionPopup(true));
     };
 
     const handleMarkLeave = () => {
-        dispatch(openMarkLeave());
+        dispatch(openMarkLeavePopup(true));
     };
-
-    //   const handleDeleteFutureSlots = () => {
-    //     setDeleteFutureSlots(true);
-    //   };
 
     const handleCreateNewSlot = () => {
-        dispatch(openCreateNewSlots());
+        dispatch(openCreteSlotsPopup(true));
     };
-
-    console.log('session', scheduleData);
-    console.log('sessiond data', scheduleData.data);
 
     return (
         <>
@@ -190,16 +175,6 @@ const CoachMenuCalendar = () => {
                                     Mark Leave
                                 </CustomButton>
 
-                                {/* <CustomButton
-                onClick={handleDeleteFutureSlots}
-                color="#F56D3B"
-                backgroundColor="#FFFFFF"
-                borderColor="#F56D3B"
-                style={{ textTransform: "none" }}
-              >
-                Delete All Future Slots
-              </CustomButton> */}
-
                                 <CustomButton
                                     color="#FFFFFF"
                                     backgroundColor="#F56D3B"
@@ -216,37 +191,36 @@ const CoachMenuCalendar = () => {
                 </DialogActions>
 
                 <CalendarComponent
-                    eventsList={eventsList}
-                    slotData={slotData}
-                    componentName={'TACALENDER'}
+                    eventsList={sessionEvent}
+                    slotData={slotEvent}
+                    componentName={'COACHMENU_CALENDER'}
                 />
-                {scheduleSessionOpen && (
-                    <Schedule componentName={'TASCHEDULE'} />
+                {createCoachSessionPopup && (
+                    <Schedule componentName={'COACHMENU_CALENDER'} />
                 )}
-                {openEditBatch && <EditBatches componentname={'ADDEDITTA'} />}
-                {openEditStudent && (
-                    <EditStudents componentname={'ADDEDITTA'} />
+                {createCoachSlotsPopup && (
+                    <CreateNewSlot componentName={'COACHMENU_CALENDER'} />
                 )}
-                {/*{sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} componentName={"TACALENDER"} />} */}
-                {markLeaveOpen && (
-                    <MarkLeave
-                    // id={id}
-                    // name={name}
-                    // componentName={'TACALENDER'}
-                    />
+                {createCoachLeavePopup && (
+                    <MarkLeave componentName={'COACHMENU_CALENDER'} />
                 )}
-                {scheduledSlotsOpen && (
-                    <Slots
-                    // id={id} name={name} componentName={'TACALENDER'}
-                    />
+                {selectStudent && (
+                    <EditStudents componentname={'COACHMENU_CALENDER'} />
                 )}
-                {scheduledSessionOpen && (
-                    <ScheduledSessions
-                    // id={id}
-                    // name={name}
-                    // componentName={'TACALENDER'}
-                    />
+                {selectBatches && (
+                    <EditBatches componentname={'COACHMENU_CALENDER'} />
                 )}
+                {LeaveSlotsPopup && (
+                    <Slots componentName={'COACHMENU_CALENDER'} />
+                )}
+                {leaveScheduledSessionPopup && (
+                    <ScheduledSessions componentName={'COACHMENU_CALENDER'} />
+                )}
+
+                {/*{sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} componentName={"TACALENDER"} />}
+                
+                
+                
                 {cancelSessionOpen && (
                     <CancelSchedule
                     // id={id}
@@ -268,20 +242,7 @@ const CoachMenuCalendar = () => {
                     // componentName={'TACALENDER'}
                     />
                 )}
-                {/* {deleteFutureSlots && (
-        <DeleteAllSlots
-          open={deleteFutureSlots}
-          handleClose={() => setDeleteFutureSlots(false)}
-          id={id}
-          name={name}
-          componentName={"TACALENDER"}
-        />
-      )} */}
-                {createNewSlotOpen && (
-                    <CreateNewSlot componentName={'TACALENDER'} />
-                )}
-                {/* {assignStudentOpen && <AssignStudents componentname="ADDEDITTA" />}
-                {assignBatchOpen && <AssignBatches componentname="ADDEDITTA" />} */}
+                 */}
             </Box>
         </>
     );

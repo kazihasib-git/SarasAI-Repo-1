@@ -21,7 +21,8 @@ import {
 import moment from 'moment';
 import { updateCoachmenuprofile } from '../../../redux/features/CoachModule/coachmenuprofileSilce';
 import { useDispatch, useSelector } from 'react-redux';
-import { getCoachProfile } from '../../../redux/features/coach/coachmenuprofileSilce';
+import { getCoachMenuProfile } from '../../../redux/features/coach/coachmenuprofileSilce';
+import { formatInTimeZone } from 'date-fns-tz';
 
 const CoachMenuProfile = () => {
     const dispatch = useDispatch();
@@ -46,7 +47,8 @@ const CoachMenuProfile = () => {
     const [selectedImage, setSelectedImage] = useState(null);
     const [dateOfBirth, setDateOfBirth] = useState(null);
     const [phoneNumber, setPhoneNumber] = useState('');
-
+    const [ipData, setIpData] = useState(null);
+    const [error, setError] = useState(null);
     const nameValue = watch('name', '');
     const aboutMeValue = watch('about_me', '');
 
@@ -57,7 +59,7 @@ const CoachMenuProfile = () => {
     };
 
     useEffect(() => {
-        dispatch(getCoachProfile());
+        dispatch(getCoachMenuProfile());
     }, [dispatch]);
 
     useEffect(() => {
@@ -65,6 +67,42 @@ const CoachMenuProfile = () => {
             populateForm(coachProfileData);
         }
     }, [coachProfileData]);
+
+    useEffect(() => {
+        const fetchIP = async () => {
+            try {
+                // Fetch IP data from ipapi
+                const response = await axios.get('https://ipapi.co/json/');
+                setIpData(response.data);
+            } catch (err) {
+                setError(err.message);
+            }
+        };
+
+        fetchIP();
+    }, []);
+
+    const convertTimezone = (time, fromTimeZone, toTimeZone) => {
+        const formattedTime = formatInTimeZone(
+            time,
+            fromTimeZone,
+            'yyyy-MM-dd HH:mm:ssXXX',
+            { timeZone: toTimeZone }
+        );
+        return formattedTime;
+    };
+
+    const getConvertedTime = () => {
+        if (ipData && ipData.timezone) {
+            const currentTime = new Date();
+            return convertTimezone(
+                currentTime,
+                ipData.timezone,
+                coachProfileData.time_zone
+            );
+        }
+        return null;
+    };
 
     const populateForm = data => {
         const formattedDate = moment(data.date_of_birth).format('YYYY-MM-DD');
@@ -391,12 +429,12 @@ const CoachMenuProfile = () => {
                                         minLength: {
                                             value: 3,
                                             message:
-                                                'PIN Code must be at least 3 characters long',
+                                                'PIN Code must be at least 3 digits long',
                                         },
                                         maxLength: {
-                                            value: 10,
+                                            value: 6,
                                             message:
-                                                'PIN Code cannot exceed 10 characters',
+                                                'PIN Code cannot exceed 6 digits',
                                         },
                                     }}
                                     errors={errors}
