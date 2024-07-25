@@ -19,11 +19,12 @@ import {
     getCoachScheduleSession,
     openCoachReasonForLeave,
 } from '../../redux/features/CoachModule/CoachAvailabilitySlice';
-import { getSessionForLeave,
+import {
+    getSessionForLeave,
     openSlotsForLeave,
     closeSlotsForLeave,
-    openScheduledSessionForLeave
- } from '../../redux/features/coach/coachmenuprofileSilce';
+    openScheduledSessionForLeave,
+} from '../../redux/features/coach/coachmenuprofileSilce';
 
 const CustomButton = ({
     onClick,
@@ -72,7 +73,7 @@ const Slots = ({ componentName }) => {
         getAvailableSlotsAction,
         closeScheduleSessionAction,
         getScheduleSessionAction,
-        markLeaveKey
+        markLeaveKey;
 
     switch (componentName) {
         case 'TACALENDER':
@@ -95,7 +96,7 @@ const Slots = ({ componentName }) => {
             markLeaveKey = 'markLeaveData';
             break;
 
-        case 'COACHMENU_CALENDER' :
+        case 'COACHMENU_CALENDER':
             scheduleSessionOpenKey = 'LeaveSlotsPopup';
             scheduledSlotsDataKey = 'coachSlotsForLeave';
             schedulingStateKey = 'coachMenu';
@@ -104,12 +105,12 @@ const Slots = ({ componentName }) => {
             getScheduleSessionAction = getSessionForLeave;
             markLeaveKey = '';
             break;
-        
+
         case 'TAMENU_CALENDER':
             scheduleSessionOpenKey = '';
             scheduledSlotsDataKey = '';
             schedulingStateKey = '';
-            getAvailableSlotsAction ='taMenu';
+            getAvailableSlotsAction = 'taMenu';
             closeScheduleSessionAction = '';
             getScheduleSessionAction = '';
             markLeaveKey = '';

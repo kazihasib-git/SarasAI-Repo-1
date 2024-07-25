@@ -23,7 +23,13 @@ import {
     reasonForCoachLeave,
 } from '../../redux/features/CoachModule/CoachAvailabilitySlice';
 import { useParams } from 'react-router-dom';
-import { closeReasonForLeavePopup, closeScheduledSessionForLeave, openReasonForLeavePopup, openRescheduleSessionForLeave, openScheduledSessionForLeave } from '../../redux/features/coach/coachmenuprofileSilce';
+import {
+    closeReasonForLeavePopup,
+    closeScheduledSessionForLeave,
+    openReasonForLeavePopup,
+    openRescheduleSessionForLeave,
+    openScheduledSessionForLeave,
+} from '../../redux/features/coach/coachmenuprofileSilce';
 
 const CustomButton = ({
     onClick,

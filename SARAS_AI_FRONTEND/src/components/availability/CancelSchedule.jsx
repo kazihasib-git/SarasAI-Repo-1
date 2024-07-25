@@ -25,7 +25,12 @@ import {
 import { cancelScheduledSession } from '../../redux/features/taModule/taScheduling';
 
 import { cancelCoachScheduledSession } from '../../redux/features/CoachModule/coachSchedule';
-import { cancelScheduledSessionForLeave, closeCancelSessionForLeave, getSessionForLeave, openCancelSessionForLeave } from '../../redux/features/coach/coachmenuprofileSilce';
+import {
+    cancelScheduledSessionForLeave,
+    closeCancelSessionForLeave,
+    getSessionForLeave,
+    openCancelSessionForLeave,
+} from '../../redux/features/coach/coachmenuprofileSilce';
 
 const CustomButton = ({
     onClick,
@@ -69,7 +74,7 @@ const CancelSchedule = ({ componentName }) => {
         cancelSessionAction,
         getSessionAction,
         openSessionAction,
-        cancelSessionState
+        cancelSessionState;
 
     switch (componentName) {
         case 'TACALENDER':
@@ -77,9 +82,9 @@ const CancelSchedule = ({ componentName }) => {
             cancelSessionAction = cancelScheduledSession;
             getSessionAction = getScheduleSession;
             openSessionAction = openScheduledSession;
-            cancelSessionState = 'cancelSessionOpen'
+            cancelSessionState = 'cancelSessionOpen';
             break;
-        
+
         case 'COACHCALENDER':
             closeSessionAction = closeCoachCancelSession;
             cancelSessionAction = cancelCoachScheduledSession;
@@ -87,23 +92,23 @@ const CancelSchedule = ({ componentName }) => {
             openSessionAction = openCoachScheduledSession;
             cancelSessionState = 'cancelCoachSessionOpen';
             break;
-        
-        case 'COACHMENU_CALENDER' :
+
+        case 'COACHMENU_CALENDER':
             closeSessionAction = closeCancelSessionForLeave;
             cancelSessionAction = cancelScheduledSessionForLeave;
             getSessionAction = getSessionForLeave;
             openSessionAction = openCancelSessionForLeave;
-            cancelSessionState = 'cancelSessionOnLeave'
+            cancelSessionState = 'cancelSessionOnLeave';
             break;
 
-        case 'COACHMENU_CALENDER' :
+        case 'COACHMENU_CALENDER':
             closeSessionAction = closeCancelSessionForLeave;
             cancelSessionAction = cancelScheduledSessionForLeave;
             getSessionAction = getSessionForLeave;
             openSessionAction = openCancelSessionForLeave;
-            cancelSessionState = ''
+            cancelSessionState = '';
             break;
-        
+
         default:
             closeSessionAction = null;
             cancelSessionAction = null;

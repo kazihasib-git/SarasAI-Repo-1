@@ -23,7 +23,8 @@ export const updateCoachmenuprofile = createAsyncThunk(
     'coachMenu/updateprofile',
     async data => {
         const response = await axiosInstance.put(
-            `${baseUrl}/coach/coach-profile`, data
+            `${baseUrl}/coach/coach-profile`,
+            data
         );
         console.log(response.data, 'response.data');
         return response.data;
@@ -127,40 +128,44 @@ export const createCoachMenuLeave = createAsyncThunk(
 // Get Slots for Leave
 export const getSlotsForLeave = createAsyncThunk(
     'coachMenu/getSlotsForLeave',
-    async (data) => {
-        const response = await axiosInstance.post(`${baseUrl}/coach/calendar/slot-between-dates`, 
+    async data => {
+        const response = await axiosInstance.post(
+            `${baseUrl}/coach/calendar/slot-between-dates`,
             data
-        )
+        );
         return response.data;
     }
-)
+);
 
 export const getSessionForLeave = createAsyncThunk(
     'coachMenu/getSessionForLeave',
-    async (data) => {
-        const response = await axiosInstance.post(`${baseUrl}/coach/calendar/schedule-by-slots`, 
+    async data => {
+        const response = await axiosInstance.post(
+            `${baseUrl}/coach/calendar/schedule-by-slots`,
             data
-        )
+        );
         return response.data;
     }
-)
+);
 
 export const cancelScheduledSessionForLeave = createAsyncThunk(
     'coachMenu/cancelScheduledSession',
-    async (id) => {
-        const response = await axiosInstance.put(`${baseUrl}/coach/calendar/cancel-schedule/${id}`)
+    async id => {
+        const response = await axiosInstance.put(
+            `${baseUrl}/coach/calendar/cancel-schedule/${id}`
+        );
         return response.data;
     }
-)
+);
 
 // Reason for Coach Leave
 export const reasonForCoachMenuLeave = createAsyncThunk(
     'coachMenu/reasonForLeave',
-    async (data) => {
-        const response = await axiosInstance.post(`${baseUrl}/`, data)
+    async data => {
+        const response = await axiosInstance.post(`${baseUrl}/`, data);
         return response.data;
     }
-)
+);
 
 // get Coach call requests
 export const getCoachCallRequests = createAsyncThunk(
@@ -240,7 +245,6 @@ export const getCoachScheduledCalls = createAsyncThunk(
     }
 );
 
-
 const initialState = {
     coachProfileData: [], // Coach Profile Data
     coachSlots: [], // Coach Slots
@@ -250,8 +254,8 @@ const initialState = {
     assignedCoachBatches: [], // Assigned Students to Batch
     selectedCoachStudents: [], // Selected Students for creating Schedules
     selectedCoachBatches: [], // Selected Batches for creating Schedules
-    coachSlotsForLeave : [], // Slots For Leave
-    coachSessionsForLeave : [], // Sessions for Leave
+    coachSlotsForLeave: [], // Slots For Leave
+    coachSessionsForLeave: [], // Sessions for Leave
     coachLeave: [],
 
     coachCallRequests: [],
@@ -261,14 +265,14 @@ const initialState = {
     createCoachSessionPopup: false,
     createCoachLeavePopup: false,
     selectStudent: false, // Select to Schedule Sessions
-    selectBatches: false, // Select to Schedule Sessions 
-    LeaveSlotsPopup : false,
-    leaveScheduledSessionPopup : false,
-    leaveRescheduleSessionPopup : false,
-    reasonForLeavePopup : false,
-    cancelSessionOnLeave : false,
-    viewStudentsOnReschedule : false,
-    viewBatchesOnReschedule : false,
+    selectBatches: false, // Select to Schedule Sessions
+    LeaveSlotsPopup: false,
+    leaveScheduledSessionPopup: false,
+    leaveRescheduleSessionPopup: false,
+    reasonForLeavePopup: false,
+    cancelSessionOnLeave: false,
+    viewStudentsOnReschedule: false,
+    viewBatchesOnReschedule: false,
 
     loading: false,
     error: null,
@@ -324,49 +328,48 @@ export const coachMenuSlice = createSlice({
         closeSelectBatches: (state, action) => {
             state.selectBatches = false;
         },
-        openSlotsForLeave : (state, action) => {
+        openSlotsForLeave: (state, action) => {
             state.LeaveSlotsPopup = true;
         },
-        closeSlotsForLeave : (state, action) => {
+        closeSlotsForLeave: (state, action) => {
             state.LeaveSlotsPopup = false;
         },
-        openScheduledSessionForLeave : (state, action) => {
-            state.leaveScheduledSessionPopup = true
+        openScheduledSessionForLeave: (state, action) => {
+            state.leaveScheduledSessionPopup = true;
         },
-        closeScheduledSessionForLeave : (state, action ) => {
-            state.leaveScheduledSessionPopup = false 
+        closeScheduledSessionForLeave: (state, action) => {
+            state.leaveScheduledSessionPopup = false;
         },
-        openCancelSessionForLeave : (state, action) => {
+        openCancelSessionForLeave: (state, action) => {
             state.cancelSessionOnLeave = true;
         },
-        closeCancelSessionForLeave : (state, action) => {
+        closeCancelSessionForLeave: (state, action) => {
             state.cancelSessionOnLeave = false;
         },
-        openReasonForLeavePopup : (state, action) => {
+        openReasonForLeavePopup: (state, action) => {
             state.reasonForLeavePopup = true;
         },
-        closeReasonForLeavePopup : (state, action) => {
+        closeReasonForLeavePopup: (state, action) => {
             state.reasonForLeavePopup = false;
         },
-        openRescheduleSessionForLeave : (state, action) => {
+        openRescheduleSessionForLeave: (state, action) => {
             state.leaveRescheduleSessionPopup = true;
         },
-        closeRescheduleSessionForLeave : (state, action) => {
+        closeRescheduleSessionForLeave: (state, action) => {
             state.leaveRescheduleSessionPopup = false;
         },
-        openStudentsOfRescheduleSessionForLeave : (state, action) => {
-            state.viewStudentsOnReschedule = true
+        openStudentsOfRescheduleSessionForLeave: (state, action) => {
+            state.viewStudentsOnReschedule = true;
         },
-        closeStudentsOfRescheduleSessionForLeave : (state, action) => {
+        closeStudentsOfRescheduleSessionForLeave: (state, action) => {
             state.viewStudentsOnReschedule = false;
         },
-        openBatchesOfRescheduleSessionForLeave : (state, action) => {
+        openBatchesOfRescheduleSessionForLeave: (state, action) => {
             state.viewBatchesOnReschedule = true;
         },
-        closeBatchesOfRescheduleSessionForLeave : (state, action) => {
+        closeBatchesOfRescheduleSessionForLeave: (state, action) => {
             state.viewBatchesOnReschedule = false;
-        }
-
+        },
     },
     extraReducers: builder => {
         // Get Coach Profile Data
@@ -495,43 +498,49 @@ export const coachMenuSlice = createSlice({
         // Get Slots for Leave
         builder.addCase(getSlotsForLeave.pending, state => {
             state.loading = true;
-        })
+        });
         builder.addCase(getSlotsForLeave.fulfilled, (state, action) => {
             state.loading = false;
             state.coachSlotsForLeave = action.payload.data;
-        })
+        });
         builder.addCase(getSlotsForLeave.rejected, (state, action) => {
             state.loading = false;
-            state.error = action.error.message
-            state.coachSlotsForLeave = []
-        })
+            state.error = action.error.message;
+            state.coachSlotsForLeave = [];
+        });
 
         // Get Sessions For Leave
         builder.addCase(getSessionForLeave.pending, state => {
             state.loading = true;
-        })
+        });
         builder.addCase(getSessionForLeave.fulfilled, (state, action) => {
             state.loading = false;
             state.coachSessionsForLeave = action.payload.data;
-        })
+        });
         builder.addCase(getSessionForLeave.rejected, (state, action) => {
             state.loading = false;
-            state.error = action.error.message
-            state.coachSessionsForLeave = []
-        })
+            state.error = action.error.message;
+            state.coachSessionsForLeave = [];
+        });
 
         // Cancel Scheduled Sessions for Leave
-        builder.addCase(cancelScheduledSessionForLeave.pending, (state) => {
+        builder.addCase(cancelScheduledSessionForLeave.pending, state => {
             state.loading = true;
-        })
-        builder.addCase(cancelScheduledSessionForLeave.fulfilled, (state, action) => {
-            state.loading = false;
-            // TODO : Handle case of cancel Scheduled Session
-        })
-        builder.addCase(cancelScheduledSessionForLeave.rejected, (state, action) => {
-            state.loading = false;
-            state.error = action.error.message
-        })
+        });
+        builder.addCase(
+            cancelScheduledSessionForLeave.fulfilled,
+            (state, action) => {
+                state.loading = false;
+                // TODO : Handle case of cancel Scheduled Session
+            }
+        );
+        builder.addCase(
+            cancelScheduledSessionForLeave.rejected,
+            (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+            }
+        );
 
         // Create Coach Leave
         builder.addCase(createCoachMenuLeave.pending, state => {
@@ -633,7 +642,6 @@ export const {
     closeStudentsOfRescheduleSessionForLeave,
     openBatchesOfRescheduleSessionForLeave,
     closeBatchesOfRescheduleSessionForLeave,
-
 } = coachMenuSlice.actions;
 
 export default coachMenuSlice.reducer;
