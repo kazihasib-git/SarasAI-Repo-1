@@ -114,9 +114,15 @@ const ScheduledCall = ({ role }) => {
             .toISOString()
             .split('T')[1]
             .split('.')[0];
-        const filteredRequests = requests.filter(
-            request => request.end_time >= currentTime
-        );
+        let filteredRequests = [];
+
+        if (date > now) {
+            filteredRequests = requests;
+        } else {
+            filteredRequests = requests.filter(
+                request => request.end_time >= currentTime
+            );
+        }
 
         const sortedRequests = filteredRequests.sort((a, b) => {
             return a.start_time.localeCompare(b.start_time);

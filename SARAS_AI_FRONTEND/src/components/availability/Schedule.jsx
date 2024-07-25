@@ -46,6 +46,14 @@ import {
     openSelectBatches,
     openSelectStudents,
 } from '../../redux/features/coach/coachmenuprofileSilce';
+import {
+    closeTaMenuCreateSessionsPopup,
+    createTaMenuSessions,
+    getTaMenuSessions,
+    getTaMenuSlotsByDate,
+    openTaMenuSelectBatches,
+    openTaMenuSelectStudents,
+} from '../../redux/features/teachingAssistant/tamenuSlice';
 
 const CustomButton = ({
     onClick,
@@ -164,17 +172,17 @@ const Schedule = ({ componentName }) => {
             createScheduleAction = createCoachMenuSession;
             break;
         case 'TAMENU_CALENDER':
-            scheduleSessionOpenKey = '';
+            scheduleSessionOpenKey = 'createTaSlotsPopup';
             schedulingStateKey = 'taMenu';
-            availableKey = '';
+            availableKey = 'taSlotsByDate';
             idKey = '';
             nameKey = '';
             timezoneKey = '';
-            studentKey = '';
-            batchKey = '';
-            getAvailableSlotsAction = '';
-            closeScheduleSessionAction = '';
-            createScheduleAction = '';
+            (studentKey = 'selectedTaStudents'),
+                (batchKey = 'selectedTaBatches');
+            getAvailableSlotsAction = getTaMenuSlotsByDate;
+            closeScheduleSessionAction = closeTaMenuCreateSessionsPopup;
+            createScheduleAction = createTaMenuSessions;
             break;
         default:
             scheduleSessionOpenKey = null;
@@ -295,6 +303,7 @@ const Schedule = ({ componentName }) => {
         } else if (componentName === 'COACHMENU_CALENDER') {
             dispatch(openSelectStudents());
         } else if (componentName === 'TAMENU_CALENDER') {
+            dispatch(openTaMenuSelectStudents());
         }
     };
 
@@ -307,6 +316,7 @@ const Schedule = ({ componentName }) => {
         } else if (componentName === 'COACHMENU_CALENDER') {
             dispatch(openSelectBatches());
         } else if (componentName === 'TAMENU_CALENDER') {
+            dispatch(openTaMenuSelectBatches());
         }
     };
 
@@ -396,6 +406,8 @@ const Schedule = ({ componentName }) => {
                 dispatch(closeScheduleSessionAction());
                 if (componentName === 'COACHMENU_CALENDER') {
                     return dispatch(getCoachMenuSessions());
+                } else if (componentName === 'TAMENU_CALENDER') {
+                    return dispatch(getTaMenuSessions());
                 } else {
                     return dispatch(fetchTAScheduleById(adminUserID));
                 }

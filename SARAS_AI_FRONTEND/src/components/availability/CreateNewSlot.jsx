@@ -36,6 +36,10 @@ import {
     createCoachSlot,
     getCoachSlots,
 } from '../../redux/features/coach/coachmenuprofileSilce';
+import {
+    closeTaMenuCreateSlotsPopup,
+    createTaMenuSlots,
+} from '../../redux/features/teachingAssistant/tamenuSlice';
 const CustomButton = ({
     onClick,
     children,
@@ -131,9 +135,9 @@ const CreateNewSlot = ({ componentName }) => {
             schedulingStateKey = 'taMenu';
             slotEventKey = '';
             createNewSlotAction = '';
-            createSlotActions = '';
-            closeCreateNewSlotAction = '';
-            openCreateNewSlotAction = '';
+            createSlotActions = createTaMenuSlots;
+            closeCreateNewSlotAction = closeTaMenuCreateSlotsPopup;
+            openCreateNewSlotAction = 'createTaSlotsPopup';
             break;
 
         default:

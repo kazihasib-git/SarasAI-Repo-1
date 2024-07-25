@@ -36,7 +36,7 @@ export const getTaMenuSlots = createAsyncThunk('taMenu/getSlots', async () => {
 // Create TA Slots
 export const createTaMenuSlots = createAsyncThunk(
     'taMenu/createTaSlot',
-    async () => {
+    async data => {
         const response = await axiosInstance.post(
             `${baseUrl}/ta/calendar/create-slots`,
             data
@@ -48,9 +48,9 @@ export const createTaMenuSlots = createAsyncThunk(
 // Get TA Slots by Date
 export const getTaMenuSlotsByDate = createAsyncThunk(
     'taMenu/createTaSlotByDate',
-    async () => {
+    async data => {
         const response = await axiosInstance.post(
-            `${baseUrl}//coach/calendar/slots-by-date`,
+            `${baseUrl}/ta/calendar/slots-by-date`,
             data
         );
         return response.data;
@@ -150,11 +150,29 @@ export const getTaScheduledCalls = createAsyncThunk(
 // Create TA Sessions
 export const createTaMenuSessions = createAsyncThunk(
     'taMenu/createTaMenuSessions',
-    async () => {
+    async data => {
         const response = await axiosInstance.post(
             `${baseUrl}/ta/calendar/create-sessions`,
             data
         );
+        return response.data;
+    }
+);
+
+//Get assigned students
+export const getTaMenuAssignedStudents = createAsyncThunk(
+    'coachMenu/getAssignedStudents',
+    async () => {
+        const response = await axiosInstance.get(`${baseUrl}/ta/get-students`);
+        return response.data;
+    }
+);
+
+// Get Assigned Batches
+export const getTaMenuAssignedBatches = createAsyncThunk(
+    'coachMenu/getAssignedBatches',
+    async () => {
+        const response = await axiosInstance.get(`${baseUrl}/ta/get-batches`);
         return response.data;
     }
 );
@@ -166,6 +184,13 @@ const initialState = {
     taSessions: [], // TA Sessions
     taCallRequests: [], //Ta call request
     taScheduledCalls: [], // scheduled call
+    selectedTaStudents: [],
+    selectedTaBatches: [],
+    assignedTaStudents: [],
+    assignedTaBatches: [],
+
+    selectTaStudent: false,
+    selectTaBatches: false,
 
     createTaSlotsPopup: false,
     createTaSessionPopup: false,
@@ -179,12 +204,39 @@ export const taMenuSlice = createSlice({
     name: 'taMenu',
     initialState,
     reducers: {
-        openCreateSlotsPopup: (state, action) => {
-            state.createTaSlotsPopup = action.payload;
+        openTaMenuCreateSlotsPopup: (state, action) => {
+            state.createTaSlotsPopup = true;
             state.createTaSessionPopup = false;
         },
-        closeCreateSlotsPopup: (state, action) => {
+        closeTaMenuCreateSlotsPopup: (state, action) => {
             state.createTaSlotsPopup = false;
+        },
+        openTaMenuCreateSessionsPopup: (state, action) => {
+            state.createTaSessionPopup = true;
+            if (action.payload.student) {
+                state.selectedTaStudents = action.payload.student;
+            }
+            if (action.payload.batches) {
+                state.selectedTaBatches = action.payload.batches;
+            }
+            state.createTaSlotsPopup = false;
+        },
+        closeTaMenuCreateSessionsPopup: (state, action) => {
+            state.createTaSessionPopup = false;
+            state.selectedTaBatches = [];
+            state.selectedTaStudents = [];
+        },
+        openTaMenuSelectStudents: (state, action) => {
+            state.selectTaStudent = true;
+        },
+        closeTaMenuSelectStudents: (state, action) => {
+            state.selectTaStudent = false;
+        },
+        openTaMenuSelectBatches: (state, action) => {
+            state.selectTaBatches = true;
+        },
+        closeTaMenuSelectBatches: (state, action) => {
+            state.selectTaBatches = false;
         },
     },
     extraReducers: builder => {
@@ -232,13 +284,14 @@ export const taMenuSlice = createSlice({
         builder.addCase(getTaMenuSlotsByDate.pending, state => {
             state.loading = true;
         });
-        builder.addCase(getTaMenuSlotsByDate.fulfilled, state => {
+        builder.addCase(getTaMenuSlotsByDate.fulfilled, (state, action) => {
             state.loading = false;
             state.taSlotsByDate = action.payload.data;
         });
-        builder.addCase(getTaMenuSlotsByDate.rejected, state => {
+        builder.addCase(getTaMenuSlotsByDate.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            state.taSlotsByDate = [];
         });
 
         // Create Ta Slots
@@ -338,7 +391,48 @@ export const taMenuSlice = createSlice({
             state.error = action.error.message;
             state.taScheduledCalls = [];
         });
+
+        // get ta assigned students
+        builder.addCase(getTaMenuAssignedStudents.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(
+            getTaMenuAssignedStudents.fulfilled,
+            (state, action) => {
+                state.loading = false;
+                state.assignedTaStudents = action.payload;
+            }
+        );
+        builder.addCase(getTaMenuAssignedStudents.rejected, (state, action) => {
+            state.loading = false;
+            state.assignedTaStudents = [];
+            state.error = action.error.message;
+        });
+
+        // Get ta Assigned Batches
+        builder.addCase(getTaMenuAssignedBatches.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(getTaMenuAssignedBatches.fulfilled, (state, action) => {
+            state.loading = false;
+            state.assignedTaBatches = action.payload;
+        });
+        builder.addCase(getTaMenuAssignedBatches.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+            state.assignedTaBatches = [];
+        });
     },
 });
 
+export const {
+    openTaMenuCreateSlotsPopup,
+    closeTaMenuCreateSlotsPopup,
+    openTaMenuCreateSessionsPopup,
+    closeTaMenuCreateSessionsPopup,
+    openTaMenuSelectStudents,
+    closeTaMenuSelectStudents,
+    openTaMenuSelectBatches,
+    closeTaMenuSelectBatches,
+} = taMenuSlice.actions;
 export default taMenuSlice.reducer;

@@ -81,6 +81,7 @@ import TaMenuMessage from './pages/MODULE/TaModule/TaMenuMessage';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLogin } from './redux/features/auth/loginSlice';
+import StudentDetails from './components/CommonComponent/studentDetails';
 
 const ROLES = {
     Teaching: 2001,
@@ -324,7 +325,9 @@ function LoginApp() {
                         />
                         <Route
                             path="coachmenu_students"
-                            element={<Mystudents page="Coach Menu Students" />}
+                            element={
+                                <CoachMenuStudents page="Coach Menu Students" />
+                            }
                         />
                         <Route
                             path="coachmenu_messages"
@@ -338,6 +341,12 @@ function LoginApp() {
                                 <CoachMenuAssessments page="Coach Menu Assessemets" />
                             }
                         />
+                        {/* <Route
+                            path="student_details/:id"
+                            element={
+                                <StudentDetails page="Coach Menu StudentDetails" />
+                            }
+                        /> */}
                     </Route>
                 )}
 

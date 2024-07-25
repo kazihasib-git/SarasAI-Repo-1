@@ -7,9 +7,8 @@ import Header from '../../Header/Header';
 import Sidebar from '../../Sidebar/Sidebar';
 import { studentDummyDatadata } from '../../../fakeData/studentData';
 import DynamicTable from '../../CommonComponent/DynamicTable';
-import CoachMenu from '../../../pages/MODULE/coachModule/CoachMenu';
 
-const Mystudents = () => {
+const Mystudents = ({ role }) => {
     const [input, setInput] = useState('');
     const [students, setStudents] = useState([]);
 
@@ -27,7 +26,9 @@ const Mystudents = () => {
             const transformedData = dataToUse.map(item => ({
                 id: item.id,
                 Name: item.name,
-                'Lms Id': item.student_lms_id,
+                'Activities Sceduled': '',
+                'Activities Completed': '',
+                'Due Dates Missed': '',
                 'Acedemic Term': item.academic_term,
                 Batch: item.primary_phone,
             }));
@@ -45,7 +46,9 @@ const Mystudents = () => {
         'Student Name',
         'Acadamic Term',
         'Batch',
-        'Live Sesions Scheduled',
+        'Activities Scheduled',
+        'Activities Completed',
+        'Due Dates Missed',
         'Status',
     ];
 
@@ -61,8 +64,7 @@ const Mystudents = () => {
 
     return (
         <>
-            <Header />
-            <CoachMenu />
+            {/* <Header /> */}
             <Box
                 display={'flex'}
                 justifyContent={'space-between'}

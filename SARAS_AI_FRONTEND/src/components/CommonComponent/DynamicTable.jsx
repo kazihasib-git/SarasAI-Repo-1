@@ -98,6 +98,7 @@ const DynamicTable = ({
             const item = data.find(item => item.id === id);
             setModalData(item);
             setModalOpen(true);
+            //navigate(`/student_details/${id}`);
         } else {
             if (componentName === 'COACHMAPPING') {
                 if (type === 'students') {

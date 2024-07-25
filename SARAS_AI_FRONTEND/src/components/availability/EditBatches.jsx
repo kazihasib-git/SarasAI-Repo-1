@@ -32,6 +32,11 @@ import {
     getCoachMenuAssignedBatches,
     openCreateSessionPopup,
 } from '../../redux/features/coach/coachmenuprofileSilce';
+import {
+    closeTaMenuSelectBatches,
+    getTaMenuAssignedBatches,
+    openTaMenuCreateSessionsPopup,
+} from '../../redux/features/teachingAssistant/tamenuSlice';
 
 const CustomButton = ({
     onClick,
@@ -127,13 +132,13 @@ const EditBatches = ({ componentname }) => {
             break;
 
         case 'TAMENU_CALENDER':
-            stateModuleKey = '';
+            stateModuleKey = 'taMenu';
             nameKey = '';
-            assignBatchOpenKey = '';
-            editBatchKey = '';
-            selectedBatchKey = '';
-            closeDialogAction = '';
-            getAssignBatchesAction = '';
+            assignBatchOpenKey = 'selectTaBatches';
+            editBatchKey = 'assignedTaBatches';
+            selectedBatchKey = 'selectedTaBatches';
+            closeDialogAction = closeTaMenuSelectBatches;
+            getAssignBatchesAction = getTaMenuAssignedBatches;
             schedulingState = useSelector(state => state.taMenu);
             nameKeyScheduling = '';
             idKeyScheduling = '';
@@ -265,6 +270,10 @@ const EditBatches = ({ componentname }) => {
         if (componentname === 'COACHMENU_CALENDER') {
             const batches = selectedBatch.map(id => ({ id }));
             dispatch(openCreateSessionPopup({ batches }));
+            dispatch(closeDialogAction());
+        } else if (componentname === 'TAMENU_CALENDER') {
+            const batches = selectedBatch.map(id => ({ id }));
+            dispatch(openTaMenuCreateSessionsPopup({ batches }));
             dispatch(closeDialogAction());
         } else {
             dispatch(openScheduleSessionAction(data));
