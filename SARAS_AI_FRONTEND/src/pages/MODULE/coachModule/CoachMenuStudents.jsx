@@ -1,11 +1,12 @@
 import React from 'react';
 import CoachMenu from './CoachMenu';
+import Mystudents from '../../../components/RoleRoute/CommonComponent/Mystudents';
 
 const CoachMenuStudents = () => {
     return (
         <div>
             <CoachMenu />
-            <h1>My Students</h1>
+            <Mystudents role='Coach'/>
         </div>
     );
 };

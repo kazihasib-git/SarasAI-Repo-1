@@ -336,6 +336,7 @@ const TaMenuProfile = () => {
                                                 onChange={field.onChange}
                                                 errors={errors}
                                                 options={transformedTimeZones}
+                                                disabled={true}
                                             />
                                         );
                                     }}

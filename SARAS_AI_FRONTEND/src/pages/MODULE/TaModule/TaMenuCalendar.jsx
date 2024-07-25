@@ -41,9 +41,10 @@ import EditStudents from '../../../components/availability/EditStudents';
 import TaMenuSidebar from './TeachingAssistantSidebar';
 import Header from '../../../components/Header/Header';
 import {
+    getTaMenuSessions,
     getTaMenuSlots,
-    getTaSessions,
-    getTaSlots,
+    openTaMenuCreateSessionsPopup,
+    openTaMenuCreateSlotsPopup,
 } from '../../../redux/features/teachingAssistant/tamenuSlice';
 
 const CustomButton = ({
@@ -87,42 +88,26 @@ const TAMenuCalendar = () => {
     const [sheduleNewSession, setSheduleNewSession] = useState(false);
     //const [deleteFutureSlots, setDeleteFutureSlots] = useState(false);
     const [createNewSlot, setCreateNewSlot] = useState(false);
+    const [eventSlotData, setEventSlotData] = useState([]);
 
     //   const { assignBatchOpen, assignStudentOpen } = useSelector(
     //     (state) => state.taModule
     //   );
 
-    const {
-        slotData,
-        scheduleData,
-        markLeaveOpen,
-        scheduledSlotsOpen,
-        scheduledSessionOpen,
-        cancelSessionOpen,
-        reasonForLeaveOpen,
-        resheduleSessionOpen,
-        createNewSlotOpen,
-        scheduledSlotsData,
-    } = useSelector(state => state.taAvialability);
+    const {createTaSlotsPopup, createTaSessionPopup, taSlots, taSessions , selectTaStudent, selectTaBatches,} = useSelector(state => state.taMenu);
 
-    const {
-        taScheduledSessions,
-        scheduleSessionOpen,
-        openEditBatch,
-        openEditStudent,
-    } = useSelector(state => state.taScheduling);
 
     //calendar
     const [eventsList, setEventsList] = useState([]);
 
     useEffect(() => {
         dispatch(getTaMenuSlots());
-        dispatch(getTa());
+        dispatch(getTaMenuSessions());
     }, [dispatch]);
 
     useEffect(() => {
-        if (scheduleData && scheduleData.data) {
-            const transformedEvents = scheduleData.data.map(event => ({
+        if (taSessions && taSessions.length>0) {
+            const transformedEvents = taSessions.map(event => ({
                 title: event.meeting_name,
                 start: new Date(
                     event.date.split(' ')[0] + 'T' + event.start_time
@@ -131,14 +116,22 @@ const TAMenuCalendar = () => {
             }));
             setEventsList(transformedEvents);
         }
-    }, [scheduleData]);
+    }, [taSessions]);
 
-    console.log('slotData', slotData, 'scheduleData', scheduleData);
+    useEffect(() => {
+        if (taSlots && taSlots.length > 0) {
+            const transformedSlots = taSlots.map(slot => ({
+                startDate: new Date(slot.slot_date + 'T' + slot.from_time),
+                endDate: new Date(slot.slot_date + 'T' + slot.to_time),
+            }));
+            setEventSlotData(transformedSlots);
+        }
+    }, [taSlots]);
+
+    console.log('slotData', taSlots, 'scheduleData', taSessions);
 
     const handleScheduleNewSession = () => {
-        // console.log("Pressed")
-        setSheduleNewSession();
-        dispatch(openScheduleSession({ id, name }));
+        dispatch(openTaMenuCreateSessionsPopup(true));
     };
 
     const handleMarkLeave = () => {
@@ -150,11 +143,8 @@ const TAMenuCalendar = () => {
     //   };
 
     const handleCreateNewSlot = () => {
-        dispatch(openCreateNewSlots());
+        dispatch(openTaMenuCreateSlotsPopup());
     };
-
-    console.log('session', scheduleData);
-    console.log('sessiond data', scheduleData.data);
 
     return (
         <>
@@ -222,18 +212,23 @@ const TAMenuCalendar = () => {
 
                 <CalendarComponent
                     eventsList={eventsList}
-                    slotData={slotData}
+                    slotData={eventSlotData}
                     componentName={'TACALENDER'}
                 />
-                {scheduleSessionOpen && (
-                    <Schedule componentName={'TASCHEDULE'} />
+                {createTaSessionPopup && (
+                    <Schedule componentName={'TAMENU_CALENDER'} />
                 )}
-                {openEditBatch && <EditBatches componentname={'ADDEDITTA'} />}
-                {openEditStudent && (
-                    <EditStudents componentname={'ADDEDITTA'} />
+
+                {selectTaStudent && (
+                    <EditStudents componentname={'TAMENU_CALENDER'} />
                 )}
+                {selectTaBatches && (
+                    <EditBatches componentname={'TAMENU_CALENDER'} />
+                )}
+                {/*
+                
                 {/*{sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} componentName={"TACALENDER"} />} */}
-                {markLeaveOpen && (
+                {/* {markLeaveOpen && (
                     <MarkLeave
                         id={id}
                         name={name}
@@ -270,7 +265,7 @@ const TAMenuCalendar = () => {
                         name={name}
                         componentName={'TACALENDER'}
                     />
-                )}
+                )} */} 
                 {/* {deleteFutureSlots && (
         <DeleteAllSlots
           open={deleteFutureSlots}
@@ -280,8 +275,8 @@ const TAMenuCalendar = () => {
           componentName={"TACALENDER"}
         />
       )} */}
-                {createNewSlotOpen && (
-                    <CreateNewSlot componentName={'TACALENDER'} />
+                {createTaSlotsPopup && (
+                    <CreateNewSlot componentName={'TAMENU_CALENDER'} />
                 )}
                 {/* {assignStudentOpen && <AssignStudents componentname="ADDEDITTA" />}
                 {assignBatchOpen && <AssignBatches componentname="ADDEDITTA" />} */}

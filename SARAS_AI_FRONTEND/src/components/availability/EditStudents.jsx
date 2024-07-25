@@ -33,6 +33,11 @@ import {
     getCoachMenuAssignedStudents,
     openCreateSessionPopup,
 } from '../../redux/features/coach/coachmenuprofileSilce';
+import {
+    closeTaMenuSelectStudents,
+    getTaMenuAssignedStudents,
+    openTaMenuCreateSessionsPopup,
+} from '../../redux/features/teachingAssistant/tamenuSlice';
 
 const CustomButton = ({
     onClick,
@@ -129,13 +134,13 @@ const EditStudents = ({ componentname }) => {
             break;
 
         case 'TAMENU_CALENDER':
-            stateModuleKey = '';
+            stateModuleKey = 'taMenu';
             nameKey = '';
-            assignStudentOpenKey = '';
-            editStudentKey = '';
-            selectedStudentKey = '';
-            closeDialogAction = '';
-            getAssignStudentAction = '';
+            assignStudentOpenKey = 'selectTaStudent';
+            editStudentKey = 'assignedTaStudents';
+            selectedStudentKey = 'selectedTaStudents';
+            closeDialogAction = closeTaMenuSelectStudents;
+            getAssignStudentAction = getTaMenuAssignedStudents;
             schedulingState = useSelector(state => state.taMenu);
             nameKeyScheduling = '';
             idKeyScheduling = '';
@@ -317,7 +322,12 @@ const EditStudents = ({ componentname }) => {
             const student = selectedStudents.map(id => ({ id }));
             dispatch(openCreateSessionPopup({ student }));
             dispatch(closeDialogAction());
-        } else {
+        } else if(componentname === 'TAMENU_CALENDER'){
+            const student = selectedStudents.map(id => ({ id }));
+            dispatch(openTaMenuCreateSessionsPopup({ student }));
+            dispatch(closeDialogAction());
+        }
+        else {
             dispatch(
                 openScheduleSession({
                     id,

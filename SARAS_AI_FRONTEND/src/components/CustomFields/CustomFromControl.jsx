@@ -40,6 +40,7 @@ const CustomFormControl = ({
                 value={value}
                 onChange={onChange}
                 error={hasError}
+                disabled={disabled}
                 MenuProps={{
                     PaperProps: {
                         style: {
