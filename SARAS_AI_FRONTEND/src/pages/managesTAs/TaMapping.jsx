@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box } from '@mui/material';
+import { Box, InputBase } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { showTAMapping } from '../../redux/features/taModule/taSlice';
 import Header from '../../components/Header/Header';
@@ -30,6 +30,7 @@ const TaMapping = () => {
     const dispatch = useDispatch();
     const { taMapping, loading } = useSelector(state => state.taModule);
     const [taMappingData, setTaMappingData] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
     console.log('tamapping ', taMapping);
 
     useEffect(() => {
@@ -49,6 +50,12 @@ const TaMapping = () => {
             setTaMappingData(transformData);
         }
     }, [taMapping]);
+    const handleSearch = event => {
+        setSearchQuery(event.target.value); // Handle search input change
+    };
+    const filteredData = taMappingData.filter(
+        item => item.name.toLowerCase().includes(searchQuery.toLowerCase()) // Filter data based on search query
+    );
 
     return (
         <>
@@ -66,10 +73,28 @@ const TaMapping = () => {
                     >
                         TA Mapping
                     </p>
+                    <Box display={'flex'}>
+                        <Box
+                            marginTop={1}
+                            display={'flex'}
+                            backgroundColor="#FFF"
+                            borderRadius={'30px'}
+                            width={'20vw'}
+                            height={'5vh'}
+                            marginRight={'10px'}
+                        >
+                            <InputBase
+                                sx={{ ml: 2, flex: 1 }}
+                                placeholder="Search here ..."
+                                value={searchQuery}
+                                onChange={handleSearch} // Added search box
+                            />
+                        </Box>
+                    </Box>
                 </Box>
                 <DynamicTable
                     headers={headers}
-                    initialData={taMappingData}
+                    initialData={filteredData}
                     actionButtons={actionButtons}
                     componentName={'TAMAPPING'}
                 />

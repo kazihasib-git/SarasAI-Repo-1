@@ -6,6 +6,7 @@ import {
     Button,
     Container,
     Grid,
+    IconButton,
     Paper,
     styled,
     Table,
@@ -26,6 +27,7 @@ import {
     addWOLOptionConfig,
     getWOLOptionConfig,
 } from '../../../redux/features/coachingTools/wol/wolSlice';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
     borderRadius: '50px',
@@ -196,6 +198,27 @@ const WOLOptionsConfig = () => {
 
     console.log('details', formValues.details.length);
 
+    const handleImageChange = (e, index) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                const updatedDetails = formValues.details.map((detail, i) =>
+                    i === index ? { ...detail, icon: reader.result } : detail
+                );
+                setFormValues({ ...formValues, details: updatedDetails });
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleImageRemove = index => {
+        const updatedDetails = formValues.details.map((detail, i) =>
+            i === index ? { ...detail, icon: '' } : detail
+        );
+        setFormValues({ ...formValues, details: updatedDetails });
+    };
+
     return (
         <>
             <Header />
@@ -337,7 +360,7 @@ const WOLOptionsConfig = () => {
                                                 fullWidth
                                             />
                                         </TableCell>
-                                        <TableCell align="right">
+                                        {/* <TableCell align="right">
                                             <CustomFormControl
                                                 label="Icon"
                                                 name="icon"
@@ -352,6 +375,106 @@ const WOLOptionsConfig = () => {
                                                 errors={errors}
                                                 options={feedbackIcons}
                                             />
+                                        </TableCell> */}
+                                        <TableCell align="left">
+                                            {detail.icon && (
+                                                <Box
+                                                    position="relative"
+                                                    display="inline-block"
+                                                    sx={{
+                                                        width: '40px',
+                                                        height: '40px',
+                                                    }} // Ensure the Box has a fixed width and height
+                                                >
+                                                    <img
+                                                        src={detail.icon}
+                                                        alt="icon"
+                                                        style={{
+                                                            width: '100%',
+                                                            height: '100%',
+                                                            objectFit: 'cover', // Ensure the image covers the Box area
+                                                        }}
+                                                        onClick={() =>
+                                                            handleImageRemove(
+                                                                index
+                                                            )
+                                                        }
+                                                    />
+                                                    <IconButton
+                                                        component="label"
+                                                        sx={{
+                                                            position:
+                                                                'relative',
+                                                            bottom: 0,
+                                                            right: 0,
+                                                            padding: '4px',
+                                                            borderRadius: '50%',
+                                                            backgroundColor:
+                                                                'rgba(245, 109, 59, 0.08)',
+                                                        }}
+                                                    >
+                                                        <UploadFileIcon
+                                                            sx={{
+                                                                color: '#F56D3B',
+                                                                fontSize:
+                                                                    '18px',
+                                                            }}
+                                                        />
+                                                        <input
+                                                            type="file"
+                                                            accept="image/*"
+                                                            hidden
+                                                            onChange={e =>
+                                                                handleImageChange(
+                                                                    e,
+                                                                    index
+                                                                )
+                                                            }
+                                                        />
+                                                    </IconButton>
+                                                </Box>
+                                            )}
+                                            {!detail.icon && (
+                                                <IconButton
+                                                    component="label"
+                                                    sx={{
+                                                        padding: '4px',
+                                                        borderRadius: '50%',
+                                                        backgroundColor:
+                                                            'rgba(245, 109, 59, 0.08)',
+                                                    }}
+                                                >
+                                                    <UploadFileIcon
+                                                        sx={{
+                                                            color: '#F56D3B',
+                                                            fontSize: '18px',
+                                                        }}
+                                                    />
+                                                    <input
+                                                        type="file"
+                                                        accept="image/*"
+                                                        hidden
+                                                        onChange={e =>
+                                                            handleImageChange(
+                                                                e,
+                                                                index
+                                                            )
+                                                        }
+                                                    />
+                                                </IconButton>
+                                            )}
+                                            {errors[`detailIcon${index}`] && (
+                                                <Typography
+                                                    variant="caption"
+                                                    color="error"
+                                                >
+                                                    {
+                                                        errors[
+                                                            `detailIcon${index}`
+                                                        ]
+                                                    }
+                                                </Typography>
+                                            )}
                                         </TableCell>
                                     </TableRow>
                                 ))}

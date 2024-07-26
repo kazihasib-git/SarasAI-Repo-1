@@ -6,6 +6,7 @@ import {
     closeTemplateModulePopup,
     createCoachTemplateModule,
     getAllCoachTemplateModules,
+    getCoachTemplateModuleId,
 } from '../../../../redux/features/CoachModule/CoachTemplateSlice';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -86,9 +87,9 @@ const AddModule = () => {
             dispatch(createCoachTemplateModule(data))
                 .unwrap()
                 .then(() => {
-                    dispatch(getAllCoachTemplateModules(selectedCoachTemplate));
-                    dispatch(closeTemplateModulePopup());
+                    dispatch(getCoachTemplateModuleId(selectedCoachTemplate));
                 });
+            dispatch(closeTemplateModulePopup());
             setModuleName(''); // Reset the input field
         }
     };

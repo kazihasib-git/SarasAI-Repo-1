@@ -81,6 +81,7 @@ import TaMenuMessage from './pages/MODULE/TaModule/TaMenuMessage';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLogin } from './redux/features/auth/loginSlice';
+import WOLSelectQuestions from './components/coachingTools/wheelOfLife/WOLSelectQuestions';
 
 const ROLES = {
     Teaching: 2001,
@@ -274,6 +275,10 @@ function App() {
                         <Route
                             path="schedule-calls"
                             element={<ScheduledCalls page="Schedule Calls" />}
+                        />
+                        <Route
+                            path="WolselectQuestions"
+                            element={<WOLSelectQuestions />}
                         />
                     </Route>
                 </Route>
