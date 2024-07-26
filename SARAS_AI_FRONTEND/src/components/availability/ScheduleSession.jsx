@@ -1,9 +1,24 @@
 import React, { useState } from 'react';
-import { IconButton, Typography, Grid, Avatar, Box, Button } from '@mui/material';
+import {
+    IconButton,
+    Typography,
+    Grid,
+    Avatar,
+    Box,
+    Button,
+} from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 
-const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = '#4E18A5', borderColor = '#FFFFFF', sx, ...props }) => {
+const CustomButton = ({
+    onClick,
+    children,
+    color = '#FFFFFF',
+    backgroundColor = '#4E18A5',
+    borderColor = '#FFFFFF',
+    sx,
+    ...props
+}) => {
     return (
         <Button
             variant="contained"
@@ -14,14 +29,14 @@ const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = 
                 fontWeight: '700',
                 fontSize: '16px',
                 borderRadius: '50px',
-                padding: "10px 20px",
+                padding: '10px 20px',
                 border: `2px solid ${borderColor}`,
                 '&:hover': {
                     backgroundColor: color,
                     color: backgroundColor,
                     borderColor: color,
                 },
-                ...sx
+                ...sx,
             }}
             {...props}
         >
@@ -31,14 +46,13 @@ const CustomButton = ({ onClick, children, color = '#FFFFFF', backgroundColor = 
 };
 
 const ScheduleSession = ({ open, handleClose }) => {
-
     const content = (
         <Box sx={{ textAlign: 'center' }}>
             <Typography variant="body1" sx={{ mb: 2 }}>
                 Friday, June 21, 11:00 - 11:30AM
             </Typography>
             <CustomButton
-                onClick={() => { }}
+                onClick={() => {}}
                 backgroundColor="#FFFFFF"
                 borderColor="#F56D38"
                 color="#F56D38"
@@ -47,7 +61,7 @@ const ScheduleSession = ({ open, handleClose }) => {
                 Join with Zoom
             </CustomButton>
             <CustomButton
-                onClick={() => { }}
+                onClick={() => {}}
                 variant="text"
                 backgroundColor="#FFFFFF"
                 borderColor="transparent"
@@ -66,20 +80,26 @@ const ScheduleSession = ({ open, handleClose }) => {
                         border: '2px solid #F56D38',
                         '&:hover': {
                             borderColor: '#F56D38',
-                            color: "#F56D38"
+                            color: '#F56D38',
                         },
                         color: 'white',
-                        ml: 1
+                        ml: 1,
                     }}
                 >
                     <ContentCopyIcon />
                 </IconButton>
             </Typography>
             <Typography variant="body2" sx={{ mb: 2 }}>
-                <Box component="span" sx={{ fontWeight: 'bold' }}>Join By Phone:</Box> (123) 456-7890, 79769199687
+                <Box component="span" sx={{ fontWeight: 'bold' }}>
+                    Join By Phone:
+                </Box>{' '}
+                (123) 456-7890, 79769199687
             </Typography>
             <Typography variant="body2" sx={{ mb: 2 }}>
-                <Box component="span" sx={{ fontWeight: 'bold' }}>8 Guests:</Box> 3 yes, 5 awaiting
+                <Box component="span" sx={{ fontWeight: 'bold' }}>
+                    8 Guests:
+                </Box>{' '}
+                3 yes, 5 awaiting
             </Typography>
             <Grid container spacing={2} justifyContent="center">
                 <Grid item>
@@ -116,7 +136,7 @@ const ScheduleSession = ({ open, handleClose }) => {
     const actions = (
         <Box>
             <CustomButton
-                onClick={() => { }}
+                onClick={() => {}}
                 backgroundColor="#FFFFFF"
                 borderColor="#F56D38"
                 color="#F56D38"
@@ -125,7 +145,7 @@ const ScheduleSession = ({ open, handleClose }) => {
                 Yes
             </CustomButton>
             <CustomButton
-                onClick={() => { }}
+                onClick={() => {}}
                 backgroundColor="#F56D38"
                 borderColor="#F56D38"
                 color="#FFFFFF"

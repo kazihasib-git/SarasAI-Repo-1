@@ -1,44 +1,76 @@
-import React from 'react'
-import { useEffect, useState } from "react";
+import React from 'react';
+import { useEffect, useState } from 'react';
 import Header from '../../Header/Header';
 import Sidebar from '../../Sidebar/Sidebar';
-import { useForm, Controller } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import { Box, Button, Container,InputLabel,TextField,styled,MenuItem } from '@mui/material'
+import { useForm, Controller, set } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import {
+    Box,
+    Button,
+    Container,
+    InputLabel,
+    TextField,
+    styled,
+    MenuItem,
+    Paper,
+} from '@mui/material';
 import CustomFormControl from '../../CustomFields/CustomFromControl';
-import ReactQuill from 'react-quill'
+import ReactQuill from 'react-quill';
 import { useDispatch, useSelector } from 'react-redux';
-import {seteditwolQuestionData ,getWOLCategory } from '../../../redux/features/coachingTools/wol/wolSlice';
-
+import {
+    seteditwolQuestionData,
+    getWOLCategory,
+    createWOLQuestion,
+    updateWOLQuestion,
+    getWOLQuestions,
+} from '../../../redux/features/coachingTools/wol/wolSlice';
 
 const AddEditWOLQuestions = () => {
-    const [questionValue, setQuestionValue] = useState("");
+    const [questionValue, setQuestionValue] = useState('');
     const [categories, setCategories] = useState([]);
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { editwolQuestionData, wolCategoryData } = useSelector((state) => state.wol);
-
-
-    const { control, handleSubmit, formState: { errors } } = useForm(
-        {
-            defaultValues: {
-                category: editwolQuestionData ? editwolQuestionData.wol_category_id: "",
-            }
-        }
+    const { editwolQuestionData, wolCategoryData } = useSelector(
+        state => state.wol
     );
+
+    const {
+        control,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({
+        defaultValues: {
+            category: editwolQuestionData
+                ? editwolQuestionData.wol_category_id
+                : '',
+        },
+    });
 
     useEffect(() => {
         dispatch(getWOLCategory());
-        const convertedCategories = wolCategoryData.data.map(category => ({
-          value: category.id.toString(),
-          label: category.name
-        }));
-        setCategories(convertedCategories);
-      }, []);
+    }, [dispatch]);
 
+    useEffect(() => {
+        if (wolCategoryData.data && wolCategoryData.data.length > 0) {
+            console.log(wolCategoryData.message);
+            const transformData = wolCategoryData.data.map(item => ({
+                id: item.id,
+                name: item.name,
+            }));
+            setCategories(transformData);
+        }
+    }, [wolCategoryData]);
 
-      const QuillContainer = styled('div')(({ theme }) => ({
+    const WOLCategoriesOptions =
+        wolCategoryData.data && wolCategoryData.data.length > 0
+            ? wolCategoryData.data.map(item => ({
+                  value: item.id,
+                  label: item.name,
+              }))
+            : [];
+
+    const QuillContainer = styled('div')(({ theme }) => ({
         position: 'relative',
         '& .ql-container': {
             borderColor: '#D0D0EC',
@@ -65,9 +97,8 @@ const AddEditWOLQuestions = () => {
         },
         '& .ql-toolbar.ql-snow': {
             borderBottom: 'none',
-        }
+        },
     }));
-    
 
     const StyledLabel = styled(InputLabel)(({ theme }) => ({
         position: 'absolute',
@@ -81,130 +112,166 @@ const AddEditWOLQuestions = () => {
         zIndex: 1,
     }));
 
-
     const modules = {
         toolbar: [
             ['bold', 'italic', 'underline'],
-            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-            [{ 'align': [] }],
+            [{ list: 'ordered' }, { list: 'bullet' }],
+            [{ align: [] }],
             ['link'],
-            ['clean']
-        ]
+            ['clean'],
+        ],
     };
 
-    const formats = [
-        'bold', 'italic', 'underline',
-        'align', 'link'
-    ];
+    const formats = ['bold', 'italic', 'underline', 'align', 'link'];
 
-    const onSubmit = async (data) => {
-        console.log(data)
+    const onSubmit = formData => {
+        console.log('formData', formData.category);
+        console.log('questionValue', questionValue);
+
+        const data = {
+            wol_category_id: Number(formData.category),
+            question: questionValue,
+        };
+
         if (editwolQuestionData) {
-            //setCategoryName(editData.name);
-            console.log('Edit')
-            try {
-                //const updatedWOL = await dispatch(updateWOLQuestion({ id: editwolQuestionData.id, data: { question: questionValue.question, wol_category_id: data.category } })).unwrap();
-            } catch (error) {
-                console.log(error.message) //TODO: Show toast message
-            }
+            const id = editwolQuestionData.id;
+            dispatch(updateWOLQuestion({ id, data }));
+        } else {
+            dispatch(createWOLQuestion(data));
         }
-        else {
-            try {
-                //const createdWOL = await dispatch(createWOLQuestion({ question: questionValue.question, wol_category_id: data.category })).unwrap();
-            } catch (error) {
-                console.log(error.message) //TODO: Show toast message
-            }
-        }
-        //await dispatch(getWOLQuestions());
-        dispatch(seteditwolQuestionData(null))
-        navigate('/coaching-tools/wheel-of-life/questions')
-    }
+        dispatch(getWOLQuestions());
+        dispatch(seteditwolQuestionData(null));
+        navigate('/wolQuestions');
+    };
 
-
-    
-
-    
     useEffect(() => {
         if (editwolQuestionData) {
+            setQuestionValue(editwolQuestionData.question);
+            /*
             setQuestionValue({
-            category: editwolQuestionData.wol_category_id,
-            question: editwolQuestionData.question
-        })
+                category: editwolQuestionData.wol_category_id,
+                question: editwolQuestionData.question
+            })
+            */
         }
-    }
-    , [editwolQuestionData]);
+    }, [editwolQuestionData]);
 
-    
     return (
-       <>
+        <>
             <Header />
             <Sidebar />
-            <Box display="flex" justifyContent="space-between" marginTop={3} alignItems={"center"}>
+            <Box
+                display="flex"
+                justifyContent="space-between"
+                marginTop={3}
+                alignItems={'center'}
+            >
                 <Box display="flex" alignItems="center" padding="16px">
-                <ArrowBackIosIcon
-                        style={{ fontSize: "25px", marginBottom: "16px", marginRight:"10px", cursor: "pointer"}}
+                    <ArrowBackIosIcon
+                        style={{
+                            fontSize: '25px',
+                            marginBottom: '16px',
+                            marginRight: '10px',
+                            cursor: 'pointer',
+                        }}
                         onClick={() => navigate(-1)}
                     />
-                    <p style={{ fontSize: "40px",fontWeight: 200 , justifyContent: "center" }}>
-                        {editwolQuestionData ? "Edit Question" : "Add Question"}
+                    <p
+                        style={{
+                            fontSize: '40px',
+                            fontWeight: 200,
+                            justifyContent: 'center',
+                        }}
+                    >
+                        {editwolQuestionData ? 'Edit Question' : 'Add Question'}
                     </p>
                 </Box>
             </Box>
-            <Container
-                sx={{ 
-                    backgroundColor: 'white', 
+            <Box
+                sx={{
+                    backgroundColor: 'white',
                     borderRadius: 2,
-                    padding :2
+                    padding: 2,
                 }}
             >
-
-            <form onSubmit={handleSubmit(onSubmit)} noValidate>
-                <Box sx={{ marginBottom: 2 ,width : '40%'}}>
-                <Controller
-                    name="category"
-                    control={control}
-                    rules={{ required: "Category is required" }}
-                    render={({ field }) => (
-                    <CustomFormControl
-                        label="Wheel of Life Category"
-                        name="category"
-                        value={field.value}
-                        onChange={field.onChange}
-                        errors={errors}
-                        options={categories}
-                    />
-                    )}
-                />
-                </Box>
-
-                <Box sx={{marginTop: '50px', position: 'relative' , padding :'2px' }}>
-                    <StyledLabel>
-                        Question
-                    </StyledLabel>
-                    <QuillContainer>
-                        <ReactQuill
-                            theme="snow"
-                            value={questionValue.question}
-                            onChange={(e) => setQuestionValue({ ...questionValue, question: e  })}
-                            modules={modules}
-                            formats={formats}
-                            style={{ height: '100px', backgroundColor: 'transparent' }}
-                            placeholder='Enter Your Question'
+                <form onSubmit={handleSubmit(onSubmit)} noValidate>
+                    <Box sx={{ marginBottom: 2, width: '40%' }}>
+                        <Controller
+                            name="category"
+                            control={control}
+                            rules={{ required: 'Category is required' }}
+                            render={({ field }) => (
+                                <CustomFormControl
+                                    label="Wheel of Life Category"
+                                    name="category"
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                    errors={errors}
+                                    options={WOLCategoriesOptions}
+                                />
+                            )}
                         />
-                        
-                    </QuillContainer>
-                </Box>
+                    </Box>
 
-                <Box className='inputBtnContainer' sx={{ display: 'flex', justifyContent: 'flex-start', marginTop: 8 }}>
-                    {editwolQuestionData ?
-                    (<button className='buttonContainer' onClick={() => setQuestionValue({})}> Update </button> ) :
-                    (<button className='buttonContainer' onClick={() => setQuestionValue({})}> Submit </button> )
-                    }
-                </Box>
-            </form>
-            </Container>
-       </>
-    )
-}
+                    <Box
+                        sx={{
+                            marginTop: '50px',
+                            position: 'relative',
+                            padding: '2px',
+                        }}
+                    >
+                        <StyledLabel>Question</StyledLabel>
+                        <Paper
+                            elevation={3}
+                            sx={{ padding: 2, borderRadius: 2 }}
+                        >
+                            <ReactQuill
+                                theme="snow"
+                                value={questionValue}
+                                onChange={setQuestionValue}
+                                modules={modules}
+                                formats={formats}
+                                //style={{ height: '100px', backgroundColor: 'transparent' }}
+                                placeholder="Write your question here..."
+                            />
+                        </Paper>
+                        {/* <QuillContainer>
+                            <ReactQuill
+                                theme='snow'
+                                value={questionValue}
+                                onChange={setQuestionValue}
+                                modules={modules}
+                                formats={formats}
+                                style={{ height: '100px', backgroundColor: 'transparent' }}
+                                placeholder='Write your question here...'
+                            />
+                        </QuillContainer> */}
+                    </Box>
 
-export default AddEditWOLQuestions
+                    <Box
+                        className="inputBtnContainer"
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'flex-start',
+                            marginTop: 8,
+                        }}
+                    >
+                        {editwolQuestionData ? (
+                            <button type="submit" className="buttonContainer">
+                                {' '}
+                                Update{' '}
+                            </button>
+                        ) : (
+                            <button type="submit" className="buttonContainer">
+                                {' '}
+                                Submit{' '}
+                            </button>
+                        )}
+                    </Box>
+                </form>
+            </Box>
+        </>
+    );
+};
+
+export default AddEditWOLQuestions;

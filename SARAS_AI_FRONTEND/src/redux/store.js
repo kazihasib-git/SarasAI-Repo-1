@@ -12,26 +12,36 @@ import timezoneSliceReducer from './features/timezone/timezoneSlice';
 import coachReducer from './features/CoachModule/coachSlice';
 import coachAvailabilityReducer from './features/CoachModule/CoachAvailabilitySlice';
 import coachSchedulingReducer from './features/CoachModule/coachSchedule';
+import activityTypeReducer from './features/ActivityType/activityTypeSlice';
+import coachMenuSliceReducer from './features/coach/coachmenuprofileSilce';
+import taMenuSliceReducer from './features/teachingAssistant/tamenuSlice';
+import loginReducer from './features/auth/loginSlice';
 
 const store = configureStore({
-
     reducer: {
+        login: loginReducer,
         taModule: taReducer,
-        taAvailability : taAvailabilityReducer,
-        taScheduling : taSchedulingReducer,
-        taAvialability : taAvailabilityReducer,
-        coachTemplate : coachTemplateReducer,
-        wol : wolSliceReducer,
-        timezone : timezoneSliceReducer,
-        coachModule : coachReducer,
-        coachAvailability : coachAvailabilityReducer,
-        coachScheduling : coachSchedulingReducer,
+        taAvailability: taAvailabilityReducer,
+        taScheduling: taSchedulingReducer,
+        taAvialability: taAvailabilityReducer,
+        coachTemplate: coachTemplateReducer,
+        wol: wolSliceReducer,
+        timezone: timezoneSliceReducer,
+        coachModule: coachReducer,
+        coachAvailability: coachAvailabilityReducer,
+        coachScheduling: coachSchedulingReducer,
+        activityType: activityTypeReducer,
+        coachMenu: coachMenuSliceReducer,
+        taMenu: taMenuSliceReducer,
         [studentsApi.reducerPath]: studentsApi.reducer,
         [batchesApi.reducerPath]: batchesApi.reducer,
         [coursesApi.reducerPath]: coursesApi.reducer,
     },
-    middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware().concat(studentsApi.middleware).concat(batchesApi.middleware).concat(coursesApi.middleware),
+    middleware: getDefaultMiddleware =>
+        getDefaultMiddleware()
+            .concat(studentsApi.middleware)
+            .concat(batchesApi.middleware)
+            .concat(coursesApi.middleware),
 });
 
 setupListeners(store.dispatch);
