@@ -84,6 +84,12 @@ const CoachCalender = () => {
         scheduleCoachData,
     } = useSelector(state => state.coachAvailability);
 
+    const {
+        scheduleCoachSessionOpen,
+        openCoachEditBatch,
+        openCoachEditStudent,
+    } = useSelector((state) => state.coachScheduling)
+
     console.log('ta Id :', id);
 
     useEffect(() => {
@@ -225,8 +231,14 @@ const CoachCalender = () => {
                         />
                     )} */}
 
-                    {scheduledCoachSessionOpen && (
+                    {scheduleCoachSessionOpen && (
                         <Schedule componentName={'COACHSCHEDULE'} />
+                    )}
+                    {openCoachEditBatch && (
+                        <EditBatches componentname={'COACHCALENDER'} />
+                    )}
+                    {openCoachEditStudent && (
+                        <EditStudents componentname={'COACHCALENDER'} />
                     )}
                     {coachMarkLeaveOpen && (
                         <MarkLeave
