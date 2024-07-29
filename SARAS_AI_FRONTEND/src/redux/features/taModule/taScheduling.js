@@ -46,7 +46,7 @@ export const getTaAvailableSlotsFromDate = createAsyncThunk(
 
 // Reschedule Session
 export const rescheduleSession = createAsyncThunk(
-    'taAvialability/rescheduleSession',
+    'taScheduling/rescheduleSession',
     async ({ id, data }) => {
         const response = await axios.put(
             `${baseUrl}/admin/taschedules/${id}`,
@@ -58,7 +58,7 @@ export const rescheduleSession = createAsyncThunk(
 
 // Cancel Scheduled Sessions
 export const cancelScheduledSession = createAsyncThunk(
-    'taAvialability/cancelScheduledSession',
+    'taScheduling/cancelScheduledSession',
     async id => {
         const response = await axios.put(
             `${baseUrl}/admin/taschedules/${id}/cancel`

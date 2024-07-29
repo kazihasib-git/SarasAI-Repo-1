@@ -276,7 +276,7 @@ const EditBatches = ({ componentname }) => {
             dispatch(openTaMenuCreateSessionsPopup({ batches }));
             dispatch(closeDialogAction());
         } else {
-            dispatch(openScheduleSessionAction(data));
+            dispatch(openScheduleSession(data));
             dispatch(closeDialogAction());
         }
     };
