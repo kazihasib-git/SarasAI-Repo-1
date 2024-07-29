@@ -225,7 +225,7 @@
 // export default PopUpTable;
 
 import React, { useEffect, useState } from 'react';
-import { IconButton, Checkbox, Button } from '@mui/material';
+import { IconButton, Checkbox, Button, Pagination } from '@mui/material';
 import './popUpTable.css';
 import { useNavigate } from 'react-router-dom';
 import editIcon from '../../assets/editIcon.png';
@@ -306,6 +306,7 @@ const PopUpTable = ({
     const [data, setData] = useState(initialData ?? []);
     const [openPopup, setOpenPopup] = useState(false);
     const [currentStudentNames, setCurrentStudentNames] = useState([]);
+    console.log(selectedBox);
 
     useEffect(() => {
         setData(initialData ?? []);
@@ -329,6 +330,10 @@ const PopUpTable = ({
 
     const handleClosePopup = () => {
         setOpenPopup(false);
+    };
+
+    const handlePageChange = (event, pageNumber) => {
+        setCurrentPage(pageNumber);
     };
 
     return (
@@ -456,6 +461,44 @@ const PopUpTable = ({
                     )}
                 </tbody>
             </table>
+            <div className="pagination">
+                <Pagination
+                    count={totalPages}
+                    page={currentPage}
+                    onChange={handlePageChange}
+                    variant="outlined"
+                    color="primary"
+                    sx={{
+                        width: '65vw',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        marginTop: '20px',
+                        '.MuiPaginationItem-root': {
+                            backgroundColor: '#fff',
+                            border: '1px solid #ddd',
+                            borderRadius: '50%',
+                            width: '40px',
+                            height: '40px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            transition: 'background-color 0.3s, transform 0.3s',
+                            '&:hover': {
+                                backgroundColor: '#DFDFF4',
+                                transform: 'scale(1.1)',
+                            },
+                            '&.Mui-selected': {
+                                backgroundColor: '#F56D3B',
+                                color: '#fff',
+                            },
+                            '&.Mui-disabled': {
+                                backgroundColor: '#DFDFF4',
+                                cursor: 'not-allowed',
+                            },
+                        },
+                    }}
+                />
+            </div>
             <StudentListPopup
                 open={openPopup}
                 onClose={handleClosePopup}

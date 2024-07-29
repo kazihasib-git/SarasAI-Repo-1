@@ -224,7 +224,9 @@ const AddEditActivity = () => {
                         module_id: editActivityData.module_id,
                     },
                 })
-            );
+            ).then(() => {
+                dispatch(getCoachTemplateModuleId(selectedCoachTemplate));
+            });
         } else {
             // Create new activity
             dispatch(createCoachTemplateActivity(data));
