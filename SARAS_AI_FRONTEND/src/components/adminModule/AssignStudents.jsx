@@ -6,6 +6,7 @@ import {
     openSuccessPopup,
     getStudentBatchMapping,
     postAssignStudents,
+    getAssignStudents
 } from '../../redux/features/taModule/taSlice';
 import CustomTextField from '../CustomFields/CustomTextField';
 import ReusableDialog from '../CustomFields/ReusableDialog';
@@ -16,6 +17,7 @@ import {
     openCoachSuccessPopup,
     getCoachStudentBatchMapping,
     postCoachAssignStudents,
+    getCoachAssignStudents
 } from '../../redux/features/CoachModule/coachSlice';
 
 const CustomButton = ({
@@ -132,6 +134,25 @@ const AssignStudents = ({ componentname }) => {
             dispatch(getBatchMappingAction());
         }
     }, [assignStudentOpen, dispatch, getBatchMappingAction]);
+
+    useEffect(() => {
+        if (assignStudentOpen) {
+            if (componentname === 'ADDITCOACH') {
+                const id = coachID || assignedId;
+                dispatch(getCoachAssignStudents(id)).then(action => {
+                    const previouslyAssignedStudents = action.payload.map(student => student.student.id);
+                    setSelectedStudents(previouslyAssignedStudents);
+                });
+            } else if (componentname === 'ADDEDITTA') {
+                const id = taID || assignedId;
+                dispatch(getAssignStudents(id)).then(action => {
+                    const previouslyAssignedStudents = action.payload.map(student => student.student.id);
+                    setSelectedStudents(previouslyAssignedStudents);
+                });
+            }
+        }
+    }, [assignStudentOpen, dispatch, componentname, assignedId, coachID, taID]);
+    
 
     useEffect(() => {
         if (studentBatchMapping) {

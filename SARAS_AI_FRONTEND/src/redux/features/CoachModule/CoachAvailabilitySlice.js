@@ -279,6 +279,7 @@ export const coachAvailabilitySlice = createSlice({
         builder.addCase(getCoachScheduleSession.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            state.scheduledCoachSessionData = [];
         });
 
         builder.addCase(fetchCoachAvailableSlots.pending, state => {
