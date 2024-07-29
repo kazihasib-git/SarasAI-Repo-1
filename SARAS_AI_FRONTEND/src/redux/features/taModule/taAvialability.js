@@ -35,8 +35,8 @@ export const fetchTAScheduleById = createAsyncThunk(
 );
 
 //for fetching slots of ta for calendar
-export const fetchCoachSlots = createAsyncThunk(
-    'taAvialability/fetchCoachSlots',
+export const fetchTaSlots = createAsyncThunk(
+    'taAvialability/fetchTaSlots',
     async id => {
         const response = await axios.get(`${baseUrl}/admin/coach-slots/${id}`);
         return response.data;
@@ -79,17 +79,14 @@ export const fetchAvailableSlots = createAsyncThunk(
 );
 
 // Delete Future Slots
-export const deleteFutureSlots = createAsyncThunk(
-    'taAvialability/deleteFutureSlots',
-    async ({ id, data }) => {
+export const deleteTaFutureSlots = createAsyncThunk(
+    'taAvialability/deleteTaFutureSlots',
+    async id => {
         // console.log("ID : ", id);
 
-        console.log('Data : ', data, id);
+        console.log('Data : ', id);
         const response = await axios.delete(
-            `${baseUrl}/admin/coach-slots/${id}`,
-            {
-                data: data,
-            }
+            `${baseUrl}/admin/coach-slots/${id}`
         );
         return response.data;
     }
@@ -133,6 +130,9 @@ const initialState = {
     loading: false,
     error: null,
     schduldeCancelData: null,
+    deletingCoachFutureSlots: false,
+    taId: [],
+    taName: [],
 };
 
 export const taAvailabilitySlice = createSlice({
@@ -198,6 +198,18 @@ export const taAvailabilitySlice = createSlice({
         closeStudentsRescheduleSession(state) {
             state.customResheduleSessionOpen = false;
         },
+
+        openDeleteTaSlots(state, action) {
+            console.log('Payload :', action.payload);
+            state.deletingCoachFutureSlots = true;
+            state.taId = action.payload.id;
+            state.taName = action.payload.name;
+        },
+        closeDeleteTaSlots(state, action) {
+            state.deletingCoachFutureSlots = false;
+            state.taId = [];
+            state.taName = [];
+        },
     },
     extraReducers: builder => {
         //for sessions ta for calendar
@@ -214,14 +226,14 @@ export const taAvailabilitySlice = createSlice({
         });
 
         //for slots of ta for calendar
-        builder.addCase(fetchCoachSlots.pending, state => {
+        builder.addCase(fetchTaSlots.pending, state => {
             state.loading = true;
         });
-        builder.addCase(fetchCoachSlots.fulfilled, (state, action) => {
+        builder.addCase(fetchTaSlots.fulfilled, (state, action) => {
             state.loading = false;
             state.slotData = action.payload; // Update state with fetched data
         });
-        builder.addCase(fetchCoachSlots.rejected, (state, action) => {
+        builder.addCase(fetchTaSlots.rejected, (state, action) => {
             state.loading = false;
             state.slotData = [];
             state.error = action.error.message;
@@ -297,13 +309,13 @@ export const taAvailabilitySlice = createSlice({
         });
 
         // Delete Future Slots
-        builder.addCase(deleteFutureSlots.pending, state => {
+        builder.addCase(deleteTaFutureSlots.pending, state => {
             state.loading = true;
         });
-        builder.addCase(deleteFutureSlots.fulfilled, (state, action) => {
+        builder.addCase(deleteTaFutureSlots.fulfilled, (state, action) => {
             state.loading = false;
         });
-        builder.addCase(deleteFutureSlots.rejected, (state, action) => {
+        builder.addCase(deleteTaFutureSlots.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
         });
@@ -340,6 +352,8 @@ export const {
     closeRescheduleSession,
     openStudentsRescheduleSession,
     closeStudentsRescheduleSession,
+    openDeleteTaSlots,
+    closeDeleteTaSlots,
 } = taAvailabilitySlice.actions;
 
 export default taAvailabilitySlice.reducer;

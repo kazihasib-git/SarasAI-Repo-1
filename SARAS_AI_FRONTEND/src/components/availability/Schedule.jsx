@@ -54,6 +54,7 @@ import {
     openTaMenuSelectBatches,
     openTaMenuSelectStudents,
 } from '../../redux/features/teachingAssistant/tamenuSlice';
+import { fetchCoachScheduleById } from '../../redux/features/CoachModule/CoachAvailabilitySlice';
 
 const CustomButton = ({
     onClick,
@@ -131,6 +132,7 @@ const Schedule = ({ componentName }) => {
         batchKey,
         getAvailableSlotsAction,
         closeScheduleSessionAction,
+        getScheduledSessionApi,
         createScheduleAction;
 
     switch (componentName) {
@@ -143,6 +145,7 @@ const Schedule = ({ componentName }) => {
             timezoneKey = 'taTimezone';
             (studentKey = 'students'), (batchKey = 'batches');
             getAvailableSlotsAction = getTaAvailableSlotsFromDate;
+            getScheduledSessionApi = fetchTAScheduleById;
             closeScheduleSessionAction = closeScheduleSession;
             createScheduleAction = createTASchedule;
             break;
@@ -153,37 +156,14 @@ const Schedule = ({ componentName }) => {
             idKey = 'coachID';
             nameKey = 'coachName';
             timezoneKey = 'coachTimezone';
-            (studentKey = 'students'), (batchKey = 'batches');
+            studentKey = 'students';
+            batchKey = 'batches';
             getAvailableSlotsAction = getCoachAvailableSlotsFromDate;
+            getScheduledSessionApi = fetchCoachScheduleById;
             closeScheduleSessionAction = closeCoachScheduleSession;
             createScheduleAction = createCoachSchedule;
             break;
-        case 'COACHMENU_CALENDER':
-            scheduleSessionOpenKey = 'createCoachSlotsPopup';
-            schedulingStateKey = 'coachMenu';
-            availableKey = 'coachSlotsByDate';
-            idKey = '';
-            nameKey = '';
-            timezoneKey = '';
-            (studentKey = 'selectedCoachStudents'),
-                (batchKey = 'selectedCoachBatches');
-            getAvailableSlotsAction = getCoachMenuSlotsByData;
-            closeScheduleSessionAction = closeCreateSessionPopup;
-            createScheduleAction = createCoachMenuSession;
-            break;
-        case 'TAMENU_CALENDER':
-            scheduleSessionOpenKey = 'createTaSlotsPopup';
-            schedulingStateKey = 'taMenu';
-            availableKey = 'taSlotsByDate';
-            idKey = '';
-            nameKey = '';
-            timezoneKey = '';
-            (studentKey = 'selectedTaStudents'),
-                (batchKey = 'selectedTaBatches');
-            getAvailableSlotsAction = getTaMenuSlotsByDate;
-            closeScheduleSessionAction = closeTaMenuCreateSessionsPopup;
-            createScheduleAction = createTaMenuSessions;
-            break;
+
         default:
             scheduleSessionOpenKey = null;
             schedulingStateKey = null;
@@ -194,6 +174,7 @@ const Schedule = ({ componentName }) => {
             studentKey = null;
             batchKey = null;
             getAvailableSlotsAction = null;
+            getScheduledSessionApi = null;
             closeScheduleSessionAction = null;
             createScheduleAction = null;
             break;
@@ -202,6 +183,7 @@ const Schedule = ({ componentName }) => {
     const schedulingState = useSelector(state =>
         schedulingStateKey ? state[schedulingStateKey] : {}
     );
+
     const {
         [scheduleSessionOpenKey]: scheduleSessionOpen,
         [idKey]: adminUserID,
@@ -300,10 +282,6 @@ const Schedule = ({ componentName }) => {
             dispatch(openEditStudent());
         } else if (componentName === 'COACHSCHEDULE') {
             dispatch(openCoachEditStudent());
-        } else if (componentName === 'COACHMENU_CALENDER') {
-            dispatch(openSelectStudents());
-        } else if (componentName === 'TAMENU_CALENDER') {
-            dispatch(openTaMenuSelectStudents());
         }
     };
 
@@ -313,10 +291,6 @@ const Schedule = ({ componentName }) => {
             dispatch(openEditBatch());
         } else if (componentName === 'COACHSCHEDULE') {
             dispatch(openCoachEditBatch());
-        } else if (componentName === 'COACHMENU_CALENDER') {
-            dispatch(openSelectBatches());
-        } else if (componentName === 'TAMENU_CALENDER') {
-            dispatch(openTaMenuSelectBatches());
         }
     };
 
@@ -404,13 +378,7 @@ const Schedule = ({ componentName }) => {
         dispatch(createScheduleAction(formData))
             .then(() => {
                 dispatch(closeScheduleSessionAction());
-                if (componentName === 'COACHMENU_CALENDER') {
-                    return dispatch(getCoachMenuSessions());
-                } else if (componentName === 'TAMENU_CALENDER') {
-                    return dispatch(getTaMenuSessions());
-                } else {
-                    return dispatch(fetchTAScheduleById(adminUserID));
-                }
+                return dispatch(getScheduledSessionApi(adminUserID));
             })
             .catch(error => {
                 console.error('Error:', error);

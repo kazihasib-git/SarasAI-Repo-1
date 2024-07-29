@@ -23,23 +23,14 @@ import { useParams } from 'react-router-dom';
 import {
     createSlots,
     closeCreateNewSlots,
-    fetchCoachSlots,
+    fetchTaSlots,
 } from '../../redux/features/taModule/taAvialability';
 import {
     createCoachSlots,
-    closeCoachCreateNewSlots,
+    fetchCoachSlots,
 } from '../../redux/features/CoachModule/CoachAvailabilitySlice';
 import { toast } from 'react-toastify';
-import {
-    closeCreateSlotsPopup,
-    createCoachMenuSlot,
-    createCoachSlot,
-    getCoachSlots,
-} from '../../redux/features/coach/coachmenuprofileSilce';
-import {
-    closeTaMenuCreateSlotsPopup,
-    createTaMenuSlots,
-} from '../../redux/features/teachingAssistant/tamenuSlice';
+
 const CustomButton = ({
     onClick,
     children,
@@ -86,8 +77,6 @@ const weekDays = [
 
 const CreateNewSlot = ({ componentName }) => {
     const taId = useParams();
-    console.log('taId', taId.id);
-
     const dispatch = useDispatch();
 
     const [fromDate, setFromDate] = useState(null);
@@ -97,73 +86,31 @@ const CreateNewSlot = ({ componentName }) => {
     const [fromTime, setFromTime] = useState(null);
     const [toTime, setToTime] = useState(null);
 
-    let schedulingStateKey,
-        createNewSlotAction,
-        slotEventKey,
-        createSlotActions,
-        closeCreateNewSlotAction,
-        openCreateNewSlotAction;
+    let sliceName, createSlotApi, getSlotsApi;
+
     switch (componentName) {
         case 'TACALENDER':
-            schedulingStateKey = 'taAvialability';
-            slotEventKey = 'slotEventData';
-            createNewSlotAction = '';
-            createSlotActions = createSlots;
-            closeCreateNewSlotAction = closeCreateNewSlots;
-            openCreateNewSlotAction = 'createNewSlotOpen';
+            sliceName = 'taAvialability';
+            createSlotApi = createSlots;
+            getSlotsApi = fetchTaSlots;
             break;
 
         case 'COACHCALENDER':
-            schedulingStateKey = 'coachAvailability';
-            slotEventKey = 'slotCoachEventData';
-            createNewSlotAction = '';
-            createSlotActions = createCoachSlots;
-            closeCreateNewSlotAction = closeCoachCreateNewSlots;
-            openCreateNewSlotAction = 'createNewCoachSlotOpen';
-            break;
-
-        case 'COACHMENU_CALENDER':
-            schedulingStateKey = 'coachMenu';
-            slotEventKey = 'slotsEventDataForLeave';
-            createNewSlotAction = '';
-            createSlotActions = createCoachMenuSlot;
-            closeCreateNewSlotAction = closeCreateSlotsPopup;
-            openCreateNewSlotAction = 'openCreteSlotsPopup';
-            break;
-
-        case 'TAMENU_CALENDER':
-            schedulingStateKey = 'taMenu';
-            slotEventKey = '';
-            createNewSlotAction = '';
-            createSlotActions = createTaMenuSlots;
-            closeCreateNewSlotAction = closeTaMenuCreateSlotsPopup;
-            openCreateNewSlotAction = 'createTaSlotsPopup';
+            sliceName = 'coachAvailability';
+            createSlotApi = createCoachSlots;
+            getSlotsApi = fetchCoachSlots;
             break;
 
         default:
-            schedulingStateKey = null;
-            slotEventKey = null;
-            createNewSlotAction = null;
-            createSlotActions = null;
-            closeCreateNewSlotAction = null;
-            openCreateNewSlotAction = null;
+            sliceName = null;
+            createSlotApi = null;
+            getSlotsApi = null;
             break;
     }
 
-    console.log({
-        schedulingStateKey,
-        createNewSlotAction,
-        slotEventKey,
-        createSlotActions,
-        closeCreateNewSlotAction,
-        openCreateNewSlotAction,
-    });
-
-    const schedulingState = useSelector(state =>
-        schedulingStateKey ? state[schedulingStateKey] : {}
-    );
-
-    const { [slotEventKey]: slotEventData } = schedulingState;
+    const schedulingState = useSelector(state => state[sliceName]);
+    const { createNewSlotOpen } = useSelector(state => state.taAvialability);
+    const { timezones } = useSelector(state => state.timezone);
 
     const {
         register,
@@ -171,8 +118,6 @@ const CreateNewSlot = ({ componentName }) => {
         handleSubmit,
         formState: { errors },
     } = useForm();
-
-    const { timezones } = useSelector(state => state.timezone);
 
     const handleDayChange = day => {
         setSelectedDays(prev => {
@@ -238,9 +183,9 @@ const CreateNewSlot = ({ componentName }) => {
         formData.weeks = weeksArray;
         formData.admin_user_id = taId.id;
 
-        dispatch(createSlotActions(formData)).then(() => {
-            dispatch(closeCreateNewSlotAction());
-            return dispatch(fetchCoachSlots(taId.id));
+        dispatch(createSlotApi(formData)).then(() => {
+            dispatch(closeCreateNewSlots());
+            dispatch(getSlotsApi(taId.id));
         });
     };
 
@@ -470,8 +415,8 @@ const CreateNewSlot = ({ componentName }) => {
 
     return (
         <ReusableDialog
-            open={openCreateNewSlotAction}
-            handleClose={() => dispatch(closeCreateNewSlotAction())}
+            open={createNewSlotOpen}
+            handleClose={() => dispatch(closeCreateNewSlots())}
             title="Create New Slot"
             actions={actions}
             content={content}
