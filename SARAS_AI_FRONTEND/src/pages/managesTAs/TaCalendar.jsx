@@ -32,6 +32,7 @@ import EditBatches from '../../components/availability/EditBatches';
 import EditStudents from '../../components/availability/EditStudents';
 import Header from '../../components/Header/Header';
 import Sidebar from '../../components/Sidebar/Sidebar';
+import ScheduleSession from '../../components/availability/ScheduleSession';
 
 const CustomButton = ({
     onClick,
@@ -86,6 +87,7 @@ const TaCalender = () => {
         createNewSlotOpen,
         scheduledSlotsData,
         deletingCoachFutureSlots,
+        openEventData,
     } = useSelector(state => state.taAvialability);
 
     const {
@@ -112,6 +114,7 @@ const TaCalender = () => {
                     event.date.split(' ')[0] + 'T' + event.start_time
                 ),
                 end: new Date(event.date.split(' ')[0] + 'T' + event.end_time),
+                meetingLink: event.meeting_url,
             }));
             setEventsList(transformedEvents);
         } else {
@@ -131,11 +134,7 @@ const TaCalender = () => {
         }
     }, [slotData]);
 
-    // console.log("slotData", slotData, "scheduleData", scheduleData);
-
     const handleScheduleNewSession = () => {
-        // console.log("Pressed")
-        // setSheduleNewSession()
         dispatch(openScheduleSession({ id, name }));
     };
 
@@ -282,6 +281,9 @@ const TaCalender = () => {
                     )}
                     {createNewSlotOpen && (
                         <CreateNewSlot componentName={'TACALENDER'} />
+                    )}
+                    {openEventData && (
+                        <ScheduleSession componentName={'TACALENDER'} />
                     )}
                 </Box>
             </Box>

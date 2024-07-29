@@ -9,6 +9,9 @@ import {
 } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import ReusableDialog from '../CustomFields/ReusableDialog';
+import { useDispatch, useSelector } from 'react-redux';
+import { closeSessionEvent } from '../../redux/features/taModule/taAvialability';
+import { formatDateTime } from '../../utils/dateFormatter';
 
 const CustomButton = ({
     onClick,
@@ -45,11 +48,46 @@ const CustomButton = ({
     );
 };
 
-const ScheduleSession = ({ open, handleClose }) => {
+const ScheduleSession = ({ componentName }) => {
+    const dispatch = useDispatch();
+
+    let sliceName, sessionDataState, closePopup, openPopupState;
+
+    switch (componentName) {
+        case 'TACALENDER':
+            sliceName = 'taAvailability';
+            sessionDataState = 'sessionEventData';
+            closePopup = closeSessionEvent;
+            openPopupState = 'openEventData';
+            break;
+
+        case 'COACHCALENDER':
+            sliceName = 'coachAvailability';
+            sessionDataState = 'sessionEventData'; // Assuming this is correct
+            closePopup = closeSessionEvent; // Assuming this is correct
+            openPopupState = 'openEventData'; // Assuming this is correct
+            break;
+
+        default:
+            sliceName = null;
+            sessionDataState = null;
+            closePopup = null;
+            openPopupState = null;
+            break;
+    }
+
+    const selectState = useSelector(state =>
+        sliceName ? state[sliceName] : {}
+    );
+    const {
+        [sessionDataState]: sessionData = {},
+        [openPopupState]: open = false,
+    } = selectState;
+
     const content = (
         <Box sx={{ textAlign: 'center' }}>
             <Typography variant="body1" sx={{ mb: 2 }}>
-                Friday, June 21, 11:00 - 11:30AM
+                {formatDateTime(sessionData)}
             </Typography>
             <CustomButton
                 onClick={() => {}}
@@ -71,7 +109,7 @@ const ScheduleSession = ({ open, handleClose }) => {
                 Change Meeting Mode
             </CustomButton>
             <Typography variant="body2" sx={{ mb: 2 }}>
-                https://zoom.us/j/20gFBhzHLExi7JC5oczJx1#success
+                {sessionData.meetingLink}
                 <IconButton
                     size="small"
                     sx={{
@@ -102,33 +140,24 @@ const ScheduleSession = ({ open, handleClose }) => {
                 3 yes, 5 awaiting
             </Typography>
             <Grid container spacing={2} justifyContent="center">
-                <Grid item>
-                    <Box display="flex" alignItems="center">
-                        <Avatar sx={{ bgcolor: '#F56D38', mr: 1 }}>N</Avatar>
-                        <Box>
-                            <Typography variant="body2">Name Here</Typography>
-                            <Typography variant="caption">Organizer</Typography>
-                        </Box>
-                    </Box>
-                </Grid>
-                <Grid item>
-                    <Box display="flex" alignItems="center">
-                        <Avatar sx={{ bgcolor: '#F56D38', mr: 1 }}>N</Avatar>
-                        <Box>
-                            <Typography variant="body2">Name Here</Typography>
-                            <Typography variant="caption">Organizer</Typography>
-                        </Box>
-                    </Box>
-                </Grid>
-                <Grid item>
-                    <Box display="flex" alignItems="center">
-                        <Avatar sx={{ bgcolor: '#F56D38', mr: 1 }}>N</Avatar>
-                        <Box>
-                            <Typography variant="body2">Name Here</Typography>
-                            <Typography variant="caption">Organizer</Typography>
-                        </Box>
-                    </Box>
-                </Grid>
+                {sessionData.guests &&
+                    sessionData.guests.map((guest, index) => (
+                        <Grid item key={index}>
+                            <Box display="flex" alignItems="center">
+                                <Avatar sx={{ bgcolor: '#F56D38', mr: 1 }}>
+                                    {guest.initials}
+                                </Avatar>
+                                <Box>
+                                    <Typography variant="body2">
+                                        {guest.name}
+                                    </Typography>
+                                    <Typography variant="caption">
+                                        {guest.role}
+                                    </Typography>
+                                </Box>
+                            </Box>
+                        </Grid>
+                    ))}
             </Grid>
         </Box>
     );
@@ -158,8 +187,8 @@ const ScheduleSession = ({ open, handleClose }) => {
     return (
         <ReusableDialog
             open={open}
-            handleClose={handleClose}
-            title="Session Name - Daily Scrum"
+            handleClose={() => dispatch(closePopup())}
+            title={`${sessionData.title || 'No Title'} - Daily Scrum`}
             content={content}
             actions={actions}
         />
