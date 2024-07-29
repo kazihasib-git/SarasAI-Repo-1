@@ -103,28 +103,6 @@ const CancelSchedule = ({ componentName }) => {
             cancelSessionState = 'cancelCoachSessionOpen';
             break;
 
-        case 'COACHMENU_CALENDER':
-            sliceName = 'coachMenu';
-            closeSessionAction = closeCancelSessionForLeave;
-            cancelSessionAction = cancelScheduledSessionForLeave;
-            getSessionAction = getSessionForLeave;
-            (eventSlotData = 'slotsEventDataForLeave'),
-                (cancelScheduledData = 'sessionsEventDataForLeave'),
-                (openSessionAction = openScheduledSessionForLeave);
-            cancelSessionState = 'cancelSessionOnLeave';
-            break;
-
-        case 'TAMENU_CALENDER':
-            sliceName = 'taMenu';
-            closeSessionAction = '';
-            cancelSessionAction = '';
-            getSessionAction = '';
-            eventSlotData = '';
-            cancelScheduledData = '';
-            openSessionAction = '';
-            cancelSessionState = '';
-            break;
-
         default:
             closeSessionAction = null;
             cancelSessionAction = null;
