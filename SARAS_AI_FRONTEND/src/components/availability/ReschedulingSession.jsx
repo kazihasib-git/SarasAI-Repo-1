@@ -24,14 +24,6 @@ import {
     openCoachScheduledSession,
     fetchCoachAvailableSlots,
 } from '../../redux/features/CoachModule/CoachAvailabilitySlice';
-import {
-    closeRescheduleSessionForLeave,
-    getCoachMenuSessions,
-    getCoachMenuSlotsByData,
-    getSessionForLeave,
-    openScheduledSessionForLeave,
-    rescheduleSessionForCoachLeave,
-} from '../../redux/features/coach/coachmenuprofileSilce';
 
 const CustomButton = ({
     onClick,
@@ -131,8 +123,6 @@ const ReschedulingSession = ({ componentName }) => {
             break;
     }
 
-    console.log('slice Name :', sliceName);
-
     const {
         [rescheduleSessionOpenKey]: rescheduleSessionOpen,
         [availableSlotsAction]: availableSlotsData,
@@ -199,8 +189,8 @@ const ReschedulingSession = ({ componentName }) => {
             .then(() => {
                 // console.log("SLOT EVENT DATA : ", slotEventData)
                 dispatch(closeRescheduleSessionAction());
-                dispatch(getScheduleSessionAction(slotEventData));
-                dispatch(openScheduledSessionAction());
+                dispatch(getScheduleSessionAction());
+                dispatch(openScheduledSessionAction(slotEventData));
             })
             .catch(error => {
                 console.error('Error rescheduling session:', error);

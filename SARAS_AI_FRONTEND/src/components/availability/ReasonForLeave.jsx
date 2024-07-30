@@ -3,19 +3,19 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     closeReasonForLeave,
+    fetchTAScheduleById,
+    fetchTaSlots,
     reasonForLeave,
 } from '../../redux/features/taModule/taAvialability';
 import {
     closeCoachReasonForLeave,
+    fetchCoachScheduleById,
+    fetchCoachSlots,
     reasonForCoachLeave,
 } from '../../redux/features/CoachModule/CoachAvailabilitySlice';
-
 import CustomTextField from '../CustomFields/CustomTextField';
 import ReusableDialog from '../CustomFields/ReusableDialog';
-import {
-    closeReasonForLeavePopup,
-    reasonForCoachMenuLeave,
-} from '../../redux/features/coach/coachmenuprofileSilce';
+import { useParams } from 'react-router-dom';
 
 const CustomButton = ({
     onClick,
@@ -54,13 +54,16 @@ const CustomButton = ({
 
 const ReasonForLeave = ({ componentName }) => {
     const dispatch = useDispatch();
+    const { id, name } = useParams();
 
     let reasonForLeaveOpenKey,
         closeReasonForLeaveAction,
         markLeaveKey,
         slotEventKey,
         reasonForLeaveAction,
-        sliceName;
+        sliceName,
+        getSlotsApi,
+        getSessionApi;
 
     switch (componentName) {
         case 'TACALENDER':
@@ -70,7 +73,10 @@ const ReasonForLeave = ({ componentName }) => {
             markLeaveKey = 'markLeaveData';
             slotEventKey = 'slotEventData';
             reasonForLeaveAction = reasonForLeave;
+            getSlotsApi = fetchTaSlots;
+            getSessionApi = fetchTAScheduleById;
             break;
+
         case 'COACHCALENDER':
             sliceName = 'coachAvailability';
             reasonForLeaveOpenKey = 'reasonForCoachLeaveOpen'; // Adjust based on your actual key
@@ -78,7 +84,10 @@ const ReasonForLeave = ({ componentName }) => {
             markLeaveKey = 'markLeaveData';
             slotEventKey = 'slotCoachEventData';
             reasonForLeaveAction = reasonForCoachLeave;
+            getSlotsApi = fetchCoachSlots;
+            getSessionApi = fetchCoachScheduleById;
             break;
+
         default:
             sliceName = null;
             reasonForLeaveOpenKey = null;
@@ -86,6 +95,8 @@ const ReasonForLeave = ({ componentName }) => {
             markLeaveKey = null;
             slotEventKey = null;
             reasonForLeaveAction = null;
+            getSlotsApi = null;
+            getSessionApi = null;
             break;
     }
 
@@ -98,6 +109,7 @@ const ReasonForLeave = ({ componentName }) => {
     );
 
     console.log('slots EVENT Details', slotEventDetails);
+    console.log('markLeaveData :', markLeaveData);
 
     const handleSubmit = () => {
         if (slotEventDetails && slotEventDetails.length > 0) {
@@ -139,22 +151,19 @@ const ReasonForLeave = ({ componentName }) => {
                 data: slots.map(slot => slot),
             };
 
-            console.log('SLOT EVENT DATA: ', requestBody);
-            if (sliceName === 'coachMenu') {
-                const { id, ...details } = requestBody;
-                console.log('DETAILS', details);
-
-                dispatch(reasonForCoachMenuLeave(details));
-            } else {
-                dispatch(reasonForLeaveAction(requestBody));
-            }
-
+            dispatch(reasonForLeaveAction(requestBody)).then(() => {
+                dispatch(getSlotsApi(id));
+                dispatch(getSessionApi(id));
+            });
             dispatch(closeReasonForLeaveAction());
         } else {
             console.log('No slots selected, opening reason for leave');
             console.log('mark leave data', markLeaveData);
 
-            dispatch(reasonForLeaveAction(markLeaveData));
+            dispatch(reasonForLeaveAction(markLeaveData)).then(() => {
+                dispatch(getSlotsApi(id));
+                dispatch(getSessionApi(id));
+            });
             dispatch(closeReasonForLeaveAction());
         }
     };

@@ -282,7 +282,7 @@ export const taAvailabilitySlice = createSlice({
         });
         builder.addCase(createSlots.fulfilled, (state, action) => {
             state.loading = false;
-            state.slotEventData = action.payload?.data;
+            state.slotData = action.payload?.data;
         });
         builder.addCase(createSlots.rejected, (state, action) => {
             state.loading = false;

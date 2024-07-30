@@ -1,42 +1,21 @@
 import React, { useState } from 'react';
-import {
-    DialogContent,
-    Grid,
-    TextField,
-    Button,
-    IconButton,
-} from '@mui/material';
-import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import CloseIcon from '@mui/icons-material/Close';
+import { Grid, Button } from '@mui/material';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import CustomDateField from '../CustomFields/CustomDateField';
 import { toast } from 'react-toastify';
-import Slots from './Slots';
-
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import { useParams } from 'react-router-dom';
-
 import {
     openScheduledSlots,
     closeMarkLeave,
     getSlots,
 } from '../../redux/features/taModule/taAvialability';
-
 import {
     openCoachScheduledSlots,
     closeCoachMarkLeave,
     getCoachSlots,
 } from '../../redux/features/CoachModule/CoachAvailabilitySlice';
-import {
-    closeMarkLeavePopup,
-    getCoachMenuSlotsByData,
-    getSlotsForLeave,
-    openMarkLeavePopup,
-    openScheduledSessionForLeave,
-    openSlotsForLeave,
-} from '../../redux/features/coach/coachmenuprofileSilce';
 
 const CustomButton = ({
     onClick,
@@ -159,6 +138,7 @@ const MarkLeave = ({ componentName }) => {
                 .catch(error => {
                     console.error('Failed to fetch scheduled slots:', error);
                     dispatch(openAvailableSlotsAction(leaveData));
+                    dispatch(closeMarkLeaveAction());
                 });
         }
     };

@@ -358,6 +358,7 @@ const Schedule = ({ componentName }) => {
         formData.slot_id = selectedSlot[0].id; // Assuming single slot selection
         formData.event_status = 'scheduled';
         formData.weeks = weeksArray;
+        formData.meeting_url = 'https://zoom.in';
         // formData.timezone = adminUserTimezone;
         formData.timezone = 'Asia/Kolkata';
         formData.studentId = studentId;
@@ -372,12 +373,6 @@ const Schedule = ({ componentName }) => {
             .catch(error => {
                 console.error('Error:', error);
             });
-
-        /*
-    dispatch(createScheduleAction({ ...formData }));
-    dispatch(fetchTAScheduleById(adminUserID))
-    dispatch(closeScheduleSessionAction());
-    */
     };
 
     console.log('AvailableSlotsOptions :', availableSlotsOptions);
