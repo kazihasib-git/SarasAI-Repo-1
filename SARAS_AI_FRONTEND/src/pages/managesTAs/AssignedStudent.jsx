@@ -342,9 +342,7 @@ const AssignedStudent = () => {
             dispatch(getAssignStudents(id));
         }
     }, [dispatch, id]);
-
     useEffect(() => {
-        // console.log('Assigned Students:', assignedStudents);
         if (assignedStudents && assignedStudents.length > 0) {
             const transformData = assignedStudents.map(item => {
                 const studentName = item.student
@@ -363,7 +361,6 @@ const AssignedStudent = () => {
 
                 return {
                     id: item.id,
-                    // item.student ? item.student.id : null,
                     student_name: studentName,
                     Acedimic_term: academicTerm,
                     Batch: batchName,
