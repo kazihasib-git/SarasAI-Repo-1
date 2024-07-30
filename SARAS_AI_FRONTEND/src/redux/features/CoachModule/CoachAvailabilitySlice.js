@@ -82,7 +82,6 @@ export const fetchCoachAvailableSlots = createAsyncThunk(
 export const deleteCoachFutureSlots = createAsyncThunk(
     'coachAvailability/deleteCoachFutureSlots',
     async id => {
-        console.log('ID : ', id);
         const response = await axios.delete(
             `${baseUrl}/admin/coach-slots/${id}`
         );

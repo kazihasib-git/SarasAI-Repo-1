@@ -20,6 +20,10 @@ const allViews = Object.keys(Views).map(k => Views[k]);
 const CalendarComponent = ({ eventsList, slotData, componentName }) => {
     const dispatch = useDispatch();
     console.log('Event List', eventsList);
+    
+
+    
+    
     console.log('Slot Data : ', slotData);
 
     let sliceName, openPopup;
@@ -58,6 +62,8 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
             },
         };
     };
+    
+    
 
     const slotPropGetter = date => {
         const dateString = moment(date).format('YYYY-MM-DD');
@@ -76,7 +82,7 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
             ) {
                 return {
                     style: {
-                        backgroundColor: '#B0FC38',
+                        backgroundColor:/* slot.on_leave ? '#FF6347' : */'#B0FC38',
                         opacity: 0.5,
                         border: 'none',
                     },

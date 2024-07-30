@@ -58,7 +58,7 @@ const PrerequisitesPopup = ({ open, handleClose }) => {
         formState: { errors },
     } = useForm();
     const [activityDependence, setActivityDependence] = useState(false);
-
+    const [fromTime, setFromTime] = useState('');
     const onSubmit = data => {
         console.log(data);
         handleClose();
@@ -67,6 +67,11 @@ const PrerequisitesPopup = ({ open, handleClose }) => {
     const handleCheckboxChange = event => {
         setActivityDependence(event.target.checked);
     };
+
+    const {
+        register,
+        
+    } = useForm();
 
     const content = (
         <Grid
@@ -100,20 +105,24 @@ const PrerequisitesPopup = ({ open, handleClose }) => {
                 />
             </Grid>
             <Grid
-                item
-                xs={12}
-                sm={6}
-                md={6}
-                style={{ margin: '10px 0px', width: '80%' }}
-            >
-                <Controller
-                    name="lockTime"
-                    control={control}
-                    render={({ field }) => (
-                        <CustomTimeField label="Time" fullWidth {...field} />
-                    )}
-                />
-            </Grid>
+                                item
+                                xs={12}
+                                sm={6}
+                                display="flex"
+                                justifyContent="center"
+                            >
+                                <CustomTimeField
+                                    label="Time"
+                                    name="Time"
+                                    value={fromTime}
+                                    onChange={time => setFromTime(time)}
+                                    register={register}
+                                    validation={{
+                                        required: 'From Time is required',
+                                    }}
+                                    errors={errors}
+                                />
+                            </Grid>
             <Grid
                 item
                 xs={12}

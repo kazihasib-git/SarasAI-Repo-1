@@ -76,7 +76,7 @@ const ReasonForLeave = ({ componentName }) => {
             reasonForLeaveOpenKey = 'reasonForCoachLeaveOpen'; // Adjust based on your actual key
             closeReasonForLeaveAction = closeCoachReasonForLeave;
             markLeaveKey = 'markLeaveData';
-            slotEventKey = 'slotEventData';
+            slotEventKey = 'slotCoachEventData';
             reasonForLeaveAction = reasonForCoachLeave;
             break;
         default:
@@ -135,13 +135,16 @@ const ReasonForLeave = ({ componentName }) => {
                 approve_status: null,
                 leave_type: null,
                 reason: null,
-
+                
                 data: slots.map(slot => slot),
             };
+
 
             console.log('SLOT EVENT DATA: ', requestBody);
             if (sliceName === 'coachMenu') {
                 const { id, ...details } = requestBody;
+            console.log("DETAILS",details)
+
                 dispatch(reasonForCoachMenuLeave(details));
             } else {
                 dispatch(reasonForLeaveAction(requestBody));
@@ -150,6 +153,8 @@ const ReasonForLeave = ({ componentName }) => {
             dispatch(closeReasonForLeaveAction());
         } else {
             console.log('No slots selected, opening reason for leave');
+            console.log("mark leave data",markLeaveData)
+
             dispatch(reasonForLeaveAction(markLeaveData));
             dispatch(closeReasonForLeaveAction());
         }
