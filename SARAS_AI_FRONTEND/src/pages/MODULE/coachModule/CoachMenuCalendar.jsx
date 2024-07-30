@@ -206,6 +206,7 @@ const CoachMenuCalendar = () => {
                 {markLeave && <MarkLeaveDate componentName={'COACHMENU'} />}
 
                 {createdSlots && <CreatedSlots componentName={'COACHMENU'} />}
+
                 {leaveScheduledSessionPopup && (
                     <ScheduledSessions componentName={'COACHMENU_CALENDER'} />
                 )}

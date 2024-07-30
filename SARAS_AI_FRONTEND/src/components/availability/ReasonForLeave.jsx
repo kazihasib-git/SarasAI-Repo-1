@@ -5,7 +5,10 @@ import {
     closeReasonForLeave,
     reasonForLeave,
 } from '../../redux/features/taModule/taAvialability';
-import { closeCoachReasonForLeave, reasonForCoachLeave } from '../../redux/features/CoachModule/CoachAvailabilitySlice';
+import {
+    closeCoachReasonForLeave,
+    reasonForCoachLeave,
+} from '../../redux/features/CoachModule/CoachAvailabilitySlice';
 
 import CustomTextField from '../CustomFields/CustomTextField';
 import ReusableDialog from '../CustomFields/ReusableDialog';

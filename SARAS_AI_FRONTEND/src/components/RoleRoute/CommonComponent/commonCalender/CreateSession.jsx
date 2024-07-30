@@ -98,7 +98,7 @@ const CreateSession = ({ componentName }) => {
         toDate: null,
         fromTime: null,
         toTime: null, // TODO : Dependents on the duration
-        timezone: '',
+        timezone: 'Asia/Kolkata',
         repeat: 'onetime',
         selectedDays: [],
     });
@@ -113,7 +113,7 @@ const CreateSession = ({ componentName }) => {
             break;
 
         case 'COACHMENU':
-            sliceName: 'coachMenu';
+            sliceName = 'coachMenu';
             createSessionApi = createCoachMenuSession;
             getSessionApi = getCoachMenuSessions;
             break;
@@ -139,17 +139,20 @@ const CreateSession = ({ componentName }) => {
     const [error, setError] = useState({});
 
     const durationOptions = [
-        { label: '30 minute', value: 30 },
-        { label: '45 minute', value: 45 },
-        { label: '1 Hour', value: 60 },
-        { label: '1 Hour 30 minute', value: 90 },
-        { label: '2 Hour', value: 120 },
+        { label: '15 minutes', value: '00:15:00' },
+        { label: '30 minutes', value: '00:30:00' },
+        { label: '45 minutes', value: '00:45:00' },
+        { label: '1 Hour', value: '01:00:00' },
+        { label: '1 Hour 15 minutes', value: '01:15:00' },
+        { label: '1 Hour 30 minutes', value: '01:30:00' },
+        { label: '1 Hour 45 minutes', value: '01:45:00' },
+        { label: '2 Hours', value: '02:00:00' },
     ];
 
     const handleChange = (field, value) => {
         console.log('field', field, ':', value);
         if (field === 'timezone') {
-            //setFormData(prev => ({ ...prev, [field]: value.time_zone }));
+            setFormData(prev => ({ ...prev, [field]: value.time_zone }));
         }
         setFormData(prev => ({ ...prev, [field]: value }));
     };
@@ -190,21 +193,40 @@ const CreateSession = ({ componentName }) => {
             weeksArray[index] = 1;
         }
 
+        const fromDateTimeString = `${formData.fromDate}T${formData.fromTime}`;
+        console.log('fromDateTimeString:', fromDateTimeString);
+
+        const fromDateTime = new Date(fromDateTimeString);
+        console.log('fromDateTime:', fromDateTime);
+
+        // Assuming formData.duration is in the format "HH:MM:SS"
+        const [hours, minutes, seconds] = formData.duration
+            .split(':')
+            .map(Number);
+        const durationInMs = (hours * 3600 + minutes * 60 + seconds) * 1000;
+
+        // Calculate endDateTime by adding duration to fromDateTime
+        const endDateTime = new Date(fromDateTime.getTime() + durationInMs);
+        console.log('endDateTime:', endDateTime);
+
+        // Extracting time from endDateTime in HH:MM:SS format
+        const endTime = endDateTime.toTimeString().split(' ')[0];
+
         const data = {
             meeting_name: formData.sessionName,
             duration: formData.duration,
             schedule_date: formData.fromDate,
             start_time: formData.fromTime,
-            end_time: formData.fromTime + formData.duration,
+            end_time: endTime,
             message: formData.message,
-            meetUrl: 'http://example.com/meeting',
+            meeting_url: 'http://example.com/meeting',
             timezone: formData.timezone,
             event_status: 'scheduled',
             studentId: studentId,
             batchId: batchId,
-            weeks: formData.selectedDays,
+            weeks: weeksArray,
         };
-
+        console.log('Form Data : ', formData);
         console.log('DATA :', data);
 
         dispatch(createSessionApi(data)).then(() => {

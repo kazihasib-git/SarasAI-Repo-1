@@ -84,7 +84,7 @@ export const createCoachMenuSession = createAsyncThunk(
     'coachMenu/createSession',
     async data => {
         const response = await axiosInstance.post(
-            `${baseUrl}/coach/calendar/create-sessions`,
+            `${baseUrl}/coach/schedule-call/schedule-calls`,
             data
         );
         return response.data;

@@ -1,50 +1,14 @@
 import { Box, DialogActions, Grid, Typography, Button } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import Calendar from '../../../components/Calender/indexCalender';
-import CalendarNew from '../../../components/Calender/IndexCalenderNew';
 import CalendarComponent from '../../../components/Calender/BigCalendar';
-import MarkLeave from '../../../components/availability/MarkLeave';
 
-import CreateNewSlot from '../../../components/availability/CreateNewSlot';
-import ScheduleSession from '../../../components/availability/ScheduleSession';
-import {
-    openMarkLeave,
-    closeMarkLeave,
-    getSlots,
-    fetchCoachSlots,
-    fetchTAScheduleById,
-    selectTAScheduleData,
-    openCreateNewSlots,
-} from '../../../redux/features/taModule/taAvialability';
 import { useDispatch, useSelector } from 'react-redux';
-import Slots from '../../../components/availability/Slots';
-import ScheduledSessions from '../../../components/availability/ScheduledSessions';
-import CancelSchedule from '../../../components/availability/CancelSchedule';
-import ReasonForLeave from '../../../components/availability/ReasonForLeave';
-import ReschedulingSession from '../../../components/availability/ReschedulingSession';
-// import { PickersInputBaseSectionsContainer } from "@mui/x-date-pickers/PickersTextField/PickersInputBase/PickersInputBase";
-// import NewCal from "../../../components/Calender/IndexCalenderNew";
-// import { add } from "date-fns";
-import { useParams } from 'react-router-dom';
-import {
-    getTAScheduledSessions,
-    openScheduleSession,
-} from '../../../redux/features/taModule/taScheduling';
-import moment from 'moment';
-import Schedule from '../../../components/availability/Schedule';
-// import AssignStudents from "../../../components/adminModule/AssignStudents";
-// import AssignBatches from "../../managesTAs/AssignedBatches";
-import EditBatches from '../../../components/availability/EditBatches';
-import EditStudents from '../../../components/availability/EditStudents';
-
 import TaMenuSidebar from './TeachingAssistantSidebar';
 import Header from '../../../components/Header/Header';
 import {
     getTaMenuSessions,
     getTaMenuSlots,
-    openTaMenuCreateSessionsPopup,
-    openTaMenuCreateSlotsPopup,
 } from '../../../redux/features/teachingAssistant/tamenuSlice';
 import {
     openCreateNewSlot,
@@ -56,6 +20,7 @@ import CreateSession from '../../../components/RoleRoute/CommonComponent/commonC
 import SelectStudents from '../../../components/RoleRoute/CommonComponent/commonCalender/SelectStudents';
 import SelectBatches from '../../../components/RoleRoute/CommonComponent/commonCalender/SelectBatches';
 import MarkLeaveDate from '../../../components/RoleRoute/CommonComponent/commonCalender/MarkLeaveDate';
+import CreatedSlots from '../../../components/RoleRoute/CommonComponent/commonCalender/CreatedSlots';
 
 const CustomButton = ({
     onClick,
@@ -103,6 +68,7 @@ const TAMenuCalendar = () => {
         selectStudentPopup,
         selectBatchPopup,
         markLeave,
+        createdSlots,
     } = useSelector(state => state.commonCalender);
 
     const { taSlots, taSessions } = useSelector(state => state.taMenu);
@@ -217,6 +183,7 @@ const TAMenuCalendar = () => {
                 {selectBatchPopup && <SelectBatches componentName={'TAMENU'} />}
 
                 {markLeave && <MarkLeaveDate componentName={'TAMENU'} />}
+                {createdSlots && <CreatedSlots componentName={'TAMENU'} />}
                 {/*
                 
                 {/*{sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} componentName={"TACALENDER"} />} */}
