@@ -12,6 +12,7 @@ import ReusableDialog from '../CustomFields/ReusableDialog';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeSessionEvent } from '../../redux/features/taModule/taAvialability';
 import { formatDateTime } from '../../utils/dateFormatter';
+import { closeCoachSessionEvent } from '../../redux/features/CoachModule/CoachAvailabilitySlice';
 
 const CustomButton = ({
     onClick,
@@ -63,9 +64,9 @@ const ScheduleSession = ({ componentName }) => {
 
         case 'COACHCALENDER':
             sliceName = 'coachAvailability';
-            sessionDataState = 'sessionEventData'; // Assuming this is correct
-            closePopup = closeSessionEvent; // Assuming this is correct
-            openPopupState = 'openEventData'; // Assuming this is correct
+            sessionDataState = 'coachSessionEventData'; // Assuming this is correct
+            closePopup = closeCoachSessionEvent; // Assuming this is correct
+            openPopupState = 'coachOpenEventData'; // Assuming this is correct
             break;
 
         default:

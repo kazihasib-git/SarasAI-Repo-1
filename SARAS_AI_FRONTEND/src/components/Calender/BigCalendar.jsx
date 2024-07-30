@@ -11,19 +11,37 @@ import Sidebar from '../Sidebar/Sidebar';
 import ScheduleSession from '../availability/ScheduleSession';
 import { useDispatch } from 'react-redux';
 import { openSessionEvent } from '../../redux/features/taModule/taAvialability';
+import { openCoachSessionEvent } from '../../redux/features/CoachModule/CoachAvailabilitySlice';
 
 moment.locale('en-GB');
 const localizer = momentLocalizer(moment);
 const allViews = Object.keys(Views).map(k => Views[k]);
 
-const CalendarComponent = ({ eventsList, slotData }) => {
+const CalendarComponent = ({ eventsList, slotData, componentName }) => {
     const dispatch = useDispatch();
     console.log('Event List', eventsList);
     console.log('Slot Data : ', slotData);
 
+    let sliceName, openPopup;
+
+    switch (componentName) {
+        case 'TACALENDER':
+            sliceName = 'taAvialability';
+            openPopup = openSessionEvent;
+            break;
+        case 'COACHCALENDER':
+            sliceName = 'coachAvailability';
+            openPopup = openCoachSessionEvent;
+            break;
+        default:
+            sliceName = null;
+            openPopup = null;
+            break;
+    }
+
     const showSessionPopUp = event => {
         console.log('Selected Event:', event);
-        dispatch(openSessionEvent(event));
+        dispatch(openPopup(event));
     };
 
     const eventStyleGetter = event => {
