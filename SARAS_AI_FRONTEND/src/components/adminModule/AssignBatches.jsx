@@ -7,6 +7,7 @@ import {
     getBatchMapping,
     getTA,
     postAssignBatches,
+    getAssignBatches,
 } from '../../redux/features/taModule/taSlice';
 
 import {
@@ -15,6 +16,7 @@ import {
     getCoachStudentBatchMapping,
     postCoachAssignBatches,
     getCoachBatchMapping,
+    getCoachAssignBatches,
 } from '../../redux/features/CoachModule/coachSlice';
 
 import CustomTextField from '../CustomFields/CustomTextField';
@@ -136,6 +138,29 @@ const AssignBatches = ({ componentname }) => {
             dispatch(getBatchMappingAction());
         }
     }, [assignBatchOpen, dispatch, getBatchMappingAction]);
+
+    useEffect(() => {
+        if (assignBatchOpen) {
+            if (componentname === 'ADDITCOACH') {
+                const id = coachID || assignedId;
+                dispatch(getCoachAssignBatches(id)).then(action => {
+                    const previouslyAssignedStudents = action.payload.map(
+                        batches => batches.batch.id
+                    );
+                    setSelectedBatch(previouslyAssignedStudents);
+                });
+            } else if (componentname === 'ADDEDITTA') {
+                const id = taID || assignedId;
+                dispatch(getAssignBatches(id)).then(action => {
+                    console.log(action.payload);
+                    const previouslyAssignedStudents = action.payload.map(
+                        batches => batches.batch.id
+                    );
+                    setSelectedBatch(previouslyAssignedStudents);
+                });
+            }
+        }
+    }, [assignBatchOpen, dispatch, componentname, assignedId, coachID, taID]);
 
     useEffect(() => {
         if (Array.isArray(batchMapping)) {
