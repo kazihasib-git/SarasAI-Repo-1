@@ -48,12 +48,18 @@ const WOLQuestions = () => {
         dispatch(getWOLQuestions());
     }, [dispatch]);
 
+    function stripHtml(html) {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+        return tempDiv.textContent || tempDiv.innerText || '';
+    }
+
     useEffect(() => {
         if (wolQuestionsData.data && wolQuestionsData.data.length > 0) {
             console.log(wolQuestionsData.message);
             const transformData = wolQuestionsData.data.map(item => ({
                 id: item.id,
-                Question: item.question,
+                Question: stripHtml(item.question),
                 'WOL Category': item.wol_category_name
                     ? item.wol_category_name
                     : item.wol_category_id,
