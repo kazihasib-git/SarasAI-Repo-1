@@ -23,11 +23,11 @@ import {
     openMarkLeaveDate,
     openScheduleNewSession,
 } from '../../../redux/features/commonCalender/commonCalender';
-import CreateSession from '../../../components/RoleRoute/CommonComponent/commonCalender/CreateSession';
 import SelectStudents from '../../../components/RoleRoute/CommonComponent/commonCalender/SelectStudents';
 import SelectBatches from '../../../components/RoleRoute/CommonComponent/commonCalender/SelectBatches';
 import MarkLeaveDate from '../../../components/RoleRoute/CommonComponent/commonCalender/MarkLeaveDate';
 import CreatedSlots from '../../../components/RoleRoute/CommonComponent/commonCalender/CreatedSlots';
+import SessionLink from '../../../components/RoleRoute/CommonComponent/commonCalender/SessionLink';
 
 const CustomButton = ({
     onClick,
@@ -76,6 +76,7 @@ const CoachMenuCalendar = () => {
         selectBatchPopup,
         markLeave,
         createdSlots,
+        openSession,
     } = useSelector(state => state.commonCalender);
 
     const {
@@ -105,6 +106,9 @@ const CoachMenuCalendar = () => {
                     event.date.split(' ')[0] + 'T' + event.start_time
                 ),
                 end: new Date(event.date.split(' ')[0] + 'T' + event.end_time),
+                meetlink: event.meeting_url,
+                students: event.students,
+                batches: event.batch,
             }));
             setSessionEvent(transformedEvents);
         }
@@ -188,7 +192,7 @@ const CoachMenuCalendar = () => {
                 <CalendarComponent
                     eventsList={sessionEvent}
                     slotData={slotEvent}
-                    componentName={'COACHMENU_CALENDER'}
+                    componentName={'COACHMENU'}
                 />
                 {createNewSlotPopup && (
                     <CreateSlot componentName={'COACHMENU'} />
@@ -219,7 +223,7 @@ const CoachMenuCalendar = () => {
                 {reasonForLeavePopup && (
                     <ReasonForLeave componentName={'COACHMENU_CALENDER'} />
                 )}
-
+                {openSession && <SessionLink componentName={'COACHMENU'} />}
                 {/*{sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} componentName={"TACALENDER"} />}
                  */}
             </Box>

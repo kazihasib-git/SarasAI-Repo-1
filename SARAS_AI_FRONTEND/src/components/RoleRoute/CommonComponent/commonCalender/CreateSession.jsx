@@ -86,6 +86,12 @@ const actionButtons = [
     },
 ];
 
+const platformOptions = [
+    { label: 'Zoom', value: '1' },
+    { label: 'Team', value: '2' },
+    { label: 'BlueButton', value: '3' },
+];
+
 const CreateSession = ({ componentName }) => {
     const dispatch = useDispatch();
     const [formData, setFormData] = useState({
@@ -94,10 +100,11 @@ const CreateSession = ({ componentName }) => {
         message: '',
         students: [],
         batches: [],
+        platforms: null,
         fromDate: null,
         toDate: null,
         fromTime: null,
-        toTime: null, // TODO : Dependents on the duration
+        toTime: null,
         timezone: 'Asia/Kolkata',
         repeat: 'onetime',
         selectedDays: [],
@@ -219,6 +226,7 @@ const CreateSession = ({ componentName }) => {
             start_time: formData.fromTime,
             end_time: endTime,
             message: formData.message,
+            platforms: formData.platforms,
             meeting_url: 'http://example.com/meeting',
             timezone: formData.timezone,
             event_status: 'scheduled',
@@ -294,6 +302,28 @@ const CreateSession = ({ componentName }) => {
                                         options={durationOptions}
                                         errors={!!error.duration}
                                         helperText={error.duration}
+                                        sx={{ width: '100%' }}
+                                    />
+                                </Grid>
+                                <Grid
+                                    item
+                                    xs={12}
+                                    display="flex"
+                                    justifyContent="center"
+                                >
+                                    <CustomFormControl
+                                        label="Platform"
+                                        name="platform"
+                                        value={formData.platforms}
+                                        onChange={e =>
+                                            handleChange(
+                                                'platforms',
+                                                e.target.value
+                                            )
+                                        }
+                                        options={platformOptions}
+                                        errors={!!error.platforms}
+                                        helperText={error.platforms}
                                         sx={{ width: '100%' }}
                                     />
                                 </Grid>

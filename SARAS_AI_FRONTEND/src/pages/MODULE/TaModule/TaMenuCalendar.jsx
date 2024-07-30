@@ -21,6 +21,7 @@ import SelectStudents from '../../../components/RoleRoute/CommonComponent/common
 import SelectBatches from '../../../components/RoleRoute/CommonComponent/commonCalender/SelectBatches';
 import MarkLeaveDate from '../../../components/RoleRoute/CommonComponent/commonCalender/MarkLeaveDate';
 import CreatedSlots from '../../../components/RoleRoute/CommonComponent/commonCalender/CreatedSlots';
+import SessionLink from '../../../components/RoleRoute/CommonComponent/commonCalender/SessionLink';
 
 const CustomButton = ({
     onClick,
@@ -69,6 +70,7 @@ const TAMenuCalendar = () => {
         selectBatchPopup,
         markLeave,
         createdSlots,
+        openSession,
     } = useSelector(state => state.commonCalender);
 
     const { taSlots, taSessions } = useSelector(state => state.taMenu);
@@ -170,7 +172,7 @@ const TAMenuCalendar = () => {
                 <CalendarComponent
                     eventsList={sessionEvent}
                     slotData={slotEvent}
-                    componentName={'TACALENDER'}
+                    componentName={'TAMENU'}
                 />
                 {createNewSlotPopup && <CreateSlot componentName={'TAMENU'} />}
                 {scheduleNewSessionPopup && (
@@ -184,6 +186,7 @@ const TAMenuCalendar = () => {
 
                 {markLeave && <MarkLeaveDate componentName={'TAMENU'} />}
                 {createdSlots && <CreatedSlots componentName={'TAMENU'} />}
+                {openSession && <SessionLink componentName={'TAMENU'} />}
                 {/*
                 
                 {/*{sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} componentName={"TACALENDER"} />} */}

@@ -82,6 +82,7 @@ const EditStudents = ({ componentname }) => {
     const [searchName, setSearchName] = useState('');
     const [selectedStudents, setSelectedStudents] = useState([]);
     const [filteredStudents, setFilteredStudents] = useState([]);
+    const [selectedPackage, setSelectedPackage] = useState('');
 
     let stateModuleKey,
         nameKey,
@@ -201,50 +202,44 @@ const EditStudents = ({ componentname }) => {
     ]);
 
     useEffect(() => {
-        console.log('STUDENT BATCH MAPPING : ', assignedStudents);
         if (assignedStudents) {
+            // Transform and filter the data
+            console.log('students batches mapping', assignedStudents);
             const transformedData = assignedStudents.map((stu, index) => ({
                 'S. No.': index + 1,
                 'Student Name': stu.student.name,
                 Program:
                     stu.student.packages.map(pack => pack.name).join(', ') ||
                     'N/A',
-                //'Academic Term': stu.student.academic_term,
                 Batch:
                     stu.student.batches
                         .map(batch => batch.batch_name)
                         .join(', ') || 'N/A',
                 Select: stu.is_active ? 'Active' : 'Inactive',
-                // student_id: stu.student_id,
                 is_active: stu.is_active,
                 id: stu.student.id,
             }));
 
-            console.log('Transformed Data : ', transformedData);
-
-            /*
+            // Filter the students based on selected package and batch
             const filtered = transformedData.filter(student => {
                 const matchesTerm = selectedTerm
-                    ? student.Program === selectedTerm
+                    ? student.Program.includes(selectedTerm)
                     : true;
-            
+
                 const matchesBatch = selectedBatch
                     ? student.Batch.includes(selectedBatch)
                     : true;
-                
-                    const matchesName = searchName
+
+                const matchesName = searchName
                     ? student['Student Name']
                           .toLowerCase()
                           .includes(searchName.toLowerCase())
                     : true;
+
                 return matchesTerm && matchesBatch && matchesName;
             });
 
-            console.log('Filtered Data : ', filtered);
-
             setFilteredStudents(filtered);
-            */
-            setFilteredStudents(transformedData);
         }
     }, [assignedStudents, selectedTerm, selectedBatch, searchName]);
 
@@ -256,7 +251,9 @@ const EditStudents = ({ componentname }) => {
                           .filter(
                               student =>
                                   !selectedTerm ||
-                                  student.student.academic_term === selectedTerm
+                                  student.student.packages.some(
+                                      pack => pack.name === selectedTerm
+                                  )
                           )
                           .flatMap(student =>
                               student.student.batches.map(

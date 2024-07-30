@@ -12,6 +12,7 @@ import ScheduleSession from '../availability/ScheduleSession';
 import { useDispatch } from 'react-redux';
 import { openSessionEvent } from '../../redux/features/taModule/taAvialability';
 import { openCoachSessionEvent } from '../../redux/features/CoachModule/CoachAvailabilitySlice';
+import { openSessionPopup } from '../../redux/features/commonCalender/commonCalender';
 
 moment.locale('en-GB');
 const localizer = momentLocalizer(moment);
@@ -20,7 +21,10 @@ const allViews = Object.keys(Views).map(k => Views[k]);
 const CalendarComponent = ({ eventsList, slotData, componentName }) => {
     const dispatch = useDispatch();
     console.log('Event List', eventsList);
+
     console.log('Slot Data : ', slotData);
+
+    console.log('comp name', componentName);
 
     let sliceName, openPopup;
 
@@ -33,6 +37,16 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
             sliceName = 'coachAvailability';
             openPopup = openCoachSessionEvent;
             break;
+        case 'TAMENU':
+            sliceName = 'taMenu';
+            openPopup = openSessionPopup;
+            break;
+
+        case 'COACHMENU':
+            sliceName = 'coachMenu';
+            openPopup = openSessionPopup;
+            break;
+
         default:
             sliceName = null;
             openPopup = null;
@@ -76,7 +90,8 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
             ) {
                 return {
                     style: {
-                        backgroundColor: '#B0FC38',
+                        backgroundColor:
+                            /* slot.on_leave ? '#FF6347' : */ '#B0FC38',
                         opacity: 0.5,
                         border: 'none',
                     },

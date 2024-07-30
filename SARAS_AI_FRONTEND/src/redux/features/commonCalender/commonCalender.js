@@ -5,6 +5,7 @@ const initialState = {
     batches: [], // select batches for scheduling session
     userId: '',
     userName: '',
+    sessionEventData: [],
 
     createNewSlotPopup: false, // for new slot popup
     scheduleNewSessionPopup: false, //  for new session Popup
@@ -12,6 +13,7 @@ const initialState = {
     selectBatchPopup: false,
     markLeave: false,
     createdSlots: false,
+    openSession: false,
 };
 
 const commonCalender = createSlice({
@@ -70,6 +72,14 @@ const commonCalender = createSlice({
         closeCreatedSlots: (state, action) => {
             state.createdSlots = false;
         },
+        openSessionPopup(state, action) {
+            state.sessionEventData = action.payload;
+            state.openSession = true;
+        },
+        closeSessionPopup(state, action) {
+            state.sessionEventData = [];
+            state.openSession = false;
+        },
     },
 });
 
@@ -86,6 +96,8 @@ export const {
     closeMarkLeaveDate,
     openCreatedSlots,
     closeCreatedSlots,
+    openSessionPopup,
+    closeSessionPopup,
 } = commonCalender.actions;
 
 export default commonCalender.reducer;
