@@ -204,14 +204,17 @@ const EditStudents = ({ componentname }) => {
     useEffect(() => {
         if (assignedStudents) {
             // Transform and filter the data
-            console.log("students batches mapping", assignedStudents)
+            console.log('students batches mapping', assignedStudents);
             const transformedData = assignedStudents.map((stu, index) => ({
                 'S. No.': index + 1,
                 'Student Name': stu.student.name,
                 Program:
-                    stu.student.packages.map(pack => pack.name).join(', ') || 'N/A',
+                    stu.student.packages.map(pack => pack.name).join(', ') ||
+                    'N/A',
                 Batch:
-                    stu.student.batches.map(batch => batch.batch_name).join(', ') || 'N/A',
+                    stu.student.batches
+                        .map(batch => batch.batch_name)
+                        .join(', ') || 'N/A',
                 Select: stu.is_active ? 'Active' : 'Inactive',
                 is_active: stu.is_active,
                 id: stu.student.id,
@@ -228,7 +231,9 @@ const EditStudents = ({ componentname }) => {
                     : true;
 
                 const matchesName = searchName
-                    ? student['Student Name'].toLowerCase().includes(searchName.toLowerCase())
+                    ? student['Student Name']
+                          .toLowerCase()
+                          .includes(searchName.toLowerCase())
                     : true;
 
                 return matchesTerm && matchesBatch && matchesName;
@@ -243,13 +248,13 @@ const EditStudents = ({ componentname }) => {
             ? [
                   ...new Set(
                       assignedStudents
-                      .filter(
-                        student =>
-                            !selectedTerm ||
-                            student.student.packages.some(
-                                pack => pack.name === selectedTerm
-                            )
-                    )
+                          .filter(
+                              student =>
+                                  !selectedTerm ||
+                                  student.student.packages.some(
+                                      pack => pack.name === selectedTerm
+                                  )
+                          )
                           .flatMap(student =>
                               student.student.batches.map(
                                   batch => batch.batch_name

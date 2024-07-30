@@ -138,7 +138,8 @@ const WOLOptionsConfig = () => {
         if (!formValues.maxScale)
             tempErrors.maxScale = 'Maximum Scale is required';
         if (Number(formValues.minScale) >= Number(formValues.maxScale))
-            tempErrors.scaleRange = 'Maximum Scale must be greater than Minimum Scale';
+            tempErrors.scaleRange =
+                'Maximum Scale must be greater than Minimum Scale';
         formValues.details.forEach((detail, index) => {
             if (
                 (index === 0 || index === formValues.details.length - 1) &&
@@ -300,7 +301,6 @@ const WOLOptionsConfig = () => {
                                 type="submit"
                                 active={true}
                                 variant="contained"
-                                
                                 sx={{
                                     borderRadius: '50px',
                                     padding: '18px 30px',

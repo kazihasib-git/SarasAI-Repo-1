@@ -106,9 +106,9 @@ const CoachMenuCalendar = () => {
                     event.date.split(' ')[0] + 'T' + event.start_time
                 ),
                 end: new Date(event.date.split(' ')[0] + 'T' + event.end_time),
-                meetlink : event.meeting_url,
-                students : event.students,
-                batches : event.batch,
+                meetlink: event.meeting_url,
+                students: event.students,
+                batches: event.batch,
             }));
             setSessionEvent(transformedEvents);
         }
@@ -223,9 +223,7 @@ const CoachMenuCalendar = () => {
                 {reasonForLeavePopup && (
                     <ReasonForLeave componentName={'COACHMENU_CALENDER'} />
                 )}
-                {openSession && (
-                    <SessionLink componentName={'COACHMENU'} />
-                )}
+                {openSession && <SessionLink componentName={'COACHMENU'} />}
                 {/*{sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} componentName={"TACALENDER"} />}
                  */}
             </Box>

@@ -13,7 +13,7 @@ import { formatDateTime } from '../../../../utils/dateFormatter';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import ReusableDialog from '../../../CustomFields/ReusableDialog';
 import editImg from '../../../../assets/editIcon.png';
-import editImgWhite from '../../../../assets/editIcon_White.png'
+import editImgWhite from '../../../../assets/editIcon_White.png';
 
 const CustomButton = ({
     onClick,
@@ -146,7 +146,7 @@ const SessionLink = ({ componentName }) => {
                     },
                 }}
             >
-                <img src={editImg} alt="edit" />
+                <img src={editImgWhite} alt="edit" />
                 Edit Students
             </Button>
             <Button
@@ -163,10 +163,6 @@ const SessionLink = ({ componentName }) => {
                     fontWeight: '700',
                     fontSize: '16px',
                     padding: '18px 30px',
-                    '&:hover': {
-                        backgroundColor: '#F56D3B',
-                        color: 'white',
-                    },
                 }}
             >
                 <img src={editImg} alt="edit" />

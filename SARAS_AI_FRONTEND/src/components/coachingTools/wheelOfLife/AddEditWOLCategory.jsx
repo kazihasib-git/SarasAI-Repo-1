@@ -102,19 +102,16 @@ const AddEditWOLCategory = () => {
 
     const content = (
         <Box display="flex" justifyContent="center" m={4}>
-        <Grid container spacing={3} justifyContent="center">
-            <Grid item 
-            sm={6}
-                    display="flex"
-                    justifyContent="center">
-                <CustomTextField
-                    label="WOL Category"
-                    placeholder="Enter WOL Category"
-                    value={categoryName}
-                    onChange={e => setCategoryName(e.target.value)}
-                />
+            <Grid container spacing={3} justifyContent="center">
+                <Grid item sm={6} display="flex" justifyContent="center">
+                    <CustomTextField
+                        label="WOL Category"
+                        placeholder="Enter WOL Category"
+                        value={categoryName}
+                        onChange={e => setCategoryName(e.target.value)}
+                    />
+                </Grid>
             </Grid>
-        </Grid>
         </Box>
     );
 

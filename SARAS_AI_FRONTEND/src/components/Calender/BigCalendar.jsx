@@ -21,16 +21,12 @@ const allViews = Object.keys(Views).map(k => Views[k]);
 const CalendarComponent = ({ eventsList, slotData, componentName }) => {
     const dispatch = useDispatch();
     console.log('Event List', eventsList);
-    
 
-    
-    
     console.log('Slot Data : ', slotData);
 
-    console.log("comp name", componentName);
+    console.log('comp name', componentName);
 
-    let sliceName, 
-        openPopup;
+    let sliceName, openPopup;
 
     switch (componentName) {
         case 'TACALENDER':
@@ -41,13 +37,13 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
             sliceName = 'coachAvailability';
             openPopup = openCoachSessionEvent;
             break;
-        case 'TAMENU' :
+        case 'TAMENU':
             sliceName = 'taMenu';
             openPopup = openSessionPopup;
             break;
 
-        case 'COACHMENU' :
-            sliceName  = 'coachMenu';
+        case 'COACHMENU':
+            sliceName = 'coachMenu';
             openPopup = openSessionPopup;
             break;
 
@@ -76,8 +72,6 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
             },
         };
     };
-    
-    
 
     const slotPropGetter = date => {
         const dateString = moment(date).format('YYYY-MM-DD');
@@ -96,7 +90,8 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
             ) {
                 return {
                     style: {
-                        backgroundColor:/* slot.on_leave ? '#FF6347' : */'#B0FC38',
+                        backgroundColor:
+                            /* slot.on_leave ? '#FF6347' : */ '#B0FC38',
                         opacity: 0.5,
                         border: 'none',
                     },

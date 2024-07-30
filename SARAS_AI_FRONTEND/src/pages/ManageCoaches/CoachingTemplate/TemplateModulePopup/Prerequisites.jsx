@@ -68,10 +68,7 @@ const PrerequisitesPopup = ({ open, handleClose }) => {
         setActivityDependence(event.target.checked);
     };
 
-    const {
-        register,
-        
-    } = useForm();
+    const { register } = useForm();
 
     const content = (
         <Grid
@@ -104,25 +101,19 @@ const PrerequisitesPopup = ({ open, handleClose }) => {
                     )}
                 />
             </Grid>
-            <Grid
-                                item
-                                xs={12}
-                                sm={6}
-                                display="flex"
-                                justifyContent="center"
-                            >
-                                <CustomTimeField
-                                    label="Time"
-                                    name="Time"
-                                    value={fromTime}
-                                    onChange={time => setFromTime(time)}
-                                    register={register}
-                                    validation={{
-                                        required: 'From Time is required',
-                                    }}
-                                    errors={errors}
-                                />
-                            </Grid>
+            <Grid item xs={12} sm={6} display="flex" justifyContent="center">
+                <CustomTimeField
+                    label="Time"
+                    name="Time"
+                    value={fromTime}
+                    onChange={time => setFromTime(time)}
+                    register={register}
+                    validation={{
+                        required: 'From Time is required',
+                    }}
+                    errors={errors}
+                />
+            </Grid>
             <Grid
                 item
                 xs={12}
