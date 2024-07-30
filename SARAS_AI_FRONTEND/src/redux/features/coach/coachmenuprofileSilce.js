@@ -125,9 +125,9 @@ export const createCoachMenuLeave = createAsyncThunk(
     }
 );
 
-// Get Slots for Leave
-export const getSlotsForLeave = createAsyncThunk(
-    'coachMenu/getSlotsForLeave',
+// Get Coach Slots for Leave
+export const getCoachMenuSlotsForLeave = createAsyncThunk(
+    'coachMenu/getCoachMenuSlotsForLeave',
     async data => {
         const response = await axiosInstance.post(
             `${baseUrl}/coach/calendar/slot-between-dates`,
@@ -137,8 +137,9 @@ export const getSlotsForLeave = createAsyncThunk(
     }
 );
 
-export const getSessionForLeave = createAsyncThunk(
-    'coachMenu/getSessionForLeave',
+// Get Coach Session for Leave by slots
+export const getCoachMenuSessionForLeave = createAsyncThunk(
+    'coachMenu/getCoachMenuSessionForLeave',
     async data => {
         console.log('DATE TO BE SEND IN API', data);
         const response = await axiosInstance.post(
@@ -530,32 +531,41 @@ export const coachMenuSlice = createSlice({
         );
 
         // Get Slots for Leave
-        builder.addCase(getSlotsForLeave.pending, state => {
+        builder.addCase(getCoachMenuSlotsForLeave.pending, state => {
             state.loading = true;
         });
-        builder.addCase(getSlotsForLeave.fulfilled, (state, action) => {
-            state.loading = false;
-            state.coachSlotsForLeave = action.payload.data;
-        });
-        builder.addCase(getSlotsForLeave.rejected, (state, action) => {
+        builder.addCase(
+            getCoachMenuSlotsForLeave.fulfilled,
+            (state, action) => {
+                state.loading = false;
+                state.coachSlotsForLeave = action.payload.data;
+            }
+        );
+        builder.addCase(getCoachMenuSlotsForLeave.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
             state.coachSlotsForLeave = [];
         });
 
         // Get Sessions For Leave
-        builder.addCase(getSessionForLeave.pending, state => {
+        builder.addCase(getCoachMenuSessionForLeave.pending, state => {
             state.loading = true;
         });
-        builder.addCase(getSessionForLeave.fulfilled, (state, action) => {
-            state.loading = false;
-            state.coachSessionsForLeave = action.payload.data;
-        });
-        builder.addCase(getSessionForLeave.rejected, (state, action) => {
-            state.loading = false;
-            state.error = action.error.message;
-            state.coachSessionsForLeave = [];
-        });
+        builder.addCase(
+            getCoachMenuSessionForLeave.fulfilled,
+            (state, action) => {
+                state.loading = false;
+                state.coachSessionsForLeave = action.payload.data;
+            }
+        );
+        builder.addCase(
+            getCoachMenuSessionForLeave.rejected,
+            (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+                state.coachSessionsForLeave = [];
+            }
+        );
 
         // Cancel Scheduled Sessions for Leave
         builder.addCase(cancelScheduledSessionForLeave.pending, state => {

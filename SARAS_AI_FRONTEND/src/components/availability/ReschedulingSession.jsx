@@ -117,32 +117,6 @@ const ReschedulingSession = ({ componentName }) => {
             reschduleSessionAction = rescheduleCoachSession;
             break;
 
-        case 'COACHMENU_CALENDER':
-            sliceName = 'coachMenu';
-            rescheduleSessionOpenKey = 'leaveRescheduleSessionPopup';
-            closeRescheduleSessionAction = closeRescheduleSessionForLeave;
-            fetchAvailableSlotsAction = getCoachMenuSlotsByData;
-            getScheduleSessionAction = getSessionForLeave;
-            openScheduledSessionAction = openScheduledSessionForLeave;
-            availableSlotsAction = 'coachSlotsByDate';
-            sessionEventAction = 'sessionsEventDataForLeave';
-            slotEventAction = 'scheduledSessionForLeaveData';
-            reschduleSessionAction = rescheduleSessionForCoachLeave;
-            break;
-
-        case 'TAMENU_CALENDER':
-            sliceName = 'taMenu';
-            rescheduleSessionOpenKey = '';
-            closeRescheduleSessionAction = '';
-            fetchAvailableSlotsAction = '';
-            getScheduleSessionAction = '';
-            openScheduledSessionAction = '';
-            availableSlotsAction = '';
-            sessionEventAction = '';
-            slotEventAction = '';
-            reschduleSessionAction = '';
-            break;
-
         default:
             sliceName = null;
             rescheduleSessionOpenKey = null;

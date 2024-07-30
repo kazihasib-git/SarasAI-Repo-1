@@ -1,35 +1,30 @@
-import React, { useEffect } from 'react';
-import {
-    Grid,
-    Button,
-    FormControl,
-    RadioGroup,
-    FormControlLabel,
-    Radio,
-    FormGroup,
-    Checkbox,
-    Box,
-} from '@mui/material';
-import { useForm, Controller } from 'react-hook-form';
-import CustomDateField from '../CustomFields/CustomDateField';
-import CustomTimeField from '../CustomFields/CustomTimeField'; // Assuming you have a CustomTimeField component
-import ReusableDialog from '../CustomFields/ReusableDialog';
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import CustomTimeZoneForm from '../CustomFields/CustomTimeZoneForm';
-import { getTimezone } from '../../redux/features/timezone/timezoneSlice';
-import { useParams } from 'react-router-dom';
-
+import { getTimezone } from '../../../../redux/features/timezone/timezoneSlice';
 import {
-    createSlots,
-    closeCreateNewSlots,
-    fetchTaSlots,
-} from '../../redux/features/taModule/taAvialability';
+    createCoachMenuSlot,
+    getCoachMenuSlots,
+} from '../../../../redux/features/coach/coachmenuprofileSilce';
 import {
-    createCoachSlots,
-    fetchCoachSlots,
-} from '../../redux/features/CoachModule/CoachAvailabilitySlice';
-import { toast } from 'react-toastify';
+    createTaMenuSlots,
+    getTaMenuSlots,
+} from '../../../../redux/features/teachingAssistant/tamenuSlice';
+import { closeCreateNewSlot } from '../../../../redux/features/commonCalender/commonCalender';
+import {
+    Box,
+    Button,
+    Checkbox,
+    FormControl,
+    FormControlLabel,
+    FormGroup,
+    Grid,
+    Radio,
+    RadioGroup,
+} from '@mui/material';
+import CustomDateField from '../../../CustomFields/CustomDateField';
+import CustomTimeField from '../../../CustomFields/CustomTimeField';
+import CustomTimeZoneForm from '../../../CustomFields/CustomTimeZoneForm';
+import ReusableDialog from '../../../CustomFields/ReusableDialog';
 
 const CustomButton = ({
     onClick,
@@ -65,6 +60,7 @@ const CustomButton = ({
         </Button>
     );
 };
+
 const weekDays = [
     'Sunday',
     'Monday',
@@ -75,117 +71,112 @@ const weekDays = [
     'Saturday',
 ];
 
-const CreateNewSlot = ({ componentName }) => {
-    const taId = useParams();
-    const dispatch = useDispatch();
+const CreateSlot = ({ componentName }) => {
+    console.log('component Name :', componentName);
 
-    const [fromDate, setFromDate] = useState(null);
-    const [toDate, setToDate] = useState(null);
-    const [selectedDays, setSelectedDays] = useState([]);
-    const [repeat, setRepeat] = useState('onetime');
-    const [fromTime, setFromTime] = useState(null);
-    const [toTime, setToTime] = useState(null);
-
-    let sliceName, createSlotApi, getSlotsApi;
+    let createSlotApi, getSlotsApi;
 
     switch (componentName) {
-        case 'TACALENDER':
-            sliceName = 'taAvialability';
-            createSlotApi = createSlots;
-            getSlotsApi = fetchTaSlots;
+        case 'TAMENU':
+            createSlotApi = createTaMenuSlots;
+            getSlotsApi = getTaMenuSlots;
             break;
-
-        case 'COACHCALENDER':
-            sliceName = 'coachAvailability';
-            createSlotApi = createCoachSlots;
-            getSlotsApi = fetchCoachSlots;
+        case 'COACHMENU':
+            createSlotApi = createCoachMenuSlot;
+            getSlotsApi = getCoachMenuSlots;
             break;
-
         default:
-            sliceName = null;
             createSlotApi = null;
             getSlotsApi = null;
             break;
     }
 
-    const schedulingState = useSelector(state => state[sliceName]);
-    const { createNewSlotOpen } = useSelector(state => state.taAvialability);
+    const dispatch = useDispatch();
+    const [errors, setErrors] = useState({});
+    const [formData, setFormData] = useState({
+        fromDate: null,
+        toDate: null,
+        selectedDays: [],
+        repeat: 'onetime',
+        fromTime: null,
+        toTime: null,
+        timezone: 'Asia/Kolkata',
+    });
+
     const { timezones } = useSelector(state => state.timezone);
-
-    const {
-        register,
-        control,
-        handleSubmit,
-        formState: { errors },
-    } = useForm();
-
-    const handleDayChange = day => {
-        setSelectedDays(prev => {
-            if (prev.includes(day)) {
-                return prev.filter(d => d !== day);
-            } else {
-                return [...prev, day];
-            }
-        });
-    };
+    const { createNewSlotPopup } = useSelector(state => state.commonCalender);
 
     useEffect(() => {
         dispatch(getTimezone());
     }, [dispatch]);
 
-    const validate = () => {
-        if (!fromDate) {
-            toast.error('Please select From Date');
-            return false;
+    const handleChange = (field, value) => {
+        console.log('field', field, ':', value);
+        if (field === 'timezone') {
+            //setFormData(prev => ({ ...prev, [field]: value.time_zone }));
         }
-        if (!fromTime) {
-            toast.error('Please select From Time');
-            return false;
-        }
-        if (!toTime) {
-            toast.error('Please select To Time');
-            return false;
-        }
-        if (repeat === 'recurring' && !toDate) {
-            toast.error('Please select To Date');
-            return false;
-        }
-        if (repeat === 'recurring' && selectedDays.length === 0) {
-            toast.error('Please select at least one day');
-            return false;
-        }
-        return true;
+        setFormData(prev => ({ ...prev, [field]: value }));
     };
 
-    const onSubmit = formData => {
-        console.log('form data', formData);
+    const handleDayChange = day => {
+        setFormData(prev => {
+            const newSelectedDays = prev.selectedDays.includes(day)
+                ? prev.selectedDays.filter(d => d !== day)
+                : [...prev.selectedDays, day];
+            return { ...prev, selectedDays: newSelectedDays };
+        });
+    };
 
-        if (!validate()) {
-            return;
-        }
+    const validate = () => {
+        let validationErrors = {};
+        if (!formData.fromDate)
+            validationErrors.fromDate = 'Please select From Date';
+        if (!formData.fromTime)
+            validationErrors.fromTime = 'Please select From Time';
+        if (!formData.toTime) validationErrors.toTime = 'Please select To Time';
+        if (formData.repeat === 'recurring' && !formData.toDate)
+            validationErrors.toDate = 'Please select To Date';
+        if (
+            formData.repeat === 'recurring' &&
+            formData.selectedDays.length === 0
+        )
+            validationErrors.selectedDays = 'Please select at least one day';
+
+        setErrors(validationErrors);
+        return Object.keys(validationErrors).length === 0;
+    };
+
+    const handleSubmit = e => {
+        e.preventDefault();
+
+        if (!validate()) return;
 
         let weeksArray = Array(7).fill(0);
-        if (repeat === 'recurring') {
-            selectedDays.forEach(day => {
+        if (formData.repeat === 'recurring') {
+            formData.selectedDays.forEach(day => {
                 const index = weekDays.indexOf(day);
                 weeksArray[index] = 1;
             });
-        } else if (repeat === 'onetime') {
-            const index = new Date(fromDate).getDay();
+        } else if (formData.repeat === 'onetime') {
+            const index = new Date(formData.fromDate).getDay();
             weeksArray[index] = 1;
         }
 
-        formData.slot_date = fromDate;
-        formData.from_time = fromTime;
-        formData.to_time = toTime;
-        formData.timezone = 'Asia/Kolkata';
-        formData.end_date = repeat === 'recurring' ? toDate : fromDate;
-        formData.weeks = weeksArray;
-        formData.admin_user_id = taId.id;
+        const data = {
+            slot_date: formData.fromDate,
+            from_time: formData.fromTime,
+            to_time: formData.toTime,
+            timezone: formData.timezone,
+            end_date:
+                formData.repeat === 'recurring'
+                    ? formData.toDate
+                    : formData.fromDate,
+            weeks: weeksArray,
+        };
 
-        dispatch(createSlotApi(formData)).then(() => {
-            dispatch(closeCreateNewSlots());
-            dispatch(getSlotsApi(taId.id));
+        dispatch(createSlotApi(data)).then(() => {
+            dispatch(getSlotsApi());
+            dispatch(closeCreateNewSlot());
         });
     };
 
@@ -197,11 +188,7 @@ const CreateNewSlot = ({ componentName }) => {
             sx={{ height: '100%', width: '100%' }}
         >
             <Grid container spacing={2} justifyContent="center">
-                <form
-                    id="createForm"
-                    onSubmit={handleSubmit(onSubmit)}
-                    noValidate
-                >
+                <form id="createForm" noValidate>
                     <Box
                         display="flex"
                         flexDirection="column"
@@ -217,13 +204,12 @@ const CreateNewSlot = ({ componentName }) => {
                         >
                             <CustomDateField
                                 label="From Date"
-                                value={fromDate}
-                                onChange={date => setFromDate(date)}
-                                name="fromDate"
-                                register={register}
-                                validation={{
-                                    required: 'From Date is required',
-                                }}
+                                value={formData.fromDate}
+                                onChange={date =>
+                                    handleChange('fromDate', date)
+                                }
+                                errors={!!errors.fromDate}
+                                helperText={errors.fromDate}
                                 sx={{ width: '100%' }}
                             />
                         </Grid>
@@ -242,14 +228,12 @@ const CreateNewSlot = ({ componentName }) => {
                             >
                                 <CustomTimeField
                                     label="From Time"
-                                    name="fromTime"
-                                    value={fromTime}
-                                    onChange={time => setFromTime(time)}
-                                    register={register}
-                                    validation={{
-                                        required: 'From Time is required',
-                                    }}
-                                    errors={errors}
+                                    value={formData.fromTime}
+                                    onChange={time =>
+                                        handleChange('fromTime', time)
+                                    }
+                                    errors={!!errors.fromTime}
+                                    helperText={errors.fromTime}
                                 />
                             </Grid>
                             <Grid
@@ -261,14 +245,12 @@ const CreateNewSlot = ({ componentName }) => {
                             >
                                 <CustomTimeField
                                     label="To Time"
-                                    name="toTime"
-                                    value={toTime}
-                                    onChange={time => setToTime(time)}
-                                    register={register}
-                                    validation={{
-                                        required: 'To Time is required',
-                                    }}
-                                    errors={errors}
+                                    value={formData.toTime}
+                                    onChange={time =>
+                                        handleChange('toTime', time)
+                                    }
+                                    errors={!!errors.toTime}
+                                    helperText={errors.toTime}
                                 />
                             </Grid>
                         </Grid>
@@ -278,20 +260,15 @@ const CreateNewSlot = ({ componentName }) => {
                             sx={{ pt: 3 }}
                             justifyContent="center"
                         >
-                            <Controller
-                                name="time_zone"
-                                control={control}
-                                // rules={{ required: 'Time Zone is required' }}
-                                render={({ field }) => (
-                                    <CustomTimeZoneForm
-                                        label="Time Zone"
-                                        name="time_zone"
-                                        value={field.value}
-                                        onChange={field.onChange}
-                                        errors={errors}
-                                        options={timezones}
-                                    />
-                                )}
+                            <CustomTimeZoneForm
+                                label="Time Zone"
+                                value={formData.timezone}
+                                onChange={value =>
+                                    handleChange('timezone', value)
+                                }
+                                errors={!!errors.timezone}
+                                helperText={errors.timezone}
+                                options={timezones}
                             />
                         </Grid>
                         <Grid
@@ -309,9 +286,12 @@ const CreateNewSlot = ({ componentName }) => {
                                 <FormControl component="fieldset">
                                     <RadioGroup
                                         row
-                                        value={repeat}
+                                        value={formData.repeat}
                                         onChange={e =>
-                                            setRepeat(e.target.value)
+                                            handleChange(
+                                                'repeat',
+                                                e.target.value
+                                            )
                                         }
                                         sx={{ justifyContent: 'center' }}
                                     >
@@ -329,7 +309,7 @@ const CreateNewSlot = ({ componentName }) => {
                                 </FormControl>
                             </Grid>
                         </Grid>
-                        {repeat === 'recurring' && (
+                        {formData.repeat === 'recurring' && (
                             <>
                                 <Grid
                                     container
@@ -345,7 +325,7 @@ const CreateNewSlot = ({ componentName }) => {
                                                         key={day}
                                                         control={
                                                             <Checkbox
-                                                                checked={selectedDays.includes(
+                                                                checked={formData.selectedDays.includes(
                                                                     day
                                                                 )}
                                                                 onChange={() =>
@@ -373,13 +353,12 @@ const CreateNewSlot = ({ componentName }) => {
                                 >
                                     <CustomDateField
                                         label="To Date"
-                                        value={toDate}
-                                        onChange={date => setToDate(date)}
-                                        name="end_date"
-                                        register={register}
-                                        validation={{
-                                            required: 'To Date is required',
-                                        }}
+                                        value={formData.toDate}
+                                        onChange={date =>
+                                            handleChange('toDate', date)
+                                        }
+                                        errors={!!errors.toDate}
+                                        helperText={errors.toDate}
                                         sx={{ width: '100%' }}
                                     />
                                 </Grid>
@@ -394,7 +373,7 @@ const CreateNewSlot = ({ componentName }) => {
     const actions = (
         <>
             <CustomButton
-                onClick={() => dispatch(closeCreateNewSlotAction())}
+                onClick={() => dispatch(closeCreateNewSlot())}
                 backgroundColor="white"
                 color="#F56D3B"
                 borderColor="#F56D3B"
@@ -403,7 +382,7 @@ const CreateNewSlot = ({ componentName }) => {
             </CustomButton>
             <CustomButton
                 type="submit"
-                form="createForm"
+                onClick={handleSubmit}
                 backgroundColor="#F56D3B"
                 color="white"
                 borderColor="#F56D3B"
@@ -415,8 +394,8 @@ const CreateNewSlot = ({ componentName }) => {
 
     return (
         <ReusableDialog
-            open={createNewSlotOpen}
-            handleClose={() => dispatch(closeCreateNewSlots())}
+            open={createNewSlotPopup}
+            handleClose={() => dispatch(closeCreateNewSlot())}
             title="Create New Slot"
             actions={actions}
             content={content}
@@ -424,4 +403,4 @@ const CreateNewSlot = ({ componentName }) => {
     );
 };
 
-export default CreateNewSlot;
+export default CreateSlot;

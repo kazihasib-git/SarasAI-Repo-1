@@ -79,12 +79,12 @@ export const fetchCoachAvailableSlots = createAsyncThunk(
     }
 );
 
-export const deleteFutureSlots = createAsyncThunk(
-    'coachAvailability/deleteFutureSlots',
+export const deleteCoachFutureSlots = createAsyncThunk(
+    'coachAvailability/deleteCoachFutureSlots',
     async id => {
         console.log('ID : ', id);
         const response = await axios.delete(
-            `${baseUrl}/admin/coach-slots/${id.id}`
+            `${baseUrl}/admin/coach-slots/${id}`
         );
         return response.data;
     }
@@ -122,6 +122,9 @@ const initialState = {
     loading: false,
     error: null,
     schduldeCoachCancelData: null,
+    deletingCoachFutureSlots: false,
+    coachId: [],
+    coachName: [],
 };
 
 export const coachAvailabilitySlice = createSlice({
@@ -176,6 +179,18 @@ export const coachAvailabilitySlice = createSlice({
             state.resheduleCoachSessionOpen = false;
         },
 
+        openDeleteCoachSlots(state, action) {
+            console.log('Payload :', action.payload);
+            state.deletingCoachFutureSlots = true;
+            state.coachId = action.payload.id;
+            state.coachName = action.payload.name;
+        },
+        closeDeleteCoachSlots(state, action) {
+            state.deletingCoachFutureSlots = false;
+            state.coachId = [];
+            state.coachName = [];
+        },
+
         // don't know where to use
         // openStudentsRescheduleSession(state) {
         //   state.customResheduleSessionOpen = true;
@@ -191,7 +206,7 @@ export const coachAvailabilitySlice = createSlice({
         });
         builder.addCase(fetchCoachScheduleById.fulfilled, (state, action) => {
             state.loading = false;
-            state.scheduleCoachData = action.payload;
+            state.scheduleCoachData = action.payload.data;
         });
         builder.addCase(fetchCoachScheduleById.rejected, (state, action) => {
             state.loading = false;
@@ -204,7 +219,7 @@ export const coachAvailabilitySlice = createSlice({
         });
         builder.addCase(fetchCoachSlots.fulfilled, (state, action) => {
             state.loading = false;
-            state.slotCoachData = action.payload; // Update state with fetched data
+            state.slotCoachData = action.payload.data; // Update state with fetched data
         });
         builder.addCase(fetchCoachSlots.rejected, (state, action) => {
             state.loading = false;
@@ -280,13 +295,13 @@ export const coachAvailabilitySlice = createSlice({
             state.availableCoachSlotsData = [];
         });
 
-        builder.addCase(deleteFutureSlots.pending, state => {
+        builder.addCase(deleteCoachFutureSlots.pending, state => {
             state.loading = true;
         });
-        builder.addCase(deleteFutureSlots.fulfilled, (state, action) => {
+        builder.addCase(deleteCoachFutureSlots.fulfilled, (state, action) => {
             state.loading = false;
         });
-        builder.addCase(deleteFutureSlots.rejected, (state, action) => {
+        builder.addCase(deleteCoachFutureSlots.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
         });
@@ -321,6 +336,8 @@ export const {
     closeCoachReasonForLeave,
     openCoachRescheduleSession,
     closeCoachRescheduleSession,
+    openDeleteCoachSlots,
+    closeDeleteCoachSlots,
     // openStudentsRescheduleSession,
     // closeStudentsRescheduleSession
 } = coachAvailabilitySlice.actions;

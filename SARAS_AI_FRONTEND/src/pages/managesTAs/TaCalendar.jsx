@@ -13,6 +13,8 @@ import {
     fetchTAScheduleById,
     selectTAScheduleData,
     openCreateNewSlots,
+    fetchTaSlots,
+    openDeleteTaSlots,
 } from '../../redux/features/taModule/taAvialability';
 import { useDispatch, useSelector } from 'react-redux';
 import Slots from '../../components/availability/Slots';
@@ -83,6 +85,7 @@ const TaCalender = () => {
         resheduleSessionOpen,
         createNewSlotOpen,
         scheduledSlotsData,
+        deletingCoachFutureSlots,
     } = useSelector(state => state.taAvialability);
 
     const {
@@ -97,7 +100,7 @@ const TaCalender = () => {
     const [slotViewData, setSlotViewData] = useState([]);
 
     useEffect(() => {
-        dispatch(fetchCoachSlots(id));
+        dispatch(fetchTaSlots(id));
         dispatch(fetchTAScheduleById(id));
     }, [dispatch]);
 
@@ -141,7 +144,8 @@ const TaCalender = () => {
     };
 
     const handleDeleteFutureSlots = () => {
-        setDeleteFutureSlots(true);
+        const data = { id, name };
+        dispatch(openDeleteTaSlots(data));
     };
 
     const handleCreateNewSlot = () => {
@@ -273,14 +277,8 @@ const TaCalender = () => {
                             componentName={'TACALENDER'}
                         />
                     )}
-                    {deleteFutureSlots && (
-                        <DeleteAllSlots
-                            open={deleteFutureSlots}
-                            handleClose={() => setDeleteFutureSlots(false)}
-                            id={id}
-                            name={name}
-                            componentName={'TACALENDER'}
-                        />
+                    {deletingCoachFutureSlots && (
+                        <DeleteAllSlots componentName={'TACALENDER'} />
                     )}
                     {createNewSlotOpen && (
                         <CreateNewSlot componentName={'TACALENDER'} />

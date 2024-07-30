@@ -17,7 +17,7 @@ const CustomTimeZoneForm = ({
     disabled,
 }) => {
     const hasError = !!errors[name];
-    // console.log("label", label , name , value )
+
     return (
         <FormControl variant="outlined" disabled={disabled} fullWidth>
             <InputLabel

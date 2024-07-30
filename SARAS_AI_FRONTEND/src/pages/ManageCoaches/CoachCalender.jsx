@@ -19,6 +19,7 @@ import {
     fetchCoachSlots,
     fetchCoachScheduleById,
     openCoachCreateNewSlots,
+    openDeleteCoachSlots,
 } from '../../redux/features/CoachModule/CoachAvailabilitySlice';
 import EditBatches from '../../components/availability/EditBatches';
 import EditStudents from '../../components/availability/EditStudents';
@@ -26,6 +27,7 @@ import { openCoachScheduleSession } from '../../redux/features/CoachModule/coach
 import Header from '../../components/Header/Header';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Schedule from '../../components/availability/Schedule';
+import { openCreateNewSlots } from '../../redux/features/taModule/taAvialability';
 
 const CustomButton = ({
     onClick,
@@ -66,11 +68,17 @@ const CustomButton = ({
 const CoachCalender = () => {
     const dispatch = useDispatch();
     const { id, name } = useParams();
-    const [sheduleNewSession, setSheduleNewSession] = useState(false);
+
     const [deleteFutureSlots, setDeleteFutureSlots] = useState(false);
 
     const [eventsList, setEventsList] = useState([]);
     const [slotViewData, setSlotViewData] = useState([]);
+
+    const { createNewSlotOpen } = useSelector(state => state.taAvialability);
+
+    const { openEditStudent, openEditBatch } = useSelector(
+        state => state.taScheduling
+    );
 
     const {
         coachMarkLeaveOpen,
@@ -82,18 +90,23 @@ const CoachCalender = () => {
         createNewCoachSlotOpen,
         slotCoachData,
         scheduleCoachData,
+        deletingCoachFutureSlots,
     } = useSelector(state => state.coachAvailability);
 
-    console.log('ta Id :', id);
+    const {
+        scheduleCoachSessionOpen,
+        openCoachEditBatch,
+        openCoachEditStudent,
+    } = useSelector(state => state.coachScheduling);
 
     useEffect(() => {
         dispatch(fetchCoachSlots(id));
         dispatch(fetchCoachScheduleById(id));
-    }, [id]);
+    }, [dispatch]);
 
     useEffect(() => {
-        if (scheduleCoachData && scheduleCoachData.data) {
-            const transformedEvents = scheduleCoachData.data.map(event => ({
+        if (scheduleCoachData && scheduleCoachData.length > 0) {
+            const transformedEvents = scheduleCoachData.map(event => ({
                 title: event.meeting_name,
                 start: new Date(
                     event.date.split(' ')[0] + 'T' + event.start_time
@@ -106,9 +119,12 @@ const CoachCalender = () => {
         }
     }, [scheduleCoachData]);
 
+    console.log('Session Data', scheduleCoachData);
+    console.log('Slots Data', slotCoachData);
+
     useEffect(() => {
-        if (slotCoachData.data && slotCoachData.data.length > 0) {
-            const transformedSlots = slotCoachData.data.map(slot => ({
+        if (slotCoachData && slotCoachData.length > 0) {
+            const transformedSlots = slotCoachData.map(slot => ({
                 startDate: new Date(slot.slot_date + 'T' + slot.from_time),
                 endDate: new Date(slot.slot_date + 'T' + slot.to_time),
             }));
@@ -118,20 +134,7 @@ const CoachCalender = () => {
         }
     }, [slotCoachData]);
 
-    console.log(
-        'slotCoachData',
-        slotCoachData,
-        'scheduleCoachData',
-        scheduleCoachData
-    );
-
-    // useEffect(() => {
-    //     ); // Replace `2` with the actual ID you need
-    // }, [dispatch]);
-
     const handleScheduleNewSession = () => {
-        console.log('Pressed');
-        // setSheduleNewSession();
         dispatch(openCoachScheduleSession({ id, name }));
     };
 
@@ -140,12 +143,15 @@ const CoachCalender = () => {
     };
 
     const handleDeleteFutureSlots = () => {
-        setDeleteFutureSlots(true);
+        const data = { id, name };
+        dispatch(openDeleteCoachSlots(data));
     };
 
     const handleCreateNewSlot = () => {
-        dispatch(openCoachCreateNewSlots());
+        dispatch(openCreateNewSlots());
     };
+
+    console.log('event Data', eventsList, 'slots View', slotViewData);
 
     return (
         <>
@@ -213,7 +219,6 @@ const CoachCalender = () => {
 
                     <CalendarComponent
                         eventsList={eventsList}
-                        // addEvent={   }
                         slotData={slotViewData}
                         componentName={'COACHCALENDER'}
                     />
@@ -225,8 +230,14 @@ const CoachCalender = () => {
                         />
                     )} */}
 
-                    {scheduledCoachSessionOpen && (
+                    {scheduleCoachSessionOpen && (
                         <Schedule componentName={'COACHSCHEDULE'} />
+                    )}
+                    {openCoachEditBatch && (
+                        <EditBatches componentname={'COACHSCHEDULE'} />
+                    )}
+                    {openCoachEditStudent && (
+                        <EditStudents componentname={'COACHSCHEDULE'} />
                     )}
                     {coachMarkLeaveOpen && (
                         <MarkLeave
@@ -276,17 +287,11 @@ const CoachCalender = () => {
                         />
                     )}
 
-                    {deleteFutureSlots && (
-                        <DeleteAllSlots
-                            open={deleteFutureSlots}
-                            handleClose={() => setDeleteFutureSlots(false)}
-                            id={id}
-                            name={name}
-                            componentName={'COACHCALENDER'}
-                        />
+                    {deletingCoachFutureSlots && (
+                        <DeleteAllSlots componentName={'COACHCALENDER'} />
                     )}
 
-                    {createNewCoachSlotOpen && (
+                    {createNewSlotOpen && (
                         <CreateNewSlot
                             // addEvent={addEvent}
                             componentName={'COACHCALENDER'}

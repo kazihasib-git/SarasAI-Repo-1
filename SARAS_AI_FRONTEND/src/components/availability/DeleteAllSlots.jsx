@@ -11,10 +11,17 @@ import ReusableDialog from '../CustomFields/ReusableDialog';
 import CustomTextField from '../CustomFields/CustomTextField';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-    deleteFutureSlots,
-    fetchCoachSlots,
+    fetchTaSlots,
     fetchTAScheduleById,
+    deleteTaFutureSlots,
+    closeDeleteTaSlots,
 } from '../../redux/features/taModule/taAvialability';
+import {
+    closeDeleteCoachSlots,
+    deleteCoachFutureSlots,
+    fetchCoachScheduleById,
+    fetchCoachSlots,
+} from '../../redux/features/CoachModule/CoachAvailabilitySlice';
 
 const CustomButton = ({
     onClick,
@@ -52,31 +59,79 @@ const CustomButton = ({
     );
 };
 
-const DeleteAllSlots = ({ open, handleClose, id, name }) => {
+const DeleteAllSlots = ({ componentName }) => {
     const dispatch = useDispatch();
+
+    let sliceName,
+        getSlotsApi,
+        getSessionsApi,
+        deleteFutureSlotsApi,
+        userIdState,
+        userNameState,
+        openPopupState,
+        closePopupAction;
+
+    switch (componentName) {
+        case 'TACALENDER':
+            sliceName = 'taAvialability';
+            getSlotsApi = fetchTaSlots;
+            getSessionsApi = fetchTAScheduleById;
+            deleteFutureSlotsApi = deleteTaFutureSlots;
+            userIdState = 'taId';
+            userNameState = 'taName';
+            openPopupState = 'deletingCoachFutureSlots';
+            closePopupAction = closeDeleteTaSlots;
+            break;
+
+        case 'COACHCALENDER':
+            sliceName = 'coachAvailability';
+            getSlotsApi = fetchCoachSlots;
+            getSessionsApi = fetchCoachScheduleById;
+            deleteFutureSlotsApi = deleteCoachFutureSlots;
+            userIdState = 'coachId';
+            userNameState = 'coachName';
+            openPopupState = 'deletingCoachFutureSlots';
+            closePopupAction = closeDeleteCoachSlots;
+            break;
+
+        default:
+            sliceName = null;
+            getSlotsApi = null;
+            getSessionsApi = null;
+            deleteFutureSlotsApi = null;
+            userIdState = null;
+            userNameState = null;
+            openPopupState = null;
+            closePopupAction = null;
+            break;
+    }
+
+    const selectState = useSelector(state => state[sliceName]);
+
+    const { [userIdState]: userId, [userNameState]: userName } = selectState;
 
     const handleSubmit = async () => {
         try {
-            console.log('TA ID : ', id);
-            console.log('TA NAME : ', name);
+            console.log('TA ID : ', userId);
+            console.log('TA NAME : ', userName);
             //get today date in YYYY-MM-DD format
-            const today = new Date();
-            const dd = String(today.getDate()).padStart(2, '0');
-            const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-            const yyyy = today.getFullYear();
+            // const today = new Date();
+            // const dd = String(today.getDate()).padStart(2, '0');
+            // const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+            // const yyyy = today.getFullYear();
 
-            const todayDate = yyyy + '-' + mm + '-' + dd;
+            // const todayDate = yyyy + '-' + mm + '-' + dd;
 
-            const data = {
-                date: todayDate,
-            };
+            // const data = {
+            //     date: todayDate,
+            // };
 
             // dispatch actions
-            dispatch(deleteFutureSlots({ id, data })).then(() => {
+            dispatch(deleteFutureSlotsApi(userId)).then(() => {
                 console.log('FEtching data after deleting slots');
-                handleClose();
-                dispatch(fetchCoachSlots(id));
-                dispatch(fetchTAScheduleById(id));
+                dispatch(closePopupAction());
+                dispatch(getSlotsApi(userId));
+                dispatch(getSessionsApi(userId));
             });
         } catch (error) {
             console.log('Error : ', error);
@@ -118,7 +173,7 @@ const DeleteAllSlots = ({ open, handleClose, id, name }) => {
     const actions = (
         <>
             <CustomButton
-                onClick={handleClose}
+                onClick={() => dispatch(closePopupAction())}
                 backgroundColor="#FFFFFF"
                 borderColor="#F56D3B"
                 color="#F56D3B"
@@ -138,8 +193,8 @@ const DeleteAllSlots = ({ open, handleClose, id, name }) => {
 
     return (
         <ReusableDialog
-            open={open}
-            handleClose={handleClose}
+            open={openPopupState}
+            handleClose={() => dispatch(closePopupAction())}
             title="Delete All Future Slots"
             content={content}
             actions={actions}
