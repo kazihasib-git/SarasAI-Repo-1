@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { baseUrl } from '../../../utils/baseURL';
 import axios from 'axios';
 import axiosInstance from '../../services/httpService';
+import { actions } from 'react-table';
 const accessToken = localStorage.getItem('accessToken');
 
 // Get Ta Profile
@@ -65,6 +66,30 @@ export const getTaMenuSessions = createAsyncThunk(
             `${baseUrl}/ta/calendar/sessions`
         );
         console.log(response.data, 'response.data');
+        return response.data;
+    }
+);
+
+// TA SLots Between Dates
+export const getTaMenuSlotsForLeave = createAsyncThunk(
+    'taMenu/slotsForLeave',
+    async data => {
+        const response = await axiosInstance.post(
+            `${baseUrl}/ta/calendar/slot-between-dates`,
+            data
+        );
+        return response.data;
+    }
+);
+
+// Get TA Sessions for Leave by Slots
+export const getTaMenuSessionForLeave = createAsyncThunk(
+    'taMenu/getSessionForLeave',
+    async data => {
+        const response = await axiosInstance.post(
+            `${baseUrl}/ta/calendar/schedule-by-slots`,
+            data
+        );
         return response.data;
     }
 );
@@ -188,6 +213,10 @@ const initialState = {
     selectedTaBatches: [],
     assignedTaStudents: [],
     assignedTaBatches: [],
+
+    //For Leave
+    slotsBetweenDates: [],
+    sessionBySlots: [],
 
     selectTaStudent: false,
     selectTaBatches: false,
@@ -332,6 +361,33 @@ export const taMenuSlice = createSlice({
             state.loading = false;
             state.error = action.error.message;
         });
+
+        // Get Slots Between Dates
+        builder.addCase(getTaMenuSlotsForLeave.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(getTaMenuSlotsForLeave.fulfilled, (state, action) => {
+            state.loading = false;
+            state.slotsBetweenDates = action.payload.data;
+        });
+        builder.addCase(getTaMenuSlotsForLeave.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+        });
+
+        // Get Session By Slots for Leave
+        builder.addCase(getTaMenuSessionForLeave.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(getTaMenuSessionForLeave.fulfilled, (state, action) => {
+            state.loading = false;
+            state.sessionBySlots = action.payload.data;
+        });
+        builder.addCase(getTaMenuSessionForLeave.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+        });
+
         //get tamenu call requests
         builder.addCase(getTaCallRequests.pending, state => {
             state.loading = true;

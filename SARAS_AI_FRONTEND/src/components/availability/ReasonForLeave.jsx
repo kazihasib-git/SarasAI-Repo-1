@@ -5,7 +5,10 @@ import {
     closeReasonForLeave,
     reasonForLeave,
 } from '../../redux/features/taModule/taAvialability';
-import { closeCoachReasonForLeave } from '../../redux/features/CoachModule/CoachAvailabilitySlice';
+import {
+    closeCoachReasonForLeave,
+    reasonForCoachLeave,
+} from '../../redux/features/CoachModule/CoachAvailabilitySlice';
 
 import CustomTextField from '../CustomFields/CustomTextField';
 import ReusableDialog from '../CustomFields/ReusableDialog';
@@ -66,7 +69,7 @@ const ReasonForLeave = ({ componentName }) => {
             closeReasonForLeaveAction = closeReasonForLeave;
             markLeaveKey = 'markLeaveData';
             slotEventKey = 'slotEventData';
-            reasonForLeaveAction = 'reasonForLeave';
+            reasonForLeaveAction = reasonForLeave;
             break;
         case 'COACHCALENDER':
             sliceName = 'coachAvailability';
@@ -74,24 +77,7 @@ const ReasonForLeave = ({ componentName }) => {
             closeReasonForLeaveAction = closeCoachReasonForLeave;
             markLeaveKey = 'markLeaveData';
             slotEventKey = 'slotEventData';
-            reasonForLeaveAction = '';
-            break;
-        case 'COACHMENU_CALENDER':
-            sliceName = 'coachMenu';
-            reasonForLeaveOpenKey = 'reasonForLeavePopup';
-            closeReasonForLeaveAction = closeReasonForLeavePopup;
-            markLeaveKey = 'markForLeaveData';
-            slotEventKey = 'scheduledSessionForLeaveData';
-            reasonForLeaveAction = reasonForCoachMenuLeave;
-            break;
-
-        case 'TAMENU_CALENDER':
-            sliceName = 'taMenu';
-            reasonForLeaveOpenKey = null;
-            closeReasonForLeaveAction = null;
-            markLeaveKey = null;
-            slotEventKey = null;
-            reasonForLeaveAction = null;
+            reasonForLeaveAction = reasonForCoachLeave;
             break;
         default:
             sliceName = null;

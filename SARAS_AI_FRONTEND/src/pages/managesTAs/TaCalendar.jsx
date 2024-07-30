@@ -13,6 +13,8 @@ import {
     fetchTAScheduleById,
     selectTAScheduleData,
     openCreateNewSlots,
+    fetchTaSlots,
+    openDeleteTaSlots,
 } from '../../redux/features/taModule/taAvialability';
 import { useDispatch, useSelector } from 'react-redux';
 import Slots from '../../components/availability/Slots';
@@ -30,6 +32,7 @@ import EditBatches from '../../components/availability/EditBatches';
 import EditStudents from '../../components/availability/EditStudents';
 import Header from '../../components/Header/Header';
 import Sidebar from '../../components/Sidebar/Sidebar';
+import ScheduleSession from '../../components/availability/ScheduleSession';
 
 const CustomButton = ({
     onClick,
@@ -83,6 +86,8 @@ const TaCalender = () => {
         resheduleSessionOpen,
         createNewSlotOpen,
         scheduledSlotsData,
+        deletingCoachFutureSlots,
+        openEventData,
     } = useSelector(state => state.taAvialability);
 
     const {
@@ -97,7 +102,7 @@ const TaCalender = () => {
     const [slotViewData, setSlotViewData] = useState([]);
 
     useEffect(() => {
-        dispatch(fetchCoachSlots(id));
+        dispatch(fetchTaSlots(id));
         dispatch(fetchTAScheduleById(id));
     }, [dispatch]);
 
@@ -109,6 +114,7 @@ const TaCalender = () => {
                     event.date.split(' ')[0] + 'T' + event.start_time
                 ),
                 end: new Date(event.date.split(' ')[0] + 'T' + event.end_time),
+                meetingLink: event.meeting_url,
             }));
             setEventsList(transformedEvents);
         } else {
@@ -128,11 +134,7 @@ const TaCalender = () => {
         }
     }, [slotData]);
 
-    // console.log("slotData", slotData, "scheduleData", scheduleData);
-
     const handleScheduleNewSession = () => {
-        // console.log("Pressed")
-        // setSheduleNewSession()
         dispatch(openScheduleSession({ id, name }));
     };
 
@@ -141,7 +143,8 @@ const TaCalender = () => {
     };
 
     const handleDeleteFutureSlots = () => {
-        setDeleteFutureSlots(true);
+        const data = { id, name };
+        dispatch(openDeleteTaSlots(data));
     };
 
     const handleCreateNewSlot = () => {
@@ -273,17 +276,14 @@ const TaCalender = () => {
                             componentName={'TACALENDER'}
                         />
                     )}
-                    {deleteFutureSlots && (
-                        <DeleteAllSlots
-                            open={deleteFutureSlots}
-                            handleClose={() => setDeleteFutureSlots(false)}
-                            id={id}
-                            name={name}
-                            componentName={'TACALENDER'}
-                        />
+                    {deletingCoachFutureSlots && (
+                        <DeleteAllSlots componentName={'TACALENDER'} />
                     )}
                     {createNewSlotOpen && (
                         <CreateNewSlot componentName={'TACALENDER'} />
+                    )}
+                    {openEventData && (
+                        <ScheduleSession componentName={'TACALENDER'} />
                     )}
                 </Box>
             </Box>

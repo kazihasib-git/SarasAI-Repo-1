@@ -99,28 +99,6 @@ const Slots = ({ componentName }) => {
             markLeaveKey = 'markLeaveData';
             break;
 
-        case 'COACHMENU_CALENDER':
-            sliceName = 'coachMenu';
-            scheduleSessionOpenKey = 'LeaveSlotsPopup';
-            scheduledSlotsDataKey = 'coachSlotsForLeave';
-            schedulingStateKey = 'coachMenu';
-            getAvailableSlotsAction = openScheduledSessionForLeave;
-            closeScheduleSessionAction = closeSlotsForLeave;
-            getScheduleSessionAction = getSessionForLeave;
-            markLeaveKey = 'markForLeaveData';
-            break;
-
-        case 'TAMENU_CALENDER':
-            sliceName = 'taMenu';
-            scheduleSessionOpenKey = '';
-            scheduledSlotsDataKey = '';
-            schedulingStateKey = '';
-            getAvailableSlotsAction = '';
-            closeScheduleSessionAction = '';
-            getScheduleSessionAction = '';
-            markLeaveKey = '';
-            break;
-
         default:
             sliceName = null;
             scheduleSessionOpenKey = null;

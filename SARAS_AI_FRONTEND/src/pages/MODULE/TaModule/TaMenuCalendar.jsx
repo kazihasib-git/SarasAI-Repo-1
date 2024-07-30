@@ -1,51 +1,26 @@
 import { Box, DialogActions, Grid, Typography, Button } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import Calendar from '../../../components/Calender/indexCalender';
-import CalendarNew from '../../../components/Calender/IndexCalenderNew';
 import CalendarComponent from '../../../components/Calender/BigCalendar';
-import MarkLeave from '../../../components/availability/MarkLeave';
 
-import CreateNewSlot from '../../../components/availability/CreateNewSlot';
-import ScheduleSession from '../../../components/availability/ScheduleSession';
-import {
-    openMarkLeave,
-    closeMarkLeave,
-    getSlots,
-    fetchCoachSlots,
-    fetchTAScheduleById,
-    selectTAScheduleData,
-    openCreateNewSlots,
-} from '../../../redux/features/taModule/taAvialability';
 import { useDispatch, useSelector } from 'react-redux';
-import Slots from '../../../components/availability/Slots';
-import ScheduledSessions from '../../../components/availability/ScheduledSessions';
-import CancelSchedule from '../../../components/availability/CancelSchedule';
-import ReasonForLeave from '../../../components/availability/ReasonForLeave';
-import ReschedulingSession from '../../../components/availability/ReschedulingSession';
-// import { PickersInputBaseSectionsContainer } from "@mui/x-date-pickers/PickersTextField/PickersInputBase/PickersInputBase";
-// import NewCal from "../../../components/Calender/IndexCalenderNew";
-// import { add } from "date-fns";
-import { useParams } from 'react-router-dom';
-import {
-    getTAScheduledSessions,
-    openScheduleSession,
-} from '../../../redux/features/taModule/taScheduling';
-import moment from 'moment';
-import Schedule from '../../../components/availability/Schedule';
-// import AssignStudents from "../../../components/adminModule/AssignStudents";
-// import AssignBatches from "../../managesTAs/AssignedBatches";
-import EditBatches from '../../../components/availability/EditBatches';
-import EditStudents from '../../../components/availability/EditStudents';
-
 import TaMenuSidebar from './TeachingAssistantSidebar';
 import Header from '../../../components/Header/Header';
 import {
     getTaMenuSessions,
     getTaMenuSlots,
-    openTaMenuCreateSessionsPopup,
-    openTaMenuCreateSlotsPopup,
 } from '../../../redux/features/teachingAssistant/tamenuSlice';
+import {
+    openCreateNewSlot,
+    openMarkLeaveDate,
+    openScheduleNewSession,
+} from '../../../redux/features/commonCalender/commonCalender';
+import CreateSlot from '../../../components/RoleRoute/CommonComponent/commonCalender/CreateSlot';
+import CreateSession from '../../../components/RoleRoute/CommonComponent/commonCalender/CreateSession';
+import SelectStudents from '../../../components/RoleRoute/CommonComponent/commonCalender/SelectStudents';
+import SelectBatches from '../../../components/RoleRoute/CommonComponent/commonCalender/SelectBatches';
+import MarkLeaveDate from '../../../components/RoleRoute/CommonComponent/commonCalender/MarkLeaveDate';
+import CreatedSlots from '../../../components/RoleRoute/CommonComponent/commonCalender/CreatedSlots';
 
 const CustomButton = ({
     onClick,
@@ -84,27 +59,19 @@ const CustomButton = ({
 
 const TAMenuCalendar = () => {
     const dispatch = useDispatch();
-
-    const [sheduleNewSession, setSheduleNewSession] = useState(false);
-    //const [deleteFutureSlots, setDeleteFutureSlots] = useState(false);
-    const [createNewSlot, setCreateNewSlot] = useState(false);
-    const [eventSlotData, setEventSlotData] = useState([]);
-
-    //   const { assignBatchOpen, assignStudentOpen } = useSelector(
-    //     (state) => state.taModule
-    //   );
+    const [slotEvent, setSlotEvent] = useState([]);
+    const [sessionEvent, setSessionEvent] = useState([]);
 
     const {
-        createTaSlotsPopup,
-        createTaSessionPopup,
-        taSlots,
-        taSessions,
-        selectTaStudent,
-        selectTaBatches,
-    } = useSelector(state => state.taMenu);
+        createNewSlotPopup,
+        scheduleNewSessionPopup,
+        selectStudentPopup,
+        selectBatchPopup,
+        markLeave,
+        createdSlots,
+    } = useSelector(state => state.commonCalender);
 
-    //calendar
-    const [eventsList, setEventsList] = useState([]);
+    const { taSlots, taSessions } = useSelector(state => state.taMenu);
 
     useEffect(() => {
         dispatch(getTaMenuSlots());
@@ -120,7 +87,7 @@ const TAMenuCalendar = () => {
                 ),
                 end: new Date(event.date.split(' ')[0] + 'T' + event.end_time),
             }));
-            setEventsList(transformedEvents);
+            setSessionEvent(transformedEvents);
         }
     }, [taSessions]);
 
@@ -130,26 +97,20 @@ const TAMenuCalendar = () => {
                 startDate: new Date(slot.slot_date + 'T' + slot.from_time),
                 endDate: new Date(slot.slot_date + 'T' + slot.to_time),
             }));
-            setEventSlotData(transformedSlots);
+            setSlotEvent(transformedSlots);
         }
     }, [taSlots]);
 
-    console.log('slotData', taSlots, 'scheduleData', taSessions);
-
     const handleScheduleNewSession = () => {
-        dispatch(openTaMenuCreateSessionsPopup(true));
+        dispatch(openScheduleNewSession());
     };
 
     const handleMarkLeave = () => {
-        dispatch(openMarkLeave());
+        dispatch(openMarkLeaveDate());
     };
 
-    //   const handleDeleteFutureSlots = () => {
-    //     setDeleteFutureSlots(true);
-    //   };
-
     const handleCreateNewSlot = () => {
-        dispatch(openTaMenuCreateSlotsPopup());
+        dispatch(openCreateNewSlot());
     };
 
     return (
@@ -191,16 +152,6 @@ const TAMenuCalendar = () => {
                                     Mark Leave
                                 </CustomButton>
 
-                                {/* <CustomButton
-                onClick={handleDeleteFutureSlots}
-                color="#F56D3B"
-                backgroundColor="#FFFFFF"
-                borderColor="#F56D3B"
-                style={{ textTransform: "none" }}
-              >
-                Delete All Future Slots
-              </CustomButton> */}
-
                                 <CustomButton
                                     color="#FFFFFF"
                                     backgroundColor="#F56D3B"
@@ -217,20 +168,22 @@ const TAMenuCalendar = () => {
                 </DialogActions>
 
                 <CalendarComponent
-                    eventsList={eventsList}
-                    slotData={eventSlotData}
+                    eventsList={sessionEvent}
+                    slotData={slotEvent}
                     componentName={'TACALENDER'}
                 />
-                {createTaSessionPopup && (
-                    <Schedule componentName={'TAMENU_CALENDER'} />
+                {createNewSlotPopup && <CreateSlot componentName={'TAMENU'} />}
+                {scheduleNewSessionPopup && (
+                    <CreateSession componentName={'TAMENU'} />
                 )}
 
-                {selectTaStudent && (
-                    <EditStudents componentname={'TAMENU_CALENDER'} />
+                {selectStudentPopup && (
+                    <SelectStudents componentName={'TAMENU'} />
                 )}
-                {selectTaBatches && (
-                    <EditBatches componentname={'TAMENU_CALENDER'} />
-                )}
+                {selectBatchPopup && <SelectBatches componentName={'TAMENU'} />}
+
+                {markLeave && <MarkLeaveDate componentName={'TAMENU'} />}
+                {createdSlots && <CreatedSlots componentName={'TAMENU'} />}
                 {/*
                 
                 {/*{sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} componentName={"TACALENDER"} />} */}
@@ -281,9 +234,7 @@ const TAMenuCalendar = () => {
           componentName={"TACALENDER"}
         />
       )} */}
-                {createTaSlotsPopup && (
-                    <CreateNewSlot componentName={'TAMENU_CALENDER'} />
-                )}
+
                 {/* {assignStudentOpen && <AssignStudents componentname="ADDEDITTA" />}
                 {assignBatchOpen && <AssignBatches componentname="ADDEDITTA" />} */}
             </Box>

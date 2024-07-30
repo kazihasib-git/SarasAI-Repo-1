@@ -16,6 +16,7 @@ import activityTypeReducer from './features/ActivityType/activityTypeSlice';
 import coachMenuSliceReducer from './features/coach/coachmenuprofileSilce';
 import taMenuSliceReducer from './features/teachingAssistant/tamenuSlice';
 import loginReducer from './features/auth/loginSlice';
+import commonCalenderReducer from './features/commonCalender/commonCalender';
 
 const store = configureStore({
     reducer: {
@@ -33,6 +34,7 @@ const store = configureStore({
         activityType: activityTypeReducer,
         coachMenu: coachMenuSliceReducer,
         taMenu: taMenuSliceReducer,
+        commonCalender: commonCalenderReducer,
         [studentsApi.reducerPath]: studentsApi.reducer,
         [batchesApi.reducerPath]: batchesApi.reducer,
         [coursesApi.reducerPath]: coursesApi.reducer,

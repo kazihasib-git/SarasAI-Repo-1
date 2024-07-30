@@ -301,8 +301,6 @@ const EditStudents = ({ componentname }) => {
         );
     };
 
-    console.log('selectedStudents 278: ', selectedStudents);
-
     const handleSubmit = () => {
         const id =
             componentname === 'ADDITCOACH'

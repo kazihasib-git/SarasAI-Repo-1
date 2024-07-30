@@ -105,24 +105,6 @@ const MarkLeave = ({ componentName }) => {
             getSlotsAction = getCoachSlots;
             break;
 
-        case 'COACHMENU_CALENDER':
-            (sliceName = 'coachMenu'),
-                (scheduleSessionOpenKey = 'createCoachLeavePopup');
-            schedulingStateKey = 'coachMenu';
-            openAvailableSlotsAction = openSlotsForLeave;
-            closeMarkLeaveAction = closeMarkLeavePopup;
-            getSlotsAction = getSlotsForLeave;
-            break;
-
-        case 'TAMENU_CALENDER':
-            sliceName = 'taMenu';
-            scheduleSessionOpenKey = '';
-            schedulingStateKey = 'taMenu';
-            openAvailableSlotsAction = '';
-            closeMarkLeaveAction = '';
-            getSlotsAction = '';
-            break;
-
         default:
             sliceName = null;
             scheduleSessionOpenKey = null;

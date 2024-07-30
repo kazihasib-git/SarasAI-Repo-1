@@ -9,17 +9,21 @@ import './BigCal.css';
 import Header from '../Header/Header';
 import Sidebar from '../Sidebar/Sidebar';
 import ScheduleSession from '../availability/ScheduleSession';
+import { useDispatch } from 'react-redux';
+import { openSessionEvent } from '../../redux/features/taModule/taAvialability';
 
 moment.locale('en-GB');
 const localizer = momentLocalizer(moment);
 const allViews = Object.keys(Views).map(k => Views[k]);
 
-const CalendarComponent = ({ eventsList, addEvent, slotData }) => {
-    const [myEventsList, setMyEventsList] = useState([]);
-    // const [slots, setSlots] = useState([]);
+const CalendarComponent = ({ eventsList, slotData }) => {
+    const dispatch = useDispatch();
+    console.log('Event List', eventsList);
+    console.log('Slot Data : ', slotData);
 
-    const showSessionPopUp = () => {
-        console.log('clicked');
+    const showSessionPopUp = event => {
+        console.log('Selected Event:', event);
+        dispatch(openSessionEvent(event));
     };
 
     const eventStyleGetter = event => {
