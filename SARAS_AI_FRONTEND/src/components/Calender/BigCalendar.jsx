@@ -12,6 +12,7 @@ import ScheduleSession from '../availability/ScheduleSession';
 import { useDispatch } from 'react-redux';
 import { openSessionEvent } from '../../redux/features/taModule/taAvialability';
 import { openCoachSessionEvent } from '../../redux/features/CoachModule/CoachAvailabilitySlice';
+import { openSessionPopup } from '../../redux/features/commonCalender/commonCalender';
 
 moment.locale('en-GB');
 const localizer = momentLocalizer(moment);
@@ -26,7 +27,10 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
     
     console.log('Slot Data : ', slotData);
 
-    let sliceName, openPopup;
+    console.log("comp name", componentName);
+
+    let sliceName, 
+        openPopup;
 
     switch (componentName) {
         case 'TACALENDER':
@@ -37,6 +41,16 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
             sliceName = 'coachAvailability';
             openPopup = openCoachSessionEvent;
             break;
+        case 'TAMENU' :
+            sliceName = 'taMenu';
+            openPopup = openSessionPopup;
+            break;
+
+        case 'COACHMENU' :
+            sliceName  = 'coachMenu';
+            openPopup = openSessionPopup;
+            break;
+
         default:
             sliceName = null;
             openPopup = null;

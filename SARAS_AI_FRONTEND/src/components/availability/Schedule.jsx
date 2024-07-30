@@ -37,23 +37,6 @@ import { getTimezone } from '../../redux/features/timezone/timezoneSlice';
 import CustomTimeZoneForm from '../CustomFields/CustomTimeZoneForm';
 import { fetchTAScheduleById } from '../../redux/features/taModule/taAvialability';
 import { toast } from 'react-toastify';
-import {
-    closeCreateSessionPopup,
-    createCoachMenuSession,
-    getCoachMenuSessions,
-    getCoachMenuSlotsByData,
-    openCreateSessionPopup,
-    openSelectBatches,
-    openSelectStudents,
-} from '../../redux/features/coach/coachmenuprofileSilce';
-import {
-    closeTaMenuCreateSessionsPopup,
-    createTaMenuSessions,
-    getTaMenuSessions,
-    getTaMenuSlotsByDate,
-    openTaMenuSelectBatches,
-    openTaMenuSelectStudents,
-} from '../../redux/features/teachingAssistant/tamenuSlice';
 import { fetchCoachScheduleById } from '../../redux/features/CoachModule/CoachAvailabilitySlice';
 
 const CustomButton = ({
@@ -107,6 +90,12 @@ const actionButtons = [
     {
         type: 'button',
     },
+];
+
+const platforms = [
+    { label: 'Zoom', value: 1 },
+    { label: 'Team', value: 2 },
+    { label: 'BlueButton', value: 3 },
 ];
 
 const Schedule = ({ componentName }) => {
@@ -466,144 +455,108 @@ const Schedule = ({ componentName }) => {
                                                     errors={errors}
                                                 />
                                             </Grid>
-
-                                            {/*
-                      <Grid item xs={12} display="flex" justifyContent="center">
-                        <PopUpTable
-                          headers={headers}
-                          initialData={slotData}
-                          onRowClick={handleSelectSlots}
-                          selectedBox={selectedSlot}
-                        />
-                      </Grid>
-                      */}
                                             <Grid
-                                                container
-                                                spacing={3}
-                                                sx={{ pt: 3 }}
+                                                item
+                                                xs={12}
+                                                display="flex"
                                                 justifyContent="center"
                                             >
-                                                <Grid
-                                                    item
-                                                    xs={12}
-                                                    display="flex"
-                                                    justifyContent="center"
-                                                >
-                                                    <CustomTextField
-                                                        label="Meeting Name"
-                                                        name="meeting_name"
-                                                        placeholder="Enter Meeting Name"
-                                                        register={register}
-                                                        validation={{
-                                                            required:
-                                                                'Meeting Name is required',
-                                                        }}
-                                                        errors={errors}
-                                                    />
-                                                </Grid>
-                                                <Grid
-                                                    item
-                                                    xs={12}
-                                                    display="flex"
-                                                    justifyContent="center"
-                                                >
-                                                    <CustomTextField
-                                                        label="Meeting URL"
-                                                        name="meeting_url"
-                                                        placeholder="Enter Meeting URL"
-                                                        register={register}
-                                                        validation={{
-                                                            required:
-                                                                'Meeting URL is required',
-                                                        }}
-                                                        errors={errors}
-                                                    />
-                                                </Grid>
-                                                <Grid
-                                                    item
-                                                    xs={12}
-                                                    sm={6}
-                                                    display="flex"
-                                                    justifyContent="center"
-                                                >
-                                                    <CustomTimeField
-                                                        label="From Time"
-                                                        name="start_time"
-                                                        value={fromTime}
-                                                        onChange={setFromTime}
-                                                        validation={{
-                                                            required:
-                                                                'From Time is required',
-                                                        }}
-                                                        errors={errors}
-                                                    />
-                                                </Grid>
-                                                <Grid
-                                                    item
-                                                    xs={12}
-                                                    sm={6}
-                                                    display="flex"
-                                                    justifyContent="center"
-                                                >
-                                                    <CustomTimeField
-                                                        label="End Time"
-                                                        name="end_time"
-                                                        value={toTime}
-                                                        onChange={setToTime}
-                                                        validation={{
-                                                            required:
-                                                                'End Time is required',
-                                                        }}
-                                                        errors={errors}
-                                                    />
-                                                </Grid>
-                                                <Grid
-                                                    item
-                                                    xs={12}
-                                                    sm={6}
-                                                    display="flex"
-                                                    justifyContent="center"
-                                                >
-                                                    <Controller
-                                                        name="timezone"
-                                                        control={control}
-                                                        // rules={{ required: "Time Zone is required" }}
-                                                        render={({ field }) => (
-                                                            <CustomTimeZoneForm
-                                                                label="Time Zone"
-                                                                name="timezone"
-                                                                value={
-                                                                    field.value
-                                                                }
-                                                                onChange={
-                                                                    field.onChange
-                                                                }
-                                                                errors={errors}
-                                                                options={
-                                                                    timezones
-                                                                }
-                                                            />
-                                                        )}
-                                                    />
-                                                    {/*
-                          <CustomFormControl
-                            label="Select Timezone"
-                            name="timezone"
-                            value={adminUserTimezone}
-                            controlProps={{
-                              select: true,
-                              fullWidth: true,
-                              value: timezone,
-                              onChange: (e) => setTimezone(e.target.value),
-                            }}
-
-                            register={register}
-                            validation={{ validate: validateTimeZone }}
-                            errors={errors}
-                            options={transformedTimeZones}
-                          />
-                           */}
-                                                </Grid>
+                                                <CustomTextField
+                                                    label="Meeting Name"
+                                                    name="meeting_name"
+                                                    placeholder="Enter Meeting Name"
+                                                    register={register}
+                                                    validation={{
+                                                        required:
+                                                            'Meeting Name is required',
+                                                    }}
+                                                    errors={errors}
+                                                />
+                                            </Grid>
+                                            <Grid
+                                                item
+                                                xs={12}
+                                                sm={6}
+                                                display="flex"
+                                                justifyContent="center"
+                                            >
+                                                <CustomTimeField
+                                                    label="From Time"
+                                                    name="start_time"
+                                                    value={fromTime}
+                                                    onChange={setFromTime}
+                                                    validation={{
+                                                        required:
+                                                            'From Time is required',
+                                                    }}
+                                                    errors={errors}
+                                                />
+                                            </Grid>
+                                            <Grid
+                                                item
+                                                xs={12}
+                                                sm={6}
+                                                display="flex"
+                                                justifyContent="center"
+                                            >
+                                                <CustomTimeField
+                                                    label="End Time"
+                                                    name="end_time"
+                                                    value={toTime}
+                                                    onChange={setToTime}
+                                                    validation={{
+                                                        required:
+                                                            'End Time is required',
+                                                    }}
+                                                    errors={errors}
+                                                />
+                                            </Grid>
+                                            <Grid
+                                                item
+                                                xs={12}
+                                                display="flex"
+                                                justifyContent="center"
+                                            >
+                                                <Controller
+                                                    name="timezone"
+                                                    control={control}
+                                                    // rules={{ required: "Time Zone is required" }}
+                                                    render={({ field }) => (
+                                                        <CustomTimeZoneForm
+                                                            label="Time Zone"
+                                                            name="timezone"
+                                                            value={field.value}
+                                                            onChange={
+                                                                field.onChange
+                                                            }
+                                                            errors={errors}
+                                                            options={timezones}
+                                                        />
+                                                    )}
+                                                />
+                                            </Grid>
+                                            <Grid
+                                                item
+                                                xs={12}
+                                                display="flex"
+                                                justifyContent="center"
+                                            >
+                                                <Controller
+                                                    name="platform"
+                                                    control={control}
+                                                    render={({ field }) => (
+                                                        <CustomFormControl
+                                                            label="Platform"
+                                                            name="platform"
+                                                            value={field.value}
+                                                            onChange={
+                                                                field.onChange
+                                                            }
+                                                            errors={errors}
+                                                            options={platforms}
+                                                        />
+                                                    )}
+                                                />
                                             </Grid>
                                             <Grid
                                                 item
