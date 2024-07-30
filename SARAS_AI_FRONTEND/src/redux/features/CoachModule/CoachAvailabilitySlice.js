@@ -125,6 +125,8 @@ const initialState = {
     deletingCoachFutureSlots: false,
     coachId: [],
     coachName: [],
+    coachSessionEventData: [],
+    coachOpenEventData: false,
 };
 
 export const coachAvailabilitySlice = createSlice({
@@ -189,6 +191,15 @@ export const coachAvailabilitySlice = createSlice({
             state.deletingCoachFutureSlots = false;
             state.coachId = [];
             state.coachName = [];
+        },
+
+        openCoachSessionEvent(state, action) {
+            state.coachSessionEventData = action.payload;
+            state.coachOpenEventData = true;
+        },
+        closeCoachSessionEvent(state, action) {
+            state.coachSessionEventData = [];
+            state.coachOpenEventData = false;
         },
 
         // don't know where to use
@@ -339,6 +350,8 @@ export const {
     closeCoachRescheduleSession,
     openDeleteCoachSlots,
     closeDeleteCoachSlots,
+    openCoachSessionEvent,
+    closeCoachSessionEvent,
     // openStudentsRescheduleSession,
     // closeStudentsRescheduleSession
 } = coachAvailabilitySlice.actions;
