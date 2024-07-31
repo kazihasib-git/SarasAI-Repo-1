@@ -27,6 +27,10 @@ const CustomButton = styled(Button)(({ theme, backgroundColor = '' }) => ({
         color: '#fff',
         borderColor: backgroundColor,
     },
+    // Text transformation for button text
+    '.buttonText': {
+        textTransform: 'capitalize', // Ensure only the first letter is capitalized
+    },
 }));
 
 const AntSwitch = styled(Switch)(({ theme }) => ({
@@ -217,7 +221,7 @@ const TemplateModuleTable = ({ modulesData }) => {
                                 }
                             >
                                 <i className="bi bi-plus-circle"></i>
-                                <span style={{ marginLeft: '5px' }}>
+                                <span className="buttonText" style={{ marginLeft: '5px' }}>
                                     Add Activity
                                 </span>
                             </CustomButton>
@@ -236,7 +240,7 @@ const TemplateModuleTable = ({ modulesData }) => {
                                     icon={faPenToSquare}
                                     className="bi"
                                 />
-                                <span style={{ marginLeft: '5px' }}>
+                                <span className="buttonText" style={{ marginLeft: '5px' }}>
                                     Edit Module
                                 </span>
                             </CustomButton>
@@ -347,7 +351,7 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                                     );
                                                                 }}
                                                             >
-                                                                Link Activity
+                                                                    <span className="buttonText">Link Activity</span>
                                                             </CustomButton>
                                                         )}
                                                     </td>
@@ -373,7 +377,7 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                             }
                                                             backgroundColor="#FEEBE3"
                                                         >
-                                                            Prerequisite
+                                                            <span className="buttonText">Prerequisite</span>
                                                         </CustomButton>
                                                     </td>
                                                     <td
@@ -436,7 +440,7 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                                 }} // Inherit color from button
                                                             />
                                                             <span
-                                                                className="text" // Apply class name for text
+                                                                className="text buttonText" // Apply class name for text
                                                                 style={{
                                                                     fontSize:
                                                                         '14px',

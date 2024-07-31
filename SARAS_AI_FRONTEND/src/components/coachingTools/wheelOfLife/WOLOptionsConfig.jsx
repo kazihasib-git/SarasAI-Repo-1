@@ -41,6 +41,9 @@ const CustomButton = styled(Button)(({ theme, active }) => ({
         color: '#fff',
         borderColor: '#F56D3B',
     },
+    '.buttonText': {
+        textTransform: 'capitalize', // Ensure only the first letter is capitalized
+    },
 }));
 
 let scaleOptions = [];
@@ -234,18 +237,18 @@ const WOLOptionsConfig = () => {
             >
                 <Box display="flex" alignItems="center" padding="16px">
                     <ArrowBackIosIcon
-                        style={{ fontSize: '25px', marginBottom: '17px' }}
+                        style={{ fontSize: '25px', marginBottom: '17px', fontWeight: 'normal'}}
                         onClick={() => navigate('/wheel-of-life')}
                     />
-                    <Typography
-                        variant="h1"
-                        sx={{
+                    <p
+                        style={{
                             fontSize: '44px',
-                            marginLeft: '16px',
+                            fontWeight: 200,
+                            justifyContent: 'center',
                         }}
                     >
-                        Wheel of Life Options Config
-                    </Typography>
+                        Wheel Of Life Options Config
+                    </p>
                 </Box>
             </Box>
             <Box
@@ -300,6 +303,7 @@ const WOLOptionsConfig = () => {
                             <CustomButton
                                 type="submit"
                                 active={true}
+                                
                                 variant="contained"
                                 sx={{
                                     borderRadius: '50px',
@@ -307,7 +311,9 @@ const WOLOptionsConfig = () => {
                                     margin: '0 8px',
                                 }}
                             >
-                                {edit ? 'Edit' : 'Submit'}
+                                <span className="buttonText" >
+                                    {edit ? 'Edit' : 'Submit'}
+                                </span>
                             </CustomButton>
                         </Grid>
                     </Grid>
@@ -493,6 +499,7 @@ const WOLOptionsConfig = () => {
                         <CustomButton
                             type="submit"
                             active={true}
+                            
                             variant="contained"
                             sx={{
                                 borderRadius: '50px',
@@ -500,7 +507,9 @@ const WOLOptionsConfig = () => {
                                 margin: '0 8px',
                             }}
                         >
-                            Submit
+                            <span className="buttonText" >
+                                    Submit
+                                </span>
                         </CustomButton>
                     </Box>
                 </form>

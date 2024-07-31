@@ -155,6 +155,11 @@ const AddEditWOLQuestions = () => {
             */
         }
     }, [editwolQuestionData]);
+    const categoryName = editwolQuestionData
+        ? wolCategoryData.data.find(
+              item => item.id === editwolQuestionData.wol_category_id
+          )?.name
+        : 'No Category Selected';
 
     return (
         <>
@@ -195,27 +200,21 @@ const AddEditWOLQuestions = () => {
                 }}
             >
                 <form onSubmit={handleSubmit(onSubmit)} noValidate>
-                    <Box sx={{ marginBottom: 2, width: '40%' }}>
-                        <Controller
-                            name="category"
-                            control={control}
-                            rules={{ required: 'Category is required' }}
-                            render={({ field }) => (
-                                <CustomFormControl
-                                    label="Wheel of Life Category"
-                                    name="category"
-                                    value={field.value}
-                                    onChange={field.onChange}
-                                    errors={errors}
-                                    options={WOLCategoriesOptions}
-                                />
-                            )}
-                        />
+                <Box sx={{ marginBottom: 2, width: '40%' }}>
+                        <p
+                            style={{
+                                fontSize: '24px', // Increase the font size
+                                fontWeight: 600, // Make the text bolder
+                                color: '#1A1E3D',
+                            }}
+                        >
+                           {categoryName}
+                        </p>
                     </Box>
 
                     <Box
                         sx={{
-                            marginTop: '50px',
+                            marginTop: '10px',
                             position: 'relative',
                             padding: '2px',
                         }}

@@ -54,7 +54,7 @@ const AssignCoachBatches = () => {
             <AdminDataTable
                 headers={headers}
                 initialData={CoachAssignBatchesData}
-                title="Assign Batches"
+                title="Assigned Batches"
                 actionButtons={actionButtons}
                 ta_id={id}
                 dispatch={dispatch}
