@@ -32,6 +32,7 @@ import {
 } from '../../../redux/features/commonCalender/commonCalender';
 import SessionLink from './commonCalender/SessionLink';
 import EditSession from './commonCalender/EditSession';
+import ParticipantsDialog from '../../../pages/MODULE/coachModule/ParticipantsDialog';
 
 const CustomButton = ({
     onClick,
@@ -75,6 +76,8 @@ const ScheduledCall = ({ role }) => {
     const [anchorEl, setAnchorEl] = useState(null);
     const { coachScheduledCalls } = useSelector(state => state.coachMenu);
     const { taScheduledCalls } = useSelector(state => state.taMenu);
+    const [participantsDialogOpen, setParticipantsDialogOpen] = useState(false); // New state for ParticipantsDialog
+    const [selectedParticipants, setSelectedParticipants] = useState([]);
     const [scheduledCalls, setScheduledCalls] = useState([]);
     const {
         scheduleNewSessionPopup,
@@ -213,6 +216,13 @@ const ScheduledCall = ({ role }) => {
                     open={newMeetingPopUpOpen}
                     onClose={handleClose}
                     onSubmit={onNewMeetingSubmit}
+                />
+            )}
+            {participantsDialogOpen && (
+                <ParticipantsDialog
+                    open={participantsDialogOpen}
+                    onClose={handleCloseParticipantsDialog}
+                    participants={selectedParticipants} // Pass the selected participants data
                 />
             )}
 
@@ -378,7 +388,11 @@ const ScheduledCall = ({ role }) => {
                                 <Typography gutterBottom>
                                     {call.students.length > 0 ? (
                                         <a
-                                            href="#"
+                                            onClick={() =>
+                                                handleOpenParticipantsDialog(
+                                                    call.participants // Pass participants data
+                                                )
+                                            }
                                             style={{
                                                 textDecoration: 'underline',
                                                 color: '#F56D3B',

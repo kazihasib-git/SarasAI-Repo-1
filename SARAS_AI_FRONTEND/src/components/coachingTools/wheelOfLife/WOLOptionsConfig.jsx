@@ -309,6 +309,7 @@ const WOLOptionsConfig = () => {
                                     borderRadius: '50px',
                                     padding: '18px 30px',
                                     margin: '0 8px',
+                                    textTransform: 'none',
                                 }}
                             >
                                 <span className="buttonText" >
@@ -505,6 +506,7 @@ const WOLOptionsConfig = () => {
                                 borderRadius: '50px',
                                 padding: '18px 30px',
                                 margin: '0 8px',
+                                textTransform: 'none',
                             }}
                         >
                             <span className="buttonText" >
