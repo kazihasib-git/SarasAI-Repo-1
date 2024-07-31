@@ -129,6 +129,7 @@ const CoachCalender = () => {
             const transformedSlots = slotCoachData.map(slot => ({
                 startDate: new Date(slot.slot_date + 'T' + slot.from_time),
                 endDate: new Date(slot.slot_date + 'T' + slot.to_time),
+                leave: slot?.leaves,
             }));
             setSlotViewData(transformedSlots);
         } else {
@@ -153,7 +154,9 @@ const CoachCalender = () => {
         dispatch(openCreateNewSlots());
     };
 
-    console.log('event Data', eventsList, 'slots View', slotViewData);
+    console.log('event Data', eventsList);
+
+    console.log('slots View', slotViewData);
 
     return (
         <>

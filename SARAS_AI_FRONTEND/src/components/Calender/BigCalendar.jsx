@@ -91,7 +91,9 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
                 return {
                     style: {
                         backgroundColor:
-                            /* slot.on_leave ? '#FF6347' : */ '#B0FC38',
+                            slot.leave && slot.leave.length > 0
+                                ? '#FF6347' // Light red color for leave slots
+                                : '#B0FC38', // Green color for regular slots
                         opacity: 0.5,
                         border: 'none',
                     },

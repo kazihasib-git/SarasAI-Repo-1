@@ -127,6 +127,7 @@ const TaCalender = () => {
             const transformedSlots = slotData.data.map(slot => ({
                 startDate: new Date(slot.slot_date + 'T' + slot.from_time),
                 endDate: new Date(slot.slot_date + 'T' + slot.to_time),
+                leave: slot?.leaves,
             }));
             setSlotViewData(transformedSlots);
         } else {
@@ -151,7 +152,7 @@ const TaCalender = () => {
         dispatch(openCreateNewSlots());
     };
 
-    // console.log("session", scheduleData);
+    console.log('SlotViewData', slotViewData);
     // console.log("sessiond data", scheduleData.data);
 
     return (
