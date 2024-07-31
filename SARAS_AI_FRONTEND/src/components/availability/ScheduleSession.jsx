@@ -13,6 +13,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { closeSessionEvent } from '../../redux/features/taModule/taAvialability';
 import { formatDateTime } from '../../utils/dateFormatter';
 import { closeCoachSessionEvent } from '../../redux/features/CoachModule/CoachAvailabilitySlice';
+import {
+    openEditStudent,
+    openEditBatch,
+} from '../../redux/features/taModule/taScheduling';
+import {
+    openCoachEditBatch,
+    openCoachEditStudent,
+} from '../../redux/features/CoachModule/coachSchedule';
 
 const CustomButton = ({
     onClick,
@@ -52,7 +60,12 @@ const CustomButton = ({
 const ScheduleSession = ({ componentName }) => {
     const dispatch = useDispatch();
 
-    let sliceName, sessionDataState, closePopup, openPopupState;
+    let sliceName,
+        sessionDataState,
+        closePopup,
+        openPopupState,
+        openEditBatches,
+        openEditStudents;
 
     switch (componentName) {
         case 'TACALENDER':
@@ -60,6 +73,8 @@ const ScheduleSession = ({ componentName }) => {
             sessionDataState = 'sessionEventData';
             closePopup = closeSessionEvent;
             openPopupState = 'openEventData';
+            openEditBatches = openEditBatch;
+            openEditStudents = openEditStudent;
             break;
 
         case 'COACHCALENDER':
@@ -67,6 +82,8 @@ const ScheduleSession = ({ componentName }) => {
             sessionDataState = 'coachSessionEventData'; // Assuming this is correct
             closePopup = closeCoachSessionEvent; // Assuming this is correct
             openPopupState = 'coachOpenEventData'; // Assuming this is correct
+            openEditBatches = openCoachEditBatch;
+            openEditStudents = openCoachEditStudent;
             break;
 
         default:
@@ -74,6 +91,8 @@ const ScheduleSession = ({ componentName }) => {
             sessionDataState = null;
             closePopup = null;
             openPopupState = null;
+            openEditBatches = null;
+            openEditStudents = null;
             break;
     }
 
@@ -84,6 +103,16 @@ const ScheduleSession = ({ componentName }) => {
         [sessionDataState]: sessionData = {},
         [openPopupState]: open = false,
     } = selectState;
+
+    console.log('SESSION DATA :', sessionData);
+
+    const handleEditStudents = () => {
+        dispatch(openEditStudents());
+    };
+
+    const handleEditBatches = () => {
+        dispatch(openEditBatches());
+    };
 
     const content = (
         <Box sx={{ textAlign: 'center' }}>
@@ -128,60 +157,62 @@ const ScheduleSession = ({ componentName }) => {
                     <ContentCopyIcon />
                 </IconButton>
             </Typography>
-            <Typography variant="body2" sx={{ mb: 2 }}>
-                <Box component="span" sx={{ fontWeight: 'bold' }}>
-                    Join By Phone:
-                </Box>{' '}
-                (123) 456-7890, 79769199687
-            </Typography>
-            <Typography variant="body2" sx={{ mb: 2 }}>
-                <Box component="span" sx={{ fontWeight: 'bold' }}>
-                    8 Guests:
-                </Box>{' '}
-                3 yes, 5 awaiting
-            </Typography>
-            <Grid container spacing={2} justifyContent="center">
-                {sessionData.guests &&
-                    sessionData.guests.map((guest, index) => (
-                        <Grid item key={index}>
-                            <Box display="flex" alignItems="center">
-                                <Avatar sx={{ bgcolor: '#F56D38', mr: 1 }}>
-                                    {guest.initials}
-                                </Avatar>
-                                <Box>
-                                    <Typography variant="body2">
-                                        {guest.name}
-                                    </Typography>
-                                    <Typography variant="caption">
-                                        {guest.role}
-                                    </Typography>
-                                </Box>
-                            </Box>
-                        </Grid>
-                    ))}
-            </Grid>
         </Box>
     );
 
     const actions = (
         <Box>
-            <CustomButton
-                onClick={() => {}}
-                backgroundColor="#FFFFFF"
-                borderColor="#F56D38"
-                color="#F56D38"
-                sx={{ mr: 2 }}
-            >
-                Yes
-            </CustomButton>
-            <CustomButton
-                onClick={() => {}}
-                backgroundColor="#F56D38"
-                borderColor="#F56D38"
-                color="#FFFFFF"
-            >
-                No
-            </CustomButton>
+            <Grid item xs={12} display="flex" justifyContent="center">
+                <Box
+                    display="flex"
+                    justifyContent="center"
+                    gap={2}
+                    sx={{ mb: 3 }}
+                >
+                    <Button
+                        variant="contained"
+                        onClick={handleEditStudents}
+                        sx={{
+                            backgroundColor: '#F56D3B',
+                            color: 'white',
+                            height: '60px',
+                            width: '201px',
+                            borderRadius: '50px',
+                            textTransform: 'none',
+                            padding: '18px 30px',
+                            fontWeight: '700',
+                            fontSize: '16px',
+                            '&:hover': {
+                                backgroundColor: '#D4522A',
+                            },
+                        }}
+                    >
+                        Edit Students
+                    </Button>
+                    <Button
+                        variant="outlined"
+                        onClick={handleEditBatches}
+                        sx={{
+                            backgroundColor: 'white',
+                            color: '#F56D3B',
+                            height: '60px',
+                            width: '194px',
+                            border: '2px solid #F56D3B',
+                            borderRadius: '50px',
+                            textTransform: 'none',
+                            fontWeight: '700',
+                            fontSize: '16px',
+                            padding: '18px 30px',
+                            '&:hover': {
+                                backgroundColor: '#F56D3B',
+                                color: 'white',
+                            },
+                        }}
+                    >
+                        Edit Batches
+                    </Button>
+                </Box>
+            </Grid>
         </Box>
     );
 

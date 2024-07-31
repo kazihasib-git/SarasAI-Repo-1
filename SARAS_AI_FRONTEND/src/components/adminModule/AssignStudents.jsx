@@ -19,41 +19,7 @@ import {
     postCoachAssignStudents,
     getCoachAssignStudents,
 } from '../../redux/features/CoachModule/coachSlice';
-
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                padding: '10px 20px',
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
+import CustomButton from '../CustomFields/CustomButton';
 
 const AssignStudents = ({ componentname }) => {
     const dispatch = useDispatch();
@@ -260,7 +226,7 @@ const AssignStudents = ({ componentname }) => {
 
     const content = (
         <>
-            <Grid container spacing={2}>
+            <Grid container spacing={2} justifyContent="center" sx={{ mt: 0 }}>
                 <Grid item sm={6}>
                     <CustomTextField
                         select
@@ -268,6 +234,9 @@ const AssignStudents = ({ componentname }) => {
                         value={selectedTerm}
                         onChange={e => setSelectedTerm(e.target.value)}
                     >
+                        <MenuItem value="">
+                            <em>All</em>
+                        </MenuItem>
                         {academicTermOptions.map(term => (
                             <MenuItem key={term} value={term}>
                                 {term}
@@ -282,6 +251,9 @@ const AssignStudents = ({ componentname }) => {
                         value={selectedBatch}
                         onChange={e => setSelectedBatch(e.target.value)}
                     >
+                        <MenuItem value="">
+                            <em>All</em>
+                        </MenuItem>
                         {batchOptions.map(batch => (
                             <MenuItem key={batch} value={batch}>
                                 {batch}

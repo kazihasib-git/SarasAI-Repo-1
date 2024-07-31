@@ -134,8 +134,9 @@ const DynamicTable = ({
     const handleDelete = (id, ta_id) => {
         // Implement delete functionality here
         console.log('Deleting item with id:', id);
-        dispatch(deleteAssignedStudent({ id }));
-        dispatch(getAssignStudents(ta_id));
+        dispatch(deleteAssignedStudent({ id })).then(() => {
+            dispatch(getAssignStudents(ta_id));
+        });
     };
 
     const handleNavigate = path => {

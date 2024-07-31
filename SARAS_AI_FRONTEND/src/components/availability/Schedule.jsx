@@ -132,7 +132,8 @@ const Schedule = ({ componentName }) => {
             idKey = 'taID';
             nameKey = 'taName';
             timezoneKey = 'taTimezone';
-            (studentKey = 'students'), (batchKey = 'batches');
+            studentKey = 'students';
+            batchKey = 'batches';
             getAvailableSlotsAction = getTaAvailableSlotsFromDate;
             getScheduledSessionApi = fetchTAScheduleById;
             closeScheduleSessionAction = closeScheduleSession;
@@ -241,16 +242,6 @@ const Schedule = ({ componentName }) => {
                 return prev.filter(d => d !== day);
             } else {
                 return [...prev, day];
-            }
-        });
-    };
-
-    const handleSelectSlots = id => {
-        setSelectedSlot(prev => {
-            if (prev.includes(id)) {
-                return prev.filter(sid => sid !== id);
-            } else {
-                return [...prev, id];
             }
         });
     };

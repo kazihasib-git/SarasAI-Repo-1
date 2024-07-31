@@ -73,8 +73,6 @@ const TaCalender = () => {
     const dispatch = useDispatch();
     const { id, name } = useParams();
 
-    const [deleteFutureSlots, setDeleteFutureSlots] = useState(false);
-
     const {
         slotData,
         scheduleData,
@@ -234,7 +232,6 @@ const TaCalender = () => {
                     {openEditStudent && (
                         <EditStudents componentname={'TASCHEDULE'} />
                     )}
-                    {/*{sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} componentName={"TACALENDER"} />} */}
                     {markLeaveOpen && (
                         <MarkLeave
                             id={id}

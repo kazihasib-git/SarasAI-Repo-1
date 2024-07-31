@@ -16,18 +16,9 @@ import {
     openScheduleSession,
 } from '../../redux/features/taModule/taScheduling';
 
-import {
-    closeCoachEditStudent,
-    openCoachScheduleSession,
-} from '../../redux/features/CoachModule/coachSchedule';
+import { closeCoachEditStudent } from '../../redux/features/CoachModule/coachSchedule';
 
-import {
-    closeCoachAssignStudents,
-    openCoachSuccessPopup,
-    getCoachStudentBatchMapping,
-    postCoachAssignStudents,
-    getCoachAssignStudents,
-} from '../../redux/features/CoachModule/coachSlice';
+import { getCoachAssignStudents } from '../../redux/features/CoachModule/coachSlice';
 import {
     closeSelectStudents,
     getCoachMenuAssignedStudents,
@@ -38,6 +29,7 @@ import {
     getTaMenuAssignedStudents,
     openTaMenuCreateSessionsPopup,
 } from '../../redux/features/teachingAssistant/tamenuSlice';
+import { useParams } from 'react-router-dom';
 
 const CustomButton = ({
     onClick,
@@ -77,6 +69,8 @@ const CustomButton = ({
 const EditStudents = ({ componentname }) => {
     console.log('Component Name :', componentname);
     const dispatch = useDispatch();
+    const { id, name } = useParams();
+
     const [selectedTerm, setSelectedTerm] = useState([]);
     const [selectedBatch, setSelectedBatch] = useState('');
     const [searchName, setSearchName] = useState('');
@@ -121,32 +115,6 @@ const EditStudents = ({ componentname }) => {
             idKeyScheduling = 'taID';
             break;
 
-        case 'COACHMENU_CALENDER':
-            stateModuleKey = 'coachMenu';
-            nameKey = '';
-            assignStudentOpenKey = 'selectStudent';
-            editStudentKey = 'assignedCoachStudents';
-            selectedStudentKey = 'selectedCoachStudents';
-            closeDialogAction = closeSelectStudents;
-            getAssignStudentAction = getCoachMenuAssignedStudents;
-            schedulingState = useSelector(state => state.coachMenu);
-            nameKeyScheduling = '';
-            idKeyScheduling = '';
-            break;
-
-        case 'TAMENU_CALENDER':
-            stateModuleKey = 'taMenu';
-            nameKey = '';
-            assignStudentOpenKey = 'selectTaStudent';
-            editStudentKey = 'assignedTaStudents';
-            selectedStudentKey = 'selectedTaStudents';
-            closeDialogAction = closeTaMenuSelectStudents;
-            getAssignStudentAction = getTaMenuAssignedStudents;
-            schedulingState = useSelector(state => state.taMenu);
-            nameKeyScheduling = '';
-            idKeyScheduling = '';
-            break;
-
         default:
             stateModuleKey = null;
             nameKey = null;
@@ -179,19 +147,9 @@ const EditStudents = ({ componentname }) => {
     } = stateSelector || {};
 
     useEffect(() => {
-        console.log(
-            'stateModuleKey :',
-            stateModuleKey,
-            'assignStudentOpen :',
-            assignStudentOpen
-        );
         // dispatch(getAssignStudents(taaId));
         if (stateModuleKey && assignStudentOpen) {
-            if (stateModuleKey == 'coachMenu' || stateModuleKey === 'taMenu') {
-                dispatch(getAssignStudentAction());
-            } else {
-                dispatch(getAssignStudentAction(assignedId));
-            }
+            dispatch(getAssignStudentAction(id));
         }
     }, [
         dispatch,
@@ -313,23 +271,13 @@ const EditStudents = ({ componentname }) => {
         };
 
         console.log('SUBMIT DATA :', data);
-        if (componentname === 'COACHMENU_CALENDER') {
-            const student = selectedStudents.map(id => ({ id }));
-            dispatch(openCreateSessionPopup({ student }));
-            dispatch(closeDialogAction());
-        } else if (componentname === 'TAMENU_CALENDER') {
-            const student = selectedStudents.map(id => ({ id }));
-            dispatch(openTaMenuCreateSessionsPopup({ student }));
-            dispatch(closeDialogAction());
-        } else {
-            dispatch(
-                openScheduleSession({
-                    id,
-                    name: assignedName,
-                    student: selectedStudents.map(id => ({ id })),
-                })
-            );
-        }
+        dispatch(
+            openScheduleSession({
+                id,
+                name: assignedName,
+                student: selectedStudents.map(id => ({ id })),
+            })
+        );
 
         dispatch(closeDialogAction());
     };
@@ -346,6 +294,9 @@ const EditStudents = ({ componentname }) => {
                         value={selectedTerm}
                         onChange={e => setSelectedTerm(e.target.value)}
                     >
+                        <MenuItem value="">
+                            <em>All</em>
+                        </MenuItem>
                         {academicTermOptions.map(term => (
                             <MenuItem key={term} value={term}>
                                 {term}
@@ -407,32 +358,15 @@ const EditStudents = ({ componentname }) => {
         </CustomButton>
     );
 
-    const assignedTA = assignedTAName || assignedName;
-
-    if (
-        componentname === 'COACHMENU_CALENDER' ||
-        componentname === 'TAMENU_CALENDER'
-    ) {
-        return (
-            <ReusableDialog
-                open={assignStudentOpen}
-                handleClose={() => dispatch(closeDialogAction())}
-                title={`Assign Students`}
-                content={content}
-                actions={actions}
-            />
-        );
-    } else {
-        return (
-            <ReusableDialog
-                open={assignStudentOpen}
-                handleClose={() => dispatch(closeDialogAction())}
-                title={`Assign Students to '${assignedTA}'`}
-                content={content}
-                actions={actions}
-            />
-        );
-    }
+    return (
+        <ReusableDialog
+            open={assignStudentOpen}
+            handleClose={() => dispatch(closeDialogAction())}
+            title={`Assign Students to '${name}'`}
+            content={content}
+            actions={actions}
+        />
+    );
 };
 
 export default EditStudents;
