@@ -22,6 +22,7 @@ import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCoachScheduledCalls } from '../../../redux/features/coach/coachmenuprofileSilce';
 import { getTaScheduledCalls } from '../../../redux/features/teachingAssistant/tamenuSlice';
+import ParticipantsDialog from '../../../pages/MODULE/coachModule/ParticipantsDialog';
 
 const CustomButton = ({
     onClick,
@@ -65,7 +66,8 @@ const ScheduledCall = ({ role }) => {
     const [anchorEl, setAnchorEl] = useState(null);
     const { coachScheduledCalls } = useSelector(state => state.coachMenu);
     const { taScheduledCalls } = useSelector(state => state.taMenu);
-
+    const [participantsDialogOpen, setParticipantsDialogOpen] = useState(false); // New state for ParticipantsDialog
+    const [selectedParticipants, setSelectedParticipants] = useState([]);
     const [scheduledCalls, setScheduledCalls] = useState([]);
 
     function formatDate(date) {
@@ -117,7 +119,7 @@ const ScheduledCall = ({ role }) => {
         let filteredRequests = [];
 
         if (date > now) {
-            filteredRequests = requests;
+            filteredRequests = [...requests];
         } else {
             filteredRequests = requests.filter(
                 request => request.end_time >= currentTime
@@ -186,6 +188,13 @@ const ScheduledCall = ({ role }) => {
             console.error('Meeting URL is not provided');
         }
     };
+    const handleOpenParticipantsDialog = participants => {
+        setSelectedParticipants(participants);
+        setParticipantsDialogOpen(true);
+    };
+    const handleCloseParticipantsDialog = () => {
+        setParticipantsDialogOpen(false);
+    };
 
     return (
         <div style={{ padding: '20px' }}>
@@ -196,6 +205,14 @@ const ScheduledCall = ({ role }) => {
                     onSubmit={onNewMeetingSubmit}
                 />
             )}
+            {participantsDialogOpen && (
+                <ParticipantsDialog
+                    open={participantsDialogOpen}
+                    onClose={handleCloseParticipantsDialog}
+                    participants={selectedParticipants} // Pass the selected participants data
+                />
+            )}
+
             <Box
                 display="flex"
                 justifyContent="space-between"
@@ -322,10 +339,15 @@ const ScheduledCall = ({ role }) => {
                                 <Typography gutterBottom>
                                     {call.students.length > 0 ? (
                                         <a
-                                            href="#"
+                                            onClick={() =>
+                                                handleOpenParticipantsDialog(
+                                                    call.participants // Pass participants data
+                                                )
+                                            }
                                             style={{
                                                 textDecoration: 'underline',
                                                 color: '#F56D3B',
+                                                cursor: 'pointer',
                                             }}
                                         >
                                             Participants

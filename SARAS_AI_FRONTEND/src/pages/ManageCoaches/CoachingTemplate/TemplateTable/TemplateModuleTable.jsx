@@ -337,6 +337,10 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                         ) : (
                                                             <CustomButton
                                                                 backgroundColor="#FEEBE3"
+                                                                style={{
+                                                                    textTransform:
+                                                                        'none',
+                                                                }}
                                                                 onClick={() => {
                                                                     console.log(
                                                                         'selectedcoachtemplate',
@@ -368,6 +372,10 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                         }}
                                                     >
                                                         <CustomButton
+                                                            style={{
+                                                                textTransform:
+                                                                    'none',
+                                                            }}
                                                             onClick={
                                                                 openPrerequisitesPopup
                                                             }
@@ -443,6 +451,8 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                                     marginLeft:
                                                                         '5px',
                                                                     color: 'inherit', // Inherit color from button
+                                                                    textTransform:
+                                                                        'none',
                                                                 }}
                                                             >
                                                                 Edit

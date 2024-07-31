@@ -239,6 +239,7 @@ const WOLOptionsConfig = () => {
                         sx={{
                             fontSize: '44px',
                             marginLeft: '16px',
+                            fontFamily: 'ExtraLight',
                         }}
                     >
                         Wheel of Life Options Config
@@ -302,6 +303,7 @@ const WOLOptionsConfig = () => {
                                     borderRadius: '50px',
                                     padding: '18px 30px',
                                     margin: '0 8px',
+                                    textTransform: 'none',
                                 }}
                             >
                                 {edit ? 'Edit' : 'Submit'}
@@ -490,6 +492,7 @@ const WOLOptionsConfig = () => {
                                 borderRadius: '50px',
                                 padding: '18px 30px',
                                 margin: '0 8px',
+                                textTransform: 'none',
                             }}
                         >
                             Submit

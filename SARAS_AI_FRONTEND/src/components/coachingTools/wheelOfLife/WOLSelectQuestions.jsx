@@ -149,7 +149,7 @@ const WOLSelectQuestions = () => {
                             justifyContent: 'center',
                         }}
                     >
-                        Wheel Of Test Config
+                        Wheel Of Life Test Config
                     </p>
                 </Box>
             </Box>
@@ -230,6 +230,7 @@ const WOLSelectQuestions = () => {
                             borderRadius: '50px',
                             padding: '18px 30px',
                             margin: '0 8px',
+                            textTransform: 'none',
                         }}
                     >
                         <img
