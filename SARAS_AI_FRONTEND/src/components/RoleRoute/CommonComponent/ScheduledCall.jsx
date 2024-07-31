@@ -22,6 +22,16 @@ import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCoachScheduledCalls } from '../../../redux/features/coach/coachmenuprofileSilce';
 import { getTaScheduledCalls } from '../../../redux/features/teachingAssistant/tamenuSlice';
+import SelectStudents from './commonCalender/SelectStudents';
+import SelectBatches from './commonCalender/SelectBatches';
+import CreateSession from './commonCalender/CreateSession';
+import {
+    openScheduleNewSession,
+    openSessionPopup,
+    openEditSession,
+} from '../../../redux/features/commonCalender/commonCalender';
+import SessionLink from './commonCalender/SessionLink';
+import EditSession from './commonCalender/EditSession';
 
 const CustomButton = ({
     onClick,
@@ -67,6 +77,13 @@ const ScheduledCall = ({ role }) => {
     const { taScheduledCalls } = useSelector(state => state.taMenu);
 
     const [scheduledCalls, setScheduledCalls] = useState([]);
+    const {
+        scheduleNewSessionPopup,
+        selectStudentPopup,
+        selectBatchPopup,
+        openSession,
+        editSession,
+    } = useSelector(state => state.commonCalender);
 
     function formatDate(date) {
         const localDate = new Date(date);
@@ -83,7 +100,7 @@ const ScheduledCall = ({ role }) => {
                 .then(response => console.log(response))
                 .catch(error => console.error(error));
         }
-    }, [dispatch, date, role]);
+    }, [dispatch, date, role, scheduleNewSessionPopup]);
 
     function convertTo12HourFormat(time24) {
         // Split the time into hours, minutes, and seconds
@@ -98,40 +115,32 @@ const ScheduledCall = ({ role }) => {
         return `${hours12}:${formattedMinutes} ${suffix}`;
     }
 
-    const isCallActive = (startTime, endTime) => {
+    const getCallStatus = (startTime, endTime) => {
         const nowUtc = new Date();
         const offset = 5.5 * 60 * 60 * 1000;
         const nowIst = new Date(nowUtc.getTime() + offset);
         const currentTime = nowIst.toISOString().split('T')[1].split('.')[0];
 
-        return currentTime >= startTime && currentTime <= endTime;
+        if (currentTime < startTime) {
+            return 'scheduled';
+        } else if (currentTime >= startTime && currentTime <= endTime) {
+            return 'inprogress';
+        } else {
+            return 'completed';
+        }
     };
 
     const processScheduledCalls = requests => {
-        const now = new Date();
-        const offset = 5.5 * 60 * 60 * 1000;
-        const currentTime = new Date(now.getTime() + offset)
-            .toISOString()
-            .split('T')[1]
-            .split('.')[0];
-        let filteredRequests = [];
+        const newRequests = requests.map(request => ({ ...request }));
 
-        if (date > now) {
-            filteredRequests = requests;
-        } else {
-            filteredRequests = requests.filter(
-                request => request.end_time >= currentTime
-            );
-        }
-
-        const sortedRequests = filteredRequests.sort((a, b) => {
+        const sortedRequests = newRequests.sort((a, b) => {
             return a.start_time.localeCompare(b.start_time);
         });
 
         const processedCalls = sortedRequests.map(request => ({
             ...request,
             time: `${convertTo12HourFormat(request.start_time)} - ${convertTo12HourFormat(request.end_time)}`,
-            callActive: isCallActive(request.start_time, request.end_time),
+            callStatus: getCallStatus(request.start_time, request.end_time),
         }));
         setScheduledCalls(processedCalls);
     };
@@ -179,12 +188,23 @@ const ScheduledCall = ({ role }) => {
         setNewMeetingPopUpOpen(false);
     };
 
-    const handleClickJoinMeeting = meetingUrl => {
-        if (meetingUrl) {
-            window.open(meetingUrl, '_blank');
-        } else {
-            console.error('Meeting URL is not provided');
-        }
+    const handleClickJoinSession = call => {
+        console.log(call);
+        const transformedCall = {
+            title: call.meeting_name,
+            start: new Date(call.date.split(' ')[0] + 'T' + call.start_time),
+            end: new Date(call.date.split(' ')[0] + 'T' + call.end_time),
+        };
+        dispatch(openSessionPopup(transformedCall));
+    };
+
+    const handleCreateNewSession = () => {
+        dispatch(openScheduleNewSession());
+    };
+
+    const handleEditClick = data => {
+        console.log(data);
+        dispatch(openEditSession(data));
     };
 
     return (
@@ -216,7 +236,7 @@ const ScheduledCall = ({ role }) => {
                     backgroundColor="#F56D3B"
                     borderColor="#F56D3B"
                     style={{ textTransform: 'none' }}
-                    onClick={() => setNewMeetingPopUpOpen(true)}
+                    onClick={handleCreateNewSession}
                 >
                     <AddCircleOutlineIcon />
                     Create New Session
@@ -263,6 +283,41 @@ const ScheduledCall = ({ role }) => {
                 </Box>
             </LocalizationProvider>
 
+            {scheduleNewSessionPopup &&
+                (role == 'Coach' ? (
+                    <CreateSession componentName={'COACHMENU'} />
+                ) : (
+                    <CreateSession componentName={'TAMENU'} />
+                ))}
+
+            {editSession &&
+                (role == 'Coach' ? (
+                    <EditSession componentName={'COACHMENU'} />
+                ) : (
+                    <EditSession componentName={'TAMENU'} />
+                ))}
+
+            {selectStudentPopup &&
+                (role == 'Coach' ? (
+                    <SelectStudents componentName={'COACHMENU'} />
+                ) : (
+                    <SelectStudents componentName={'TAMENU'} />
+                ))}
+
+            {selectBatchPopup &&
+                (role == 'Coach' ? (
+                    <SelectBatches componentName={'COACHMENU'} />
+                ) : (
+                    <SelectBatches componentName={'TAMENU'} />
+                ))}
+
+            {openSession &&
+                (role == 'Coach' ? (
+                    <SessionLink componentName={'COACHMENU'} />
+                ) : (
+                    <SessionLink componentName={'TAMENU'} />
+                ))}
+
             <Grid container spacing={2}>
                 {scheduledCalls.map(call => (
                     <Grid item key={call.id} xs={12} sm={6} md={4}>
@@ -302,6 +357,7 @@ const ScheduledCall = ({ role }) => {
                                         lineHeight: '16px', // match this with the image height for better alignment
                                     },
                                 }}
+                                onClick={() => handleEditClick(call)}
                             >
                                 <img src={editIcon} alt="" />
                                 <small
@@ -342,21 +398,19 @@ const ScheduledCall = ({ role }) => {
                                     justifyContent="flex-end"
                                     mt={2}
                                 >
-                                    {call.callActive ? (
+                                    {call.callStatus === 'inprogress' ? (
                                         <CustomButton
                                             color="#FFFFFF"
                                             backgroundColor="#19B420"
                                             borderColor="#19B420"
                                             style={{ textTransform: 'none' }}
                                             onClick={() =>
-                                                handleClickJoinMeeting(
-                                                    call.meeting_url
-                                                )
+                                                handleClickJoinSession(call)
                                             }
                                         >
                                             Join Session
                                         </CustomButton>
-                                    ) : (
+                                    ) : call.callStatus === 'scheduled' ? (
                                         <CustomButton
                                             color="#FFFFFF"
                                             backgroundColor="#F56D3B"
@@ -365,6 +419,16 @@ const ScheduledCall = ({ role }) => {
                                         >
                                             Scheduled
                                         </CustomButton>
+                                    ) : (
+                                        <span
+                                            style={{
+                                                color: '#19B420',
+                                                textTransform: 'none',
+                                                padding: '10px',
+                                            }}
+                                        >
+                                            Completed
+                                        </span>
                                     )}
                                 </Box>
                             </CardContent>

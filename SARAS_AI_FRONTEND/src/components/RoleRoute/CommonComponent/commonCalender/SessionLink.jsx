@@ -175,7 +175,7 @@ const SessionLink = ({ componentName }) => {
         <ReusableDialog
             open={openSession}
             handleClose={() => dispatch(closeSessionPopup())}
-            title={`${sessionEventData.title || 'No Title'} - Daily Scrum`}
+            title={`${sessionEventData.title || 'No Title'}`}
             content={content}
             actions={actions}
         />

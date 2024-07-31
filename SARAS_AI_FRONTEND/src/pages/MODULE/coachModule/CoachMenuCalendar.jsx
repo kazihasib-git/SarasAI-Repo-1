@@ -28,6 +28,7 @@ import SelectBatches from '../../../components/RoleRoute/CommonComponent/commonC
 import MarkLeaveDate from '../../../components/RoleRoute/CommonComponent/commonCalender/MarkLeaveDate';
 import CreatedSlots from '../../../components/RoleRoute/CommonComponent/commonCalender/CreatedSlots';
 import SessionLink from '../../../components/RoleRoute/CommonComponent/commonCalender/SessionLink';
+import CreateSession from '../../../components/RoleRoute/CommonComponent/commonCalender/CreateSession';
 
 const CustomButton = ({
     onClick,
