@@ -105,7 +105,7 @@ const CreateSession = ({ componentName }) => {
         toDate: null,
         fromTime: null,
         toTime: null,
-        timezone: 'Asia/Kolkata',
+        timezone: '1',
         repeat: 'onetime',
         selectedDays: [],
     });

@@ -30,7 +30,7 @@ const Students = () => {
             const transformedData = apiData.map((item, index) => ({
                 id: item.student_id,
                 'Student Name': item.student_name,
-                'Lms Id': item.enrollment_id,
+                'Enrollment Id': item.enrollment_id,
                 Program:
                     item.packages.map(pack => pack.name).join(',') || 'N/A',
                 Batch:

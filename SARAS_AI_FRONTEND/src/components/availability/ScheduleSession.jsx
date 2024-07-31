@@ -24,7 +24,6 @@ import {
 
 import editImg from '../../assets/editIcon_White.png';
 import editImage from '../../assets/editIcon.png';
-import ZoomCall from '../integrations/zoom/ZoomCall';
 
 const CustomButton = ({
     onClick,
@@ -136,8 +135,6 @@ const ScheduleSession = ({ componentName }) => {
     };
 
     const handleChangeMode = () => {};
-
-    const handleJoinZoom = data => {};
 
     const content = (
         <Box sx={{ textAlign: 'center' }}>
