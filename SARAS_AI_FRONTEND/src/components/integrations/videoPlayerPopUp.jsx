@@ -15,6 +15,7 @@ const VideoPopup = ({ open, videoUrl, onClose }) => {
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
+                    position: 'relative', // Make sure to use relative positioning
                 },
             }}
         >
@@ -35,20 +36,29 @@ const VideoPopup = ({ open, videoUrl, onClose }) => {
                 dividers={false}
                 sx={{
                     position: 'relative',
-                    height: '75vh',
+                    height: '100%', // Make the DialogContent take up the entire height
+                    width: '100%', // Make the DialogContent take up the entire width
+                    padding: 0, // Remove padding to make the video fill the dialog
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    padding: 0, // Remove padding to make the video fill the dialog
                 }}
             >
-                <Vimeo
+                <ReactPlayer
+                    video={videoUrl}
+                    playing
+                    controls
+                    width="100%"
+                    height="100%"
+                    style={{ position: 'absolute', top: 0, left: 0 }}
+                />
+                {/* <Vimeo
                     video={videoUrl}
                     autoplay
                     width="100%"
                     height="100%"
                     style={{ position: 'absolute', top: 0, left: 0 }}
-                />
+                /> */}
             </DialogContent>
         </Dialog>
     );

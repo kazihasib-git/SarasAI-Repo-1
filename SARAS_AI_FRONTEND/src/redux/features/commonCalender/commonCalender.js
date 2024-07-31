@@ -6,6 +6,7 @@ const initialState = {
     userId: '',
     userName: '',
     sessionEventData: [],
+    sessionData: null, // select session data to edit
 
     createNewSlotPopup: false, // for new slot popup
     scheduleNewSessionPopup: false, //  for new session Popup
@@ -14,6 +15,7 @@ const initialState = {
     markLeave: false,
     createdSlots: false,
     openSession: false,
+    editSession: false,
 };
 
 const commonCalender = createSlice({
@@ -80,6 +82,15 @@ const commonCalender = createSlice({
             state.sessionEventData = [];
             state.openSession = false;
         },
+
+        openEditSession: (state, action) => {
+            state.editSession = true;
+            state.sessionData = action.payload;
+        },
+        closeEditSession: (state, action) => {
+            state.editSession = false;
+            state.sessionData = null;
+        },
     },
 });
 
@@ -98,6 +109,8 @@ export const {
     closeCreatedSlots,
     openSessionPopup,
     closeSessionPopup,
+    openEditSession,
+    closeEditSession,
 } = commonCalender.actions;
 
 export default commonCalender.reducer;
