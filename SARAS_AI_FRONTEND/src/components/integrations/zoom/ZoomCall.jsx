@@ -16,7 +16,15 @@ const url = process.env.REACT_APP_FRONTEND_URL;
 const signature = process.env.REACT_APP_ZOOM_SIGNATURE;
 const apiKey = process.env.REACT_APP_ZOOM_API_KEY;
 
-const ZoomCall = () => {
+const ZoomCall = ({ info }) => {
+    // TODO : INFO
+    /*
+        meetingNumber
+        userName
+        userEmail
+        password
+    */
+
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
@@ -33,6 +41,7 @@ const ZoomCall = () => {
                         apiKey: apiKey,
                         meetingNumber: 'your_meeting_number',
                         userName: 'Your Name',
+                        userEmail: 'user@example.com',
                         passWord: 'your_meeting_password',
                         success: res => {
                             setLoading(false);

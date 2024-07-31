@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { useGetStudentsQuery } from '../../redux/services/students/studentsApi'; // Import your API hook
+import {
+    studentsApi,
+    useGetStudentsQuery,
+} from '../../redux/services/students/studentsApi'; // Import your API hook
 import { Box } from '@mui/material';
-import Pagination from '@mui/material/Pagination';
-import { useNavigate } from 'react-router-dom';
 import Header from '../Header/Header';
 import Sidebar from '../Sidebar/Sidebar';
 import { studentDummyDatadata } from '../../fakeData/studentData';
 import DynamicTable from '../CommonComponent/DynamicTable';
+import { useDispatch } from 'react-redux';
 
 const Students = () => {
+    const dispatch = useDispatch();
     const [input, setInput] = useState('');
     const [students, setStudents] = useState([]);
 
@@ -21,28 +24,39 @@ const Students = () => {
     const { data: apiData, error, isLoading } = useGetStudentsQuery();
 
     useEffect(() => {
-        const dataToUse = useDummyData ? studentDummyDatadata : apiData;
-        if (dataToUse) {
-            const transformedData = dataToUse.map(item => ({
-                id: item.id,
-                Name: item.name,
-                'Lms Id': item.student_lms_id,
-                'Acedemic Term': item.academic_term,
-                Batch: item.primary_phone,
+        //const dataToUse = useDummyData ? studentDummyDatadata : apiData;
+        console.log('apiData ', apiData);
+        if (apiData) {
+            const transformedData = apiData.map((item, index) => ({
+                id: item.student_id,
+                'Student Name': item.student_name,
+                'Lms Id': item.enrollment_id,
+                Program:
+                    item.packages.map(pack => pack.name).join(',') || 'N/A',
+                Batch:
+                    item.batches.map(batch => batch.batch_name).join(', ') ||
+                    'N/A',
             }));
+            console.log('TransformedData', transformedData);
             setStudents(transformedData);
         }
-    }, [apiData, useDummyData]);
+    }, [apiData]);
 
     if (isLoading) {
         return <div>Loading....</div>;
     }
 
-    const headers = ['ID', 'Name', 'Lms Id', 'Acedemic Term', 'Batch'];
+    const headers = [
+        'S. No.',
+        'Student Name',
+        'Enrollment Id',
+        'Program',
+        'Batch',
+    ];
 
     // Filter students based on the search input
     const filteredStudents = students.filter(student =>
-        student.Name.toLowerCase().includes(input.toLowerCase())
+        student['Student Name'].toLowerCase().includes(input.toLowerCase())
     );
 
     return (

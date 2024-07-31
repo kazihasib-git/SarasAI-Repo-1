@@ -22,6 +22,10 @@ import {
     openCoachEditStudent,
 } from '../../redux/features/CoachModule/coachSchedule';
 
+import editImg from '../../assets/editIcon_White.png';
+import editImage from '../../assets/editIcon.png';
+import ZoomCall from '../integrations/zoom/ZoomCall';
+
 const CustomButton = ({
     onClick,
     children,
@@ -114,13 +118,34 @@ const ScheduleSession = ({ componentName }) => {
         dispatch(openEditBatches());
     };
 
+    const handleLinkCopy = () => {
+        if (sessionData.meetingLink) {
+            navigator.clipboard
+                .writeText(sessionData.meetingLink)
+                .then(() => {
+                    console.log('Link copied to clipboard!');
+                    // Optionally, you can display a notification or message to the user
+                })
+                .catch(err => {
+                    console.error('Failed to copy link: ', err);
+                    // Optionally, handle the error case
+                });
+        } else {
+            console.error('No meeting link available to copy.');
+        }
+    };
+
+    const handleChangeMode = () => {};
+
+    const handleJoinZoom = data => {};
+
     const content = (
         <Box sx={{ textAlign: 'center' }}>
             <Typography variant="body1" sx={{ mb: 2 }}>
                 {formatDateTime(sessionData)}
             </Typography>
             <CustomButton
-                onClick={() => {}}
+                onClick={() => handleJoinZoom(sessionData)}
                 backgroundColor="#FFFFFF"
                 borderColor="#F56D38"
                 color="#F56D38"
@@ -129,14 +154,14 @@ const ScheduleSession = ({ componentName }) => {
                 Join with Zoom
             </CustomButton>
             <CustomButton
-                onClick={() => {}}
+                onClick={handleChangeMode}
                 variant="text"
                 backgroundColor="#FFFFFF"
                 borderColor="transparent"
                 color="#F56D38"
                 sx={{ mb: 2 }}
             >
-                Change Meeting Mode
+                Change Mode
             </CustomButton>
             <Typography variant="body2" sx={{ mb: 2 }}>
                 {sessionData.meetingLink}
@@ -153,6 +178,7 @@ const ScheduleSession = ({ componentName }) => {
                         color: 'white',
                         ml: 1,
                     }}
+                    onClick={handleLinkCopy}
                 >
                     <ContentCopyIcon />
                 </IconButton>
@@ -187,6 +213,7 @@ const ScheduleSession = ({ componentName }) => {
                             },
                         }}
                     >
+                        <img src={editImg} alt="edit" />
                         Edit Students
                     </Button>
                     <Button
@@ -203,12 +230,9 @@ const ScheduleSession = ({ componentName }) => {
                             fontWeight: '700',
                             fontSize: '16px',
                             padding: '18px 30px',
-                            '&:hover': {
-                                backgroundColor: '#F56D3B',
-                                color: 'white',
-                            },
                         }}
                     >
+                        <img src={editImage} alt="edit" />
                         Edit Batches
                     </Button>
                 </Box>
@@ -220,7 +244,7 @@ const ScheduleSession = ({ componentName }) => {
         <ReusableDialog
             open={open}
             handleClose={() => dispatch(closePopup())}
-            title={`${sessionData.title || 'No Title'} - Daily Scrum`}
+            title={`${sessionData.title || 'No Title'}`}
             content={content}
             actions={actions}
         />
