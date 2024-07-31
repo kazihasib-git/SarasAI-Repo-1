@@ -75,7 +75,6 @@ const ScheduledCall = ({ role }) => {
     const [anchorEl, setAnchorEl] = useState(null);
     const { coachScheduledCalls } = useSelector(state => state.coachMenu);
     const { taScheduledCalls } = useSelector(state => state.taMenu);
-
     const [scheduledCalls, setScheduledCalls] = useState([]);
     const {
         scheduleNewSessionPopup,
@@ -203,9 +202,9 @@ const ScheduledCall = ({ role }) => {
     };
 
     const handleEditClick = data => {
-        console.log(data);
         dispatch(openEditSession(data));
     };
+    
 
     return (
         <div style={{ padding: '20px' }}>
@@ -216,6 +215,7 @@ const ScheduledCall = ({ role }) => {
                     onSubmit={onNewMeetingSubmit}
                 />
             )}
+
             <Box
                 display="flex"
                 justifyContent="space-between"
@@ -382,6 +382,7 @@ const ScheduledCall = ({ role }) => {
                                             style={{
                                                 textDecoration: 'underline',
                                                 color: '#F56D3B',
+                                                cursor: 'pointer',
                                             }}
                                         >
                                             Participants

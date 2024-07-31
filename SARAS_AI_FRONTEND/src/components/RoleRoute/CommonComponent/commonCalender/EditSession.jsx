@@ -94,22 +94,24 @@ const platformOptions = [
 const EditSession = ({ componentName }) => {
     const dispatch = useDispatch();
     const { timezones } = useSelector(state => state.timezone);
-    const { editSessionPopup, students, batches, sessionData } = useSelector(
+    const { editSession, students, batches, sessionData } = useSelector(
         state => state.commonCalender
     );
+
+    console.log(sessionData);
 
     const [formData, setFormData] = useState({
         sessionName: sessionData.meeting_name || '',
         duration: sessionData.duration || null,
         message: sessionData.message || '',
-        students: sessionData.studentId || [],
+        students: sessionData.students || [],
         batches: sessionData.batchId || [],
         platforms: sessionData.platforms || null,
         fromDate: sessionData.schedule_date || null,
         toDate: sessionData.to_date || null,
         fromTime: sessionData.start_time || null,
         toTime: sessionData.end_time || null,
-        timezone: sessionData.timezone || 'Asia/Kolkata',
+        timezone:  'Asia/Kolkata',
         repeat: sessionData.weeks ? 'recurring' : 'onetime',
         selectedDays: sessionData.weeks
             ? sessionData.weeks
@@ -304,125 +306,9 @@ const EditSession = ({ componentName }) => {
                                     display="flex"
                                     justifyContent="center"
                                 >
-                                    <CustomTextField
-                                        label="Message"
-                                        name="message"
-                                        value={formData.message}
-                                        onChange={e =>
-                                            handleChange(
-                                                'message',
-                                                e.target.value
-                                            )
-                                        }
-                                        errors={!!error.message}
-                                        helperText={error.message}
-                                        sx={{ width: '100%' }}
-                                    />
-                                </Grid>
-                                <Grid
-                                    item
-                                    xs={12}
-                                    display="flex"
-                                    justifyContent="center"
-                                >
-                                    <CustomDateField
-                                        label="From Date"
-                                        name="fromDate"
-                                        value={formData.fromDate}
-                                        onChange={e =>
-                                            handleChange(
-                                                'fromDate',
-                                                e.target.value
-                                            )
-                                        }
-                                        errors={!!error.fromDate}
-                                        helperText={error.fromDate}
-                                        sx={{ width: '100%' }}
-                                    />
-                                </Grid>
-                                <Grid
-                                    item
-                                    xs={12}
-                                    display="flex"
-                                    justifyContent="center"
-                                >
-                                    <CustomTimeField
-                                        label="From Time"
-                                        name="fromTime"
-                                        value={formData.fromTime}
-                                        onChange={e =>
-                                            handleChange(
-                                                'fromTime',
-                                                e.target.value
-                                            )
-                                        }
-                                        errors={!!error.fromTime}
-                                        helperText={error.fromTime}
-                                        sx={{ width: '100%' }}
-                                    />
-                                </Grid>
-                                <Grid
-                                    item
-                                    xs={12}
-                                    display="flex"
-                                    justifyContent="center"
-                                >
-                                    <CustomTimeField
-                                        label="To Time"
-                                        name="toTime"
-                                        value={formData.toTime}
-                                        onChange={e =>
-                                            handleChange(
-                                                'toTime',
-                                                e.target.value
-                                            )
-                                        }
-                                        errors={!!error.toTime}
-                                        helperText={error.toTime}
-                                        sx={{ width: '100%' }}
-                                    />
-                                </Grid>
-                                <Grid
-                                    item
-                                    xs={12}
-                                    display="flex"
-                                    justifyContent="center"
-                                >
-                                    <FormControl
-                                        component="fieldset"
-                                        sx={{ width: '100%' }}
-                                    >
-                                        <FormGroup row>
-                                            {weekDays.map(day => (
-                                                <FormControlLabel
-                                                    key={day}
-                                                    control={
-                                                        <Checkbox
-                                                            checked={formData.selectedDays.includes(
-                                                                day
-                                                            )}
-                                                            onChange={() =>
-                                                                handleDayChange(
-                                                                    day
-                                                                )
-                                                            }
-                                                        />
-                                                    }
-                                                    label={day}
-                                                />
-                                            ))}
-                                        </FormGroup>
-                                    </FormControl>
-                                </Grid>
-                                <Grid
-                                    item
-                                    xs={12}
-                                    display="flex"
-                                    justifyContent="center"
-                                >
                                     <CustomFormControl
                                         label="Platform"
-                                        name="platforms"
+                                        name="platform"
                                         value={formData.platforms}
                                         onChange={e =>
                                             handleChange(
@@ -436,61 +322,270 @@ const EditSession = ({ componentName }) => {
                                         sx={{ width: '100%' }}
                                     />
                                 </Grid>
+                            </Grid>
+
+                            <Grid
+                                container
+                                item
+                                spacing={3}
+                                justifyContent="center"
+                            >
+                                <Grid
+                                    item
+                                    xs={12}
+                                    sm={6}
+                                    display="flex"
+                                    justifyContent="center"
+                                >
+                                    <CustomDateField
+                                        label="From Date"
+                                        name="fromDate"
+                                        value={formData.fromDate}
+                                        onChange={date =>
+                                            handleChange('fromDate', date)
+                                        }
+                                        errors={!!error.fromDate}
+                                        helperText={error.fromDate}
+                                    />
+                                </Grid>
+                                <Grid
+                                    item
+                                    xs={12}
+                                    sm={6}
+                                    display="flex"
+                                    justifyContent="center"
+                                >
+                                    <CustomTimeField
+                                        label="From Time"
+                                        name="fromTime"
+                                        value={formData.fromTime}
+                                        onChange={time =>
+                                            handleChange('fromTime', time)
+                                        }
+                                        errors={!!error.fromTime}
+                                        helperText={error.fromTime}
+                                    />
+                                </Grid>
+                            </Grid>
+
+                            <Grid
+                                item
+                                xs={12}
+                                display="flex"
+                                justifyContent="center"
+                            >
+                                <CustomTextField
+                                    label="Message"
+                                    name="message"
+                                    value={formData.message}
+                                    onChange={text =>
+                                        handleChange(
+                                            'message',
+                                            text.target.value
+                                        )
+                                    }
+                                    errors={!!error.message}
+                                    helperText={error.message}
+                                    sx={{ width: '100%' }}
+                                />
+                            </Grid>
+
+                            <Grid
+                                item
+                                xs={12}
+                                display="flex"
+                                justifyContent="center"
+                            >
+                                <CustomTimeZoneForm
+                                    label="Timezone"
+                                    name="timezone"
+                                    value={formData.timezone}
+                                    onChange={timezone =>
+                                        handleChange('timezone', timezone)
+                                    }
+                                    options={timezones}
+                                    errors={!!error.timezone}
+                                    helperText={error.timezone}
+                                    sx={{ width: '100%' }}
+                                />
+                            </Grid>
+
+                            <Grid
+                                item
+                                xs={12}
+                                display="flex"
+                                justifyContent="center"
+                            >
+                                <Box
+                                    display="flex"
+                                    justifyContent="center"
+                                    gap={2}
+                                    sx={{ mb: 3 }}
+                                >
+                                    <Button
+                                        variant="contained"
+                                        onClick={handleAssignStudents}
+                                        sx={{
+                                            backgroundColor: '#F56D3B',
+                                            color: 'white',
+                                            height: '60px',
+                                            width: '201px',
+                                            borderRadius: '50px',
+                                            textTransform: 'none',
+                                            padding: '18px 30px',
+                                            fontWeight: '700',
+                                            fontSize: '16px',
+                                            '&:hover': {
+                                                backgroundColor: '#D4522A',
+                                            },
+                                        }}
+                                    >
+                                        Edit Students
+                                    </Button>
+                                    <Button
+                                        variant="outlined"
+                                        onClick={handleAssignBatches}
+                                        sx={{
+                                            backgroundColor: 'white',
+                                            color: '#F56D3B',
+                                            height: '60px',
+                                            width: '194px',
+                                            border: '2px solid #F56D3B',
+                                            borderRadius: '50px',
+                                            textTransform: 'none',
+                                            fontWeight: '700',
+                                            fontSize: '16px',
+                                            padding: '18px 30px',
+                                            '&:hover': {
+                                                backgroundColor: '#F56D3B',
+                                                color: 'white',
+                                            },
+                                        }}
+                                    >
+                                        Edit Batches
+                                    </Button>
+                                </Box>
+                            </Grid>
+
+                            <Grid
+                                container
+                                spacing={3}
+                                justifyContent="center"
+                                sx={{ pt: 3 }}
+                            >
                                 <Grid
                                     item
                                     xs={12}
                                     display="flex"
                                     justifyContent="center"
                                 >
-                                    <CustomTimeZoneForm
-                                        name="timezone"
-                                        value={formData.timezone}
-                                        onChange={e =>
-                                            handleChange(
-                                                'timezone',
-                                                e.target.value
-                                            )
-                                        }
-                                        errors={!!error.timezone}
-                                        helperText={error.timezone}
-                                        sx={{ width: '100%' }}
-                                    />
+                                    <FormControl component="fieldset">
+                                        <RadioGroup
+                                            row
+                                            value={formData.repeat}
+                                            onChange={e =>
+                                                handleChange(
+                                                    'repeat',
+                                                    e.target.value
+                                                )
+                                            }
+                                            sx={{ justifyContent: 'center' }}
+                                        >
+                                            <FormControlLabel
+                                                value="onetime"
+                                                control={<Radio />}
+                                                label="One-Time"
+                                            />
+                                            <FormControlLabel
+                                                value="recurring"
+                                                control={<Radio />}
+                                                label="Recurring"
+                                            />
+                                        </RadioGroup>
+                                    </FormControl>
                                 </Grid>
                             </Grid>
+
+                            {formData.repeat === 'recurring' && (
+                                <>
+                                    <Grid
+                                        container
+                                        spacing={3}
+                                        justifyContent="center"
+                                        sx={{ pt: 3 }}
+                                    >
+                                        <Grid item xs={12}>
+                                            <FormControl component="fieldset">
+                                                <FormGroup row>
+                                                    {weekDays.map(day => (
+                                                        <FormControlLabel
+                                                            key={day}
+                                                            control={
+                                                                <Checkbox
+                                                                    checked={formData.selectedDays.includes(
+                                                                        day
+                                                                    )}
+                                                                    onChange={() =>
+                                                                        handleDayChange(
+                                                                            day
+                                                                        )
+                                                                    }
+                                                                    name={day}
+                                                                />
+                                                            }
+                                                            label={day}
+                                                        />
+                                                    ))}
+                                                </FormGroup>
+                                            </FormControl>
+                                        </Grid>
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        xs={12}
+                                        sm={6}
+                                        display="flex"
+                                        sx={{ pt: 3 }}
+                                        justifyContent="center"
+                                    >
+                                        <CustomDateField
+                                            label="To Date"
+                                            value={formData.toDate}
+                                            onChange={date =>
+                                                handleChange('toDate', date)
+                                            }
+                                            errors={!!error.toDate}
+                                            helperText={error.toDate}
+                                            sx={{ width: '100%' }}
+                                        />
+                                    </Grid>
+                                </>
+                            )}
                         </Grid>
                     </Box>
-                    <Grid
-                        container
-                        spacing={2}
-                        justifyContent="center"
-                        alignItems="center"
-                    >
-                        <Grid item xs={6} sm={6} md={4} lg={3} xl={2}>
-                            <CustomButton type="submit">Submit</CustomButton>
-                        </Grid>
-                        <Grid item xs={6} sm={6} md={4} lg={3} xl={2}>
-                            <CustomButton
-                                color="#4E18A5"
-                                backgroundColor="#FFFFFF"
-                                borderColor="#4E18A5"
-                                onClick={() => dispatch(closeEditSession())}
-                            >
-                                Cancel
-                            </CustomButton>
-                        </Grid>
-                    </Grid>
                 </form>
             </Grid>
         </Box>
     );
 
+    const actions = (
+        <CustomButton
+            onClick={handleSubmit}
+            backgroundColor="#F56D3B"
+            borderColor="#F56D3B"
+            color="#FFFFFF"
+        >
+            Submit
+        </CustomButton>
+    );
+
     return (
         <ReusableDialog
-            title="Edit Session"
+            open={EditSession}
+            handleClose={() => dispatch(closeEditSession())}
+            title={`Edit Session`}
             content={content}
-            open={editSessionPopup}
-            handleClose={() => dispatch(closeEditSessionPopup())}
-            actionButtons={actionButtons}
+            actions={actions}
         />
     );
 };

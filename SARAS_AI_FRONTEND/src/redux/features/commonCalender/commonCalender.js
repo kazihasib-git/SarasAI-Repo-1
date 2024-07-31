@@ -83,11 +83,11 @@ const commonCalender = createSlice({
             state.openSession = false;
         },
 
-        openEditSession: (state, action) => {
+        openEditSession (state, action) {
             state.editSession = true;
             state.sessionData = action.payload;
         },
-        closeEditSession: (state, action) => {
+        closeEditSession (state, action) {
             state.editSession = false;
             state.sessionData = null;
         },
