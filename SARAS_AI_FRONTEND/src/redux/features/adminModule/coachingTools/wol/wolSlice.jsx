@@ -1,12 +1,15 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { baseUrl } from '../../../../../utils/baseURL';
+import axiosInstance from '../../../../services/httpService';
 
 // To get all WOL Category data
 export const getWOLCategory = createAsyncThunk(
     'wol/getWOLCategory',
     async () => {
-        const response = await axios.get(`${baseUrl}/admin/wol/wol-category`);
+        const response = await axiosInstance.get(
+            `${baseUrl}/admin/wol/wol-category`
+        );
         return response.data;
     }
 );
@@ -16,7 +19,7 @@ export const createWOLCategory = createAsyncThunk(
     'wol/createWOLCategory',
     async data => {
         console.log(data);
-        const response = await axios.post(
+        const response = await axiosInstance.post(
             `${baseUrl}/admin/wol/wol-category`,
             data
         );
@@ -28,7 +31,7 @@ export const createWOLCategory = createAsyncThunk(
 export const updateWOLCategory = createAsyncThunk(
     'wol/updateWOLCategory',
     async ({ id, data }) => {
-        const response = await axios.put(
+        const response = await axiosInstance.put(
             `${baseUrl}/admin/wol/wol-category/${id}`,
             data
         );
@@ -40,7 +43,7 @@ export const updateWOLCategory = createAsyncThunk(
 export const deleteWOLCategory = createAsyncThunk(
     'wol/deleteWOLCategory',
     async id => {
-        const response = await axios.delete(
+        const response = await axiosInstance.delete(
             `${baseUrl}/admin/wol/wol-category/${id}`
         );
         return response.data;
@@ -52,7 +55,7 @@ export const activeDeactiveWOLCategory = createAsyncThunk(
     'wol/activeDeactiveWOLCategory',
     async id => {
         console.log('in activeDeactiveWOLCategory', id);
-        const response = await axios.get(
+        const response = await axiosInstance.get(
             `${baseUrl}/admin/wol/wol-category/${id}`
         );
         return response.data;
@@ -63,7 +66,7 @@ export const activeDeactiveWOLCategory = createAsyncThunk(
 export const getLifeInstruction = createAsyncThunk(
     'wol/getLifeInstruction',
     async () => {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
             `${baseUrl}/admin/wol/wol-life-instruction`
         );
         return response.data;
@@ -74,7 +77,7 @@ export const getLifeInstruction = createAsyncThunk(
 export const editLifeInstruction = createAsyncThunk(
     'wol/editLifeInstruction',
     async data => {
-        const response = await axios.put(
+        const response = await axiosInstance.put(
             `${baseUrl}/admin/wol/wol-life-instruction`,
             data
         );
@@ -86,7 +89,9 @@ export const editLifeInstruction = createAsyncThunk(
 export const getWOLQuestions = createAsyncThunk(
     'wol/getWOLQuestions',
     async () => {
-        const response = await axios.get(`${baseUrl}/admin/wol/wol-question`);
+        const response = await axiosInstance.get(
+            `${baseUrl}/admin/wol/wol-question`
+        );
         return response.data;
     }
 );
@@ -95,7 +100,7 @@ export const getWOLQuestions = createAsyncThunk(
 export const createWOLQuestion = createAsyncThunk(
     'wol/createWOLQuestion',
     async data => {
-        const response = await axios.post(
+        const response = await axiosInstance.post(
             `${baseUrl}/admin/wol/wol-question`,
             data
         );
@@ -107,7 +112,7 @@ export const createWOLQuestion = createAsyncThunk(
 export const updateWOLQuestion = createAsyncThunk(
     'wol/updateWOLQuestion',
     async ({ id, data }) => {
-        const response = await axios.put(
+        const response = await axiosInstance.put(
             `${baseUrl}/admin/wol/wol-question/${id}`,
             data
         );
@@ -119,7 +124,7 @@ export const updateWOLQuestion = createAsyncThunk(
 export const toggleWOLQuestionStatus = createAsyncThunk(
     'wol/toggleWOLQuestionStatus',
     async id => {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
             `${baseUrl}/admin/wol/wol-question/${id}`
         );
         return response.data;
@@ -130,7 +135,7 @@ export const toggleWOLQuestionStatus = createAsyncThunk(
 export const getWOLOptionConfig = createAsyncThunk(
     'wol/getWOLOptionConfig',
     async () => {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
             `${baseUrl}/admin/wol/wol-option-config`
         );
         return response.data;
@@ -141,7 +146,7 @@ export const getWOLOptionConfig = createAsyncThunk(
 export const addWOLOptionConfig = createAsyncThunk(
     'wol/addWOLOptionConfig',
     async data => {
-        const response = await axios.post(
+        const response = await axiosInstance.post(
             `${baseUrl}/admin/wol/wol-option-config`,
             data
         );
@@ -153,7 +158,7 @@ export const addWOLOptionConfig = createAsyncThunk(
 export const addWOLTestConfig = createAsyncThunk(
     'wol/addWOLTestConfig',
     async data => {
-        const response = await axios.post(
+        const response = await axiosInstance.post(
             `${baseUrl}/admin/wol/wol-test-config`,
             data
         );
@@ -165,7 +170,7 @@ export const addWOLTestConfig = createAsyncThunk(
 export const getWolTestConfig = createAsyncThunk(
     'wol/getWolTestConfig',
     async () => {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
             `${baseUrl}/admin/wol/wol-test-config`
         );
         return response.data;
@@ -176,7 +181,7 @@ export const getWolTestConfig = createAsyncThunk(
 export const getWolQuestionCategoryWise = createAsyncThunk(
     'wol/getWolQuestionCategoryWise',
     async id => {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
             `${baseUrl}/admin/wol/wol-question-category-wise/${id}`
         );
         return response.data;
@@ -187,7 +192,7 @@ export const getWolQuestionCategoryWise = createAsyncThunk(
 export const getWolTestConfigCategoryWise = createAsyncThunk(
     'wol/getWolTestConfigCategoryWise',
     async id => {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
             `${baseUrl}/admin/wol/wol-test-config-category-question-count`
         );
         return response.data;
@@ -198,7 +203,7 @@ export const getWolTestConfigCategoryWise = createAsyncThunk(
 export const addQuestionToCategory = createAsyncThunk(
     'wol/addQuestionToCategory',
     async data => {
-        const response = await axios.post(
+        const response = await axiosInstance.post(
             `${baseUrl}/admin/wol/wol-test-config-add-question-to-category`,
             data
         );
@@ -210,7 +215,7 @@ export const addQuestionToCategory = createAsyncThunk(
 export const selectedQuestionsList = createAsyncThunk(
     'wol/selectedQuestionsList',
     async id => {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
             `${baseUrl}/admin/wol/wol-test-config-selected-question-list/${id}`
         );
         return response.data;

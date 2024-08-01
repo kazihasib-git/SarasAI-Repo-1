@@ -1,12 +1,13 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { baseUrl } from '../../../../utils/baseURL';
+import axiosInstance from '../../../services/httpService';
 
 // Get Today Available Ta
 export const getTodayCoachAvailability = createAsyncThunk(
     'coachAvailability/getTodayCoachAvailability',
     async () => {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
             `${baseUrl}/admin/Coach-availability/get-today-available-coach`
         );
         return response.data;
@@ -17,7 +18,7 @@ export const getTodayCoachAvailability = createAsyncThunk(
 export const getCoachSlots = createAsyncThunk(
     'coachAvailability/getCoachSlots',
     async data => {
-        const response = await axios.post(
+        const response = await axiosInstance.post(
             `${baseUrl}/admin/coach-slots/records`,
             data
         );
@@ -29,7 +30,7 @@ export const getCoachSlots = createAsyncThunk(
 export const fetchCoachScheduleById = createAsyncThunk(
     'coachAvailability/fetchCoachScheduleById',
     async id => {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
             `${baseUrl}/admin/coachschedules/${id}`
         );
         return response.data;
@@ -40,7 +41,9 @@ export const fetchCoachScheduleById = createAsyncThunk(
 export const fetchCoachSlots = createAsyncThunk(
     'coachAvailability/fetchCoachSlots',
     async id => {
-        const response = await axios.get(`${baseUrl}/admin/coach-slots/${id}`);
+        const response = await axiosInstance.get(
+            `${baseUrl}/admin/coach-slots/${id}`
+        );
         return response.data;
     }
 );
@@ -50,7 +53,10 @@ export const createCoachSlots = createAsyncThunk(
     'coachAvailability/createCoachSlots',
     async data => {
         console.log('Data being sent:', data);
-        const response = await axios.post(`${baseUrl}/admin/coach-slots`, data);
+        const response = await axiosInstance.post(
+            `${baseUrl}/admin/coach-slots`,
+            data
+        );
         return response.data;
     }
 );
@@ -59,7 +65,7 @@ export const createCoachSlots = createAsyncThunk(
 export const getCoachScheduleSession = createAsyncThunk(
     'coachAvailability/getScheduleSession',
     async data => {
-        const response = await axios.post(
+        const response = await axiosInstance.post(
             `${baseUrl}/admin/coachschedules/get-schedules-records`,
             data
         );
@@ -71,7 +77,7 @@ export const fetchCoachAvailableSlots = createAsyncThunk(
     'coachAvailability/fetchCoachAvailableSlots',
     async data => {
         // console.log("ID : ", id);
-        const response = await axios.post(
+        const response = await axiosInstance.post(
             `${baseUrl}/admin/coach-slots/getTACoachSlotForADate`,
             data
         );
@@ -82,7 +88,7 @@ export const fetchCoachAvailableSlots = createAsyncThunk(
 export const deleteCoachFutureSlots = createAsyncThunk(
     'coachAvailability/deleteCoachFutureSlots',
     async id => {
-        const response = await axios.delete(
+        const response = await axiosInstance.delete(
             `${baseUrl}/admin/coach-slots/${id}`
         );
         return response.data;
@@ -93,7 +99,10 @@ export const deleteCoachFutureSlots = createAsyncThunk(
 export const reasonForCoachLeave = createAsyncThunk(
     'taAvialability/reasonForCoachLeave',
     async data => {
-        const response = await axios.post(`${baseUrl}/admin/leave`, data);
+        const response = await axiosInstance.post(
+            `${baseUrl}/admin/leave`,
+            data
+        );
         return response.data;
     }
 );

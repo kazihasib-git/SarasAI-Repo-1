@@ -16,7 +16,7 @@ const CreateTemplate = () => {
                 alignItems={'center'}
             >
                 <p style={{ fontSize: '44px', justifyContent: 'center' }}>
-                    Creating Template
+                    Create Template
                 </p>
             </Box>
             <CoachTemplateForm />

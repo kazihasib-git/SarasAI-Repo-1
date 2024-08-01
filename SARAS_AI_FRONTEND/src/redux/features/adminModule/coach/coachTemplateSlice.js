@@ -1,11 +1,13 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
 import { baseUrl } from '../../../../utils/baseURL';
+import axiosInstance from '../../../services/httpService';
 
 export const getAllCoachTemplates = createAsyncThunk(
     'coachTemplate/getAllCoachTemplates',
     async () => {
-        const response = await axios.get(`${baseUrl}/admin/coaching-templates`);
+        const response = await axiosInstance.get(
+            `${baseUrl}/admin/coaching-templates`
+        );
         return response.data;
     }
 );
@@ -13,7 +15,7 @@ export const getAllCoachTemplates = createAsyncThunk(
 export const createCoachTemplate = createAsyncThunk(
     'coachTemplate/createCoachTemplate',
     async data => {
-        const response = await axios.post(
+        const response = await axiosInstance.post(
             `${baseUrl}/admin/store-template`,
             data
         );
@@ -24,7 +26,7 @@ export const createCoachTemplate = createAsyncThunk(
 export const getAllCoachTemplateModules = createAsyncThunk(
     'coachTemplate/getAllCoachTemplateModules',
     async () => {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
             `${baseUrl}/admin/coaching-templates/modules/${templateId}`
         );
         const modules = response.data.data.filter(
@@ -37,7 +39,7 @@ export const getAllCoachTemplateModules = createAsyncThunk(
 export const createCoachTemplateModule = createAsyncThunk(
     'coachTemplate/createCoachTemplateModule',
     async data => {
-        const response = await axios.post(
+        const response = await axiosInstance.post(
             `${baseUrl}/admin/coaching-templates/store-modules`,
             data
         );
@@ -48,7 +50,7 @@ export const createCoachTemplateModule = createAsyncThunk(
 export const getCoachTemplateModuleId = createAsyncThunk(
     'coachTemplate/getCoachTemplateModuleId',
     async id => {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
             `${baseUrl}/admin/coaching-templates/modules/${id}`
         );
         return response.data;
@@ -58,7 +60,7 @@ export const getCoachTemplateModuleId = createAsyncThunk(
 export const updateCoachTemplateModule = createAsyncThunk(
     'coachTemplate/updateCoachTemplateModule',
     async data => {
-        const response = await axios.post(
+        const response = await axiosInstance.post(
             `${baseUrl}/admin/coaching-templates/update-modules`,
             data
         );
@@ -70,7 +72,7 @@ export const updateCoachActivity = createAsyncThunk(
     'coachTemplate/updateCoachActivity',
     async ({ data }, { rejectWithValue }) => {
         try {
-            const response = await axios.post(
+            const response = await axiosInstance.post(
                 `${baseUrl}/admin/coaching-templates/activity-status`,
                 data
             );
@@ -91,7 +93,7 @@ export const updateCoachActivity = createAsyncThunk(
 export const createCoachTemplateActivity = createAsyncThunk(
     'coachTemplate/createCoachTemplateActivity',
     async data => {
-        const response = await axios.post(
+        const response = await axiosInstance.post(
             `${baseUrl}/admin/coaching-templates/store-activity`,
             data
         );
@@ -104,7 +106,7 @@ export const updateEditActivity = createAsyncThunk(
     async ({ data }, { rejectWithValue }) => {
         console.log('DATA : ', data);
         try {
-            const response = await axios.post(
+            const response = await axiosInstance.post(
                 `${baseUrl}/admin/coaching-templates/update-activity`,
                 data
             );

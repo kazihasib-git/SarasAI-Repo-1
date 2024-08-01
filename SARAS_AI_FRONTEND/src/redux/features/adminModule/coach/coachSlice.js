@@ -1,11 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { baseUrl } from '../../../../utils/baseURL';
+import axiosInstance from '../../../services/httpService';
 
 export const createCoach = createAsyncThunk(
     'coachModule/createCoach',
     async data => {
-        const response = await axios.post(
+        const response = await axiosInstance.post(
             `${baseUrl}/admin/manage_coaches`,
             data
         );
@@ -14,7 +15,7 @@ export const createCoach = createAsyncThunk(
 );
 
 export const getCoach = createAsyncThunk('coachModule/getCoach', async () => {
-    const response = await axios.get(`${baseUrl}/admin/manage_coaches`);
+    const response = await axiosInstance.get(`${baseUrl}/admin/manage_coaches`);
     return response.data;
 });
 
@@ -22,7 +23,7 @@ export const updateCoach = createAsyncThunk(
     'coachModule/updateCoach',
     async ({ id, data }, { rejectWithValue }) => {
         try {
-            const response = await axios.put(
+            const response = await axiosInstance.put(
                 `${baseUrl}/admin/manage_coaches/${id}`,
                 data
             );
@@ -43,7 +44,7 @@ export const updateCoach = createAsyncThunk(
 export const deleteCoach = createAsyncThunk(
     'coachModule/deleteCoach',
     async id => {
-        await axios.delete(`${baseUrl}/admin/manage_coaches/${id}`);
+        await axiosInstance.delete(`${baseUrl}/admin/manage_coaches/${id}`);
         return id;
     }
 );
@@ -51,7 +52,7 @@ export const deleteCoach = createAsyncThunk(
 export const getCoachStudentBatchMapping = createAsyncThunk(
     'coachModule/getCoachStudentBatchMapping',
     async () => {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
             `${baseUrl}/admin/student-batch-mapping/getAllStudentWithBatches`
         );
         return response.data;
@@ -61,7 +62,7 @@ export const getCoachStudentBatchMapping = createAsyncThunk(
 export const getCoachBatchMapping = createAsyncThunk(
     'coachModule/getCoachBatchMapping',
     async () => {
-        const response = await axios.get(`${baseUrl}/admin/batches`);
+        const response = await axiosInstance.get(`${baseUrl}/admin/batches`);
         console.log('Response : ', response);
         return response.data;
     }
@@ -70,7 +71,7 @@ export const getCoachBatchMapping = createAsyncThunk(
 export const showCoachMapping = createAsyncThunk(
     'coachModule/showCoachMapping',
     async () => {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
             `${baseUrl}/admin/CoachMapping/CoachswithActiveStudentnBatches`
         );
         return response.data;
@@ -79,7 +80,7 @@ export const showCoachMapping = createAsyncThunk(
 export const getCoachAssignStudents = createAsyncThunk(
     'coachModule/getCoachAssignStudents',
     async id => {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
             `${baseUrl}/admin/CoachMapping/${id}/AssignStudents`
         );
         return response.data;
@@ -88,7 +89,7 @@ export const getCoachAssignStudents = createAsyncThunk(
 export const getCoachAssignBatches = createAsyncThunk(
     'coachModule/getCoachAssignBatches',
     async id => {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
             `${baseUrl}/admin/CoachMapping/${id}/AssignBatches`
         );
         return response.data;
@@ -98,7 +99,7 @@ export const getCoachAssignBatches = createAsyncThunk(
 export const postCoachAssignStudents = createAsyncThunk(
     'coachModule/postCoachAssignStudents',
     async ({ id, data }) => {
-        const response = await axios.post(
+        const response = await axiosInstance.post(
             `${baseUrl}/admin/CoachMapping/AssignStudents`,
             data
         );
@@ -109,7 +110,7 @@ export const postCoachAssignStudents = createAsyncThunk(
 export const postCoachAssignBatches = createAsyncThunk(
     'coachModule/postCoachAssignBatches',
     async ({ id, data }) => {
-        const response = await axios.post(
+        const response = await axiosInstance.post(
             `${baseUrl}/admin/CoachMapping/AssignBatches`,
             data
         );
@@ -120,7 +121,7 @@ export const postCoachAssignBatches = createAsyncThunk(
 export const toggleCoachAssignStudentStatus = createAsyncThunk(
     'coachModule/toggleCoachAssignStudentStatus',
     async ({ id, studentId }) => {
-        const response = await axios.put(
+        const response = await axiosInstance.put(
             `${baseUrl}/admin/CoachMapping/${id}/ActiveDeactiveAssignStudent`,
             { student_id: studentId }
         );
@@ -131,7 +132,7 @@ export const toggleCoachAssignStudentStatus = createAsyncThunk(
 export const toggleCoachAssignBatchStatus = createAsyncThunk(
     'coachModule/toggleCoachAssignBatchStatus',
     async ({ id, batchId }) => {
-        const response = await axios.put(
+        const response = await axiosInstance.put(
             `${baseUrl}/admin/CoachMapping/${id}/ActiveDeactiveAssignBatch`,
             { batch_id: batchId }
         );
@@ -143,7 +144,7 @@ export const deleteCoachAssignedStudent = createAsyncThunk(
     'coachModule/deleteCoachAssignedStudent',
     async id => {
         console.log('ID to delete STUDENT : ', id);
-        const response = await axios.delete(
+        const response = await axiosInstance.delete(
             `${baseUrl}/admin/CoachMapping/${id.id}/deleteStudent`
         );
         return response.data;
@@ -154,7 +155,7 @@ export const deleteCoachAssignedBatch = createAsyncThunk(
     'coachModule/deleteCoachAssignedBatch',
     async id => {
         // console.log("ID to delete BATCH : ", id)
-        const response = await axios.delete(
+        const response = await axiosInstance.delete(
             `${baseUrl}/admin/CoachMapping/${id.id}/deleteBatch`
         );
         return response.data;

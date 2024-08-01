@@ -159,7 +159,7 @@ const AddEditTA = ({ data }) => {
                 dispatch(accessTaName(updateRes));
             } else {
                 updatedFormData.email = email;
-                updatedFormData.time_zone = time_zone;
+                updatedFormData.time_zone = 'Asia/Kolkata';
                 const createRes = await dispatch(
                     createTA(updatedFormData)
                 ).unwrap();

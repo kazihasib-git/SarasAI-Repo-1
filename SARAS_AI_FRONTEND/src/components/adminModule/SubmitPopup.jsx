@@ -157,7 +157,7 @@ const SubmitPopup = ({ componentname }) => {
                 Assign Batches
             </CustomButton>
             <Typography
-                onClick={handleDoItLater}
+                onClick={handleCloseButton}
                 color="#1A1E3D"
                 sx={{ marginTop: '10px', cursor: 'pointer' }}
             >

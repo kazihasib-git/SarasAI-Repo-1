@@ -24,41 +24,7 @@ import {
     openTaMenuCreateSessionsPopup,
 } from '../../redux/features/taModule/tamenuSlice';
 import { useParams } from 'react-router-dom';
-
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                padding: '10px 20px',
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
+import CustomButton from '../CustomFields/CustomButton';
 
 const EditStudents = ({ componentname }) => {
     console.log('Component Name :', componentname);
@@ -141,9 +107,9 @@ const EditStudents = ({ componentname }) => {
     } = stateSelector || {};
 
     useEffect(() => {
-        // dispatch(getAssignStudents(taaId));
+        dispatch(getAssignStudents(taID));
         if (stateModuleKey && assignStudentOpen) {
-            dispatch(getAssignStudentAction(id));
+            dispatch(getAssignStudentAction(assignedId));
         }
     }, [
         dispatch,
@@ -200,13 +166,13 @@ const EditStudents = ({ componentname }) => {
             ? [
                   ...new Set(
                       assignedStudents
-                          .filter(
-                              student =>
-                                  !selectedTerm ||
-                                  student.student.packages.some(
-                                      pack => pack.name === selectedTerm
-                                  )
-                          )
+                          //   .filter(
+                          //       student =>
+                          //           !selectedTerm ||
+                          //           student.student.packages.some(
+                          //               pack => pack.name === selectedTerm
+                          //           )
+                          //   )
                           .flatMap(student =>
                               student.student.batches.map(
                                   batch => batch.batch_name
@@ -221,13 +187,14 @@ const EditStudents = ({ componentname }) => {
             ? [
                   ...new Set(
                       assignedStudents
-                          //  .filter(
-                          //     (student) =>
-                          //     !selectedBatch ||
-                          //     student.student.batches.some(
-                          //         (batch) => batch.batch_name === selectedBatch
-                          //     )
-                          //  )
+                          .filter(
+                              student =>
+                                  !selectedBatch ||
+                                  student.student.batches.some(
+                                      batch =>
+                                          batch.batch_name === selectedBatch
+                                  )
+                          )
                           .flatMap(student =>
                               student.student.packages.map(pack => pack.name)
                           )
@@ -305,6 +272,9 @@ const EditStudents = ({ componentname }) => {
                         value={selectedBatch}
                         onChange={e => setSelectedBatch(e.target.value)}
                     >
+                        <MenuItem value="">
+                            <em>All</em>
+                        </MenuItem>
                         {batchOptions.map(batch => (
                             <MenuItem key={batch} value={batch}>
                                 {batch}
@@ -352,11 +322,13 @@ const EditStudents = ({ componentname }) => {
         </CustomButton>
     );
 
+    const assignedTA = assignedTAName || assignedName;
+
     return (
         <ReusableDialog
             open={assignStudentOpen}
             handleClose={() => dispatch(closeDialogAction())}
-            title={`Assign Students to '${name}'`}
+            title={`Assign Students to '${assignedTA}'`}
             content={content}
             actions={actions}
         />

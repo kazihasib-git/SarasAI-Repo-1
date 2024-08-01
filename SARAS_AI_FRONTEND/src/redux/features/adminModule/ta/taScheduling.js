@@ -1,12 +1,14 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
 import { baseUrl } from '../../../../utils/baseURL';
+import axiosInstance from '../../../services/httpService';
 
 // Show TA Schedule
 export const showTASchedule = createAsyncThunk(
     'taScheduling/showTaSchedule',
     async () => {
-        const response = await axios.get(`${baseUrl}/admin/taschedules`);
+        const response = await axiosInstance.get(
+            `${baseUrl}/admin/taschedules`
+        );
         return response.data;
     }
 );
@@ -15,7 +17,7 @@ export const showTASchedule = createAsyncThunk(
 export const getTAScheduledSessions = createAsyncThunk(
     'taScheduling/getTAScheduledSessions',
     async ({ id, data }) => {
-        const response = await axios.post(
+        const response = await axiosInstance.post(
             `${baseUrl}/admin/taschedules/${id}`,
             data
         );
@@ -27,7 +29,10 @@ export const getTAScheduledSessions = createAsyncThunk(
 export const createTASchedule = createAsyncThunk(
     'taScheduling/createTASchedule',
     async data => {
-        const response = await axios.post(`${baseUrl}/admin/taschedules`, data);
+        const response = await axiosInstance.post(
+            `${baseUrl}/admin/taschedules`,
+            data
+        );
         return response.data;
     }
 );
@@ -36,7 +41,7 @@ export const createTASchedule = createAsyncThunk(
 export const getTaAvailableSlotsFromDate = createAsyncThunk(
     'taScheduling/getTaAvailableSlotsFromDate',
     async data => {
-        const response = await axios.post(
+        const response = await axiosInstance.post(
             `${baseUrl}/admin/coach-slots/getTACoachSlotForADate`,
             data
         );
@@ -48,7 +53,7 @@ export const getTaAvailableSlotsFromDate = createAsyncThunk(
 export const rescheduleSession = createAsyncThunk(
     'taScheduling/rescheduleSession',
     async ({ id, data }) => {
-        const response = await axios.put(
+        const response = await axiosInstance.put(
             `${baseUrl}/admin/taschedules/${id}`,
             data
         );
@@ -60,7 +65,7 @@ export const rescheduleSession = createAsyncThunk(
 export const cancelScheduledSession = createAsyncThunk(
     'taScheduling/cancelScheduledSession',
     async id => {
-        const response = await axios.put(
+        const response = await axiosInstance.put(
             `${baseUrl}/admin/taschedules/${id}/cancel`
         );
         return response.data;

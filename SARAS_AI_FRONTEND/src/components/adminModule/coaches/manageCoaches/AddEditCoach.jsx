@@ -154,7 +154,7 @@ function AddEditCoach({ data }) {
                 dispatch(accessCoachName(updateRes));
             } else {
                 updatedFormData.email = email;
-                updatedFormData.time_zone = time_zone;
+                updatedFormData.time_zone = 'Asia/Kolkata';
                 const createRes = await dispatch(
                     createCoach(updatedFormData)
                 ).unwrap();
