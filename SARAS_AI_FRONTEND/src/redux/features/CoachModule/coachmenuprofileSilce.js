@@ -189,14 +189,8 @@ export const rescheduleSessionForCoachLeave = createAsyncThunk(
 export const getCoachCallRequests = createAsyncThunk(
     'coachMenu/getCallRequests',
     async () => {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
             `${baseUrl}/coach/call-request/get-call-request`,
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json',
-                },
-            }
         );
         console.log(response.data, 'response.data');
         return response.data;
@@ -207,14 +201,8 @@ export const getCoachCallRequests = createAsyncThunk(
 export const approveCallRequest = createAsyncThunk(
     'coachMenu/approveCallRequest',
     async id => {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
             `${baseUrl}/coach/call-request/approve-call-request/${id}`,
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json',
-                },
-            }
         );
         console.log(response.data, 'response.data');
         return response.data;
@@ -225,17 +213,11 @@ export const approveCallRequest = createAsyncThunk(
 export const denyCallRequest = createAsyncThunk(
     'coachMenu/denyCallRequest',
     async (id, reason) => {
-        const response = await axios.put(
+        const response = await axiosInstance.put(
             `${baseUrl}/coach/call-request/denie-call-request/${id}`,
             {
                 'reject-reason': reason,
             },
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json',
-                },
-            }
         );
         console.log(response.data, 'response.data');
         return response.data;
