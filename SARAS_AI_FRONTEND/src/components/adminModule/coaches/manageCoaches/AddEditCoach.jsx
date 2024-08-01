@@ -135,7 +135,7 @@ function AddEditCoach({ data }) {
     const onSubmit = async coachData => {
         const { email, time_zone, ...updatedFormData } = coachData;
 
-        updatedFormData.date_of_birth = dateOfBirth;
+        //updatedFormData.date_of_birth = dateOfBirth;
         // updatedFormData.phone = phoneNumber;
 
         if (selectedImage) {

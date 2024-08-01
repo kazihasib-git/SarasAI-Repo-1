@@ -145,7 +145,7 @@ const AddEditTA = ({ data }) => {
     const onSubmit = async formData => {
         const { email, time_zone, ...updatedFormData } = formData;
 
-        updatedFormData.date_of_birth = dateOfBirth;
+        // updatedFormData.date_of_birth = dateOfBirth;
 
         if (selectedImage) {
             const base64Data = selectedImage.replace(/^data:image\/(png|jpeg|jpg);base64,/, '');
