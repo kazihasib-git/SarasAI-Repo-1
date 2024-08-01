@@ -670,6 +670,7 @@ function AddEditCoach({ data }) {
                                 fontSize: '16px',
                                 fontWeight: '700px',
                                 text: '#FFFFFF',
+                                textTransform: 'none',
                             }}
                         >
                             Submit

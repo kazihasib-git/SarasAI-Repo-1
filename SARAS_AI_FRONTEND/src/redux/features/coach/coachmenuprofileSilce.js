@@ -84,7 +84,7 @@ export const createCoachMenuSession = createAsyncThunk(
     'coachMenu/createSession',
     async data => {
         const response = await axiosInstance.post(
-            `${baseUrl}/coach/calendar/create-sessions`,
+            `${baseUrl}/coach/schedule-call/schedule-calls`,
             data
         );
         return response.data;
@@ -246,16 +246,10 @@ export const denyCallRequest = createAsyncThunk(
 export const getCoachScheduledCalls = createAsyncThunk(
     'coachMenu/getScheduledCalls',
     async date => {
-        const response = await axios.post(
+        const response = await axiosInstance.post(
             `${baseUrl}/coach/schedule-call/get-schedule-call`,
             {
                 date: date,
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json',
-                },
             }
         );
         console.log(response.data, 'response.data');

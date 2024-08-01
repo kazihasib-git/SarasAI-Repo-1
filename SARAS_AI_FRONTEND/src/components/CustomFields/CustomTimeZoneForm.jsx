@@ -65,7 +65,7 @@ const CustomTimeZoneForm = ({
                 }}
             >
                 {options.map(option => (
-                    <MenuItem key={option.country} value={option.utc_offset}>
+                    <MenuItem key={option.id} value={option.id}>
                         {option.time_zone}
                     </MenuItem>
                 ))}

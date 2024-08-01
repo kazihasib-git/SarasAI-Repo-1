@@ -9,17 +9,53 @@ import './BigCal.css';
 import Header from '../Header/Header';
 import Sidebar from '../Sidebar/Sidebar';
 import ScheduleSession from '../availability/ScheduleSession';
+import { useDispatch } from 'react-redux';
+import { openSessionEvent } from '../../redux/features/taModule/taAvialability';
+import { openCoachSessionEvent } from '../../redux/features/CoachModule/CoachAvailabilitySlice';
+import { openSessionPopup } from '../../redux/features/commonCalender/commonCalender';
 
 moment.locale('en-GB');
 const localizer = momentLocalizer(moment);
 const allViews = Object.keys(Views).map(k => Views[k]);
 
-const CalendarComponent = ({ eventsList, addEvent, slotData }) => {
-    const [myEventsList, setMyEventsList] = useState([]);
-    // const [slots, setSlots] = useState([]);
+const CalendarComponent = ({ eventsList, slotData, componentName }) => {
+    const dispatch = useDispatch();
+    console.log('Event List', eventsList);
 
-    const showSessionPopUp = () => {
-        console.log('clicked');
+    console.log('Slot Data : ', slotData);
+
+    console.log('comp name', componentName);
+
+    let sliceName, openPopup;
+
+    switch (componentName) {
+        case 'TACALENDER':
+            sliceName = 'taAvialability';
+            openPopup = openSessionEvent;
+            break;
+        case 'COACHCALENDER':
+            sliceName = 'coachAvailability';
+            openPopup = openCoachSessionEvent;
+            break;
+        case 'TAMENU':
+            sliceName = 'taMenu';
+            openPopup = openSessionPopup;
+            break;
+
+        case 'COACHMENU':
+            sliceName = 'coachMenu';
+            openPopup = openSessionPopup;
+            break;
+
+        default:
+            sliceName = null;
+            openPopup = null;
+            break;
+    }
+
+    const showSessionPopUp = event => {
+        console.log('Selected Event:', event);
+        dispatch(openPopup(event));
     };
 
     const eventStyleGetter = event => {
@@ -54,7 +90,10 @@ const CalendarComponent = ({ eventsList, addEvent, slotData }) => {
             ) {
                 return {
                     style: {
-                        backgroundColor: '#B0FC38',
+                        backgroundColor:
+                            slot.leave && slot.leave.length > 0
+                                ? '#FF6347' // Light red color for leave slots
+                                : '#B0FC38', // Green color for regular slots
                         opacity: 0.5,
                         border: 'none',
                     },

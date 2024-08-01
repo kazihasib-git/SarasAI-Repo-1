@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from '@mui/material';
 import ReusableDialog from '../CustomFields/ReusableDialog';
-import DynamicTable from '../CommonComponent/DynamicTable';
 import { useDispatch, useSelector } from 'react-redux';
 import PopUpTable from '../CommonComponent/PopUpTable';
 import { useParams } from 'react-router-dom';
@@ -10,21 +9,13 @@ import {
     closeScheduledSlots,
     openScheduledSession,
     getScheduleSession,
-    openReasonForLeave,
 } from '../../redux/features/taModule/taAvialability';
 
 import {
     closeCoachScheduledSlots,
     openCoachScheduledSession,
     getCoachScheduleSession,
-    openCoachReasonForLeave,
 } from '../../redux/features/CoachModule/CoachAvailabilitySlice';
-import {
-    getSessionForLeave,
-    openSlotsForLeave,
-    closeSlotsForLeave,
-    openScheduledSessionForLeave,
-} from '../../redux/features/coach/coachmenuprofileSilce';
 
 const CustomButton = ({
     onClick,
@@ -69,7 +60,6 @@ const Slots = ({ componentName }) => {
 
     let scheduleSessionOpenKey,
         scheduledSlotsDataKey,
-        schedulingStateKey,
         getAvailableSlotsAction,
         closeScheduleSessionAction,
         getScheduleSessionAction,
@@ -81,7 +71,6 @@ const Slots = ({ componentName }) => {
             sliceName = 'taAvailability';
             scheduleSessionOpenKey = 'scheduledSlotsOpen';
             scheduledSlotsDataKey = 'scheduledSlotsData';
-            schedulingStateKey = 'taAvailability';
             getAvailableSlotsAction = openScheduledSession;
             closeScheduleSessionAction = closeScheduledSlots;
             getScheduleSessionAction = getScheduleSession;
@@ -92,7 +81,6 @@ const Slots = ({ componentName }) => {
             sliceName = 'coachAvailability';
             scheduleSessionOpenKey = 'scheduledCoachSlotsOpen';
             scheduledSlotsDataKey = 'scheduledCoachSlotsData';
-            schedulingStateKey = 'coachAvailability';
             getAvailableSlotsAction = openCoachScheduledSession;
             closeScheduleSessionAction = closeCoachScheduledSlots;
             getScheduleSessionAction = getCoachScheduleSession;
@@ -103,7 +91,6 @@ const Slots = ({ componentName }) => {
             sliceName = null;
             scheduleSessionOpenKey = null;
             scheduledSlotsDataKey = null;
-            schedulingStateKey = null;
             getAvailableSlotsAction = null;
             closeScheduleSessionAction = null;
             getScheduleSessionAction = null;

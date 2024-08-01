@@ -1,29 +1,10 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import ReusableDialog from '../CustomFields/ReusableDialog';
-import CustomDateField from '../CustomFields/CustomDateField';
 import { Button, DialogContent, Grid } from '@mui/material';
-import CustomTimeField from '../CustomFields/CustomTimeField';
-import { useDispatch, useSelector } from 'react-redux';
-import PopUpTable from '../CommonComponent/PopUpTable';
-import { useParams } from 'react-router-dom';
-import { rescheduleSession } from '../../redux/features/taModule/taScheduling';
-import { rescheduleCoachSession } from '../../redux/features/CoachModule/coachSchedule';
-
-import {
-    closeRescheduleSession,
-    fetchAvailableSlots,
-    getScheduleSession,
-    openReasonForLeave,
-    openScheduledSession,
-} from '../../redux/features/taModule/taAvialability';
-
-import {
-    closeCoachRescheduleSession,
-    getCoachScheduleSession,
-    openCoachReasonForLeave,
-    openCoachScheduledSession,
-    fetchCoachAvailableSlots,
-} from '../../redux/features/CoachModule/CoachAvailabilitySlice';
+import React from 'react';
+import { useDispatch } from 'react-redux';
+import ReusableDialog from '../../../CustomFields/ReusableDialog';
+import CustomDateField from '../../../CustomFields/CustomDateField';
+import PopUpTable from '../../../CommonComponent/PopUpTable';
+import CustomTimeField from '../../../CustomFields/CustomTimeField';
 
 const CustomButton = ({
     onClick,
@@ -62,73 +43,22 @@ const CustomButton = ({
 
 const headers = ['S. No.', 'Slots Available', 'Select'];
 
-const ReschedulingSession = ({ componentName }) => {
-    console.log('componentName : ', componentName);
-    const taId = useParams();
+const RescheduleCreatedSession = ({ componentName }) => {
     const dispatch = useDispatch();
-    const [selectDate, setSelectDate] = useState(null);
-    const [selectedSlots, setSelectedSlots] = useState([]);
-    const [fromTime, setFromTime] = useState(null);
-    const [toTime, setToTime] = useState(null);
-    const [transformedSlotsData, setTransformedSlotsData] = useState([]);
 
-    let rescheduleSessionOpenKey,
-        closeRescheduleSessionAction,
-        fetchAvailableSlotsAction,
-        getScheduleSessionAction,
-        openScheduledSessionAction,
-        availableSlotsAction,
-        sessionEventAction,
-        slotEventAction,
-        sliceName,
-        reschduleSessionAction;
+    let sliceName;
 
     switch (componentName) {
-        case 'TACALENDER':
-            sliceName = 'taAvailability';
-            rescheduleSessionOpenKey = 'resheduleSessionOpen';
-            closeRescheduleSessionAction = closeRescheduleSession;
-            fetchAvailableSlotsAction = fetchAvailableSlots;
-            getScheduleSessionAction = getScheduleSession;
-            openScheduledSessionAction = openScheduledSession;
-            availableSlotsAction = 'availableSlotsData';
-            sessionEventAction = 'sessionEventData';
-            slotEventAction = 'slotEventData';
-            reschduleSessionAction = rescheduleSession;
+        case 'TAMENU':
+            sliceName = 'taMenu';
             break;
-        case 'COACHCALENDER':
-            sliceName = 'coachAvailability';
-            rescheduleSessionOpenKey = 'resheduleCoachSessionOpen';
-            closeRescheduleSessionAction = closeCoachRescheduleSession;
-            fetchAvailableSlotsAction = fetchCoachAvailableSlots;
-            getScheduleSessionAction = getCoachScheduleSession;
-            openScheduledSessionAction = openCoachScheduledSession;
-            availableSlotsAction = 'availableCoachSlotsData';
-            sessionEventAction = 'sessionCoachEventData';
-            slotEventAction = 'slotCoachEventData';
-            reschduleSessionAction = rescheduleCoachSession;
+        case 'COACHMENU':
+            sliceName = 'coachMenu';
             break;
-
         default:
             sliceName = null;
-            rescheduleSessionOpenKey = null;
-            closeRescheduleSessionAction = null;
-            fetchAvailableSlotsAction = null;
-            getScheduleSessionAction = null;
-            openScheduledSessionAction = null;
-            availableSlotsAction = null;
-            sessionEventAction = null;
-            slotEventAction = null;
-            reschduleSessionAction;
             break;
     }
-
-    const {
-        [rescheduleSessionOpenKey]: rescheduleSessionOpen,
-        [availableSlotsAction]: availableSlotsData,
-        [sessionEventAction]: sessionEventData,
-        [slotEventAction]: slotEventData,
-    } = useSelector(state => state[sliceName]);
 
     useEffect(() => {
         if (selectDate) {
@@ -167,37 +97,9 @@ const ReschedulingSession = ({ componentName }) => {
         );
     };
 
-    console.log('slotEventData ::::::', slotEventData);
-
     const handleSubmit = () => {
-        console.log('*** Submitting Reschedule Session....');
-        dispatch(
-            reschduleSessionAction({
-                id: sessionEventData ? sessionEventData.id : '',
-                data: {
-                    admin_user_id: taId.id,
-                    schedule_date: selectDate,
-                    slot_id: selectedSlots[0], // Assuming only one slot can be selected
-                    start_time: fromTime,
-                    end_time: toTime,
-                    timezone: 'IST',
-                    event_status: 'rescheduled',
-                },
-            })
-        )
-            .unwrap()
-            .then(() => {
-                // console.log("SLOT EVENT DATA : ", slotEventData)
-                dispatch(closeRescheduleSessionAction());
-                dispatch(getScheduleSessionAction());
-                dispatch(openScheduledSessionAction(slotEventData));
-            })
-            .catch(error => {
-                console.error('Error rescheduling session:', error);
-            });
+        dispatch();
     };
-
-    const headers = ['S. No.', 'Slots Available', 'Select']; // Example headers for PopUpTable, adjust as per your actual implementation
 
     const content = (
         <>
@@ -280,14 +182,12 @@ const ReschedulingSession = ({ componentName }) => {
         </CustomButton>
     );
 
-    console.log('rescheduleSessionOpen', rescheduleSessionOpen);
-
     return (
         <ReusableDialog
-            open={rescheduleSessionOpen}
+            open={''}
             handleClose={() => {
-                dispatch(closeRescheduleSessionAction());
-                dispatch(openScheduledSessionAction());
+                dispatch();
+                dispatch();
             }}
             title="Reschedule Session"
             content={content}
@@ -296,4 +196,4 @@ const ReschedulingSession = ({ componentName }) => {
     );
 };
 
-export default ReschedulingSession;
+export default RescheduleCreatedSession;

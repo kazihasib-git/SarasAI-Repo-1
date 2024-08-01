@@ -18,3 +18,23 @@ export const dateFormatter = date => {
 
     return { formattedDate, formattedDateToSend };
 };
+
+export const formatDateTime = sessionData => {
+    const startDate = new Date(sessionData.start);
+    const endDate = new Date(sessionData.end);
+
+    const options = { weekday: 'long', month: 'long', day: 'numeric' };
+    const formattedDate = startDate.toLocaleDateString('en-US', options);
+
+    const formatTime = date => {
+        const hours = date.getHours() % 12 || 12;
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        const ampm = date.getHours() >= 12 ? 'PM' : 'AM';
+        return `${hours}:${minutes} ${ampm}`;
+    };
+
+    const formattedStartTime = formatTime(startDate);
+    const formattedEndTime = formatTime(endDate);
+
+    return `${formattedDate}, ${formattedStartTime} - ${formattedEndTime}`;
+};

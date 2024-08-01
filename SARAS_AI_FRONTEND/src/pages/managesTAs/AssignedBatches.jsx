@@ -145,8 +145,9 @@ const DynamicTable = ({
     const handleDelete = (id, ta_id) => {
         // Implement delete functionality here
         console.log('Deleting item with id:', id);
-        dispatch(deleteAssignedBatch({ id }));
-        dispatch(getAssignBatches(ta_id));
+        dispatch(deleteAssignedBatch({ id })).then(() => {
+            dispatch(getAssignBatches(ta_id));
+        });
     };
 
     const handleNavigate = path => {
@@ -346,7 +347,6 @@ const actionButtons = [
 
 const AssignBatches = () => {
     const { id } = useParams();
-    console.log('c', id);
     const dispatch = useDispatch();
     const { assignedBatches, loading } = useSelector(state => state.taModule);
     const [taAssignBatchesData, setTaAssignBatchesData] = useState([]);
@@ -356,6 +356,8 @@ const AssignBatches = () => {
             dispatch(getAssignBatches(id));
         }
     }, [dispatch, id]);
+
+    console.log('assigned Batches');
 
     useEffect(() => {
         if (assignedBatches && assignedBatches.length > 0) {

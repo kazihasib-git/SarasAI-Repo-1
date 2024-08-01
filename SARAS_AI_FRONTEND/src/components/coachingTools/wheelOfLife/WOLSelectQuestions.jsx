@@ -53,13 +53,26 @@ const WOLSelectQuestions = () => {
     const [selectedCategory, setSelectedCategory] = useState('');
     const [categoryId, setCategoryId] = useState();
 
+    function stripHtml(html) {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+        return tempDiv.textContent || tempDiv.innerText || '';
+    }
+
     useEffect(() => {
         if (
             wolQuestionCategoryWise.data &&
             wolQuestionCategoryWise.data.length > 0
         ) {
-            // console.log("Wol Question Category Wise", wolQuestionCategoryWise.data)
-            setQuestions(wolQuestionCategoryWise.data);
+            console.log(
+                'Wol Question Category Wise',
+                wolQuestionCategoryWise.data
+            );
+            const transformedData = wolQuestionCategoryWise.data.map(data => ({
+                ...data,
+                question: stripHtml(data.question),
+            }));
+            setQuestions(transformedData);
             setTotalQuestions(wolQuestionCategoryWise.data.length);
             setSelectedCategory(
                 wolQuestionCategoryWise.data[0].wol_category_name

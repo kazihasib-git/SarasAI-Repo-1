@@ -9,19 +9,18 @@ import {
     Radio,
     RadioGroup,
 } from '@mui/material';
-import { duration } from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-    createTaMenuSessions,
+    //updateTaMenuSession,
     getTaMenuSessions,
 } from '../../../../redux/features/teachingAssistant/tamenuSlice';
 import {
-    createCoachMenuSession,
+    // updateCoachMenuSession,
     getCoachMenuSessions,
 } from '../../../../redux/features/coach/coachmenuprofileSilce';
 import {
-    closeScheduleNewSession,
+    closeEditSession,
     openSelectBatches,
     openSelectStudents,
 } from '../../../../redux/features/commonCalender/commonCalender';
@@ -92,50 +91,56 @@ const platformOptions = [
     { label: 'BlueButton', value: '3' },
 ];
 
-const CreateSession = ({ componentName }) => {
+const EditSession = ({ componentName }) => {
     const dispatch = useDispatch();
+    const { timezones } = useSelector(state => state.timezone);
+    const { editSession, students, batches, sessionData } = useSelector(
+        state => state.commonCalender
+    );
+
+    console.log(sessionData);
+
     const [formData, setFormData] = useState({
-        sessionName: '',
-        duration: null,
-        message: '',
-        students: [],
-        batches: [],
-        platforms: null,
-        fromDate: null,
-        toDate: null,
-        fromTime: null,
-        toTime: null,
-        timezone: '1',
-        repeat: 'onetime',
-        selectedDays: [],
+        sessionName: sessionData.meeting_name || '',
+        duration: sessionData.duration || null,
+        message: sessionData.message || '',
+        students: sessionData.students || [],
+        batches: sessionData.batchId || [],
+        platforms: sessionData.platforms || null,
+        fromDate: sessionData.schedule_date || null,
+        toDate: sessionData.to_date || null,
+        fromTime: sessionData.start_time || null,
+        toTime: sessionData.end_time || null,
+        timezone:  'Asia/Kolkata',
+        repeat: sessionData.weeks ? 'recurring' : 'onetime',
+        selectedDays: sessionData.weeks
+            ? sessionData.weeks
+                  .map((day, index) => (day === 1 ? weekDays[index] : null))
+                  .filter(Boolean)
+            : [],
     });
 
-    let sliceName, createSessionApi, getSessionApi;
+    let sliceName, updateSessionApi, getSessionApi;
 
     switch (componentName) {
         case 'TAMENU':
             sliceName = 'taMenu';
-            createSessionApi = createTaMenuSessions;
+            // updateSessionApi = updateTaMenuSession;
             getSessionApi = getTaMenuSessions;
             break;
 
         case 'COACHMENU':
             sliceName = 'coachMenu';
-            createSessionApi = createCoachMenuSession;
+            // updateSessionApi = updateCoachMenuSession;
             getSessionApi = getCoachMenuSessions;
             break;
 
         default:
             sliceName = null;
-            createSessionApi = null;
+            updateSessionApi = null;
             getSessionApi = null;
             break;
     }
-
-    const { timezones } = useSelector(state => state.timezone);
-    const { scheduleNewSessionPopup, students, batches } = useSelector(
-        state => state.commonCalender
-    );
 
     useEffect(() => {
         dispatch(getTimezone());
@@ -157,7 +162,6 @@ const CreateSession = ({ componentName }) => {
     ];
 
     const handleChange = (field, value) => {
-        console.log('field', field, ':', value);
         if (field === 'timezone') {
             setFormData(prev => ({ ...prev, [field]: value.time_zone }));
         }
@@ -191,7 +195,7 @@ const CreateSession = ({ componentName }) => {
 
         let weeksArray = Array(7).fill(0);
         if (formData.repeat === 'recurring') {
-            selectedDays.forEach(day => {
+            formData.selectedDays.forEach(day => {
                 const index = weekDays.indexOf(day);
                 weeksArray[index] = 1;
             });
@@ -201,25 +205,18 @@ const CreateSession = ({ componentName }) => {
         }
 
         const fromDateTimeString = `${formData.fromDate}T${formData.fromTime}`;
-        console.log('fromDateTimeString:', fromDateTimeString);
-
         const fromDateTime = new Date(fromDateTimeString);
-        console.log('fromDateTime:', fromDateTime);
 
-        // Assuming formData.duration is in the format "HH:MM:SS"
         const [hours, minutes, seconds] = formData.duration
             .split(':')
             .map(Number);
         const durationInMs = (hours * 3600 + minutes * 60 + seconds) * 1000;
 
-        // Calculate endDateTime by adding duration to fromDateTime
         const endDateTime = new Date(fromDateTime.getTime() + durationInMs);
-        console.log('endDateTime:', endDateTime);
-
-        // Extracting time from endDateTime in HH:MM:SS format
         const endTime = endDateTime.toTimeString().split(' ')[0];
 
         const data = {
+            id: sessionData.id,
             meeting_name: formData.sessionName,
             duration: formData.duration,
             schedule_date: formData.fromDate,
@@ -234,16 +231,14 @@ const CreateSession = ({ componentName }) => {
             batchId: batchId,
             weeks: weeksArray,
         };
-        console.log('Form Data : ', formData);
-        console.log('DATA :', data);
 
-        dispatch(createSessionApi(data)).then(() => {
-            dispatch(getSessionApi());
-            dispatch(closeScheduleNewSession());
-        });
+        console.log(data);
+        // dispatch(updateSessionApi(data)).then(() => {
+        //     dispatch(getSessionApi());
+        //     dispatch(closeEditSession());
+        // });
+        dispatch(closeEditSession());
     };
-
-    console.log('FormData :', formData);
 
     const content = (
         <Box
@@ -586,13 +581,13 @@ const CreateSession = ({ componentName }) => {
 
     return (
         <ReusableDialog
-            open={scheduleNewSessionPopup}
-            handleClose={() => dispatch(closeScheduleNewSession())}
-            title={`Create New Session`}
+            open={EditSession}
+            handleClose={() => dispatch(closeEditSession())}
+            title={`Edit Session`}
             content={content}
             actions={actions}
         />
     );
 };
 
-export default CreateSession;
+export default EditSession;

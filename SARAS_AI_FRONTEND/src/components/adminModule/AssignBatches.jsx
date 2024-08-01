@@ -7,6 +7,7 @@ import {
     getBatchMapping,
     getTA,
     postAssignBatches,
+    getAssignBatches,
 } from '../../redux/features/taModule/taSlice';
 
 import {
@@ -15,47 +16,14 @@ import {
     getCoachStudentBatchMapping,
     postCoachAssignBatches,
     getCoachBatchMapping,
+    getCoachAssignBatches,
 } from '../../redux/features/CoachModule/coachSlice';
 
 import CustomTextField from '../CustomFields/CustomTextField';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import PopUpTable from '../CommonComponent/PopUpTable';
 import { openScheduleSession } from '../../redux/features/taModule/taScheduling';
-
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                padding: '10px 20px',
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
+import CustomButton from '../CustomFields/CustomButton';
 
 const AssignBatches = ({ componentname }) => {
     const dispatch = useDispatch();
@@ -136,6 +104,29 @@ const AssignBatches = ({ componentname }) => {
             dispatch(getBatchMappingAction());
         }
     }, [assignBatchOpen, dispatch, getBatchMappingAction]);
+
+    useEffect(() => {
+        if (assignBatchOpen) {
+            if (componentname === 'ADDITCOACH') {
+                const id = coachID || assignedId;
+                dispatch(getCoachAssignBatches(id)).then(action => {
+                    const previouslyAssignedStudents = action.payload.map(
+                        batches => batches.batch.id
+                    );
+                    setSelectedBatch(previouslyAssignedStudents);
+                });
+            } else if (componentname === 'ADDEDITTA') {
+                const id = taID || assignedId;
+                dispatch(getAssignBatches(id)).then(action => {
+                    console.log(action.payload);
+                    const previouslyAssignedStudents = action.payload.map(
+                        batches => batches.batch.id
+                    );
+                    setSelectedBatch(previouslyAssignedStudents);
+                });
+            }
+        }
+    }, [assignBatchOpen, dispatch, componentname, assignedId, coachID, taID]);
 
     useEffect(() => {
         if (Array.isArray(batchMapping)) {

@@ -82,7 +82,6 @@ export const fetchCoachAvailableSlots = createAsyncThunk(
 export const deleteCoachFutureSlots = createAsyncThunk(
     'coachAvailability/deleteCoachFutureSlots',
     async id => {
-        console.log('ID : ', id);
         const response = await axios.delete(
             `${baseUrl}/admin/coach-slots/${id}`
         );
@@ -125,6 +124,8 @@ const initialState = {
     deletingCoachFutureSlots: false,
     coachId: [],
     coachName: [],
+    coachSessionEventData: [],
+    coachOpenEventData: false,
 };
 
 export const coachAvailabilitySlice = createSlice({
@@ -189,6 +190,15 @@ export const coachAvailabilitySlice = createSlice({
             state.deletingCoachFutureSlots = false;
             state.coachId = [];
             state.coachName = [];
+        },
+
+        openCoachSessionEvent(state, action) {
+            state.coachSessionEventData = action.payload;
+            state.coachOpenEventData = true;
+        },
+        closeCoachSessionEvent(state, action) {
+            state.coachSessionEventData = [];
+            state.coachOpenEventData = false;
         },
 
         // don't know where to use
@@ -279,6 +289,7 @@ export const coachAvailabilitySlice = createSlice({
         builder.addCase(getCoachScheduleSession.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            state.scheduledCoachSessionData = [];
         });
 
         builder.addCase(fetchCoachAvailableSlots.pending, state => {
@@ -338,6 +349,8 @@ export const {
     closeCoachRescheduleSession,
     openDeleteCoachSlots,
     closeDeleteCoachSlots,
+    openCoachSessionEvent,
+    closeCoachSessionEvent,
     // openStudentsRescheduleSession,
     // closeStudentsRescheduleSession
 } = coachAvailabilitySlice.actions;

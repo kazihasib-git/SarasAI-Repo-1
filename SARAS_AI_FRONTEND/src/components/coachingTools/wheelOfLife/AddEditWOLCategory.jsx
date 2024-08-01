@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ReusableDialog from '../../CustomFields/ReusableDialog';
-import { Button, Grid, styled } from '@mui/material';
+import { Box, Button, Grid, styled } from '@mui/material';
 import CustomTextField from '../../CustomFields/CustomTextField';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -101,16 +101,18 @@ const AddEditWOLCategory = () => {
     );
 
     const content = (
-        <Grid container spacing={2} justifyContent="center">
-            <Grid item sm={6}>
-                <CustomTextField
-                    label="WOL Category"
-                    placeholder="Enter WOL Category"
-                    value={categoryName}
-                    onChange={e => setCategoryName(e.target.value)}
-                />
+        <Box display="flex" justifyContent="center" m={4}>
+            <Grid container spacing={3} justifyContent="center">
+                <Grid item sm={6} display="flex" justifyContent="center">
+                    <CustomTextField
+                        label="WOL Category"
+                        placeholder="Enter WOL Category"
+                        value={categoryName}
+                        onChange={e => setCategoryName(e.target.value)}
+                    />
+                </Grid>
             </Grid>
-        </Grid>
+        </Box>
     );
 
     return (

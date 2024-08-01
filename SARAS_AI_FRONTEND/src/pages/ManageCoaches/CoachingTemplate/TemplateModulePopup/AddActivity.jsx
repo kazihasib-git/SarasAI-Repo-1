@@ -178,7 +178,7 @@ const AddActivity = () => {
                                     value: 'Close Activity',
                                     label: 'Close Activity',
                                 },
-                                { value: 'No Points', label: 'No Penalty' },
+                                { value: 'No Points', label: 'No Points' },
                                 { value: 'No Effect', label: 'No Effect' },
                             ]}
                         />

@@ -120,15 +120,23 @@ const taScheduling = createSlice({
         },
         openEditBatch(state, action) {
             state.openEditBatch = true;
+            if (action.payload) {
+            }
         },
         closeEditBatch(state, action) {
             state.openEditBatch = false;
         },
         openEditStudent(state, action) {
             state.openEditStudent = true;
+            if (action.payload) {
+                state.students = action.payload.student;
+            }
         },
         closeEditStudent(state, action) {
             state.openEditStudent = false;
+            if (action.payload) {
+                state.students = action.payload.student;
+            }
         },
         clearAvailableSlots(state) {
             state.taAvailableSlots = [];

@@ -133,6 +133,8 @@ const initialState = {
     deletingCoachFutureSlots: false,
     taId: [],
     taName: [],
+    sessionEventData: [],
+    openEventData: false,
 };
 
 export const taAvailabilitySlice = createSlice({
@@ -210,6 +212,14 @@ export const taAvailabilitySlice = createSlice({
             state.taId = [];
             state.taName = [];
         },
+        openSessionEvent(state, action) {
+            state.sessionEventData = action.payload;
+            state.openEventData = true;
+        },
+        closeSessionEvent(state, action) {
+            state.sessionEventData = [];
+            state.openEventData = false;
+        },
     },
     extraReducers: builder => {
         //for sessions ta for calendar
@@ -272,7 +282,7 @@ export const taAvailabilitySlice = createSlice({
         });
         builder.addCase(createSlots.fulfilled, (state, action) => {
             state.loading = false;
-            state.slotEventData = action.payload?.data;
+            state.slotData = action.payload?.data;
         });
         builder.addCase(createSlots.rejected, (state, action) => {
             state.loading = false;
@@ -354,6 +364,8 @@ export const {
     closeStudentsRescheduleSession,
     openDeleteTaSlots,
     closeDeleteTaSlots,
+    openSessionEvent,
+    closeSessionEvent,
 } = taAvailabilitySlice.actions;
 
 export default taAvailabilitySlice.reducer;

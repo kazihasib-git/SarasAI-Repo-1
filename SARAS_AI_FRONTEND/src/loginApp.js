@@ -57,6 +57,7 @@ import WOLInstructions from './components/coachingTools/wheelOfLife/WOLInstructi
 import WOLQuestions from './components/coachingTools/wheelOfLife/WOLQuestions';
 import WOLOptionsConfig from './components/coachingTools/wheelOfLife/WOLOptionsConfig';
 import WOLTestConfig from './components/coachingTools/wheelOfLife/WOLTestConfig';
+import WOLSelectQuestions from './components/coachingTools/wheelOfLife/WOLSelectQuestions';
 import AddEditWOLQuestions from './components/coachingTools/wheelOfLife/AddEditWOLQuestions';
 import AddEditTeachingAssistant from './pages/MODULE/TaModule/TeachingAssistant';
 import CreateTaMenu from './pages/MODULE/TaModule/CreateTaMenu';
@@ -276,6 +277,10 @@ function LoginApp() {
                         <Route
                             path="WOLTestConfigSelectQuestions"
                             element={<WOLTestConfigSelectQuestions />}
+                        />
+                        <Route
+                            path="WolselectQuestions"
+                            element={<WOLSelectQuestions />}
                         />
                         <Route
                             path="schedule-calls"

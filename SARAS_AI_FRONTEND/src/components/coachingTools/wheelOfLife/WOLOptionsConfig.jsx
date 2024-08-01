@@ -41,6 +41,9 @@ const CustomButton = styled(Button)(({ theme, active }) => ({
         color: '#fff',
         borderColor: '#F56D3B',
     },
+    '.buttonText': {
+        textTransform: 'capitalize', // Ensure only the first letter is capitalized
+    },
 }));
 
 let scaleOptions = [];
@@ -137,6 +140,9 @@ const WOLOptionsConfig = () => {
             tempErrors.minScale = 'Minimum Scale is required';
         if (!formValues.maxScale)
             tempErrors.maxScale = 'Maximum Scale is required';
+        if (Number(formValues.minScale) >= Number(formValues.maxScale))
+            tempErrors.scaleRange =
+                'Maximum Scale must be greater than Minimum Scale';
         formValues.details.forEach((detail, index) => {
             if (
                 (index === 0 || index === formValues.details.length - 1) &&
@@ -231,19 +237,18 @@ const WOLOptionsConfig = () => {
             >
                 <Box display="flex" alignItems="center" padding="16px">
                     <ArrowBackIosIcon
-                        style={{ fontSize: '25px', marginBottom: '17px' }}
+                        style={{ fontSize: '25px', marginBottom: '17px', fontWeight: 'normal'}}
                         onClick={() => navigate('/wheel-of-life')}
                     />
-                    <Typography
-                        variant="h1"
-                        sx={{
+                    <p
+                        style={{
                             fontSize: '44px',
-                            marginLeft: '16px',
-                            fontFamily: 'ExtraLight',
+                            fontWeight: 200,
+                            justifyContent: 'center',
                         }}
                     >
-                        Wheel of Life Options Config
-                    </Typography>
+                        Wheel Of Life Options Config
+                    </p>
                 </Box>
             </Box>
             <Box
@@ -298,6 +303,7 @@ const WOLOptionsConfig = () => {
                             <CustomButton
                                 type="submit"
                                 active={true}
+                                
                                 variant="contained"
                                 sx={{
                                     borderRadius: '50px',
@@ -306,10 +312,17 @@ const WOLOptionsConfig = () => {
                                     textTransform: 'none',
                                 }}
                             >
-                                {edit ? 'Edit' : 'Submit'}
+                                <span className="buttonText" >
+                                    {edit ? 'Edit' : 'Submit'}
+                                </span>
                             </CustomButton>
                         </Grid>
                     </Grid>
+                    {errors.scaleRange && (
+                        <Typography color="error" sx={{ mt: 2 }}>
+                            {errors.scaleRange}
+                        </Typography>
+                    )}
                 </form>
             </Box>
 
@@ -487,6 +500,7 @@ const WOLOptionsConfig = () => {
                         <CustomButton
                             type="submit"
                             active={true}
+                            
                             variant="contained"
                             sx={{
                                 borderRadius: '50px',
@@ -495,7 +509,9 @@ const WOLOptionsConfig = () => {
                                 textTransform: 'none',
                             }}
                         >
-                            Submit
+                            <span className="buttonText" >
+                                    Submit
+                                </span>
                         </CustomButton>
                     </Box>
                 </form>

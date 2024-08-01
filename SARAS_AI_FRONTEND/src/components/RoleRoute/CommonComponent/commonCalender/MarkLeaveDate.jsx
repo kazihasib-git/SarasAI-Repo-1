@@ -53,6 +53,7 @@ const CustomButton = ({
 };
 
 const MarkLeaveDate = ({ componentName }) => {
+    console.log('Comp Name :', componentName);
     const dispatch = useDispatch();
     const [formData, setFormData] = useState({
         fromDate: null,

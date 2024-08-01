@@ -21,17 +21,8 @@ import {
     getCoachScheduleSession,
     openCoachScheduledSession,
 } from '../../redux/features/CoachModule/CoachAvailabilitySlice';
-
 import { cancelScheduledSession } from '../../redux/features/taModule/taScheduling';
-
 import { cancelCoachScheduledSession } from '../../redux/features/CoachModule/coachSchedule';
-import {
-    cancelScheduledSessionForLeave,
-    closeCancelSessionForLeave,
-    getSessionForLeave,
-    openCancelSessionForLeave,
-    openScheduledSessionForLeave,
-} from '../../redux/features/coach/coachmenuprofileSilce';
 
 const CustomButton = ({
     onClick,
@@ -86,9 +77,9 @@ const CancelSchedule = ({ componentName }) => {
                 (closeSessionAction = closeCancelSession);
             cancelSessionAction = cancelScheduledSession;
             getSessionAction = getScheduleSession;
-            (eventSlotData = 'slotEventData'),
-                (cancelScheduledData = 'schduldeCancelData'),
-                (openSessionAction = openScheduledSession);
+            eventSlotData = 'slotEventData';
+            cancelScheduledData = 'schduldeCancelData';
+            openSessionAction = openScheduledSession;
             cancelSessionState = 'cancelSessionOpen';
             break;
 
@@ -121,12 +112,6 @@ const CancelSchedule = ({ componentName }) => {
         [eventSlotData]: slotEventData,
     } = schedulingState;
 
-    console.log(
-        'scheduleCande Data : ',
-        schduldeCancelData,
-        'slotEventData :',
-        slotEventData
-    );
     // For coachAvailability specific data
     const {
         cancelCoachSessionOpen,
@@ -137,8 +122,6 @@ const CancelSchedule = ({ componentName }) => {
     console.log('schduldeCancelData ', schduldeCancelData, slotEventData);
 
     const handleCancel = () => {
-        // console.log("SLOT EVENT DATA : ", slotEventData)
-        // console.log("SLOT COACH EVENT DATA : ", slotCoachEventData)
         dispatch(closeSessionAction());
         const sessionData = schduldeCancelData;
 
@@ -149,8 +132,8 @@ const CancelSchedule = ({ componentName }) => {
         dispatch(cancelSessionAction(sessionNo))
             .unwrap()
             .then(() => {
-                dispatch(getSessionAction(slotEventData));
-                dispatch(openSessionAction());
+                dispatch(getSessionAction());
+                dispatch(openSessionAction(slotEventData));
             })
             .catch(error => {
                 console.error('Failed to cancel the session:', error);
@@ -203,7 +186,7 @@ const CancelSchedule = ({ componentName }) => {
             open={cancelSessionState}
             handleClose={() => {
                 dispatch(closeSessionAction());
-                dispatch(openSessionAction());
+                //dispatch(openSessionAction());
             }}
             title="Are you sure that you want to cancel the session"
             content={content}

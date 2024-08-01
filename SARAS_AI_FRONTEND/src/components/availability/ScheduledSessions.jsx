@@ -198,6 +198,7 @@ const ScheduledSessions = ({ componentName }) => {
     const handleSubmit = () => {
         console.log('*** ScheduledSessions', slotEventData);
         dispatch(openReasonAction(slotEventData));
+        dispatch(closeSessionAction());
     };
 
     const content =
@@ -234,7 +235,7 @@ const ScheduledSessions = ({ componentName }) => {
         <ReusableDialog
             open={scheduledSessionOpen}
             handleClose={() => {
-                dispatch(openSlotsAction());
+                // dispatch(openSlotsAction());
                 dispatch(closeSessionAction());
             }}
             title="Scheduled Sessions"
