@@ -19,7 +19,7 @@ import {
     openCoachSuccessPopup,
     updateCoach,
     accessCoachName,
-} from '../../../../redux/features/CoachModule/coachSlice';
+} from '../../../../redux/features/adminModule/coach/coachSlice';
 import AssignStudents from '../../AssignStudents';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';

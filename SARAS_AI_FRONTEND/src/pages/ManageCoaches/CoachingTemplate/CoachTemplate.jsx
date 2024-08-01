@@ -11,7 +11,7 @@ import {
     openEditTemplateCoach,
     setSelectedCoachTemplate,
     getCoachTemplateModuleId,
-} from '../../../redux/features/CoachModule/CoachTemplateSlice';
+} from '../../../redux/features/adminModule/coach/coachTemplateSlice';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 

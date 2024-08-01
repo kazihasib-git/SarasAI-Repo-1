@@ -10,12 +10,12 @@ import {
     openScheduledSlots,
     closeMarkLeave,
     getSlots,
-} from '../../redux/features/taModule/taAvialability';
+} from '../../redux/features/adminModule/ta/taAvialability';
 import {
     openCoachScheduledSlots,
     closeCoachMarkLeave,
     getCoachSlots,
-} from '../../redux/features/CoachModule/CoachAvailabilitySlice';
+} from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 
 const CustomButton = ({
     onClick,

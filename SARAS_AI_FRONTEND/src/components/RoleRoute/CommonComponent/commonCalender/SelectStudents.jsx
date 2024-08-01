@@ -1,8 +1,8 @@
 import { Button, Divider, Grid, MenuItem, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getTaMenuAssignedStudents } from '../../../../redux/features/teachingAssistant/tamenuSlice';
-import { getCoachMenuAssignedStudents } from '../../../../redux/features/coach/coachmenuprofileSilce';
+import { getTaMenuAssignedStudents } from '../../../../redux/features/taModule/tamenuSlice';
+import { getCoachMenuAssignedStudents } from '../../../../redux/features/coachModule/coachmenuprofileSilce';
 import {
     closeSelectStudents,
     openScheduleNewSession,

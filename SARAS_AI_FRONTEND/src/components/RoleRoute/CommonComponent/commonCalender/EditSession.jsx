@@ -14,11 +14,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
     //updateTaMenuSession,
     getTaMenuSessions,
-} from '../../../../redux/features/teachingAssistant/tamenuSlice';
+} from '../../../../redux/features/taModule/tamenuSlice';
 import {
     // updateCoachMenuSession,
     getCoachMenuSessions,
-} from '../../../../redux/features/coach/coachmenuprofileSilce';
+} from '../../../../redux/features/coachModule/coachmenuprofileSilce';
 import {
     closeEditSession,
     openSelectBatches,
@@ -111,7 +111,7 @@ const EditSession = ({ componentName }) => {
         toDate: sessionData.to_date || null,
         fromTime: sessionData.start_time || null,
         toTime: sessionData.end_time || null,
-        timezone:  'Asia/Kolkata',
+        timezone: 'Asia/Kolkata',
         repeat: sessionData.weeks ? 'recurring' : 'onetime',
         selectedDays: sessionData.weeks
             ? sessionData.weeks

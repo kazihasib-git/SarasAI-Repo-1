@@ -12,7 +12,7 @@ import {
     openScheduledSlots,
     reasonForLeave,
     openReasonForLeave,
-} from '../../redux/features/taModule/taAvialability';
+} from '../../redux/features/adminModule/ta/taAvialability';
 
 import {
     closeCoachScheduledSession,
@@ -21,7 +21,7 @@ import {
     openCoachScheduledSlots,
     openCoachReasonForLeave,
     reasonForCoachLeave,
-} from '../../redux/features/CoachModule/CoachAvailabilitySlice';
+} from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import { useParams } from 'react-router-dom';
 import {
     closeReasonForLeavePopup,
@@ -30,7 +30,7 @@ import {
     openReasonForLeavePopup,
     openRescheduleSessionForLeave,
     openScheduledSessionForLeave,
-} from '../../redux/features/coach/coachmenuprofileSilce';
+} from '../../redux/features/coachModule/coachmenuprofileSilce';
 
 const CustomButton = ({
     onClick,

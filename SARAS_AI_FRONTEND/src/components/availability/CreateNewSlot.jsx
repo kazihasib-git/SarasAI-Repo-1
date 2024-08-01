@@ -24,11 +24,11 @@ import {
     createSlots,
     closeCreateNewSlots,
     fetchTaSlots,
-} from '../../redux/features/taModule/taAvialability';
+} from '../../redux/features/adminModule/ta/taAvialability';
 import {
     createCoachSlots,
     fetchCoachSlots,
-} from '../../redux/features/CoachModule/CoachAvailabilitySlice';
+} from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import { toast } from 'react-toastify';
 
 const CustomButton = ({

@@ -15,11 +15,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
     createTaMenuSessions,
     getTaMenuSessions,
-} from '../../../../redux/features/teachingAssistant/tamenuSlice';
+} from '../../../../redux/features/taModule/tamenuSlice';
 import {
     createCoachMenuSession,
     getCoachMenuSessions,
-} from '../../../../redux/features/coach/coachmenuprofileSilce';
+} from '../../../../redux/features/coachModule/coachmenuprofileSilce';
 import {
     closeScheduleNewSession,
     openSelectBatches,

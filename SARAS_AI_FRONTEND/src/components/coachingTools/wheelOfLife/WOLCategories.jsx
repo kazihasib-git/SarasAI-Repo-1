@@ -11,7 +11,7 @@ import {
     setAddEditWolCategory,
     setEditData,
     getWOLCategory,
-} from '../../../redux/features/coachingTools/wol/wolSlice';
+} from '../../../redux/features/adminModule/coachingTools/wol/wolSlice';
 import AddEditWOLCategory from './AddEditWOLCategory';
 
 const WOLCategories = () => {

@@ -4,7 +4,7 @@ import CustomTextField from '../../../../components/CustomFields/CustomTextField
 import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { createCoachTemplate } from '../../../../redux/features/CoachModule/CoachTemplateSlice';
+import { createCoachTemplate } from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
 
 const durations = [
     { value: 30, label: '30 mins' },

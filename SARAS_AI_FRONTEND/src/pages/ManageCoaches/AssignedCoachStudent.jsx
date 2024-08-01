@@ -3,7 +3,7 @@ import Header from '../../components/Header/Header';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { getCoachAssignStudents } from '../../redux/features/CoachModule/coachSlice';
+import { getCoachAssignStudents } from '../../redux/features/adminModule/coach/coachSlice';
 import AdminDataTable from '../../components/CommonComponent/AdminDataTable';
 const headers = ['Sr. No.', 'Student Name', 'Program', 'Batch', 'Actions'];
 const actionButtons = [

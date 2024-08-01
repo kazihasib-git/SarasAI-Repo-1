@@ -9,13 +9,13 @@ import {
     closeScheduledSlots,
     openScheduledSession,
     getScheduleSession,
-} from '../../redux/features/taModule/taAvialability';
+} from '../../redux/features/adminModule/ta/taAvialability';
 
 import {
     closeCoachScheduledSlots,
     openCoachScheduledSession,
     getCoachScheduleSession,
-} from '../../redux/features/CoachModule/CoachAvailabilitySlice';
+} from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 
 const CustomButton = ({
     onClick,

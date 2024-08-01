@@ -14,7 +14,7 @@ import {
     getAssignStudents,
     toggleAssignStudentStatus,
     deleteAssignedStudent,
-} from '../../redux/features/taModule/taSlice';
+} from '../../redux/features/adminModule/ta/taSlice';
 import { useDispatch, useSelector } from 'react-redux';
 
 const CustomButton = styled(Button)(({ theme, active }) => ({

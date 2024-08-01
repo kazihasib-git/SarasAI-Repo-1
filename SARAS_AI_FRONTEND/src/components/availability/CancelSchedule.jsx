@@ -14,15 +14,15 @@ import {
     getScheduleSession,
     openReasonForLeave,
     openScheduledSession,
-} from '../../redux/features/taModule/taAvialability';
+} from '../../redux/features/adminModule/ta/taAvialability';
 
 import {
     closeCoachCancelSession,
     getCoachScheduleSession,
     openCoachScheduledSession,
-} from '../../redux/features/CoachModule/CoachAvailabilitySlice';
-import { cancelScheduledSession } from '../../redux/features/taModule/taScheduling';
-import { cancelCoachScheduledSession } from '../../redux/features/CoachModule/coachSchedule';
+} from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
+import { cancelScheduledSession } from '../../redux/features/adminModule/ta/taScheduling';
+import { cancelCoachScheduledSession } from '../../redux/features/adminModule/coach/coachSchedule';
 
 const CustomButton = ({
     onClick,

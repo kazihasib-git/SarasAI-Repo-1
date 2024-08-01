@@ -360,7 +360,7 @@ import {
     addWOLTestConfig,
     getWOLCategory,
     getWolTestConfig,
-} from '../../../redux/features/coachingTools/wol/wolSlice';
+} from '../../../redux/features/adminModule/coachingTools/wol/wolSlice';
 import {
     Box,
     Button,
@@ -377,7 +377,6 @@ import {
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { useNavigate } from 'react-router-dom';
 import CustomFormControl from '../../CustomFields/CustomFromControl';
-
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
     borderRadius: '50px',
@@ -733,4 +732,3 @@ const WOLTestConfig = () => {
 };
 
 export default WOLTestConfig;
-

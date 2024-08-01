@@ -11,9 +11,7 @@ import {
     Typography,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import CallMadeOutlinedIcon from '@mui/icons-material/CallMadeOutlined';
-import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import { styled } from '@mui/material/styles';
 import './DynamicTable.css';
 import { useNavigate } from 'react-router-dom';
@@ -21,12 +19,12 @@ import editIcon from '../../assets/editIcon.png';
 import bin from '../../assets/bin.png';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { useDispatch } from 'react-redux';
-import { activeDeactiveWOLCategory } from '../../redux/features/coachingTools/wol/wolSlice';
-import { openScheduleSession } from '../../redux/features/taModule/taScheduling';
+import { activeDeactiveWOLCategory } from '../../redux/features/adminModule/coachingTools/wol/wolSlice';
+import { openScheduleSession } from '../../redux/features/adminModule/ta/taScheduling';
 
-import { updateTA } from '../../redux/features/taModule/taSlice';
-import { updateCoach } from '../../redux/features/CoachModule/coachSlice';
-import { openCoachScheduleSession } from '../../redux/features/CoachModule/coachSchedule';
+import { updateTA } from '../../redux/features/adminModule/ta/taSlice';
+import { updateCoach } from '../../redux/features/adminModule/coach/coachSlice';
+import { openCoachScheduleSession } from '../../redux/features/adminModule/coach/coachSchedule';
 
 const DynamicTable = ({
     headers,

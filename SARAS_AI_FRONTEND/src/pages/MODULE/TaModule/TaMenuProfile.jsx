@@ -22,7 +22,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
     getTaMenuProfile,
     updateTaMenuProfile,
-} from '../../../redux/features/teachingAssistant/tamenuSlice';
+} from '../../../redux/features/taModule/tamenuSlice';
 import moment from 'moment';
 import CustomDateOfBirth from '../../../components/CustomFields/CustomDateOfBirth';
 

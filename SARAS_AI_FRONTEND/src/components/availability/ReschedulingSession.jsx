@@ -6,8 +6,8 @@ import CustomTimeField from '../CustomFields/CustomTimeField';
 import { useDispatch, useSelector } from 'react-redux';
 import PopUpTable from '../CommonComponent/PopUpTable';
 import { useParams } from 'react-router-dom';
-import { rescheduleSession } from '../../redux/features/taModule/taScheduling';
-import { rescheduleCoachSession } from '../../redux/features/CoachModule/coachSchedule';
+import { rescheduleSession } from '../../redux/features/adminModule/ta/taScheduling';
+import { rescheduleCoachSession } from '../../redux/features/adminModule/coach/coachSchedule';
 
 import {
     closeRescheduleSession,
@@ -15,7 +15,7 @@ import {
     getScheduleSession,
     openReasonForLeave,
     openScheduledSession,
-} from '../../redux/features/taModule/taAvialability';
+} from '../../redux/features/adminModule/ta/taAvialability';
 
 import {
     closeCoachRescheduleSession,
@@ -23,7 +23,7 @@ import {
     openCoachReasonForLeave,
     openCoachScheduledSession,
     fetchCoachAvailableSlots,
-} from '../../redux/features/CoachModule/CoachAvailabilitySlice';
+} from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 
 const CustomButton = ({
     onClick,

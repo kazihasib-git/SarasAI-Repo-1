@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Schedule from '../../components/availability/Schedule';
 import AssignStudents from '../../components/adminModule/AssignStudents';
 import AssignBatches from '../../components/adminModule/AssignBatches';
-import { showTAMapping } from '../../redux/features/taModule/taSlice';
+import { showTAMapping } from '../../redux/features/adminModule/ta/taSlice';
 import EditBatches from '../../components/availability/EditBatches';
 import EditStudents from '../../components/availability/EditStudents';
 

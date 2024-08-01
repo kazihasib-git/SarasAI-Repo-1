@@ -3,16 +3,15 @@ import ReusableDialog from '../../CustomFields/ReusableDialog';
 import { Box, Button, Grid, styled } from '@mui/material';
 import CustomTextField from '../../CustomFields/CustomTextField';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-    setAddEditWolCategory,
-    setEditData,
-    updateWOLCategory,
-} from '../../../redux/features/coachingTools/wol/wolSlice';
+
 import {
     createWOLCategory,
     updateeWOLCategory,
     getWOLCategory,
-} from '../../../redux/features/coachingTools/wol/wolSlice';
+    setAddEditWolCategory,
+    setEditData,
+    updateWOLCategory,
+} from '../../../redux/features/adminModule/coachingTools/wol/wolSlice';
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
     borderRadius: '50px',

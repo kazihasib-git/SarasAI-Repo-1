@@ -8,15 +8,13 @@ import Header from '../../components/Header/Header';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { AssignedBatchesData } from '../../fakeData/AssignedBatchesData';
 import bin from '../../assets/bin.png';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     deleteAssignedBatch,
     getAssignBatches,
     toggleAssignBatchStatus,
-} from '../../redux/features/taModule/taSlice';
-import AdminDataTable from '../../components/CommonComponent/AdminDataTable';
+} from '../../redux/features/adminModule/ta/taSlice';
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
     borderRadius: '50px',

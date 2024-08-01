@@ -25,19 +25,19 @@ import {
     getTaAvailableSlotsFromDate,
     openEditBatch,
     openEditStudent,
-} from '../../redux/features/taModule/taScheduling';
+} from '../../redux/features/adminModule/ta/taScheduling';
 import {
     closeCoachScheduleSession,
     createCoachSchedule,
     getCoachAvailableSlotsFromDate,
     openCoachEditBatch,
     openCoachEditStudent,
-} from '../../redux/features/CoachModule/coachSchedule';
+} from '../../redux/features/adminModule/coach/coachSchedule';
 import { getTimezone } from '../../redux/features/timezone/timezoneSlice';
 import CustomTimeZoneForm from '../CustomFields/CustomTimeZoneForm';
-import { fetchTAScheduleById } from '../../redux/features/taModule/taAvialability';
+import { fetchTAScheduleById } from '../../redux/features/adminModule/ta/taAvialability';
 import { toast } from 'react-toastify';
-import { fetchCoachScheduleById } from '../../redux/features/CoachModule/CoachAvailabilitySlice';
+import { fetchCoachScheduleById } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 
 const CustomButton = ({
     onClick,

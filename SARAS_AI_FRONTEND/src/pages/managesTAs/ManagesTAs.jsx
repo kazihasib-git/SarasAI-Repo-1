@@ -11,7 +11,7 @@ import {
     openEditTa,
     closeCreateTa,
     closeEditTa,
-} from '../../redux/features/taModule/taSlice';
+} from '../../redux/features/adminModule/ta/taSlice';
 import { useDispatch, useSelector } from 'react-redux';
 
 const headers = [

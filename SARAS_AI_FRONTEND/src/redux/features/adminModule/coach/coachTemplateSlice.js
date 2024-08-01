@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { baseUrl } from '../../../utils/baseURL';
+import { baseUrl } from '../../../../utils/baseURL';
 
 export const getAllCoachTemplates = createAsyncThunk(
     'coachTemplate/getAllCoachTemplates',
@@ -44,6 +44,7 @@ export const createCoachTemplateModule = createAsyncThunk(
         return response.data;
     }
 );
+
 export const getCoachTemplateModuleId = createAsyncThunk(
     'coachTemplate/getCoachTemplateModuleId',
     async id => {

@@ -1,34 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { Button, MenuItem, Typography, Grid, Divider } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-    closeAssignStudents,
-    openSuccessPopup,
-    getStudentBatchMapping,
-    postAssignStudents,
-    getAssignStudents,
-} from '../../redux/features/taModule/taSlice';
+import { getAssignStudents } from '../../redux/features/adminModule/ta/taSlice';
 import CustomTextField from '../CustomFields/CustomTextField';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import PopUpTable from '../CommonComponent/PopUpTable';
 import {
     closeEditStudent,
     openScheduleSession,
-} from '../../redux/features/taModule/taScheduling';
+} from '../../redux/features/adminModule/ta/taScheduling';
 
-import { closeCoachEditStudent } from '../../redux/features/CoachModule/coachSchedule';
+import { closeCoachEditStudent } from '../../redux/features/adminModule/coach/coachSchedule';
 
-import { getCoachAssignStudents } from '../../redux/features/CoachModule/coachSlice';
+import { getCoachAssignStudents } from '../../redux/features/adminModule/coach/coachSlice';
 import {
     closeSelectStudents,
     getCoachMenuAssignedStudents,
     openCreateSessionPopup,
-} from '../../redux/features/coach/coachmenuprofileSilce';
+} from '../../redux/features/coachModule/coachmenuprofileSilce';
 import {
     closeTaMenuSelectStudents,
     getTaMenuAssignedStudents,
     openTaMenuCreateSessionsPopup,
-} from '../../redux/features/teachingAssistant/tamenuSlice';
+} from '../../redux/features/taModule/tamenuSlice';
 import { useParams } from 'react-router-dom';
 
 const CustomButton = ({

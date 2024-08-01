@@ -11,13 +11,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import Schedule from '../../components/availability/Schedule';
 import AssignStudents from '../../components/adminModule/AssignStudents';
 import AssignBatches from '../../components/adminModule/AssignBatches';
-import { showCoachMapping } from '../../redux/features/CoachModule/coachSlice';
+import { showCoachMapping } from '../../redux/features/adminModule/coach/coachSlice';
 import EditBatches from '../../components/availability/EditBatches';
 import EditStudents from '../../components/availability/EditStudents';
 import {
     openCoachEditBatch,
     openCoachEditStudent,
-} from '../../redux/features/CoachModule/coachSchedule';
+} from '../../redux/features/adminModule/coach/coachSchedule';
 
 const CoachSheduling = () => {
     const dispatch = useDispatch();

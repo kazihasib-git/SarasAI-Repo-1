@@ -24,7 +24,7 @@ import {
     createWOLQuestion,
     updateWOLQuestion,
     getWOLQuestions,
-} from '../../../redux/features/coachingTools/wol/wolSlice';
+} from '../../../redux/features/adminModule/coachingTools/wol/wolSlice';
 
 const AddEditWOLQuestions = () => {
     const [questionValue, setQuestionValue] = useState('');
@@ -200,7 +200,7 @@ const AddEditWOLQuestions = () => {
                 }}
             >
                 <form onSubmit={handleSubmit(onSubmit)} noValidate>
-                <Box sx={{ marginBottom: 2, width: '40%' }}>
+                    <Box sx={{ marginBottom: 2, width: '40%' }}>
                         <p
                             style={{
                                 fontSize: '24px', // Increase the font size
@@ -208,7 +208,7 @@ const AddEditWOLQuestions = () => {
                                 color: '#1A1E3D',
                             }}
                         >
-                           {categoryName}
+                            {categoryName}
                         </p>
                     </Box>
 

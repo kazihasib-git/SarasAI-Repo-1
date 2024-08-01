@@ -19,7 +19,7 @@ import { Navigate } from 'react-router-dom';
 import {
     getLifeInstruction,
     editLifeInstruction,
-} from '../../../redux/features/coachingTools/wol/wolSlice';
+} from '../../../redux/features/adminModule/coachingTools/wol/wolSlice';
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
     borderRadius: '50px',
@@ -46,7 +46,6 @@ const WOLInstructions = () => {
     const handleEditWOLInstructions = () => {
         setValue(instruction);
         setEditData(true);
-        
     };
 
     const handleUpdateWOLInstructions = () => {

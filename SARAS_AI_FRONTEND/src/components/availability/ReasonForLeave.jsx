@@ -6,13 +6,13 @@ import {
     fetchTAScheduleById,
     fetchTaSlots,
     reasonForLeave,
-} from '../../redux/features/taModule/taAvialability';
+} from '../../redux/features/adminModule/ta/taAvialability';
 import {
     closeCoachReasonForLeave,
     fetchCoachScheduleById,
     fetchCoachSlots,
     reasonForCoachLeave,
-} from '../../redux/features/CoachModule/CoachAvailabilitySlice';
+} from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import CustomTextField from '../CustomFields/CustomTextField';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import { useParams } from 'react-router-dom';

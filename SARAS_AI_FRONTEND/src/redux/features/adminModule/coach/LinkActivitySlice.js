@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { baseUrl } from '../../../utils/baseURL';
+import { baseUrl } from '../../../../utils/baseURL';
 
 export const linkActivity = createAsyncThunk(
     'linkActivity/link',

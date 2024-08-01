@@ -10,17 +10,17 @@ import {
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import { useDispatch, useSelector } from 'react-redux';
-import { closeSessionEvent } from '../../redux/features/taModule/taAvialability';
+import { closeSessionEvent } from '../../redux/features/adminModule/ta/taAvialability';
 import { formatDateTime } from '../../utils/dateFormatter';
-import { closeCoachSessionEvent } from '../../redux/features/CoachModule/CoachAvailabilitySlice';
+import { closeCoachSessionEvent } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import {
     openEditStudent,
     openEditBatch,
-} from '../../redux/features/taModule/taScheduling';
+} from '../../redux/features/adminModule/ta/taScheduling';
 import {
     openCoachEditBatch,
     openCoachEditStudent,
-} from '../../redux/features/CoachModule/coachSchedule';
+} from '../../redux/features/adminModule/coach/coachSchedule';
 
 import editImg from '../../assets/editIcon_White.png';
 import editImage from '../../assets/editIcon.png';

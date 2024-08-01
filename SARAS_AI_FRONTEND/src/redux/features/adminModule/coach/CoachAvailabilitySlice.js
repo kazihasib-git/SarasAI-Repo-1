@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { baseUrl } from '../../../utils/baseURL';
+import { baseUrl } from '../../../../utils/baseURL';
 
 // Get Today Available Ta
 export const getTodayCoachAvailability = createAsyncThunk(

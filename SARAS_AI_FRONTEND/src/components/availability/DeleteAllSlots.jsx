@@ -15,13 +15,13 @@ import {
     fetchTAScheduleById,
     deleteTaFutureSlots,
     closeDeleteTaSlots,
-} from '../../redux/features/taModule/taAvialability';
+} from '../../redux/features/adminModule/ta/taAvialability';
 import {
     closeDeleteCoachSlots,
     deleteCoachFutureSlots,
     fetchCoachScheduleById,
     fetchCoachSlots,
-} from '../../redux/features/CoachModule/CoachAvailabilitySlice';
+} from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 
 const CustomButton = ({
     onClick,

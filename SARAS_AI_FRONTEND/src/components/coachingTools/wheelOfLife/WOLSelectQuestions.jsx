@@ -21,7 +21,7 @@ import {
     getWolTestConfigCategoryWise,
     handleIdToSubmitSelectedQuestions,
     selectedQuestionsList,
-} from '../../../redux/features/coachingTools/wol/wolSlice';
+} from '../../../redux/features/adminModule/coachingTools/wol/wolSlice';
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
     borderRadius: '50px',

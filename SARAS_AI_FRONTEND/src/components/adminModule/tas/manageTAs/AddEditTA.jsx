@@ -31,7 +31,7 @@ import {
     openSuccessPopup,
     updateTA,
     accessTaName,
-} from '../../../../redux/features/taModule/taSlice';
+} from '../../../../redux/features/adminModule/ta/taSlice';
 import SubmitPopup from '../../SubmitPopup';
 import dayjs from 'dayjs';
 import AvatarInput from '../../../CustomFields/AvatarInput';

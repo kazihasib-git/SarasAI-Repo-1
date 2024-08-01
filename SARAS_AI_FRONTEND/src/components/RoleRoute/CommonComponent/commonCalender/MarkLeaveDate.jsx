@@ -4,11 +4,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
     getTaMenuSlotsForLeave,
     getTaSlotsForLeave,
-} from '../../../../redux/features/teachingAssistant/tamenuSlice';
+} from '../../../../redux/features/taModule/tamenuSlice';
 import {
     getCoachMenuSlotsForLeave,
     getSlotsForLeave,
-} from '../../../../redux/features/coach/coachmenuprofileSilce';
+} from '../../../../redux/features/coachModule/coachmenuprofileSilce';
 import { toast } from 'react-toastify';
 import {
     closeMarkLeaveDate,

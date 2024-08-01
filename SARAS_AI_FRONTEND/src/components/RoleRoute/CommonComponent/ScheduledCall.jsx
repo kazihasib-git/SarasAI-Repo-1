@@ -20,8 +20,8 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { DateCalendar, LocalizationProvider } from '@mui/x-date-pickers';
 import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
-import { getCoachScheduledCalls } from '../../../redux/features/coach/coachmenuprofileSilce';
-import { getTaScheduledCalls } from '../../../redux/features/teachingAssistant/tamenuSlice';
+import { getCoachScheduledCalls } from '../../../redux/features/coachModule/coachmenuprofileSilce';
+import { getTaScheduledCalls } from '../../../redux/features/taModule/tamenuSlice';
 import SelectStudents from './commonCalender/SelectStudents';
 import SelectBatches from './commonCalender/SelectBatches';
 import CreateSession from './commonCalender/CreateSession';
@@ -207,7 +207,6 @@ const ScheduledCall = ({ role }) => {
     const handleEditClick = data => {
         dispatch(openEditSession(data));
     };
-    
 
     return (
         <div style={{ padding: '20px' }}>

@@ -11,7 +11,7 @@ import {
     getWOLQuestions,
     seteditwolQuestionData,
     toggleWOLQuestionStatus,
-} from '../../../redux/features/coachingTools/wol/wolSlice';
+} from '../../../redux/features/adminModule/coachingTools/wol/wolSlice';
 
 const WOLQuestions = () => {
     const dispatch = useDispatch();

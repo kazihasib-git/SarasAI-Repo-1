@@ -4,29 +4,29 @@ import { useDispatch, useSelector } from 'react-redux';
 import CustomTextField from '../CustomFields/CustomTextField';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import PopUpTable from '../CommonComponent/PopUpTable';
-import { getAssignBatches } from '../../redux/features/taModule/taSlice';
+import { getAssignBatches } from '../../redux/features/adminModule/ta/taSlice';
 
-import { getCoachAssignBatches } from '../../redux/features/CoachModule/coachSlice';
+import { getCoachAssignBatches } from '../../redux/features/adminModule/coach/coachSlice';
 
 import {
     closeEditBatch,
     openScheduleSession,
-} from '../../redux/features/taModule/taScheduling';
+} from '../../redux/features/adminModule/ta/taScheduling';
 
 import {
     closeCoachEditBatch,
     openCoachScheduleSession,
-} from '../../redux/features/CoachModule/coachSchedule';
+} from '../../redux/features/adminModule/coach/coachSchedule';
 import {
     closeSelectBatches,
     getCoachMenuAssignedBatches,
     openCreateSessionPopup,
-} from '../../redux/features/coach/coachmenuprofileSilce';
+} from '../../redux/features/coachModule/coachmenuprofileSilce';
 import {
     closeTaMenuSelectBatches,
     getTaMenuAssignedBatches,
     openTaMenuCreateSessionsPopup,
-} from '../../redux/features/teachingAssistant/tamenuSlice';
+} from '../../redux/features/taModule/tamenuSlice';
 import { useParams } from 'react-router-dom';
 
 const CustomButton = ({

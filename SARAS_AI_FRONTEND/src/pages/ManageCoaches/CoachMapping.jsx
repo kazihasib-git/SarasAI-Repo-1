@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 import { OnOffSwitch } from '../../components/Switch';
 import editIcon from '../../assets/editIcon.png';
 import DynamicTable from '../../components/CommonComponent/DynamicTable';
-import { showCoachMapping } from '../../redux/features/CoachModule/coachSlice';
+import { showCoachMapping } from '../../redux/features/adminModule/coach/coachSlice';
 import { useDispatch, useSelector } from 'react-redux';
 
 const headers = [

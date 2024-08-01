@@ -7,8 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
     getWolTestConfig,
     setOpenWolCategories,
-} from '../../../redux/features/coachingTools/wol/wolSlice';
-import WOLCategories from '../../../components/coachingTools/wheelOfLife/WOLCategories';
+} from '../../../redux/features/adminModule/coachingTools/wol/wolSlice';
 import { useNavigate } from 'react-router-dom';
 
 const headers = [

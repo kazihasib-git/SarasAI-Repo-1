@@ -4,11 +4,11 @@ import { getTimezone } from '../../../../redux/features/timezone/timezoneSlice';
 import {
     createCoachMenuSlot,
     getCoachMenuSlots,
-} from '../../../../redux/features/coach/coachmenuprofileSilce';
+} from '../../../../redux/features/coachModule/coachmenuprofileSilce';
 import {
     createTaMenuSlots,
     getTaMenuSlots,
-} from '../../../../redux/features/teachingAssistant/tamenuSlice';
+} from '../../../../redux/features/taModule/tamenuSlice';
 import { closeCreateNewSlot } from '../../../../redux/features/commonCalender/commonCalender';
 import {
     Box,
