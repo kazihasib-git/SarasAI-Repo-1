@@ -39,7 +39,6 @@ import CallRequest from './pages/MODULE/TaModule/CallRequest';
 import MyCalender from './components/RoleRoute/CommonComponent/MyCalender';
 import Mystudents from './components/RoleRoute/CommonComponent/Mystudents';
 import AssignedStudent from './pages/managesTAs/AssignedStudent';
-// import StudentList from './pages/Student/StudentList';
 import AddEditTA from './components/adminModule/tas/manageTAs/AddEditTA';
 import AssignCoachBatches from './pages/ManageCoaches/AssignedCoachBatches';
 import AssignCoachStudent from './pages/ManageCoaches/AssignedCoachStudent';
