@@ -378,7 +378,6 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { useNavigate } from 'react-router-dom';
 import CustomFormControl from '../../CustomFields/CustomFromControl';
 
-
 const CustomButton = styled(Button)(({ theme, active }) => ({
     borderRadius: '50px',
     border: '1px solid #F56D3B',
@@ -733,4 +732,3 @@ const WOLTestConfig = () => {
 };
 
 export default WOLTestConfig;
-

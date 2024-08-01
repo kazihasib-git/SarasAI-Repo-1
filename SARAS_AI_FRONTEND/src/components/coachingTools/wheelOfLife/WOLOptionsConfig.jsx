@@ -237,7 +237,11 @@ const WOLOptionsConfig = () => {
             >
                 <Box display="flex" alignItems="center" padding="16px">
                     <ArrowBackIosIcon
-                        style={{ fontSize: '25px', marginBottom: '17px', fontWeight: 'normal'}}
+                        style={{
+                            fontSize: '25px',
+                            marginBottom: '17px',
+                            fontWeight: 'normal',
+                        }}
                         onClick={() => navigate('/wheel-of-life')}
                     />
                     <p
@@ -303,7 +307,6 @@ const WOLOptionsConfig = () => {
                             <CustomButton
                                 type="submit"
                                 active={true}
-                                
                                 variant="contained"
                                 sx={{
                                     borderRadius: '50px',
@@ -312,7 +315,7 @@ const WOLOptionsConfig = () => {
                                     textTransform: 'none',
                                 }}
                             >
-                                <span className="buttonText" >
+                                <span className="buttonText">
                                     {edit ? 'Edit' : 'Submit'}
                                 </span>
                             </CustomButton>
@@ -500,7 +503,6 @@ const WOLOptionsConfig = () => {
                         <CustomButton
                             type="submit"
                             active={true}
-                            
                             variant="contained"
                             sx={{
                                 borderRadius: '50px',
@@ -509,9 +511,7 @@ const WOLOptionsConfig = () => {
                                 textTransform: 'none',
                             }}
                         >
-                            <span className="buttonText" >
-                                    Submit
-                                </span>
+                            <span className="buttonText">Submit</span>
                         </CustomButton>
                     </Box>
                 </form>

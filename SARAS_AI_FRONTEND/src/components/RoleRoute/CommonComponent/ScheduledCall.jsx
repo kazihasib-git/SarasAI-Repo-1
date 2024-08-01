@@ -207,7 +207,6 @@ const ScheduledCall = ({ role }) => {
     const handleEditClick = data => {
         dispatch(openEditSession(data));
     };
-    
 
     return (
         <div style={{ padding: '20px' }}>
