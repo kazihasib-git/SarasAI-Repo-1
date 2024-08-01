@@ -55,6 +55,11 @@ const Mystudents = ({ role }) => {
     const actionButtons = [
         {
             type: 'view',
+            onClick: student => {
+                navigate(`/student-detail/${student.id}`, {
+                    state: { student },
+                });
+            },
         },
     ];
     // Filter students based on the search input

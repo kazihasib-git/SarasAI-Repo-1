@@ -96,9 +96,9 @@ const DynamicTable = ({
             }
         } else if (componentName === 'MYSTUDENTS') {
             const item = data.find(item => item.id === id);
-            setModalData(item);
-            setModalOpen(true);
-            //navigate(`/student_details/${id}`);
+            // setModalData(item);
+            // setModalOpen(true);
+            navigate(`/student_details/${id}`);
         } else {
             if (componentName === 'COACHMAPPING') {
                 if (type === 'students') {

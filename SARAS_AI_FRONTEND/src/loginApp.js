@@ -329,6 +329,7 @@ function LoginApp() {
                                 <CoachMenuStudents page="Coach Menu Students" />
                             }
                         />
+
                         <Route
                             path="coachmenu_messages"
                             element={
@@ -341,12 +342,12 @@ function LoginApp() {
                                 <CoachMenuAssessments page="Coach Menu Assessemets" />
                             }
                         />
-                        {/* <Route
+                        <Route
                             path="student_details/:id"
                             element={
                                 <StudentDetails page="Coach Menu StudentDetails" />
                             }
-                        /> */}
+                        />
                     </Route>
                 )}
 
