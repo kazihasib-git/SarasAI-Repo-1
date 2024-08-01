@@ -30,7 +30,7 @@ import CustomFormControl from '../../../CustomFields/CustomFromControl';
 import CustomDateField from '../../../CustomFields/CustomDateField';
 import CustomTimeField from '../../../CustomFields/CustomTimeField';
 import CustomTimeZoneForm from '../../../CustomFields/CustomTimeZoneForm';
-import { getTimezone } from '../../../../redux/features/timezone/timezoneSlice';
+import { getTimezone } from '../../../../redux/features/utils/utilSlice';
 
 const CustomButton = ({
     onClick,
@@ -93,7 +93,7 @@ const platformOptions = [
 
 const EditSession = ({ componentName }) => {
     const dispatch = useDispatch();
-    const { timezones } = useSelector(state => state.timezone);
+    const { timezones } = useSelector(state => state.util);
     const { editSession, students, batches, sessionData } = useSelector(
         state => state.commonCalender
     );

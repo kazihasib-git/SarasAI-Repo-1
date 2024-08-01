@@ -17,7 +17,7 @@ import ReusableDialog from '../CustomFields/ReusableDialog';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomTimeZoneForm from '../CustomFields/CustomTimeZoneForm';
-import { getTimezone } from '../../redux/features/timezone/timezoneSlice';
+import { getTimezone } from '../../redux/features/utils/utilSlice';
 import { useParams } from 'react-router-dom';
 
 import {
@@ -110,7 +110,7 @@ const CreateNewSlot = ({ componentName }) => {
 
     const schedulingState = useSelector(state => state[sliceName]);
     const { createNewSlotOpen } = useSelector(state => state.taAvialability);
-    const { timezones } = useSelector(state => state.timezone);
+    const { timezones } = useSelector(state => state.util);
 
     const {
         register,

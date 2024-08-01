@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getTimezone } from '../../../../redux/features/timezone/timezoneSlice';
+import { getTimezone } from '../../../../redux/features/utils/utilSlice';
 import {
     createCoachMenuSlot,
     getCoachMenuSlots,
@@ -103,7 +103,7 @@ const CreateSlot = ({ componentName }) => {
         timezone: 'Asia/Kolkata',
     });
 
-    const { timezones } = useSelector(state => state.timezone);
+    const { timezones } = useSelector(state => state.util);
     const { createNewSlotPopup } = useSelector(state => state.commonCalender);
 
     useEffect(() => {
