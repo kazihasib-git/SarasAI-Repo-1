@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import Header from '../../../components/Header/Header';
-import Sidebar from '../../../components/Sidebar/Sidebar';
+import Header from '../../../Header/Header';
+import Sidebar from '../../../Sidebar/Sidebar';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     addWOLTestConfig,
     getWOLCategory,
     getWolTestConfig,
-} from '../../../redux/features/coachingTools/wol/wolSlice';
+} from '../../../../redux/features/adminModule/coachingTools/wol/wolSlice';
 import {
     Box,
     Button,
@@ -22,7 +22,7 @@ import {
 } from '@mui/material';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { useNavigate } from 'react-router-dom';
-import CustomFormControl from '../../CustomFields/CustomFromControl';
+import CustomFormControl from '../../../CustomFields/CustomFromControl';
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
     borderRadius: '50px',
