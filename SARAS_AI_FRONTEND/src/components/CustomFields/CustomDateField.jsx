@@ -1,7 +1,6 @@
 import React from 'react';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
-import { TextField } from '@mui/material';
 import moment from 'moment';
 
 const CustomDateField = ({
@@ -25,8 +24,7 @@ const CustomDateField = ({
                 name={name}
                 value={value ? moment(value, 'YYYY-MM-DD') : null}
                 onChange={handleDateChange}
-                disableFuture={disableFutureDates} // Apply the restriction conditionally
-                format="MMMM-DD-YYYY"
+                disableFuture={disableFutureDates}
                 slotProps={{
                     textField: {
                         InputLabelProps: {
@@ -35,6 +33,7 @@ const CustomDateField = ({
                         sx: {
                             '& .MuiOutlinedInput-root': {
                                 borderRadius: '50px',
+                                height: '60px',
                                 '& fieldset': {
                                     borderColor: '#D0D0EC',
                                 },
@@ -52,6 +51,7 @@ const CustomDateField = ({
                                     color: '#1A1E3D',
                                 },
                             },
+                            width: '100%', // Ensure full width
                             ...sx,
                         },
                         ...props,
