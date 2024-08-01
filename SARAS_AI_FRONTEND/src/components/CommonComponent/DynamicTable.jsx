@@ -25,6 +25,7 @@ import { openScheduleSession } from '../../redux/features/adminModule/ta/taSched
 import { updateTA } from '../../redux/features/adminModule/ta/taSlice';
 import { updateCoach } from '../../redux/features/adminModule/coach/coachSlice';
 import { openCoachScheduleSession } from '../../redux/features/adminModule/coach/coachSchedule';
+import AssessmentDialog from '../../pages/MODULE/coachModule/AssessmentDialog';
 
 const DynamicTable = ({
     headers,
@@ -40,8 +41,10 @@ const DynamicTable = ({
     );
 
     const [currentPage, setCurrentPage] = useState(1);
+    const [assessmentModalOpen, setassessmentModalOpen] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
     const [modalData, setModalData] = useState(null);
+    const [assessmentData, setAssessmentData] = useState([]);
 
     useEffect(() => {
         setData(
@@ -94,9 +97,37 @@ const DynamicTable = ({
             }
         } else if (componentName === 'MYSTUDENTS') {
             const item = data.find(item => item.id === id);
-            setModalData(item);
-            setModalOpen(true);
-            //navigate(`/student_details/${id}`);
+            // setModalData(item);
+            // setModalOpen(true);
+            navigate(`/student_details/${id}`);
+        } else if (componentName === 'ASSESSMENT') {
+            const dummyAssessmentData = [
+                {
+                    name: 'Assessment 1',
+                    status: 'Completed',
+                    source: 'Wheel of Life',
+                },
+                {
+                    name: 'Assessment 2',
+                    status: 'Completed',
+                    source: 'Wheel of Life',
+                },
+                {
+                    name: 'Assessment 3',
+                    status: 'In Progress',
+                    source: 'Core Values',
+                },
+                {
+                    name: 'Assessment 4',
+                    status: 'Not Attempted',
+                    source: 'Core Values II',
+                },
+            ];
+
+            if (type === 'view report') {
+                setAssessmentData(dummyAssessmentData);
+                setassessmentModalOpen(true);
+            }
         } else {
             if (componentName === 'COACHMAPPING') {
                 if (type === 'students') {
@@ -505,6 +536,13 @@ const DynamicTable = ({
                 />
             </div>
             {/* Modal Component */}
+            {assessmentModalOpen && (
+                <AssessmentDialog
+                    open={assessmentModalOpen}
+                    onClose={() => setassessmentModalOpen(false)}
+                    assessmentData={assessmentData}
+                />
+            )}
             <Modal
                 open={modalOpen}
                 onClose={handleCloseModal}
