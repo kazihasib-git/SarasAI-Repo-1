@@ -9,7 +9,7 @@ import Header from '../../../components/Header/Header';
 import {
     getTaMenuSessions,
     getTaMenuSlots,
-} from '../../../redux/features/teachingAssistant/tamenuSlice';
+} from '../../../redux/features/taModule/tamenuSlice';
 import {
     openCreateNewSlot,
     openMarkLeaveDate,

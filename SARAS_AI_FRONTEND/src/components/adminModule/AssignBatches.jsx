@@ -8,7 +8,7 @@ import {
     getTA,
     postAssignBatches,
     getAssignBatches,
-} from '../../redux/features/taModule/taSlice';
+} from '../../redux/features/adminModule/ta/taSlice';
 
 import {
     closeCoachAssignBatches,
@@ -17,12 +17,12 @@ import {
     postCoachAssignBatches,
     getCoachBatchMapping,
     getCoachAssignBatches,
-} from '../../redux/features/CoachModule/coachSlice';
+} from '../../redux/features/adminModule/coach/coachSlice';
 
 import CustomTextField from '../CustomFields/CustomTextField';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import PopUpTable from '../CommonComponent/PopUpTable';
-import { openScheduleSession } from '../../redux/features/taModule/taScheduling';
+import { openScheduleSession } from '../../redux/features/adminModule/ta/taScheduling';
 import CustomButton from '../CustomFields/CustomButton';
 
 const AssignBatches = ({ componentname }) => {

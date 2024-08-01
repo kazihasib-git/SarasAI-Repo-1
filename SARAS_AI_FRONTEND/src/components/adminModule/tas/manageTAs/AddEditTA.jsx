@@ -33,13 +33,13 @@ import {
     openSuccessPopup,
     updateTA,
     accessTaName,
-} from '../../../../redux/features/taModule/taSlice';
+} from '../../../../redux/features/adminModule/ta/taSlice';
 import SubmitPopup from '../../SubmitPopup';
 import dayjs from 'dayjs';
 import AvatarInput from '../../../CustomFields/AvatarInput';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
-import { getTimezone } from '../../../../redux/features/timezone/timezoneSlice';
+import { getTimezone } from '../../../../redux/features/utils/utilSlice';
 import CustomTimeZoneForm from '../../../CustomFields/CustomTimeZoneForm';
 import { dateFormatter } from '../../../../utils/dateFormatter';
 import CustomDateOfBirth from '../../../CustomFields/CustomDateOfBirth';
@@ -72,7 +72,7 @@ const AddEditTA = ({ data }) => {
     const { successPopup, assignStudentOpen, assignBatchOpen } = useSelector(
         state => state.taModule
     );
-    const { timezones } = useSelector(state => state.timezone);
+    const { timezones } = useSelector(state => state.util);
 
     useEffect(() => {
         dispatch(getTimezone());
@@ -159,8 +159,10 @@ const AddEditTA = ({ data }) => {
                 dispatch(accessTaName(updateRes));
             } else {
                 updatedFormData.email = email;
-                updatedFormData.time_zone = time_zone;
-                const createRes = await dispatch(createTA(updatedFormData)).unwrap();
+                updatedFormData.time_zone = 'Asia/Kolkata';
+                const createRes = await dispatch(
+                    createTA(updatedFormData)
+                ).unwrap();
                 dispatch(openSuccessPopup());
                 dispatch(accessTaName(createRes.ta));
             }

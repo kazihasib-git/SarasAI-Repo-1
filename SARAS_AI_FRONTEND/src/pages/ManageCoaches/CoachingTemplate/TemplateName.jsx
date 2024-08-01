@@ -13,7 +13,7 @@ import {
     setSelectedCoachTemplate,
     setSelectedModule,
     openEditActivityPopup,
-} from '../../../redux/features/CoachModule/CoachTemplateSlice';
+} from '../../../redux/features/adminModule/coach/coachTemplateSlice';
 import TemplateModuleTable from './TemplateTable/TemplateModuleTable';
 import './TemplateName.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

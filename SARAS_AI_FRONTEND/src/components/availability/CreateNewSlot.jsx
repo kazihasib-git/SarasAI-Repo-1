@@ -17,54 +17,21 @@ import ReusableDialog from '../CustomFields/ReusableDialog';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomTimeZoneForm from '../CustomFields/CustomTimeZoneForm';
-import { getTimezone } from '../../redux/features/timezone/timezoneSlice';
+import { getTimezone } from '../../redux/features/utils/utilSlice';
 import { useParams } from 'react-router-dom';
 
 import {
     createSlots,
     closeCreateNewSlots,
     fetchTaSlots,
-} from '../../redux/features/taModule/taAvialability';
+} from '../../redux/features/adminModule/ta/taAvialability';
 import {
     createCoachSlots,
     fetchCoachSlots,
-} from '../../redux/features/CoachModule/CoachAvailabilitySlice';
+} from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import { toast } from 'react-toastify';
+import CustomButton from '../CustomFields/CustomButton';
 
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                padding: '10px 20px',
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
 const weekDays = [
     'Sunday',
     'Monday',
@@ -110,7 +77,7 @@ const CreateNewSlot = ({ componentName }) => {
 
     const schedulingState = useSelector(state => state[sliceName]);
     const { createNewSlotOpen } = useSelector(state => state.taAvialability);
-    const { timezones } = useSelector(state => state.timezone);
+    const { timezones } = useSelector(state => state.util);
 
     const {
         register,
@@ -161,6 +128,7 @@ const CreateNewSlot = ({ componentName }) => {
         console.log('form data', formData);
 
         if (!validate()) {
+            console.log('NOT VALID DATA');
             return;
         }
 
@@ -394,7 +362,7 @@ const CreateNewSlot = ({ componentName }) => {
     const actions = (
         <>
             <CustomButton
-                onClick={() => dispatch(closeCreateNewSlotAction())}
+                onClick={() => dispatch(closeCreateNewSlots())}
                 backgroundColor="white"
                 color="#F56D3B"
                 borderColor="#F56D3B"

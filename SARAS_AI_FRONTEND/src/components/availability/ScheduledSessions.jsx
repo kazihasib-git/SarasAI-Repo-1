@@ -12,7 +12,7 @@ import {
     openScheduledSlots,
     reasonForLeave,
     openReasonForLeave,
-} from '../../redux/features/taModule/taAvialability';
+} from '../../redux/features/adminModule/ta/taAvialability';
 
 import {
     closeCoachScheduledSession,
@@ -21,7 +21,7 @@ import {
     openCoachScheduledSlots,
     openCoachReasonForLeave,
     reasonForCoachLeave,
-} from '../../redux/features/CoachModule/CoachAvailabilitySlice';
+} from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import { useParams } from 'react-router-dom';
 import {
     closeReasonForLeavePopup,
@@ -30,42 +30,8 @@ import {
     openReasonForLeavePopup,
     openRescheduleSessionForLeave,
     openScheduledSessionForLeave,
-} from '../../redux/features/coach/coachmenuprofileSilce';
-
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                padding: '10px 20px',
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
+} from '../../redux/features/coachModule/coachmenuprofileSilce';
+import CustomButton from '../CustomFields/CustomButton';
 
 const ScheduledSessions = ({ componentName }) => {
     const dispatch = useDispatch();

@@ -4,65 +4,31 @@ import { useDispatch, useSelector } from 'react-redux';
 import CustomTextField from '../CustomFields/CustomTextField';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import PopUpTable from '../CommonComponent/PopUpTable';
-import { getAssignBatches } from '../../redux/features/taModule/taSlice';
+import { getAssignBatches } from '../../redux/features/adminModule/ta/taSlice';
 
-import { getCoachAssignBatches } from '../../redux/features/CoachModule/coachSlice';
+import { getCoachAssignBatches } from '../../redux/features/adminModule/coach/coachSlice';
 
 import {
     closeEditBatch,
     openScheduleSession,
-} from '../../redux/features/taModule/taScheduling';
+} from '../../redux/features/adminModule/ta/taScheduling';
 
 import {
     closeCoachEditBatch,
     openCoachScheduleSession,
-} from '../../redux/features/CoachModule/coachSchedule';
+} from '../../redux/features/adminModule/coach/coachSchedule';
 import {
     closeSelectBatches,
     getCoachMenuAssignedBatches,
     openCreateSessionPopup,
-} from '../../redux/features/coach/coachmenuprofileSilce';
+} from '../../redux/features/coachModule/coachmenuprofileSilce';
 import {
     closeTaMenuSelectBatches,
     getTaMenuAssignedBatches,
     openTaMenuCreateSessionsPopup,
-} from '../../redux/features/teachingAssistant/tamenuSlice';
+} from '../../redux/features/taModule/tamenuSlice';
 import { useParams } from 'react-router-dom';
-
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                padding: '10px 20px',
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
+import CustomButton from '../CustomFields/CustomButton';
 
 const EditBatches = ({ componentname }) => {
     console.log('COMPONENT NAME EDITBATCH: ', componentname);
@@ -174,7 +140,7 @@ const EditBatches = ({ componentname }) => {
 
     useEffect(() => {
         if (stateModuleKey && assignBatchOpen) {
-            dispatch(getAssignBatchesAction(id));
+            dispatch(getAssignBatchesAction(assignedId));
         }
     }, [
         dispatch,
@@ -332,7 +298,7 @@ const EditBatches = ({ componentname }) => {
         <ReusableDialog
             open={assignBatchOpen}
             handleClose={() => dispatch(closeDialogAction())}
-            title={`Assign Batches to ${name}`}
+            title={`Assign Batches to ${assignedTA}`}
             content={content}
             actions={actions}
         />

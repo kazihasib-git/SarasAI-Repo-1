@@ -8,14 +8,14 @@ import {
     closeSuccessPopup,
     openAssignBatches,
     openAssignStudents,
-} from '../../redux/features/taModule/taSlice';
+} from '../../redux/features/adminModule/ta/taSlice';
 import {
     openCoachAssignBatches,
     openCoachAssignStudents,
     closeCoachSuccessPopup,
     closeEditCoach,
     closeCreateCoach,
-} from '../../redux/features/CoachModule/coachSlice';
+} from '../../redux/features/adminModule/coach/coachSlice';
 import { Button, Typography } from '@mui/material';
 
 const CustomButton = ({
@@ -157,7 +157,7 @@ const SubmitPopup = ({ componentname }) => {
                 Assign Batches
             </CustomButton>
             <Typography
-                onClick={handleDoItLater}
+                onClick={handleCloseButton}
                 color="#1A1E3D"
                 sx={{ marginTop: '10px', cursor: 'pointer' }}
             >

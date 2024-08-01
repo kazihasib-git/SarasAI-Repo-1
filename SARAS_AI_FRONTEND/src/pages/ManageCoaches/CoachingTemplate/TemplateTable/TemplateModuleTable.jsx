@@ -13,7 +13,7 @@ import {
     openEditModulePopup,
     openTemplateActivityPopup,
     updateCoachActivity,
-} from '../../../../redux/features/CoachModule/CoachTemplateSlice';
+} from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
 
 const CustomButton = styled(Button)(({ theme, backgroundColor = '' }) => ({
     borderRadius: '20px',

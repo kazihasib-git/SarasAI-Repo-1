@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box, InputBase } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { showTAMapping } from '../../redux/features/taModule/taSlice';
+import { showTAMapping } from '../../redux/features/adminModule/ta/taSlice';
 import Header from '../../components/Header/Header';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import DynamicTable from '../../components/CommonComponent/DynamicTable';

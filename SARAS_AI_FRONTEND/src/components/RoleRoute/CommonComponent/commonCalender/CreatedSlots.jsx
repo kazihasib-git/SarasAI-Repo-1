@@ -1,8 +1,8 @@
 import { Button } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getCoachMenuSessionForLeave } from '../../../../redux/features/coach/coachmenuprofileSilce';
-import { getTaMenuSessionForLeave } from '../../../../redux/features/teachingAssistant/tamenuSlice';
+import { getCoachMenuSessionForLeave } from '../../../../redux/features/coachModule/coachmenuprofileSilce';
+import { getTaMenuSessionForLeave } from '../../../../redux/features/taModule/tamenuSlice';
 import PopUpTable from '../../../CommonComponent/PopUpTable';
 import { closeCreatedSlots } from '../../../../redux/features/commonCalender/commonCalender';
 import ReusableDialog from '../../../CustomFields/ReusableDialog';

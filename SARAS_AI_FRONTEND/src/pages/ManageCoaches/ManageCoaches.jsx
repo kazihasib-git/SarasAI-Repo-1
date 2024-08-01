@@ -35,7 +35,7 @@ import {
     closeAssignStudents,
     openAssignBatches,
     closeAssignBatches,
-} from '../../redux/features/CoachModule/coachSlice';
+} from '../../redux/features/adminModule/coach/coachSlice';
 
 const ManageCoaches = () => {
     const dispatch = useDispatch();

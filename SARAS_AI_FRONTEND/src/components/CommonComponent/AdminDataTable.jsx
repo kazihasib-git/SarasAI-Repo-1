@@ -18,7 +18,7 @@ import {
     getCoachAssignStudents,
     toggleCoachAssignBatchStatus,
     toggleCoachAssignStudentStatus,
-} from '../../redux/features/CoachModule/coachSlice';
+} from '../../redux/features/adminModule/coach/coachSlice';
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
     borderRadius: '50px',

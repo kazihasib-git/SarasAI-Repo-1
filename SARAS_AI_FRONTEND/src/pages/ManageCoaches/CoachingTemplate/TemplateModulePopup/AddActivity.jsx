@@ -10,7 +10,7 @@ import {
     closeTemplateActivityPopup,
     createCoachTemplateActivity,
     getCoachTemplateModuleId,
-} from '../../../../redux/features/CoachModule/CoachTemplateSlice';
+} from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
 
 // Custom button component for consistent styling
 const CustomButton = ({

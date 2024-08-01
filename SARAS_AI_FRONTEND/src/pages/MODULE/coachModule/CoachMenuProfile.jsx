@@ -19,9 +19,8 @@ import {
     validateTimeZone,
 } from '../../../components/CustomFields/FormOptions';
 import moment from 'moment';
-import { updateCoachmenuprofile } from '../../../redux/features/CoachModule/coachmenuprofileSilce';
 import { useDispatch, useSelector } from 'react-redux';
-import { getCoachMenuProfile } from '../../../redux/features/coach/coachmenuprofileSilce';
+import { getCoachMenuProfile } from '../../../redux/features/coachModule/coachmenuprofileSilce';
 import { formatInTimeZone } from 'date-fns-tz';
 
 const CoachMenuProfile = () => {
