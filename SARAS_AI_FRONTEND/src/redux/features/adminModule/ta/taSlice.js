@@ -1,14 +1,17 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
 import { baseUrl } from '../../../../utils/baseURL';
+import axiosInstance from '../../../services/httpService';
 
 export const createTA = createAsyncThunk('taModule/createTA', async data => {
-    const response = await axios.post(`${baseUrl}/admin/manage_tas`, data);
+    const response = await axiosInstance.post(
+        `${baseUrl}/admin/manage_tas`,
+        data
+    );
     return response.data;
 });
 
 export const getTA = createAsyncThunk('taModule/getTA', async () => {
-    const response = await axios.get(`${baseUrl}/admin/manage_tas`);
+    const response = await axiosInstance.get(`${baseUrl}/admin/manage_tas`);
     return response.data;
 });
 
@@ -16,7 +19,7 @@ export const updateTA = createAsyncThunk(
     'taModule/updateTA',
     async ({ id, data }, { rejectWithValue }) => {
         try {
-            const response = await axios.put(
+            const response = await axiosInstance.put(
                 `${baseUrl}/admin/manage_tas/${id}`,
                 data
             );
@@ -35,14 +38,14 @@ export const updateTA = createAsyncThunk(
 );
 
 export const deleteTA = createAsyncThunk('taModule/deleteTA', async id => {
-    await axios.delete(`${baseUrl}/admin/manage_tas/${id}`);
+    await axiosInstance.delete(`${baseUrl}/admin/manage_tas/${id}`);
     return id;
 });
 
 export const getStudentBatchMapping = createAsyncThunk(
     'taModule/getStudentBatchMapping',
     async () => {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
             `${baseUrl}/admin/student-batch-mapping/getAllStudentWithBatches`
         );
         console.log('Response : ', response);
@@ -53,7 +56,7 @@ export const getStudentBatchMapping = createAsyncThunk(
 export const getBatchMapping = createAsyncThunk(
     'taModule/getBatchMapping',
     async () => {
-        const response = await axios.get(`${baseUrl}/admin/batches`);
+        const response = await axiosInstance.get(`${baseUrl}/admin/batches`);
         console.log('Response : ', response);
         return response.data;
     }
@@ -62,7 +65,7 @@ export const getBatchMapping = createAsyncThunk(
 export const showTAMapping = createAsyncThunk(
     'taModule/showTAMapping',
     async () => {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
             `${baseUrl}/admin/TAMapping/TAswithActiveStudentnBatches`
         );
         return response.data;
@@ -72,7 +75,7 @@ export const showTAMapping = createAsyncThunk(
 export const getAssignStudents = createAsyncThunk(
     'taModule/getAssignStudents',
     async id => {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
             `${baseUrl}/admin/TAMapping/${id}/AssignStudents`
         );
         return response.data;
@@ -82,7 +85,7 @@ export const getAssignStudents = createAsyncThunk(
 export const getAssignBatches = createAsyncThunk(
     'taModule/getAssignBatches',
     async id => {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
             `${baseUrl}/admin/TAMapping/${id}/AssignBatches`
         );
         return response.data;
@@ -92,7 +95,7 @@ export const getAssignBatches = createAsyncThunk(
 export const toggleAssignStudentStatus = createAsyncThunk(
     'taModule/toggleAssignStudentStatus',
     async ({ id, studentId }) => {
-        const response = await axios.put(
+        const response = await axiosInstance.put(
             `${baseUrl}/admin/TAMapping/${id}/ActiveDeactiveAssignStudent`,
             { student_id: studentId }
         );
@@ -103,7 +106,7 @@ export const toggleAssignStudentStatus = createAsyncThunk(
 export const toggleAssignBatchStatus = createAsyncThunk(
     'taModule/toggleAssignBatchStatus',
     async ({ id, batchId }) => {
-        const response = await axios.put(
+        const response = await axiosInstance.put(
             `${baseUrl}/admin/TAMapping/${id}/ActiveDeactiveAssignBatch`,
             { batch_id: batchId }
         );
@@ -114,7 +117,7 @@ export const toggleAssignBatchStatus = createAsyncThunk(
 export const postAssignStudents = createAsyncThunk(
     'taModule/postAssignStudents',
     async ({ id, data }) => {
-        const response = await axios.post(
+        const response = await axiosInstance.post(
             `${baseUrl}/admin/TAMapping/AssignStudents`,
             data
         );
@@ -125,7 +128,7 @@ export const postAssignStudents = createAsyncThunk(
 export const postAssignBatches = createAsyncThunk(
     'taModule/postAssignBatches',
     async ({ id, data }) => {
-        const response = await axios.post(
+        const response = await axiosInstance.post(
             `${baseUrl}/admin/TAMapping/AssignBatches`,
             data
         );
@@ -137,7 +140,7 @@ export const deleteAssignedStudent = createAsyncThunk(
     'taModule/deleteAssignedStudent',
     async id => {
         console.log('ID to delete STUDENT : ', id);
-        const response = await axios.delete(
+        const response = await axiosInstance.delete(
             `${baseUrl}/admin/TAMapping/${id.id}/deleteStudent`
         );
         return response.data;
@@ -148,7 +151,7 @@ export const deleteAssignedBatch = createAsyncThunk(
     'taModule/deleteAssignedBatch',
     async id => {
         console.log('ID to delete BATCH : ', id);
-        const response = await axios.delete(
+        const response = await axiosInstance.delete(
             `${baseUrl}/admin/TAMapping/${id.id}/deleteBatch`
         );
         return response.data;

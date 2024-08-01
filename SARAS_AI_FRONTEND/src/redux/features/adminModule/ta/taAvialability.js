@@ -1,12 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
 import { baseUrl } from '../../../../utils/baseURL';
+import axiosInstance from '../../../services/httpService';
 
 // Get Today Available Ta
 export const getTodayTaAvailability = createAsyncThunk(
     'taAvialability/getTodayTaAvailability',
     async () => {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
             `${baseUrl}/admin/TA-availability/get-today-available-ta`
         );
         return response.data;
@@ -232,6 +232,7 @@ export const taAvailabilitySlice = createSlice({
         });
         builder.addCase(fetchTAScheduleById.rejected, (state, action) => {
             state.loading = false;
+            state.scheduleData = [];
             state.error = action.error.message;
         });
 

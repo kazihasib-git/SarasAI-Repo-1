@@ -1,7 +1,7 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
-import Header from '../../Header/Header';
-import Sidebar from '../../Sidebar/Sidebar';
+import Header from '../../../Header/Header';
+import Sidebar from '../../../Sidebar/Sidebar';
 import { useForm, Controller, set } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
@@ -15,7 +15,7 @@ import {
     MenuItem,
     Paper,
 } from '@mui/material';
-import CustomFormControl from '../../CustomFields/CustomFromControl';
+import CustomFormControl from '../../../CustomFields/CustomFromControl';
 import ReactQuill from 'react-quill';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -24,7 +24,7 @@ import {
     createWOLQuestion,
     updateWOLQuestion,
     getWOLQuestions,
-} from '../../../redux/features/adminModule/coachingTools/wol/wolSlice';
+} from '../../../../redux/features/adminModule/coachingTools/wol/wolSlice';
 
 const AddEditWOLQuestions = () => {
     const [questionValue, setQuestionValue] = useState('');

@@ -13,10 +13,10 @@ import {
     TableRow,
     Typography,
 } from '@mui/material';
-import Header from '../../Header/Header';
-import Sidebar from '../../Sidebar/Sidebar';
+import Header from '../../../Header/Header';
+import Sidebar from '../../../Sidebar/Sidebar';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import editIcon_White from '../../../assets/editIcon_White.png';
+import editIcon_White from '../../../../assets/editIcon_White.png';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -25,7 +25,7 @@ import {
     getWolTestConfig,
     getWolTestConfigCategoryWise,
     handleIdToSubmitSelectedQuestions,
-} from '../../../redux/features/adminModule/coachingTools/wol/wolSlice';
+} from '../../../../redux/features/adminModule/coachingTools/wol/wolSlice';
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
     borderRadius: '50px',

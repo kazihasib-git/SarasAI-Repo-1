@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import Header from '../../../components/Header/Header';
-import Sidebar from '../../../components/Sidebar/Sidebar';
+import Header from '../../../../components/Header/Header';
+import Sidebar from '../../../../components/Sidebar/Sidebar';
 import {
     Box,
     Button,
@@ -20,13 +20,13 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { useNavigate } from 'react-router-dom';
-import CustomFormControl from '../../CustomFields/CustomFromControl';
-import CustomTextField from '../../CustomFields/CustomTextField';
-import star from '../../../assets/star.png';
+import CustomFormControl from '../../../CustomFields/CustomFromControl';
+import CustomTextField from '../../../CustomFields/CustomTextField';
+import star from '../../../../assets/star.png';
 import {
     addWOLOptionConfig,
     getWOLOptionConfig,
-} from '../../../redux/features/adminModule/coachingTools/wol/wolSlice';
+} from '../../../../redux/features/adminModule/coachingTools/wol/wolSlice';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 
 const CustomButton = styled(Button)(({ theme, active }) => ({

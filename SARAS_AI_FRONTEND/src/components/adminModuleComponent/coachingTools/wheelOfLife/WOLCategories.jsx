@@ -1,17 +1,17 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
-import Header from '../../Header/Header';
-import Sidebar from '../../Sidebar/Sidebar';
+import Header from '../../../Header/Header';
+import Sidebar from '../../../Sidebar/Sidebar';
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import DynamicTable from '../../CommonComponent/DynamicTable';
+import DynamicTable from '../../../CommonComponent/DynamicTable';
 import { Box } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     setAddEditWolCategory,
     setEditData,
     getWOLCategory,
-} from '../../../redux/features/adminModule/coachingTools/wol/wolSlice';
+} from '../../../../redux/features/adminModule/coachingTools/wol/wolSlice';
 import AddEditWOLCategory from './AddEditWOLCategory';
 
 const WOLCategories = () => {

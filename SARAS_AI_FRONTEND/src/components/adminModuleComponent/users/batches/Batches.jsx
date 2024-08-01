@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useGetBatchesQuery } from '../../redux/services/batches/batchesApi'; // Import your API hook
+import { useGetBatchesQuery } from '../../../../redux/services/batches/batchesApi'; // Import your API hook
 import { Box } from '@mui/material';
-import Header from '../Header/Header';
-import Sidebar from '../Sidebar/Sidebar';
-import { batchDummyData } from '../../fakeData/batchesData';
+import Header from '../../../Header/Header';
+import Sidebar from '../../../Sidebar/Sidebar';
+import { batchDummyData } from '../../../../fakeData/batchesData';
 
-import DynamicTable from '../CommonComponent/DynamicTable';
+import DynamicTable from '../../../CommonComponent/DynamicTable';
 
 const Batches = () => {
     const [input, setInput] = useState('');

@@ -10,16 +10,16 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import Header from '../../Header/Header';
-import Sidebar from '../../Sidebar/Sidebar';
+import Header from '../../../Header/Header';
+import Sidebar from '../../../Sidebar/Sidebar';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import editIcon_White from '../../../assets/editIcon_White.png';
+import editIcon_White from '../../../../assets/editIcon_White.png';
 import { Navigate } from 'react-router-dom';
 import {
     getLifeInstruction,
     editLifeInstruction,
-} from '../../../redux/features/adminModule/coachingTools/wol/wolSlice';
+} from '../../../../redux/features/adminModule/coachingTools/wol/wolSlice';
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
     borderRadius: '50px',

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import ReusableDialog from '../../CustomFields/ReusableDialog';
+import ReusableDialog from '../../../CustomFields/ReusableDialog';
 import { Box, Button, Grid, styled } from '@mui/material';
-import CustomTextField from '../../CustomFields/CustomTextField';
+import CustomTextField from '../../../CustomFields/CustomTextField';
 import { useDispatch, useSelector } from 'react-redux';
 
 import {
@@ -11,7 +11,7 @@ import {
     setAddEditWolCategory,
     setEditData,
     updateWOLCategory,
-} from '../../../redux/features/adminModule/coachingTools/wol/wolSlice';
+} from '../../../../redux/features/adminModule/coachingTools/wol/wolSlice';
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
     borderRadius: '50px',

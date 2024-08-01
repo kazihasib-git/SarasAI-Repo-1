@@ -2,12 +2,18 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { baseUrl } from '../../../utils/baseURL';
 import { toast } from 'react-toastify';
+import axiosInstance from '../../services/httpService';
 
-const url = 'http://34.100.233.67:8080/api/login';
+const url = 'http://34.100.233.67:8080/api';
 
 // login api
 export const login = createAsyncThunk('login', async data => {
-    const response = await axios.post(`${url}`, data);
+    const response = await axiosInstance.post(`${url}/login`, data);
+    return response.data;
+});
+
+export const logout = createAsyncThunk('logout', async () => {
+    const response = await axiosInstance.post(`${url}/logout`);
     return response.data;
 });
 
@@ -20,8 +26,8 @@ const initialState = {
     error: [],
 };
 
-const loginSlice = createSlice({
-    name: 'login',
+const authSlice = createSlice({
+    name: 'auth',
     initialState,
     reducers: {
         setLogin: (state, action) => {
@@ -52,9 +58,22 @@ const loginSlice = createSlice({
             state.userData = [];
             state.login = false;
         });
+
+        // user logout
+        builder.addCase(logout.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(logout.fulfilled, (state, action) => {
+            state.loading = false;
+            state.login = false;
+            state.userData = [];
+            localStorage.setItem('login', false);
+            localStorage.setItem('accessToken', '');
+            localStorage.setItem('role', '');
+        });
     },
 });
 
-export const { setLogin } = loginSlice.actions;
+export const { setLogin } = authSlice.actions;
 
-export default loginSlice.reducer;
+export default authSlice.reducer;

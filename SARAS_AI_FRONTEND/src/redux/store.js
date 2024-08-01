@@ -15,12 +15,12 @@ import coachSchedulingReducer from './features/adminModule/coach/coachSchedule';
 import activityTypeReducer from './features/adminModule/coach/activityTypeSlice';
 import coachMenuSliceReducer from './features/coachModule/coachmenuprofileSilce';
 import taMenuSliceReducer from './features/taModule/tamenuSlice';
-import loginReducer from './features/auth/loginSlice';
+import authReducer from './features/auth/authSlice';
 import commonCalenderReducer from './features/commonCalender/commonCalender';
 
 const store = configureStore({
     reducer: {
-        login: loginReducer,
+        auth: authReducer,
         taModule: taReducer,
         taAvailability: taAvailabilityReducer,
         taScheduling: taSchedulingReducer,

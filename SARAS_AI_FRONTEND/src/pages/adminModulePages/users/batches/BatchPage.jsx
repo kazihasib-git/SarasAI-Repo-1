@@ -1,5 +1,5 @@
 import React from 'react';
-import Batches from '../../components/batches/Batches';
+import Batches from '../../../../components/adminModuleComponent/users/batches/Batches';
 
 const BatchPage = () => {
     return <Batches />;

@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import {
     studentsApi,
     useGetStudentsQuery,
-} from '../../redux/services/students/studentsApi'; // Import your API hook
+} from '../../../../redux/services/students/studentsApi'; // Import your API hook
 import { Box } from '@mui/material';
-import Header from '../Header/Header';
-import Sidebar from '../Sidebar/Sidebar';
-import { studentDummyDatadata } from '../../fakeData/studentData';
-import DynamicTable from '../CommonComponent/DynamicTable';
+import Header from '../../../Header/Header';
+import Sidebar from '../../../Sidebar/Sidebar';
+import { studentDummyDatadata } from '../../../../fakeData/studentData';
+import DynamicTable from '../../../CommonComponent/DynamicTable';
 import { useDispatch } from 'react-redux';
 
 const Students = () => {
