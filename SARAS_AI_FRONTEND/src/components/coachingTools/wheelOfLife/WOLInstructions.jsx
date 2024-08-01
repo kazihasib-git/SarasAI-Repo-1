@@ -46,7 +46,6 @@ const WOLInstructions = () => {
     const handleEditWOLInstructions = () => {
         setValue(instruction);
         setEditData(true);
-        
     };
 
     const handleUpdateWOLInstructions = () => {

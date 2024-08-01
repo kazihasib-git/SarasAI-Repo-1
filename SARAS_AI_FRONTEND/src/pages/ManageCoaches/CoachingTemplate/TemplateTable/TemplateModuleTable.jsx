@@ -221,7 +221,10 @@ const TemplateModuleTable = ({ modulesData }) => {
                                 }
                             >
                                 <i className="bi bi-plus-circle"></i>
-                                <span className="buttonText" style={{ marginLeft: '5px' }}>
+                                <span
+                                    className="buttonText"
+                                    style={{ marginLeft: '5px' }}
+                                >
                                     Add Activity
                                 </span>
                             </CustomButton>
@@ -240,7 +243,10 @@ const TemplateModuleTable = ({ modulesData }) => {
                                     icon={faPenToSquare}
                                     className="bi"
                                 />
-                                <span className="buttonText" style={{ marginLeft: '5px' }}>
+                                <span
+                                    className="buttonText"
+                                    style={{ marginLeft: '5px' }}
+                                >
                                     Edit Module
                                 </span>
                             </CustomButton>
@@ -355,7 +361,10 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                                     );
                                                                 }}
                                                             >
-                                                                    <span className="buttonText">Link Activity</span>
+                                                                <span className="buttonText">
+                                                                    Link
+                                                                    Activity
+                                                                </span>
                                                             </CustomButton>
                                                         )}
                                                     </td>
@@ -385,7 +394,9 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                             }
                                                             backgroundColor="#FEEBE3"
                                                         >
-                                                            <span className="buttonText">Prerequisite</span>
+                                                            <span className="buttonText">
+                                                                Prerequisite
+                                                            </span>
                                                         </CustomButton>
                                                     </td>
                                                     <td

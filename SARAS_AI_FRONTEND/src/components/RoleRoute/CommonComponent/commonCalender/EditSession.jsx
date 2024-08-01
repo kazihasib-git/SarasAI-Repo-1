@@ -111,7 +111,7 @@ const EditSession = ({ componentName }) => {
         toDate: sessionData.to_date || null,
         fromTime: sessionData.start_time || null,
         toTime: sessionData.end_time || null,
-        timezone:  'Asia/Kolkata',
+        timezone: 'Asia/Kolkata',
         repeat: sessionData.weeks ? 'recurring' : 'onetime',
         selectedDays: sessionData.weeks
             ? sessionData.weeks

@@ -123,38 +123,44 @@ const AdminDataTable = ({
     const handleToggle = id => {
         // Log the initial state of the item being toggled
         console.log('Toggling ID:', id);
-        console.log('Before Toggle:', data.find(item => item.id === id));
-    
+        console.log(
+            'Before Toggle:',
+            data.find(item => item.id === id)
+        );
+
         const updatedData = data.map(item =>
             item.id === id
                 ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
                 : item
         );
-    
+
         // Log the updated state of the item
-        console.log('After Toggle:', updatedData.find(item => item.id === id));
-    
+        console.log(
+            'After Toggle:',
+            updatedData.find(item => item.id === id)
+        );
+
         setData(updatedData);
-    
+
         const toggledItem = updatedData.find(item => item.id === id);
         const requestData = { is_active: toggledItem.is_active };
-    
+
         switch (componentName) {
             case 'ASSIGNCOACHSTUDENT':
                 dispatch(
                     toggleCoachAssignStudentStatus({ id, data: requestData })
                 ).then(() => {
                     dispatch(getCoachAssignStudents(ta_id));
-                })
-                
+                });
+
                 break;
             case 'ASSIGNCOACHBATCH':
                 dispatch(
                     toggleCoachAssignBatchStatus({ id, data: requestData })
                 ).then(() => {
                     dispatch(getCoachAssignBatches(ta_id));
-                })
-                
+                });
+
                 break;
             default:
                 console.warn(
