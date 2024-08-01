@@ -155,8 +155,9 @@ const AddEditWOLQuestions = () => {
             */
         }
     }, [editwolQuestionData]);
+
     const categoryName = editwolQuestionData
-        ? wolCategoryData.data.find(
+        ? wolCategoryData.data?.find(
               item => item.id === editwolQuestionData.wol_category_id
           )?.name
         : 'No Category Selected';
@@ -201,20 +202,27 @@ const AddEditWOLQuestions = () => {
             >
                 <form onSubmit={handleSubmit(onSubmit)} noValidate>
                     <Box sx={{ marginBottom: 2, width: '40%' }}>
-                        <p
-                            style={{
-                                fontSize: '24px', // Increase the font size
-                                fontWeight: 600, // Make the text bolder
-                                color: '#1A1E3D',
-                            }}
-                        >
-                            {categoryName}
-                        </p>
+                        <Controller
+                            name="category"
+                            control={control}
+                            rules={{ required: 'Category is required' }}
+                            render={({ field }) => (
+                                <CustomFormControl
+                                    label="Wheel of Life Category"
+                                    name="category"
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                    errors={errors}
+                                    options={WOLCategoriesOptions}
+                                    disabled={editwolQuestionData}
+                                />
+                            )}
+                        />
                     </Box>
 
                     <Box
                         sx={{
-                            marginTop: '10px',
+                            marginTop: '50px',
                             position: 'relative',
                             padding: '2px',
                         }}
@@ -235,16 +243,16 @@ const AddEditWOLQuestions = () => {
                             />
                         </Paper>
                         {/* <QuillContainer>
-                            <ReactQuill
-                                theme='snow'
-                                value={questionValue}
-                                onChange={setQuestionValue}
-                                modules={modules}
-                                formats={formats}
-                                style={{ height: '100px', backgroundColor: 'transparent' }}
-                                placeholder='Write your question here...'
-                            />
-                        </QuillContainer> */}
+            <ReactQuill
+                                            theme='snow'
+                                            value={questionValue}
+                                            onChange={setQuestionValue}
+                                            modules={modules}
+                                            formats={formats}
+                                            style={{ height: '100px', backgroundColor: 'transparent' }}
+                                            placeholder='Write your question here...'
+                                        />
+            </QuillContainer> */}
                     </Box>
 
                     <Box

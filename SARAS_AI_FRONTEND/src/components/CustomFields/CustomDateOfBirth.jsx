@@ -18,6 +18,7 @@ const CustomDateOfBirth = ({ label, name, value, onChange, ...props }) => {
             value={value}
             onChange={handleDateChange}
             disableFutureDates={true}
+            sx={{ width: '100%' }} // Ensure full width
             {...props}
         />
     );
