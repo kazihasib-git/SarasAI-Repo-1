@@ -403,6 +403,7 @@ function AddEditCoach({ data }) {
                                 <CustomTextField
                                     label="Address"
                                     name="address"
+                                    placeholder="Enter Address"
                                     register={register}
                                     validation={{
                                         required: 'Address is required',

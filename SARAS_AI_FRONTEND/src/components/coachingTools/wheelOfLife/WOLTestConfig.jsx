@@ -624,6 +624,7 @@ const WOLTestConfig = () => {
                                     borderRadius: '50px',
                                     padding: '18px 30px',
                                     margin: '0 8px',
+                                    textTransform: 'none',
                                 }}
                             >
                                 {edit ? 'Update' : 'Submit'}

@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import CoachMenu from './CoachMenu';
 import EditIcon from '@mui/icons-material/Edit';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import DateRangeIcon from '@mui/icons-material/DateRange';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import SessionNotes from './SessionNotes';
 import {
     Box,
     Typography,
@@ -82,6 +83,10 @@ const CoachCallRecord = () => {
                 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
         },
     ];
+    const [open, setOpen] = useState(false);
+
+    const handleClickOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
     return (
         <div>
             <CoachMenu />
@@ -181,12 +186,13 @@ const CoachCallRecord = () => {
                                     justifyContent="space-between"
                                 >
                                     <CustomButton
+                                        onClick={handleClickOpen}
                                         color="#F56D3B"
                                         backgroundColor="#FFFFFF"
                                         borderColor="#F56D3B"
                                         style={{ textTransform: 'none' }}
                                     >
-                                        Meeting Notes
+                                        Session Notes
                                     </CustomButton>
                                     <CustomButton
                                         color="#F56D3B"
@@ -202,6 +208,7 @@ const CoachCallRecord = () => {
                     ))}
                 </Box>
             </Box>
+            <SessionNotes open={open} onClose={handleClose} />
         </div>
     );
 };
