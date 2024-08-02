@@ -33,7 +33,7 @@ const CoachTemplate = () => {
             const transformData = coachTemplates.map(item => ({
                 id: item.id,
                 'Template Name': item.name,
-                Duration: item.duration,
+                Duration: `${item.duration} hours`,
                 Activities: item?.modules
                     ?.map(module => module?.module_name)
                     .join(', '),

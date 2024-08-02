@@ -108,6 +108,7 @@ const AddEditTA = ({ data }) => {
             date_of_birth: formattedDate,
             highest_qualification: data.highest_qualification,
             about_me: data.about_me,
+            description: data.description
         };
 
         Object.entries(formValues).forEach(([key, value]) => setValue(key, value));
@@ -151,7 +152,7 @@ const AddEditTA = ({ data }) => {
             const base64Data = selectedImage.replace(/^data:image\/(png|jpeg|jpg);base64,/, '');
             updatedFormData.profile_picture = base64Data;
         }
-
+            updatedFormData.description = editableDescription;
         try {
             if (data) {
                 const updateRes = await dispatch(updateTA({ id: data.id, data: updatedFormData })).unwrap();
@@ -169,6 +170,7 @@ const AddEditTA = ({ data }) => {
         } catch (error) {
             console.error('Error submitting form:', error);
         }
+
     };
 
     const nameValue = watch('name', '');

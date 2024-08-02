@@ -39,6 +39,8 @@ import { getTimezone } from '../../../../redux/features/utils/utilSlice';
 import CustomTimeZoneForm from '../../../CustomFields/CustomTimeZoneForm';
 import AssignBatches from '../../AssignBatches';
 import CustomDateOfBirth from '../../../CustomFields/CustomDateOfBirth';
+import EditIcon from '@mui/icons-material/Edit';
+
 
 function AddEditCoach({ data }) {
     const {
@@ -60,6 +62,10 @@ function AddEditCoach({ data }) {
     const [selectedImage, setSelectedImage] = useState(null);
     const [dateOfBirth, setDateOfBirth] = useState(null);
     const [phoneNumber, setPhoneNumber] = useState('');
+    const [editableDescription, setEditableDescription] = useState('');
+    const [isEditingDescription, setIsEditingDescription] = useState(false);
+    const [editableAboutMe, setEditableAboutMe] = useState('');
+    
 
     const dispatch = useDispatch();
 
@@ -105,6 +111,7 @@ function AddEditCoach({ data }) {
             date_of_birth: formattedDate,
             highest_qualification: data.highest_qualification,
             about_me: data.about_me,
+            description: data.description
         };
 
         Object.entries(formValues).forEach(([key, value]) =>
@@ -132,6 +139,21 @@ function AddEditCoach({ data }) {
         dispatch(openCoachAssignBatches());
     };
 
+    const handleAboutMeChange = event => {
+        setEditableAboutMe(event.target.value);
+    };
+
+
+    const handleSaveDescription = () => {
+        setIsEditingDescription(false);
+        setValue('about_me', editableDescription);
+    };
+
+    const handleDescriptionChange = event => {
+        setEditableDescription(event.target.value);
+    };
+
+
     const onSubmit = async coachData => {
         const { email, time_zone, ...updatedFormData } = coachData;
 
@@ -145,6 +167,7 @@ function AddEditCoach({ data }) {
             );
             updatedFormData.profile_picture = base64Data;
         }
+        updatedFormData.description = editableDescription;
         try {
             if (data) {
                 const updateRes = await dispatch(
@@ -201,7 +224,7 @@ function AddEditCoach({ data }) {
                                                 backgroundColor: 'white',
                                                 color: '#F56D3B',
                                                 height: '60px',
-                                                width: '194px',
+                                                width: '220px',
                                                 border: '2px solid #F56D3B',
                                                 borderRadius: '50px',
                                                 textTransform: 'none',
@@ -271,42 +294,73 @@ function AddEditCoach({ data }) {
                                 selectedImage={selectedImage}
                                 setSelectedImage={setSelectedImage}
                             />
-                            <Box ml={4}>
-                                <Typography
-                                    variant="h5"
-                                    sx={{
-                                        fontSize: '24px',
-                                        fontWeight: '600',
-                                        color: '#1A1E3D',
-                                    }}
-                                >
-                                    {nameValue || 'Name of the Coach'}
-                                </Typography>
-                                <Typography
-                                    variant="body2"
-                                    sx={{
-                                        fontSize: '16px',
-                                        fontWeight: '400',
-                                        mb: 4,
-                                        color: '#5F6383',
-                                        font: 'Nunito Sans',
-                                    }}
-                                >
-                                    {aboutMeValue || 'Short Description'}
-                                </Typography>
-                                {/* <CustomTextField
-                label="Short Description"
-                name="short_description"
-                placeholder="Enter About TA"
-                register={register}
-                validation={{ required: "About Me is required" }}
-                errors={errors}
-                multiline
-                rows={2}
-                sx={{ width: "400px" }}
-              /> */}
+                            <Box ml={4} display="flex" flexDirection="column">
+                                <Box display="flex" alignItems="center" gap={2}>
+                                    <Typography
+                                        variant="h5"
+                                        sx={{
+                                            fontSize: '24px',
+                                            fontWeight: '600',
+                                            font: 'Nunito Sans',
+                                            color: '#1A1E3D',
+                                        }}
+                                    >
+                                        {nameValue || 'Name of the Coach'}
+                                    </Typography>
+
+                                    <Button
+                                        variant="contained"
+                                        onClick={() => setIsEditingDescription(!isEditingDescription)}
+                                        sx={{
+                                            backgroundColor: '#F56D3B',
+                                            color: 'white',
+                                            borderRadius: '20px',
+                                            textTransform: 'none',
+                                            height: '32px',
+                                            minWidth: 'auto',
+                                            padding: '0 16px',
+                                        }}
+                                    >
+                                        <EditIcon />
+                                        Edit
+                                    </Button>
+                                </Box>
+
+                                {isEditingDescription ? (
+                                    <Box mt={2}>
+                                        <CustomTextField
+                                            fullWidth
+                                            multiline
+                                            rows={2}
+                                            value={editableDescription}
+                                            onChange={handleDescriptionChange}
+                                            placeholder="Add a brief description..."
+                                        />
+                                        <Button
+                                            variant="contained"
+                                            onClick={handleSaveDescription}
+                                            sx={{
+                                                mt: 2,
+                                                backgroundColor: '#F56D3B',
+                                                color: 'white',
+                                                borderRadius: '20px',
+                                                textTransform: 'none',
+                                                height: '32px',
+                                                minWidth: 'auto',
+                                                padding: '0 16px',
+                                            }}
+                                        >
+                                            Save
+                                        </Button>
+                                    </Box>
+                                ) : (
+                                    <Typography variant="body1" sx={{ mt: 2 }}>
+                                        {editableDescription || 'Short Description'}
+                                    </Typography>
+                                )}
                             </Box>
                         </Box>
+                    
 
                         <Divider
                             sx={{ mt: 2, mb: 4, border: '1px solid #C2C2E7' }}
@@ -654,6 +708,8 @@ function AddEditCoach({ data }) {
                                     errors={errors}
                                     multiline
                                     rows={4}
+                                    value={editableAboutMe}
+                                    onChange={handleAboutMeChange}
                                 />
                             </Grid>
                         </Grid>
