@@ -20,7 +20,7 @@ const headers = [
     'Username',
     'Location',
     'Time Zone',
-    'Action',
+    'Actions',
 ];
 
 const ManageTA = () => {

@@ -160,10 +160,10 @@ const StudentDetails = () => {
                         <Box
                             sx={{
                                 position: 'absolute',
-                                top: '45%',
+                                top: '25%',
                                 right: '5%',
                                 width: '18%',
-                                height: '30%',
+                                height: '50%',
                                 backgroundImage: `url(${background1Icon})`,
                                 backgroundPosition: 'center',
                                 backgroundRepeat: 'no-repeat',
@@ -183,7 +183,7 @@ const StudentDetails = () => {
                             alt="Card Icon"
                             sx={{
                                 position: 'absolute',
-                                top: '50%',
+                                top: '38%',
                                 right: '10%',
                                 width: '8%', // Size of card1.svg
                                 height: 'auto',
@@ -201,10 +201,10 @@ const StudentDetails = () => {
                         <Box
                             sx={{
                                 position: 'absolute',
-                                top: '45%',
+                                top: '25%',
                                 right: '5%',
                                 width: '18%',
-                                height: '30%',
+                                height: '50%',
                                 backgroundImage: `url(${activityBackgroundIcon})`,
                                 backgroundPosition: 'center',
                                 backgroundRepeat: 'no-repeat',
@@ -224,7 +224,7 @@ const StudentDetails = () => {
                             alt="Card Icon"
                             sx={{
                                 position: 'absolute',
-                                top: '50%',
+                                top: '38%',
                                 right: '10%',
                                 width: '8%', // Size of card1.svg
                                 height: 'auto',
@@ -242,10 +242,10 @@ const StudentDetails = () => {
                         <Box
                             sx={{
                                 position: 'absolute',
-                                top: '45%',
+                                top: '25%',
                                 right: '5%',
                                 width: '18%',
-                                height: '30%',
+                                height: '50%',
                                 backgroundImage: `url(${dueBackgroundIcon})`,
                                 backgroundPosition: 'center',
                                 backgroundRepeat: 'no-repeat',
@@ -265,7 +265,7 @@ const StudentDetails = () => {
                             alt="Activity Icon"
                             sx={{
                                 position: 'absolute',
-                                top: '50%',
+                                top: '38%',
                                 right: '10%',
                                 width: '8%',
                                 height: 'auto',

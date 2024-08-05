@@ -1,6 +1,6 @@
 .container {
     position: relative;
-    padding-top: 50px; /* Adjust if needed to position h1 */
+    padding-top: 10px; /* Adjust if needed to position h1 */
 }
 
 h1 {
@@ -10,23 +10,23 @@ h1 {
 
 .box {
     position: absolute;
-    top: 205px;
+    top: 85px;
     height: 600px; /* Set a fixed height to control the layout */
     background-color: rgb(255, 255, 255);
 }
 
 .box1 {
-    width: 300px;
+    width: Fixed (300px) px;
     left: 0px;
     border-radius: 10px 0 0 10px;
-    height: 600px; /* Ensure height is set properly */
+    height: Fixed (837px) px; /* Ensure height is set properly */
     overflow: hidden; /* Hide overflow for better control */
 }
 
 .box2 {
     width: 804px;
     left: 301px;
-    height: 600px; /* Ensure height matches for consistency */
+    height: Fixed (837px) px; /* Ensure height matches for consistency */
     border-radius: 0 10px 10px 0;
     overflow: hidden;
     flex-direction: column;
@@ -41,38 +41,69 @@ h1 {
     border-bottom: 1px solid #ffffff;
     display: flex;
     align-items: center;
+    margin-bottom: -10px;
 }
 
 .search-bar {
-    width: 100%; /* Full width of the container */
+    width: 70%; /* Full width of the container */
+    background: #f1f1fb;
+}
+
+.filter-background {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 40px;
 }
 
 .filter-button {
-    width: 18px;
-    height: 18px;
-    border: none;
+    position: absolute;
+    top: 7%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     background: transparent;
-    cursor: pointer; /* Change cursor to pointer for better UX */
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border: none;
+    width: 35px; /* Set icon width */
+    height: 40px; /* Set icon height */
 }
+
+.filter-background img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    margin-left: 13px;
+}
+
+.filter-button img {
+    width: 100%;
+    height: 100%;
+}
+
 .notification-icon {
-    color: #f2f2fd;
+    color: #f6f6f8; /* Set the default color of the notification icon */
+    transition: none; /* Disable transition effects if any */
+}
+
+.notification-icon:hover,
+.notification-icon:focus {
+    color: #f6f6f8; /* Ensure color remains the same on hover and focus */
+    outline: none; /* Remove any focus outline if present */
+    cursor: default; /* Optionally change cursor to default if you don't want pointer cursor */
 }
 
 .chat-list {
     width: 100%;
     height: calc(600px - 88px); /* Adjust height to fit below search bar */
-    padding: 20px 30px;
+    /* padding: 20px 30px; */
     box-sizing: border-box;
     overflow-y: auto; /* Allow scrolling if content exceeds height */
     background-color: #fff; /* White background for the chat list */
-    border-radius: 10px;
+    /* border-radius: 10px; */
     gap: 8px;
 }
 
 .chat-item {
+    background-color: #f6f6f8;
     display: flex;
     align-items: center;
     padding: 10px;
@@ -110,14 +141,20 @@ h1 {
 
 .chat-messages {
     flex: 1;
-    padding: 20px;
+    padding: 10px;
     overflow-y: auto;
-    background-color: #fff;
+
+    background-color: #f6f6f8;
     border-radius: 10px;
-    margin-bottom: 80px;
+    margin-bottom: 60px;
     display: flex;
     flex-direction: column;
-    gap: 10px; /* Add space between messages */
+    gap: 5px; /* Add space between messages */
+}
+.last-seen {
+    margin-left: 20px; /* Adjust this value to move it further to the right */
+    /* or use padding if you prefer */
+    padding-left: 20px; /* Adjust this value as needed */
 }
 
 .message {
@@ -133,7 +170,7 @@ h1 {
 }
 
 .message.user {
-    background-color: #fefefe;
+    background-color: #f1f1fb;
     color: #000; /* Text color for user messages */
     margin-left: auto;
 }
@@ -161,8 +198,8 @@ h1 {
     display: flex;
     align-items: center;
     padding: 10px 20px;
-    border-top: 1px solid #fff;
-    background-color: #fff;
+
+    background-color: #f1f1fb;
     position: absolute;
     bottom: 0;
     width: 100%;

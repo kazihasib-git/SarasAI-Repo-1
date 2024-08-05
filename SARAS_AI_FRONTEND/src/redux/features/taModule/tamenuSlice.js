@@ -166,6 +166,25 @@ export const getTaScheduledCalls = createAsyncThunk(
     }
 );
 
+//ta call records
+export const getTaCallRecords = createAsyncThunk(
+    'taMenu/getTaCallRecords',
+    async date => {
+        const response = await axiosInstance.post(
+            `${baseUrl}/ta/call-recording/get-call-recording`,
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                },
+                date: date,
+            }
+        );
+        console.log(response.data, 'response.data');
+        return response.data;
+    }
+);
+
 // Create TA Sessions
 export const createTaMenuSessions = createAsyncThunk(
     'taMenu/createTaMenuSessions',
@@ -196,6 +215,35 @@ export const getTaMenuAssignedBatches = createAsyncThunk(
     }
 );
 
+//session notes
+export const assignSessionNotes = createAsyncThunk(
+    'calls/assignSessionNotes',
+    async ({ id, data }, { rejectWithValue }) => {
+        try {
+            console.log('Assigning session notes with ID:', id);
+            if (!id) {
+                throw new Error('ID is required');
+            }
+
+            const response = await axios.put(
+                `${baseUrl}/ta/call-recording/assign-session-notes/${id}`,
+                data,
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                }
+            );
+            return response.data;
+        } catch (error) {
+            console.error('Error assigning session notes:', error);
+            return rejectWithValue(
+                error.response ? error.response.data : error.message
+            );
+        }
+    }
+);
+
 const initialState = {
     taProfileData: [], // TA Profile Data
     taSlots: [], // TA Slots
@@ -207,7 +255,7 @@ const initialState = {
     selectedTaBatches: [],
     assignedTaStudents: [],
     assignedTaBatches: [],
-
+    taCallRecords: [], //call recording
     //For Leave
     slotsBetweenDates: [],
     sessionBySlots: [],
@@ -221,6 +269,7 @@ const initialState = {
 
     loading: false,
     error: null,
+    sessionNotesData: [],
 };
 
 export const taMenuSlice = createSlice({
@@ -428,7 +477,7 @@ export const taMenuSlice = createSlice({
             state.error = action.error.message;
         });
 
-        //get coach scheduled calls
+        //get ta scheduled calls
         builder.addCase(getTaScheduledCalls.pending, state => {
             state.loading = true;
         });
@@ -440,6 +489,20 @@ export const taMenuSlice = createSlice({
             state.loading = false;
             state.error = action.error.message;
             state.taScheduledCalls = [];
+        });
+
+        //get ta call records
+        builder.addCase(getTaCallRecords.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(getTaCallRecords.fulfilled, (state, action) => {
+            state.loading = false;
+            state.taCallRecords = action.payload.data;
+        });
+        builder.addCase(getTaCallRecords.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+            state.taCallRecords = [];
         });
 
         // get ta assigned students
@@ -471,6 +534,21 @@ export const taMenuSlice = createSlice({
             state.loading = false;
             state.error = action.error.message;
             state.assignedTaBatches = [];
+        });
+    },
+
+    //session notes
+    extraReducers: builder => {
+        builder.addCase(assignSessionNotes.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(assignSessionNotes.fulfilled, (state, action) => {
+            state.loading = false;
+            state.sessionNotesData = action.payload.data; // Adjust based on response
+        });
+        builder.addCase(assignSessionNotes.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
         });
     },
 });

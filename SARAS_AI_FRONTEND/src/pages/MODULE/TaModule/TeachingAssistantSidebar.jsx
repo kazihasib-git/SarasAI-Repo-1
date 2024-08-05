@@ -27,15 +27,16 @@ const TaMenuSidebar = () => {
         <aside id="sidebar" className="sidebar">
             <ul className="sidebar-nav" id="sidebar-nav">
                 <li className="nav-item">
-                    <a
-                        className={`nav-link ${activeLink.startsWith('/coachmenu-') ? 'active' : 'collapsed'}`}
+                    <Link
+                        to={'/tamenu_profile'}
+                        className={`nav-link ${activeLink === '/tamenu_profile' ? 'active' : ''}`}
                         href="#"
-                        onClick={() => handleLinkClick('/coachmenu-profile')}
+                        onClick={() => handleLinkClick('/tamenu-profile')}
                     >
                         <i className="bi bi-person-circle"></i>
                         <span>My Profile</span>
                         <i className="bi bi-chevron-right ms-auto"></i>
-                    </a>
+                    </Link>
                     <Divider
                         variant="middle"
                         component="li"
