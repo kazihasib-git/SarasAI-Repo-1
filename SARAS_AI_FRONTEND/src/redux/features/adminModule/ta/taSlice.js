@@ -324,7 +324,7 @@ export const taSlice = createSlice({
         builder.addCase(showTAMapping.fulfilled, (state, action) => {
             // console.log("TAMAPPING : ", action.payload);
             state.loading = false;
-            state.taMapping = action.payload;
+            state.taMapping = action.payload.data;
         });
         builder.addCase(showTAMapping.rejected, (state, action) => {
             state.loading = false;

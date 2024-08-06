@@ -151,6 +151,8 @@ const CreateNewSlot = ({ componentName }) => {
         formData.weeks = weeksArray;
         formData.admin_user_id = taId.id;
 
+
+        
         dispatch(createSlotApi(formData)).then(() => {
             dispatch(closeCreateNewSlots());
             dispatch(getSlotsApi(taId.id));
@@ -247,13 +249,13 @@ const CreateNewSlot = ({ componentName }) => {
                             justifyContent="center"
                         >
                             <Controller
-                                name="time_zone"
+                                name="timezone_id"
                                 control={control}
                                 // rules={{ required: 'Time Zone is required' }}
                                 render={({ field }) => (
                                     <CustomTimeZoneForm
                                         label="Time Zone"
-                                        name="time_zone"
+                                        name="timezone_id"
                                         value={field.value}
                                         onChange={field.onChange}
                                         errors={errors}
