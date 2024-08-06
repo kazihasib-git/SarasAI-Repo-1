@@ -4,16 +4,14 @@ import { baseUrl } from '../../../utils/baseURL';
 
 export const getPlatforms = createAsyncThunk(
     'util/getPlatforms',
-    async ({ rejectWithValue }) => {
+    async () => {
         try {
             const response = await axiosInstance.get(
-                `${baseUrl}/calling-tools`
+                `${baseUrl}/platform-tools`
             );
             return response.data;
         } catch (error) {
-            return rejectWithValue(
                 error.response ? error.response.data : 'An Error occurred'
-            );
         }
     }
 );
