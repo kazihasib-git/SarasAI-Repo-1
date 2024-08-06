@@ -34,6 +34,7 @@ import Header from '../../components/Header/Header';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import ScheduleSession from '../../components/availability/ScheduleSession';
 
+
 const CustomButton = ({
     onClick,
     children,
@@ -211,6 +212,7 @@ const TaCalender = () => {
                                         style={{ textTransform: 'none' }}
                                     >
                                         {/* <AddCircleOutlineIcon /> */}
+                                        <AddCircleOutlineIcon sx={{ marginRight: 1 }} />
                                         Create New Slot
                                     </CustomButton>
                                 </Box>

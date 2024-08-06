@@ -38,8 +38,8 @@ const TaMapping = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        if (taMapping && taMapping.length > 0) {
-            const transformData = taMapping.map((item, index) => ({
+        if (taMapping.data && taMapping.data.length > 0) {
+            const transformData = taMapping.data.map((item, index) => ({
                 id: item.id,
                 name: item.name,
                 Username: item.username,

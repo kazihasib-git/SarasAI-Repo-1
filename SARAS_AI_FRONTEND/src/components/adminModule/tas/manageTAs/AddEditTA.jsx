@@ -114,6 +114,7 @@ const AddEditTA = ({ data }) => {
             date_of_birth: formattedDate,
             highest_qualification: data.highest_qualification,
             about_me: data.about_me,
+            description: data.description
         };
 
         Object.entries(formValues).forEach(([key, value]) =>
@@ -164,7 +165,7 @@ const AddEditTA = ({ data }) => {
             );
             updatedFormData.profile_picture = base64Data;
         }
-
+            updatedFormData.description = editableDescription;
         try {
             if (data) {
                 const updateRes = await dispatch(
@@ -184,6 +185,7 @@ const AddEditTA = ({ data }) => {
         } catch (error) {
             console.error('Error submitting form:', error);
         }
+
     };
 
     const nameValue = watch('name', '');
