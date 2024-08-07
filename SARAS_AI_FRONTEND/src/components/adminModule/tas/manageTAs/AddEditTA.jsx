@@ -45,6 +45,7 @@ import { dateFormatter } from '../../../../utils/dateFormatter';
 import CustomDateOfBirth from '../../../CustomFields/CustomDateOfBirth';
 
 const AddEditTA = ({ data }) => {
+    console.log("DATA :", data)
     const {
         register,
         handleSubmit,
@@ -55,24 +56,15 @@ const AddEditTA = ({ data }) => {
     } = useForm({
         defaultValues: {
             gender: '',
-            time_zone: '',
+            timezone_id : null,
             highest_qualification: '',
             date_of_birth: null,
         },
     });
-
+    
     const [selectedImage, setSelectedImage] = useState(null);
-    const [dateOfBirth, setDateOfBirth] = useState(null);
-    const [phoneNumber, setPhoneNumber] = useState('');
     const [isEditingDescription, setIsEditingDescription] = useState(false);
     const [editableDescription, setEditableDescription] = useState('');
-    const [editableAboutMe, setEditableAboutMe] = useState('');
-
-    //diasbke username timezone
-    // const [isEditing, setIsEditing] = useState(false);
-    // const handleEditClick = () => {
-    //     setIsEditing(!isEditing);
-    // };
 
     const dispatch = useDispatch();
     const { successPopup, assignStudentOpen, assignBatchOpen } = useSelector(
@@ -91,13 +83,17 @@ const AddEditTA = ({ data }) => {
     }, [data]);
 
     const populateForm = data => {
-        const formattedDate = moment(data.date_of_birth).format('YYYY-MM-DD');
-        setDateOfBirth(formattedDate);
+        // formattedDate = moment(data.date_of_birth).format('YYYY-MM-DD');
         dispatch(accessTaName(data));
 
         if (data.profile_picture) {
             const blobUrl = base64ToBlobUrl(data.profile_picture);
-            setSelectedImage(blobUrl);
+            console.log('url', blobUrl)
+            setSelectedImage(data.profile_picture);
+        }
+
+        if(data.description){
+            setEditableDescription(data.description);
         }
 
         const formValues = {
@@ -108,13 +104,13 @@ const AddEditTA = ({ data }) => {
             address: data.address,
             pincode: data.pincode,
             phone: data.phone,
-            time_zone: data.time_zone_id,
+            timezone_id : data.timezone_id,
             gender: data.gender,
             email: data.email,
-            date_of_birth: formattedDate,
+            date_of_birth: data.date_of_birth,
             highest_qualification: data.highest_qualification,
             about_me: data.about_me,
-            description: data.description
+            description: data.description,
         };
 
         Object.entries(formValues).forEach(([key, value]) =>
@@ -144,10 +140,6 @@ const AddEditTA = ({ data }) => {
         setEditableDescription(event.target.value);
     };
 
-    const handleAboutMeChange = event => {
-        setEditableAboutMe(event.target.value);
-    };
-
     const handleSaveDescription = () => {
         setIsEditingDescription(false);
         setValue('description', editableDescription);
@@ -155,18 +147,18 @@ const AddEditTA = ({ data }) => {
 
     const onSubmit = async formData => {
         console.log("formData :", formData)
-        const { email, time_zone, ...updatedFormData } = formData;
-
+        
         if (selectedImage) {
             const base64Data = selectedImage.replace(
                 /^data:image\/(png|jpeg|jpg);base64,/,
                 ''
             );
-            updatedFormData.profile_picture = base64Data;
+            formData.profile_picture = base64Data;
         }
-            updatedFormData.description = editableDescription;
+
         try {
             if (data) {
+                const { email, phone, ...updatedFormData } = formData;
                 const updateRes = await dispatch(
                     updateTA({ id: data.id, data: updatedFormData })
                 ).unwrap();
@@ -186,12 +178,6 @@ const AddEditTA = ({ data }) => {
     };
 
     const nameValue = watch('name', '');
-
-    const handleDateChange = (date, field) => {
-        const formattedDate = date ? moment(date).format('YYYY-MM-DD') : '';
-        setDateOfBirth(formattedDate);
-        field.onChange(formattedDate);
-    };
 
     return (
         <Box m={'20px'}>
@@ -517,22 +503,41 @@ const AddEditTA = ({ data }) => {
                         <Grid item xs={12} sm={6} md={4}>
                             <Controller
                                 name="timezone_id"
+                                placeholder="Time Zone"
                                 control={control}
                                 rules={{ required: 'TimeZone is required' }}
-                                render={({ field }) => {
-                                    console.log("value ", field, field.value)
-                                    return (
+                                render={({ field }) => (
                                         <CustomTimeZoneForm
                                             label="Time Zone"
                                             name="timezone_id"
+                                            placeholder="Time Zone"
                                             value={field.value}
                                             onChange={field.onChange}
                                             errors={errors}
                                             options={timezones}
-                                            //disabled={!isEditing}
                                         />
-                                    );
-                                }}
+                                    )
+                                }
+                            />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6} md={4}>
+                            <Controller
+                                name="gender"
+                                placeholder="Gender"
+                                control={control}
+                                rules={{ required: 'Gender is required' }}
+                                render={({ field }) => (
+                                    <CustomFormControl
+                                        label="Gender"
+                                        name="gender"
+                                        placeholder="Gender"
+                                        value={field.value}
+                                        onChange={field.onChange}
+                                        errors={errors}
+                                        options={genders}
+                                    />
+                                )}
                             />
                         </Grid>
 
@@ -556,26 +561,6 @@ const AddEditTA = ({ data }) => {
                                 rules={{
                                     required: 'Date of Birth is required',
                                 }}
-                            />
-                        </Grid>
-
-                        <Grid item xs={12} sm={6} md={4}>
-                            <Controller
-                                name="gender"
-                                placeholder="Gender"
-                                control={control}
-                                rules={{ required: 'Gender is required' }}
-                                render={({ field }) => (
-                                    <CustomFormControl
-                                        label="Gender"
-                                        name="gender"
-                                        placeholder="Gender"
-                                        value={field.value}
-                                        onChange={field.onChange}
-                                        errors={errors}
-                                        options={genders}
-                                    />
-                                )}
                             />
                         </Grid>
 
@@ -682,8 +667,6 @@ const AddEditTA = ({ data }) => {
                                 errors={errors}
                                 multiline
                                 rows={4}
-                                value={editableAboutMe}
-                                onChange={handleAboutMeChange}
                             />
                         </Grid>
                     </Grid>
@@ -707,12 +690,6 @@ const AddEditTA = ({ data }) => {
                     </Button>
                 </form>
 
-                {/* <ReusableDialog
-          open={successPopup}
-          handleClose={() => dispatch(closeSuccessPopup())}
-          title= {`${taName} successfully created.`}
-          actions={actions}
-        /> */}
                 {successPopup && <SubmitPopup componentname={'ADDEDITTA'} />}
                 {assignStudentOpen && (
                     <AssignStudents componentname={'ADDEDITTA'} />

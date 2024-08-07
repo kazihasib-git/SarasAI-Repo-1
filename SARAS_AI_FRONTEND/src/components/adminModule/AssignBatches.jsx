@@ -192,7 +192,7 @@ const AssignBatches = ({ componentname }) => {
                 : taID || assignedId;
                 
         const data = {
-            [componentname === 'ADDITCOACH' ? 'Coach_id' : 'admin_user_id']: id,
+            'admin_user_id' : id,
             batches: selectedBatch.map(id => ({ id: id.toString() })),
         };
         dispatch(postAssignAction({ id, data })).then(() => {

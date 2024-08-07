@@ -295,10 +295,11 @@ export const coachSlice = createSlice({
         });
         builder.addCase(getCoachAssignStudents.fulfilled, (state, action) => {
             state.loading = false;
-            state.assignedStudents = action.payload;
+            state.assignedStudents = action.payload.data;
         });
         builder.addCase(getCoachAssignStudents.rejected, (state, action) => {
             state.loading = false;
+            state.assignedStudents = [];
             state.error = action.payload || action.error.message;
         });
 
@@ -308,10 +309,11 @@ export const coachSlice = createSlice({
         });
         builder.addCase(getCoachAssignBatches.fulfilled, (state, action) => {
             state.loading = false;
-            state.assignedBatches = action.payload;
+            state.assignedBatches = action.payload.data;
         });
         builder.addCase(getCoachAssignBatches.rejected, (state, action) => {
             state.loading = false;
+            state.assignedBatches = [];
             state.error = action.payload || action.error.message;
         });
 
