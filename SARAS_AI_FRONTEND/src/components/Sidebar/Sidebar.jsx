@@ -3,9 +3,12 @@ import './Sidebar.css';
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Divider from '@mui/material/Divider';
-import dashboard from '../../assets/dashboard.png';
-import coaches from '../../assets/coaches.png';
-import assistant from '../../assets/teachingassis.png';
+import dashboard from '../../assets/Dashboard.svg';
+import coaches from '../../assets/Coaches.svg';
+import assistant from '../../assets/Teachingassis.svg';
+import Users from '../../assets/Users.svg';
+import Coachingtools from '../../assets/Coachingtools.svg';
+
 const Sidebar = () => {
     const location = useLocation();
     const [activeLink, setActiveLink] = useState(location.pathname);
@@ -23,7 +26,14 @@ const Sidebar = () => {
                         to={'/'}
                         onClick={() => handleLinkClick('/dashboard')}
                     >
-                        <i className="bi bi-grid"></i>
+                        <img
+                            src={dashboard}
+                            style={{
+                                width: '18px',
+                                height: '18px',
+                                marginRight: '10px',
+                            }}
+                        />
                         <span className="SideHeader">Dashboard</span>
                     </Link>
                 </li>
@@ -47,7 +57,7 @@ const Sidebar = () => {
                         {/* <i className='bi bi-menu-button-wide'></i>
                          */}
                         <img
-                            src={dashboard}
+                            src={assistant}
                             style={{
                                 width: '18px',
                                 height: '18px',
@@ -272,7 +282,14 @@ const Sidebar = () => {
                         href="#"
                         onClick={() => handleLinkClick('/users')}
                     >
-                        <i className="bi bi-person"></i>
+                        <img
+                            src={Users}
+                            style={{
+                                width: '18px',
+                                height: '18px',
+                                marginRight: '10px',
+                            }}
+                        />
                         <span className="SideHeader">Users</span>
                         <i className="bi bi-chevron-down ms-auto"></i>
                     </a>
@@ -323,7 +340,7 @@ const Sidebar = () => {
                         onClick={() => handleLinkClick('/tools')}
                     >
                         <img
-                            src={assistant}
+                            src={Coachingtools}
                             alt=""
                             style={{
                                 width: '18px',

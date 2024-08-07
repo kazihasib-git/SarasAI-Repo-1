@@ -87,6 +87,23 @@ const CoachCallRecord = () => {
 
     const handleClickOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+
+    const [date, setDate] = useState(moment());
+
+    const handleDateChange = newDate => {
+        if (newDate && newDate.isValid()) {
+            setDate(newDate);
+            // handleCalendarClose();
+        }
+    };
+
+    const handleIncrement = () => {
+        setDate(prevDate => moment(prevDate).add(1, 'days'));
+    };
+
+    const handleDecrement = () => {
+        setDate(prevDate => moment(prevDate).subtract(1, 'days'));
+    };
     return (
         <div>
             <CoachMenu />
@@ -123,10 +140,13 @@ const CoachCallRecord = () => {
                         />
                         10 July, 2024
                     </Typography>
-                    <IconButton style={{ height: '9.24px', width: '23.28' }}>
+                    <IconButton
+                        style={{ height: '9.24px', width: '23.28' }}
+                        onClick={handleDecrement}
+                    >
                         <ArrowBackIosIcon />
                     </IconButton>
-                    <IconButton>
+                    <IconButton onClick={handleIncrement}>
                         <ArrowForwardIosIcon />
                     </IconButton>
                 </Box>
@@ -208,7 +228,7 @@ const CoachCallRecord = () => {
                     ))}
                 </Box>
             </Box>
-            <SessionNotes open={open} onClose={handleClose} />
+            <SessionNotes open={open} onClose={handleClose} role="Coach" />
         </div>
     );
 };

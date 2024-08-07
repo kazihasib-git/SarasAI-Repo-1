@@ -10,6 +10,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // Import Quill styles
 import { styled } from '@mui/material/styles';
+import { baseUrl } from '../../../utils/baseURL';
 
 // Styled components
 const QuillContainer = styled('div')(({ theme }) => ({
@@ -64,7 +65,7 @@ const modules = {
 
 const formats = ['bold', 'italic', 'underline', 'align', 'link'];
 
-const SessionNotes = ({ open, onClose }) => {
+const SessionNotes = ({ open, onClose, onSave, selectedId }) => {
     const [editorContent, setEditorContent] = useState('');
 
     useEffect(() => {
@@ -72,6 +73,29 @@ const SessionNotes = ({ open, onClose }) => {
             setEditorContent('');
         }
     }, [open]);
+    // useEffect(() => {
+    //     if (open && selectedId) {
+    //         const fetchNotes = async () => {
+    //             try {
+    //                 const response = await fetch(
+    //                     `${baseUrl}/ta/call-recording/assign-session-notes/${1}`
+    //                 );
+    //                 const data = await response.json();
+    //                 setEditorContent(data.notes || '');
+    //             } catch (error) {
+    //                 console.error('Failed to fetch notes:', error);
+    //             }
+    //         };
+
+    //         fetchNotes();
+
+    //     }
+    // }, [open, selectedId]);
+
+    const handleSave = () => {
+        onSave(editorContent);
+        onClose();
+    };
 
     return (
         <Dialog
@@ -136,7 +160,7 @@ const SessionNotes = ({ open, onClose }) => {
                     />
                 </QuillContainer>
                 <Button
-                    onClick={onClose}
+                    onClick={handleSave}
                     style={{
                         backgroundColor: '#F56D3B',
                         color: '#fff',

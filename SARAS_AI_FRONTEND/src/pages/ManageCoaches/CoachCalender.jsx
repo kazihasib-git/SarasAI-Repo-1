@@ -215,6 +215,7 @@ const CoachCalender = () => {
                                         onClick={handleCreateNewSlot}
                                     >
                                         {/* <AddCircleOutlineIcon /> */}
+                                        <AddCircleOutlineIcon sx={{ marginRight: 1 }} />
                                         Create New Slot
                                     </CustomButton>
                                 </Box>

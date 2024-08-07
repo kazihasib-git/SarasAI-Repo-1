@@ -343,6 +343,8 @@ const AssignedStudent = () => {
             dispatch(getAssignStudents(id));
         }
     }, [dispatch, id]);
+
+    
     useEffect(() => {
         if (assignedStudents && assignedStudents.length > 0) {
             const transformData = assignedStudents.map(item => {

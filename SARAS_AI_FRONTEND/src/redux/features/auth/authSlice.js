@@ -4,8 +4,6 @@ import { baseUrl } from '../../../utils/baseURL';
 import { toast } from 'react-toastify';
 import axiosInstance from '../../services/httpService';
 
-// const url = 'http://34.100.233.67:8080/api';
-
 // login api
 export const login = createAsyncThunk('login', async data => {
     const response = await axiosInstance.post(`${baseUrl}/login`, data);

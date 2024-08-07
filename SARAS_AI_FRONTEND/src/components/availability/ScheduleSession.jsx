@@ -24,6 +24,8 @@ import {
 
 import editImg from '../../assets/editIcon_White.png';
 import editImage from '../../assets/editIcon.png';
+import { useNavigate } from 'react-router-dom';
+
 
 const CustomButton = ({
     onClick,
@@ -62,6 +64,7 @@ const CustomButton = ({
 
 const ScheduleSession = ({ componentName }) => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     let sliceName,
         sessionDataState,
@@ -117,6 +120,8 @@ const ScheduleSession = ({ componentName }) => {
         dispatch(openEditBatches());
     };
 
+    console.log('sessionData', sessionData)
+
     const handleLinkCopy = () => {
         if (sessionData.meetingLink) {
             navigator.clipboard
@@ -136,19 +141,23 @@ const ScheduleSession = ({ componentName }) => {
 
     const handleChangeMode = () => {};
 
+    const handleJoinCall = (data) => {
+        window.open(sessionData.platform_meet.host_meeting_url, '_blank');
+    }
+  
     const content = (
         <Box sx={{ textAlign: 'center' }}>
             <Typography variant="body1" sx={{ mb: 2 }}>
                 {formatDateTime(sessionData)}
             </Typography>
             <CustomButton
-                onClick={() => handleJoinZoom(sessionData)}
+                onClick={() => handleJoinCall(sessionData)}
                 backgroundColor="#FFFFFF"
                 borderColor="#F56D38"
                 color="#F56D38"
                 sx={{ mb: 2, mr: 2 }}
             >
-                Join with Zoom
+                Join with {sessionData.platform_tools.name}
             </CustomButton>
             <CustomButton
                 onClick={handleChangeMode}
@@ -160,8 +169,8 @@ const ScheduleSession = ({ componentName }) => {
             >
                 Change Mode
             </CustomButton>
-            <Typography variant="body2" sx={{ mb: 2 }}>
-                {sessionData.meetingLink}
+            <Typography variant="body2" sx={{ mb: 2, overflow: 'hidden', textOverflow: 'ellipsis', }}>
+                {sessionData.platform_meet.host_meeting_url}
                 <IconButton
                     size="small"
                     sx={{
@@ -177,6 +186,7 @@ const ScheduleSession = ({ componentName }) => {
                     }}
                     onClick={handleLinkCopy}
                 >
+                    
                     <ContentCopyIcon />
                 </IconButton>
             </Typography>
@@ -241,7 +251,7 @@ const ScheduleSession = ({ componentName }) => {
         <ReusableDialog
             open={open}
             handleClose={() => dispatch(closePopup())}
-            title={`${sessionData.title || 'No Title'}`}
+            title={`${sessionData.meetingName || 'No Title'}`}
             content={content}
             actions={actions}
         />

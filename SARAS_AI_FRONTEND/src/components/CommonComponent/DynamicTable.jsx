@@ -70,6 +70,7 @@ const DynamicTable = ({
     };
 
     const handleDelete = id => {
+        dispatch(deleteTA(id)); //delete item of ta mapping
         console.log('Deleting item with id:', id);
     };
 
@@ -458,7 +459,7 @@ const DynamicTable = ({
                                                                 handleCalender(
                                                                     'Calendar',
                                                                     item.id,
-                                                                    item.taName
+                                                                    item.taName,
                                                                 )
                                                             }
                                                         >

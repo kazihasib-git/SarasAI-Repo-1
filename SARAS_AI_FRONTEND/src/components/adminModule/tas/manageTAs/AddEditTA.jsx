@@ -45,6 +45,7 @@ import { dateFormatter } from '../../../../utils/dateFormatter';
 import CustomDateOfBirth from '../../../CustomFields/CustomDateOfBirth';
 
 const AddEditTA = ({ data }) => {
+    console.log("DATA :", data)
     const {
         register,
         handleSubmit,
@@ -55,18 +56,15 @@ const AddEditTA = ({ data }) => {
     } = useForm({
         defaultValues: {
             gender: '',
-            time_zone: '',
+            timezone_id : null,
             highest_qualification: '',
             date_of_birth: null,
         },
     });
-
+    
     const [selectedImage, setSelectedImage] = useState(null);
-    const [dateOfBirth, setDateOfBirth] = useState(null);
-    const [phoneNumber, setPhoneNumber] = useState('');
     const [isEditingDescription, setIsEditingDescription] = useState(false);
     const [editableDescription, setEditableDescription] = useState('');
-    const [editableAboutMe, setEditableAboutMe] = useState('');
 
     const dispatch = useDispatch();
     const { successPopup, assignStudentOpen, assignBatchOpen } = useSelector(
@@ -85,13 +83,17 @@ const AddEditTA = ({ data }) => {
     }, [data]);
 
     const populateForm = data => {
-        const formattedDate = moment(data.date_of_birth).format('YYYY-MM-DD');
-        setDateOfBirth(formattedDate);
+        // formattedDate = moment(data.date_of_birth).format('YYYY-MM-DD');
         dispatch(accessTaName(data));
 
         if (data.profile_picture) {
             const blobUrl = base64ToBlobUrl(data.profile_picture);
-            setSelectedImage(blobUrl);
+            console.log('url', blobUrl)
+            setSelectedImage(data.profile_picture);
+        }
+
+        if(data.description){
+            setEditableDescription(data.description);
         }
 
         const formValues = {
@@ -102,20 +104,25 @@ const AddEditTA = ({ data }) => {
             address: data.address,
             pincode: data.pincode,
             phone: data.phone,
-            time_zone: data.time_zone,
+            timezone_id : data.timezone_id,
             gender: data.gender,
             email: data.email,
-            date_of_birth: formattedDate,
+            date_of_birth: data.date_of_birth,
             highest_qualification: data.highest_qualification,
             about_me: data.about_me,
+            description: data.description,
         };
 
-        Object.entries(formValues).forEach(([key, value]) => setValue(key, value));
+        Object.entries(formValues).forEach(([key, value]) =>
+            setValue(key, value)
+        );
     };
 
     const base64ToBlobUrl = base64Data => {
         const byteCharacters = atob(base64Data);
-        const byteNumbers = Array.from(byteCharacters, char => char.charCodeAt(0));
+        const byteNumbers = Array.from(byteCharacters, char =>
+            char.charCodeAt(0)
+        );
         const byteArray = new Uint8Array(byteNumbers);
         const blob = new Blob([byteArray], { type: 'image/jpeg' });
         return URL.createObjectURL(blob);
@@ -133,35 +140,33 @@ const AddEditTA = ({ data }) => {
         setEditableDescription(event.target.value);
     };
 
-    const handleAboutMeChange = event => {
-        setEditableAboutMe(event.target.value);
-    };
-
     const handleSaveDescription = () => {
         setIsEditingDescription(false);
-        setValue('about_me', editableDescription);
+        setValue('description', editableDescription);
     };
 
     const onSubmit = async formData => {
-        const { email, time_zone, ...updatedFormData } = formData;
-
-        // updatedFormData.date_of_birth = dateOfBirth;
-
+        console.log("formData :", formData)
+        
         if (selectedImage) {
-            const base64Data = selectedImage.replace(/^data:image\/(png|jpeg|jpg);base64,/, '');
-            updatedFormData.profile_picture = base64Data;
+            const base64Data = selectedImage.replace(
+                /^data:image\/(png|jpeg|jpg);base64,/,
+                ''
+            );
+            formData.profile_picture = base64Data;
         }
 
         try {
             if (data) {
-                const updateRes = await dispatch(updateTA({ id: data.id, data: updatedFormData })).unwrap();
+                const { email, phone, ...updatedFormData } = formData;
+                const updateRes = await dispatch(
+                    updateTA({ id: data.id, data: updatedFormData })
+                ).unwrap();
                 dispatch(openSuccessPopup());
                 dispatch(accessTaName(updateRes));
             } else {
-                updatedFormData.email = email;
-                updatedFormData.time_zone = 'Asia/Kolkata';
                 const createRes = await dispatch(
-                    createTA(updatedFormData)
+                    createTA(formData)
                 ).unwrap();
                 dispatch(openSuccessPopup());
                 dispatch(accessTaName(createRes.ta));
@@ -169,15 +174,10 @@ const AddEditTA = ({ data }) => {
         } catch (error) {
             console.error('Error submitting form:', error);
         }
+
     };
 
     const nameValue = watch('name', '');
-
-    const handleDateChange = (date, field) => {
-        const formattedDate = date ? moment(date).format('YYYY-MM-DD') : '';
-        setDateOfBirth(formattedDate);
-        field.onChange(formattedDate);
-    };
 
     return (
         <Box m={'20px'}>
@@ -191,7 +191,11 @@ const AddEditTA = ({ data }) => {
                                 </Typography>
                             </Grid>
                             <Grid item>
-                                <Box display="flex" justifyContent="center" gap={2}>
+                                <Box
+                                    display="flex"
+                                    justifyContent="center"
+                                    gap={2}
+                                >
                                     <Button
                                         variant="contained"
                                         onClick={handleAssignStudents}
@@ -241,7 +245,10 @@ const AddEditTA = ({ data }) => {
                         </>
                     ) : (
                         <Grid item xs>
-                            <Typography variant="h4" sx={{ mb: 4 }}>
+                            <Typography
+                                variant="h4"
+                                sx={{ mb: 4, fontFamily: 'ExtraLight' }}
+                            >
                                 Create TA
                             </Typography>
                         </Grid>
@@ -282,7 +289,11 @@ const AddEditTA = ({ data }) => {
 
                                     <Button
                                         variant="contained"
-                                        onClick={() => setIsEditingDescription(!isEditingDescription)}
+                                        onClick={() =>
+                                            setIsEditingDescription(
+                                                !isEditingDescription
+                                            )
+                                        }
                                         sx={{
                                             backgroundColor: '#F56D3B',
                                             color: 'white',
@@ -304,9 +315,10 @@ const AddEditTA = ({ data }) => {
                                             fullWidth
                                             multiline
                                             rows={2}
+                                            name='description'
                                             value={editableDescription}
                                             onChange={handleDescriptionChange}
-                                            placeholder="Add a brief description..."
+                                            placeholder="sort description..."
                                         />
                                         <Button
                                             variant="contained"
@@ -327,15 +339,13 @@ const AddEditTA = ({ data }) => {
                                     </Box>
                                 ) : (
                                     <Typography variant="body1" sx={{ mt: 2 }}>
-                                        {editableDescription || 'Short Description'}
+                                        {editableDescription ||
+                                            'Short Description'}
                                     </Typography>
                                 )}
                             </Box>
                         </Box>
                     </Box>
-
-
-
 
                     <Divider
                         sx={{ mt: 2, mb: 4, border: '1px solid #C2C2E7' }}
@@ -391,6 +401,7 @@ const AddEditTA = ({ data }) => {
                                     },
                                 }}
                                 errors={errors}
+                                //disabled={!isEditing}
                             />
                         </Grid>
 
@@ -491,21 +502,42 @@ const AddEditTA = ({ data }) => {
 
                         <Grid item xs={12} sm={6} md={4}>
                             <Controller
-                                name="time_zone"
+                                name="timezone_id"
+                                placeholder="Time Zone"
                                 control={control}
                                 rules={{ required: 'TimeZone is required' }}
-                                render={({ field }) => {
-                                    return (
+                                render={({ field }) => (
                                         <CustomTimeZoneForm
                                             label="Time Zone"
-                                            name="time_zone"
+                                            name="timezone_id"
+                                            placeholder="Time Zone"
                                             value={field.value}
                                             onChange={field.onChange}
                                             errors={errors}
                                             options={timezones}
                                         />
-                                    );
-                                }}
+                                    )
+                                }
+                            />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6} md={4}>
+                            <Controller
+                                name="gender"
+                                placeholder="Gender"
+                                control={control}
+                                rules={{ required: 'Gender is required' }}
+                                render={({ field }) => (
+                                    <CustomFormControl
+                                        label="Gender"
+                                        name="gender"
+                                        placeholder="Gender"
+                                        value={field.value}
+                                        onChange={field.onChange}
+                                        errors={errors}
+                                        options={genders}
+                                    />
+                                )}
                             />
                         </Grid>
 
@@ -520,31 +552,15 @@ const AddEditTA = ({ data }) => {
                                         value={field.value}
                                         onChange={field.onChange}
                                         error={!!errors.date_of_birth}
-                                        helperText={errors.date_of_birth?.message}
+                                        helperText={
+                                            errors.date_of_birth?.message
+                                        }
                                         sx={{ width: '100%' }} // Ensure full width
                                     />
                                 )}
                                 rules={{
                                     required: 'Date of Birth is required',
                                 }}
-                            />
-                        </Grid>
-
-                        <Grid item xs={12} sm={6} md={4}>
-                            <Controller
-                                name="gender"
-                                control={control}
-                                rules={{ required: 'Gender is required' }}
-                                render={({ field }) => (
-                                    <CustomFormControl
-                                        label="Gender"
-                                        name="gender"
-                                        value={field.value}
-                                        onChange={field.onChange}
-                                        errors={errors}
-                                        options={genders}
-                                    />
-                                )}
                             />
                         </Grid>
 
@@ -640,7 +656,7 @@ const AddEditTA = ({ data }) => {
                             )}
                         </Grid>
                         <Grid item xs={12}>
-                        <CustomTextField
+                            <CustomTextField
                                 label="About Me"
                                 name="about_me"
                                 placeholder="Enter About TA"
@@ -651,8 +667,6 @@ const AddEditTA = ({ data }) => {
                                 errors={errors}
                                 multiline
                                 rows={4}
-                                value={editableAboutMe}
-                                onChange={handleAboutMeChange}
                             />
                         </Grid>
                     </Grid>
@@ -676,12 +690,6 @@ const AddEditTA = ({ data }) => {
                     </Button>
                 </form>
 
-                {/* <ReusableDialog
-          open={successPopup}
-          handleClose={() => dispatch(closeSuccessPopup())}
-          title= {`${taName} successfully created.`}
-          actions={actions}
-        /> */}
                 {successPopup && <SubmitPopup componentname={'ADDEDITTA'} />}
                 {assignStudentOpen && (
                     <AssignStudents componentname={'ADDEDITTA'} />

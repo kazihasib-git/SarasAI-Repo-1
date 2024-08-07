@@ -43,7 +43,7 @@ const weekDays = [
     'Saturday',
 ];
 
-const CreateNewSlot = ({ componentName }) => {
+const CreateNewSlot = ({ componentName, timezoneID }) => {
     const taId = useParams();
     const dispatch = useDispatch();
 
@@ -54,23 +54,26 @@ const CreateNewSlot = ({ componentName }) => {
     const [fromTime, setFromTime] = useState(null);
     const [toTime, setToTime] = useState(null);
 
-    let sliceName, createSlotApi, getSlotsApi;
+    let sliceName, timezoneId, createSlotApi, getSlotsApi;
 
     switch (componentName) {
         case 'TACALENDER':
             sliceName = 'taAvialability';
+            timezoneID = '';
             createSlotApi = createSlots;
             getSlotsApi = fetchTaSlots;
             break;
 
         case 'COACHCALENDER':
             sliceName = 'coachAvailability';
+            timezoneId = '';
             createSlotApi = createCoachSlots;
             getSlotsApi = fetchCoachSlots;
             break;
 
         default:
             sliceName = null;
+            timezoneId = null;
             createSlotApi = null;
             getSlotsApi = null;
             break;
@@ -147,7 +150,6 @@ const CreateNewSlot = ({ componentName }) => {
         formData.slot_date = fromDate;
         formData.from_time = fromTime;
         formData.to_time = toTime;
-        // formData.timezone = 'Asia/Kolkata';
         formData.end_date = repeat === 'recurring' ? toDate : fromDate;
         formData.weeks = weeksArray;
         formData.admin_user_id = taId.id;

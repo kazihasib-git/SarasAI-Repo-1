@@ -190,7 +190,7 @@ export const getCoachCallRequests = createAsyncThunk(
     'coachMenu/getCallRequests',
     async () => {
         const response = await axiosInstance.get(
-            `${baseUrl}/coach/call-request/get-call-request`,
+            `${baseUrl}/coach/call-request/get-call-request`
         );
         console.log(response.data, 'response.data');
         return response.data;
@@ -202,7 +202,7 @@ export const approveCallRequest = createAsyncThunk(
     'coachMenu/approveCallRequest',
     async id => {
         const response = await axiosInstance.get(
-            `${baseUrl}/coach/call-request/approve-call-request/${id}`,
+            `${baseUrl}/coach/call-request/approve-call-request/${id}`
         );
         console.log(response.data, 'response.data');
         return response.data;
@@ -217,7 +217,7 @@ export const denyCallRequest = createAsyncThunk(
             `${baseUrl}/coach/call-request/denie-call-request/${id}`,
             {
                 'reject-reason': reason,
-            },
+            }
         );
         console.log(response.data, 'response.data');
         return response.data;

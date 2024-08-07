@@ -7,11 +7,10 @@ import {
     Typography,
 } from '@mui/material';
 
-const CustomTimeZoneForm = ({
+const CustomPlatformForm = ({
     label,
     name,
     value,
-    placeholder,
     onChange,
     errors,
     options,
@@ -22,7 +21,6 @@ const CustomTimeZoneForm = ({
     return (
         <FormControl variant="outlined" disabled={disabled} fullWidth>
             <InputLabel
-                shrink
                 style={{ margin: 0 }}
                 sx={{
                     color: hasError ? 'red' : '#1A1E3D',
@@ -32,7 +30,6 @@ const CustomTimeZoneForm = ({
                     '&.MuiFormLabel-filled': {
                         color: hasError ? 'red' : '#1A1E3D', // Change label color when the field is filled
                     },
-                    backgroundColor: 'white',
                 }}
             >
                 {label}
@@ -41,7 +38,6 @@ const CustomTimeZoneForm = ({
                 label={label}
                 name={name}
                 value={value}
-                placeholder={placeholder}
                 onChange={onChange}
                 error={!!errors[name]}
                 disabled={disabled}
@@ -70,7 +66,7 @@ const CustomTimeZoneForm = ({
             >
                 {options.map(option => (
                     <MenuItem key={option.id} value={option.id}>
-                        {option.time_zone}
+                        {option.name}
                     </MenuItem>
                 ))}
             </Select>
@@ -87,4 +83,4 @@ const CustomTimeZoneForm = ({
     );
 };
 
-export default CustomTimeZoneForm;
+export default CustomPlatformForm;
