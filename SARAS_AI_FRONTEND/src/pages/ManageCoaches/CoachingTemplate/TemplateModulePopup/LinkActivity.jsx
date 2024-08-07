@@ -98,7 +98,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId }) => {
             link: data.virtualMeetLink, // Add other fields if needed
         };
         console.log('payload', payload);
-
+        console.log("ActivityId", selectedActivityId);
         try {
             await dispatch(linkActivity(payload))
                 .unwrap()
@@ -197,22 +197,23 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId }) => {
             dispatch(getTaAvailableSlotsFromDate(data));
             dispatch(getCoachAvailableSlotsFromDate(data));
 
-            const data1 = {
+            if (coachAvailableSlots) {
+              const data1 = {
                 admin_user_id: selectedCoachId,
                 meeting_name: 'Team Meeting',
                 meeting_url: 'http://example.com/meeting',
                 schedule_date: fromDate,
-                slot_id: 'coachAvailableSlots.id',
-                start_time: 'coachAvailableSlots.from_time',
-                end_time: 'coachAvailableSlots.to_time',
+                slot_id: coachAvailableSlots[0].id,
+                start_time: coachAvailableSlots[0].from_time,
+                end_time: coachAvailableSlots[0].to_time,
                 timezone: 'IST',
                 event_status: 'scheduled',
                 end_date: fromDate,
-                studentId: [1, 2, 3],
-                batchId: [12, 13],
-                weeks: '[0,1, 0, 0, 0,1,0]',
+                studentId: [1],
+                batchId: [2],
+                weeks:[0,0,0,0,0,0,0]
+                
             };
-            if (coachAvailableSlots) {
                 dispatch(createCoachSchedule(data1));
             }
         }
@@ -390,147 +391,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId }) => {
                 />
             )}
             {selectedSessionType === 'group' &&
-                activityType === 'virtual meet' && (
-                    <>
-                        <Grid
-                            item
-                            xs={12}
-                            sm={6}
-                            md={6}
-                            style={{ margin: '5px 0px', width: '80%' }}
-                        >
-                            <Controller
-                                name="coach"
-                                control={control}
-                                defaultValue="coach"
-                                render={({ field }) => (
-                                    <CustomFormControl
-                                        label="Select Coach"
-                                        name="coach"
-                                        value={field.value}
-                                        onChange={e => {
-                                            field.onChange(e);
-                                            handleCoachChange(e);
-                                            // handleCoachChange(e); // Uncomment if you have a handleCoachChange function
-                                        }}
-                                        errors={errors}
-                                        options={coachOptions}
-                                    />
-                                )}
-                            />
-                        </Grid>
-
-                        <Grid
-                            item
-                            xs={12}
-                            sm={6}
-                            md={6}
-                            style={{ margin: '5px 0px', width: '80%' }}
-                        >
-                            <Controller
-                                name="date"
-                                control={control}
-                                defaultValue={null}
-                                render={({ field }) => (
-                                    <CustomDateField
-                                        label="Select Date"
-                                        name="date"
-                                        value={fromDate}
-                                        onChange={setFromDate}
-                                        fullWidth
-                                    />
-                                )}
-                            />
-                        </Grid>
-
-                        <Grid
-                            item
-                            xs={12}
-                            style={{ margin: '5px 0px', width: '80%' }}
-                        >
-                            <Typography variant="h6">
-                                Available Slots
-                            </Typography>
-                            {coachAvailableSlots &&
-                            coachAvailableSlots.length > 0 ? (
-                                <RadioGroup>
-                                    {coachAvailableSlots.map((slot, index) => (
-                                        <FormControlLabel
-                                            key={index}
-                                            control={<Radio />}
-                                            label={`${formatTime(slot.from_time)} - ${formatTime(slot.to_time)}`}
-                                            value={slot.timeFrom}
-                                        />
-                                    ))}
-                                </RadioGroup>
-                            ) : (
-                                <Typography>No slots available</Typography>
-                            )}
-                        </Grid>
-                        <Grid
-                            container
-                            spacing={1}
-                            style={{ margin: '5px 0px', width: '80%' }}
-                        >
-                            <Grid item xs={6}>
-                                <Controller
-                                    name="fromTime"
-                                    control={control}
-                                    defaultValue=""
-                                    render={({ field }) => (
-                                        <CustomTimeField
-                                            {...field}
-                                            label="From Time"
-                                            fullWidth
-                                        />
-                                    )}
-                                />
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Controller
-                                    name="toTime"
-                                    control={control}
-                                    defaultValue=""
-                                    render={({ field }) => (
-                                        <CustomTimeField
-                                            {...field}
-                                            label="To Time"
-                                            fullWidth
-                                        />
-                                    )}
-                                />
-                            </Grid>
-                        </Grid>
-                        <Grid
-                            item
-                            xs={12}
-                            sm={6}
-                            md={6}
-                            style={{ margin: '5px 0px', width: '80%' }}
-                        >
-                            <Controller
-                                name="timezone"
-                                control={control}
-                                defaultValue="IST"
-                                render={({ field }) => (
-                                    <CustomFormControl
-                                        label="Time Zone"
-                                        name="timezone"
-                                        value={field.value}
-                                        onChange={e => {
-                                            field.onChange(e);
-                                        }}
-                                        errors={errors}
-                                        options={timeZones.map(zone => ({
-                                            value: zone.value,
-                                            label: zone.label,
-                                        }))}
-                                    />
-                                )}
-                            />
-                        </Grid>
-                    </>
-                )}
+                activityType === 'virtual meet' && <VirtualGroupSession/>}
         </Grid>
     );
 

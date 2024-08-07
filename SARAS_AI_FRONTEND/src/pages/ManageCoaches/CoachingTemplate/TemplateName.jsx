@@ -103,7 +103,7 @@ const TemplateName = () => {
         'After Due Date',
         'Actions',
     ];
-
+console.log("coachtemplateid", coachTemplatesId)
     const actionButtons = [
         {
             type: 'switch',

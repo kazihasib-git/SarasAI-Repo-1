@@ -2,18 +2,9 @@ import {
     Box,
     InputBase,
     Button,
-    Modal,
-    TextField,
-    IconButton,
-    Switch,
-    Select,
-    MenuItem,
-    FormControl,
-    InputLabel,
     Snackbar,
     Alert,
 } from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
 import Header from '../../components/Header/Header';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import { useEffect, useState } from 'react';
@@ -28,69 +19,54 @@ import {
     openEditCoach,
     closeEditCoach,
     setSelectedCoach,
-    openSuccessPopup,
-    accessCoachName,
-    closeSuccessPopup,
-    openAssignStudents,
-    closeAssignStudents,
-    openAssignBatches,
-    closeAssignBatches,
 } from '../../redux/features/adminModule/coach/coachSlice';
+import { timezoneIdToName } from '../../utils/timezoneIdToName';
 
 const ManageCoaches = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     // State variables
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedCoachData, setSelectedCoachData] = useState(null);
     const [coachesData, setCoachesData] = useState([]);
-    const [isAddEditCoachOpen, setIsAddEditCoachOpen] = useState(false);
-    const [formValues, setFormValues] = useState({});
     const [editData, setEditData] = useState();
     const [openSnackbar, setOpenSnackbar] = useState(false);
-    const [searchQuery, setSearchQuery] = useState(''); // State for search query
+    const [searchQuery, setSearchQuery] = useState('');
 
-    const { coaches, loading, error, createCoachOpen, editCoachOpen } =
-        useSelector(state => state.coachModule);
+    const { coaches, createCoachOpen, editCoachOpen } = useSelector(state => state.coachModule);
 
-    // Fetch coach data on component mount
     useEffect(() => {
         dispatch(closeCreateCoach());
         dispatch(closeEditCoach());
         dispatch(getCoach());
     }, [dispatch]);
 
-    // Action buttons for the DynamicTable
-    const actionButtons = [
-        {
-            type: 'switch',
-        },
-        {
-            type: 'edit',
-            onClick: id => {
-                handleEditCoaches(id);
-            },
-        },
-    ];
-
     useEffect(() => {
-        if (coaches.length > 0) {
-            const transformData = coaches.map(item => ({
-                id: item.id,
-                'Coach Name': item.name,
-                Username: item.username,
-                Location: item.location,
-                'Time Zone': item.time_zone,
-                is_active: item.is_active,
-            }));
+        const transformData = async () => {
+            if (coaches.length > 0) {
+                const transformed = await Promise.all(
+                    coaches.map(async item => {
+                        const timezonename = await timezoneIdToName(item.timezone_id);
+                        console.log('timezonename: ', timezonename);
+                        return {
+                            id: item.id,
+                            'Coach Name': item.name,
+                            Username: item.username,
+                            Location: item.location,
+                            'Time Zone': timezonename,
+                            is_active: item.is_active,
+                        };
+                    })
+                );
+                setCoachesData(transformed);
+            }
+        };
 
-            setCoachesData(transformData);
-        }
+        transformData();
     }, [coaches]);
 
-    const handleAddTa = () => {
-        dispatch(openCreateCoach());
+    const handleAddCoach = () => {
+        navigate('/createcoach');
     };
 
     const handleEditCoaches = id => {
@@ -98,23 +74,10 @@ const ManageCoaches = () => {
         setSelectedCoachData(coachData);
         setEditData(coachData);
         dispatch(openEditCoach());
-        //navigate('/editcoach', { state: { fromManageCoaches: true } });
     };
 
-    const handleAddCoach = () => {
-        navigate('/createcoach');
-    };
-
-    const handleCloseAddEditCoach = () => {
-        setIsAddEditCoachOpen(false);
-    };
-
-    const handleOpenModal = () => {
-        setIsModalOpen(true);
-    };
-
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
+    const handleCloseSnackbar = () => {
+        setOpenSnackbar(false);
     };
 
     const headers = [
@@ -126,28 +89,17 @@ const ManageCoaches = () => {
         'Action',
     ];
 
-    const handleSubmitForm = event => {
-        event.preventDefault();
-        console.log(formValues);
-        setOpenSnackbar(true); // Show the success popup
-        handleCloseModal();
-    };
-
-    const handleInputChange = event => {
-        const { name, value } = event.target;
-        setFormValues({
-            ...formValues,
-            [name]: value,
-        });
-    };
-
-    const handleToggle = id => {
-        console.log(`Toggle TA with ID: ${id}`);
-    };
-
-    const handleCloseSnackbar = () => {
-        setOpenSnackbar(false);
-    };
+    const actionButtons = [
+        {
+            type: 'switch',
+        },
+        {
+            type: 'edit',
+            onClick: id => {
+                handleEditCoaches(id);
+            },
+        },
+    ];
 
     // Filter coachesData based on the search query
     const filteredCoachesData = coachesData.filter(coach =>
@@ -194,9 +146,7 @@ const ManageCoaches = () => {
                                     sx={{ m1: 2, flex: 1, marginLeft: 5 }}
                                     placeholder="Search here ..."
                                     value={searchQuery}
-                                    onChange={e =>
-                                        setSearchQuery(e.target.value)
-                                    } // Update search query
+                                    onChange={e => setSearchQuery(e.target.value)}
                                 />
                             </Box>
                             <Button
@@ -209,9 +159,7 @@ const ManageCoaches = () => {
                                 }}
                             >
                                 <i
-                                    style={{
-                                        marginRight: '5px',
-                                    }}
+                                    style={{ marginRight: '5px' }}
                                     className="bi bi-plus-circle"
                                 ></i>
                                 <span>Create Coach</span>
@@ -254,7 +202,7 @@ const ManageCoaches = () => {
                     >
                         <DynamicTable
                             headers={headers}
-                            initialData={filteredCoachesData} // Use filtered data
+                            initialData={filteredCoachesData}
                             actionButtons={actionButtons}
                             componentName={'MANAGECOACH'}
                         />

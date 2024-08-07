@@ -80,6 +80,7 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
 }));
 
 const TemplateModuleTable = ({ modulesData }) => {
+    console.log("moduledata",modulesData);
     const [linkActivityPopupOpen, setLinkActivityPopupOpen] = useState(false);
     const [prerequisitesPopupOpen, setPrerequisitesPopupOpen] = useState(false);
     const [selectedActivityId, setSelectedActivityId] = useState(null); // State for selected activity ID

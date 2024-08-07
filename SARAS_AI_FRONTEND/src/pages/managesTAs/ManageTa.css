@@ -43,6 +43,7 @@
     font-weight: 700;
     white-space: nowrap; /* Prevent text from wrapping */
     transition: all 0.3s ease; /* Smooth transition for hover effects */
+    height: 2.5rem;
 }
 
 .buttonContainer .bi {

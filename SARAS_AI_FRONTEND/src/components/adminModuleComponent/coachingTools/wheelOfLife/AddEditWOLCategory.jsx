@@ -12,20 +12,8 @@ import {
     setEditData,
     updateWOLCategory,
 } from '../../../../redux/features/adminModule/coachingTools/wol/wolSlice';
+import CustomButton from '../../../CustomFields/CustomButton';
 
-const CustomButton = styled(Button)(({ theme, active }) => ({
-    borderRadius: '50px',
-    border: '1px solid #F56D3B',
-    color: active ? '#fff' : '#F56D3B',
-    backgroundColor: active ? '#F56D3B' : '#FFF',
-    padding: '8px 16px',
-    margin: '0 8px',
-    '&:hover': {
-        backgroundColor: '#F56D3B',
-        color: '#fff',
-        borderColor: '#F56D3B',
-    },
-}));
 
 const AddEditWOLCategory = () => {
     const dispatch = useDispatch();

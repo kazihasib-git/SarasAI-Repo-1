@@ -13,7 +13,6 @@ import { useDispatch } from 'react-redux';
 import { openSessionEvent } from '../../redux/features/adminModule/ta/taAvialability';
 import { openCoachSessionEvent } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import { openSessionPopup } from '../../redux/features/commonCalender/commonCalender';
-
 moment.locale('en-GB');
 const localizer = momentLocalizer(moment);
 const allViews = Object.keys(Views).map(k => Views[k]);
@@ -82,7 +81,6 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
             const slotDate = moment(slot.startDate).format('YYYY-MM-DD');
             const slotStartTime = moment(slot.startDate).format('HH:mm');
             const slotEndTime = moment(slot.endDate).format('HH:mm');
-
             if (
                 dateString === slotDate &&
                 timeString >= slotStartTime &&

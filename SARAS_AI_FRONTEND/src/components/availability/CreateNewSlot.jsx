@@ -31,10 +31,11 @@ import {
 } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import { toast } from 'react-toastify';
 import CustomButton from '../CustomFields/CustomButton';
+import { convertToUTC } from '../../utils/dateAndtimeConversion';
 
 const weekDays = [
     'Sunday',
-    'Monday',
+    'Monday',   
     'Tuesday',
     'Wednesday',
     'Thursday',
@@ -42,7 +43,7 @@ const weekDays = [
     'Saturday',
 ];
 
-const CreateNewSlot = ({ componentName }) => {
+const CreateNewSlot = ({ componentName, timezoneID }) => {
     const taId = useParams();
     const dispatch = useDispatch();
 
@@ -53,23 +54,26 @@ const CreateNewSlot = ({ componentName }) => {
     const [fromTime, setFromTime] = useState(null);
     const [toTime, setToTime] = useState(null);
 
-    let sliceName, createSlotApi, getSlotsApi;
+    let sliceName, timezoneId, createSlotApi, getSlotsApi;
 
     switch (componentName) {
         case 'TACALENDER':
             sliceName = 'taAvialability';
+            timezoneID = '';
             createSlotApi = createSlots;
             getSlotsApi = fetchTaSlots;
             break;
 
         case 'COACHCALENDER':
             sliceName = 'coachAvailability';
+            timezoneId = '';
             createSlotApi = createCoachSlots;
             getSlotsApi = fetchCoachSlots;
             break;
 
         default:
             sliceName = null;
+            timezoneId = null;
             createSlotApi = null;
             getSlotsApi = null;
             break;
@@ -146,10 +150,22 @@ const CreateNewSlot = ({ componentName }) => {
         formData.slot_date = fromDate;
         formData.from_time = fromTime;
         formData.to_time = toTime;
-        formData.timezone = 'Asia/Kolkata';
         formData.end_date = repeat === 'recurring' ? toDate : fromDate;
         formData.weeks = weeksArray;
         formData.admin_user_id = taId.id;
+
+
+        
+
+
+        const start_time =  formData.from_time ;
+        const time_end =  formData.to_time ;
+        const date_slot =  formData.slot_date ;
+        const slot_end_date = formData.end_date ;
+        const time_zone_id = formData.timezone_id ; 
+
+
+        console.log("timepass:" ,convertToUTC({date_slot , start_time, time_end, slot_end_date, time_zone_id}) ) ; 
 
         dispatch(createSlotApi(formData)).then(() => {
             dispatch(closeCreateNewSlots());
@@ -247,13 +263,13 @@ const CreateNewSlot = ({ componentName }) => {
                             justifyContent="center"
                         >
                             <Controller
-                                name="time_zone"
+                                name="timezone_id"
                                 control={control}
                                 // rules={{ required: 'Time Zone is required' }}
                                 render={({ field }) => (
                                     <CustomTimeZoneForm
                                         label="Time Zone"
-                                        name="time_zone"
+                                        name="timezone_id"
                                         value={field.value}
                                         onChange={field.onChange}
                                         errors={errors}

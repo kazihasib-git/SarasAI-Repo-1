@@ -38,9 +38,10 @@ const CoachMapping = () => {
         dispatch(showCoachMapping());
     }, [dispatch]);
 
+
     useEffect(() => {
         if (coachMapping && coachMapping.length > 0) {
-            const transformData = coachMapping.map((item, index) => ({
+            const transformData = coachMapping.map((item,index) => ({
                 id: item.id,
                 name: item.name,
                 Username: item.username,
@@ -49,6 +50,7 @@ const CoachMapping = () => {
             }));
 
             setcaMappingData(transformData);
+            console.log("transform data",transformData);
         }
     }, [coachMapping]);
 
@@ -56,7 +58,7 @@ const CoachMapping = () => {
         setSearchQuery(event.target.value);
     };
 
-    const filteredData = caMappingData.filter(item =>
+    const filteredData = caMappingData?.filter(item =>
         item.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 

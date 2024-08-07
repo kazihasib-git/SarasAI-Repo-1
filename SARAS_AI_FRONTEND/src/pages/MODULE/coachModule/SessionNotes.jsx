@@ -10,6 +10,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // Import Quill styles
 import { styled } from '@mui/material/styles';
+import { baseUrl } from '../../../utils/baseURL';
 
 // Styled components
 const QuillContainer = styled('div')(({ theme }) => ({
@@ -64,14 +65,22 @@ const modules = {
 
 const formats = ['bold', 'italic', 'underline', 'align', 'link'];
 
-const SessionNotes = ({ open, onClose }) => {
+const SessionNotes = ({ open, onClose, onSave, selectedId }) => {
     const [editorContent, setEditorContent] = useState('');
 
+    const handleSave = () => {
+        onSave(editorContent);
+        onClose();
+    };
+
     useEffect(() => {
-        if (open) {
+        if (selectedId && selectedId.session_meeting_notes) {
+            console.log('note', selectedId.session_meeting_notes);
+            setEditorContent(selectedId.session_meeting_notes);
+        } else {
             setEditorContent('');
         }
-    }, [open]);
+    }, [selectedId]);
 
     return (
         <Dialog
@@ -123,7 +132,6 @@ const SessionNotes = ({ open, onClose }) => {
                     }}
                 >
                     <ReactQuill
-                        theme="snow"
                         modules={modules}
                         formats={formats}
                         value={editorContent}
@@ -136,7 +144,7 @@ const SessionNotes = ({ open, onClose }) => {
                     />
                 </QuillContainer>
                 <Button
-                    onClick={onClose}
+                    onClick={handleSave}
                     style={{
                         backgroundColor: '#F56D3B',
                         color: '#fff',

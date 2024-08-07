@@ -1,12 +1,13 @@
 import React from 'react';
 
 import CreateTaMenu from './CreateTaMenu';
+import Mystudents from '../../../components/RoleRoute/CommonComponent/Mystudents';
 
 const TaMenuStudents = () => {
     return (
         <div>
             <CreateTaMenu />
-            <h1>My students</h1>
+            <Mystudents role="TA" />
         </div>
     );
 };
