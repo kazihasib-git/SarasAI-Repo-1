@@ -1,5 +1,5 @@
 import React from 'react';
-import Vimeo from '@u-wave/react-vimeo';
+//import Vimeo from '@u-wave/react-vimeo';
 import { Dialog, DialogContent, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 

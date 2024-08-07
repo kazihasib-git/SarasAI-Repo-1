@@ -68,34 +68,19 @@ const formats = ['bold', 'italic', 'underline', 'align', 'link'];
 const SessionNotes = ({ open, onClose, onSave, selectedId }) => {
     const [editorContent, setEditorContent] = useState('');
 
-    useEffect(() => {
-        if (open) {
-            setEditorContent('');
-        }
-    }, [open]);
-    // useEffect(() => {
-    //     if (open && selectedId) {
-    //         const fetchNotes = async () => {
-    //             try {
-    //                 const response = await fetch(
-    //                     `${baseUrl}/ta/call-recording/assign-session-notes/${1}`
-    //                 );
-    //                 const data = await response.json();
-    //                 setEditorContent(data.notes || '');
-    //             } catch (error) {
-    //                 console.error('Failed to fetch notes:', error);
-    //             }
-    //         };
-
-    //         fetchNotes();
-
-    //     }
-    // }, [open, selectedId]);
-
     const handleSave = () => {
         onSave(editorContent);
         onClose();
     };
+
+    useEffect(() => {
+        if (selectedId && selectedId.session_meeting_notes) {
+            console.log('note', selectedId.session_meeting_notes);
+            setEditorContent(selectedId.session_meeting_notes);
+        } else {
+            setEditorContent('');
+        }
+    }, [selectedId]);
 
     return (
         <Dialog
@@ -147,7 +132,6 @@ const SessionNotes = ({ open, onClose, onSave, selectedId }) => {
                     }}
                 >
                     <ReactQuill
-                        theme="snow"
                         modules={modules}
                         formats={formats}
                         value={editorContent}

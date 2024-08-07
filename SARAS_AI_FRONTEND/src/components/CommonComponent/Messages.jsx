@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 //import CoachMenu from './CoachMenu';
-//import './CoachMenuMessages.css'; // Import the CSS file
+
 import '../../pages/MODULE/coachModule/CoachMenuMessages.css';
 
 import filterIcon from '../../assets/filtericon1.svg';
@@ -15,6 +15,8 @@ import SendButtonIcon from '../../assets/sendbutton.svg';
 import NotificationIcon from '../../assets/NotificationIcon.svg';
 import SearchIcon from '../../assets/messagesearchicon.svg';
 import FilterBackground from '../../assets/duedatebackground.svg';
+import profilePic from '../../assets/profile.png';
+
 import {
     TextField,
     InputAdornment,
@@ -29,56 +31,56 @@ const studentsData = [
     {
         id: 1,
         name: 'John Doe',
-        profilePic: 'https://via.placeholder.com/40',
+        profilePic: profilePic,
         status: 'Online',
         lastSeen: '2m',
     },
     {
         id: 2,
         name: 'Jane Smith',
-        profilePic: 'https://via.placeholder.com/40',
+        profilePic: profilePic,
         status: 'Offline',
         lastSeen: '20m',
     },
     {
         id: 3,
         name: 'Alice Johnson',
-        profilePic: 'https://via.placeholder.com/40',
+        profilePic: profilePic,
         status: 'Online',
         lastSeen: '4m',
     },
     {
         id: 4,
         name: 'Sandeep',
-        profilePic: 'https://via.placeholder.com/40',
+        profilePic: profilePic,
         status: 'Online',
         lastSeen: '5m',
     },
     {
         id: 5,
         name: 'Nikesh',
-        profilePic: 'https://via.placeholder.com/40',
+        profilePic: profilePic,
         status: 'Online',
         lastSeen: '5m',
     },
     {
         id: 6,
         name: 'Nikuu',
-        profilePic: 'https://via.placeholder.com/40',
+        profilePic: profilePic,
         status: 'Online',
         lastSeen: '15m',
     },
     {
         id: 7,
         name: 'Manish',
-        profilePic: 'https://via.placeholder.com/40',
+        profilePic: profilePic,
         status: 'Online',
         lastSeen: '15m',
     },
     {
         id: 8,
         name: 'Ayushman',
-        profilePic: 'https://via.placeholder.com/40',
+        profilePic: profilePic,
         status: 'Online',
         lastSeen: '18m',
     },
