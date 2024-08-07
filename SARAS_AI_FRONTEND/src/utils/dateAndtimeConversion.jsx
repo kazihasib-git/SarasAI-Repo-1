@@ -1,18 +1,25 @@
-const moment = require('moment-timezone');
+import moment from 'moment-timezone';
+import { timezoneIdToName } from './timezoneIdToName';
 
-function convertLocalToUTCdate(localDate, timeZone) {
-    // Parse the local date in the specified timezone and convert it to UTC
-    const utcDate = moment.tz(localDate, timeZone).utc().format('YYYY-MM-DD');
+function convertToUTC({ fromDate, fromTime, toTime, toDate, timezone_id}) {
+    const timezone = timezoneIdToName(timezone_id)  ; 
+    // Combine date and time for fromTime and toTime
+    const fromDateTime = `${fromDate} ${fromTime}`;
+    const toDateTime = `${toDate} ${toTime}`;
 
-    return utcDate;
+    // Convert to UTC using moment-timezone
+    const fromDateTimeUTC = moment.tz(fromDateTime, timezone).utc().format();
+    const toDateTimeUTC = moment.tz(toDateTime, timezone).utc().format();
+
+    const obbj  = {
+        slot_date: fromDateTimeUTC.split('T')[0], // Extracting date part
+        from_time: fromDateTimeUTC.split('T')[1], // Extracting time part
+        to_time: toDateTimeUTC.split('T')[1],     // Extracting time part
+        end_date:toDateTimeUTC.split('T')[0]
+    };
+
+    console.log(" UTCDATE==/====/==/===/=///==/==>>>>>>" , obbj )
+    return obbj;
 }
 
-export {convertLocalToUTCdate} ; 
-
-
-
-
-
-
-
-
+export {convertToUTC} ; 

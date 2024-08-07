@@ -2,12 +2,11 @@ import axiosInstance from '../redux/services/httpService';
 
     import { baseUrl } from './baseURL';
 
-    export const timezoneIdToName = async (timezoneId) => {
+    export const timezoneIdToName =  (timezoneId) => {
         console.log('timezoneIdToName hit:' , timezoneId) ;
         try {
-            const response = await axiosInstance.get(`${baseUrl}/timezones`);
+            const response = axiosInstance.get(`${baseUrl}/timezones`);
             const timezones = response.data;
-
             console.log('Timezones:', timezones);
             const timezone = timezones.find(tz => tz.id === timezoneId);
             return timezone ? timezone.time_zone : 'Unknown Timezone';
