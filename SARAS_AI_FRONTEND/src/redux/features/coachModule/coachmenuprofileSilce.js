@@ -212,11 +212,13 @@ export const approveCallRequest = createAsyncThunk(
 //deny call request
 export const denyCallRequest = createAsyncThunk(
     'coachMenu/denyCallRequest',
-    async (id, reason) => {
+    async (id, message) => {
         const response = await axiosInstance.put(
             `${baseUrl}/coach/call-request/denie-call-request/${id}`,
             {
-                'reject-reason': reason,
+                // 'reject_reason': message,
+                reject_reason: message,  
+                
             }
         );
         console.log(response.data, 'response.data');
@@ -239,8 +241,57 @@ export const getCoachScheduledCalls = createAsyncThunk(
     }
 );
 
+//coach call records
+export const getCoachCallRecords = createAsyncThunk(
+    'taMenu/getCoachCallRecords',
+    async date => {
+        const response = await axiosInstance.post(
+            `${baseUrl}/coach/call-recording/get-call-recording`,
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                },
+                date: date,
+            }
+        );
+        console.log(response.data, 'response.data');
+        return response.data;
+    }
+);
+
+export const assignSessionNotes = createAsyncThunk(
+    'calls/assignSessionNotes',
+    async ({ id, data }, { rejectWithValue }) => {
+        try {
+            console.log('Assigning session notes with ID:', id);
+            if (!id) {
+                throw new Error('ID is required');
+            }
+
+            const response = await axios.put(
+                `${baseUrl}/coach/call-recording/assign-session-notes/${id}`,
+                data,
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json',
+                    },
+                }
+            );
+            return response.data;
+        } catch (error) {
+            console.error('Error assigning session notes:', error);
+            return rejectWithValue(
+                error.response ? error.response.data : error.message
+            );
+        }
+    }
+);
+
 const initialState = {
     coachProfileData: [], // Coach Profile Data
+    updateProfileData:[],
     coachSlots: [], // Coach Slots
     coachSlotsByDate: [], // Coach Slots By Date
     coachSessions: [], // Coach Sessions,
@@ -260,6 +311,9 @@ const initialState = {
 
     coachCallRequests: [],
     coachScheduledCalls: [],
+
+    coachCallRecords: [],
+    sessionNotesData: [],
 
     createCoachSlotsPopup: false,
     createCoachSessionPopup: false,
@@ -403,11 +457,12 @@ export const coachMenuSlice = createSlice({
         });
         builder.addCase(updateCoachmenuprofile.fulfilled, (state, action) => {
             state.loading = false;
-            state.coachProfileData = action.payload.data;
+            state.updateProfileData = action.payload.data;
         });
         builder.addCase(updateCoachmenuprofile.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            state.updateProfileData = [];
         });
 
         // Get Coach Slots
@@ -633,6 +688,33 @@ export const coachMenuSlice = createSlice({
             state.loading = false;
             state.error = action.error.message;
             state.coachScheduledCalls = [];
+        });
+
+        //get coach call records
+        builder.addCase(getCoachCallRecords.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(getCoachCallRecords.fulfilled, (state, action) => {
+            state.loading = false;
+            state.coachCallRecords = action.payload.data;
+        });
+        builder.addCase(getCoachCallRecords.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+            state.coachCallRecords = [];
+        });
+
+        // session notes
+        builder.addCase(assignSessionNotes.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(assignSessionNotes.fulfilled, (state, action) => {
+            state.loading = false;
+            state.sessionNotesData = action.payload.data; // Adjust based on response
+        });
+        builder.addCase(assignSessionNotes.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
         });
 
         // Reschedule CoachMenu Sessions For Leave
