@@ -95,12 +95,15 @@ const WOLTestConfig = () => {
         }
     }, [wolCategoryData]);
 
+
+
     // Generate options based on the wol_questions_count for each category
     const WOLCategoriesOptions = wolCategoryData.data?.map(item => ({
         value: item.id,
         label: item.name,
     })) || [];
 
+    
     const getNumberOfQuestionsOptions = (categoryId) => {
         const category = wolCategoryData.data.find(cat => cat.id === categoryId);
         const maxQuestions = category?.wol_questions_count || 0;
@@ -112,6 +115,16 @@ const WOLTestConfig = () => {
 
     const handleSubmit = e => {
         e.preventDefault();
+
+        if (edit) {
+            setEdit(false);
+            setFormValues(prevValues => ({
+                numberOfWolCategories: '',
+                categories: [],
+            }));
+            return;
+        }
+
         const newErrors = {};
 
         if (!formValues.numberOfWolCategories) {
