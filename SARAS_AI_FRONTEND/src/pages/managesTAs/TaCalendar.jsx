@@ -109,6 +109,7 @@ const TaCalender = () => {
         if (scheduleData && scheduleData.data) {
             const transformedEvents = scheduleData.data.map(event => ({
                 id : event.id,
+                admin_user_id :event.admin_user_id,
                 meetingName : event.meeting_name,
                 meetingId : event.meeting_id,
                 platformId : event.platform_id,

@@ -89,9 +89,6 @@ export const fetchAvailableSlots = createAsyncThunk(
 export const deleteTaFutureSlots = createAsyncThunk(
     'taAvialability/deleteTaFutureSlots',
     async id => {
-        // console.log("ID : ", id);
-
-        console.log('Data : ', id);
         const response = await axiosInstance.delete(
             `${baseUrl}/admin/coach-slots/${id}`
         );
@@ -111,6 +108,18 @@ export const reasonForLeave = createAsyncThunk(
     }
 );
 
+
+export const changePlatform = createAsyncThunk(
+    'taAvialability/changePlatform',
+    async ({id, data}) => {
+        console.log("ID and Data", id , data)
+        const response = await axiosInstance.patch(
+            `${baseUrl}/admin/taschedules/change-platform/${id}`, data
+        )
+        return response.data
+    }
+)
+
 const initialState = {
     todaysAvailableTa: [],
 
@@ -121,6 +130,7 @@ const initialState = {
     scheduledSessionData: [], // Ensure this is correctly named and initialized
     availableSlotsData: [],
     reasonForLeaveData: [],
+    platformData : [],
 
     scheduleNewSession: false,
     createNewSlotOpen: false,
@@ -353,6 +363,20 @@ export const taAvailabilitySlice = createSlice({
             state.loading = false;
             state.error = action.error.message;
         });
+
+        // Change Platform
+        builder.addCase(changePlatform.pending, state => {
+            state.loading = true;
+        }) 
+        builder.addCase(changePlatform.fulfilled, (state, action) => {
+            state.loading = false;
+            state.platformData = action.payload;
+        })
+        builder.addCase(changePlatform.rejected, (state, action) => {
+            state.loading = false;
+            state.platformData = [];
+            state.error = action.error.message;
+        })
     },
 });
 

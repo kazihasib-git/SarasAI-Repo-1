@@ -13,16 +13,6 @@ import {
 import { closeCoachEditStudent } from '../../redux/features/adminModule/coach/coachSchedule';
 
 import { getCoachAssignStudents } from '../../redux/features/adminModule/coach/coachSlice';
-import {
-    closeSelectStudents,
-    getCoachMenuAssignedStudents,
-    openCreateSessionPopup,
-} from '../../redux/features/coachModule/coachmenuprofileSilce';
-import {
-    closeTaMenuSelectStudents,
-    getTaMenuAssignedStudents,
-    openTaMenuCreateSessionsPopup,
-} from '../../redux/features/taModule/tamenuSlice';
 import { useParams } from 'react-router-dom';
 import CustomButton from '../CustomFields/CustomButton';
 
@@ -105,6 +95,8 @@ const EditStudents = ({ componentname }) => {
         coachID,
         [editStudentKey]: assignedStudents,
     } = stateSelector || {};
+
+    console.log("TA ID :", id)
 
     useEffect(() => {
         dispatch(getAssignStudents(taID));

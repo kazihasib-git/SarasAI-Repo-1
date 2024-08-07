@@ -356,10 +356,11 @@ export const coachSlice = createSlice({
         builder.addCase(showCoachMapping.fulfilled, (state, action) => {
             console.log('Coach mapping action ', action.payload);
             state.loading = false;
-            state.coachMapping = action.payload;
+            state.coachMapping = action.payload.data;
         });
         builder.addCase(showCoachMapping.rejected, (state, action) => {
             state.loading = false;
+            state.coachMapping = []
             state.error = action.payload || action.error.message;
         });
 
