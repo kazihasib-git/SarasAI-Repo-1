@@ -26,6 +26,8 @@ import { updateTA } from '../../redux/features/adminModule/ta/taSlice';
 import { updateCoach } from '../../redux/features/adminModule/coach/coachSlice';
 import { openCoachScheduleSession } from '../../redux/features/adminModule/coach/coachSchedule';
 import AssessmentDialog from '../../pages/MODULE/coachModule/AssessmentDialog';
+import {deleteTaMapping , showTAMapping } from '../../redux/features/adminModule/ta/taSlice';
+import {deleteCoachMapping, showCoachMapping} from '../../redux/features/adminModule/coach/coachSlice'
 
 const DynamicTable = ({
     headers,
@@ -70,7 +72,18 @@ const DynamicTable = ({
     };
 
     const handleDelete = id => {
-        dispatch(deleteTA(id)); //delete item of ta mapping
+        console.log('COMPONENTNAME : ', componentName);
+        if(componentName==="TAMAPPING") {
+            dispatch(deleteTaMapping(id)).then(() => {
+                dispatch(showTAMapping());
+            });;
+        }
+         else if(componentName==="COACHMAPPING") {
+            dispatch(deleteCoachMapping(id)).then(() => {
+                dispatch(showCoachMapping());
+            });;
+         }
+         
         console.log('Deleting item with id:', id);
     };
 

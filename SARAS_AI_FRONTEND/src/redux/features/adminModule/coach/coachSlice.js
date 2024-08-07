@@ -151,6 +151,16 @@ export const deleteCoachAssignedStudent = createAsyncThunk(
         return response.data;
     }
 );
+export const deleteCoachMapping = createAsyncThunk(
+    'coachModule/deleteCoachMapping',
+    async id => {
+        console.log('ID to delete Ta Mapping : ', id);
+        const response = await axiosInstance.delete(
+            `${baseUrl}/admin/CoachMapping/${id}/deleteMapping`
+        );
+        return response.data;
+    }
+);
 
 export const deleteCoachAssignedBatch = createAsyncThunk(
     'coachModule/deleteCoachAssignedBatch',
@@ -335,6 +345,19 @@ export const coachSlice = createSlice({
                 state.error = action.payload || action.error.message;
             }
         );
+
+         // delete coach Mapping
+         builder.addCase(deleteCoachMapping.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(deleteCoachMapping.fulfilled, (state, action) => {
+            state.loading = false;
+            
+        });
+        builder.addCase(deleteCoachMapping.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload || action.error.message;
+        });
 
         // delete assigned Batches
         builder.addCase(deleteCoachAssignedBatch.pending, state => {
