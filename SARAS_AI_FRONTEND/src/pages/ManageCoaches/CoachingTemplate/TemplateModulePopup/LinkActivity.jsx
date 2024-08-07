@@ -16,13 +16,21 @@ import { useDispatch, useSelector } from 'react-redux';
 import VideoUploadComponent from './videoUpload/VideoUploadComponent';
 import CustomFormControl from '../../../../components/CustomFields/CustomFromControl';
 import CustomTextField from '../../../../components/CustomFields/CustomTextField';
-import { getActivityType } from '../../../../redux/features/ActivityType/activityTypeSlice';
-import { getCoach } from '../../../../redux/features/CoachModule/coachSlice';
-import { linkActivity } from '../../../../redux/features/ActivityType/LinkActivitySlice';
-import VirtualGroupSession from './LinkActivityPopup/VirtualGroupSession';
-import { getCoachAvailableSlotsFromDate } from '../../../../redux/features/CoachModule/coachSchedule';
-import { getTaAvailableSlotsFromDate } from '../../../../redux/features/taModule/taScheduling';
-import { createCoachSchedule } from '../../../../redux/features/CoachModule/coachSchedule';
+import CustomDateField from '../../../../components/CustomFields/CustomDateField';
+import CustomTimeField from '../../../../components/CustomFields/CustomTimeField';
+import { getActivityType } from '../../../../redux/features/adminModule/coach/activityTypeSlice';
+import { getCoach } from '../../../../redux/features/adminModule/coach/coachSlice';
+import { linkActivity } from '../../../../redux/features/adminModule/coach/LinkActivitySlice';
+
+import {
+    getCoachAvailableSlotsFromDate,
+    createCoachSchedule,
+} from '../../../../redux/features/adminModule/coach/coachSchedule';
+import { getTaAvailableSlotsFromDate } from '../../../../redux/features/adminModule/ta/taScheduling';
+import TestActivityComponent from './Components/TestActivityComponent';
+import OneOnOneSessionComponent from './Components/OneonOneSessionComponent';
+import PDFUploadComponent from './Components/PDFUploadComponent';
+import { getCoachTemplateModuleId } from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
 const CustomButton = ({
     onClick,
     children,
@@ -58,11 +66,13 @@ const CustomButton = ({
     );
 };
 
-const LinkActivityPopup = ({ open, handleClose, activityId }) => {
+const LinkActivityPopup = ({ open, handleClose, activityId, templateId }) => {
     const dispatch = useDispatch();
+    console.log('template id', templateId);
     const {
         handleSubmit,
         control,
+        reset,
         formState: { errors },
     } = useForm();
     const [fromDate, setFromDate] = useState(null);
@@ -90,7 +100,12 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
         console.log('payload', payload);
         console.log("ActivityId", selectedActivityId);
         try {
-            await dispatch(linkActivity(payload)).unwrap();
+            await dispatch(linkActivity(payload))
+                .unwrap()
+                .then(() => {
+                    // Refetch the data to update the table
+                    dispatch(getCoachTemplateModuleId(templateId));
+                });
             handleClose();
         } catch (error) {
             console.error('Failed to link activity:', error);
@@ -203,6 +218,12 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
             }
         }
     }, [fromDate, dispatch]);
+
+    useEffect(() => {
+        // Reset `askCoach` when `activityType` or `selectedSessionType` changes
+        setAskCoach(false);
+        setSelectedSessionType('');
+    }, [activityType]);
     const contentComponent = (
         <Grid
             container
@@ -232,7 +253,13 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
                             name="activityType"
                             value={field.value}
                             onChange={e => {
+                                const selectedOption = activityOptions.find(
+                                    option => option.value === e.target.value
+                                );
                                 setActivityType(e.target.value);
+                                setSelectedActivityId(
+                                    selectedOption ? selectedOption.id : ''
+                                );
                                 field.onChange(e);
                             }}
                             errors={errors}
@@ -243,6 +270,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
             </Grid>
 
             {activityType === 'videos' && <VideoUploadComponent />}
+            {activityType === 'pdf' && <PDFUploadComponent />}
 
             {activityType === 'link' && (
                 <Grid
@@ -259,7 +287,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
                         render={({ field }) => (
                             <CustomTextField
                                 label="Link"
-                                name="link"
+                                name="virtualMeetLink"
                                 variant="outlined"
                                 value={field.value}
                                 onChange={e => {
@@ -274,41 +302,14 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
             )}
 
             {activityType === 'test' && (
-                <Grid
-                    item
-                    xs={12}
-                    sm={6}
-                    md={6}
-                    style={{ margin: '5px 0px', width: '80%' }}
-                >
-                    <Controller
-                        name="assessment"
-                        control={control}
-                        defaultValue=""
-                        render={({ field }) => (
-                            <CustomFormControl
-                                label="Assessment"
-                                name="assessment"
-                                value={field.value}
-                                onChange={e => {
-                                    const selectedValue = e.target.value;
-                                    field.onChange(e);
-                                    const selectedOption =
-                                        assessmentOptions.find(
-                                            option =>
-                                                option.value === selectedValue
-                                        );
-                                    setSelectedAssessmentId(
-                                        selectedOption ? selectedOption.id : ''
-                                    );
-                                }}
-                                errors={errors}
-                                options={assessmentOptions}
-                            />
-                        )}
-                    />
-                </Grid>
+                <TestActivityComponent
+                    control={control}
+                    errors={errors}
+                    assessmentOptions={assessmentOptions}
+                    setSelectedAssessmentId={setSelectedAssessmentId}
+                />
             )}
+
             {activityType === 'virtual meet' && (
                 <>
                     <Grid
@@ -384,31 +385,10 @@ const LinkActivityPopup = ({ open, handleClose, activityId }) => {
             )}
 
             {selectedSessionType === 'one-on-one' && (
-                <Grid
-                    item
-                    xs={12}
-                    style={{
-                        margin: '2px 0px',
-                        width: '80%',
-                        paddingTop: '2px',
-                    }}
-                >
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                checked={askCoach}
-                                onChange={e => setAskCoach(e.target.checked)}
-                                sx={{
-                                    color: 'black',
-                                    '&.Mui-checked': {
-                                        color: 'black',
-                                    },
-                                }}
-                            />
-                        }
-                        label="Ask respective coach to schedule the session with the student before due date"
-                    />
-                </Grid>
+                <OneOnOneSessionComponent
+                    askCoach={askCoach}
+                    setAskCoach={setAskCoach}
+                />
             )}
             {selectedSessionType === 'group' &&
                 activityType === 'virtual meet' && <VirtualGroupSession/>}

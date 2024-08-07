@@ -1,0 +1,234 @@
+.container {
+    position: relative;
+    padding-top: 10px; /* Adjust if needed to position h1 */
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px; /* Adjust as needed */
+}
+
+.box {
+    position: absolute;
+    top: 85px;
+    height: 600px; /* Set a fixed height to control the layout */
+    background-color: rgb(255, 255, 255);
+}
+
+.box1 {
+    width: Fixed (300px) px;
+    left: 0px;
+    border-radius: 10px 0 0 10px;
+    height: Fixed (837px) px; /* Ensure height is set properly */
+    overflow: hidden; /* Hide overflow for better control */
+}
+
+.box2 {
+    width: 804px;
+    left: 301px;
+    height: Fixed (837px) px; /* Ensure height matches for consistency */
+    border-radius: 0 10px 10px 0;
+    overflow: hidden;
+    flex-direction: column;
+
+    display: flex;
+}
+
+.search-container {
+    width: 100%;
+    height: 88px;
+    padding: 20px 30px;
+    border-bottom: 1px solid #ffffff;
+    display: flex;
+    align-items: center;
+    margin-bottom: -10px;
+}
+
+.search-bar {
+    width: 70%; /* Full width of the container */
+    background: #f1f1fb;
+}
+
+.filter-background {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+}
+
+.filter-button {
+    position: absolute;
+    top: 7%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: transparent;
+    border: none;
+    width: 35px; /* Set icon width */
+    height: 40px; /* Set icon height */
+}
+
+.filter-background img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    margin-left: 13px;
+}
+
+.filter-button img {
+    width: 100%;
+    height: 100%;
+}
+
+.notification-icon {
+    color: #f6f6f8; /* Set the default color of the notification icon */
+    transition: none; /* Disable transition effects if any */
+}
+
+.notification-icon:hover,
+.notification-icon:focus {
+    color: #f6f6f8; /* Ensure color remains the same on hover and focus */
+    outline: none; /* Remove any focus outline if present */
+    cursor: default; /* Optionally change cursor to default if you don't want pointer cursor */
+}
+
+.chat-list {
+    width: 100%;
+    height: calc(600px - 88px); /* Adjust height to fit below search bar */
+    /* padding: 20px 30px; */
+    box-sizing: border-box;
+    overflow-y: auto; /* Allow scrolling if content exceeds height */
+    background-color: #fff; /* White background for the chat list */
+    /* border-radius: 10px; */
+    gap: 8px;
+}
+
+.chat-item {
+    background-color: #f6f6f8;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.profile-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.chat-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.student-name {
+    font-weight: bold;
+}
+
+.last-message {
+    color: #a6a6a6; /* Light color for last message */
+}
+.last-seen-container {
+    position: absolute;
+    bottom: 20px; /* Adjust as needed */
+    right: 20px; /* Aligns the last seen text to the right */
+    width: calc(100% - 40px); /* Adjust width to fit inside box1 */
+    text-align: right; /* Align text to the right */
+    padding: 10px; /* Add padding if needed */
+}
+/* Add this CSS to your existing file */
+
+.chat-messages {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+
+    background-color: #f6f6f8;
+    border-radius: 10px;
+    margin-bottom: 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px; /* Add space between messages */
+}
+.last-seen {
+    margin-left: 20px; /* Adjust this value to move it further to the right */
+    /* or use padding if you prefer */
+    padding-left: 20px; /* Adjust this value as needed */
+}
+
+.message {
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 40%; /* Restrict message bubble width */
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    word-break: break-word; /* Ensure long words break */
+    word-wrap: break-word; /* Ensure long words wrap */
+    overflow-wrap: break-word; /* Support wrapping in older browsers */
+}
+
+.message.user {
+    background-color: #f1f1fb;
+    color: #000; /* Text color for user messages */
+    margin-left: auto;
+}
+
+/* Styling for profile pictures */
+.profile-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+.message.me {
+    background-color: #4e18a5; /* Background color for messages from the user */
+    color: #fff; /* Text color for messages from the user */
+    margin-left: auto; /* Align to right */
+}
+
+.message.other {
+    background-color: #f1f1f1; /* Background color for messages from others */
+    color: #000; /* Text color for messages from others */
+}
+
+/* Chat input container */
+.chat-input-container {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+
+    background-color: #f1f1fb;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Icons in chat input */
+.chat-input-icons {
+    display: flex;
+    align-items: center;
+    gap: 0px; /* Space between icons */
+}
+
+.input-icon {
+    width: 50.95px; /* Adjusted width */
+    height: 20px; /* Adjusted height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* .input-icon img {
+    width: 100%;
+    height: auto;
+} */
+
+/* Styling for input field */
+input[type='text'] {
+    flex: 1;
+    border-radius: 20px;
+    padding: 8px 12px;
+}

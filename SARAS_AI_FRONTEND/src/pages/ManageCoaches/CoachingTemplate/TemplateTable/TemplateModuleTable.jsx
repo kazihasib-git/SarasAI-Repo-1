@@ -3,7 +3,7 @@ import { Box, Button, Switch } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import LinkActivityPopup from '../TemplateModulePopup/LinkActivity';
 import PrerequisitesPopup from '../TemplateModulePopup/Prerequisites';
 import editIcon from '../../../../assets/editIcon.png'; // Assuming this is the correct path to your edit icon
@@ -13,7 +13,7 @@ import {
     openEditModulePopup,
     openTemplateActivityPopup,
     updateCoachActivity,
-} from '../../../../redux/features/CoachModule/CoachTemplateSlice';
+} from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
 
 const CustomButton = styled(Button)(({ theme, backgroundColor = '' }) => ({
     borderRadius: '20px',
@@ -26,6 +26,10 @@ const CustomButton = styled(Button)(({ theme, backgroundColor = '' }) => ({
         backgroundColor: '#F56D3B',
         color: '#fff',
         borderColor: backgroundColor,
+    },
+    // Text transformation for button text
+    '.buttonText': {
+        textTransform: 'capitalize', // Ensure only the first letter is capitalized
     },
 }));
 
@@ -99,7 +103,8 @@ const TemplateModuleTable = ({ modulesData }) => {
             });
     };
 
-    const openLinkActivityPopup = () => {
+    const openLinkActivityPopup = activityId => {
+        setSelectedActivityId(activityId); // Set the selected activity ID
         setLinkActivityPopupOpen(true);
     };
 
@@ -140,6 +145,9 @@ const TemplateModuleTable = ({ modulesData }) => {
         console.log('Clicked Activity !');
         dispatch(openEditActivityPopup(activity));
     };
+    const handleActivityClick = activity => {
+        console.log('clicked');
+    };
 
     const headers = [
         'S. No.',
@@ -152,11 +160,23 @@ const TemplateModuleTable = ({ modulesData }) => {
         'Actions',
     ];
 
+    const { typeList } = useSelector(state => state.activityType);
+    const activityOptions = typeList.map(type => ({
+        value: type.type_name,
+        label: type.type_name.charAt(0).toUpperCase() + type.type_name.slice(1), // Capitalize the first letter of each type_name
+        id: type.id,
+    }));
+
+    const getActivityLabel = activityTypeId => {
+        const option = activityOptions.find(opt => opt.id === activityTypeId);
+        return option ? option.label : 'Unknown';
+    };
+
     return (
         <>
+            {console.log('MODULE DATA : ', modulesData)}
             {modulesData?.modules.map(module => (
                 <Box key={module.id}>
-                    {/* {console.log("MODULE DATA : ", modulesData)} */}
                     <Box
                         display="flex"
                         justifyContent="space-between"
@@ -202,7 +222,10 @@ const TemplateModuleTable = ({ modulesData }) => {
                                 }
                             >
                                 <i className="bi bi-plus-circle"></i>
-                                <span style={{ marginLeft: '5px' }}>
+                                <span
+                                    className="buttonText"
+                                    style={{ marginLeft: '5px' }}
+                                >
                                     Add Activity
                                 </span>
                             </CustomButton>
@@ -221,7 +244,10 @@ const TemplateModuleTable = ({ modulesData }) => {
                                     icon={faPenToSquare}
                                     className="bi"
                                 />
-                                <span style={{ marginLeft: '5px' }}>
+                                <span
+                                    className="buttonText"
+                                    style={{ marginLeft: '5px' }}
+                                >
                                     Edit Module
                                 </span>
                             </CustomButton>
@@ -292,14 +318,56 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                                 '1px solid #e0e0e0',
                                                         }}
                                                     >
-                                                        <CustomButton
-                                                            onClick={
-                                                                openLinkActivityPopup
-                                                            }
-                                                            backgroundColor="#FEEBE3"
-                                                        >
-                                                            Link Activity
-                                                        </CustomButton>
+                                                        {activity.activity_type_id ? (
+                                                            <Button
+                                                                onClick={() =>
+                                                                    handleActivityClick(
+                                                                        activity
+                                                                    )
+                                                                }
+                                                                style={{
+                                                                    backgroundColor:
+                                                                        'transparent',
+                                                                    border: 'none',
+                                                                    cursor: 'pointer',
+                                                                    color: 'black',
+                                                                }}
+                                                            >
+                                                                {getActivityLabel(
+                                                                    activity.activity_type_id
+                                                                )}
+                                                                <FontAwesomeIcon
+                                                                    icon={faEye}
+                                                                    style={{
+                                                                        marginLeft:
+                                                                            '5px',
+                                                                        color: '#F56D3B',
+                                                                    }}
+                                                                />
+                                                            </Button>
+                                                        ) : (
+                                                            <CustomButton
+                                                                backgroundColor="#FEEBE3"
+                                                                style={{
+                                                                    textTransform:
+                                                                        'none',
+                                                                }}
+                                                                onClick={() => {
+                                                                    console.log(
+                                                                        'selectedcoachtemplate',
+                                                                        selectedCoachTemplate
+                                                                    );
+                                                                    openLinkActivityPopup(
+                                                                        activity.id
+                                                                    );
+                                                                }}
+                                                            >
+                                                                <span className="buttonText">
+                                                                    Link
+                                                                    Activity
+                                                                </span>
+                                                            </CustomButton>
+                                                        )}
                                                     </td>
                                                     <td
                                                         style={{
@@ -318,12 +386,18 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                         }}
                                                     >
                                                         <CustomButton
+                                                            style={{
+                                                                textTransform:
+                                                                    'none',
+                                                            }}
                                                             onClick={
                                                                 openPrerequisitesPopup
                                                             }
                                                             backgroundColor="#FEEBE3"
                                                         >
-                                                            Prerequisite
+                                                            <span className="buttonText">
+                                                                Prerequisite
+                                                            </span>
                                                         </CustomButton>
                                                     </td>
                                                     <td
@@ -386,13 +460,15 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                                 }} // Inherit color from button
                                                             />
                                                             <span
-                                                                className="text" // Apply class name for text
+                                                                className="text buttonText" // Apply class name for text
                                                                 style={{
                                                                     fontSize:
                                                                         '14px',
                                                                     marginLeft:
                                                                         '5px',
                                                                     color: 'inherit', // Inherit color from button
+                                                                    textTransform:
+                                                                        'none',
                                                                 }}
                                                             >
                                                                 Edit
@@ -412,6 +488,8 @@ const TemplateModuleTable = ({ modulesData }) => {
             <LinkActivityPopup
                 open={linkActivityPopupOpen}
                 handleClose={closeLinkActivityPopup}
+                activityId={selectedActivityId}
+                templateId={selectedCoachTemplate}
             />
             <PrerequisitesPopup
                 open={prerequisitesPopupOpen}

@@ -11,7 +11,7 @@ import {
     openEditTemplateCoach,
     setSelectedCoachTemplate,
     getCoachTemplateModuleId,
-} from '../../../redux/features/CoachModule/CoachTemplateSlice';
+} from '../../../redux/features/adminModule/coach/coachTemplateSlice';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -33,7 +33,7 @@ const CoachTemplate = () => {
             const transformData = coachTemplates.map(item => ({
                 id: item.id,
                 'Template Name': item.name,
-                Duration: item.duration,
+                Duration: `${item.duration} hours`,
                 Activities: item?.modules
                     ?.map(module => module?.module_name)
                     .join(', '),

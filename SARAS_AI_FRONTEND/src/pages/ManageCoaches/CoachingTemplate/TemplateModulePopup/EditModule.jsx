@@ -13,7 +13,7 @@ import {
     closeEditModulePopup,
     getCoachTemplateModuleId,
     updateCoachTemplateModule,
-} from '../../../../redux/features/CoachModule/CoachTemplateSlice';
+} from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { Controller, useForm } from 'react-hook-form';
 import CustomFormControl from '../../../../components/CustomFields/CustomFromControl';

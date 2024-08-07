@@ -1,10 +1,17 @@
 import React from 'react';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
-import { TextField } from '@mui/material';
 import moment from 'moment';
 
-const CustomDateField = ({ label, name, value, onChange, sx, ...props }) => {
+const CustomDateField = ({
+    label,
+    name,
+    value,
+    onChange,
+    disableFutureDates,
+    sx,
+    ...props
+}) => {
     const handleDateChange = date => {
         const formattedDate = date ? moment(date).format('YYYY-MM-DD') : '';
         onChange(formattedDate);
@@ -17,7 +24,7 @@ const CustomDateField = ({ label, name, value, onChange, sx, ...props }) => {
                 name={name}
                 value={value ? moment(value, 'YYYY-MM-DD') : null}
                 onChange={handleDateChange}
-                format="MMMM-DD-YYYY"
+                disableFuture={disableFutureDates}
                 slotProps={{
                     textField: {
                         InputLabelProps: {
@@ -26,6 +33,7 @@ const CustomDateField = ({ label, name, value, onChange, sx, ...props }) => {
                         sx: {
                             '& .MuiOutlinedInput-root': {
                                 borderRadius: '50px',
+                                height: '60px',
                                 '& fieldset': {
                                     borderColor: '#D0D0EC',
                                 },
@@ -43,6 +51,7 @@ const CustomDateField = ({ label, name, value, onChange, sx, ...props }) => {
                                     color: '#1A1E3D',
                                 },
                             },
+                            width: '100%', // Ensure full width
                             ...sx,
                         },
                         ...props,

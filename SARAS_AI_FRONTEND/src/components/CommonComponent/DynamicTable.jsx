@@ -6,10 +6,12 @@ import {
     Pagination,
     Box,
     Checkbox,
+    Modal,
+    Grid,
+    Typography,
 } from '@mui/material';
-import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import CloseIcon from '@mui/icons-material/Close';
 import CallMadeOutlinedIcon from '@mui/icons-material/CallMadeOutlined';
-import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import { styled } from '@mui/material/styles';
 import './DynamicTable.css';
 import { useNavigate } from 'react-router-dom';
@@ -17,12 +19,13 @@ import editIcon from '../../assets/editIcon.png';
 import bin from '../../assets/bin.png';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { useDispatch } from 'react-redux';
-import { activeDeactiveWOLCategory } from '../../redux/features/coachingTools/wol/wolSlice';
-import { openScheduleSession } from '../../redux/features/taModule/taScheduling';
+import { activeDeactiveWOLCategory } from '../../redux/features/adminModule/coachingTools/wol/wolSlice';
+import { openScheduleSession } from '../../redux/features/adminModule/ta/taScheduling';
 
-import { updateTA } from '../../redux/features/taModule/taSlice';
-import { updateCoach } from '../../redux/features/CoachModule/coachSlice';
-import { openCoachScheduleSession } from '../../redux/features/CoachModule/coachSchedule';
+import { updateTA } from '../../redux/features/adminModule/ta/taSlice';
+import { updateCoach } from '../../redux/features/adminModule/coach/coachSlice';
+import { openCoachScheduleSession } from '../../redux/features/adminModule/coach/coachSchedule';
+import AssessmentDialog from '../../pages/MODULE/coachModule/AssessmentDialog';
 
 const DynamicTable = ({
     headers,
@@ -38,6 +41,10 @@ const DynamicTable = ({
     );
 
     const [currentPage, setCurrentPage] = useState(1);
+    const [assessmentModalOpen, setassessmentModalOpen] = useState(false);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [modalData, setModalData] = useState(null);
+    const [assessmentData, setAssessmentData] = useState([]);
 
     useEffect(() => {
         setData(
@@ -63,6 +70,7 @@ const DynamicTable = ({
     };
 
     const handleDelete = id => {
+        dispatch(deleteTA(id)); //delete item of ta mapping
         console.log('Deleting item with id:', id);
     };
 
@@ -87,6 +95,39 @@ const DynamicTable = ({
                 navigate(`/active-batches/${id}`); // Append id as a parameter
             } else if (type === 'view report') {
                 navigate(`/view-report/${id}`); // Append id as a parameter
+            }
+        } else if (componentName === 'MYSTUDENTS') {
+            const item = data.find(item => item.id === id);
+            // setModalData(item);
+            // setModalOpen(true);
+            navigate(`/student_details/${id}`);
+        } else if (componentName === 'ASSESSMENT') {
+            const dummyAssessmentData = [
+                {
+                    name: 'Assessment 1',
+                    status: 'Completed',
+                    source: 'Wheel of Life',
+                },
+                {
+                    name: 'Assessment 2',
+                    status: 'Completed',
+                    source: 'Wheel of Life',
+                },
+                {
+                    name: 'Assessment 3',
+                    status: 'In Progress',
+                    source: 'Core Values',
+                },
+                {
+                    name: 'Assessment 4',
+                    status: 'Not Attempted',
+                    source: 'Core Values II',
+                },
+            ];
+
+            if (type === 'view report') {
+                setAssessmentData(dummyAssessmentData);
+                setassessmentModalOpen(true);
             }
         } else {
             if (componentName === 'COACHMAPPING') {
@@ -116,6 +157,12 @@ const DynamicTable = ({
                 : item
         );
         setData(updatedData);
+        const toggleButton = actionButtons.find(
+            action => action.type === 'switch'
+        );
+        if (toggleButton && toggleButton.onChange) {
+            toggleButton.onChange(id);
+        }
 
         const toggledItem = updatedData.find(item => item.id === id);
         const requestData = { is_active: toggledItem.is_active };
@@ -142,15 +189,22 @@ const DynamicTable = ({
     const getColorForAvailability = availability => {
         switch (availability) {
             case 'available':
-                return '#06DD0F';
-            case 'on leave':
+                return '#00C808';
+            case 'On leave':
                 return '#F48606';
-            case 'Inactive':
-                return '#808080';
+            case 'In active':
+                return '#060FDD';
+            case 'Active':
+                return '#06DD0F';
             default:
                 return '#000000';
         }
     };
+    const handleCloseModal = () => {
+        setModalOpen(false);
+        setModalData(null);
+    };
+
     return (
         <div className="tableContainer">
             <table>
@@ -405,7 +459,7 @@ const DynamicTable = ({
                                                                 handleCalender(
                                                                     'Calendar',
                                                                     item.id,
-                                                                    item.taName
+                                                                    item.taName,
                                                                 )
                                                             }
                                                         >
@@ -482,6 +536,164 @@ const DynamicTable = ({
                     }}
                 />
             </div>
+            {/* Modal Component */}
+            {assessmentModalOpen && (
+                <AssessmentDialog
+                    open={assessmentModalOpen}
+                    onClose={() => setassessmentModalOpen(false)}
+                    assessmentData={assessmentData}
+                />
+            )}
+            <Modal
+                open={modalOpen}
+                onClose={handleCloseModal}
+                aria-labelledby="modal-title"
+                aria-describedby="modal-description"
+            >
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        width: 600,
+                        bgcolor: 'background.paper',
+                        border: '2px solid #000',
+                        boxShadow: 24,
+                        p: 4,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 2,
+                    }}
+                >
+                    <IconButton
+                        sx={{ alignSelf: 'flex-end' }}
+                        onClick={handleCloseModal}
+                    >
+                        <CloseIcon />
+                    </IconButton>
+                    <Typography id="modal-title" variant="h6" component="h2">
+                        View Detail
+                    </Typography>
+
+                    <Grid container spacing={2}>
+                        <Grid item xs={6}>
+                            <Box
+                                sx={{
+                                    height: 80,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    padding: 4,
+                                    backgroundColor: '#edf0f0',
+                                }}
+                            >
+                                <div>
+                                    <h5>Student Name</h5>
+                                    <h6 style={{ textAlign: 'center' }}>
+                                        Ankit Sharma
+                                    </h6>
+                                </div>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Box
+                                sx={{
+                                    height: 80,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    padding: 4,
+                                    backgroundColor: '#edf0f0',
+                                }}
+                            >
+                                <div>
+                                    <h5>Academic Term</h5>
+                                    <h6 style={{ textAlign: 'center' }}>
+                                        Lorem Ipsum
+                                    </h6>
+                                </div>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Box
+                                sx={{
+                                    height: 80,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    padding: 4,
+                                    backgroundColor: '#edf0f0',
+                                }}
+                            >
+                                <div>
+                                    <h5>Batch</h5>
+                                    <h6 style={{ textAlign: 'center' }}>
+                                        Batch 1
+                                    </h6>
+                                </div>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Box
+                                sx={{
+                                    height: 80,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    padding: 4,
+                                    backgroundColor: '#edf0f0',
+                                }}
+                            >
+                                <div>
+                                    <h5>Activities Scheduled</h5>
+                                    <h6 style={{ textAlign: 'center' }}>
+                                        Friday June 21, 11:00 to 11:30 AM
+                                    </h6>
+                                </div>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Box
+                                sx={{
+                                    height: 80,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    padding: 4,
+                                    backgroundColor: '#edf0f0',
+                                }}
+                            >
+                                <div>
+                                    <h5>Student Name</h5>
+                                    <h6 style={{ textAlign: 'center' }}>
+                                        Student Name
+                                    </h6>
+                                </div>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Box
+                                sx={{
+                                    height: 80,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    padding: 4,
+                                    backgroundColor: '#edf0f0',
+                                }}
+                            >
+                                <div>
+                                    <h5>Student Name</h5>
+                                    <h6 style={{ textAlign: 'center' }}>
+                                        Student Name
+                                    </h6>
+                                </div>
+                            </Box>
+                        </Grid>
+                    </Grid>
+                </Box>
+            </Modal>
         </div>
     );
 };
@@ -509,6 +721,7 @@ const CalenderButton = styled(Button)(({ theme }) => ({
     border: 'none',
     color: '#F56D3B',
     backgroundColor: '#FEEBE3',
+    textTransform: 'none',
     transition: 'all 0.3s ease', // Corrected transition syntax
     '&:hover': {
         backgroundColor: '#FEEBE3',

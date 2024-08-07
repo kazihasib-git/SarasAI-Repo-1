@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 import { OnOffSwitch } from '../../components/Switch';
 import editIcon from '../../assets/editIcon.png';
 import DynamicTable from '../../components/CommonComponent/DynamicTable';
-import { showCoachMapping } from '../../redux/features/CoachModule/coachSlice';
+import { showCoachMapping } from '../../redux/features/adminModule/coach/coachSlice';
 import { useDispatch, useSelector } from 'react-redux';
 
 const headers = [
@@ -38,9 +38,10 @@ const CoachMapping = () => {
         dispatch(showCoachMapping());
     }, [dispatch]);
 
+
     useEffect(() => {
-        if (coachMapping && coachMapping.length > 0) {
-            const transformData = coachMapping.map((item, index) => ({
+        if (coachMapping?.data && coachMapping?.data?.length > 0) {
+            const transformData = coachMapping?.data?.map((item,index) => ({
                 id: item.id,
                 name: item.name,
                 Username: item.username,
@@ -49,6 +50,7 @@ const CoachMapping = () => {
             }));
 
             setcaMappingData(transformData);
+            console.log("transform data",transformData);
         }
     }, [coachMapping]);
 
@@ -56,7 +58,7 @@ const CoachMapping = () => {
         setSearchQuery(event.target.value);
     };
 
-    const filteredData = caMappingData.filter(item =>
+    const filteredData = caMappingData?.filter(item =>
         item.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 

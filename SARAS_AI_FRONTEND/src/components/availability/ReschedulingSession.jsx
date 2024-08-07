@@ -6,14 +6,16 @@ import CustomTimeField from '../CustomFields/CustomTimeField';
 import { useDispatch, useSelector } from 'react-redux';
 import PopUpTable from '../CommonComponent/PopUpTable';
 import { useParams } from 'react-router-dom';
-import { rescheduleSession } from '../../redux/features/taModule/taScheduling';
+import { rescheduleSession } from '../../redux/features/adminModule/ta/taScheduling';
+import { rescheduleCoachSession } from '../../redux/features/adminModule/coach/coachSchedule';
+
 import {
     closeRescheduleSession,
     fetchAvailableSlots,
     getScheduleSession,
     openReasonForLeave,
     openScheduledSession,
-} from '../../redux/features/taModule/taAvialability';
+} from '../../redux/features/adminModule/ta/taAvialability';
 
 import {
     closeCoachRescheduleSession,
@@ -21,46 +23,13 @@ import {
     openCoachReasonForLeave,
     openCoachScheduledSession,
     fetchCoachAvailableSlots,
-} from '../../redux/features/CoachModule/CoachAvailabilitySlice';
-
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                padding: '10px 20px',
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
+} from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
+import CustomButton from '../CustomFields/CustomButton';
 
 const headers = ['S. No.', 'Slots Available', 'Select'];
 
 const ReschedulingSession = ({ componentName }) => {
+    console.log('componentName : ', componentName);
     const taId = useParams();
     const dispatch = useDispatch();
     const [selectDate, setSelectDate] = useState(null);
@@ -76,10 +45,13 @@ const ReschedulingSession = ({ componentName }) => {
         openScheduledSessionAction,
         availableSlotsAction,
         sessionEventAction,
-        slotEventAction;
+        slotEventAction,
+        sliceName,
+        reschduleSessionAction;
 
     switch (componentName) {
         case 'TACALENDER':
+            sliceName = 'taAvailability';
             rescheduleSessionOpenKey = 'resheduleSessionOpen';
             closeRescheduleSessionAction = closeRescheduleSession;
             fetchAvailableSlotsAction = fetchAvailableSlots;
@@ -88,8 +60,10 @@ const ReschedulingSession = ({ componentName }) => {
             availableSlotsAction = 'availableSlotsData';
             sessionEventAction = 'sessionEventData';
             slotEventAction = 'slotEventData';
+            reschduleSessionAction = rescheduleSession;
             break;
         case 'COACHCALENDER':
+            sliceName = 'coachAvailability';
             rescheduleSessionOpenKey = 'resheduleCoachSessionOpen';
             closeRescheduleSessionAction = closeCoachRescheduleSession;
             fetchAvailableSlotsAction = fetchCoachAvailableSlots;
@@ -98,8 +72,11 @@ const ReschedulingSession = ({ componentName }) => {
             availableSlotsAction = 'availableCoachSlotsData';
             sessionEventAction = 'sessionCoachEventData';
             slotEventAction = 'slotCoachEventData';
+            reschduleSessionAction = rescheduleCoachSession;
             break;
+
         default:
+            sliceName = null;
             rescheduleSessionOpenKey = null;
             closeRescheduleSessionAction = null;
             fetchAvailableSlotsAction = null;
@@ -108,6 +85,7 @@ const ReschedulingSession = ({ componentName }) => {
             availableSlotsAction = null;
             sessionEventAction = null;
             slotEventAction = null;
+            reschduleSessionAction;
             break;
     }
 
@@ -116,11 +94,7 @@ const ReschedulingSession = ({ componentName }) => {
         [availableSlotsAction]: availableSlotsData,
         [sessionEventAction]: sessionEventData,
         [slotEventAction]: slotEventData,
-    } = useSelector(state =>
-        componentName === 'TACALENDER'
-            ? state.taAvailability
-            : state.coachAvailability
-    );
+    } = useSelector(state => state[sliceName]);
 
     useEffect(() => {
         if (selectDate) {
@@ -159,13 +133,13 @@ const ReschedulingSession = ({ componentName }) => {
         );
     };
 
+    console.log('slotEventData ::::::', slotEventData);
+
     const handleSubmit = () => {
         console.log('*** Submitting Reschedule Session....');
-        console.log('selectedSlots : ', selectedSlots);
-        console.log('sessionEventData : ', sessionEventData['S. No.']);
         dispatch(
-            rescheduleSession({
-                id: sessionEventData.id,
+            reschduleSessionAction({
+                id: sessionEventData ? sessionEventData.id : '',
                 data: {
                     admin_user_id: taId.id,
                     schedule_date: selectDate,
@@ -181,8 +155,8 @@ const ReschedulingSession = ({ componentName }) => {
             .then(() => {
                 // console.log("SLOT EVENT DATA : ", slotEventData)
                 dispatch(closeRescheduleSessionAction());
-                dispatch(getScheduleSessionAction(slotEventData));
-                dispatch(openScheduledSessionAction());
+                dispatch(getScheduleSessionAction());
+                dispatch(openScheduledSessionAction(slotEventData));
             })
             .catch(error => {
                 console.error('Error rescheduling session:', error);
@@ -242,7 +216,7 @@ const ReschedulingSession = ({ componentName }) => {
                         >
                             <Grid item xs={12} sm={6}>
                                 <CustomTimeField
-                                    label="From Time"
+                                    label="Start Time"
                                     value={fromTime}
                                     onChange={time => setFromTime(time)}
                                 />
@@ -271,6 +245,8 @@ const ReschedulingSession = ({ componentName }) => {
             Submit
         </CustomButton>
     );
+
+    console.log('rescheduleSessionOpen', rescheduleSessionOpen);
 
     return (
         <ReusableDialog

@@ -11,17 +11,16 @@ import 'react-toastify/dist/ReactToastify.css';
 import store from './redux/store';
 // console.log = function () {};
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
 root.render(
     <React.StrictMode>
         <Provider store={store}>
             <BrowserRouter>
-                <AuthProvider>
-                    <Routes>
-                        {/* <App /> */}
-                        <Route path="/*" element={<App />} />
-                    </Routes>
-                    <ToastContainer />
-                </AuthProvider>
+                <Routes>
+                    {/* <App />  */}
+                    <Route path="/*" element={<App />} />
+                </Routes>
+                <ToastContainer />
             </BrowserRouter>
         </Provider>
     </React.StrictMode>

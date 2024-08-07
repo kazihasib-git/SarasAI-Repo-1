@@ -19,7 +19,7 @@ import {
     openCoachSuccessPopup,
     updateCoach,
     accessCoachName,
-} from '../../../../redux/features/CoachModule/coachSlice';
+} from '../../../../redux/features/adminModule/coach/coachSlice';
 import AssignStudents from '../../AssignStudents';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
@@ -35,9 +35,12 @@ import {
 } from '../../../CustomFields/FormOptions';
 import Header from '../../../Header/Header';
 import Sidebar from '../../../Sidebar/Sidebar';
-import { getTimezone } from '../../../../redux/features/timezone/timezoneSlice';
+import { getTimezone } from '../../../../redux/features/utils/utilSlice';
 import CustomTimeZoneForm from '../../../CustomFields/CustomTimeZoneForm';
 import AssignBatches from '../../AssignBatches';
+import CustomDateOfBirth from '../../../CustomFields/CustomDateOfBirth';
+import EditIcon from '@mui/icons-material/Edit';
+
 
 function AddEditCoach({ data }) {
     const {
@@ -59,12 +62,16 @@ function AddEditCoach({ data }) {
     const [selectedImage, setSelectedImage] = useState(null);
     const [dateOfBirth, setDateOfBirth] = useState(null);
     const [phoneNumber, setPhoneNumber] = useState('');
+    const [editableDescription, setEditableDescription] = useState('');
+    const [isEditingDescription, setIsEditingDescription] = useState(false);
+    const [editableAboutMe, setEditableAboutMe] = useState('');
+    
 
     const dispatch = useDispatch();
 
     const { coachSuccessPopup, assignCoachStudentOpen, assignCoachBatchOpen } =
         useSelector(state => state.coachModule);
-    const { timezones } = useSelector(state => state.timezone);
+    const { timezones } = useSelector(state => state.util);
 
     useEffect(() => {
         dispatch(getTimezone());
@@ -104,6 +111,7 @@ function AddEditCoach({ data }) {
             date_of_birth: formattedDate,
             highest_qualification: data.highest_qualification,
             about_me: data.about_me,
+            description: data.description
         };
 
         Object.entries(formValues).forEach(([key, value]) =>
@@ -131,10 +139,25 @@ function AddEditCoach({ data }) {
         dispatch(openCoachAssignBatches());
     };
 
+    const handleAboutMeChange = event => {
+        setEditableAboutMe(event.target.value);
+    };
+
+
+    const handleSaveDescription = () => {
+        setIsEditingDescription(false);
+        setValue('about_me', editableDescription);
+    };
+
+    const handleDescriptionChange = event => {
+        setEditableDescription(event.target.value);
+    };
+
+
     const onSubmit = async coachData => {
         const { email, time_zone, ...updatedFormData } = coachData;
 
-        updatedFormData.date_of_birth = dateOfBirth;
+        //updatedFormData.date_of_birth = dateOfBirth;
         // updatedFormData.phone = phoneNumber;
 
         if (selectedImage) {
@@ -144,6 +167,7 @@ function AddEditCoach({ data }) {
             );
             updatedFormData.profile_picture = base64Data;
         }
+        updatedFormData.description = editableDescription;
         try {
             if (data) {
                 const updateRes = await dispatch(
@@ -153,7 +177,7 @@ function AddEditCoach({ data }) {
                 dispatch(accessCoachName(updateRes));
             } else {
                 updatedFormData.email = email;
-                updatedFormData.time_zone = time_zone;
+                updatedFormData.time_zone = 'Asia/Kolkata';
                 const createRes = await dispatch(
                     createCoach(updatedFormData)
                 ).unwrap();
@@ -197,24 +221,26 @@ function AddEditCoach({ data }) {
                                             variant="contained"
                                             onClick={handleAssignStudents}
                                             sx={{
-                                                backgroundColor: '#F56D3B',
-                                                color: 'white',
+                                                backgroundColor: 'white',
+                                                color: '#F56D3B',
                                                 height: '60px',
-                                                width: '201px',
+                                                width: '220px',
+                                                border: '2px solid #F56D3B',
                                                 borderRadius: '50px',
                                                 textTransform: 'none',
-                                                padding: '18px 30px',
                                                 fontWeight: '700',
                                                 fontSize: '16px',
+                                                padding: '18px 30px',
                                                 '&:hover': {
-                                                    //backgroundColor: '#D4522A'
+                                                    backgroundColor: '#F56D3B',
+                                                    color: 'white',
                                                 },
                                             }}
                                         >
                                             Assign Students
                                         </Button>
                                         <Button
-                                            variant="outlined"
+                                            variant="contained"
                                             onClick={handleAssignBatches}
                                             sx={{
                                                 backgroundColor: 'white',
@@ -228,8 +254,8 @@ function AddEditCoach({ data }) {
                                                 fontSize: '16px',
                                                 padding: '18px 30px',
                                                 '&:hover': {
-                                                    //backgroundColor: '#F56D3B',
-                                                    //color: 'white'
+                                                    backgroundColor: '#F56D3B',
+                                                    color: 'white',
                                                 },
                                             }}
                                         >
@@ -240,7 +266,10 @@ function AddEditCoach({ data }) {
                             </>
                         ) : (
                             <Grid item xs>
-                                <Typography variant="h4" sx={{ mb: 4 }}>
+                                <Typography
+                                    variant="h4"
+                                    sx={{ mb: 4, textTransform: 'none' }}
+                                >
                                     Create Coach
                                 </Typography>
                             </Grid>
@@ -265,43 +294,73 @@ function AddEditCoach({ data }) {
                                 selectedImage={selectedImage}
                                 setSelectedImage={setSelectedImage}
                             />
-                            <Box ml={4}>
-                                <Typography
-                                    variant="h5"
-                                    sx={{
-                                        fontSize: '24px',
-                                        fontWeight: '600',
-                                        font: 'Nunito Sans',
-                                        color: '#1A1E3D',
-                                    }}
-                                >
-                                    {nameValue || 'Name of the TA'}
-                                </Typography>
-                                <Typography
-                                    variant="body2"
-                                    sx={{
-                                        fontSize: '16px',
-                                        fontWeight: '400',
-                                        mb: 4,
-                                        color: '#5F6383',
-                                        font: 'Nunito Sans',
-                                    }}
-                                >
-                                    {aboutMeValue || 'Short Description'}
-                                </Typography>
-                                {/* <CustomTextField
-                label="Short Description"
-                name="short_description"
-                placeholder="Enter About TA"
-                register={register}
-                validation={{ required: "About Me is required" }}
-                errors={errors}
-                multiline
-                rows={2}
-                sx={{ width: "400px" }}
-              /> */}
+                            <Box ml={4} display="flex" flexDirection="column">
+                                <Box display="flex" alignItems="center" gap={2}>
+                                    <Typography
+                                        variant="h5"
+                                        sx={{
+                                            fontSize: '24px',
+                                            fontWeight: '600',
+                                            font: 'Nunito Sans',
+                                            color: '#1A1E3D',
+                                        }}
+                                    >
+                                        {nameValue || 'Name of the Coach'}
+                                    </Typography>
+
+                                    <Button
+                                        variant="contained"
+                                        onClick={() => setIsEditingDescription(!isEditingDescription)}
+                                        sx={{
+                                            backgroundColor: '#F56D3B',
+                                            color: 'white',
+                                            borderRadius: '20px',
+                                            textTransform: 'none',
+                                            height: '32px',
+                                            minWidth: 'auto',
+                                            padding: '0 16px',
+                                        }}
+                                    >
+                                        <EditIcon />
+                                        Edit
+                                    </Button>
+                                </Box>
+
+                                {isEditingDescription ? (
+                                    <Box mt={2}>
+                                        <CustomTextField
+                                            fullWidth
+                                            multiline
+                                            rows={2}
+                                            value={editableDescription}
+                                            onChange={handleDescriptionChange}
+                                            placeholder="Add a brief description..."
+                                        />
+                                        <Button
+                                            variant="contained"
+                                            onClick={handleSaveDescription}
+                                            sx={{
+                                                mt: 2,
+                                                backgroundColor: '#F56D3B',
+                                                color: 'white',
+                                                borderRadius: '20px',
+                                                textTransform: 'none',
+                                                height: '32px',
+                                                minWidth: 'auto',
+                                                padding: '0 16px',
+                                            }}
+                                        >
+                                            Save
+                                        </Button>
+                                    </Box>
+                                ) : (
+                                    <Typography variant="body1" sx={{ mt: 2 }}>
+                                        {editableDescription || 'Short Description'}
+                                    </Typography>
+                                )}
                             </Box>
                         </Box>
+                    
 
                         <Divider
                             sx={{ mt: 2, mb: 4, border: '1px solid #C2C2E7' }}
@@ -398,6 +457,7 @@ function AddEditCoach({ data }) {
                                 <CustomTextField
                                     label="Address"
                                     name="address"
+                                    placeholder="Enter Address"
                                     register={register}
                                     validation={{
                                         required: 'Address is required',
@@ -525,7 +585,7 @@ function AddEditCoach({ data }) {
                                     control={control}
                                     name="date_of_birth"
                                     render={({ field }) => (
-                                        <CustomDateField
+                                        <CustomDateOfBirth
                                             label="Date of Birth"
                                             name="date_of_birth"
                                             value={dateOfBirth}
@@ -648,6 +708,8 @@ function AddEditCoach({ data }) {
                                     errors={errors}
                                     multiline
                                     rows={4}
+                                    value={editableAboutMe}
+                                    onChange={handleAboutMeChange}
                                 />
                             </Grid>
                         </Grid>
@@ -664,6 +726,7 @@ function AddEditCoach({ data }) {
                                 fontSize: '16px',
                                 fontWeight: '700px',
                                 text: '#FFFFFF',
+                                textTransform: 'none',
                             }}
                         >
                             Submit

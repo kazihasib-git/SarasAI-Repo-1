@@ -12,7 +12,7 @@ import {
     openScheduledSlots,
     reasonForLeave,
     openReasonForLeave,
-} from '../../redux/features/taModule/taAvialability';
+} from '../../redux/features/adminModule/ta/taAvialability';
 
 import {
     closeCoachScheduledSession,
@@ -21,43 +21,17 @@ import {
     openCoachScheduledSlots,
     openCoachReasonForLeave,
     reasonForCoachLeave,
-} from '../../redux/features/CoachModule/CoachAvailabilitySlice';
+} from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import { useParams } from 'react-router-dom';
-
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                padding: '10px 20px',
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
+import {
+    closeReasonForLeavePopup,
+    closeScheduledSessionForLeave,
+    openCancelSessionForLeave,
+    openReasonForLeavePopup,
+    openRescheduleSessionForLeave,
+    openScheduledSessionForLeave,
+} from '../../redux/features/coachModule/coachmenuprofileSilce';
+import CustomButton from '../CustomFields/CustomButton';
 
 const ScheduledSessions = ({ componentName }) => {
     const dispatch = useDispatch();
@@ -98,6 +72,33 @@ const ScheduledSessions = ({ componentName }) => {
             openReasonAction = openCoachReasonForLeave;
             reasonForLeaveAction = reasonForCoachLeave;
             break;
+
+        case 'COACHMENU_CALENDER':
+            scheduleSessionOpenKey = 'leaveScheduledSessionPopup';
+            scheduledSessionDataKey = 'coachSessionsForLeave';
+            schedulingStateKey = 'coachMenu';
+            closeSessionAction = closeScheduledSessionForLeave;
+            openCancelAction = openCancelSessionForLeave;
+            openRescheduleAction = openRescheduleSessionForLeave;
+            openSlotsAction = openScheduledSessionForLeave;
+            slotEventKey = 'slotsEventDataForLeave';
+            openReasonAction = openReasonForLeavePopup;
+            reasonForLeaveAction = closeReasonForLeavePopup;
+            break;
+
+        case 'TAMENU_CALENDER':
+            scheduleSessionOpenKey = '';
+            scheduledSessionDataKey = '';
+            schedulingStateKey = '';
+            closeSessionAction = '';
+            openCancelAction = '';
+            openRescheduleAction = '';
+            openSlotsAction = '';
+            slotEventKey = '';
+            openReasonAction = '';
+            reasonForLeaveAction = '';
+            break;
+
         default:
             scheduleSessionOpenKey = null;
             scheduledSessionDataKey = null;
@@ -153,14 +154,17 @@ const ScheduledSessions = ({ componentName }) => {
     };
 
     const handleCancelClick = session => {
+        console.log('Handle Cancel Sessions');
+        console.log('component Name :', componentName, session);
         dispatch(closeSessionAction());
         dispatch(openCancelAction(session));
         console.log('Cancel clicked!', session);
     };
 
     const handleSubmit = () => {
-        console.log('*** ScheduledSessions');
+        console.log('*** ScheduledSessions', slotEventData);
         dispatch(openReasonAction(slotEventData));
+        dispatch(closeSessionAction());
     };
 
     const content =
@@ -197,7 +201,7 @@ const ScheduledSessions = ({ componentName }) => {
         <ReusableDialog
             open={scheduledSessionOpen}
             handleClose={() => {
-                dispatch(openSlotsAction());
+                // dispatch(openSlotsAction());
                 dispatch(closeSessionAction());
             }}
             title="Scheduled Sessions"

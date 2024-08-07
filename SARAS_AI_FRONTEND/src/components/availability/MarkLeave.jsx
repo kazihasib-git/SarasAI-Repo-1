@@ -1,69 +1,22 @@
 import React, { useState } from 'react';
-import {
-    DialogContent,
-    Grid,
-    TextField,
-    Button,
-    IconButton,
-} from '@mui/material';
-import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import CloseIcon from '@mui/icons-material/Close';
+import { Grid, Button } from '@mui/material';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import CustomDateField from '../CustomFields/CustomDateField';
 import { toast } from 'react-toastify';
-import Slots from './Slots';
-
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import { useParams } from 'react-router-dom';
-
 import {
     openScheduledSlots,
     closeMarkLeave,
     getSlots,
-} from '../../redux/features/taModule/taAvialability';
-
+} from '../../redux/features/adminModule/ta/taAvialability';
 import {
     openCoachScheduledSlots,
     closeCoachMarkLeave,
     getCoachSlots,
-} from '../../redux/features/CoachModule/CoachAvailabilitySlice';
-
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                padding: '10px 20px',
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
+} from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
+import CustomButton from '../CustomFields/CustomButton';
 
 const MarkLeave = ({ componentName }) => {
     const { id: taId } = useParams(); // Ensure taId is correctly extracted
@@ -75,24 +28,30 @@ const MarkLeave = ({ componentName }) => {
         schedulingStateKey,
         openAvailableSlotsAction,
         closeMarkLeaveAction,
-        getSlotsAction;
+        getSlotsAction,
+        sliceName;
 
     switch (componentName) {
         case 'TACALENDER':
+            sliceName = 'taAvialability';
             scheduleSessionOpenKey = 'markLeaveOpen';
             schedulingStateKey = 'taAvialability';
             openAvailableSlotsAction = openScheduledSlots;
             closeMarkLeaveAction = closeMarkLeave;
             getSlotsAction = getSlots;
             break;
+
         case 'COACHCALENDER':
+            sliceName = 'coachAvailability';
             scheduleSessionOpenKey = 'coachMarkLeaveOpen';
             schedulingStateKey = 'coachAvailability';
             openAvailableSlotsAction = openCoachScheduledSlots;
             closeMarkLeaveAction = closeCoachMarkLeave;
             getSlotsAction = getCoachSlots;
             break;
+
         default:
+            sliceName = null;
             scheduleSessionOpenKey = null;
             schedulingStateKey = null;
             openAvailableSlotsAction = null;
@@ -133,12 +92,19 @@ const MarkLeave = ({ componentName }) => {
             dispatch(getSlotsAction(leaveData))
                 .unwrap()
                 .then(() => {
-                    dispatch(openAvailableSlotsAction(leaveData));
-                    dispatch(closeMarkLeaveAction());
+                    if (sliceName === 'coachMenu') {
+                        console.log('ComponetName :', componentName);
+                        dispatch(openAvailableSlotsAction());
+                        dispatch(closeMarkLeaveAction());
+                    } else {
+                        dispatch(openAvailableSlotsAction(leaveData));
+                        dispatch(closeMarkLeaveAction());
+                    }
                 })
                 .catch(error => {
                     console.error('Failed to fetch scheduled slots:', error);
                     dispatch(openAvailableSlotsAction(leaveData));
+                    dispatch(closeMarkLeaveAction());
                 });
         }
     };

@@ -46,12 +46,17 @@ const CustomButton = ({
     );
 };
 
-const DenyDialog = ({ open, handleClose, handleDenySubmit }) => {
+const DenyDialog = ({ open, handleClose, handleDenySubmit, denyRequestId }) => {
     const [message, setMessage] = useState('');
 
-    const handleSubmit = () => {
-        handleDenySubmit(message);
+    const handleDenyDialogClose = () => {
+        setMessage('');
         handleClose();
+    };
+
+    const handleSubmit = () => {
+        handleDenySubmit(denyRequestId, message);
+        handleDenyDialogClose();
     };
 
     const content = (
@@ -103,7 +108,7 @@ const DenyDialog = ({ open, handleClose, handleDenySubmit }) => {
     return (
         <ReusableDialog
             open={open}
-            handleClose={handleClose}
+            handleClose={handleDenyDialogClose}
             content={content}
             actions={actions}
         />

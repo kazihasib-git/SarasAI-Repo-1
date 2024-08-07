@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import CoachMenu from './CoachMenu';
 import EditIcon from '@mui/icons-material/Edit';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import DateRangeIcon from '@mui/icons-material/DateRange';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import SessionNotes from './SessionNotes';
 import {
     Box,
     Typography,
@@ -82,6 +83,27 @@ const CoachCallRecord = () => {
                 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
         },
     ];
+    const [open, setOpen] = useState(false);
+
+    const handleClickOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+
+    const [date, setDate] = useState(moment());
+
+    const handleDateChange = newDate => {
+        if (newDate && newDate.isValid()) {
+            setDate(newDate);
+            // handleCalendarClose();
+        }
+    };
+
+    const handleIncrement = () => {
+        setDate(prevDate => moment(prevDate).add(1, 'days'));
+    };
+
+    const handleDecrement = () => {
+        setDate(prevDate => moment(prevDate).subtract(1, 'days'));
+    };
     return (
         <div>
             <CoachMenu />
@@ -118,10 +140,13 @@ const CoachCallRecord = () => {
                         />
                         10 July, 2024
                     </Typography>
-                    <IconButton style={{ height: '9.24px', width: '23.28' }}>
+                    <IconButton
+                        style={{ height: '9.24px', width: '23.28' }}
+                        onClick={handleDecrement}
+                    >
                         <ArrowBackIosIcon />
                     </IconButton>
-                    <IconButton>
+                    <IconButton onClick={handleIncrement}>
                         <ArrowForwardIosIcon />
                     </IconButton>
                 </Box>
@@ -181,12 +206,13 @@ const CoachCallRecord = () => {
                                     justifyContent="space-between"
                                 >
                                     <CustomButton
+                                        onClick={handleClickOpen}
                                         color="#F56D3B"
                                         backgroundColor="#FFFFFF"
                                         borderColor="#F56D3B"
                                         style={{ textTransform: 'none' }}
                                     >
-                                        Meeting Notes
+                                        Session Notes
                                     </CustomButton>
                                     <CustomButton
                                         color="#F56D3B"
@@ -202,6 +228,7 @@ const CoachCallRecord = () => {
                     ))}
                 </Box>
             </Box>
+            <SessionNotes open={open} onClose={handleClose} role="Coach" />
         </div>
     );
 };

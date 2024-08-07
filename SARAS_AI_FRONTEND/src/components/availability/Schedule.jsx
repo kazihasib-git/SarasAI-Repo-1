@@ -25,53 +25,21 @@ import {
     getTaAvailableSlotsFromDate,
     openEditBatch,
     openEditStudent,
-} from '../../redux/features/taModule/taScheduling';
+} from '../../redux/features/adminModule/ta/taScheduling';
 import {
     closeCoachScheduleSession,
     createCoachSchedule,
     getCoachAvailableSlotsFromDate,
     openCoachEditBatch,
     openCoachEditStudent,
-} from '../../redux/features/CoachModule/coachSchedule';
-import { getTimezone } from '../../redux/features/timezone/timezoneSlice';
+} from '../../redux/features/adminModule/coach/coachSchedule';
+import { getPlatforms, getTimezone } from '../../redux/features/utils/utilSlice';
 import CustomTimeZoneForm from '../CustomFields/CustomTimeZoneForm';
-import { fetchTAScheduleById } from '../../redux/features/taModule/taAvialability';
+import { fetchTAScheduleById } from '../../redux/features/adminModule/ta/taAvialability';
 import { toast } from 'react-toastify';
-
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                padding: '10px 20px',
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
+import { fetchCoachScheduleById } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
+import CustomButton from '../CustomFields/CustomButton';
+import CustomPlatformForm from '../CustomFields/CustomPlatformForm';
 
 const headers = ['S. No.', 'Slot Date', 'From Time', 'To Time', 'Select'];
 
@@ -110,8 +78,11 @@ const Schedule = ({ componentName }) => {
         idKey,
         nameKey,
         timezoneKey,
+        studentKey,
+        batchKey,
         getAvailableSlotsAction,
         closeScheduleSessionAction,
+        getScheduledSessionApi,
         createScheduleAction;
 
     switch (componentName) {
@@ -122,7 +93,10 @@ const Schedule = ({ componentName }) => {
             idKey = 'taID';
             nameKey = 'taName';
             timezoneKey = 'taTimezone';
+            studentKey = 'students';
+            batchKey = 'batches';
             getAvailableSlotsAction = getTaAvailableSlotsFromDate;
+            getScheduledSessionApi = fetchTAScheduleById;
             closeScheduleSessionAction = closeScheduleSession;
             createScheduleAction = createTASchedule;
             break;
@@ -133,10 +107,14 @@ const Schedule = ({ componentName }) => {
             idKey = 'coachID';
             nameKey = 'coachName';
             timezoneKey = 'coachTimezone';
+            studentKey = 'students';
+            batchKey = 'batches';
             getAvailableSlotsAction = getCoachAvailableSlotsFromDate;
+            getScheduledSessionApi = fetchCoachScheduleById;
             closeScheduleSessionAction = closeCoachScheduleSession;
             createScheduleAction = createCoachSchedule;
             break;
+
         default:
             scheduleSessionOpenKey = null;
             schedulingStateKey = null;
@@ -144,7 +122,10 @@ const Schedule = ({ componentName }) => {
             idKey = null;
             nameKey = null;
             timezoneKey = null;
+            studentKey = null;
+            batchKey = null;
             getAvailableSlotsAction = null;
+            getScheduledSessionApi = null;
             closeScheduleSessionAction = null;
             createScheduleAction = null;
             break;
@@ -153,14 +134,15 @@ const Schedule = ({ componentName }) => {
     const schedulingState = useSelector(state =>
         schedulingStateKey ? state[schedulingStateKey] : {}
     );
+
     const {
         [scheduleSessionOpenKey]: scheduleSessionOpen,
         [idKey]: adminUserID,
         [nameKey]: adminUserName,
         [timezoneKey]: adminUserTimezone,
         [availableKey]: availableSlots,
-        students,
-        batches,
+        [studentKey]: students,
+        [batchKey]: batches,
     } = schedulingState;
 
     const {
@@ -183,10 +165,11 @@ const Schedule = ({ componentName }) => {
         }
     }, [fromDate, dispatch, adminUserID, getAvailableSlotsAction]);
 
-    const { timezones } = useSelector(state => state.timezone);
+    const { timezones, platforms } = useSelector(state => state.util);
 
     useEffect(() => {
         dispatch(getTimezone());
+        dispatch(getPlatforms())
     }, [dispatch]);
 
     useEffect(() => {
@@ -209,6 +192,9 @@ const Schedule = ({ componentName }) => {
             setAvailableSlotsOptions(options);
 
             setSlotData(transformData);
+        } else {
+            setAvailableSlotsOptions([]);
+            setSlotData([{}]);
         }
     }, [availableSlots]);
 
@@ -218,16 +204,6 @@ const Schedule = ({ componentName }) => {
                 return prev.filter(d => d !== day);
             } else {
                 return [...prev, day];
-            }
-        });
-    };
-
-    const handleSelectSlots = id => {
-        setSelectedSlot(prev => {
-            if (prev.includes(id)) {
-                return prev.filter(sid => sid !== id);
-            } else {
-                return [...prev, id];
             }
         });
     };
@@ -250,12 +226,6 @@ const Schedule = ({ componentName }) => {
             dispatch(openCoachEditStudent());
         }
     };
-
-    // const handleClear = () => {
-    //     setSelectedSlot([{}]);
-    // }
-
-    console.log('adminUserID ', adminUserID);
 
     const handleAssignBatches = () => {
         console.log('COMPONENT NAME  handleAssignBatches : ', componentName);
@@ -308,6 +278,11 @@ const Schedule = ({ componentName }) => {
     };
 
     const onSubmit = formData => {
+        console.log('formData --> ', formData);
+
+        console.log('students :', students);
+        console.log('batches', batches);
+
         const studentId = students.map(student => student.id);
         const batchId = batches.map(batch => batch.id);
 
@@ -325,36 +300,27 @@ const Schedule = ({ componentName }) => {
         }
 
         console.log('FORM DATA : ', formData);
-        console.log('selected slots', selectedSlot);
 
         formData.start_time = fromTime;
         formData.end_time = toTime;
-        formData.timezone = timezone;
         formData.schedule_date = fromDate;
         formData.end_date = repeat === 'recurring' ? toDate : fromDate;
         formData.admin_user_id = adminUserID;
         formData.slot_id = selectedSlot[0].id; // Assuming single slot selection
         formData.event_status = 'scheduled';
         formData.weeks = weeksArray;
-        // formData.timezone = adminUserTimezone;
-        formData.timezone = 'Asia/Kolkata';
         formData.studentId = studentId;
         formData.batchId = batchId;
 
-        dispatch(createScheduleAction({ ...formData }))
+        console.log('form Data :', formData);
+        dispatch(createScheduleAction(formData))
             .then(() => {
                 dispatch(closeScheduleSessionAction());
-                return dispatch(fetchTAScheduleById(adminUserID));
+                return dispatch(getScheduledSessionApi(adminUserID));
             })
             .catch(error => {
                 console.error('Error:', error);
             });
-
-        /*
-    dispatch(createScheduleAction({ ...formData }));
-    dispatch(fetchTAScheduleById(adminUserID))
-    dispatch(closeScheduleSessionAction());
-    */
     };
 
     console.log('AvailableSlotsOptions :', availableSlotsOptions);
@@ -432,144 +398,108 @@ const Schedule = ({ componentName }) => {
                                                     errors={errors}
                                                 />
                                             </Grid>
-
-                                            {/*
-                      <Grid item xs={12} display="flex" justifyContent="center">
-                        <PopUpTable
-                          headers={headers}
-                          initialData={slotData}
-                          onRowClick={handleSelectSlots}
-                          selectedBox={selectedSlot}
-                        />
-                      </Grid>
-                      */}
                                             <Grid
-                                                container
-                                                spacing={3}
-                                                sx={{ pt: 3 }}
+                                                item
+                                                xs={12}
+                                                display="flex"
                                                 justifyContent="center"
                                             >
-                                                <Grid
-                                                    item
-                                                    xs={12}
-                                                    display="flex"
-                                                    justifyContent="center"
-                                                >
-                                                    <CustomTextField
-                                                        label="Meeting Name"
-                                                        name="meeting_name"
-                                                        placeholder="Enter Meeting Name"
-                                                        register={register}
-                                                        validation={{
-                                                            required:
-                                                                'Meeting Name is required',
-                                                        }}
-                                                        errors={errors}
-                                                    />
-                                                </Grid>
-                                                <Grid
-                                                    item
-                                                    xs={12}
-                                                    display="flex"
-                                                    justifyContent="center"
-                                                >
-                                                    <CustomTextField
-                                                        label="Meeting URL"
-                                                        name="meeting_url"
-                                                        placeholder="Enter Meeting URL"
-                                                        register={register}
-                                                        validation={{
-                                                            required:
-                                                                'Meeting URL is required',
-                                                        }}
-                                                        errors={errors}
-                                                    />
-                                                </Grid>
-                                                <Grid
-                                                    item
-                                                    xs={12}
-                                                    sm={6}
-                                                    display="flex"
-                                                    justifyContent="center"
-                                                >
-                                                    <CustomTimeField
-                                                        label="From Time"
-                                                        name="start_time"
-                                                        value={fromTime}
-                                                        onChange={setFromTime}
-                                                        validation={{
-                                                            required:
-                                                                'From Time is required',
-                                                        }}
-                                                        errors={errors}
-                                                    />
-                                                </Grid>
-                                                <Grid
-                                                    item
-                                                    xs={12}
-                                                    sm={6}
-                                                    display="flex"
-                                                    justifyContent="center"
-                                                >
-                                                    <CustomTimeField
-                                                        label="End Time"
-                                                        name="end_time"
-                                                        value={toTime}
-                                                        onChange={setToTime}
-                                                        validation={{
-                                                            required:
-                                                                'End Time is required',
-                                                        }}
-                                                        errors={errors}
-                                                    />
-                                                </Grid>
-                                                <Grid
-                                                    item
-                                                    xs={12}
-                                                    sm={6}
-                                                    display="flex"
-                                                    justifyContent="center"
-                                                >
-                                                    <Controller
-                                                        name="timezone"
-                                                        control={control}
-                                                        // rules={{ required: "Time Zone is required" }}
-                                                        render={({ field }) => (
-                                                            <CustomTimeZoneForm
-                                                                label="Time Zone"
-                                                                name="timezone"
-                                                                value={
-                                                                    field.value
-                                                                }
-                                                                onChange={
-                                                                    field.onChange
-                                                                }
-                                                                errors={errors}
-                                                                options={
-                                                                    timezones
-                                                                }
-                                                            />
-                                                        )}
-                                                    />
-                                                    {/*
-                          <CustomFormControl
-                            label="Select Timezone"
-                            name="timezone"
-                            value={adminUserTimezone}
-                            controlProps={{
-                              select: true,
-                              fullWidth: true,
-                              value: timezone,
-                              onChange: (e) => setTimezone(e.target.value),
-                            }}
-
-                            register={register}
-                            validation={{ validate: validateTimeZone }}
-                            errors={errors}
-                            options={transformedTimeZones}
-                          />
-                           */}
-                                                </Grid>
+                                                <CustomTextField
+                                                    label="Meeting Name"
+                                                    name="meeting_name"
+                                                    placeholder="Enter Meeting Name"
+                                                    register={register}
+                                                    validation={{
+                                                        required:
+                                                            'Meeting Name is required',
+                                                    }}
+                                                    errors={errors}
+                                                />
+                                            </Grid>
+                                            <Grid
+                                                item
+                                                xs={12}
+                                                sm={6}
+                                                display="flex"
+                                                justifyContent="center"
+                                            >
+                                                <CustomTimeField
+                                                    label="From Time"
+                                                    name="start_time"
+                                                    value={fromTime}
+                                                    onChange={setFromTime}
+                                                    validation={{
+                                                        required:
+                                                            'From Time is required',
+                                                    }}
+                                                    errors={errors}
+                                                />
+                                            </Grid>
+                                            <Grid
+                                                item
+                                                xs={12}
+                                                sm={6}
+                                                display="flex"
+                                                justifyContent="center"
+                                            >
+                                                <CustomTimeField
+                                                    label="End Time"
+                                                    name="end_time"
+                                                    value={toTime}
+                                                    onChange={setToTime}
+                                                    validation={{
+                                                        required:
+                                                            'End Time is required',
+                                                    }}
+                                                    errors={errors}
+                                                />
+                                            </Grid>
+                                            <Grid
+                                                item
+                                                xs={12}
+                                                display="flex"
+                                                justifyContent="center"
+                                            >
+                                                <Controller
+                                                    name="timezone_id"
+                                                    control={control}
+                                                    // rules={{ required: "Time Zone is required" }}
+                                                    render={({ field }) => (
+                                                        <CustomTimeZoneForm
+                                                            label="Time Zone"
+                                                            name="timezone_id"
+                                                            value={field.value}
+                                                            onChange={
+                                                                field.onChange
+                                                            }
+                                                            errors={errors}
+                                                            options={timezones}
+                                                        />
+                                                    )}
+                                                />
+                                            </Grid>
+                                            <Grid
+                                                item
+                                                xs={12}
+                                                display="flex"
+                                                justifyContent="center"
+                                            >
+                                                <Controller
+                                                    name="platform_id"
+                                                    control={control}
+                                                    render={({ field }) => (
+                                                        <CustomPlatformForm
+                                                            label="Platform"
+                                                            name="platform_id"
+                                                            value={field.value}
+                                                            onChange={
+                                                                field.onChange
+                                                            }
+                                                            errors={errors}
+                                                            options={platforms}
+                                                        />
+                                                    )}
+                                                />
                                             </Grid>
                                             <Grid
                                                 item
@@ -772,6 +702,7 @@ const Schedule = ({ componentName }) => {
                                                         fontSize: '16px',
                                                         fontWeight: '700px',
                                                         text: '#FFFFFF',
+                                                        textTransform: 'none',
                                                     }}
                                                 >
                                                     Submit
@@ -801,7 +732,7 @@ const Schedule = ({ componentName }) => {
 
     return (
         <ReusableDialog
-            open={scheduleSessionOpen}
+            open={createScheduleAction}
             handleClose={() => {
                 dispatch(closeScheduleSessionAction());
             }}

@@ -2,22 +2,21 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import ReusableDialog from '../CustomFields/ReusableDialog';
-// import CustomButton from "../CustomFields/CustomButton";
 import {
     closeCreateTa,
     closeEditTa,
     closeSuccessPopup,
     openAssignBatches,
     openAssignStudents,
-} from '../../redux/features/taModule/taSlice';
+} from '../../redux/features/adminModule/ta/taSlice';
 import {
     openCoachAssignBatches,
     openCoachAssignStudents,
     closeCoachSuccessPopup,
     closeEditCoach,
     closeCreateCoach,
-} from '../../redux/features/CoachModule/coachSlice';
-import { Button } from '@mui/material';
+} from '../../redux/features/adminModule/coach/coachSlice';
+import { Button, Typography } from '@mui/material';
 
 const CustomButton = ({
     onClick,
@@ -131,6 +130,14 @@ const SubmitPopup = ({ componentname }) => {
         }
     };
 
+    const handleDoItLater = () => {
+        if (componentname === 'ADDITCOACH') {
+            navigate('/coach-mapping');
+        } else {
+            navigate('/ta-mapping');
+        }
+    };
+
     const actions = (
         <>
             <CustomButton
@@ -149,6 +156,13 @@ const SubmitPopup = ({ componentname }) => {
             >
                 Assign Batches
             </CustomButton>
+            <Typography
+                onClick={handleCloseButton}
+                color="#1A1E3D"
+                sx={{ marginTop: '10px', cursor: 'pointer' }}
+            >
+                Do it Later
+            </Typography>
         </>
     );
 

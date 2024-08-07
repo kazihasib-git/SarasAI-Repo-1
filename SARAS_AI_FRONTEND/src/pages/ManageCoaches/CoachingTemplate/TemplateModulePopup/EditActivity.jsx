@@ -17,7 +17,7 @@ import {
     updateEditActivity,
     getAllCoachTemplateModules,
     getAllCoachTemplates,
-} from '../../../../redux/features/CoachModule/CoachTemplateSlice';
+} from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
 
 const CustomButton = ({
     onClick,
@@ -224,7 +224,9 @@ const AddEditActivity = () => {
                         module_id: editActivityData.module_id,
                     },
                 })
-            );
+            ).then(() => {
+                dispatch(getCoachTemplateModuleId(selectedCoachTemplate));
+            });
         } else {
             // Create new activity
             dispatch(createCoachTemplateActivity(data));

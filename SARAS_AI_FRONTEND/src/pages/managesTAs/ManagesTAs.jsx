@@ -11,7 +11,7 @@ import {
     openEditTa,
     closeCreateTa,
     closeEditTa,
-} from '../../redux/features/taModule/taSlice';
+} from '../../redux/features/adminModule/ta/taSlice';
 import { useDispatch, useSelector } from 'react-redux';
 
 const headers = [
@@ -20,7 +20,7 @@ const headers = [
     'Username',
     'Location',
     'Time Zone',
-    'Action',
+    'Actions',
 ];
 
 const ManageTA = () => {
@@ -31,6 +31,7 @@ const ManageTA = () => {
     const [tasData, setTasData] = useState([]);
     const [editData, setEditData] = useState();
     const [searchQuery, setSearchQuery] = useState('');
+    const [actionButtonToggled, setActionButtonToggled] = useState(false); // Track toggle state
 
     useEffect(() => {
         dispatch(closeCreateTa());
@@ -39,7 +40,7 @@ const ManageTA = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        if (tas.length > 0) {
+        if (tas && tas.length > 0) {
             const transformData = tas.map(item => ({
                 id: item.id,
                 'TA Name': item.name,
@@ -53,18 +54,17 @@ const ManageTA = () => {
         }
     }, [tas]);
 
-    // if (loading) return <div>Loading...</div>;
-    // if (error) return <div>Error: {error}</div>;
-
     const actionButtons = [
         {
             type: 'switch',
+            onChange: () => setActionButtonToggled(prev => !prev), // Toggle state
         },
         {
             type: 'edit',
             onClick: id => {
                 handleEditTa(id);
             },
+            disabled: actionButtonToggled, // Disable edit button based on toggle state
         },
     ];
 
@@ -77,7 +77,6 @@ const ManageTA = () => {
         setEditData(dataToEdit);
         dispatch(openEditTa());
     };
-    console.log('Editta isisisi', editData);
 
     const handleChange = value => {
         setSearchQuery(value);

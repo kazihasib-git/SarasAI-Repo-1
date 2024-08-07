@@ -3,74 +3,66 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     closeReasonForLeave,
+    fetchTAScheduleById,
+    fetchTaSlots,
     reasonForLeave,
-} from '../../redux/features/taModule/taAvialability';
-import { closeCoachReasonForLeave } from '../../redux/features/CoachModule/CoachAvailabilitySlice';
-
+} from '../../redux/features/adminModule/ta/taAvialability';
+import {
+    closeCoachReasonForLeave,
+    fetchCoachScheduleById,
+    fetchCoachSlots,
+    reasonForCoachLeave,
+} from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import CustomTextField from '../CustomFields/CustomTextField';
 import ReusableDialog from '../CustomFields/ReusableDialog';
-
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                padding: '10px 20px',
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
+import { useParams } from 'react-router-dom';
+import CustomButton from '../CustomFields/CustomButton';
 
 const ReasonForLeave = ({ componentName }) => {
     const dispatch = useDispatch();
+    const { id, name } = useParams();
 
     let reasonForLeaveOpenKey,
         closeReasonForLeaveAction,
         markLeaveKey,
-        slotEventKey;
+        slotEventKey,
+        reasonForLeaveAction,
+        sliceName,
+        getSlotsApi,
+        getSessionApi;
 
     switch (componentName) {
         case 'TACALENDER':
+            sliceName = 'taAvialability';
             reasonForLeaveOpenKey = 'reasonForLeaveOpen';
             closeReasonForLeaveAction = closeReasonForLeave;
             markLeaveKey = 'markLeaveData';
             slotEventKey = 'slotEventData';
+            reasonForLeaveAction = reasonForLeave;
+            getSlotsApi = fetchTaSlots;
+            getSessionApi = fetchTAScheduleById;
             break;
+
         case 'COACHCALENDER':
+            sliceName = 'coachAvailability';
             reasonForLeaveOpenKey = 'reasonForCoachLeaveOpen'; // Adjust based on your actual key
             closeReasonForLeaveAction = closeCoachReasonForLeave;
             markLeaveKey = 'markLeaveData';
-            slotEventKey = 'slotEventData';
+            slotEventKey = 'slotCoachEventData';
+            reasonForLeaveAction = reasonForCoachLeave;
+            getSlotsApi = fetchCoachSlots;
+            getSessionApi = fetchCoachScheduleById;
             break;
+
         default:
+            sliceName = null;
             reasonForLeaveOpenKey = null;
             closeReasonForLeaveAction = null;
             markLeaveKey = null;
             slotEventKey = null;
+            reasonForLeaveAction = null;
+            getSlotsApi = null;
+            getSessionApi = null;
             break;
     }
 
@@ -79,8 +71,11 @@ const ReasonForLeave = ({ componentName }) => {
         [markLeaveKey]: markLeaveData,
         [slotEventKey]: slotEventDetails,
     } = useSelector(
-        state => state.taAvialability || state.coachAvailability || {} // Adjust to access the correct state slice
+        state => state[sliceName] // Adjust to access the correct state slice
     );
+
+    console.log('slots EVENT Details', slotEventDetails);
+    console.log('markLeaveData :', markLeaveData);
 
     const handleSubmit = () => {
         if (slotEventDetails && slotEventDetails.length > 0) {
@@ -115,23 +110,32 @@ const ReasonForLeave = ({ componentName }) => {
                 approve_status: null,
                 leave_type: null,
                 reason: null,
+                approve_status: null,
+                leave_type: null,
+                reason: null,
 
                 data: slots.map(slot => slot),
             };
 
-            console.log('SLOT EVENT DATA: ', requestBody);
-
-            dispatch(reasonForLeave(requestBody));
+            dispatch(reasonForLeaveAction(requestBody)).then(() => {
+                dispatch(getSlotsApi(id));
+                dispatch(getSessionApi(id));
+            });
             dispatch(closeReasonForLeaveAction());
         } else {
             console.log('No slots selected, opening reason for leave');
-            dispatch(reasonForLeave(markLeaveData));
+            console.log('mark leave data', markLeaveData);
+
+            dispatch(reasonForLeaveAction(markLeaveData)).then(() => {
+                dispatch(getSlotsApi(id));
+                dispatch(getSessionApi(id));
+            });
             dispatch(closeReasonForLeaveAction());
         }
     };
 
     const content = (
-        <Grid container spacing={2}>
+        <Grid container spacing={2} justifyContent="center" sx={{ mt: 0 }}>
             <Grid item xs={120}>
                 <CustomTextField
                     label="Reason for Leave"

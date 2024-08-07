@@ -11,13 +11,13 @@ import './assets/fonts/Nohemi-SemiBold.ttf';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.min.js';
 import Main from './components/Main/Main';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import Layout from './Layout';
 import Login from './components/AUTH/Login';
 import LinkPage from './components/AUTH/LinkPage';
 import Unauthorized from './components/AUTH/Unauthorized';
 import RequireAuth from './components/Hooks/RequireAuth';
-import Dashboard from './components/Dashboard';
+import Dashboard from './components/adminModuleComponent/dashboard/Dashboard.jsx';
 import ManagesTAs from './pages/managesTAs/ManagesTAs';
 import TAAvailability from './pages/managesTAs/TaAvaialablity';
 import ManageCoaches from './pages/ManageCoaches/ManageCoaches';
@@ -31,7 +31,7 @@ import AllRoutes from './components/AllRoutes/AllRoutes';
 import TaMapping from './pages/managesTAs/TaMapping';
 import TaScheduling from './pages/managesTAs/TaScheduling';
 import Calendar from './components/Calender/indexCalender';
-import StudentPage from './pages/students/StudentPage';
+import StudentPage from './pages/adminModulePages/users/students/StudentPage';
 import MyProfile from './components/RoleRoute/CommonComponent/MyProfile';
 import CallRecords from './pages/MODULE/TaModule/CallRecords';
 import Messages from './components/RoleRoute/CommonComponent/Messages';
@@ -39,7 +39,6 @@ import CallRequest from './pages/MODULE/TaModule/CallRequest';
 import MyCalender from './components/RoleRoute/CommonComponent/MyCalender';
 import Mystudents from './components/RoleRoute/CommonComponent/Mystudents';
 import AssignedStudent from './pages/managesTAs/AssignedStudent';
-// import StudentList from './pages/Student/StudentList';
 import AddEditTA from './components/adminModule/tas/manageTAs/AddEditTA';
 import AssignCoachBatches from './pages/ManageCoaches/AssignedCoachBatches';
 import AssignCoachStudent from './pages/ManageCoaches/AssignedCoachStudent';
@@ -48,16 +47,17 @@ import CoachCalender from './pages/ManageCoaches/CoachCalender';
 import CreateTAPage from './pages/managesTAs/CreateTAPage';
 import AssignedBatches from './pages/managesTAs/AssignedBatches';
 import TaCalender from './pages/managesTAs/TaCalendar';
-import BatchPage from './pages/batches/BatchPage';
+import BatchPage from './pages/adminModulePages/users/batches/BatchPage.jsx';
 import CreateTemplate from './pages/ManageCoaches/CoachingTemplate/CreateTemplate';
 import TemplateName from './pages/ManageCoaches/CoachingTemplate/TemplateName';
-import WheelOfLife from './pages/coachingTools/wheelOfLife/WheelOfLife';
-import WOLCategories from './components/coachingTools/wheelOfLife/WOLCategories';
-import WOLInstructions from './components/coachingTools/wheelOfLife/WOLInstructions';
-import WOLQuestions from './components/coachingTools/wheelOfLife/WOLQuestions';
-import WOLOptionsConfig from './components/coachingTools/wheelOfLife/WOLOptionsConfig';
-import WOLTestConfig from './components/coachingTools/wheelOfLife/WOLTestConfig';
-import AddEditWOLQuestions from './components/coachingTools/wheelOfLife/AddEditWOLQuestions';
+import WheelOfLife from './pages/adminModulePages/coachingTools/wheelOfLife/WheelOfLife.jsx';
+import WOLCategories from './components/adminModuleComponent/coachingTools/wheelOfLife/WOLCategories';
+import WOLInstructions from './components/adminModuleComponent/coachingTools/wheelOfLife/WOLInstructions';
+import WOLQuestions from './components/adminModuleComponent/coachingTools/wheelOfLife/WOLQuestions';
+import WOLOptionsConfig from './components/adminModuleComponent/coachingTools/wheelOfLife/WOLOptionsConfig';
+import WOLTestConfig from './components/adminModuleComponent/coachingTools/wheelOfLife/WOLTestConfig';
+import WOLSelectQuestions from './components/adminModuleComponent/coachingTools/wheelOfLife/WOLSelectQuestions';
+import AddEditWOLQuestions from './components/adminModuleComponent/coachingTools/wheelOfLife/AddEditWOLQuestions';
 import AddEditTeachingAssistant from './pages/MODULE/TaModule/TeachingAssistant';
 import CreateTaMenu from './pages/MODULE/TaModule/CreateTaMenu';
 
@@ -68,7 +68,7 @@ import CoachCallRequest from './pages/MODULE/coachModule/CoachCallRequest';
 
 import CoachMenuCalendar from './pages/MODULE/coachModule/CoachMenuCalendar';
 import CoachCallRecord from './pages/MODULE/coachModule/CoachCallRecord';
-import WOLTestConfigSelectQuestions from './components/coachingTools/wheelOfLife/WOLTestConfigSelectQuestions';
+import WOLTestConfigSelectQuestions from './components/adminModuleComponent/coachingTools/wheelOfLife/WOLTestConfigSelectQuestions';
 import TAMenuCalendar from './pages/MODULE/TaModule/TaMenuCalendar';
 import CoachMenuScheduledcall from './pages/MODULE/coachModule/CoachMenuScheduledcall';
 import CoachMenuStudents from './pages/MODULE/coachModule/CoachMenuStudents';
@@ -78,6 +78,10 @@ import TaMenuProfile from './pages/MODULE/TaModule/TaMenuProfile';
 import TaMenuStudents from './pages/MODULE/TaModule/TaMenuStudents';
 import TaMenuScheduledCall from './pages/MODULE/TaModule/TaMenuScheduledCall';
 import TaMenuMessage from './pages/MODULE/TaModule/TaMenuMessage';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setLogin } from './redux/features/auth/authSlice';
+import StudentDetails from './components/CommonComponent/studentDetails';
 
 const ROLES = {
     Teaching: 2001,
@@ -86,6 +90,49 @@ const ROLES = {
 };
 
 function App() {
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const { userData, login, role, accessToken } = useSelector(
+        state => state.auth
+    );
+
+    const access_token = localStorage.getItem('accessToken');
+    const userRole = localStorage.getItem('role');
+
+    useEffect(() => {
+        if (access_token) {
+            dispatch(
+                setLogin({
+                    login: true,
+                    role: userRole,
+                    accessToken: access_token,
+                })
+            );
+        }
+    }, [access_token]);
+
+    useEffect(() => {
+        if (login) {
+            console.log('inside user Effect in app.js', role);
+
+            if (role.includes(1984)) {
+                // Coach role
+                navigate('/coachmenu_profile', { replace: true });
+            } else if (role.includes(2001)) {
+                // Teaching role
+                navigate('/tamenu_profile', { replace: true });
+            } else if (role.includes(5150)) {
+                // Admin role
+                navigate('/', { replace: true });
+            } else {
+                navigate(from, { replace: true });
+            }
+        } else {
+            navigate('/login', { replace: true });
+        }
+    }, [login, role, accessToken]);
+
     return (
         <Routes>
             <Route path="/" element={<Layout />}>
@@ -94,8 +141,11 @@ function App() {
                 <Route path="linkpage" element={<LinkPage />} />
                 <Route path="unauthorized" element={<Unauthorized />} />
 
+                {!login}
+                {<Route path="login" element={<Login />} />}
+
                 {/* Protected Routes */}
-                <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
+                {login && role == 5150 && (
                     <Route path="/" element={<Main page="Dashboard" />}>
                         <Route index element={<Dashboard />} />
                         <Route path="dashboard" element={<Dashboard />} />
@@ -228,65 +278,20 @@ function App() {
                             element={<WOLTestConfigSelectQuestions />}
                         />
                         <Route
-                            path="schedule-calls"
-                            element={<ScheduledCalls page="Schedule Calls" />}
-                        />
-                    </Route>
-                </Route>
-
-                <Route
-                    element={<RequireAuth allowedRoles={[ROLES.Teaching]} />}
-                >
-                    <Route
-                        path="/"
-                        element={<Main page="Teaching Assistant" />}
-                    >
-                        <Route
-                            path="my-profile"
-                            element={<MyProfile page="My Profile" />}
-                        />
-                        <Route
-                            path="my-student"
-                            element={<Mystudents page="My Students" />}
-                        />
-                        <Route
-                            path="my-calender"
-                            element={<MyCalender page="My Calender" />}
+                            path="WolselectQuestions"
+                            element={<WOLSelectQuestions />}
                         />
                         <Route
                             path="schedule-calls"
                             element={<ScheduledCalls page="Schedule Calls" />}
                         />
-                        <Route
-                            path="call-requests"
-                            element={<CallRequest page="Call Request" />}
-                        />
-                        <Route
-                            path="messages"
-                            element={<Messages page="Messages" />}
-                        />
-                        <Route
-                            path="call-records"
-                            element={<CallRecords page="Call Records" />}
-                        />
                     </Route>
-                </Route>
-
-                <Route element={<RequireAuth allowedRoles={[ROLES.Coaches]} />}>
-                    <Route
-                        path="/"
-                        element={<Main page="Manage Coaches" />}
-                    ></Route>
-                </Route>
-
-                <Route
-                    element={<RequireAuth allowedRoles={[ROLES.Coaches]} />}
-                ></Route>
+                )}
 
                 {/* Missed */}
 
                 {/* Routes for Coachemenu */}
-                <Route element={<RequireAuth allowedRoles={[ROLES.Coaches]} />}>
+                {login && role == 1984 && (
                     <Route path="/" element={<Main page="Coach Menu" />}>
                         <Route
                             path="coachmenu"
@@ -340,13 +345,17 @@ function App() {
                                 <CoachMenuAssessments page="Coach Menu Assessemets" />
                             }
                         />
+                        {/* <Route
+                            path="student_details/:id"
+                            element={
+                                <StudentDetails page="Coach Menu StudentDetails" />
+                            }
+                        /> */}
                     </Route>
-                </Route>
+                )}
 
                 {/* Routes for Tamenu */}
-                <Route
-                    element={<RequireAuth allowedRoles={[ROLES.Teaching]} />}
-                >
+                {login && role == 2001 && (
                     <Route
                         path="/"
                         element={<Main page="Teaching Assistant Menu" />}
@@ -390,7 +399,7 @@ function App() {
                             element={<TAMenuCalendar page="TA Menu Calendar" />}
                         />
                     </Route>
-                </Route>
+                )}
 
                 <Route path="*" element={<AllRoutes />} />
             </Route>

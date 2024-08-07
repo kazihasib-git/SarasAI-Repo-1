@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Schedule from '../../components/availability/Schedule';
 import AssignStudents from '../../components/adminModule/AssignStudents';
 import AssignBatches from '../../components/adminModule/AssignBatches';
-import { showTAMapping } from '../../redux/features/taModule/taSlice';
+import { showTAMapping } from '../../redux/features/adminModule/ta/taSlice';
 import EditBatches from '../../components/availability/EditBatches';
 import EditStudents from '../../components/availability/EditStudents';
 
@@ -37,10 +37,10 @@ const TaScheduling = () => {
                 id: item.id,
                 name: item.name,
                 Username: item.username,
-                Active_Students: item.Active_Batches,
-                Active_Batches: item.Active_Students,
-                // Active_Students: item.Active_Students,
-                // Active_Batches: item.Active_Batches,
+                // Active_Students: item.Active_Batches,
+                // Active_Batches: item.Active_Students,
+                Active_Students: item.Active_Students,
+                Active_Batches: item.Active_Batches,
                 timezone: item.time_zone,
             }));
 

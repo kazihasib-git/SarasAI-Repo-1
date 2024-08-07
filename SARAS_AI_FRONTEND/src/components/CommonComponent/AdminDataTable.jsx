@@ -18,7 +18,7 @@ import {
     getCoachAssignStudents,
     toggleCoachAssignBatchStatus,
     toggleCoachAssignStudentStatus,
-} from '../../redux/features/CoachModule/coachSlice';
+} from '../../redux/features/adminModule/coach/coachSlice';
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
     borderRadius: '50px',
@@ -27,6 +27,7 @@ const CustomButton = styled(Button)(({ theme, active }) => ({
     backgroundColor: active ? '#F56D3B' : '#FFF',
     padding: '8px 16px',
     margin: '0 8px',
+    textTransform: 'none',
     '&:hover': {
         backgroundColor: '#F56D3B',
         color: '#fff',
@@ -120,27 +121,46 @@ const AdminDataTable = ({
     };
 
     const handleToggle = id => {
+        // Log the initial state of the item being toggled
+        console.log('Toggling ID:', id);
+        console.log(
+            'Before Toggle:',
+            data.find(item => item.id === id)
+        );
+
         const updatedData = data.map(item =>
             item.id === id
                 ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
                 : item
         );
+
+        // Log the updated state of the item
+        console.log(
+            'After Toggle:',
+            updatedData.find(item => item.id === id)
+        );
+
         setData(updatedData);
-        console.log('ID : handle toggle : ', id);
+
         const toggledItem = updatedData.find(item => item.id === id);
         const requestData = { is_active: toggledItem.is_active };
+
         switch (componentName) {
             case 'ASSIGNCOACHSTUDENT':
                 dispatch(
                     toggleCoachAssignStudentStatus({ id, data: requestData })
-                );
-                dispatch(getCoachAssignStudents(ta_id));
+                ).then(() => {
+                    dispatch(getCoachAssignStudents(ta_id));
+                });
+
                 break;
             case 'ASSIGNCOACHBATCH':
                 dispatch(
                     toggleCoachAssignBatchStatus({ id, data: requestData })
-                );
-                dispatch(getCoachAssignBatches(ta_id));
+                ).then(() => {
+                    dispatch(getCoachAssignBatches(ta_id));
+                });
+
                 break;
             default:
                 console.warn(
@@ -175,7 +195,7 @@ const AdminDataTable = ({
     return (
         <div className="table-container">
             <Box display={'flex'} justifyContent={'space-between'}>
-                <Box display="flex" alignItems="center" padding="16px">
+                <Box>
                     {/* <ArrowBackIosIcon
             style={{ fontSize: "25px", marginBottom: "17px" }}
             onClick={() => navigate("/coach-mapping")}
@@ -184,7 +204,7 @@ const AdminDataTable = ({
                     <p
                         style={{
                             fontSize: '44px',
-                            marginLeft: '16px',
+                            fontFamily: 'ExtraLight',
                         }}
                     >
                         {title}
@@ -243,7 +263,7 @@ const AdminDataTable = ({
                                         verticalAlign: 'middle',
                                     }}
                                 >
-                                    {actionButtons?.map((button, idx) => {
+                                    {actionButtons.map((button, idx) => {
                                         if (button.type === 'switch') {
                                             return (
                                                 <AntSwitch

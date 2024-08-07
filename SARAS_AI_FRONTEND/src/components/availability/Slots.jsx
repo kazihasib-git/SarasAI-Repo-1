@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from '@mui/material';
 import ReusableDialog from '../CustomFields/ReusableDialog';
-import DynamicTable from '../CommonComponent/DynamicTable';
 import { useDispatch, useSelector } from 'react-redux';
 import PopUpTable from '../CommonComponent/PopUpTable';
 import { useParams } from 'react-router-dom';
@@ -10,50 +9,14 @@ import {
     closeScheduledSlots,
     openScheduledSession,
     getScheduleSession,
-    openReasonForLeave,
-} from '../../redux/features/taModule/taAvialability';
+} from '../../redux/features/adminModule/ta/taAvialability';
 
 import {
     closeCoachScheduledSlots,
     openCoachScheduledSession,
     getCoachScheduleSession,
-    openCoachReasonForLeave,
-} from '../../redux/features/CoachModule/CoachAvailabilitySlice';
-
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                padding: '10px 20px',
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
+} from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
+import CustomButton from '../CustomFields/CustomButton';
 
 const Slots = ({ componentName }) => {
     const dispatch = useDispatch();
@@ -63,50 +26,45 @@ const Slots = ({ componentName }) => {
 
     let scheduleSessionOpenKey,
         scheduledSlotsDataKey,
-        schedulingStateKey,
         getAvailableSlotsAction,
         closeScheduleSessionAction,
         getScheduleSessionAction,
         markLeaveKey,
-        openMarkLeaveAction;
+        sliceName;
 
     switch (componentName) {
         case 'TACALENDER':
+            sliceName = 'taAvailability';
             scheduleSessionOpenKey = 'scheduledSlotsOpen';
             scheduledSlotsDataKey = 'scheduledSlotsData';
-            schedulingStateKey = 'taAvailability';
             getAvailableSlotsAction = openScheduledSession;
             closeScheduleSessionAction = closeScheduledSlots;
             getScheduleSessionAction = getScheduleSession;
             markLeaveKey = 'markLeaveData';
-            openMarkLeaveAction = openReasonForLeave;
             break;
+
         case 'COACHCALENDER':
+            sliceName = 'coachAvailability';
             scheduleSessionOpenKey = 'scheduledCoachSlotsOpen';
             scheduledSlotsDataKey = 'scheduledCoachSlotsData';
-            schedulingStateKey = 'coachAvailability';
             getAvailableSlotsAction = openCoachScheduledSession;
             closeScheduleSessionAction = closeCoachScheduledSlots;
             getScheduleSessionAction = getCoachScheduleSession;
             markLeaveKey = 'markLeaveData';
-            openMarkLeaveAction = openCoachReasonForLeave;
             break;
+
         default:
+            sliceName = null;
             scheduleSessionOpenKey = null;
             scheduledSlotsDataKey = null;
-            schedulingStateKey = null;
             getAvailableSlotsAction = null;
             closeScheduleSessionAction = null;
             getScheduleSessionAction = null;
             markLeaveKey = null;
-            openMarkLeaveAction = null;
             break;
     }
 
-    const schedulingState =
-        useSelector(state =>
-            schedulingStateKey ? state[schedulingStateKey] : {}
-        ) || {};
+    const schedulingState = useSelector(state => state[sliceName]);
 
     const {
         [scheduleSessionOpenKey]: scheduledSlotsOpen,

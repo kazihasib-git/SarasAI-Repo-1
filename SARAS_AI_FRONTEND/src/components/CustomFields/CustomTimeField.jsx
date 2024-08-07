@@ -1,13 +1,21 @@
 import React from 'react';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers'; // Import TimePicker instead of DateTimePicker
+import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import moment from 'moment';
 
-const CustomTimeField = ({ label, name, value, onChange, sx, ...props }) => {
-    const momentValue = value ? moment(value, 'YYYY-MM-DDTHH:mm:ss') : null; // Adjust parsing format based on input
+const CustomTimeField = ({
+    label,
+    name,
+    value,
+    onChange,
+    sx,
+    fullWidth,
+    ...props
+}) => {
+    const momentValue = value ? moment(value, 'YYYY-MM-DDTHH:mm:ss') : null;
 
     const handleTimeChange = date => {
-        onChange(date.format('HH:mm:ss')); // Update onChange to only pass time
+        onChange(date.format('HH:mm:ss'));
     };
 
     return (
@@ -17,11 +25,29 @@ const CustomTimeField = ({ label, name, value, onChange, sx, ...props }) => {
                 name={name}
                 value={momentValue}
                 onChange={handleTimeChange}
-                inputFormat="HH:mm:ss" // Specify the desired time format
+                inputFormat="HH:mm:ss"
                 InputLabelProps={{
                     shrink: true,
+                    sx: {
+                        // Center the label vertically when in placeholder position
+                        position: 'absolute',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        fontSize: '1rem',
+                        transition: 'all 0.2s ease-in-out',
+                        '&.MuiInputLabel-shrink': {
+                            top: 0,
+                            transform: 'translateY(-100%) scale(0.75)',
+                            fontSize: '0.75rem',
+                        },
+                    },
                 }}
                 {...props}
+                slotProps={{
+                    textField: {
+                        fullWidth: { fullWidth },
+                    },
+                }}
                 sx={{
                     '& .MuiOutlinedInput-root': {
                         borderRadius: '50px',
@@ -33,6 +59,9 @@ const CustomTimeField = ({ label, name, value, onChange, sx, ...props }) => {
                         },
                         '&.Mui-focused fieldset': {
                             borderColor: 'rgb(245, 109, 59)',
+                        },
+                        '& .MuiInputBase-input': {
+                            padding: '16.5px 14px', // Adjust padding to match label's centered position
                         },
                     },
                     '& .MuiInputLabel-root': {

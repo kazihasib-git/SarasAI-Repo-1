@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Grid, Button, Typography, Box } from '@mui/material';
-import tus from 'tus-js-client';
+import { Upload } from 'tus-js-client';
 import { styled } from '@mui/material/styles';
 const VIMEO_ACCESS_TOKEN = process.env.VIMEO_ACCESS_TOKEN;
 
@@ -56,7 +56,7 @@ const VideoUploadComponent = () => {
             const uploadLink = vimeoResultData.upload.upload_link;
 
             if (uploadLink) {
-                const upload = new tus.Upload(file, {
+                const upload = new Upload(file, {
                     uploadUrl: uploadLink,
                     retryDelays: [0, 3000, 5000, 10000, 20000],
                     metadata: {

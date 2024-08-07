@@ -17,7 +17,7 @@ const CustomTimeZoneForm = ({
     disabled,
 }) => {
     const hasError = !!errors[name];
-    // console.log("label", label , name , value )
+
     return (
         <FormControl variant="outlined" disabled={disabled} fullWidth>
             <InputLabel
@@ -65,7 +65,7 @@ const CustomTimeZoneForm = ({
                 }}
             >
                 {options.map(option => (
-                    <MenuItem key={option.country} value={option.utc_offset}>
+                    <MenuItem key={option.id} value={option.id}>
                         {option.time_zone}
                     </MenuItem>
                 ))}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Divider from '@mui/material/Divider';
 
@@ -10,13 +10,18 @@ import Calendar from '../../../assets/calendar.svg';
 import Callrecord from '../../../assets/callrecords.svg';
 import Scheduledcalls from '../../../assets/scheduledcalls.svg';
 import Assessment from '../../../assets/assessments.svg';
-//import Callrequest from '../../../callrequest.svg';
 import Students from '../../../assets/students.svg';
 import Message from '../../../assets/messages.svg';
+
+import './CoachMenu.css';
 
 const CoachMenu = () => {
     const location = useLocation();
     const [activeLink, setActiveLink] = useState(location.pathname);
+
+    useEffect(() => {
+        setActiveLink(location.pathname);
+    }, [location.pathname]);
 
     const handleLinkClick = path => {
         setActiveLink(path);
@@ -35,13 +40,12 @@ const CoachMenu = () => {
                         <Link
                             to={'/coachmenu_profile'}
                             className={`nav-link ${
-                                activeLink.startsWith('/coachmenu-')
+                                activeLink === '/coachmenu_profile'
                                     ? 'active'
-                                    : 'collapsed'
+                                    : ''
                             }`}
-                            href="#"
                             onClick={() =>
-                                handleLinkClick('/coachmenu-profile')
+                                handleLinkClick('/coachmenu_profile')
                             }
                         >
                             <i className="bi bi-person-circle"></i>
@@ -58,11 +62,13 @@ const CoachMenu = () => {
                         <Link
                             to={'/coachmenu_students'}
                             className={`nav-link ${
-                                activeLink.startsWith('/coachmenu-')
+                                activeLink === '/coachmenu_students'
                                     ? 'active'
                                     : ''
                             }`}
-                            onClick={() => handleLinkClick('/')}
+                            onClick={() =>
+                                handleLinkClick('/coachmenu_students')
+                            }
                         >
                             <img
                                 src={Students}
@@ -86,11 +92,13 @@ const CoachMenu = () => {
                         <Link
                             to={'/coachmenu_calendar'}
                             className={`nav-link ${
-                                activeLink === '/coachmenu-calendar'
-                                    ? 'active orange-text'
+                                activeLink === '/coachmenu_calendar'
+                                    ? 'active'
                                     : ''
                             }`}
-                            onClick={() => handleLinkClick('/calendar')}
+                            onClick={() =>
+                                handleLinkClick('/coachmenu_calendar')
+                            }
                         >
                             <img
                                 src={Calendar}
@@ -114,11 +122,13 @@ const CoachMenu = () => {
                         <Link
                             to={'/coachmenu_scheduledcall'}
                             className={`nav-link ${
-                                activeLink.startsWith('/coachmenu-')
+                                activeLink === '/coachmenu_scheduledcall'
                                     ? 'active'
                                     : ''
                             }`}
-                            onClick={() => handleLinkClick('/ta-manage')}
+                            onClick={() =>
+                                handleLinkClick('/coachmenu_scheduledcall')
+                            }
                         >
                             <img
                                 src={Scheduledcalls}
@@ -142,11 +152,13 @@ const CoachMenu = () => {
                         <Link
                             to={'/coachmenu_callrequest'}
                             className={`nav-link ${
-                                activeLink === '/coach-call-request'
-                                    ? 'active orange-text'
+                                activeLink === '/coachmenu_callrequest'
+                                    ? 'active'
                                     : ''
                             }`}
-                            onClick={() => handleLinkClick('/callrequest')}
+                            onClick={() =>
+                                handleLinkClick('/coachmenu_callrequest')
+                            }
                         >
                             <img
                                 src={Callrecord}
@@ -170,11 +182,13 @@ const CoachMenu = () => {
                         <Link
                             to={'/coachmenu_messages'}
                             className={`nav-link ${
-                                activeLink.startsWith('/coachmenu-')
+                                activeLink === '/coachmenu_messages'
                                     ? 'active'
                                     : ''
                             }`}
-                            onClick={() => handleLinkClick('/ta-manage')}
+                            onClick={() =>
+                                handleLinkClick('/coachmenu_messages')
+                            }
                         >
                             <img
                                 src={Message}
@@ -198,11 +212,13 @@ const CoachMenu = () => {
                         <Link
                             to={'/coachmenu_callrecords'}
                             className={`nav-link ${
-                                activeLink.startsWith('/coachmenu-')
+                                activeLink === '/coachmenu_callrecords'
                                     ? 'active'
                                     : ''
                             }`}
-                            onClick={() => handleLinkClick('/call-records')}
+                            onClick={() =>
+                                handleLinkClick('/coachmenu_callrecords')
+                            }
                         >
                             <img
                                 src={Callrecord}
@@ -226,11 +242,13 @@ const CoachMenu = () => {
                         <Link
                             to={'/coachmenu_assessments'}
                             className={`nav-link ${
-                                activeLink.startsWith('/coachmenu-')
+                                activeLink === '/coachmenu_assessments'
                                     ? 'active'
                                     : ''
                             }`}
-                            onClick={() => handleLinkClick('/ta-manage')}
+                            onClick={() =>
+                                handleLinkClick('/coachmenu_assessments')
+                            }
                         >
                             <img
                                 src={Assessment}

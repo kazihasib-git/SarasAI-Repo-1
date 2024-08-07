@@ -3,12 +3,16 @@ import { useRef, useState, useEffect } from 'react';
 import './Login.css';
 // import axios from '../API/axios';
 import useAuth from '../Hooks/useAuth';
-const LOGIN_URL = '/auth';
+//const LOGIN_URL = '/auth';
+const LOGIN_URL = 'http://34.100.233.67:8080/api/login';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { login } from '../../redux/features/auth/authSlice';
 
 const Login = () => {
     const { setAuth } = useAuth();
 
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
     const from = location.state?.from?.pathname || '/';
@@ -19,6 +23,7 @@ const Login = () => {
     const [user, setUser] = useState('');
     const [pwd, setPwd] = useState('');
     const [errMsg, setErrMsg] = useState('');
+
     useEffect(() => {
         userRef.current.focus();
     }, []);
@@ -27,7 +32,9 @@ const Login = () => {
         setErrMsg('');
     }, [user, pwd]);
 
-    const handleSubmit = async e => {
+    /*
+    // using context api
+    const handleSubmit = async (e) => {
         e.preventDefault();
         // console.log(user, pwd)
         // setUser('')
@@ -44,7 +51,7 @@ const Login = () => {
 
             const response = {
                 data: {
-                    roles: [5150],
+                    roles: [1984],
                     accessToken: 'Heeloo_there_123',
                 },
             };
@@ -83,6 +90,25 @@ const Login = () => {
             errRef.current.focus();
         }
     };
+    */
+
+    // using redux toolkit
+    const onSubmit = async e => {
+        e.preventDefault();
+        try {
+            const requestBody = {
+                username: user,
+                password: pwd,
+            };
+
+            dispatch(login(requestBody));
+
+            setUser('');
+            setPwd('');
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     return (
         <div id="loginPage" className="login_Container">
@@ -95,7 +121,7 @@ const Login = () => {
                     {errMsg}
                 </p>
                 <h1 style={{ color: '#FFF' }}>Sign In</h1>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={onSubmit}>
                     <label style={{ color: '#fff' }} htmlFor="username">
                         Username:
                     </label>

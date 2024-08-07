@@ -6,53 +6,20 @@ import {
     openSuccessPopup,
     getStudentBatchMapping,
     postAssignStudents,
-} from '../../redux/features/taModule/taSlice';
+    getAssignStudents,
+} from '../../redux/features/adminModule/ta/taSlice';
 import CustomTextField from '../CustomFields/CustomTextField';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import PopUpTable from '../CommonComponent/PopUpTable';
-import { openScheduleSession } from '../../redux/features/taModule/taScheduling';
-
+import { openScheduleSession } from '../../redux/features/adminModule/ta/taScheduling';
 import {
     closeCoachAssignStudents,
     openCoachSuccessPopup,
     getCoachStudentBatchMapping,
     postCoachAssignStudents,
-} from '../../redux/features/CoachModule/coachSlice';
-
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                padding: '10px 20px',
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
+    getCoachAssignStudents,
+} from '../../redux/features/adminModule/coach/coachSlice';
+import CustomButton from '../CustomFields/CustomButton';
 
 const AssignStudents = ({ componentname }) => {
     const dispatch = useDispatch();
@@ -135,7 +102,29 @@ const AssignStudents = ({ componentname }) => {
     }, [assignStudentOpen, dispatch, getBatchMappingAction]);
 
     useEffect(() => {
-        if (studentBatchMapping) {
+        if (assignStudentOpen) {
+            if (componentname === 'ADDITCOACH') {
+                const id = coachID || assignedId;
+                dispatch(getCoachAssignStudents(id)).then(action => {
+                    const previouslyAssignedStudents = action.payload.data.map(
+                        student => student.student.id
+                    );
+                    setSelectedStudents(previouslyAssignedStudents);
+                });
+            } else if (componentname === 'ADDEDITTA') {
+                const id = taID || assignedId;
+                dispatch(getAssignStudents(id)).then(action => {
+                    const previouslyAssignedStudents = action.payload.data.map(
+                        student => student.student.id
+                    );
+                    setSelectedStudents(previouslyAssignedStudents);
+                });
+            }
+        }
+    }, [assignStudentOpen, dispatch, componentname, assignedId, coachID, taID]);
+
+    useEffect(() => {
+        if (studentBatchMapping && studentBatchMapping.length > 0) {
             const transformedData = studentBatchMapping.map(
                 (student, index) => ({
                     'S. No.': index + 1,
@@ -155,7 +144,7 @@ const AssignStudents = ({ componentname }) => {
 
             const filtered = transformedData.filter(student => {
                 const matchesTerm = selectedTerm
-                    ? student['Academic Term'] === selectedTerm
+                    ? student.Program.includes(selectedTerm)
                     : true;
                 const matchesBatch = selectedBatch
                     ? student.Batch.includes(selectedBatch)
@@ -172,6 +161,7 @@ const AssignStudents = ({ componentname }) => {
         }
     }, [studentBatchMapping, selectedTerm, selectedBatch, searchName]);
 
+    // Generate unique batch options and program options
     const batchOptions = studentBatchMapping
         ? [
               ...new Set(
@@ -179,7 +169,9 @@ const AssignStudents = ({ componentname }) => {
                       .filter(
                           student =>
                               !selectedTerm ||
-                              student.academic_term === selectedTerm
+                              student.packages
+                                  .map(pack => pack.name)
+                                  .includes(selectedTerm)
                       )
                       .flatMap(student =>
                           student.batches.map(batch => batch.batch_name)
@@ -191,7 +183,9 @@ const AssignStudents = ({ componentname }) => {
     const academicTermOptions = studentBatchMapping
         ? [
               ...new Set(
-                  studentBatchMapping.map(student => student.academic_term)
+                  studentBatchMapping.flatMap(student =>
+                      student.packages.map(pack => pack.name)
+                  )
               ),
           ]
         : [];
@@ -208,8 +202,8 @@ const AssignStudents = ({ componentname }) => {
                 ? coachID || assignedId
                 : taID || assignedId;
         const data = {
-            [componentname === 'ADDITCOACH' ? 'Coach_id' : 'ta_id']: id,
-            student: selectedStudents.map(id => ({ id: id.toString() })),
+            [componentname === 'ADDITCOACH' ? 'Coach_id' : 'admin_user_id']: id,
+            students : selectedStudents.map(id => ({ id: id.toString() })),
         };
         dispatch(postAssignAction({ id, data })).then(() => {
             if (assignedId) {
@@ -222,8 +216,10 @@ const AssignStudents = ({ componentname }) => {
                         })),
                     })
                 );
+            }else{
+                dispatch(openSuccessAction());
             }
-            dispatch(openSuccessAction());
+           
         });
         dispatch(closeDialogAction());
     };
@@ -232,14 +228,17 @@ const AssignStudents = ({ componentname }) => {
 
     const content = (
         <>
-            <Grid container spacing={2}>
+            <Grid container spacing={2} justifyContent="center" sx={{ mt: 0 }}>
                 <Grid item sm={6}>
                     <CustomTextField
                         select
-                        label="Academic Term"
+                        label="Program"
                         value={selectedTerm}
                         onChange={e => setSelectedTerm(e.target.value)}
                     >
+                        <MenuItem value="">
+                            <em>All</em>
+                        </MenuItem>
                         {academicTermOptions.map(term => (
                             <MenuItem key={term} value={term}>
                                 {term}
@@ -254,6 +253,9 @@ const AssignStudents = ({ componentname }) => {
                         value={selectedBatch}
                         onChange={e => setSelectedBatch(e.target.value)}
                     >
+                        <MenuItem value="">
+                            <em>All</em>
+                        </MenuItem>
                         {batchOptions.map(batch => (
                             <MenuItem key={batch} value={batch}>
                                 {batch}

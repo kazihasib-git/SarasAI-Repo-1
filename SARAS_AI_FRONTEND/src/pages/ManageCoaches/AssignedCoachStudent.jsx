@@ -3,15 +3,9 @@ import Header from '../../components/Header/Header';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { getCoachAssignStudents } from '../../redux/features/CoachModule/coachSlice';
+import { getCoachAssignStudents } from '../../redux/features/adminModule/coach/coachSlice';
 import AdminDataTable from '../../components/CommonComponent/AdminDataTable';
-const headers = [
-    'Sr. No.',
-    'Student Name',
-    'Academic Term',
-    'Batch',
-    'Actions',
-];
+const headers = ['Sr. No.', 'Student Name', 'Program', 'Batch', 'Actions'];
 const actionButtons = [
     {
         type: 'switch',
@@ -44,7 +38,7 @@ const AssignCoachStudent = () => {
                     ? item.student.name
                     : 'Unknown Student';
                 const academicTerm = item.student
-                    ? item.student.academic_term
+                    ? item.student.packages.map(pack => pack.name).join(', ')
                     : 'N/A';
                 const batchName =
                     item.student.batches && item.student.batches.length > 0
@@ -72,7 +66,7 @@ const AssignCoachStudent = () => {
             <AdminDataTable
                 headers={headers}
                 initialData={CoachAssignBatchesData}
-                title="Assigned Batches"
+                title="Assigned Students"
                 actionButtons={actionButtons}
                 ta_id={id}
                 dispatch={dispatch}

@@ -6,7 +6,8 @@ import {
     closeTemplateModulePopup,
     createCoachTemplateModule,
     getAllCoachTemplateModules,
-} from '../../../../redux/features/CoachModule/CoachTemplateSlice';
+    getCoachTemplateModuleId,
+} from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
 import { useDispatch, useSelector } from 'react-redux';
 
 const CustomButton = ({
@@ -86,7 +87,7 @@ const AddModule = () => {
             dispatch(createCoachTemplateModule(data))
                 .unwrap()
                 .then(() => {
-                    dispatch(getAllCoachTemplateModules(selectedCoachTemplate));
+                    dispatch(getCoachTemplateModuleId(selectedCoachTemplate));
                 });
             dispatch(closeTemplateModulePopup());
             setModuleName(''); // Reset the input field

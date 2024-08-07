@@ -1,13 +1,10 @@
 import { Box, DialogActions, Grid, Typography, Button } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import Calendar from '../../components/Calender/indexCalender';
-import CalendarNew from '../../components/Calender/IndexCalenderNew';
 import CalendarComponent from '../../components/Calender/BigCalendar';
 import MarkLeave from '../../components/availability/MarkLeave';
 import DeleteAllSlots from '../../components/availability/DeleteAllSlots';
 import CreateNewSlot from '../../components/availability/CreateNewSlot';
-import ScheduleSession from '../../components/availability/ScheduleSession';
 import {
     openMarkLeave,
     closeMarkLeave,
@@ -16,29 +13,27 @@ import {
     fetchTAScheduleById,
     selectTAScheduleData,
     openCreateNewSlots,
-} from '../../redux/features/taModule/taAvialability';
+    fetchTaSlots,
+    openDeleteTaSlots,
+} from '../../redux/features/adminModule/ta/taAvialability';
 import { useDispatch, useSelector } from 'react-redux';
 import Slots from '../../components/availability/Slots';
 import ScheduledSessions from '../../components/availability/ScheduledSessions';
 import CancelSchedule from '../../components/availability/CancelSchedule';
 import ReasonForLeave from '../../components/availability/ReasonForLeave';
 import ReschedulingSession from '../../components/availability/ReschedulingSession';
-import { PickersInputBaseSectionsContainer } from '@mui/x-date-pickers/PickersTextField/PickersInputBase/PickersInputBase';
-import NewCal from '../../components/Calender/IndexCalenderNew';
-import { add } from 'date-fns';
 import { useParams } from 'react-router-dom';
 import {
     getTAScheduledSessions,
     openScheduleSession,
-} from '../../redux/features/taModule/taScheduling';
-import moment from 'moment';
+} from '../../redux/features/adminModule/ta/taScheduling';
 import Schedule from '../../components/availability/Schedule';
-import AssignStudents from '../../components/adminModule/AssignStudents';
-import AssignBatches from '../../components/adminModule/AssignBatches';
 import EditBatches from '../../components/availability/EditBatches';
 import EditStudents from '../../components/availability/EditStudents';
 import Header from '../../components/Header/Header';
 import Sidebar from '../../components/Sidebar/Sidebar';
+import ScheduleSession from '../../components/availability/ScheduleSession';
+
 
 const CustomButton = ({
     onClick,
@@ -79,14 +74,6 @@ const TaCalender = () => {
     const dispatch = useDispatch();
     const { id, name } = useParams();
 
-    //const [sheduleNewSession, setSheduleNewSession] = useState(false)
-    const [deleteFutureSlots, setDeleteFutureSlots] = useState(false);
-    //const [createNewSlot, setCreateNewSlot] = useState(false)
-
-    const { assignBatchOpen, assignStudentOpen } = useSelector(
-        state => state.taModule
-    );
-
     const {
         slotData,
         scheduleData,
@@ -98,6 +85,8 @@ const TaCalender = () => {
         resheduleSessionOpen,
         createNewSlotOpen,
         scheduledSlotsData,
+        deletingCoachFutureSlots,
+        openEventData,
     } = useSelector(state => state.taAvialability);
 
     const {
@@ -111,67 +100,24 @@ const TaCalender = () => {
     const [eventsList, setEventsList] = useState([]);
     const [slotViewData, setSlotViewData] = useState([]);
 
-    /*
-        const addEvent = (title, startDateTime, endDateTime) => {
-            const newStart = new Date(startDateTime);
-            const newEnd = new Date(endDateTime);
-            setEventsList(prev => [...prev, { title, start: newStart, end: newEnd }]);
-        };
-
-        */
-
-    // const handleSelectEvent = event => {
-    //     if (window.confirm(`Are you sure you want to delete the event '${event.title}'?`)) {
-    //         setEventsList(prev => {
-    //             const updatedEvents = prev.filter(e => e.start !== event.start || e.end !== event.end || e.title !== event.title);
-    //             return updatedEvents;
-    //           });
-    //     }
-    //   };
-
-    /*
-        useEffect(() => {
-
-            // Get the current date
-            const currentDate = new Date();
-    
-            // Get the start date of the current month
-            const start_date = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-    
-            // Get the end date of the current month
-            const end_date = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
-    
-            // Format dates as DD/MM/YYYY
-            const formatDate = (date) => {
-                const day = String(date.getDate()).padStart(2, '0');
-                const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-                const year = date.getFullYear();
-                return `${day}/${month}/${year}`;
-            };
-    
-            const formattedStartDate = formatDate(start_date);
-            const formattedEndDate = formatDate(end_date);
-    
-            // Dispatch the action with the formatted dates
-            dispatch(getTAScheduledSessions({ id, data: { start_date: formattedStartDate, end_date: formattedEndDate } }));
-        }, [id]);
-        */
-
-    // console.log("ta Id :", id);
-
     useEffect(() => {
-        dispatch(fetchCoachSlots(id));
+        dispatch(fetchTaSlots(id));
         dispatch(fetchTAScheduleById(id));
     }, [dispatch]);
 
     useEffect(() => {
         if (scheduleData && scheduleData.data) {
             const transformedEvents = scheduleData.data.map(event => ({
-                title: event.meeting_name,
+                id : event.id,
+                meetingName : event.meeting_name,
+                meetingId : event.meeting_id,
+                platformId : event.platform_id,
                 start: new Date(
                     event.date.split(' ')[0] + 'T' + event.start_time
                 ),
                 end: new Date(event.date.split(' ')[0] + 'T' + event.end_time),
+                platform_tools : event.platform_tool_details,
+                platform_meet : event.platform_meeting_details,
             }));
             setEventsList(transformedEvents);
         } else {
@@ -184,6 +130,7 @@ const TaCalender = () => {
             const transformedSlots = slotData.data.map(slot => ({
                 startDate: new Date(slot.slot_date + 'T' + slot.from_time),
                 endDate: new Date(slot.slot_date + 'T' + slot.to_time),
+                leave: slot?.leaves,
             }));
             setSlotViewData(transformedSlots);
         } else {
@@ -191,11 +138,7 @@ const TaCalender = () => {
         }
     }, [slotData]);
 
-    // console.log("slotData", slotData, "scheduleData", scheduleData);
-
     const handleScheduleNewSession = () => {
-        // console.log("Pressed")
-        // setSheduleNewSession()
         dispatch(openScheduleSession({ id, name }));
     };
 
@@ -204,14 +147,15 @@ const TaCalender = () => {
     };
 
     const handleDeleteFutureSlots = () => {
-        setDeleteFutureSlots(true);
+        const data = { id, name };
+        dispatch(openDeleteTaSlots(data));
     };
 
     const handleCreateNewSlot = () => {
         dispatch(openCreateNewSlots());
     };
 
-    // console.log("session", scheduleData);
+    console.log('SlotViewData', slotViewData);
     // console.log("sessiond data", scheduleData.data);
 
     return (
@@ -272,6 +216,7 @@ const TaCalender = () => {
                                         style={{ textTransform: 'none' }}
                                     >
                                         {/* <AddCircleOutlineIcon /> */}
+                                        <AddCircleOutlineIcon sx={{ marginRight: 1 }} />
                                         Create New Slot
                                     </CustomButton>
                                 </Box>
@@ -293,7 +238,6 @@ const TaCalender = () => {
                     {openEditStudent && (
                         <EditStudents componentname={'TASCHEDULE'} />
                     )}
-                    {/*{sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} componentName={"TACALENDER"} />} */}
                     {markLeaveOpen && (
                         <MarkLeave
                             id={id}
@@ -336,20 +280,15 @@ const TaCalender = () => {
                             componentName={'TACALENDER'}
                         />
                     )}
-                    {deleteFutureSlots && (
-                        <DeleteAllSlots
-                            open={deleteFutureSlots}
-                            handleClose={() => setDeleteFutureSlots(false)}
-                            id={id}
-                            name={name}
-                            componentName={'TACALENDER'}
-                        />
+                    {deletingCoachFutureSlots && (
+                        <DeleteAllSlots componentName={'TACALENDER'} />
                     )}
                     {createNewSlotOpen && (
                         <CreateNewSlot componentName={'TACALENDER'} />
                     )}
-                    {/* {assignStudentOpen && <AssignStudents componentname="ADDEDITTA" />}
-                {assignBatchOpen && <AssignBatches componentname="ADDEDITTA" />} */}
+                    {openEventData && (
+                        <ScheduleSession componentName={'TACALENDER'} />
+                    )}
                 </Box>
             </Box>
         </>

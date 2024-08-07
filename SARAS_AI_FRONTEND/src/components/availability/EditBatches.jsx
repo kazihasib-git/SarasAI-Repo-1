@@ -4,68 +4,37 @@ import { useDispatch, useSelector } from 'react-redux';
 import CustomTextField from '../CustomFields/CustomTextField';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import PopUpTable from '../CommonComponent/PopUpTable';
-import {
-    closeAssignBatches,
-    openSuccessPopup,
-    postAssignBatches,
-    getAssignBatches,
-} from '../../redux/features/taModule/taSlice';
+import { getAssignBatches } from '../../redux/features/adminModule/ta/taSlice';
 
-import {
-    closeCoachAssignBatches,
-    openCoachSuccessPopup,
-    postCoachAssignBatches,
-    getCoachAssignBatches,
-} from '../../redux/features/CoachModule/coachSlice';
+import { getCoachAssignBatches } from '../../redux/features/adminModule/coach/coachSlice';
 
 import {
     closeEditBatch,
     openScheduleSession,
-} from '../../redux/features/taModule/taScheduling';
+} from '../../redux/features/adminModule/ta/taScheduling';
 
 import {
     closeCoachEditBatch,
     openCoachScheduleSession,
-} from '../../redux/features/CoachModule/coachSchedule';
-
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                padding: '10px 20px',
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
+} from '../../redux/features/adminModule/coach/coachSchedule';
+import {
+    closeSelectBatches,
+    getCoachMenuAssignedBatches,
+    openCreateSessionPopup,
+} from '../../redux/features/coachModule/coachmenuprofileSilce';
+import {
+    closeTaMenuSelectBatches,
+    getTaMenuAssignedBatches,
+    openTaMenuCreateSessionsPopup,
+} from '../../redux/features/taModule/tamenuSlice';
+import { useParams } from 'react-router-dom';
+import CustomButton from '../CustomFields/CustomButton';
 
 const EditBatches = ({ componentname }) => {
     console.log('COMPONENT NAME EDITBATCH: ', componentname);
+    const { id, name } = useParams();
     const dispatch = useDispatch();
+
     const [selectedBatch, setSelectedBatch] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedBranch, setSelectedBranch] = useState('');
@@ -74,13 +43,11 @@ const EditBatches = ({ componentname }) => {
     let stateModuleKey,
         nameKey,
         assignBatchOpenKey,
-        editBatchKey,
-        selectedBatchKey,
-        openScheduleSessionAction,
         closeDialogAction,
-        openSuccessAction,
         getAssignBatchesAction,
-        postAssignAction;
+        editBatchKey,
+        selectedBatchKey;
+
     let schedulingState, nameKeyScheduling, idKeyScheduling;
 
     switch (componentname) {
@@ -91,14 +58,12 @@ const EditBatches = ({ componentname }) => {
             editBatchKey = 'assignedBatches';
             selectedBatchKey = 'batches';
             closeDialogAction = closeCoachEditBatch;
-            openSuccessAction = openCoachSuccessPopup;
             getAssignBatchesAction = getCoachAssignBatches;
-            postAssignAction = postCoachAssignBatches;
             schedulingState = useSelector(state => state.coachScheduling);
             nameKeyScheduling = 'coachName';
             idKeyScheduling = 'coachID';
-            openScheduleSessionAction = openCoachScheduleSession;
             break;
+
         case 'TASCHEDULE':
             stateModuleKey = 'taModule';
             nameKey = 'ta_name';
@@ -106,14 +71,38 @@ const EditBatches = ({ componentname }) => {
             editBatchKey = 'assignedBatches';
             selectedBatchKey = 'batches';
             closeDialogAction = closeEditBatch;
-            openSuccessAction = openSuccessPopup;
             getAssignBatchesAction = getAssignBatches;
-            postAssignAction = postAssignBatches;
             schedulingState = useSelector(state => state.taScheduling);
             nameKeyScheduling = 'taName';
             idKeyScheduling = 'taID';
-            openScheduleSessionAction = openScheduleSession;
             break;
+
+        case 'COACHMENU_CALENDER':
+            stateModuleKey = 'coachMenu';
+            nameKey = '';
+            assignBatchOpenKey = 'selectBatches';
+            editBatchKey = 'assignedCoachBatches';
+            selectedBatchKey = 'selectedCoachBatches';
+            closeDialogAction = closeSelectBatches;
+            getAssignBatchesAction = getCoachMenuAssignedBatches;
+            schedulingState = useSelector(state => state.coachMenu);
+            nameKeyScheduling = '';
+            idKeyScheduling = '';
+            break;
+
+        case 'TAMENU_CALENDER':
+            stateModuleKey = 'taMenu';
+            nameKey = '';
+            assignBatchOpenKey = 'selectTaBatches';
+            editBatchKey = 'assignedTaBatches';
+            selectedBatchKey = 'selectedTaBatches';
+            closeDialogAction = closeTaMenuSelectBatches;
+            getAssignBatchesAction = getTaMenuAssignedBatches;
+            schedulingState = useSelector(state => state.taMenu);
+            nameKeyScheduling = '';
+            idKeyScheduling = '';
+            break;
+
         default:
             stateModuleKey = null;
             assignBatchOpenKey = null;
@@ -121,13 +110,10 @@ const EditBatches = ({ componentname }) => {
             editBatchKey = null;
             selectedBatchKey = null;
             closeDialogAction = null;
-            openSuccessAction = null;
             getAssignBatchesAction = null;
-            postAssignAction = null;
             schedulingState = null;
             nameKeyScheduling = null;
             idKeyScheduling = null;
-            openScheduleSessionAction = null;
             break;
     }
 
@@ -163,8 +149,6 @@ const EditBatches = ({ componentname }) => {
         assignedId,
         getAssignBatchesAction,
     ]);
-
-    console.log('Assigned Batches', assignedBatches);
 
     useEffect(() => {
         if (assignedBatches) {
@@ -235,7 +219,7 @@ const EditBatches = ({ componentname }) => {
             batches: selectedBatch ? selectedBatch.map(id => ({ id })) : [],
         };
         console.log('DATA: ', data);
-        dispatch(openScheduleSessionAction(data));
+        dispatch(openScheduleSession(data));
         dispatch(closeDialogAction());
     };
 
@@ -243,7 +227,7 @@ const EditBatches = ({ componentname }) => {
 
     const content = (
         <>
-            <Grid container spacing={2} justifyContent="center">
+            <Grid container spacing={2} justifyContent="center" sx={{ mt: 0 }}>
                 <Grid item sm={6}>
                     <CustomTextField
                         select

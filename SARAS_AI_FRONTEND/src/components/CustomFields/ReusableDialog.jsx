@@ -66,7 +66,9 @@ const ReusableDialog = ({ open, handleClose, title, content, actions }) => (
 
         <CustomDialogContent>{content}</CustomDialogContent>
 
-        <DialogActions sx={{ p: 2, justifyContent: 'center' }}>
+        <DialogActions
+            sx={{ p: 2, justifyContent: 'center', textTransform: 'none' }}
+        >
             <Box display="flex" justifyContent="center" width="100%" gap={2}>
                 {actions}
             </Box>
