@@ -459,7 +459,7 @@ const DynamicTable = ({
                                                                 handleCalender(
                                                                     'Calendar',
                                                                     item.id,
-                                                                    item.taName
+                                                                    item.taName,
                                                                 )
                                                             }
                                                         >

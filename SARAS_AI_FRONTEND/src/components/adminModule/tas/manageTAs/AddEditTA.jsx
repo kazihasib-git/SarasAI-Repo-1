@@ -108,12 +108,13 @@ const AddEditTA = ({ data }) => {
             address: data.address,
             pincode: data.pincode,
             phone: data.phone,
-            time_zone: data.time_zone,
+            time_zone: data.time_zone_id,
             gender: data.gender,
             email: data.email,
             date_of_birth: formattedDate,
             highest_qualification: data.highest_qualification,
             about_me: data.about_me,
+            description: data.description
         };
 
         Object.entries(formValues).forEach(([key, value]) =>
@@ -149,13 +150,12 @@ const AddEditTA = ({ data }) => {
 
     const handleSaveDescription = () => {
         setIsEditingDescription(false);
-        setValue('about_me', editableDescription);
+        setValue('description', editableDescription);
     };
 
     const onSubmit = async formData => {
+        console.log("formData :", formData)
         const { email, time_zone, ...updatedFormData } = formData;
-
-        // updatedFormData.date_of_birth = dateOfBirth;
 
         if (selectedImage) {
             const base64Data = selectedImage.replace(
@@ -164,7 +164,7 @@ const AddEditTA = ({ data }) => {
             );
             updatedFormData.profile_picture = base64Data;
         }
-
+            updatedFormData.description = editableDescription;
         try {
             if (data) {
                 const updateRes = await dispatch(
@@ -173,10 +173,8 @@ const AddEditTA = ({ data }) => {
                 dispatch(openSuccessPopup());
                 dispatch(accessTaName(updateRes));
             } else {
-                updatedFormData.email = email;
-                updatedFormData.time_zone = 'Asia/Kolkata';
                 const createRes = await dispatch(
-                    createTA(updatedFormData)
+                    createTA(formData)
                 ).unwrap();
                 dispatch(openSuccessPopup());
                 dispatch(accessTaName(createRes.ta));
@@ -184,6 +182,7 @@ const AddEditTA = ({ data }) => {
         } catch (error) {
             console.error('Error submitting form:', error);
         }
+
     };
 
     const nameValue = watch('name', '');
@@ -330,9 +329,10 @@ const AddEditTA = ({ data }) => {
                                             fullWidth
                                             multiline
                                             rows={2}
+                                            name='description'
                                             value={editableDescription}
                                             onChange={handleDescriptionChange}
-                                            placeholder="Add a brief description..."
+                                            placeholder="sort description..."
                                         />
                                         <Button
                                             variant="contained"
@@ -516,14 +516,15 @@ const AddEditTA = ({ data }) => {
 
                         <Grid item xs={12} sm={6} md={4}>
                             <Controller
-                                name="time_zone"
+                                name="timezone_id"
                                 control={control}
                                 rules={{ required: 'TimeZone is required' }}
                                 render={({ field }) => {
+                                    console.log("value ", field, field.value)
                                     return (
                                         <CustomTimeZoneForm
                                             label="Time Zone"
-                                            name="time_zone"
+                                            name="timezone_id"
                                             value={field.value}
                                             onChange={field.onChange}
                                             errors={errors}

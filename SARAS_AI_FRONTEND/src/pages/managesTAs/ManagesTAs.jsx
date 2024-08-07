@@ -40,7 +40,7 @@ const ManageTA = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        if (tas.length > 0) {
+        if (tas && tas.length > 0) {
             const transformData = tas.map(item => ({
                 id: item.id,
                 'TA Name': item.name,
