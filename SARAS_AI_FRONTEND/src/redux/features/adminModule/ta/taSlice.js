@@ -147,6 +147,17 @@ export const deleteAssignedStudent = createAsyncThunk(
     }
 );
 
+export const deleteTaMapping = createAsyncThunk(
+    'taModule/deleteTaMapping',
+    async id => {
+        console.log('ID to delete Ta Mapping : ', id);
+        const response = await axiosInstance.delete(
+            `${baseUrl}/admin/TAMapping/${id}/deleteMapping`
+        );
+        return response.data;
+    }
+);
+
 export const deleteAssignedBatch = createAsyncThunk(
     'taModule/deleteAssignedBatch',
     async id => {
@@ -433,6 +444,19 @@ export const taSlice = createSlice({
             // state.assignedStudents = action.payload;
         });
         builder.addCase(deleteAssignedStudent.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload || action.error.message;
+        });
+
+         // delete Ta Mapping
+         builder.addCase(deleteTaMapping.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(deleteTaMapping.fulfilled, (state, action) => {
+            state.loading = false;
+            
+        });
+        builder.addCase(deleteTaMapping.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload || action.error.message;
         });

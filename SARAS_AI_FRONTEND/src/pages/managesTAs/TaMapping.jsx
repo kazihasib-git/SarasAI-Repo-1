@@ -6,6 +6,7 @@ import Header from '../../components/Header/Header';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import DynamicTable from '../../components/CommonComponent/DynamicTable';
 import { mockMappingDat } from '../../fakeData/mappingData';
+import {deleteTaMapping } from '../../redux/features/adminModule/ta/taSlice';
 
 const headers = [
     'S. No.',
