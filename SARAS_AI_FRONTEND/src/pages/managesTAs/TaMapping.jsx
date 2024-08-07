@@ -50,9 +50,11 @@ const TaMapping = () => {
             setTaMappingData(transformData);
         }
     }, [taMapping]);
+
     const handleSearch = event => {
         setSearchQuery(event.target.value); // Handle search input change
     };
+    
     const filteredData = taMappingData.filter(
         item => item.name.toLowerCase().includes(searchQuery.toLowerCase()) // Filter data based on search query
     );

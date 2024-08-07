@@ -202,7 +202,7 @@ const AssignStudents = ({ componentname }) => {
                 ? coachID || assignedId
                 : taID || assignedId;
         const data = {
-            [componentname === 'ADDITCOACH' ? 'Coach_id' : 'admin_user_id']: id,
+            'admin_user_id' : id,
             students : selectedStudents.map(id => ({ id: id.toString() })),
         };
         dispatch(postAssignAction({ id, data })).then(() => {

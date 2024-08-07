@@ -173,12 +173,16 @@ const AdminDataTable = ({
     const handleDelete = id => {
         switch (componentName) {
             case 'ASSIGNCOACHSTUDENT':
-                dispatch(deleteCoachAssignedStudent({ id }));
-                dispatch(getCoachAssignStudents(ta_id));
+                dispatch(deleteCoachAssignedStudent({ id }))
+                    .then(() => {
+                        dispatch(getCoachAssignStudents(ta_id));
+                    })
                 break;
             case 'ASSIGNCOACHBATCH':
-                dispatch(deleteCoachAssignedBatch({ id }));
-                dispatch(getCoachAssignBatches(ta_id));
+                dispatch(deleteCoachAssignedBatch({ id }))
+                    .then(() => {
+                        dispatch(getCoachAssignBatches(ta_id));
+                    })
                 break;
             default:
                 console.warn(

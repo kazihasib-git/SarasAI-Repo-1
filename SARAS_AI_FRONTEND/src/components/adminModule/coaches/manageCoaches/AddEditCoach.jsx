@@ -43,6 +43,7 @@ import EditIcon from '@mui/icons-material/Edit';
 
 
 function AddEditCoach({ data }) {
+    console.log("coach Data", data)
     const {
         register,
         handleSubmit,
@@ -53,22 +54,18 @@ function AddEditCoach({ data }) {
     } = useForm({
         defaultValues: {
             gender: '',
-            time_zone: '',
+            timezone_id: null,
             highest_qualification: '',
             date_of_birth: null,
         },
     });
 
     const [selectedImage, setSelectedImage] = useState(null);
-    const [dateOfBirth, setDateOfBirth] = useState(null);
-    const [phoneNumber, setPhoneNumber] = useState('');
     const [editableDescription, setEditableDescription] = useState('');
     const [isEditingDescription, setIsEditingDescription] = useState(false);
-    const [editableAboutMe, setEditableAboutMe] = useState('');
     
 
     const dispatch = useDispatch();
-
     const { coachSuccessPopup, assignCoachStudentOpen, assignCoachBatchOpen } =
         useSelector(state => state.coachModule);
     const { timezones } = useSelector(state => state.util);
@@ -84,17 +81,16 @@ function AddEditCoach({ data }) {
     }, [data]);
 
     const populateForm = data => {
-        // TODO : Neet to format the date in MM/DD/YYYY format
-        // const newDate = dateFormatter(data.date_of_birth)
-        // console.log("NEW DATE : ", newDate)
 
-        const formattedDate = moment(data.date_of_birth).format('YYYY-MM-DD');
-        setDateOfBirth(formattedDate);
         dispatch(accessCoachName(data));
 
         if (data.profile_picture) {
             const blobUrl = base64ToBlobUrl(data.profile_picture);
             setSelectedImage(blobUrl);
+        }
+
+        if(data.description){
+            setEditableDescription(data.description);
         }
 
         const formValues = {
@@ -105,10 +101,10 @@ function AddEditCoach({ data }) {
             address: data.address,
             pincode: data.pincode,
             phone: data.phone,
-            time_zone: data.time_zone,
+            timezone_id : data.timezone_id,
             gender: data.gender,
             email: data.email,
-            date_of_birth: formattedDate,
+            date_of_birth: data.date_of_birth,
             highest_qualification: data.highest_qualification,
             about_me: data.about_me,
             description: data.description
@@ -117,8 +113,6 @@ function AddEditCoach({ data }) {
         Object.entries(formValues).forEach(([key, value]) =>
             setValue(key, value)
         );
-
-        setPhoneNumber(data.phone);
     };
 
     const base64ToBlobUrl = base64Data => {
@@ -139,47 +133,35 @@ function AddEditCoach({ data }) {
         dispatch(openCoachAssignBatches());
     };
 
-    const handleAboutMeChange = event => {
-        setEditableAboutMe(event.target.value);
-    };
-
-
-    const handleSaveDescription = () => {
-        setIsEditingDescription(false);
-        setValue('about_me', editableDescription);
-    };
-
     const handleDescriptionChange = event => {
         setEditableDescription(event.target.value);
     };
 
 
-    const onSubmit = async coachData => {
-        const { email, time_zone, ...updatedFormData } = coachData;
-
-        //updatedFormData.date_of_birth = dateOfBirth;
-        // updatedFormData.phone = phoneNumber;
-
+    const handleSaveDescription = () => {
+        setIsEditingDescription(false);
+        setValue('description', editableDescription);
+    };
+    const onSubmit = async (coachData) => {
+        
         if (selectedImage) {
             const base64Data = selectedImage.replace(
                 /^data:image\/(png|jpeg|jpg);base64,/,
                 ''
             );
-            updatedFormData.profile_picture = base64Data;
+            coachData.profile_picture = base64Data;
         }
-        updatedFormData.description = editableDescription;
         try {
             if (data) {
+                const { email, phone, ...updatedFormData } = coachData;
                 const updateRes = await dispatch(
                     updateCoach({ id: data.id, data: updatedFormData })
                 ).unwrap();
                 dispatch(openCoachSuccessPopup());
                 dispatch(accessCoachName(updateRes));
             } else {
-                updatedFormData.email = email;
-                updatedFormData.time_zone = 'Asia/Kolkata';
                 const createRes = await dispatch(
-                    createCoach(updatedFormData)
+                    createCoach(coachData)
                 ).unwrap();
                 dispatch(openCoachSuccessPopup());
                 dispatch(accessCoachName(createRes.coach));
@@ -190,13 +172,7 @@ function AddEditCoach({ data }) {
     };
 
     const nameValue = watch('name', '');
-    const aboutMeValue = watch('about_me', '');
 
-    const handleDateChange = (date, field) => {
-        const formattedDate = date ? moment(date).format('YYYY-MM-DD') : '';
-        setDateOfBirth(formattedDate);
-        field.onChange(formattedDate);
-    };
     return (
         <>
             <Header />
@@ -283,7 +259,6 @@ function AddEditCoach({ data }) {
                         borderRadius: 2,
                         p: 4,
                         boxShadow: 3,
-                        // maxWidth: 1400,
                         mx: 'auto',
                     }}
                 >
@@ -488,31 +463,7 @@ function AddEditCoach({ data }) {
                                     errors={errors}
                                 />
                             </Grid>
-                            {/* <Grid item xs={12} sm={6} md={4}>
-                <CustomTextField
-                  label="PIN Code"
-                  name="pincode"
-                  placeholder="Enter PIN Code"
-                  register={register}
-                  validation={{
-                    required: "PIN Code is required",
-                    pattern: {
-                      value: /^[a-zA-Z0-9-]*$/,
-                      message: "PIN Code must be alphanumeric",
-                    },
-                    minLength: {
-                      value: 3,
-                      message: "PIN Code must be at least 3 characters long",
-                    },
-                    maxLength: {
-                      value: 10,
-                      message: "PIN Code cannot exceed 10 characters",
-                    },
-                  }}
-                  errors={errors}
-                  helperText={errors.pinCode?.message}
-                />
-              </Grid> */}
+                        
                             <Grid item xs={12} sm={6} md={4}>
                                 <CustomTextField
                                     label="PIN Code"
@@ -543,23 +494,24 @@ function AddEditCoach({ data }) {
                             </Grid>
                             <Grid item xs={12} sm={6} md={4}>
                                 <Controller
-                                    name="time_zone"
+                                    name="timezone_id"
+                                    placeholder="Time Zone"
                                     control={control}
                                     rules={{
                                         required: 'Time Zone is required',
                                     }}
-                                    render={({ field }) => {
-                                        return (
+                                    render={({ field }) => (
                                             <CustomTimeZoneForm
                                                 label="Time Zone"
-                                                name="time_zone"
+                                                name="timezone_id"
+                                                placeholder="Time Zone"
                                                 value={field.value}
                                                 onChange={field.onChange}
                                                 errors={errors}
                                                 options={timezones}
                                             />
-                                        );
-                                    }}
+                                        )
+                                    }
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6} md={4}>
@@ -588,10 +540,8 @@ function AddEditCoach({ data }) {
                                         <CustomDateOfBirth
                                             label="Date of Birth"
                                             name="date_of_birth"
-                                            value={dateOfBirth}
-                                            onChange={date =>
-                                                handleDateChange(date, field)
-                                            }
+                                            value={field.value}
+                                            onChange={field.onChange}
                                             error={!!errors.date_of_birth}
                                             helperText={
                                                 errors.date_of_birth?.message
@@ -690,7 +640,7 @@ function AddEditCoach({ data }) {
                                     <Typography
                                         variant="body2"
                                         color="error"
-                                        style={{ marginTop: '8px' }}
+                                        style={{ fontSize: '0.75rem' }}
                                     >
                                         {errors.phone.message}
                                     </Typography>
@@ -708,8 +658,6 @@ function AddEditCoach({ data }) {
                                     errors={errors}
                                     multiline
                                     rows={4}
-                                    value={editableAboutMe}
-                                    onChange={handleAboutMeChange}
                                 />
                             </Grid>
                         </Grid>

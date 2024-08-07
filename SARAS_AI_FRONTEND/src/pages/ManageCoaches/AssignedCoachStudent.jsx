@@ -24,7 +24,7 @@ const AssignCoachStudent = () => {
         state => state.coachModule
     );
     const [CoachAssignBatchesData, setCoachAssignBatchesData] = useState([]);
-    console.log('Assigned Students', assignedStudents);
+
     useEffect(() => {
         if (id) {
             dispatch(getCoachAssignStudents(id));

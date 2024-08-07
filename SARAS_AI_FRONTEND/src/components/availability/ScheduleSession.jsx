@@ -142,7 +142,7 @@ const ScheduleSession = ({ componentName }) => {
     const handleChangeMode = () => {};
 
     const handleJoinCall = (data) => {
-        window.open(sessionData.platform_meet.join_url, '_blank');
+        window.open(sessionData.platform_meet.host_meeting_url, '_blank');
     }
   
     const content = (
