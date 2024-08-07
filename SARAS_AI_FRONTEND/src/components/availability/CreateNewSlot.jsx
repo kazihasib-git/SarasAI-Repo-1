@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
     Grid,
     Button,
@@ -11,17 +11,15 @@ import {
     Box,
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
-import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
-import { toast } from 'react-toastify';
-
 import CustomDateField from '../CustomFields/CustomDateField';
-import CustomTimeField from '../CustomFields/CustomTimeField';
+import CustomTimeField from '../CustomFields/CustomTimeField'; // Assuming you have a CustomTimeField component
 import ReusableDialog from '../CustomFields/ReusableDialog';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import CustomTimeZoneForm from '../CustomFields/CustomTimeZoneForm';
-import CustomButton from '../CustomFields/CustomButton';
-
 import { getTimezone } from '../../redux/features/utils/utilSlice';
+import { useParams } from 'react-router-dom';
+
 import {
     createSlots,
     closeCreateNewSlots,
@@ -31,7 +29,8 @@ import {
     createCoachSlots,
     fetchCoachSlots,
 } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
-
+import { toast } from 'react-toastify';
+import CustomButton from '../CustomFields/CustomButton';
 import { convertToUTC } from '../../utils/dateAndtimeConversion';
 
 const weekDays = [
@@ -45,7 +44,7 @@ const weekDays = [
 ];
 
 const CreateNewSlot = ({ componentName }) => {
-    const { id: taId } = useParams();
+    const taId = useParams();
     const dispatch = useDispatch();
 
     const [fromDate, setFromDate] = useState(null);
@@ -63,11 +62,13 @@ const CreateNewSlot = ({ componentName }) => {
             createSlotApi = createSlots;
             getSlotsApi = fetchTaSlots;
             break;
+
         case 'COACHCALENDER':
             sliceName = 'coachAvailability';
             createSlotApi = createCoachSlots;
             getSlotsApi = fetchCoachSlots;
             break;
+
         default:
             sliceName = null;
             createSlotApi = null;
@@ -125,7 +126,10 @@ const CreateNewSlot = ({ componentName }) => {
     };
 
     const onSubmit = formData => {
+        console.log('form data', formData);
+
         if (!validate()) {
+            console.log('NOT VALID DATA');
             return;
         }
 
@@ -143,18 +147,27 @@ const CreateNewSlot = ({ componentName }) => {
         formData.slot_date = fromDate;
         formData.from_time = fromTime;
         formData.to_time = toTime;
+        // formData.timezone = 'Asia/Kolkata';
         formData.end_date = repeat === 'recurring' ? toDate : fromDate;
         formData.weeks = weeksArray;
-        formData.admin_user_id = taId;
+        formData.admin_user_id = taId.id;
 
-        const { slot_date, from_time, to_time, end_date, timezone_id } = formData;
-        const convertedTimes = convertToUTC({ date_slot: slot_date, start_time: from_time, time_end: to_time, slot_end_date: end_date, time_zone_id: timezone_id });
 
-        console.log("Converted Times:", convertedTimes);
+        
+
+
+        const start_time =  formData.from_time ;
+        const time_end =  formData.to_time ;
+        const date_slot =  formData.slot_date ;
+        const slot_end_date = formData.end_date ;
+        const time_zone_id = formData.timezone_id ; 
+
+
+        console.log("timepass:" ,convertToUTC({date_slot , start_time, time_end, slot_end_date, time_zone_id}) ) ; 
 
         dispatch(createSlotApi(formData)).then(() => {
             dispatch(closeCreateNewSlots());
-            dispatch(getSlotsApi(taId));
+            dispatch(getSlotsApi(taId.id));
         });
     };
 
@@ -250,6 +263,7 @@ const CreateNewSlot = ({ componentName }) => {
                             <Controller
                                 name="timezone_id"
                                 control={control}
+                                // rules={{ required: 'Time Zone is required' }}
                                 render={({ field }) => (
                                     <CustomTimeZoneForm
                                         label="Time Zone"
@@ -302,79 +316,92 @@ const CreateNewSlot = ({ componentName }) => {
                                 <Grid
                                     container
                                     spacing={3}
-                                    sx={{ pt: 3 }}
                                     justifyContent="center"
+                                    sx={{ pt: 3 }}
                                 >
-                                    <Grid
-                                        item
-                                        xs={12}
-                                        sm={6}
-                                        display="flex"
-                                        justifyContent="center"
-                                    >
-                                        <CustomDateField
-                                            label="To Date"
-                                            value={toDate}
-                                            onChange={date => setToDate(date)}
-                                            name="toDate"
-                                            register={register}
-                                            validation={{
-                                                required: 'To Date is required',
-                                            }}
-                                            errors={errors}
-                                            sx={{ width: '100%' }}
-                                        />
+                                    <Grid item xs={12}>
+                                        <FormControl component="fieldset">
+                                            <FormGroup row>
+                                                {weekDays.map(day => (
+                                                    <FormControlLabel
+                                                        key={day}
+                                                        control={
+                                                            <Checkbox
+                                                                checked={selectedDays.includes(
+                                                                    day
+                                                                )}
+                                                                onChange={() =>
+                                                                    handleDayChange(
+                                                                        day
+                                                                    )
+                                                                }
+                                                                name={day}
+                                                            />
+                                                        }
+                                                        label={day}
+                                                    />
+                                                ))}
+                                            </FormGroup>
+                                        </FormControl>
                                     </Grid>
                                 </Grid>
                                 <Grid
-                                    container
-                                    spacing={3}
+                                    item
+                                    xs={12}
+                                    sm={6}
+                                    display="flex"
                                     sx={{ pt: 3 }}
                                     justifyContent="center"
                                 >
-                                    <Grid item xs={12} sm={6}>
-                                        <FormGroup row>
-                                            {weekDays.map(day => (
-                                                <FormControlLabel
-                                                    key={day}
-                                                    control={
-                                                        <Checkbox
-                                                            checked={selectedDays.includes(day)}
-                                                            onChange={() => handleDayChange(day)}
-                                                        />
-                                                    }
-                                                    label={day}
-                                                />
-                                            ))}
-                                        </FormGroup>
-                                    </Grid>
+                                    <CustomDateField
+                                        label="To Date"
+                                        value={toDate}
+                                        onChange={date => setToDate(date)}
+                                        name="end_date"
+                                        register={register}
+                                        validation={{
+                                            required: 'To Date is required',
+                                        }}
+                                        sx={{ width: '100%' }}
+                                    />
                                 </Grid>
                             </>
                         )}
-                        <Grid
-                            container
-                            spacing={3}
-                            justifyContent="center"
-                            sx={{ pt: 3 }}
-                        >
-                            <Grid item xs={12} display="flex" justifyContent="center">
-                                <Button type="submit" variant="contained">
-                                    Create Slot
-                                </Button>
-                            </Grid>
-                        </Grid>
                     </Box>
                 </form>
             </Grid>
         </Box>
     );
 
+    const actions = (
+        <>
+            <CustomButton
+                onClick={() => dispatch(closeCreateNewSlots())}
+                backgroundColor="white"
+                color="#F56D3B"
+                borderColor="#F56D3B"
+            >
+                Back
+            </CustomButton>
+            <CustomButton
+                type="submit"
+                form="createForm"
+                backgroundColor="#F56D3B"
+                color="white"
+                borderColor="#F56D3B"
+            >
+                Submit
+            </CustomButton>
+        </>
+    );
+
     return (
         <ReusableDialog
-            dialogContent={content}
-            dialogTitle="Create New Slot"
-            isOpen={createNewSlotOpen}
+            open={createNewSlotOpen}
             handleClose={() => dispatch(closeCreateNewSlots())}
+            title="Create New Slot"
+            actions={actions}
+            content={content}
         />
     );
 };
