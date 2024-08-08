@@ -25,6 +25,7 @@ import {
 } from '@mui/material';
 import calender from '../../../assets/calender.svg';
 import VideoUploadDialog from '../../../components/integrations/videoUpload';
+import VideoPopup from '../../../components/integrations/videoPlayerPopUp';
 
 const CustomButton = ({
     onClick,
@@ -64,42 +65,13 @@ const CustomButton = ({
 };
 
 const CoachCallRecord = () => {
-    // const calls = [
-    //     {
-    //         id: 1,
-    //         title: 'Aman Gupta Meeting',
-    //         time: '10 July | 12:30 PM',
-    //         participants: 'Aman Gupta, Amandeep',
-    //         status: 'Join Meeting',
-    //         description:
-    //             'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-    //     },
-    //     {
-    //         id: 2,
-    //         title: 'John Doe Meeting',
-    //         time: '11 July | 1:30 PM',
-    //         participants: 'John Doe, Jane Smith',
-    //         status: 'Join Meeting',
-    //         description:
-    //             'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-    //     },
-    //     {
-    //         id: 3,
-    //         title: 'Project Sync',
-    //         time: '12 July | 3:00 PM',
-    //         participants: 'Alice Johnson, Bob Brown',
-    //         status: 'Join Meeting',
-    //         description:
-    //             'Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-    //     },
-    // ];
-
     const calls = useSelector(state => state.coachMenu.coachCallRecords);
 
     const [date, setDate] = useState(moment());
     const [selectedCall, setSelectedCall] = useState(null);
-    //const [videoDialogOpen, setVideoDialogOpen] = useState(false);
+    const [videoDialogOpen, setVideoDialogOpen] = useState(false);
     const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+    const [videoUrl, setVideoUrl] = useState('')
 
     const dispatch = useDispatch();
 
@@ -274,9 +246,10 @@ const CoachCallRecord = () => {
                                     </CustomButton>
                                     {call.session_recording_url ? (
                                         <CustomButton
-                                            // onClick={() =>
-                                            //     setVideoDialogOpen(true)
-                                            // }
+                                            onClick={() => {
+                                                setVideoDialogOpen(true)
+                                                setVideoUrl(call.session_recording_url)
+                                            }}
                                             color="#F56D3B"
                                             backgroundColor="#FFFFFF"
                                             borderColor="#F56D3B"
@@ -316,6 +289,15 @@ const CoachCallRecord = () => {
                 open={uploadDialogOpen}
                 onClose={() => setUploadDialogOpen(false)}
             />
+
+            {videoDialogOpen && (
+                <VideoPopup
+                    open={videoDialogOpen}
+                    videoUrl={videoUrl}
+                    onClose={() => setVideoDialogOpen(false)}
+                />
+            ) }
+            
         </div>
     );
 };

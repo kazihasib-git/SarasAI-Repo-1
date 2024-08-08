@@ -28,7 +28,8 @@ const EditStudents = ({ componentname }) => {
     const [filteredStudents, setFilteredStudents] = useState([]);
     const [selectedPackage, setSelectedPackage] = useState('');
 
-    let stateModuleKey,
+    let sliceName,
+        stateModuleKey,
         nameKey,
         assignStudentOpenKey,
         closeDialogAction,
@@ -40,6 +41,7 @@ const EditStudents = ({ componentname }) => {
 
     switch (componentname) {
         case 'COACHSCHEDULE':
+            sliceName = 'coachModule'
             stateModuleKey = 'coachModule';
             nameKey = 'coach_name';
             assignStudentOpenKey = 'openCoachEditStudent';
@@ -53,6 +55,7 @@ const EditStudents = ({ componentname }) => {
             break;
 
         case 'TASCHEDULE':
+            sliceName = 'taModule'
             stateModuleKey = 'taModule';
             nameKey = 'ta_name';
             assignStudentOpenKey = 'openEditStudent';
@@ -66,6 +69,7 @@ const EditStudents = ({ componentname }) => {
             break;
 
         default:
+            sliceName = null;
             stateModuleKey = null;
             nameKey = null;
             assignStudentOpenKey = null;
@@ -79,9 +83,12 @@ const EditStudents = ({ componentname }) => {
             break;
     }
 
-    const stateSelector = useSelector(state =>
-        stateModuleKey ? state[stateModuleKey] : {}
-    );
+    const stateSelector = useSelector((state) => state[sliceName])
+
+    // const stateSelector = useSelector(state =>
+    //     stateModuleKey ? state[stateModuleKey] : {}
+    // );
+
     const {
         [nameKeyScheduling]: assignedName,
         [idKeyScheduling]: assignedId,
@@ -96,12 +103,10 @@ const EditStudents = ({ componentname }) => {
         [editStudentKey]: assignedStudents,
     } = stateSelector || {};
 
-    console.log("TA ID :", id)
-
     useEffect(() => {
-        dispatch(getAssignStudents(taID));
+        const userAdminId = assignedId || id;
         if (stateModuleKey && assignStudentOpen) {
-            dispatch(getAssignStudentAction(assignedId));
+            dispatch(getAssignStudentAction(userAdminId));
         }
     }, [
         dispatch,
@@ -114,7 +119,6 @@ const EditStudents = ({ componentname }) => {
     useEffect(() => {
         if (assignedStudents) {
             // Transform and filter the data
-            console.log('students batches mapping', assignedStudents);
             const transformedData = assignedStudents.map((stu, index) => ({
                 'S. No.': index + 1,
                 'Student Name': stu.student.name,
@@ -314,7 +318,7 @@ const EditStudents = ({ componentname }) => {
         </CustomButton>
     );
 
-    const assignedTA = assignedTAName || assignedName;
+    const assignedTA = assignedTAName || assignedName || name;
 
     return (
         <ReusableDialog

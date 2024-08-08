@@ -129,7 +129,7 @@ import {
     Typography,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-const VIMEO_ACCESS_TOKEN = process.env.VIMEO_ACCESS_TOKEN;
+const VIMEO_ACCESS_TOKEN = process.env.REACT_APP_VIMEO_ACCESS_TOKEN;
 
 // VIMEO_CLIENT_ID=34b3c9cb5fac58425122c4b84e79e2832e857b14
 // VIMEO_CLIENT_SECRET=DRGOd/6GfDDDUHu7hFakjCq0ka4vWz93J5Dgoy4epBP1x8OyVnkw6xGsl8KnDzEMIFcJ65425x20DRhGOCl36oL9f8jvun4l0LxygKDEMTEe4PM2ShJOJYmB2xwL0kpd
@@ -144,6 +144,8 @@ const VideoUploadDialog = ({ open, onClose }) => {
     const handleFileChange = event => {
         setFile(event.target.files[0]);
     };
+
+    console.log("VIMEO_ACCESS_TOKEN", VIMEO_ACCESS_TOKEN)
 
     const uploadVideoToVimeo = async () => {
         const requestData = {
@@ -183,6 +185,7 @@ const VideoUploadDialog = ({ open, onClose }) => {
             if (uploadLink) {
                 const upload = new Upload(file, {
                     endpoint: uploadLink,
+                    uploadUrl : uploadLink,
                     retryDelays: [0, 3000, 5000, 10000, 20000],
                     metadata: {
                         filename: file.name,
@@ -197,7 +200,13 @@ const VideoUploadDialog = ({ open, onClose }) => {
                         setUploadProgress(percentage);
                     },
                     onSuccess: async function () {
+                        console.log("Link :", vimeoResultData.link)
                         setVideoUrl(vimeoResultData.link);
+                        // TODO : NEED TO CALL BACKEND API FOR UPLOAD RECOREDED SESSION
+
+                        // TODO : NEED TO TRACK THE STATUS OF VIDEO after uploading unitl it is uploaded succesfully show  show a box displaying that uploading in progress. 
+
+                        
                     },
                 });
 
