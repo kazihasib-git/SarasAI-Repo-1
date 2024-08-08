@@ -43,6 +43,7 @@ const PDFUploadComponent = () => {
                         variant="text"
                         sx={{ color: '#F56D3B' }}
                         component="span"
+                        style={{ textTransform: 'none' }}
                     >
                         Browse File
                     </Button>

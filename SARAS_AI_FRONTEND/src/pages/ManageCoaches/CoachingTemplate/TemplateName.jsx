@@ -44,6 +44,8 @@ const TemplateName = () => {
     const { newTemplateData } = location.state || {};
 
     console.log('Tempete name is', template_name);
+    
+
     console.log('coach templete', coachTemplates);
     console.log('coachtemplate id', coachTemplatesId);
 
@@ -104,6 +106,7 @@ const TemplateName = () => {
         'Actions',
     ];
 console.log("coachtemplateid", coachTemplatesId)
+console.log('Tempete name is>>>>>>>>>>>>>>>>>>', coachTemplatesId[0]?.name);
     const actionButtons = [
         {
             type: 'switch',
@@ -133,9 +136,10 @@ console.log("coachtemplateid", coachTemplatesId)
                         fontFamily: 'ExtraLight',
                     }}
                 >
+                    
                     {newTemplateData?.name ||
                         template_name ||
-                        coachTemplatesId[0]?.template.name}
+                        coachTemplatesId[0]?.name}
                 </p>
                 <div className="inputBtnContainer">
                     <button className="buttonContainer" onClick={handleModule}>

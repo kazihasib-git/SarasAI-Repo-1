@@ -98,7 +98,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId }) => {
             link: data.virtualMeetLink, // Add other fields if needed
         };
         console.log('payload', payload);
-        console.log("ActivityId", selectedActivityId);
+        console.log('ActivityId', selectedActivityId);
         try {
             await dispatch(linkActivity(payload))
                 .unwrap()
@@ -198,22 +198,21 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId }) => {
             dispatch(getCoachAvailableSlotsFromDate(data));
 
             if (coachAvailableSlots) {
-              const data1 = {
-                admin_user_id: selectedCoachId,
-                meeting_name: 'Team Meeting',
-                meeting_url: 'http://example.com/meeting',
-                schedule_date: fromDate,
-                slot_id: coachAvailableSlots[0].id,
-                start_time: coachAvailableSlots[0].from_time,
-                end_time: coachAvailableSlots[0].to_time,
-                timezone: 'IST',
-                event_status: 'scheduled',
-                end_date: fromDate,
-                studentId: [1],
-                batchId: [2],
-                weeks:[0,0,0,0,0,0,0]
-                
-            };
+                const data1 = {
+                    admin_user_id: selectedCoachId,
+                    meeting_name: 'Team Meeting',
+                    meeting_url: 'http://example.com/meeting',
+                    schedule_date: fromDate,
+                    slot_id: coachAvailableSlots[0].id,
+                    start_time: coachAvailableSlots[0].from_time,
+                    end_time: coachAvailableSlots[0].to_time,
+                    timezone: 'IST',
+                    event_status: 'scheduled',
+                    end_date: fromDate,
+                    studentId: [1],
+                    batchId: [2],
+                    weeks: [0, 0, 0, 0, 0, 0, 0],
+                };
                 dispatch(createCoachSchedule(data1));
             }
         }
@@ -391,7 +390,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId }) => {
                 />
             )}
             {selectedSessionType === 'group' &&
-                activityType === 'virtual meet' && <VirtualGroupSession/>}
+                activityType === 'virtual meet' && <VirtualGroupSession />}
         </Grid>
     );
 
@@ -402,6 +401,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId }) => {
                 backgroundColor="#F56D3B"
                 borderColor="#F56D3B"
                 color="#FFFFFF"
+                style={{ textTransform: 'none' }} // Inline style to transform text to lowercase
             >
                 Submit
             </CustomButton>

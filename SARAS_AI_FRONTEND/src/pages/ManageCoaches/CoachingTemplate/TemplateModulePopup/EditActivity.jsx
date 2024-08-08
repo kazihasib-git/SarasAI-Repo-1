@@ -231,7 +231,7 @@ const AddEditActivity = () => {
             // Create new activity
             dispatch(createCoachTemplateActivity(data));
         }
-
+        console.log("Selectedcoachtemplate", selectedCoachTemplate);
         dispatch(getAllCoachTemplateModules(selectedCoachTemplate));
         dispatch(getAllCoachTemplates());
         dispatch(closeEditActivityPopup());
