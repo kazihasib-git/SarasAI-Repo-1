@@ -4,6 +4,7 @@ import { baseUrl } from '../../../utils/baseURL';
 import axiosInstance from '../../services/httpService';
 import { toast } from 'react-toastify';
 import { act } from 'react';
+
 const accessToken = localStorage.getItem('accessToken');
 
 // Get Coach profile
@@ -217,8 +218,7 @@ export const denyCallRequest = createAsyncThunk(
             `${baseUrl}/coach/call-request/denie-call-request/${id}`,
             {
                 // 'reject_reason': message,
-                reject_reason: message,  
-                
+                reject_reason: message,
             }
         );
         console.log(response.data, 'response.data');
@@ -260,6 +260,31 @@ export const getCoachCallRecords = createAsyncThunk(
     }
 );
 
+//upload video
+
+export const uploadSessionRecording = createAsyncThunk(
+    'coachMenu/uploadSessionRecording',
+    async ({ id, session_recording_url }, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.put(
+                `${baseUrl}/coach/call-recording/upload-session-recording/${id}`,
+                {
+                    session_recording_url: session_recording_url,
+                }
+            );
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                return rejectWithValue(errorData.message);
+            }
+
+            return await response.json(); // Or return an appropriate response
+        } catch (error) {
+            return rejectWithValue('Upload failed. Please try again.');
+        }
+    }
+);
+
 export const assignSessionNotes = createAsyncThunk(
     'calls/assignSessionNotes',
     async ({ id, data }, { rejectWithValue }) => {
@@ -291,7 +316,7 @@ export const assignSessionNotes = createAsyncThunk(
 
 const initialState = {
     coachProfileData: [], // Coach Profile Data
-    updateProfileData:[],
+    updateProfileData: [],
     coachSlots: [], // Coach Slots
     coachSlotsByDate: [], // Coach Slots By Date
     coachSessions: [], // Coach Sessions,
@@ -327,6 +352,9 @@ const initialState = {
     reasonForLeavePopup: false,
     cancelSessionOnLeave: false,
     viewStudentsOnReschedule: false,
+
+    selectedCallId: null,
+    sessionRecordingUrl: null,
 
     loading: false,
     error: null,
@@ -703,6 +731,18 @@ export const coachMenuSlice = createSlice({
             state.error = action.error.message;
             state.coachCallRecords = [];
         });
+
+        //video upload call record
+
+        builder
+            .addCase(uploadSessionRecording.fulfilled, (state, action) => {
+                // Assuming the response contains session_recording_url
+                state.sessionRecordingUrl =
+                    action.payload.session_recording_url;
+            })
+            .addCase(uploadSessionRecording.rejected, (state, action) => {
+                state.error = action.payload;
+            });
 
         // session notes
         builder.addCase(assignSessionNotes.pending, state => {
