@@ -1,7 +1,17 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { getAssignStudents, getStudentBatchMapping } from '../../redux/features/adminModule/ta/taSlice'
+import { closeTaEditScheduledStudents, editTASchdeuledStudents, getTAScheduledBatches, getTAScheduledStudents } from '../../redux/features/adminModule/ta/taAvialability'
+import ReusableDialog from '../CustomFields/ReusableDialog'
+import CustomButton from '../CustomFields/CustomButton'
+import { Divider, Grid, MenuItem, Typography } from '@mui/material'
+import CustomTextField from '../CustomFields/CustomTextField'
+import PopUpTable from '../CommonComponent/PopUpTable'
+import { closeCoachEditScheduledStudents, editCoachScheduledStudents, getCoachScheduledStudents } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice'
+import { getCoachAssignStudents } from '../../redux/features/adminModule/coach/coachSlice'
+
+const headers = ['S. No.', 'Student Name', 'Program', 'Batch', 'Select'];
 
 const EditStudentsFromSession = ({ componentName }) => {
     const dispatch = useDispatch()
@@ -13,37 +23,76 @@ const EditStudentsFromSession = ({ componentName }) => {
     const [selectedStudents, setSelectedStudents] = useState([]);
     const [filteredStudents, setFilteredStudents] = useState([]);
 
-    let sliceName,
+    let openPopState,
+        closePopupActions,
+        sliceName,
+        availabilitySliceName,
+        scheduledStudentsApi,
+        scheduledStudentsState,
+        editScheduledStudentsApi,
         assignedStudentsApi,
-        assignedStudentsState;
+        assignedStudentsState,
+        meetingIdState;
 
     switch (componentName) {
-        case 'TASCHEDULE' : 
+        case 'TACALENDER' : 
             sliceName = 'taModule';
+            availabilitySliceName = 'taAvialability'
+            openPopState = 'taEditScheduledStudents'
+            closePopupActions = closeTaEditScheduledStudents
+            scheduledStudentsApi = getTAScheduledStudents
+            scheduledStudentsState = 'taScheduledStudents'
+            editScheduledStudentsApi =  editTASchdeuledStudents
             assignedStudentsApi = getAssignStudents
             assignedStudentsState = 'assignedStudents'
+            meetingIdState = 'meetingId'
             break;
-        case 'COACHSCHEDULE' :
+
+        case 'COACHCALENDER' :
             sliceName = 'coachModule';
-            assignedStudentsApi = ''
-            assignedStudentsState = ''
+            availabilitySliceName = 'coachAvailability'
+            openPopState = 'coachEditScheduledStudents'
+            closePopupActions = closeCoachEditScheduledStudents
+            scheduledStudentsApi = getCoachScheduledStudents
+            scheduledStudentsState = 'coachScheduledStudents'
+            editScheduledStudentsApi = editCoachScheduledStudents
+            assignedStudentsApi = getCoachAssignStudents
+            assignedStudentsState = 'assignedStudents'
+            meetingIdState = 'meetingId'
             break;
         
         default :
             sliceName = null;
+            availabilitySliceName = null
+            openPopState = null
+            closePopupActions = null
+            scheduledStudentsApi = null
+            scheduledStudentsState = null
+            editScheduledStudentsApi = null
             assignedStudentsApi = null;
             assignedStudentsState = null;
+            meetingIdState = null;
             break;
     }
 
     const stateSelector = useSelector((state) => state[sliceName])
+    const availabilityStateSelector = useSelector((state) => state[availabilitySliceName])
 
     const {
         [assignedStudentsState] : assignedStudents
     } = stateSelector;
 
+    const {
+        [scheduledStudentsState] : scheduledStudents,
+        [openPopState] : open,
+        [meetingIdState] : meetingId
+    } = availabilityStateSelector;
+
     useEffect(() => {
         dispatch(assignedStudentsApi(id))
+        .then(() => {
+            dispatch(scheduledStudentsApi(meetingId));
+        })
     }, [dispatch])
 
     useEffect(() => {
@@ -83,6 +132,8 @@ const EditStudentsFromSession = ({ componentName }) => {
             });
 
             setFilteredStudents(filtered);
+        }else{
+            setFilteredStudents()
         }
     }, [assignedStudents, selectedTerm, selectedBatch, searchName])
 
@@ -128,8 +179,10 @@ const EditStudentsFromSession = ({ componentName }) => {
             : [];
 
     useEffect(() => {
-        
-    }, [])
+        if(scheduledStudents){
+            setSelectedStudents(scheduledStudents.map((student)=> student.student_id))
+        }
+    }, [scheduledStudents])
 
     const handleSelectStudent = id => {
         setSelectedStudents(prev =>
@@ -137,9 +190,105 @@ const EditStudentsFromSession = ({ componentName }) => {
         );
     };
 
-    return (
-        <div>EditStudentsFromSession</div>
+    const handleSubmit = () => {
+        console.log("MeetingId", meetingId)
+        const Id = meetingId
+        const data = {
+            admin_user_id : Number(id),
+            studentId : selectedStudents.map(id => (id))
+        }
+        dispatch(editScheduledStudentsApi({ Id, data })).
+        then(() => {
+            dispatch(closePopupActions())
+        })
+    }
+
+    const content = (
+        <>
+            <Grid container spacing={2} justifyContent="center" sx={{ mt: 0 }}>
+                <Grid item sm={6}>
+                    <CustomTextField
+                        select
+                        label="Program"
+                        value={selectedTerm}
+                        onChange={e => setSelectedTerm(e.target.value)}
+                    >
+                        <MenuItem value="">
+                            <em>All</em>
+                        </MenuItem>
+                        {academicTermOptions.map(term => (
+                            <MenuItem key={term} value={term}>
+                                {term}
+                            </MenuItem>
+                        ))}
+                    </CustomTextField>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                    <CustomTextField
+                        select
+                        label="Batch"
+                        value={selectedBatch}
+                        onChange={e => setSelectedBatch(e.target.value)}
+                    >
+                        <MenuItem value="">
+                            <em>All</em>
+                        </MenuItem>
+                        {batchOptions.map(batch => (
+                            <MenuItem key={batch} value={batch}>
+                                {batch}
+                            </MenuItem>
+                        ))}
+                    </CustomTextField>
+                </Grid>
+                <Grid item xs={12}>
+                    <Divider sx={{ border: '1px solid #C2C2E7' }} />
+                </Grid>
+                <Grid item xs={12} marginBottom={2}>
+                    <CustomTextField
+                        label="Search By Student Name"
+                        value={searchName}
+                        onChange={e => setSearchName(e.target.value)}
+                    />
+                </Grid>
+            </Grid>
+            <PopUpTable
+                headers={headers}
+                initialData={filteredStudents}
+                onRowClick={handleSelectStudent}
+                selectedBox={selectedStudents}
+            />
+            <Typography
+                variant="subtitle1"
+                gutterBottom
+                sx={{ mt: 2, textAlign: 'center' }}
+            >
+                {selectedStudents.length} Student(s) Selected
+            </Typography>
+        </>
+    );
+
+    const actions = (
+        <CustomButton
+            onClick={handleSubmit}
+            style={{
+                backgroundColor: '#F56D3B',
+                borderColor: '#F56D3B',
+                color: '#FFFFFF',
+            }}
+        >
+            Submit
+        </CustomButton>
     )
+
+    return (
+        <ReusableDialog
+            open={open}
+            handleClose={() => dispatch(closePopupActions())}
+            title={`Assign Students to the Session`}
+            content={content}
+            actions={actions}
+        />
+    );
 }
 
 export default EditStudentsFromSession

@@ -29,6 +29,8 @@ import Sidebar from '../../components/Sidebar/Sidebar';
 import Schedule from '../../components/availability/Schedule';
 import { openCreateNewSlots } from '../../redux/features/adminModule/ta/taAvialability';
 import ScheduleSession from '../../components/availability/ScheduleSession';
+import EditBatchesFromSession from '../../components/availability/EditBatchesFromSession';
+import EditStudentsFromSession from '../../components/availability/EditStudentsFromSession';
 
 const CustomButton = ({
     onClick,
@@ -91,6 +93,8 @@ const CoachCalender = () => {
         scheduleCoachData,
         deletingCoachFutureSlots,
         coachOpenEventData,
+        coachEditScheduledStudents,
+        coachEditScheduledBatches,
     } = useSelector(state => state.coachAvailability);
 
     const {
@@ -308,6 +312,12 @@ const CoachCalender = () => {
                     )}
                     {coachOpenEventData && (
                         <ScheduleSession componentName={'COACHCALENDER'} />
+                    )}
+                    {coachEditScheduledBatches && (
+                        <EditBatchesFromSession componentName={'COACHCALENDER'} />
+                    )}
+                    {coachEditScheduledStudents && (
+                        <EditStudentsFromSession componentName={'COACHCALENDER'} />
                     )}
                 </Box>
             </Box>
