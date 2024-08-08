@@ -69,6 +69,7 @@ export const cancelCoachScheduledSession = createAsyncThunk(
     }
 );
 
+
 const initialState = {
     coachAvailableSlots: [],
     coachScheduledSessions: [],

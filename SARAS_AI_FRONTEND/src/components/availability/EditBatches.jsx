@@ -136,11 +136,11 @@ const EditBatches = ({ componentname }) => {
         loading,
     } = stateSelector || {};
 
-    console.log('assignedId : ', assignedId);
 
     useEffect(() => {
+        const userAdminId = assignedId || id;
         if (stateModuleKey && assignBatchOpen) {
-            dispatch(getAssignBatchesAction(assignedId));
+            dispatch(getAssignBatchesAction(userAdminId));
         }
     }, [
         dispatch,
@@ -292,7 +292,7 @@ const EditBatches = ({ componentname }) => {
         return <div>Loading...</div>;
     }
 
-    const assignedTA = assignedTAName || assignedName;
+    const assignedTA = assignedTAName || assignedName || name;
 
     return (
         <ReusableDialog

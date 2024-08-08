@@ -33,6 +33,8 @@ import EditStudents from '../../components/availability/EditStudents';
 import Header from '../../components/Header/Header';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import ScheduleSession from '../../components/availability/ScheduleSession';
+import EditStudentsFromSession from '../../components/availability/EditStudentsFromSession';
+import EditBatchesFromSession from '../../components/availability/EditBatchesFromSession';
 
 
 const CustomButton = ({
@@ -87,6 +89,8 @@ const TaCalender = () => {
         scheduledSlotsData,
         deletingCoachFutureSlots,
         openEventData,
+        taEditScheduledStudents,
+        taEditScheduledBatches,
     } = useSelector(state => state.taAvialability);
 
     const {
@@ -289,6 +293,12 @@ const TaCalender = () => {
                     )}
                     {openEventData && (
                         <ScheduleSession componentName={'TACALENDER'} />
+                    )}
+                    {taEditScheduledStudents && (
+                            <EditStudentsFromSession componentName={'TACALENDER'} />
+                    )}
+                    {taEditScheduledBatches && (
+                        <EditBatchesFromSession componentName={'TACALENDER'} />
                     )}
                 </Box>
             </Box>

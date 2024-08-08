@@ -107,6 +107,50 @@ export const reasonForCoachLeave = createAsyncThunk(
     }
 );
 
+// Get Coach Schdeuled Students
+export const getCoachScheduledStudents = createAsyncThunk(
+    'coachAvailability/getScheduledStudents',
+    async id  => {
+        const response = await axiosInstance.get(
+            `${baseUrl}/admin/coachschedules/students/${id}`
+        )
+        return response.data;
+    }
+)
+
+// Edit Coach Scheduled Students 
+export const editCoachScheduledStudents = createAsyncThunk(
+    'coachAvailability/editScheduledStudents',
+    async ({ Id, data}) => {
+        const response = await axiosInstance.patch(
+            `${baseUrl}/admin/coachschedules/update-students/${Id}` , data
+        )
+        return response.data;
+    }
+)
+
+// Get Coach Schdeuled Batches
+export const getCoachScheduledBatches = createAsyncThunk(
+    'coachAvailability/getScheduledBatches',
+    async id => {
+        const response = await axiosInstance.get(
+            `${baseUrl}/admin/coachschedules/batches/${id}`
+        )
+        return response.data;
+    }
+)
+
+// Edit Coach Scheduled Batches
+export const editCoachScheduledBatches = createAsyncThunk(
+    'coachAvailability/editScheduledBatches',
+    async ({ Id, data}) => {
+        const response = await axiosInstance.patch(
+            `${baseUrl}/admin/coachschedules/update-batches/${Id}`, data
+        )
+        return response.data;
+    }
+)
+
 const initialState = {
     todaysAvailableCoach: [],
     coachMarkLeaveOpen: false,
@@ -117,6 +161,10 @@ const initialState = {
     scheduledCoachSessionData: [], // Ensure this is correctly named and initialized
     availableCoachSlotsData: [],
     reasonForCoachLeaveData: [],
+    platformData : [],
+    coachScheduledStudents : [],
+    coachScheduledBatches : [],
+
     scheduledCoachSessionOpen: false,
     cancelCoachSessionOpen: false,
     resheduleCoachSessionOpen: false,
@@ -135,6 +183,10 @@ const initialState = {
     coachName: [],
     coachSessionEventData: [],
     coachOpenEventData: false,
+
+    coachEditScheduledStudents : false,
+    coachEditScheduledBatches : false,
+    meetingId : null,
 };
 
 export const coachAvailabilitySlice = createSlice({
@@ -217,6 +269,23 @@ export const coachAvailabilitySlice = createSlice({
         // closeStudentsRescheduleSession(state) {
         //   state.customResheduleSessionOpen = false;
         // },
+        openCoachEditScheduledStudents(state, action){
+            console.log("Action :", action.payload)
+            state.coachEditScheduledStudents = true;
+            state.meetingId = action.payload.id
+        },
+        closeCoachEditScheduledStudents(state, action){
+            state.coachEditScheduledStudents = false;
+            state.meetingId = null
+        },
+        openCoachEditSchduledBatches(state, action){
+            state.coachEditScheduledBatches = true;
+            state.meetingId = action.payload.id
+        },
+        closeCoachEditScheduledBatches(state, action){
+            state.coachEditScheduledBatches = false
+            state.meetingId = null
+        }
     },
     extraReducers: builder => {
         //for sessions Coach for calendar
@@ -338,6 +407,60 @@ export const coachAvailabilitySlice = createSlice({
             state.loading = false;
             state.error = action.error.message;
         });
+
+        // Get Coach Scheduled Students
+        builder.addCase(getCoachScheduledStudents.pending, state => {
+            state.loading = true;
+        })
+        builder.addCase(getCoachScheduledStudents.fulfilled , (state, action) => {
+            state.loading = false;
+            state.coachScheduledStudents = action.payload.data;
+        })
+        builder.addCase(getCoachScheduledStudents.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+            state.coachScheduledStudents=  []
+        })
+
+        // Edit Coach Scheduled Students
+        builder.addCase(editCoachScheduledStudents.pending, state => {
+            state.loading = true;
+        })
+        builder.addCase(editCoachScheduledStudents.fulfilled, (state, action) => {
+            state.loading = false;
+            // TODO :
+        })
+        builder.addCase(editCoachScheduledStudents.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message
+        })
+
+        // Get Coach Scheduled Batches
+        builder.addCase(getCoachScheduledBatches.pending , state => {
+            state.loading = true;
+        })
+        builder.addCase(getCoachScheduledBatches.fulfilled, (state, action) => {
+            state.loading = false;
+            state.coachScheduledBatches = action.payload.data;
+        })
+        builder.addCase(getCoachScheduledBatches.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+            state.coachScheduledBatches = []
+        })
+
+        // Edit Coach Scheduled Batches
+        builder.addCase(editCoachScheduledBatches.pending, (state) => {
+            state.loading = true;
+        })
+        builder.addCase(editCoachScheduledBatches.fulfilled, (state, action) => {
+            state.loading = false;
+            // TODO : 
+        })
+        builder.addCase(editCoachScheduledBatches.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message
+        })
     },
 });
 
@@ -360,6 +483,10 @@ export const {
     closeDeleteCoachSlots,
     openCoachSessionEvent,
     closeCoachSessionEvent,
+    openCoachEditSchduledBatches,
+    closeCoachEditScheduledBatches,
+    openCoachEditScheduledStudents,
+    closeCoachEditScheduledStudents,
     // openStudentsRescheduleSession,
     // closeStudentsRescheduleSession
 } = coachAvailabilitySlice.actions;
