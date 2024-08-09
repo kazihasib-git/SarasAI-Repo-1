@@ -316,10 +316,14 @@ const CoachCalender = () => {
                         <ScheduleSession componentName={'COACHCALENDER'} />
                     )}
                     {coachEditScheduledBatches && (
-                        <EditBatchesFromSession componentName={'COACHCALENDER'} />
+                        <EditBatchesFromSession
+                            componentName={'COACHCALENDER'}
+                        />
                     )}
                     {coachEditScheduledStudents && (
-                        <EditStudentsFromSession componentName={'COACHCALENDER'} />
+                        <EditStudentsFromSession
+                            componentName={'COACHCALENDER'}
+                        />
                     )}
                 </Box>
             </Box>

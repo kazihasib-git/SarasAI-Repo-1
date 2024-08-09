@@ -43,8 +43,8 @@ const WOLInstructions = () => {
     const [instruction, setInstruction] = useState([]);
 
     const handleEditWOLInstructions = () => {
-        console.log("INSTRUC", instruction)
-        setValue(instructionData[0].message);// Join the points into a single string
+        console.log('INSTRUC', instruction);
+        setValue(instructionData[0].message); // Join the points into a single string
         setEditData(true);
     };
 
@@ -67,7 +67,7 @@ const WOLInstructions = () => {
 
     useEffect(() => {
         if (instructionData && instructionData.length > 0) {
-            console.log("INSTRUCTION DATA : ", instructionData[0].message);
+            console.log('INSTRUCTION DATA : ', instructionData[0].message);
             // Extract points from HTML message
             const points = extractPoints(instructionData[0].message);
             setInstruction(points); // Update state with the array of points
@@ -78,7 +78,9 @@ const WOLInstructions = () => {
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = html;
         const textContent = tempDiv.textContent || tempDiv.innerText || '';
-        return textContent.split(/(?=\d+\.\s)/).filter(point => point.trim() !== '');
+        return textContent
+            .split(/(?=\d+\.\s)/)
+            .filter(point => point.trim() !== '');
     }
 
     const modules = {
@@ -145,7 +147,7 @@ const WOLInstructions = () => {
                             fontSize: '40px',
                             fontWeight: 200,
                             justifyContent: 'center',
-                            fontFamily : 'ExtraLight'
+                            fontFamily: 'ExtraLight',
                         }}
                     >
                         {editData
@@ -161,18 +163,15 @@ const WOLInstructions = () => {
                         <button
                             className="buttonContainer"
                             onClick={handleEditWOLInstructions}
-                            style={{ fontFamily : 'Bold' }}
+                            style={{ fontFamily: 'Bold' }}
                         >
-                            <img
-                                src={editIcon_White}
-                                alt="edit image"
-                            />
+                            <img src={editIcon_White} alt="edit image" />
                             <small
                                 style={{
                                     fontSize: '16px',
                                     fontWeight: 700,
                                     marginLeft: '5px',
-                                    fontFamily : 'Bold'
+                                    fontFamily: 'Bold',
                                 }}
                             >
                                 Edit
@@ -198,7 +197,7 @@ const WOLInstructions = () => {
                         fontSize: '16px',
                         fontWeight: 500,
                         marginBottom: '20px',
-                        fontFamily : 'Medium'
+                        fontFamily: 'Medium',
                     }}
                     component="h4"
                     gutterBottom
@@ -230,7 +229,12 @@ const WOLInstructions = () => {
                                 className="buttonContainer"
                                 onClick={handleUpdateWOLInstructions}
                             >
-                                <small style={{ fontSize: '14px', fontFamily : 'Bold' }}>
+                                <small
+                                    style={{
+                                        fontSize: '14px',
+                                        fontFamily: 'Bold',
+                                    }}
+                                >
                                     Update
                                 </small>
                             </button>

@@ -97,13 +97,13 @@ const WOLTestConfig = () => {
     }, [wolCategoryData]);
 
     // Generate options based on the wol_questions_count for each category
-    const WOLCategoriesOptions = wolCategoryData.map(item => ({
-        value: item.id,
-        label: item.name,
-    })) || [];
+    const WOLCategoriesOptions =
+        wolCategoryData.map(item => ({
+            value: item.id,
+            label: item.name,
+        })) || [];
 
-    
-    const getNumberOfQuestionsOptions = (categoryId) => {
+    const getNumberOfQuestionsOptions = categoryId => {
         const category = wolCategoryData.find(cat => cat.id === categoryId);
         const maxQuestions = category?.wol_questions_count || 0;
         return Array.from({ length: maxQuestions }, (_, i) => ({
@@ -248,7 +248,12 @@ const WOLTestConfig = () => {
                                 type="submit"
                                 active={true}
                                 variant="contained"
-                                sx={{ borderRadius: '50px', padding: '14px 30px', textTransform: 'none', fontFamily : 'Bold' }}
+                                sx={{
+                                    borderRadius: '50px',
+                                    padding: '14px 30px',
+                                    textTransform: 'none',
+                                    fontFamily: 'Bold',
+                                }}
                             >
                                 {edit ? 'Update' : 'Submit'}
                             </CustomButton>
@@ -262,52 +267,151 @@ const WOLTestConfig = () => {
                     <TableContainer sx={{ padding: 2 }} component={Paper}>
                         <Table sx={{ minWidth: 650 }} aria-label="simple table">
                             <TableHead>
-                                <TableRow >
-                                    <TableCell style={{ fontFamily : 'Medium' }}>S. No.</TableCell>
-                                    <TableCell style={{ fontFamily : 'Medium', align : "left" }} >Wheel of Life Category</TableCell>
-                                    <TableCell style={{ fontFamily : 'Medium', align : "left" }} >No. of Questions</TableCell>
+                                <TableRow>
+                                    <TableCell style={{ fontFamily: 'Medium' }}>
+                                        S. No.
+                                    </TableCell>
+                                    <TableCell
+                                        style={{
+                                            fontFamily: 'Medium',
+                                            align: 'left',
+                                        }}
+                                    >
+                                        Wheel of Life Category
+                                    </TableCell>
+                                    <TableCell
+                                        style={{
+                                            fontFamily: 'Medium',
+                                            align: 'left',
+                                        }}
+                                    >
+                                        No. of Questions
+                                    </TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {Array.from({ length: formValues.numberOfWolCategories }, (_, index) => (
-                                    <TableRow key={index}>
-                                        <TableCell component="th" scope="row">{index + 1}</TableCell>
-                                        <TableCell  style={{ fontFamily : 'Medium', align : "left" }} >
-                                            <CustomFormControl
-                                                label="Category Name"
-                                                name={`category_name_${index}`}
-                                                value={formValues.categories[index]?.category_name || ''}
-                                                onChange={e => {
-                                                    const newCategories = [...formValues.categories];
-                                                    newCategories[index] = { ...newCategories[index], category_name: e.target.value };
-                                                    setFormValues({ ...formValues, categories: newCategories });
+                                {Array.from(
+                                    {
+                                        length: formValues.numberOfWolCategories,
+                                    },
+                                    (_, index) => (
+                                        <TableRow key={index}>
+                                            <TableCell
+                                                component="th"
+                                                scope="row"
+                                            >
+                                                {index + 1}
+                                            </TableCell>
+                                            <TableCell
+                                                style={{
+                                                    fontFamily: 'Medium',
+                                                    align: 'left',
                                                 }}
-                                                errors={errors}
-                                                options={WOLCategoriesOptions}
-                                            />
-                                            {errors[`category_name_${index}`] && <p style={{ color: 'red' }}>{errors[`category_name_${index}`]}</p>}
-                                        </TableCell>
-                                        <TableCell align="left">
-                                            <CustomFormControl
-                                                label="No. of Questions"
-                                                name={`no_of_questions_${index}`}
-                                                value={formValues.categories[index]?.no_of_questions || ''}
-                                                onChange={e => {
-                                                    const newCategories = [...formValues.categories];
-                                                    newCategories[index] = { ...newCategories[index], no_of_questions: e.target.value };
-                                                    setFormValues({ ...formValues, categories: newCategories });
-                                                }}
-                                                errors={errors}
-                                                options={getNumberOfQuestionsOptions(formValues.categories[index]?.category_name)}
-                                            />
-                                            {errors[`no_of_questions_${index}`] && <p style={{ color: 'red' }}>{errors[`no_of_questions_${index}`]}</p>}
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
+                                            >
+                                                <CustomFormControl
+                                                    label="Category Name"
+                                                    name={`category_name_${index}`}
+                                                    value={
+                                                        formValues.categories[
+                                                            index
+                                                        ]?.category_name || ''
+                                                    }
+                                                    onChange={e => {
+                                                        const newCategories = [
+                                                            ...formValues.categories,
+                                                        ];
+                                                        newCategories[index] = {
+                                                            ...newCategories[
+                                                                index
+                                                            ],
+                                                            category_name:
+                                                                e.target.value,
+                                                        };
+                                                        setFormValues({
+                                                            ...formValues,
+                                                            categories:
+                                                                newCategories,
+                                                        });
+                                                    }}
+                                                    errors={errors}
+                                                    options={
+                                                        WOLCategoriesOptions
+                                                    }
+                                                />
+                                                {errors[
+                                                    `category_name_${index}`
+                                                ] && (
+                                                    <p style={{ color: 'red' }}>
+                                                        {
+                                                            errors[
+                                                                `category_name_${index}`
+                                                            ]
+                                                        }
+                                                    </p>
+                                                )}
+                                            </TableCell>
+                                            <TableCell align="left">
+                                                <CustomFormControl
+                                                    label="No. of Questions"
+                                                    name={`no_of_questions_${index}`}
+                                                    value={
+                                                        formValues.categories[
+                                                            index
+                                                        ]?.no_of_questions || ''
+                                                    }
+                                                    onChange={e => {
+                                                        const newCategories = [
+                                                            ...formValues.categories,
+                                                        ];
+                                                        newCategories[index] = {
+                                                            ...newCategories[
+                                                                index
+                                                            ],
+                                                            no_of_questions:
+                                                                e.target.value,
+                                                        };
+                                                        setFormValues({
+                                                            ...formValues,
+                                                            categories:
+                                                                newCategories,
+                                                        });
+                                                    }}
+                                                    errors={errors}
+                                                    options={getNumberOfQuestionsOptions(
+                                                        formValues.categories[
+                                                            index
+                                                        ]?.category_name
+                                                    )}
+                                                />
+                                                {errors[
+                                                    `no_of_questions_${index}`
+                                                ] && (
+                                                    <p style={{ color: 'red' }}>
+                                                        {
+                                                            errors[
+                                                                `no_of_questions_${index}`
+                                                            ]
+                                                        }
+                                                    </p>
+                                                )}
+                                            </TableCell>
+                                        </TableRow>
+                                    )
+                                )}
                             </TableBody>
                         </Table>
                         <Box display="flex" justifyContent="flex-start" mt={2}>
-                            <SubmitButton type="submit" active={true} variant="contained" style={{ textTransform : 'none', fontFamily : 'Bold' }} >Submit</SubmitButton>
+                            <SubmitButton
+                                type="submit"
+                                active={true}
+                                variant="contained"
+                                style={{
+                                    textTransform: 'none',
+                                    fontFamily: 'Bold',
+                                }}
+                            >
+                                Submit
+                            </SubmitButton>
                         </Box>
                     </TableContainer>
                 </form>

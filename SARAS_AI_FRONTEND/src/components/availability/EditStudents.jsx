@@ -100,7 +100,7 @@ const EditStudents = ({ componentname }) => {
     } = stateSelector || {};
 
     useEffect(() => {
-        const id = assignedId || taID || coachID
+        const id = assignedId || taID || coachID;
         if (stateModuleKey && assignStudentOpen) {
             dispatch(getAssignStudentAction(id));
         }

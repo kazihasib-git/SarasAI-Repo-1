@@ -110,7 +110,6 @@ const WOLSelectQuestions = () => {
     };
 
     const handleSubmit = () => {
-
         const data = {
             wol_test_category_id: categoryIdToSubmitSelectedQuestions,
             wol_questions_id: selectedQuestions,
@@ -147,7 +146,7 @@ const WOLSelectQuestions = () => {
                             fontSize: '40px',
                             fontWeight: 200,
                             justifyContent: 'center',
-                            fontFamily : 'ExtraLight'
+                            fontFamily: 'ExtraLight',
                         }}
                     >
                         Wheel Of Life Test Config
@@ -188,7 +187,7 @@ const WOLSelectQuestions = () => {
                                     fontSize: '20px',
                                     fontWeight: 500,
                                     justifyContent: 'center',
-                                    fontFamily : 'Medium'
+                                    fontFamily: 'Medium',
                                 }}
                             >
                                 Total Questions: {totalQuestions}
@@ -201,7 +200,7 @@ const WOLSelectQuestions = () => {
                                 color: '#1A1E3D',
                                 fontSize: '16px',
                                 fontWeight: 500,
-                                fontFamily : 'Medium'
+                                fontFamily: 'Medium',
                             }}
                             component="h4"
                             gutterBottom
@@ -215,7 +214,7 @@ const WOLSelectQuestions = () => {
                                 color: '#1A1E3D',
                                 fontSize: '16px',
                                 fontWeight: 500,
-                                fontFamily : 'Medium'
+                                fontFamily: 'Medium',
                             }}
                             component="h4"
                             gutterBottom
@@ -235,7 +234,7 @@ const WOLSelectQuestions = () => {
                             padding: '14px 30px',
                             margin: '0 8px',
                             textTransform: 'none',
-                            fontFamily : 'Bold'
+                            fontFamily: 'Bold',
                         }}
                     >
                         <img
@@ -265,7 +264,7 @@ const WOLSelectQuestions = () => {
                                     color: '#1A1E3D',
                                     fontWeight: 500,
                                     mb: 1,
-                                    fontFamily : 'Medium'
+                                    fontFamily: 'Medium',
                                 }}
                             >
                                 Q{index + 1}: {question.question}
@@ -297,8 +296,8 @@ const WOLSelectQuestions = () => {
                             borderRadius: '50px',
                             padding: '8px 16px',
                             margin: '0 8px',
-                            textTransform : 'none',
-                            fontFamily : 'Bold'
+                            textTransform: 'none',
+                            fontFamily: 'Bold',
                         }}
                         onClick={handleSubmit}
                     >

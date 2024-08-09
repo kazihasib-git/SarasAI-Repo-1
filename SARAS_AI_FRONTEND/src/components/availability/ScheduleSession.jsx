@@ -10,9 +10,19 @@ import {
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import { useDispatch, useSelector } from 'react-redux';
-import { changePlatform, closeSessionEvent, fetchTAScheduleById, openTaEditSchduledBatches, openTaEditScheduledStudents } from '../../redux/features/adminModule/ta/taAvialability';
+import {
+    changePlatform,
+    closeSessionEvent,
+    fetchTAScheduleById,
+    openTaEditSchduledBatches,
+    openTaEditScheduledStudents,
+} from '../../redux/features/adminModule/ta/taAvialability';
 import { formatDateTime } from '../../utils/dateFormatter';
-import { closeCoachSessionEvent, openCoachEditSchduledBatches, openCoachEditScheduledStudents } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
+import {
+    closeCoachSessionEvent,
+    openCoachEditSchduledBatches,
+    openCoachEditScheduledStudents,
+} from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import {
     openEditStudent,
     openEditBatch,
@@ -93,7 +103,7 @@ const ScheduleSession = ({ componentName }) => {
             openPopupState = 'openEventData';
             openEditBatches = openEditBatch;
             openEditStudents = openEditStudent;
-            openStudentsPopup =  openTaEditScheduledStudents;
+            openStudentsPopup = openTaEditScheduledStudents;
             openBatchesPopup = openTaEditSchduledBatches;
             break;
 
@@ -104,8 +114,8 @@ const ScheduleSession = ({ componentName }) => {
             openPopupState = 'coachOpenEventData'; // Assuming this is correct
             openEditBatches = openCoachEditBatch;
             openEditStudents = openCoachEditStudent;
-            openStudentsPopup = openCoachEditScheduledStudents
-            openBatchesPopup = openCoachEditSchduledBatches
+            openStudentsPopup = openCoachEditScheduledStudents;
+            openBatchesPopup = openCoachEditSchduledBatches;
             break;
 
         default:
@@ -131,11 +141,11 @@ const ScheduleSession = ({ componentName }) => {
     console.log('SESSION DATA :', sessionData);
 
     const handleEditStudents = () => {
-        dispatch(openStudentsPopup({ id : sessionData.id }));
+        dispatch(openStudentsPopup({ id: sessionData.id }));
     };
 
     const handleEditBatches = () => {
-        dispatch(openBatchesPopup({ id : sessionData.id }));
+        dispatch(openBatchesPopup({ id: sessionData.id }));
     };
 
     console.log('sessionData', sessionData);

@@ -90,16 +90,16 @@ const WOLCategories = () => {
                                 fontSize: '40px',
                                 fontWeight: 200,
                                 justifyContent: 'center',
-                                fontFamily : 'ExtraLight'
+                                fontFamily: 'ExtraLight',
                             }}
                         >
                             Wheel Of Life Categories
                         </p>
                     </Box>
-                    <Box className="inputBtnContainer" paddingBottom="16px"   >
+                    <Box className="inputBtnContainer" paddingBottom="16px">
                         <button
                             className="buttonContainer"
-                            style={{ fontFamily : 'Bold' }}
+                            style={{ fontFamily: 'Bold' }}
                             onClick={handleAddNewWOLCategory}
                         >
                             <i className="bi bi-plus-circle"></i>

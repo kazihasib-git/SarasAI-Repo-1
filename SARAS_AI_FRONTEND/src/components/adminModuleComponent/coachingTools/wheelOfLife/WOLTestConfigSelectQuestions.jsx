@@ -105,7 +105,7 @@ const WOLTestConfigSelectQuestions = () => {
                             fontSize: '40px',
                             fontWeight: 200,
                             justifyContent: 'center',
-                            fontFamily : 'ExtraLight'
+                            fontFamily: 'ExtraLight',
                         }}
                     >
                         Wheel Of Life Test Config
@@ -135,7 +135,7 @@ const WOLTestConfigSelectQuestions = () => {
                                 color: '#1A1E3D',
                                 fontSize: '24px',
                                 fontWeight: 500,
-                                fontFamily : 'Medium'
+                                fontFamily: 'Medium',
                             }}
                             component="h4"
                             gutterBottom
@@ -149,7 +149,7 @@ const WOLTestConfigSelectQuestions = () => {
                                 color: '#1A1E3D',
                                 fontSize: '24px',
                                 fontWeight: 500,
-                                fontFamily : 'Medium'
+                                fontFamily: 'Medium',
                             }}
                             component="h4"
                             gutterBottom
@@ -183,10 +183,18 @@ const WOLTestConfigSelectQuestions = () => {
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
                         <TableHead>
                             <TableRow>
-                                <TableCell style={{ fontFamily : 'Medium' }}>S. No.</TableCell>
-                                <TableCell style={{ fontFamily : 'Medium' }}>Wheel Of Life Category</TableCell>
-                                <TableCell style={{ fontFamily : 'Medium' }}>No. of Questions</TableCell>
-                                <TableCell style={{ fontFamily : 'Medium' }}>Action</TableCell>
+                                <TableCell style={{ fontFamily: 'Medium' }}>
+                                    S. No.
+                                </TableCell>
+                                <TableCell style={{ fontFamily: 'Medium' }}>
+                                    Wheel Of Life Category
+                                </TableCell>
+                                <TableCell style={{ fontFamily: 'Medium' }}>
+                                    No. of Questions
+                                </TableCell>
+                                <TableCell style={{ fontFamily: 'Medium' }}>
+                                    Action
+                                </TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -197,29 +205,38 @@ const WOLTestConfigSelectQuestions = () => {
                                         '&:last-child td, &:last-child th': {
                                             border: 0,
                                         },
-                                        
                                     }}
                                 >
-                                    <TableCell component="th" scope="row" style={{ fontFamily : 'Regular' }}>
+                                    <TableCell
+                                        component="th"
+                                        scope="row"
+                                        style={{ fontFamily: 'Regular' }}
+                                    >
                                         {index + 1}
                                     </TableCell>
-                                    <TableCell style={{ fontFamily : 'Regular' }}>
+                                    <TableCell
+                                        style={{ fontFamily: 'Regular' }}
+                                    >
                                         {category.wol_category_name}
                                     </TableCell>
-                                    <TableCell style={{ fontFamily : 'Regular' }}>
+                                    <TableCell
+                                        style={{ fontFamily: 'Regular' }}
+                                    >
                                         {category.selected_question_count}/
                                         {category.number_of_questions_for_total}
                                     </TableCell>
-                                    <TableCell style={{ fontFamily : 'Regular' }}>
+                                    <TableCell
+                                        style={{ fontFamily: 'Regular' }}
+                                    >
                                         <CustomButton
                                             variant="contained"
                                             sx={{
                                                 borderRadius: '50px',
                                                 padding: '8px 16px',
                                                 margin: '0 8px',
-                                                textTransform : 'none',
-                                                fontFamily : 'Regular',
-                                                backgroundColor : '#FEEBE3'
+                                                textTransform: 'none',
+                                                fontFamily: 'Regular',
+                                                backgroundColor: '#FEEBE3',
                                             }}
                                             onClick={() =>
                                                 handleSelectQuestions(

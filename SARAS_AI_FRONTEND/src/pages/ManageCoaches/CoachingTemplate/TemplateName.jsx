@@ -44,7 +44,6 @@ const TemplateName = () => {
     const { newTemplateData } = location.state || {};
 
     console.log('Tempete name is', template_name);
-    
 
     console.log('coach templete', coachTemplates);
     console.log('coachtemplate id', coachTemplatesId);
@@ -105,8 +104,8 @@ const TemplateName = () => {
         'After Due Date',
         'Actions',
     ];
-console.log("coachtemplateid", coachTemplatesId)
-console.log('Tempete name is>>>>>>>>>>>>>>>>>>', coachTemplatesId[0]?.name);
+    console.log('coachtemplateid', coachTemplatesId);
+    console.log('Tempete name is>>>>>>>>>>>>>>>>>>', coachTemplatesId[0]?.name);
     const actionButtons = [
         {
             type: 'switch',
@@ -136,7 +135,6 @@ console.log('Tempete name is>>>>>>>>>>>>>>>>>>', coachTemplatesId[0]?.name);
                         fontFamily: 'ExtraLight',
                     }}
                 >
-                    
                     {newTemplateData?.name ||
                         template_name ||
                         coachTemplatesId[0]?.name}

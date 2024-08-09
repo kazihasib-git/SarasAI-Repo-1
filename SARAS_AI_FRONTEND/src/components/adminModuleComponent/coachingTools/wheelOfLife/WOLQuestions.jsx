@@ -108,7 +108,7 @@ const WOLQuestions = () => {
                                 fontSize: '40px',
                                 fontWeight: 200,
                                 justifyContent: 'center',
-                                fontFamily : 'ExtraLight'
+                                fontFamily: 'ExtraLight',
                             }}
                         >
                             Wheel Of Life Questions
@@ -121,7 +121,7 @@ const WOLQuestions = () => {
                         <button
                             className="buttonContainer"
                             onClick={handleAddQuestion}
-                            style={{fontFamily : 'Bold'}}
+                            style={{ fontFamily: 'Bold' }}
                         >
                             <i className="bi bi-plus-circle"></i>
                             <span>Add Question</span>

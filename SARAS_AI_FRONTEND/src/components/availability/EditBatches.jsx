@@ -37,7 +37,8 @@ const EditBatches = ({ componentname }) => {
     const [selectedBatch, setSelectedBatch] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedBranch, setSelectedBranch] = useState('');
-    const [filteredBatches, setFilteredBatches] = useState([]);``
+    const [filteredBatches, setFilteredBatches] = useState([]);
+    ``;
 
     let stateModuleKey,
         nameKey,
@@ -169,7 +170,7 @@ const EditBatches = ({ componentname }) => {
                     : true;
                 return matchesBranch && matchesQuery;
             });
-            console.log('filtered data', filtered)
+            console.log('filtered data', filtered);
             setFilteredBatches(filtered);
         }
     }, [assignedBatches, selectedBranch, searchQuery]);
@@ -179,14 +180,14 @@ const EditBatches = ({ componentname }) => {
         : [];
 
     useEffect(() => {
-        console.log('selected Batches', selectedBatches)
+        console.log('selected Batches', selectedBatches);
         if (selectedBatches) {
-            setSelectedBatch(selectedBatches.map((batch) => batch.id));
+            setSelectedBatch(selectedBatches.map(batch => batch.id));
         }
     }, [selectedBatches]);
 
     const handleSelectBatch = id => {
-        setSelectedBatch(prev => 
+        setSelectedBatch(prev =>
             prev.includes(id) ? prev.filter(sid => sid !== id) : [...prev, id]
         );
     };
@@ -225,7 +226,7 @@ const EditBatches = ({ componentname }) => {
 
     const headers = ['S. No.', 'Batch Name', 'Branch', 'Select'];
 
-    console.log("selected batch", selectedBatch)
+    console.log('selected batch', selectedBatch);
 
     const content = (
         <>

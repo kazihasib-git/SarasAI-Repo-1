@@ -296,7 +296,7 @@ const TaCalender = () => {
                         <ScheduleSession componentName={'TACALENDER'} />
                     )}
                     {taEditScheduledStudents && (
-                            <EditStudentsFromSession componentName={'TACALENDER'} />
+                        <EditStudentsFromSession componentName={'TACALENDER'} />
                     )}
                     {taEditScheduledBatches && (
                         <EditBatchesFromSession componentName={'TACALENDER'} />
