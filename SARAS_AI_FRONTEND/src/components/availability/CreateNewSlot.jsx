@@ -43,7 +43,7 @@ const weekDays = [
     'Saturday',
 ];
 
-const CreateNewSlot = ({ componentName, timezoneID }) => {
+const  CreateNewSlot = ({ componentName, timezoneID }) => {
     const taId = useParams();
     const dispatch = useDispatch();
 
@@ -128,14 +128,14 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
         return true;
     };
 
-    const onSubmit = formData => {
+    const onSubmit = async formData => {
         console.log('form data', formData);
-
+    
         if (!validate()) {
             console.log('NOT VALID DATA');
             return;
         }
-
+    
         let weeksArray = Array(7).fill(0);
         if (repeat === 'recurring') {
             selectedDays.forEach(day => {
@@ -146,36 +146,36 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
             const index = new Date(fromDate).getDay();
             weeksArray[index] = 1;
         }
-
+    
         formData.slot_date = fromDate;
         formData.from_time = fromTime;
         formData.to_time = toTime;
         formData.end_date = repeat === 'recurring' ? toDate : fromDate;
         formData.weeks = weeksArray;
         formData.admin_user_id = taId.id;
-
+    
+        const date_slot = formData.slot_date;
         const start_time = formData.from_time;
         const time_end = formData.to_time;
-        const date_slot = formData.slot_date;
-        const slot_end_date = formData.end_date;
+        const date_end = formData.end_date;
         const time_zone_id = formData.timezone_id;
+    
+        console.log("data to convert:", { date_slot, start_time, time_end, date_end, time_zone_id });
+        const utcval = await convertToUTC({ date_slot, start_time, time_end, date_end, time_zone_id });
+        console.log("timepass:", utcval);
+    
+        formData.slot_date = utcval.slot_date;
+        formData.from_time = utcval.from_time;
+        formData.to_time = utcval.to_time;
+        formData.end_date = repeat === 'recurring' ? utcval.end_date : utcval.slot_date;
 
-        console.log(
-            'timepass:',
-            convertToUTC({
-                date_slot,
-                start_time,
-                time_end,
-                slot_end_date,
-                time_zone_id,
-            })
-        );
 
         dispatch(createSlotApi(formData)).then(() => {
             dispatch(closeCreateNewSlots());
             dispatch(getSlotsApi(taId.id));
         });
     };
+    
 
     const content = (
         <Box
