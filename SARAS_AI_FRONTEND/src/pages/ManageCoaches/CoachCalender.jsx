@@ -107,16 +107,16 @@ const CoachCalender = () => {
     useEffect(() => {
         if (scheduleCoachData && scheduleCoachData.length > 0) {
             const transformedEvents = scheduleCoachData.map(event => ({
-                id : event.id,
-                meetingName : event.meeting_name,
-                meetingId : event.meeting_id,
-                platformId : event.platform_id,
+                id: event.id,
+                meetingName: event.meeting_name,
+                meetingId: event.meeting_id,
+                platformId: event.platform_id,
                 start: new Date(
                     event.date.split(' ')[0] + 'T' + event.start_time
                 ),
                 end: new Date(event.date.split(' ')[0] + 'T' + event.end_time),
-                platform_tools : event.platform_tool_details,
-                platform_meet : event.platform_meeting_details,
+                platform_tools: event.platform_tool_details,
+                platform_meet: event.platform_meeting_details,
             }));
             setEventsList(transformedEvents);
         } else {
@@ -218,7 +218,9 @@ const CoachCalender = () => {
                                         onClick={handleCreateNewSlot}
                                     >
                                         {/* <AddCircleOutlineIcon /> */}
-                                        <AddCircleOutlineIcon sx={{ marginRight: 1 }} />
+                                        <AddCircleOutlineIcon
+                                            sx={{ marginRight: 1 }}
+                                        />
                                         Create New Slot
                                     </CustomButton>
                                 </Box>

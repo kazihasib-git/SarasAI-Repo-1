@@ -35,7 +35,7 @@ import { convertToUTC } from '../../utils/dateAndtimeConversion';
 
 const weekDays = [
     'Sunday',
-    'Monday',   
+    'Monday',
     'Tuesday',
     'Wednesday',
     'Thursday',
@@ -154,18 +154,22 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
         formData.weeks = weeksArray;
         formData.admin_user_id = taId.id;
 
+        const start_time = formData.from_time;
+        const time_end = formData.to_time;
+        const date_slot = formData.slot_date;
+        const slot_end_date = formData.end_date;
+        const time_zone_id = formData.timezone_id;
 
-        
-
-
-        const start_time =  formData.from_time ;
-        const time_end =  formData.to_time ;
-        const date_slot =  formData.slot_date ;
-        const slot_end_date = formData.end_date ;
-        const time_zone_id = formData.timezone_id ; 
-
-
-        console.log("timepass:" ,convertToUTC({date_slot , start_time, time_end, slot_end_date, time_zone_id}) ) ; 
+        console.log(
+            'timepass:',
+            convertToUTC({
+                date_slot,
+                start_time,
+                time_end,
+                slot_end_date,
+                time_zone_id,
+            })
+        );
 
         dispatch(createSlotApi(formData)).then(() => {
             dispatch(closeCreateNewSlots());

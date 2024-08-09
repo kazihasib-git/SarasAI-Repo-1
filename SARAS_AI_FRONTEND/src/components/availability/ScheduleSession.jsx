@@ -10,7 +10,11 @@ import {
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import { useDispatch, useSelector } from 'react-redux';
-import { changePlatform, closeSessionEvent, fetchTAScheduleById } from '../../redux/features/adminModule/ta/taAvialability';
+import {
+    changePlatform,
+    closeSessionEvent,
+    fetchTAScheduleById,
+} from '../../redux/features/adminModule/ta/taAvialability';
 import { formatDateTime } from '../../utils/dateFormatter';
 import { closeCoachSessionEvent } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import {
@@ -28,7 +32,6 @@ import { useNavigate } from 'react-router-dom';
 import CustomFormControl from '../CustomFields/CustomFromControl';
 import { getPlatforms } from '../../redux/features/utils/utilSlice';
 import CustomPlatformForm from '../CustomFields/CustomPlatformForm';
-
 
 const CustomButton = ({
     onClick,
@@ -68,16 +71,14 @@ const CustomButton = ({
 const ScheduleSession = ({ componentName }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const [changeMode, setChangeMode] = useState(false)
+    const [changeMode, setChangeMode] = useState(false);
     const [selectedPlatform, setSelectedPlatform] = useState();
 
-    const { platforms } = useSelector((state) => state.util)
-
+    const { platforms } = useSelector(state => state.util);
 
     useEffect(() => {
-        dispatch(getPlatforms())
-    }, [dispatch])
-
+        dispatch(getPlatforms());
+    }, [dispatch]);
 
     let sliceName,
         sessionDataState,
@@ -133,7 +134,7 @@ const ScheduleSession = ({ componentName }) => {
         dispatch(openEditBatches());
     };
 
-    console.log('sessionData', sessionData)
+    console.log('sessionData', sessionData);
 
     const handleLinkCopy = () => {
         if (sessionData.meetingLink) {
@@ -156,28 +157,27 @@ const ScheduleSession = ({ componentName }) => {
         setChangeMode(true);
     };
 
-    const handlePlatformChange = (event) => {
+    const handlePlatformChange = event => {
         setSelectedPlatform(event.target.value);
-    }
+    };
 
-    const handleChangePlatform = (sessionData) => {
+    const handleChangePlatform = sessionData => {
         const id = sessionData.id;
         const data = {
             admin_user_id: sessionData.admin_user_id,
-            platform_id: selectedPlatform
+            platform_id: selectedPlatform,
         };
-        console.log('data and id', data, id)
-        dispatch(changePlatform({id, data}))
-        .then(() => {
-            dispatch(fetchTAScheduleById(sessionData.admin_user_id))
-        })
+        console.log('data and id', data, id);
+        dispatch(changePlatform({ id, data })).then(() => {
+            dispatch(fetchTAScheduleById(sessionData.admin_user_id));
+        });
     };
 
-    const handleJoinCall = (data) => {
+    const handleJoinCall = data => {
         window.open(sessionData.platform_meet.host_meeting_url, '_blank');
-    }
+    };
 
-    console.log('secletected Platform', selectedPlatform)
+    console.log('secletected Platform', selectedPlatform);
 
     const content = (
         <Box sx={{ textAlign: 'center' }}>
@@ -187,21 +187,25 @@ const ScheduleSession = ({ componentName }) => {
             {changeMode ? (
                 <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
                     <CustomPlatformForm
-                        label='Change Mode'
+                        label="Change Mode"
                         name="platform"
                         placeholder="Select Platform"
-                        value={selectedPlatform ? selectedPlatform : sessionData.platform_tools.id}
+                        value={
+                            selectedPlatform
+                                ? selectedPlatform
+                                : sessionData.platform_tools.id
+                        }
                         onChange={handlePlatformChange}
                         errors={''}
                         options={platforms}
-                        sx={{ width: '100px' }}  // Adjust the width as needed
+                        sx={{ width: '100px' }} // Adjust the width as needed
                     />
                     <CustomButton
                         onClick={() => handleChangePlatform(sessionData)}
                         backgroundColor="#F56D3B"
                         color="white"
                         borderColor="#F56D3B"
-                        style={{ textTransform : 'none' }}
+                        style={{ textTransform: 'none' }}
                     >
                         Submit
                     </CustomButton>
@@ -229,7 +233,10 @@ const ScheduleSession = ({ componentName }) => {
                     </CustomButton>
                 </>
             )}
-            <Typography variant="body2" sx={{ mb: 2, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            <Typography
+                variant="body2"
+                sx={{ mb: 2, overflow: 'hidden', textOverflow: 'ellipsis' }}
+            >
                 {sessionData.platform_meet.host_meeting_url}
                 <IconButton
                     size="small"
@@ -251,7 +258,6 @@ const ScheduleSession = ({ componentName }) => {
             </Typography>
         </Box>
     );
-    
 
     const actions = (
         <Box>

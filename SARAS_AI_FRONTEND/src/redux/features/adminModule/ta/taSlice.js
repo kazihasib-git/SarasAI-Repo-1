@@ -3,7 +3,7 @@ import { baseUrl } from '../../../../utils/baseURL';
 import axiosInstance from '../../../services/httpService';
 
 export const createTA = createAsyncThunk('taModule/createTA', async data => {
-    console.log("create ta data :", data)
+    console.log('create ta data :', data);
     const response = await axiosInstance.post(
         `${baseUrl}/admin/manage_tas`,
         data
@@ -448,13 +448,12 @@ export const taSlice = createSlice({
             state.error = action.payload || action.error.message;
         });
 
-         // delete Ta Mapping
-         builder.addCase(deleteTaMapping.pending, state => {
+        // delete Ta Mapping
+        builder.addCase(deleteTaMapping.pending, state => {
             state.loading = true;
         });
         builder.addCase(deleteTaMapping.fulfilled, (state, action) => {
             state.loading = false;
-            
         });
         builder.addCase(deleteTaMapping.rejected, (state, action) => {
             state.loading = false;

@@ -1,10 +1,4 @@
-import {
-    Box,
-    InputBase,
-    Button,
-    Snackbar,
-    Alert,
-} from '@mui/material';
+import { Box, InputBase, Button, Snackbar, Alert } from '@mui/material';
 import Header from '../../components/Header/Header';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import { useEffect, useState } from 'react';
@@ -33,7 +27,9 @@ const ManageCoaches = () => {
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
 
-    const { coaches, createCoachOpen, editCoachOpen } = useSelector(state => state.coachModule);
+    const { coaches, createCoachOpen, editCoachOpen } = useSelector(
+        state => state.coachModule
+    );
 
     useEffect(() => {
         dispatch(closeCreateCoach());
@@ -46,7 +42,9 @@ const ManageCoaches = () => {
             if (coaches.length > 0) {
                 const transformed = await Promise.all(
                     coaches.map(async item => {
-                        const timezonename = await timezoneIdToName(item.timezone_id);
+                        const timezonename = await timezoneIdToName(
+                            item.timezone_id
+                        );
                         console.log('timezonename: ', timezonename);
                         return {
                             id: item.id,
@@ -146,7 +144,9 @@ const ManageCoaches = () => {
                                     sx={{ m1: 2, flex: 1, marginLeft: 5 }}
                                     placeholder="Search here ..."
                                     value={searchQuery}
-                                    onChange={e => setSearchQuery(e.target.value)}
+                                    onChange={e =>
+                                        setSearchQuery(e.target.value)
+                                    }
                                 />
                             </Box>
                             <Button

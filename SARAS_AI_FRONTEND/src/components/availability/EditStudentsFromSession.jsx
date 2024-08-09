@@ -1,11 +1,14 @@
-import React, { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
-import { getAssignStudents, getStudentBatchMapping } from '../../redux/features/adminModule/ta/taSlice'
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import {
+    getAssignStudents,
+    getStudentBatchMapping,
+} from '../../redux/features/adminModule/ta/taSlice';
 
 const EditStudentsFromSession = ({ componentName }) => {
-    const dispatch = useDispatch()
-    const {id, name} = useParams()
+    const dispatch = useDispatch();
+    const { id, name } = useParams();
 
     const [selectedTerm, setSelectedTerm] = useState([]);
     const [selectedBatch, setSelectedBatch] = useState('');
@@ -13,41 +16,37 @@ const EditStudentsFromSession = ({ componentName }) => {
     const [selectedStudents, setSelectedStudents] = useState([]);
     const [filteredStudents, setFilteredStudents] = useState([]);
 
-    let sliceName,
-        assignedStudentsApi,
-        assignedStudentsState;
+    let sliceName, assignedStudentsApi, assignedStudentsState;
 
     switch (componentName) {
-        case 'TASCHEDULE' : 
+        case 'TASCHEDULE':
             sliceName = 'taModule';
-            assignedStudentsApi = getAssignStudents
-            assignedStudentsState = 'assignedStudents'
+            assignedStudentsApi = getAssignStudents;
+            assignedStudentsState = 'assignedStudents';
             break;
-        case 'COACHSCHEDULE' :
+        case 'COACHSCHEDULE':
             sliceName = 'coachModule';
-            assignedStudentsApi = ''
-            assignedStudentsState = ''
+            assignedStudentsApi = '';
+            assignedStudentsState = '';
             break;
-        
-        default :
+
+        default:
             sliceName = null;
             assignedStudentsApi = null;
             assignedStudentsState = null;
             break;
     }
 
-    const stateSelector = useSelector((state) => state[sliceName])
+    const stateSelector = useSelector(state => state[sliceName]);
 
-    const {
-        [assignedStudentsState] : assignedStudents
-    } = stateSelector;
+    const { [assignedStudentsState]: assignedStudents } = stateSelector;
 
     useEffect(() => {
-        dispatch(assignedStudentsApi(id))
-    }, [dispatch])
+        dispatch(assignedStudentsApi(id));
+    }, [dispatch]);
 
     useEffect(() => {
-        if(assignedStudents && assignedStudents.length > 0){
+        if (assignedStudents && assignedStudents.length > 0) {
             const transformedData = assignedStudents.map((stu, index) => ({
                 'S. No.': index + 1,
                 'Student Name': stu.student.name,
@@ -84,7 +83,7 @@ const EditStudentsFromSession = ({ componentName }) => {
 
             setFilteredStudents(filtered);
         }
-    }, [assignedStudents, selectedTerm, selectedBatch, searchName])
+    }, [assignedStudents, selectedTerm, selectedBatch, searchName]);
 
     const batchOptions =
         assignedStudents && Array.isArray(assignedStudents)
@@ -127,9 +126,7 @@ const EditStudentsFromSession = ({ componentName }) => {
               ]
             : [];
 
-    useEffect(() => {
-        
-    }, [])
+    useEffect(() => {}, []);
 
     const handleSelectStudent = id => {
         setSelectedStudents(prev =>
@@ -137,9 +134,7 @@ const EditStudentsFromSession = ({ componentName }) => {
         );
     };
 
-    return (
-        <div>EditStudentsFromSession</div>
-    )
-}
+    return <div>EditStudentsFromSession</div>;
+};
 
-export default EditStudentsFromSession
+export default EditStudentsFromSession;

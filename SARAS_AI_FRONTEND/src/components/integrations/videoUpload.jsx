@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
 import * as tus from 'tus-js-client';
-//import Vimeo from '@u-wave/react-vimeo';
 import {
     Button,
     Dialog,
@@ -14,46 +12,27 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useDispatch, useSelector } from 'react-redux';
+
+import { uploadSessionRecording as uploadCoachSessionRecording } from '../../redux/features/coachModule/coachmenuprofileSilce';
+import {
+    getTaCallRecords,
+    uploadSessionRecording as uploadTASessionRecording,
+} from '../../redux/features/taModule/tamenuSlice';
+
 const VIMEO_ACCESS_TOKEN = process.env.REACT_APP_VIMEO_ACCESS_TOKEN;
-import { uploadSessionRecording } from '../../redux/features/coachModule/coachmenuprofileSilce';
 
-// VIMEO_CLIENT_ID=34b3c9cb5fac58425122c4b84e79e2832e857b14
-// VIMEO_CLIENT_SECRET=DRGOd/6GfDDDUHu7hFakjCq0ka4vWz93J5Dgoy4epBP1x8OyVnkw6xGsl8KnDzEMIFcJ65425x20DRhGOCl36oL9f8jvun4l0LxygKDEMTEe4PM2ShJOJYmB2xwL0kpd
-// VIMEO_ACCESS_TOKEN=7d93a352d9b20c0a2141bf3269860df5
-
-const VideoUploadDialog = ({ open, onClose }) => {
+const VideoUploadDialog = ({ open, onClose, role, selectedId }) => {
     const [file, setFile] = useState(null);
     const [videoUrl, setVideoUrl] = useState('');
     const [uploadProgress, setUploadProgress] = useState(0);
     const [error, setError] = useState('');
 
     const dispatch = useDispatch();
-
-    const selectedCallId = useSelector(state => state.coachMenu.selectedCallId);
-
-    const handleUpload = async () => {
-        if (videoUrl) {
-            try {
-                await dispatch(
-                    uploadSessionRecording({
-                        id: selectedCallId,
-                        session_recording_url: videoUrl,
-                    })
-                ).unwrap();
-
-                setUploadProgress(100);
-                onClose();
-            } catch {
-                setError('Update failed. Please try again.');
-            }
-        }
-    };
+    //const selectedCallId = useSelector(state => state.taMenu.selectedCall);
 
     const handleFileChange = event => {
         setFile(event.target.files[0]);
     };
-
-    console.log('VIMEO_ACCESS_TOKEN', VIMEO_ACCESS_TOKEN);
 
     const uploadVideoToVimeo = async () => {
         const folderId = '21774130';
@@ -121,10 +100,12 @@ const VideoUploadDialog = ({ open, onClose }) => {
                                 },
                             }
                         );
-                        setVideoUrl(vimeoResultData.link);
-                        // TODO : NEED TO CALL BACKEND API FOR UPLOAD RECOREDED SESSION
 
-                        // TODO : NEED TO TRACK THE STATUS OF VIDEO after uploading unitl it is uploaded succesfully show  show a box displaying that uploading in progress.
+                        if (!moveResponse.ok) {
+                            throw new Error('Failed to move video to project.');
+                        }
+
+                        setVideoUrl(vimeoResultData.link);
                     },
                 });
 
@@ -141,42 +122,88 @@ const VideoUploadDialog = ({ open, onClose }) => {
             uploadVideoToVimeo();
         }
     }, [file]);
+    // console.log('id', selectedId);
+    useEffect(() => {
+        if (videoUrl && selectedId) {
+            console.log('Video URL:', videoUrl);
+
+            const sessionUrl = async () => {
+                try {
+                    if (role === 'COACH') {
+                        await dispatch(
+                            uploadCoachSessionRecording({
+                                id: selectedId,
+                                session_recording_url: videoUrl,
+                            })
+                        ).unwrap();
+                    } else if (role === 'TA') {
+                        await dispatch(
+                            uploadTASessionRecording({
+                                id: selectedId,
+                                session_recording_url: videoUrl,
+                            })
+                        )
+                            .unwrap()
+                            .then(() => {
+                                dispatch(getTaCallRecords());
+                            });
+                    }
+
+                    setUploadProgress(100);
+                    //onClose();
+                } catch {
+                    setError('Update failed. Please try again.');
+                }
+            };
+
+            sessionUrl();
+        }
+    }, [videoUrl, role, selectedId, dispatch, onClose]);
 
     return (
-        <div className="App">
-            <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-                <DialogTitle>Upload Video</DialogTitle>
-                <IconButton
-                    onClick={onClose}
-                    style={{
-                        position: 'absolute',
-                        top: '10px',
-                        right: '10px',
-                        color: '#F56D3B',
+        <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+            <DialogTitle>Upload Video</DialogTitle>
+            <IconButton
+                onClick={() => {
+                    onClose();
+
+                    //setFile(null);
+                    setVideoUrl('');
+                    setUploadProgress(0);
+                }}
+                style={{
+                    position: 'absolute',
+                    top: '10px',
+                    right: '10px',
+                    color: '#F56D3B',
+                }}
+            >
+                <CloseIcon />
+            </IconButton>
+            <DialogContent>
+                {error && <Typography color="error">{error}</Typography>}
+                <input type="file" onChange={handleFileChange} />
+                {uploadProgress > 0 && uploadProgress < 100 && (
+                    <LinearProgress
+                        variant="determinate"
+                        value={uploadProgress}
+                    />
+                )}
+            </DialogContent>
+            <DialogActions>
+                <Button
+                    onClick={() => {
+                        onClose();
+                        setFile(null);
+                        setVideoUrl('');
+                        setUploadProgress(0);
                     }}
+                    color="primary"
                 >
-                    <CloseIcon />
-                </IconButton>
-                <DialogContent>
-                    {error && <Typography color="error">{error}</Typography>}
-                    <input type="file" onChange={handleFileChange} />
-                    {uploadProgress > 0 && uploadProgress < 100 && (
-                        <LinearProgress
-                            variant="determinate"
-                            value={uploadProgress}
-                        />
-                    )}
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleUpload} color="primary">
-                        Upload
-                    </Button>
-                    <Button onClick={onClose} color="primary">
-                        Close
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        </div>
+                    Close
+                </Button>
+            </DialogActions>
+        </Dialog>
     );
 };
 
