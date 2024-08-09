@@ -32,6 +32,7 @@ import {
 import { toast } from 'react-toastify';
 import CustomButton from '../CustomFields/CustomButton';
 import { convertToUTC } from '../../utils/dateAndtimeConversion';
+import { timezoneIdToName } from '../../utils/timezoneIdToName';
 
 const weekDays = [
     'Sunday',
@@ -158,10 +159,10 @@ const  CreateNewSlot = ({ componentName, timezoneID }) => {
         const start_time = formData.from_time;
         const time_end = formData.to_time;
         const date_end = formData.end_date;
-        const time_zone_id = formData.timezone_id;
+        const timezonename = timezoneIdToName(timezones , formData.timezone_id);
     
-        console.log("data to convert:", { date_slot, start_time, time_end, date_end, time_zone_id });
-        const utcval = await convertToUTC({ date_slot, start_time, time_end, date_end, time_zone_id });
+        console.log("data to convert:", { date_slot, start_time, time_end, date_end, timezonename });
+        const utcval = await convertToUTC({ date_slot, start_time, time_end, date_end,timezonename});
         console.log("timepass:", utcval);
     
         formData.slot_date = utcval.slot_date;

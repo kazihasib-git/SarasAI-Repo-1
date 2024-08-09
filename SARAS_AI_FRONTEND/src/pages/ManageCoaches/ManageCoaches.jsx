@@ -20,6 +20,7 @@ import {
     closeEditCoach,
     setSelectedCoach,
 } from '../../redux/features/adminModule/coach/coachSlice';
+import { getTimezone } from '../../redux/features/utils/utilSlice';
 import { timezoneIdToName } from '../../utils/timezoneIdToName';
 
 const ManageCoaches = () => {
@@ -33,20 +34,23 @@ const ManageCoaches = () => {
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
 
+    // Get coaches and timezones from Redux store
     const { coaches, createCoachOpen, editCoachOpen } = useSelector(state => state.coachModule);
+    const { timezones } = useSelector(state => state.util);
 
     useEffect(() => {
         dispatch(closeCreateCoach());
         dispatch(closeEditCoach());
         dispatch(getCoach());
+        dispatch(getTimezone()); // Fetch timezones when the component mounts
     }, [dispatch]);
 
     useEffect(() => {
         const transformData = async () => {
-            if (coaches.length > 0) {
+            if (coaches.length > 0 && timezones.length > 0) {
                 const transformed = await Promise.all(
                     coaches.map(async item => {
-                        const timezonename = await timezoneIdToName(item.timezone_id);
+                        const timezonename = await timezoneIdToName(item.timezone_id, timezones);
                         console.log('timezonename: ', timezonename);
                         return {
                             id: item.id,
@@ -63,7 +67,7 @@ const ManageCoaches = () => {
         };
 
         transformData();
-    }, [coaches]);
+    }, [coaches, timezones]);
 
     const handleAddCoach = () => {
         navigate('/createcoach');
