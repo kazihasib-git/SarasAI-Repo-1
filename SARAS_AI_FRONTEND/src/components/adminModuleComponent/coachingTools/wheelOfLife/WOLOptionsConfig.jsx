@@ -143,15 +143,15 @@ const WOLOptionsConfig = () => {
         if (Number(formValues.minScale) >= Number(formValues.maxScale))
             tempErrors.scaleRange =
                 'Maximum Scale must be greater than Minimum Scale';
-                formValues.details.forEach((detail, index) => {
-                    if (index===0 || index % 5 === 0) { // Check if the point is a multiple of 5 starting from 1
-                        if (!detail.text) {
-                            tempErrors[`detailText${index}`] = 'Text is required';
-                        }
-                        if (!detail.icon) {
-                            tempErrors[`detailIcon${index}`] = 'Icon is required';
-                        }
-                    }
+        formValues.details.forEach((detail, index) => {
+            if (index === 0 || index / 2 === 0) { // Check if the point is a multiple of 5 starting from 1
+                if (!detail.text) {
+                    tempErrors[`detailText${index}`] = 'Text is required';
+                }
+                if (!detail.icon) {
+                    tempErrors[`detailIcon${index}`] = 'Icon is required';
+                }
+            }
         });
         setErrors(tempErrors);
         return Object.keys(tempErrors).length === 0;
@@ -245,6 +245,7 @@ const WOLOptionsConfig = () => {
                             fontSize: '44px',
                             fontWeight: 200,
                             justifyContent: 'center',
+                            fontFamily : 'ExtraLight'
                         }}
                     >
                         Wheel Of Life Options Config
@@ -267,6 +268,7 @@ const WOLOptionsConfig = () => {
                         color: '#1A1E3D',
                         fontSize: '16px',
                         fontWeight: 500,
+                        fontFamily : 'Medium',
                         marginBottom: '20px',
                     }}
                     component="h4"
@@ -309,6 +311,7 @@ const WOLOptionsConfig = () => {
                                     padding: '18px 30px',
                                     margin: '0 8px',
                                     textTransform: 'none',
+                                    fontFamily : 'Bold'
                                 }}
                             >
                                 <span className="buttonText">
@@ -335,7 +338,7 @@ const WOLOptionsConfig = () => {
                         padding: 2,
                     }}
                 >
-                    <Typography
+                    {/* <Typography
                         variant="h4"
                         sx={{
                             color: '#1A1E3D',
@@ -347,7 +350,7 @@ const WOLOptionsConfig = () => {
                         gutterBottom
                     >
                         Options Configurations
-                    </Typography>
+                    </Typography> */}
 
                     <form onSubmit={handleFormSubmit}>
                         <TableContainer component={Paper}>
@@ -355,70 +358,71 @@ const WOLOptionsConfig = () => {
                                 <TableHead>
                                     <TableRow>
                                         {headers.map(header => (
-                                            <TableCell key={header}>
+                                            <TableCell key={header} style={{ fontFamily : 'Medium' }} >
                                                 {header}
                                             </TableCell>
                                         ))}
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-    {formValues.details.map((detail, index) => (
-        <TableRow key={index}>
-            <TableCell>
-                <Box display="flex" alignItems="center">
-                    {detail.point}
-                    {(index === 0 || (index + 1) % 5 === 0) && (
-                        <img
-                            src={star}
-                            alt="star"
-                            style={{ marginLeft: '5px' }}
-                        />
-                    )}
-                </Box>
-            </TableCell>
-            <TableCell>
-                <CustomTextField
-                    name="text"
-                    value={detail.text}
-                    onChange={e => handleDetailChange(e, index)}
-                    error={errors[`detailText${index}`]}
-                    helperText={errors[`detailText${index}`]}
-                />
-            </TableCell>
-            <TableCell>
-                <Box display="flex" alignItems="center">
-                    <input
-                        accept="image/*"
-                        style={{ display: 'none' }}
-                        id={`icon-upload-${index}`}
-                        type="file"
-                        onChange={e => handleImageChange(e, index)}
-                    />
-                    <label htmlFor={`icon-upload-${index}`}>
-                        <IconButton component="span" color="primary">
-                            <UploadFileIcon />
-                        </IconButton>
-                    </label>
-                    {detail.icon && (
-                        <IconButton onClick={() => handleImageRemove(index)}>
-                            <img
-                                src={detail.icon}
-                                alt={`icon-${index}`}
-                                style={{ height: '32px', width: '32px', marginLeft: '10px' }}
-                            />
-                        </IconButton>
-                    )}
-                </Box>
-            </TableCell>
-        </TableRow>
-    ))}
-</TableBody>
+                                    {formValues.details.map((detail, index) => (
+                                        <TableRow key={index}>
+                                            <TableCell style={{ fontFamily : 'Regular'}} >
+                                                <Box display="flex" alignItems="center">
+                                                    {detail.point}
+                                                    {(index === 0 || (index + 1) % 5 === 0) && (
+                                                        <img
+                                                            src={star}
+                                                            alt="star"
+                                                            style={{ marginLeft: '5px' }}
+                                                        />
+                                                    )}
+                                                </Box>
+                                            </TableCell>
+                                            <TableCell>
+                                                <CustomTextField
+                                                    name="text"
+                                                    value={detail.text}
+                                                    onChange={e => handleDetailChange(e, index)}
+                                                    error={errors[`detailText${index}`]}
+                                                    helperText={errors[`detailText${index}`]}
+                                                />
+                                            </TableCell>
+                                            <TableCell>
+                                                <Box display="flex" alignItems="center">
+                                                    <input
+                                                        accept="image/*"
+                                                        style={{ display: 'none' }}
+                                                        id={`icon-upload-${index}`}
+                                                        type="file"
+                                                        onChange={e => handleImageChange(e, index)}
+                                                    />
+                                                    <label htmlFor={`icon-upload-${index}`}>
+                                                        <IconButton component="span" color="primary">
+                                                            <UploadFileIcon />
+                                                        </IconButton>
+                                                    </label>
+                                                    {detail.icon && (
+                                                        <IconButton onClick={() => handleImageRemove(index)}>
+                                                            <img
+                                                                src={detail.icon}
+                                                                alt={`icon-${index}`}
+                                                                style={{ height: '32px', width: '32px', marginLeft: '10px' }}
+                                                            />
+                                                        </IconButton>
+                                                    )}
+                                                </Box>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
 
                             </Table>
                         </TableContainer>
                         <Box mt={2}>
-                            <Button
+                            <CustomButton
                                 type="submit"
+                                active={true}
                                 variant="contained"
                                 color="primary"
                                 sx={{
@@ -426,10 +430,11 @@ const WOLOptionsConfig = () => {
                                     padding: '10px 20px',
                                     margin: '0 8px',
                                     textTransform: 'none',
+                                    fontFamily : 'Bold'
                                 }}
                             >
                                 Submit
-                            </Button>
+                            </CustomButton>
                         </Box>
                     </form>
                 </Box>

@@ -29,9 +29,8 @@ const WOLCategories = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        if (wolCategoryData.status) {
-            console.log(wolCategoryData.message);
-            const transformData = wolCategoryData.data.map(item => ({
+        if (wolCategoryData && wolCategoryData.length > 0) {
+            const transformData = wolCategoryData.map(item => ({
                 id: item.id,
                 'Wheel Of Life Category': item.name,
                 is_active: item.is_active,
@@ -91,14 +90,16 @@ const WOLCategories = () => {
                                 fontSize: '40px',
                                 fontWeight: 200,
                                 justifyContent: 'center',
+                                fontFamily : 'ExtraLight'
                             }}
                         >
                             Wheel Of Life Categories
                         </p>
                     </Box>
-                    <Box className="inputBtnContainer" paddingBottom="16px">
+                    <Box className="inputBtnContainer" paddingBottom="16px"   >
                         <button
                             className="buttonContainer"
+                            style={{ fontFamily : 'Bold' }}
                             onClick={handleAddNewWOLCategory}
                         >
                             <i className="bi bi-plus-circle"></i>

@@ -92,11 +92,6 @@ const WOLSelectQuestions = () => {
             selectedQuestionsListData.data &&
             selectedQuestionsListData.data.length > 0
         ) {
-            // Map over the data array to extract the 'wol_question_id'
-            console.log(
-                'selectedQuestionsListData',
-                selectedQuestionsListData.data
-            );
             setSelectedQuestions(
                 selectedQuestionsListData.data.map(
                     question => question.wol_question_id
@@ -105,28 +100,20 @@ const WOLSelectQuestions = () => {
         }
     }, [selectedQuestionsListData]);
 
-    console.log('selectedQuestions', selectedQuestions);
-
     const handleSelectQuestion = index => {
-        console.log(`Toggling question ${index}`);
         setSelectedQuestions(prevSelected => {
             const updatedSelection = prevSelected.includes(index)
                 ? prevSelected.filter(i => i !== index)
                 : [...prevSelected, index];
-            console.log('Updated Selection:', updatedSelection);
             return updatedSelection;
         });
     };
 
     const handleSubmit = () => {
-        //const selectedQuestionData = selectedQuestions.map(index => questions[index]);
-        // console.log('Selected Questions:', selectedQuestionData);
-        // Dispatch an action or call an API to save the selected questions
 
         const data = {
             wol_test_category_id: categoryIdToSubmitSelectedQuestions,
             wol_questions_id: selectedQuestions,
-            //selectedQuestionData.map(question => question.id)
         };
         dispatch(addQuestionToCategory(data)).then(() => {
             dispatch(getWolTestConfigCategoryWise());
@@ -160,6 +147,7 @@ const WOLSelectQuestions = () => {
                             fontSize: '40px',
                             fontWeight: 200,
                             justifyContent: 'center',
+                            fontFamily : 'ExtraLight'
                         }}
                     >
                         Wheel Of Life Test Config
@@ -200,6 +188,7 @@ const WOLSelectQuestions = () => {
                                     fontSize: '20px',
                                     fontWeight: 500,
                                     justifyContent: 'center',
+                                    fontFamily : 'Medium'
                                 }}
                             >
                                 Total Questions: {totalQuestions}
@@ -212,6 +201,7 @@ const WOLSelectQuestions = () => {
                                 color: '#1A1E3D',
                                 fontSize: '16px',
                                 fontWeight: 500,
+                                fontFamily : 'Medium'
                             }}
                             component="h4"
                             gutterBottom
@@ -225,6 +215,7 @@ const WOLSelectQuestions = () => {
                                 color: '#1A1E3D',
                                 fontSize: '16px',
                                 fontWeight: 500,
+                                fontFamily : 'Medium'
                             }}
                             component="h4"
                             gutterBottom
@@ -241,9 +232,10 @@ const WOLSelectQuestions = () => {
                         variant="contained"
                         sx={{
                             borderRadius: '50px',
-                            padding: '18px 30px',
+                            padding: '14px 30px',
                             margin: '0 8px',
                             textTransform: 'none',
+                            fontFamily : 'Bold'
                         }}
                     >
                         <img
@@ -273,6 +265,7 @@ const WOLSelectQuestions = () => {
                                     color: '#1A1E3D',
                                     fontWeight: 500,
                                     mb: 1,
+                                    fontFamily : 'Medium'
                                 }}
                             >
                                 Q{index + 1}: {question.question}
@@ -299,11 +292,13 @@ const WOLSelectQuestions = () => {
                 <Box display="flex" mt={2}>
                     <CustomButton
                         variant="contained"
-                        color="primary"
+                        active={true}
                         sx={{
                             borderRadius: '50px',
                             padding: '8px 16px',
                             margin: '0 8px',
+                            textTransform : 'none',
+                            fontFamily : 'Bold'
                         }}
                         onClick={handleSubmit}
                     >

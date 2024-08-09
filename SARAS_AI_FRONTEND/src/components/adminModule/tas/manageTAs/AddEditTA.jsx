@@ -158,7 +158,7 @@ const AddEditTA = ({ data }) => {
 
         try {
             if (data) {
-                const { email, phone, profile_picture, ...updatedFormData } = formData;
+                const { email, phone, ...updatedFormData } = formData;
                 const updateRes = await dispatch(
                     updateTA({ id: data.id, data: updatedFormData })
                 ).unwrap();

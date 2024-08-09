@@ -83,9 +83,9 @@ const WOLTestConfig = () => {
     }, [wolTestConfig]);
 
     useEffect(() => {
-        if (wolCategoryData.data && wolCategoryData.data.length > 0) {
+        if (wolCategoryData && wolCategoryData.length > 0) {
             const numberOfWolCategories = Array.from(
-                { length: wolCategoryData.data.length },
+                { length: wolCategoryData.length },
                 (_, i) => ({
                     value: i + 1,
                     label: i + 1,
@@ -98,14 +98,14 @@ const WOLTestConfig = () => {
 
 
     // Generate options based on the wol_questions_count for each category
-    const WOLCategoriesOptions = wolCategoryData.data?.map(item => ({
+    const WOLCategoriesOptions = wolCategoryData.map(item => ({
         value: item.id,
         label: item.name,
     })) || [];
 
     
     const getNumberOfQuestionsOptions = (categoryId) => {
-        const category = wolCategoryData.data.find(cat => cat.id === categoryId);
+        const category = wolCategoryData.find(cat => cat.id === categoryId);
         const maxQuestions = category?.wol_questions_count || 0;
         return Array.from({ length: maxQuestions }, (_, i) => ({
             value: i + 1,
@@ -213,7 +213,7 @@ const WOLTestConfig = () => {
                                 type="submit"
                                 active={true}
                                 variant="contained"
-                                sx={{ borderRadius: '50px', padding: '18px 30px', margin: '0 8px', textTransform: 'none' }}
+                                sx={{ borderRadius: '50px', padding: '14px 30px', textTransform: 'none', fontFamily : 'Bold' }}
                             >
                                 {edit ? 'Update' : 'Submit'}
                             </CustomButton>
@@ -227,17 +227,17 @@ const WOLTestConfig = () => {
                     <TableContainer sx={{ padding: 2 }} component={Paper}>
                         <Table sx={{ minWidth: 650 }} aria-label="simple table">
                             <TableHead>
-                                <TableRow>
-                                    <TableCell>S. No.</TableCell>
-                                    <TableCell align="left">Wheel of Life Category</TableCell>
-                                    <TableCell align="left">No. of Questions</TableCell>
+                                <TableRow >
+                                    <TableCell style={{ fontFamily : 'Medium' }}>S. No.</TableCell>
+                                    <TableCell style={{ fontFamily : 'Medium', align : "left" }} >Wheel of Life Category</TableCell>
+                                    <TableCell style={{ fontFamily : 'Medium', align : "left" }} >No. of Questions</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
                                 {Array.from({ length: formValues.numberOfWolCategories }, (_, index) => (
                                     <TableRow key={index}>
                                         <TableCell component="th" scope="row">{index + 1}</TableCell>
-                                        <TableCell align="left">
+                                        <TableCell  style={{ fontFamily : 'Medium', align : "left" }} >
                                             <CustomFormControl
                                                 label="Category Name"
                                                 name={`category_name_${index}`}
@@ -271,10 +271,10 @@ const WOLTestConfig = () => {
                                 ))}
                             </TableBody>
                         </Table>
+                        <Box display="flex" justifyContent="flex-start" mt={2}>
+                            <SubmitButton type="submit" active={true} variant="contained" style={{ textTransform : 'none', fontFamily : 'Bold' }} >Submit</SubmitButton>
+                        </Box>
                     </TableContainer>
-                    <Box display="flex" justifyContent="flex-start" mt={2}>
-                        <SubmitButton type="submit" active={true} variant="contained" style={{ textTransform : 'none' }} >Submit</SubmitButton>
-                    </Box>
                 </form>
             )}
         </>

@@ -74,6 +74,7 @@ const WheelOfLife = () => {
                             fontSize: '44px',
                             fontWeight: 200,
                             justifyContent: 'center',
+                            fontFamily : 'ExtraLight'
                         }}
                     >
                         Wheel Of Life
@@ -82,34 +83,35 @@ const WheelOfLife = () => {
                         <button
                             className="buttonContainer"
                             onClick={() => navigate('/wolCategories')}
-                            style={{ marginRight: '8px' }}
+                            style={{ marginRight: '8px', fontFamily : 'Bold'  }}
                         >
                             WOL Categories
                         </button>
                         <button
                             className="buttonContainer"
                             onClick={() => navigate('/wolInstructions')}
-                            style={{ marginRight: '8px' }}
+                            style={{ marginRight: '8px', fontFamily : 'Bold'  }}
                         >
                             WOL Instructions
                         </button>
                         <button
                             className="buttonContainer"
                             onClick={() => navigate('/wolQuestions')}
-                            style={{ marginRight: '8px' }}
+                            style={{ marginRight: '8px', fontFamily : 'Bold'  }}
                         >
                             WOL Questions
                         </button>
                         <button
                             className="buttonContainer"
                             onClick={() => navigate('/wolOptionsConfig')}
-                            style={{ marginRight: '8px' }}
+                            style={{ marginRight: '8px', fontFamily : 'Bold'  }}
                         >
                             WOL Options Config
                         </button>
                         <button
                             className="buttonContainer"
                             onClick={handleNavigate}
+                            style={{ marginRight: '8px', fontFamily : 'Bold'  }}
                         >
                             WOL Test Config
                         </button>

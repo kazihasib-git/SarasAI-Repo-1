@@ -85,10 +85,6 @@ const EditStudents = ({ componentname }) => {
 
     const stateSelector = useSelector((state) => state[sliceName])
 
-    // const stateSelector = useSelector(state =>
-    //     stateModuleKey ? state[stateModuleKey] : {}
-    // );
-
     const {
         [nameKeyScheduling]: assignedName,
         [idKeyScheduling]: assignedId,
@@ -104,9 +100,9 @@ const EditStudents = ({ componentname }) => {
     } = stateSelector || {};
 
     useEffect(() => {
-        // dispatch(getAssignStudents(taID));
+        const id = assignedId || taID || coachID
         if (stateModuleKey && assignStudentOpen) {
-            dispatch(getAssignStudentAction(userAdminId));
+            dispatch(getAssignStudentAction(id));
         }
     }, [
         dispatch,
