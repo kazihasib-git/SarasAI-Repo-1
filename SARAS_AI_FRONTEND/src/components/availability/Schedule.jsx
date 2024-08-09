@@ -33,7 +33,10 @@ import {
     openCoachEditBatch,
     openCoachEditStudent,
 } from '../../redux/features/adminModule/coach/coachSchedule';
-import { getPlatforms, getTimezone } from '../../redux/features/utils/utilSlice';
+import {
+    getPlatforms,
+    getTimezone,
+} from '../../redux/features/utils/utilSlice';
 import CustomTimeZoneForm from '../CustomFields/CustomTimeZoneForm';
 import { fetchTAScheduleById } from '../../redux/features/adminModule/ta/taAvialability';
 import { toast } from 'react-toastify';
@@ -169,7 +172,7 @@ const Schedule = ({ componentName }) => {
 
     useEffect(() => {
         dispatch(getTimezone());
-        dispatch(getPlatforms())
+        dispatch(getPlatforms());
     }, [dispatch]);
 
     useEffect(() => {

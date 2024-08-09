@@ -163,7 +163,12 @@ const TaMenuProfile = () => {
                     }}
                 >
                     <form onSubmit={handleSubmit(onSubmit)} noValidate>
-                        <Box display="flex " alignItems="center" mb={3}>
+                        <Box
+                            display="flex "
+                            alignItems="center"
+                            mb={3}
+                            sx={{ position: 'relative' }}
+                        >
                             <AvatarInput
                                 name="profile_picture"
                                 selectedImage={selectedImage}
@@ -174,8 +179,9 @@ const TaMenuProfile = () => {
                                 <Button
                                     onClick={toggleEdit}
                                     sx={{
-                                        top: 3,
-                                        left: 799,
+                                        position: 'absolute',
+                                        top: 0,
+                                        right: 0,
                                         borderRadius: 40,
                                         textTransform: 'none',
                                         backgroundColor: '#F56D3B',
@@ -317,6 +323,9 @@ const TaMenuProfile = () => {
                                                 outline: 'none',
                                                 height: '60px',
                                                 // boxShadow: errors.phone ? "0 0 0 2px red" : "none",
+                                                color: isEditing
+                                                    ? 'inherit'
+                                                    : '#B0B0B0',
                                             }}
                                             buttonStyle={{
                                                 borderRadius: '50px 0 0 50px',

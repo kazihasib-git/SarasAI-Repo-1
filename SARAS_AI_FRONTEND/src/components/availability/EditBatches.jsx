@@ -135,7 +135,6 @@ const EditBatches = ({ componentname }) => {
         loading,
     } = stateSelector || {};
 
-
     useEffect(() => {
         const userAdminId = assignedId || id;
         if (stateModuleKey && assignBatchOpen) {

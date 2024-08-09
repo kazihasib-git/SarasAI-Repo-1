@@ -14,8 +14,8 @@ import { getCoachAssignStudents } from '../../redux/features/adminModule/coach/c
 const headers = ['S. No.', 'Student Name', 'Program', 'Batch', 'Select'];
 
 const EditStudentsFromSession = ({ componentName }) => {
-    const dispatch = useDispatch()
-    const {id, name} = useParams()
+    const dispatch = useDispatch();
+    const { id, name } = useParams();
 
     const [selectedTerm, setSelectedTerm] = useState([]);
     const [selectedBatch, setSelectedBatch] = useState('');
@@ -60,8 +60,8 @@ const EditStudentsFromSession = ({ componentName }) => {
             assignedStudentsState = 'assignedStudents'
             meetingIdState = 'meetingId'
             break;
-        
-        default :
+
+        default:
             sliceName = null;
             availabilitySliceName = null
             openPopState = null
@@ -96,7 +96,7 @@ const EditStudentsFromSession = ({ componentName }) => {
     }, [dispatch])
 
     useEffect(() => {
-        if(assignedStudents && assignedStudents.length > 0){
+        if (assignedStudents && assignedStudents.length > 0) {
             const transformedData = assignedStudents.map((stu, index) => ({
                 'S. No.': index + 1,
                 'Student Name': stu.student.name,
@@ -135,7 +135,7 @@ const EditStudentsFromSession = ({ componentName }) => {
         }else{
             setFilteredStudents()
         }
-    }, [assignedStudents, selectedTerm, selectedBatch, searchName])
+    }, [assignedStudents, selectedTerm, selectedBatch, searchName]);
 
     const batchOptions =
         assignedStudents && Array.isArray(assignedStudents)
@@ -291,4 +291,4 @@ const EditStudentsFromSession = ({ componentName }) => {
     );
 }
 
-export default EditStudentsFromSession
+export default EditStudentsFromSession;

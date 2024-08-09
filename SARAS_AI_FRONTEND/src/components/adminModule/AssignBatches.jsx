@@ -99,7 +99,7 @@ const AssignBatches = ({ componentname }) => {
         loading,
     } = stateSelector || {};
 
-    console.log("id", taID, coachID)
+    console.log('id', taID, coachID);
 
     useEffect(() => {
         if (stateModuleKey && assignBatchOpen) {
@@ -190,9 +190,9 @@ const AssignBatches = ({ componentname }) => {
             componentname === 'ADDITCOACH'
                 ? coachID || assignedId
                 : taID || assignedId;
-                
+
         const data = {
-            'admin_user_id' : id,
+            admin_user_id: id,
             batches: selectedBatch.map(id => ({ id: id.toString() })),
         };
         dispatch(postAssignAction({ id, data })).then(() => {

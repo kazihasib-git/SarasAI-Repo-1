@@ -1,7 +1,7 @@
-import CryptoJS from "crypto-js";
-import { Buffer } from "buffer";
+import CryptoJS from 'crypto-js';
+import { Buffer } from 'buffer';
 import { ZoomMtg } from '@zoomus/websdk';
-import 'zoom-css/zoom.css';  // Import Zoom SDK CSS
+import 'zoom-css/zoom.css'; // Import Zoom SDK CSS
 
 // Configuration and environment variables
 const url = process.env.REACT_APP_FRONTEND_URL;
@@ -19,12 +19,12 @@ const API_KEY = process.env.REACT_APP_ZOOM_API_KEY;
 
 // Function to initialize Zoom SDK
 export function initializeZoomSDK() {
-    ZoomMtg.setZoomJSLib("https://source.zoom.us/2.13.0/lib", "/av");
+    ZoomMtg.setZoomJSLib('https://source.zoom.us/2.13.0/lib', '/av');
 
     ZoomMtg.preLoadWasm();
     ZoomMtg.prepareWebSDK();
-    ZoomMtg.i18n.load("en-US");
-    ZoomMtg.i18n.reload("en-US");
+    ZoomMtg.i18n.load('en-US');
+    ZoomMtg.i18n.reload('en-US');
 }
 
 // Function to join a Zoom meeting
@@ -46,12 +46,12 @@ export function joinMeeting(data) {
                 success: () => {
                     console.log('Joined the meeting successfully!');
                 },
-                error: (err) => {
+                error: err => {
                     console.error('Join error:', err);
                 },
             });
         },
-        error: (err) => {
+        error: err => {
             console.error('Zoom SDK initialization failed:', err);
         },
     });

@@ -56,7 +56,8 @@ const WOLTestConfig = () => {
     const { wolCategoryData, wolTestConfig } = useSelector(state => state.wol);
 
     const [edit, setEdit] = useState(false);
-    const [numberOfWolCategoriesOptions, setNumberOfWolCategoriesOptions] = useState([]);
+    const [numberOfWolCategoriesOptions, setNumberOfWolCategoriesOptions] =
+        useState([]);
     const [formValues, setFormValues] = useState({
         numberOfWolCategories: '',
         categories: [],
@@ -95,8 +96,6 @@ const WOLTestConfig = () => {
         }
     }, [wolCategoryData]);
 
-
-
     // Generate options based on the wol_questions_count for each category
     const WOLCategoriesOptions = wolCategoryData.map(item => ({
         value: item.id,
@@ -128,7 +127,8 @@ const WOLTestConfig = () => {
         const newErrors = {};
 
         if (!formValues.numberOfWolCategories) {
-            newErrors.numberOfWolCategories = 'Number of WOL Categories is required';
+            newErrors.numberOfWolCategories =
+                'Number of WOL Categories is required';
         }
 
         if (Object.keys(newErrors).length > 0) {
@@ -147,14 +147,18 @@ const WOLTestConfig = () => {
         const categories = Array.from(
             { length: formValues.numberOfWolCategories },
             (_, i) => {
-                const categoryName = formValues.categories[i]?.category_name || '';
-                const noOfQuestions = formValues.categories[i]?.no_of_questions || '';
+                const categoryName =
+                    formValues.categories[i]?.category_name || '';
+                const noOfQuestions =
+                    formValues.categories[i]?.no_of_questions || '';
 
                 if (!categoryName) {
-                    newErrors[`category_name_${i}`] = 'Category name is required';
+                    newErrors[`category_name_${i}`] =
+                        'Category name is required';
                 }
                 if (!noOfQuestions) {
-                    newErrors[`no_of_questions_${i}`] = 'Number of questions is required';
+                    newErrors[`no_of_questions_${i}`] =
+                        'Number of questions is required';
                 }
 
                 return {
@@ -182,16 +186,37 @@ const WOLTestConfig = () => {
         <>
             <Header />
             <Sidebar />
-            <Box display="flex" justifyContent="space-between" marginTop={3} alignItems="center">
+            <Box
+                display="flex"
+                justifyContent="space-between"
+                marginTop={3}
+                alignItems="center"
+            >
                 <Box display="flex" alignItems="center" padding="16px">
                     <ArrowBackIosIcon
-                        style={{ fontSize: '25px', marginBottom: '17px', marginRight: '10px', cursor: 'pointer' }}
+                        style={{
+                            fontSize: '25px',
+                            marginBottom: '17px',
+                            marginRight: '10px',
+                            cursor: 'pointer',
+                        }}
                         onClick={() => navigate('/wheel-of-life')}
                     />
-                    <p style={{ fontSize: '40px', fontWeight: 200 }}>Wheel Of Test Config</p>
+                    <p style={{ fontSize: '40px', fontWeight: 200 }}>
+                        Wheel Of Test Config
+                    </p>
                 </Box>
             </Box>
-            <Box sx={{ mt: 2, mb: 2, backgroundColor: 'white', borderRadius: 2, minHeight: 160, padding: 2 }}>
+            <Box
+                sx={{
+                    mt: 2,
+                    mb: 2,
+                    backgroundColor: 'white',
+                    borderRadius: 2,
+                    minHeight: 160,
+                    padding: 2,
+                }}
+            >
                 <form onSubmit={handleSubmit} noValidate>
                     <Grid container spacing={2}>
                         {numberOfWolCategoriesOptions.length > 0 && (
@@ -200,12 +225,22 @@ const WOLTestConfig = () => {
                                     label="Number of WOL Categories"
                                     name="numberOfWolCategories"
                                     value={formValues.numberOfWolCategories}
-                                    onChange={e => setFormValues({ ...formValues, numberOfWolCategories: e.target.value })}
+                                    onChange={e =>
+                                        setFormValues({
+                                            ...formValues,
+                                            numberOfWolCategories:
+                                                e.target.value,
+                                        })
+                                    }
                                     errors={errors}
                                     options={numberOfWolCategoriesOptions}
                                     disabled={edit}
                                 />
-                                {errors.numberOfWolCategories && <p style={{ color: 'red' }}>{errors.numberOfWolCategories}</p>}
+                                {errors.numberOfWolCategories && (
+                                    <p style={{ color: 'red' }}>
+                                        {errors.numberOfWolCategories}
+                                    </p>
+                                )}
                             </Grid>
                         )}
                         <Grid item xs={12} md={4}>
