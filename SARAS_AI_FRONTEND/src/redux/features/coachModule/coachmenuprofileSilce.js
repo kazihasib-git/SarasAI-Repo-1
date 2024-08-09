@@ -4,6 +4,7 @@ import { baseUrl } from '../../../utils/baseURL';
 import axiosInstance from '../../services/httpService';
 import { toast } from 'react-toastify';
 import { act } from 'react';
+
 const accessToken = localStorage.getItem('accessToken');
 
 // Get Coach profile
@@ -217,8 +218,7 @@ export const denyCallRequest = createAsyncThunk(
             `${baseUrl}/coach/call-request/denie-call-request/${id}`,
             {
                 // 'reject_reason': message,
-                reject_reason: message,  
-                
+                reject_reason: message,
             }
         );
         console.log(response.data, 'response.data');
@@ -243,15 +243,11 @@ export const getCoachScheduledCalls = createAsyncThunk(
 
 //coach call records
 export const getCoachCallRecords = createAsyncThunk(
-    'taMenu/getCoachCallRecords',
+    'coachMenu/getCoachCallRecords',
     async date => {
         const response = await axiosInstance.post(
             `${baseUrl}/coach/call-recording/get-call-recording`,
             {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json',
-                },
                 date: date,
             }
         );
@@ -260,38 +256,34 @@ export const getCoachCallRecords = createAsyncThunk(
     }
 );
 
+//upload video
+
+export const uploadSessionRecording = createAsyncThunk(
+    'coachMenu/uploadSessionRecording',
+    async ({ id, session_recording_url }) => {
+        const response = await axiosInstance.put(
+            `${baseUrl}/coach/call-recording/upload-session-recording/${id}`,
+            { session_recording_url }
+        );
+
+        return response.data;
+    }
+);
+
 export const assignSessionNotes = createAsyncThunk(
     'calls/assignSessionNotes',
-    async ({ id, data }, { rejectWithValue }) => {
-        try {
-            console.log('Assigning session notes with ID:', id);
-            if (!id) {
-                throw new Error('ID is required');
-            }
-
-            const response = await axios.put(
-                `${baseUrl}/coach/call-recording/assign-session-notes/${id}`,
-                data,
-                {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`,
-                        'Content-Type': 'application/json',
-                    },
-                }
-            );
-            return response.data;
-        } catch (error) {
-            console.error('Error assigning session notes:', error);
-            return rejectWithValue(
-                error.response ? error.response.data : error.message
-            );
-        }
+    async ({ id, data }) => {
+        const response = await axiosInstance.put(
+            `${baseUrl}/coach/call-recording/assign-session-notes/${id}`,
+            data
+        );
+        return response.data;
     }
 );
 
 const initialState = {
     coachProfileData: [], // Coach Profile Data
-    updateProfileData:[],
+    updateProfileData: [],
     coachSlots: [], // Coach Slots
     coachSlotsByDate: [], // Coach Slots By Date
     coachSessions: [], // Coach Sessions,
@@ -327,6 +319,8 @@ const initialState = {
     reasonForLeavePopup: false,
     cancelSessionOnLeave: false,
     viewStudentsOnReschedule: false,
+
+    sessionRecordingUrl: null,
 
     loading: false,
     error: null,
@@ -702,6 +696,18 @@ export const coachMenuSlice = createSlice({
             state.loading = false;
             state.error = action.error.message;
             state.coachCallRecords = [];
+        });
+
+        //video upload call record
+        builder.addCase(uploadSessionRecording.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(uploadSessionRecording.fulfilled, (state, action) => {
+            // Assuming the response contains session_recording_url
+            state.sessionRecordingUrl = action.payload.session_recording_url;
+        });
+        builder.addCase(uploadSessionRecording.rejected, (state, action) => {
+            state.error = action.payload;
         });
 
         // session notes

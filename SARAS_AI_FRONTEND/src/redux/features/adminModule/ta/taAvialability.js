@@ -110,38 +110,40 @@ export const reasonForLeave = createAsyncThunk(
     }
 );
 
-
 export const changePlatform = createAsyncThunk(
     'taAvialability/changePlatform',
-    async ({id, data}) => {
-        console.log("ID and Data", id , data)
+    async ({ id, data }) => {
+        console.log('ID and Data', id, data);
         const response = await axiosInstance.patch(
-            `${baseUrl}/admin/taschedules/change-platform/${id}`, data
-        )
-        return response.data
+            `${baseUrl}/admin/taschedules/change-platform/${id}`,
+            data
+        );
+        return response.data;
     }
-)
+);
 
 // Get TA Schdeuled Students
 export const getTAScheduledStudents = createAsyncThunk(
     'taAvialability/getScheduledStudents',
-    async id  => {
-        const response = await axiosInstance.get(`${baseUrl}/admin/taschedules/students/${id}`)
+    async id => {
+        const response = await axiosInstance.get(
+            `${baseUrl}/admin/taschedules/students/${id}`
+        );
         return response.data;
     }
-)
+);
 
 // Edit TA Scheduled Students
 export const editTASchdeuledStudents = createAsyncThunk(
     'taAvialability/editTAScheduledStudents',
-    async ({ Id, data}) => {
+    async ({ Id, data }) => {
         const response = await axiosInstance.patch(
-            `${baseUrl}/admin/taschedules/update-students/${Id}`, data
-        )
+            `${baseUrl}/admin/taschedules/update-students/${Id}`,
+            data
+        );
         return response.data;
     }
-)
-
+);
 
 // Get Ta Schdeuled Batches
 export const getTAScheduledBatches = createAsyncThunk(
@@ -149,21 +151,22 @@ export const getTAScheduledBatches = createAsyncThunk(
     async id => {
         const response = await axiosInstance.get(
             `${baseUrl}/admin/taschedules/batches/${id}`
-        )
+        );
         return response.data;
     }
-)
+);
 
 // Edit TA Schdeuled Batches
 export const editTASchdeuledBatches = createAsyncThunk(
     'taAvialability/editScheduledBatches',
-    async ({ Id, data}) => {
+    async ({ Id, data }) => {
         const response = await axiosInstance.patch(
-            `${baseUrl}/admin/taschedules/update-batches/${Id}` , data
-        )
+            `${baseUrl}/admin/taschedules/update-batches/${Id}`,
+            data
+        );
         return response.data;
     }
-)
+);
 
 const initialState = {
     todaysAvailableTa: [],
@@ -175,9 +178,9 @@ const initialState = {
     scheduledSessionData: [], // Ensure this is correctly named and initialized
     availableSlotsData: [],
     reasonForLeaveData: [],
-    platformData : [],
-    taScheduledStudents : [],
-    taScheduledBatches : [],
+    platformData: [],
+    taScheduledStudents: [],
+    taScheduledBatches: [],
 
     scheduleNewSession: false,
     createNewSlotOpen: false,
@@ -202,9 +205,9 @@ const initialState = {
     taName: [],
     sessionEventData: [],
     openEventData: false,
-    taEditScheduledStudents : false,
-    taEditScheduledBatches : false,
-    meetingId : null,
+    taEditScheduledStudents: false,
+    taEditScheduledBatches: false,
+    meetingId: null,
 };
 
 export const taAvailabilitySlice = createSlice({
@@ -290,23 +293,23 @@ export const taAvailabilitySlice = createSlice({
             state.sessionEventData = [];
             state.openEventData = false;
         },
-        openTaEditScheduledStudents(state, action){
-            console.log("Action :", action.payload)
+        openTaEditScheduledStudents(state, action) {
+            console.log('Action :', action.payload);
             state.taEditScheduledStudents = true;
-            state.meetingId = action.payload.id
+            state.meetingId = action.payload.id;
         },
-        closeTaEditScheduledStudents(state, action){
+        closeTaEditScheduledStudents(state, action) {
             state.taEditScheduledStudents = false;
-            state.meetingId = null
+            state.meetingId = null;
         },
-        openTaEditSchduledBatches(state, action){
+        openTaEditSchduledBatches(state, action) {
             state.taEditScheduledBatches = true;
-            state.meetingId = action.payload.id
+            state.meetingId = action.payload.id;
         },
-        closeTaEditScheduledBatches(state, action){
-            state.taEditScheduledBatches = false
-            state.meetingId = null
-        }
+        closeTaEditScheduledBatches(state, action) {
+            state.taEditScheduledBatches = false;
+            state.meetingId = null;
+        },
     },
     extraReducers: builder => {
         //for sessions ta for calendar
@@ -369,7 +372,7 @@ export const taAvailabilitySlice = createSlice({
             state.loading = true;
         });
         builder.addCase(createSlots.fulfilled, (state, action) => {
-            console.log("slot data ==================> " , action.payload?.data)  ;
+            console.log('slot data ==================> ', action.payload?.data);
             state.loading = false;
             state.slotData = action.payload?.data;
         });
@@ -435,70 +438,70 @@ export const taAvailabilitySlice = createSlice({
         // Change Platform
         builder.addCase(changePlatform.pending, state => {
             state.loading = true;
-        }) 
+        });
         builder.addCase(changePlatform.fulfilled, (state, action) => {
             state.loading = false;
             state.platformData = action.payload;
-        })
+        });
         builder.addCase(changePlatform.rejected, (state, action) => {
             state.loading = false;
             state.platformData = [];
             state.error = action.error.message;
-        })
+        });
 
         // Get Ta Scheduled Students
         builder.addCase(getTAScheduledStudents.pending, state => {
             state.loading = true;
-        })
-        builder.addCase(getTAScheduledStudents.fulfilled , (state, action) => {
+        });
+        builder.addCase(getTAScheduledStudents.fulfilled, (state, action) => {
             state.loading = false;
             state.taScheduledStudents = action.payload.data;
-        })
+        });
         builder.addCase(getTAScheduledStudents.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
-            state.taScheduledStudents=  []
-        })
+            state.taScheduledStudents = [];
+        });
 
         // Edit TA Scheduled Students
         builder.addCase(editTASchdeuledStudents.pending, state => {
             state.loading = true;
-        })
+        });
         builder.addCase(editTASchdeuledStudents.fulfilled, (state, action) => {
             state.loading = false;
             // TODO :
-        })
+        });
         builder.addCase(editTASchdeuledStudents.rejected, (state, action) => {
             state.loading = false;
-            state.error = action.error.message
-        })
+            state.error = action.error.message;
+        });
 
         // Get TA Scheduled Batches
-        builder.addCase(getTAScheduledBatches.pending , state => {
+        builder.addCase(getTAScheduledBatches.pending, state => {
             state.loading = true;
-        })
+        });
         builder.addCase(getTAScheduledBatches.fulfilled, (state, action) => {
             state.loading = false;
             state.taScheduledBatches = action.payload.data;
-        })
+        });
         builder.addCase(getTAScheduledBatches.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
-            state.taScheduledBatches = []
-        })
+            state.taScheduledBatches = [];
+        });
 
         // Edit TA Scheduled Batches
-        builder.addCase(editTASchdeuledBatches.pending, (state) => {
+        builder.addCase(editTASchdeuledBatches.pending, state => {
             state.loading = true;
-        })
+        });
         builder.addCase(editTASchdeuledBatches.fulfilled, (state, action) => {
             state.loading = false;
-            // TODO : 
-        })
+            // TODO :
+        });
         builder.addCase(editTASchdeuledBatches.rejected, (state, action) => {
             state.loading = false;
-            state.error = action.error.message
-        })
+            state.error = action.error.message;
+        });
     },
 });
 

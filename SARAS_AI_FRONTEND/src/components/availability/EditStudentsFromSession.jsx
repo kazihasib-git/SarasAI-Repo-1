@@ -1,21 +1,33 @@
-import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
-import { getAssignStudents, getStudentBatchMapping } from '../../redux/features/adminModule/ta/taSlice'
-import { closeTaEditScheduledStudents, editTASchdeuledStudents, getTAScheduledBatches, getTAScheduledStudents } from '../../redux/features/adminModule/ta/taAvialability'
-import ReusableDialog from '../CustomFields/ReusableDialog'
-import CustomButton from '../CustomFields/CustomButton'
-import { Divider, Grid, MenuItem, Typography } from '@mui/material'
-import CustomTextField from '../CustomFields/CustomTextField'
-import PopUpTable from '../CommonComponent/PopUpTable'
-import { closeCoachEditScheduledStudents, editCoachScheduledStudents, getCoachScheduledStudents } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice'
-import { getCoachAssignStudents } from '../../redux/features/adminModule/coach/coachSlice'
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import {
+    getAssignStudents,
+    getStudentBatchMapping,
+} from '../../redux/features/adminModule/ta/taSlice';
+import {
+    closeTaEditScheduledStudents,
+    editTASchdeuledStudents,
+    getTAScheduledBatches,
+    getTAScheduledStudents,
+} from '../../redux/features/adminModule/ta/taAvialability';
+import ReusableDialog from '../CustomFields/ReusableDialog';
+import CustomButton from '../CustomFields/CustomButton';
+import { Divider, Grid, MenuItem, Typography } from '@mui/material';
+import CustomTextField from '../CustomFields/CustomTextField';
+import PopUpTable from '../CommonComponent/PopUpTable';
+import {
+    closeCoachEditScheduledStudents,
+    editCoachScheduledStudents,
+    getCoachScheduledStudents,
+} from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
+import { getCoachAssignStudents } from '../../redux/features/adminModule/coach/coachSlice';
 
 const headers = ['S. No.', 'Student Name', 'Program', 'Batch', 'Select'];
 
 const EditStudentsFromSession = ({ componentName }) => {
-    const dispatch = useDispatch()
-    const {id, name} = useParams()
+    const dispatch = useDispatch();
+    const { id, name } = useParams();
 
     const [selectedTerm, setSelectedTerm] = useState([]);
     const [selectedBatch, setSelectedBatch] = useState('');
@@ -35,68 +47,67 @@ const EditStudentsFromSession = ({ componentName }) => {
         meetingIdState;
 
     switch (componentName) {
-        case 'TACALENDER' : 
+        case 'TACALENDER':
             sliceName = 'taModule';
-            availabilitySliceName = 'taAvialability'
-            openPopState = 'taEditScheduledStudents'
-            closePopupActions = closeTaEditScheduledStudents
-            scheduledStudentsApi = getTAScheduledStudents
-            scheduledStudentsState = 'taScheduledStudents'
-            editScheduledStudentsApi =  editTASchdeuledStudents
-            assignedStudentsApi = getAssignStudents
-            assignedStudentsState = 'assignedStudents'
-            meetingIdState = 'meetingId'
+            availabilitySliceName = 'taAvialability';
+            openPopState = 'taEditScheduledStudents';
+            closePopupActions = closeTaEditScheduledStudents;
+            scheduledStudentsApi = getTAScheduledStudents;
+            scheduledStudentsState = 'taScheduledStudents';
+            editScheduledStudentsApi = editTASchdeuledStudents;
+            assignedStudentsApi = getAssignStudents;
+            assignedStudentsState = 'assignedStudents';
+            meetingIdState = 'meetingId';
             break;
 
-        case 'COACHCALENDER' :
+        case 'COACHCALENDER':
             sliceName = 'coachModule';
-            availabilitySliceName = 'coachAvailability'
-            openPopState = 'coachEditScheduledStudents'
-            closePopupActions = closeCoachEditScheduledStudents
-            scheduledStudentsApi = getCoachScheduledStudents
-            scheduledStudentsState = 'coachScheduledStudents'
-            editScheduledStudentsApi = editCoachScheduledStudents
-            assignedStudentsApi = getCoachAssignStudents
-            assignedStudentsState = 'assignedStudents'
-            meetingIdState = 'meetingId'
+            availabilitySliceName = 'coachAvailability';
+            openPopState = 'coachEditScheduledStudents';
+            closePopupActions = closeCoachEditScheduledStudents;
+            scheduledStudentsApi = getCoachScheduledStudents;
+            scheduledStudentsState = 'coachScheduledStudents';
+            editScheduledStudentsApi = editCoachScheduledStudents;
+            assignedStudentsApi = getCoachAssignStudents;
+            assignedStudentsState = 'assignedStudents';
+            meetingIdState = 'meetingId';
             break;
-        
-        default :
+
+        default:
             sliceName = null;
-            availabilitySliceName = null
-            openPopState = null
-            closePopupActions = null
-            scheduledStudentsApi = null
-            scheduledStudentsState = null
-            editScheduledStudentsApi = null
+            availabilitySliceName = null;
+            openPopState = null;
+            closePopupActions = null;
+            scheduledStudentsApi = null;
+            scheduledStudentsState = null;
+            editScheduledStudentsApi = null;
             assignedStudentsApi = null;
             assignedStudentsState = null;
             meetingIdState = null;
             break;
     }
 
-    const stateSelector = useSelector((state) => state[sliceName])
-    const availabilityStateSelector = useSelector((state) => state[availabilitySliceName])
+    const stateSelector = useSelector(state => state[sliceName]);
+    const availabilityStateSelector = useSelector(
+        state => state[availabilitySliceName]
+    );
+
+    const { [assignedStudentsState]: assignedStudents } = stateSelector;
 
     const {
-        [assignedStudentsState] : assignedStudents
-    } = stateSelector;
-
-    const {
-        [scheduledStudentsState] : scheduledStudents,
-        [openPopState] : open,
-        [meetingIdState] : meetingId
+        [scheduledStudentsState]: scheduledStudents,
+        [openPopState]: open,
+        [meetingIdState]: meetingId,
     } = availabilityStateSelector;
 
     useEffect(() => {
-        dispatch(assignedStudentsApi(id))
-        .then(() => {
+        dispatch(assignedStudentsApi(id)).then(() => {
             dispatch(scheduledStudentsApi(meetingId));
-        })
-    }, [dispatch])
+        });
+    }, [dispatch]);
 
     useEffect(() => {
-        if(assignedStudents && assignedStudents.length > 0){
+        if (assignedStudents && assignedStudents.length > 0) {
             const transformedData = assignedStudents.map((stu, index) => ({
                 'S. No.': index + 1,
                 'Student Name': stu.student.name,
@@ -132,10 +143,10 @@ const EditStudentsFromSession = ({ componentName }) => {
             });
 
             setFilteredStudents(filtered);
-        }else{
-            setFilteredStudents()
+        } else {
+            setFilteredStudents();
         }
-    }, [assignedStudents, selectedTerm, selectedBatch, searchName])
+    }, [assignedStudents, selectedTerm, selectedBatch, searchName]);
 
     const batchOptions =
         assignedStudents && Array.isArray(assignedStudents)
@@ -179,10 +190,12 @@ const EditStudentsFromSession = ({ componentName }) => {
             : [];
 
     useEffect(() => {
-        if(scheduledStudents){
-            setSelectedStudents(scheduledStudents.map((student)=> student.student_id))
+        if (scheduledStudents) {
+            setSelectedStudents(
+                scheduledStudents.map(student => student.student_id)
+            );
         }
-    }, [scheduledStudents])
+    }, [scheduledStudents]);
 
     const handleSelectStudent = id => {
         setSelectedStudents(prev =>
@@ -191,17 +204,16 @@ const EditStudentsFromSession = ({ componentName }) => {
     };
 
     const handleSubmit = () => {
-        console.log("MeetingId", meetingId)
-        const Id = meetingId
+        console.log('MeetingId', meetingId);
+        const Id = meetingId;
         const data = {
-            admin_user_id : Number(id),
-            studentId : selectedStudents.map(id => (id))
-        }
-        dispatch(editScheduledStudentsApi({ Id, data })).
-        then(() => {
-            dispatch(closePopupActions())
-        })
-    }
+            admin_user_id: Number(id),
+            studentId: selectedStudents.map(id => id),
+        };
+        dispatch(editScheduledStudentsApi({ Id, data })).then(() => {
+            dispatch(closePopupActions());
+        });
+    };
 
     const content = (
         <>
@@ -278,7 +290,7 @@ const EditStudentsFromSession = ({ componentName }) => {
         >
             Submit
         </CustomButton>
-    )
+    );
 
     return (
         <ReusableDialog
@@ -289,6 +301,6 @@ const EditStudentsFromSession = ({ componentName }) => {
             actions={actions}
         />
     );
-}
+};
 
-export default EditStudentsFromSession
+export default EditStudentsFromSession;

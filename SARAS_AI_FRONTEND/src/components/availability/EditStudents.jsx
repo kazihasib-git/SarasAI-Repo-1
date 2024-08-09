@@ -41,7 +41,7 @@ const EditStudents = ({ componentname }) => {
 
     switch (componentname) {
         case 'COACHSCHEDULE':
-            sliceName = 'coachModule'
+            sliceName = 'coachModule';
             stateModuleKey = 'coachModule';
             nameKey = 'coach_name';
             assignStudentOpenKey = 'openCoachEditStudent';
@@ -55,7 +55,7 @@ const EditStudents = ({ componentname }) => {
             break;
 
         case 'TASCHEDULE':
-            sliceName = 'taModule'
+            sliceName = 'taModule';
             stateModuleKey = 'taModule';
             nameKey = 'ta_name';
             assignStudentOpenKey = 'openEditStudent';
@@ -83,11 +83,7 @@ const EditStudents = ({ componentname }) => {
             break;
     }
 
-    const stateSelector = useSelector((state) => state[sliceName])
-
-    // const stateSelector = useSelector(state =>
-    //     stateModuleKey ? state[stateModuleKey] : {}
-    // );
+    const stateSelector = useSelector(state => state[sliceName]);
 
     const {
         [nameKeyScheduling]: assignedName,
@@ -104,9 +100,9 @@ const EditStudents = ({ componentname }) => {
     } = stateSelector || {};
 
     useEffect(() => {
-        const userAdminId = assignedId || id;
+        const id = assignedId || taID || coachID;
         if (stateModuleKey && assignStudentOpen) {
-            dispatch(getAssignStudentAction(userAdminId));
+            dispatch(getAssignStudentAction(id));
         }
     }, [
         dispatch,

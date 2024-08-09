@@ -31,7 +31,6 @@ import { useParams } from 'react-router-dom';
 import CustomButton from '../CustomFields/CustomButton';
 
 const EditBatches = ({ componentname }) => {
-    console.log('COMPONENT NAME EDITBATCH: ', componentname);
     const { id, name } = useParams();
     const dispatch = useDispatch();
 
@@ -39,6 +38,7 @@ const EditBatches = ({ componentname }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedBranch, setSelectedBranch] = useState('');
     const [filteredBatches, setFilteredBatches] = useState([]);
+    ``;
 
     let stateModuleKey,
         nameKey,
@@ -136,7 +136,6 @@ const EditBatches = ({ componentname }) => {
         loading,
     } = stateSelector || {};
 
-
     useEffect(() => {
         const userAdminId = assignedId || id;
         if (stateModuleKey && assignBatchOpen) {
@@ -157,7 +156,7 @@ const EditBatches = ({ componentname }) => {
                 'S. No.': index + 1,
                 'Batch Name': batch.batch.name,
                 Branch: batch.batch.branch.name,
-                id: batch.id,
+                id: batch.batch.id,
             }));
 
             const filtered = transformedData.filter(batch => {
@@ -171,7 +170,7 @@ const EditBatches = ({ componentname }) => {
                     : true;
                 return matchesBranch && matchesQuery;
             });
-
+            console.log('filtered data', filtered);
             setFilteredBatches(filtered);
         }
     }, [assignedBatches, selectedBranch, searchQuery]);
@@ -181,8 +180,9 @@ const EditBatches = ({ componentname }) => {
         : [];
 
     useEffect(() => {
+        console.log('selected Batches', selectedBatches);
         if (selectedBatches) {
-            setSelectedBatch(selectedBatches.map(prev => prev.id));
+            setSelectedBatch(selectedBatches.map(batch => batch.id));
         }
     }, [selectedBatches]);
 
@@ -191,6 +191,7 @@ const EditBatches = ({ componentname }) => {
             prev.includes(id) ? prev.filter(sid => sid !== id) : [...prev, id]
         );
     };
+
     const handleBranchChange = e => {
         const selectedBranchValue = e.target.value;
         setSelectedBranch(selectedBranchValue);
@@ -202,7 +203,7 @@ const EditBatches = ({ componentname }) => {
                     'S. No.': index + 1,
                     'Batch Name': batch.batch.name,
                     Branch: batch.batch.branch.name,
-                    id: batch.id,
+                    id: batch.batch.id,
                 }))
             );
         }
@@ -224,6 +225,8 @@ const EditBatches = ({ componentname }) => {
     };
 
     const headers = ['S. No.', 'Batch Name', 'Branch', 'Select'];
+
+    console.log('selected batch', selectedBatch);
 
     const content = (
         <>

@@ -1,17 +1,23 @@
 import axiosInstance from '../redux/services/httpService';
 
-    import { baseUrl } from './baseURL';
+// Function to get time_zone by id
+async function timezoneIdToName(id) {
+    try {
+        // Make the API call using the custom Axios instance
+        const response = await axiosInstance.get('/timezones');
 
-    export const timezoneIdToName =  (timezoneId) => {
-        console.log('timezoneIdToName hit:' , timezoneId) ;
-        try {
-            const response = axiosInstance.get(`${baseUrl}/timezones`);
-            const timezones = response.data;
-            console.log('Timezones:', timezones);
-            const timezone = timezones.find(tz => tz.id === timezoneId);
-            return timezone ? timezone.time_zone : 'Unknown Timezone';
-        } catch (error) {
-            console.error('Error fetching timezones:', error);
-            return 'Unknown Timezone'; 
-        }
-    };
+        // Extract the data from the response
+        const timezones = response.data;
+
+        // Find the timezone object with the matching id
+        const timezone = timezones.find(tz => tz.id === id);
+
+        // Return the time_zone if found, otherwise return null
+        return timezone ? timezone.time_zone : null;
+    } catch (error) {
+        console.error('Error fetching timezones:', error);
+        return null;
+    }
+}
+
+export { timezoneIdToName };

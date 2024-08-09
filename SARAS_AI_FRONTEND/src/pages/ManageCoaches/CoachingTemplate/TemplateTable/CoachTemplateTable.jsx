@@ -150,7 +150,6 @@ const CoachTemplateTable = ({
                                         key !== 'is_active' &&
                                         key !== 'timezone'
                                     ) {
-                                        
                                         // Check if item[key] is an object, and handle accordingly
                                         if (
                                             typeof item[key] === 'object' &&

@@ -14,7 +14,6 @@ import {
 } from '../../../../redux/features/adminModule/coachingTools/wol/wolSlice';
 import CustomButton from '../../../CustomFields/CustomButton';
 
-
 const AddEditWOLCategory = () => {
     const dispatch = useDispatch();
     const { openAddEditWolCategory, editData } = useSelector(

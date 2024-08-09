@@ -54,7 +54,7 @@ const VideoPopup = ({ open, videoUrl, onClose }) => {
                 /> */}
                 <Vimeo
                     video={videoUrl}
-                    // autoplay
+                    autoplay
                     // width="50%"
                     // height="50%"
                     // style={{ position: 'absolute', top: 0, left: 0 }}
