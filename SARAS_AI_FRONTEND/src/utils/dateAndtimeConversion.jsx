@@ -1,25 +1,29 @@
 import moment from 'moment-timezone';
 import { timezoneIdToName } from './timezoneIdToName';
 
-function convertToUTC({ fromDate, fromTime, toTime, toDate, timezone_id}) {
-    const timezone = timezoneIdToName(timezone_id)  ; 
-    // Combine date and time for fromTime and toTime
-    const fromDateTime = `${fromDate} ${fromTime}`;
-    const toDateTime = `${toDate} ${toTime}`;
+async function convertToUTC({ date_slot, start_time, time_end, date_end, time_zone_id }) {
+    try {
+        const timezone = await timezoneIdToName(time_zone_id);
+        
+        const fromDateTime = `${date_slot} ${start_time}`;
+        const toDateTime = `${date_end} ${time_end}`;
 
-    // Convert to UTC using moment-timezone
-    const fromDateTimeUTC = moment.tz(fromDateTime, timezone).utc().format();
-    const toDateTimeUTC = moment.tz(toDateTime, timezone).utc().format();
+        const fromDateTimeUTC = moment.tz(fromDateTime, timezone).utc();
+        const toDateTimeUTC = moment.tz(toDateTime, timezone).utc();
 
-    const obbj  = {
-        slot_date: fromDateTimeUTC.split('T')[0], // Extracting date part
-        from_time: fromDateTimeUTC.split('T')[1], // Extracting time part
-        to_time: toDateTimeUTC.split('T')[1],     // Extracting time part
-        end_date:toDateTimeUTC.split('T')[0]
-    };
+        const obbj = {
+            slot_date: fromDateTimeUTC.format('YYYY-MM-DD'),
+            from_time: fromDateTimeUTC.format('HH:mm:ss'),
+            to_time: toDateTimeUTC.format('HH:mm:ss'),
+            end_date: toDateTimeUTC.format('YYYY-MM-DD')
+        };
 
-    console.log(" UTCDATE==/====/==/===/=///==/==>>>>>>" , obbj )
-    return obbj;
+        console.log("UTCDATE==/====/==/===/=///==/==>>>>>>", obbj);
+        return obbj;
+    } catch (error) {
+        console.error('Error in convertToUTC:', error);
+        throw error;
+    }
 }
 
-export {convertToUTC} ; 
+export { convertToUTC };
