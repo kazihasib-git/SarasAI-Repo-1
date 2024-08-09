@@ -27,7 +27,7 @@ h1 {
     width: 804px;
     left: 301px;
     height: Fixed (837px) px; /* Ensure height matches for consistency */
-    border-radius: 0 10px 10px 0;
+    border-radius: 0 0 0 0;
     overflow: hidden;
     flex-direction: column;
 

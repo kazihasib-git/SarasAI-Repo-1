@@ -1,7 +1,7 @@
 // src/components/VideoUploadAndPlayer.js
 import React, { useState, useEffect } from 'react';
 import { Upload } from 'tus-js-client';
-import Vimeo from '@u-wave/react-vimeo';
+//import Vimeo from '@u-wave/react-vimeo';
 import VideoPopup from './videoPlayerPopUp';
 
 const VideoUploadAndPlayer = ({

@@ -29,6 +29,8 @@ import Sidebar from '../../components/Sidebar/Sidebar';
 import Schedule from '../../components/availability/Schedule';
 import { openCreateNewSlots } from '../../redux/features/adminModule/ta/taAvialability';
 import ScheduleSession from '../../components/availability/ScheduleSession';
+import EditBatchesFromSession from '../../components/availability/EditBatchesFromSession';
+import EditStudentsFromSession from '../../components/availability/EditStudentsFromSession';
 
 const CustomButton = ({
     onClick,
@@ -70,8 +72,6 @@ const CoachCalender = () => {
     const dispatch = useDispatch();
     const { id, name } = useParams();
 
-    const [deleteFutureSlots, setDeleteFutureSlots] = useState(false);
-
     const [eventsList, setEventsList] = useState([]);
     const [slotViewData, setSlotViewData] = useState([]);
 
@@ -93,6 +93,8 @@ const CoachCalender = () => {
         scheduleCoachData,
         deletingCoachFutureSlots,
         coachOpenEventData,
+        coachEditScheduledStudents,
+        coachEditScheduledBatches,
     } = useSelector(state => state.coachAvailability);
 
     const {
@@ -109,11 +111,16 @@ const CoachCalender = () => {
     useEffect(() => {
         if (scheduleCoachData && scheduleCoachData.length > 0) {
             const transformedEvents = scheduleCoachData.map(event => ({
-                title: event.meeting_name,
+                id : event.id,
+                meetingName : event.meeting_name,
+                meetingId : event.meeting_id,
+                platformId : event.platform_id,
                 start: new Date(
                     event.date.split(' ')[0] + 'T' + event.start_time
                 ),
                 end: new Date(event.date.split(' ')[0] + 'T' + event.end_time),
+                platform_tools : event.platform_tool_details,
+                platform_meet : event.platform_meeting_details,
             }));
             setEventsList(transformedEvents);
         } else {
@@ -305,6 +312,12 @@ const CoachCalender = () => {
                     )}
                     {coachOpenEventData && (
                         <ScheduleSession componentName={'COACHCALENDER'} />
+                    )}
+                    {coachEditScheduledBatches && (
+                        <EditBatchesFromSession componentName={'COACHCALENDER'} />
+                    )}
+                    {coachEditScheduledStudents && (
+                        <EditStudentsFromSession componentName={'COACHCALENDER'} />
                     )}
                 </Box>
             </Box>

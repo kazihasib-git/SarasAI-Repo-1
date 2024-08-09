@@ -33,6 +33,8 @@ import EditStudents from '../../components/availability/EditStudents';
 import Header from '../../components/Header/Header';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import ScheduleSession from '../../components/availability/ScheduleSession';
+import EditStudentsFromSession from '../../components/availability/EditStudentsFromSession';
+import EditBatchesFromSession from '../../components/availability/EditBatchesFromSession';
 
 
 const CustomButton = ({
@@ -87,6 +89,8 @@ const TaCalender = () => {
         scheduledSlotsData,
         deletingCoachFutureSlots,
         openEventData,
+        taEditScheduledStudents,
+        taEditScheduledBatches,
     } = useSelector(state => state.taAvialability);
 
     const {
@@ -109,6 +113,7 @@ const TaCalender = () => {
         if (scheduleData && scheduleData.data) {
             const transformedEvents = scheduleData.data.map(event => ({
                 id : event.id,
+                admin_user_id :event.admin_user_id,
                 meetingName : event.meeting_name,
                 meetingId : event.meeting_id,
                 platformId : event.platform_id,
@@ -288,6 +293,12 @@ const TaCalender = () => {
                     )}
                     {openEventData && (
                         <ScheduleSession componentName={'TACALENDER'} />
+                    )}
+                    {taEditScheduledStudents && (
+                            <EditStudentsFromSession componentName={'TACALENDER'} />
+                    )}
+                    {taEditScheduledBatches && (
+                        <EditBatchesFromSession componentName={'TACALENDER'} />
                     )}
                 </Box>
             </Box>

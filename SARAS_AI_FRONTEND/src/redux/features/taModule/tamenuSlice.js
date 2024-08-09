@@ -231,6 +231,7 @@ export const assignSessionNotes = createAsyncThunk(
                 {
                     headers: {
                         Authorization: `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json',
                     },
                 }
             );
@@ -256,6 +257,7 @@ const initialState = {
     assignedTaStudents: [],
     assignedTaBatches: [],
     taCallRecords: [], //call recording
+
     //For Leave
     slotsBetweenDates: [],
     sessionBySlots: [],
@@ -310,6 +312,7 @@ export const taMenuSlice = createSlice({
         closeTaMenuSelectBatches: (state, action) => {
             state.selectTaBatches = false;
         },
+        // callRecordings: callRecordingsReducer,
     },
     extraReducers: builder => {
         // Get Ta Profile Data
@@ -535,10 +538,9 @@ export const taMenuSlice = createSlice({
             state.error = action.error.message;
             state.assignedTaBatches = [];
         });
-    },
 
-    //session notes
-    extraReducers: builder => {
+        //session notes
+
         builder.addCase(assignSessionNotes.pending, state => {
             state.loading = true;
         });

@@ -40,8 +40,8 @@ const CoachMapping = () => {
 
 
     useEffect(() => {
-        if (coachMapping?.data && coachMapping?.data?.length > 0) {
-            const transformData = coachMapping?.data?.map((item,index) => ({
+        if (coachMapping && coachMapping.length > 0) {
+            const transformData = coachMapping.map((item,index) => ({
                 id: item.id,
                 name: item.name,
                 Username: item.username,
