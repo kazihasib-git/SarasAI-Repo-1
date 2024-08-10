@@ -162,7 +162,7 @@ const SelectStudents = ({ componentName }) => {
 
     const handleSubmit = () => {
         const data = {
-            students: selectedStudents
+            studentId: selectedStudents
                 ? selectedStudents.map(id => ({ id }))
                 : [],
         };

@@ -31,7 +31,8 @@ import CustomFormControl from '../../../CustomFields/CustomFromControl';
 import CustomDateField from '../../../CustomFields/CustomDateField';
 import CustomTimeField from '../../../CustomFields/CustomTimeField';
 import CustomTimeZoneForm from '../../../CustomFields/CustomTimeZoneForm';
-import { getTimezone } from '../../../../redux/features/utils/utilSlice';
+import { getPlatforms, getTimezone } from '../../../../redux/features/utils/utilSlice';
+import CustomPlatformForm from '../../../CustomFields/CustomPlatformForm';
 
 const CustomButton = ({
     onClick,
@@ -86,12 +87,6 @@ const actionButtons = [
     },
 ];
 
-const platformOptions = [
-    { label: 'Zoom', value: '1' },
-    { label: 'Team', value: '2' },
-    { label: 'BlueButton', value: '3' },
-];
-
 const CreateSession = ({ componentName }) => {
     const dispatch = useDispatch();
     const [formData, setFormData] = useState({
@@ -100,12 +95,12 @@ const CreateSession = ({ componentName }) => {
         message: '',
         students: [],
         batches: [],
-        platforms: null,
+        platform_id: null,
         fromDate: null,
         toDate: null,
         fromTime: null,
         toTime: null,
-        timezone: '1',
+        timezone_id : null,
         repeat: 'onetime',
         selectedDays: [],
     });
@@ -132,13 +127,14 @@ const CreateSession = ({ componentName }) => {
             break;
     }
 
-    const { timezones } = useSelector(state => state.util);
+    const { timezones, platforms } = useSelector(state => state.util);
     const { scheduleNewSessionPopup, students, batches } = useSelector(
         state => state.commonCalender
     );
 
     useEffect(() => {
-        dispatch(getTimezone());
+        dispatch(getTimezone())
+        dispatch(getPlatforms());
     }, [dispatch]);
 
     const [selectedSlot, setSelectedSlot] = useState();
@@ -158,9 +154,6 @@ const CreateSession = ({ componentName }) => {
 
     const handleChange = (field, value) => {
         console.log('field', field, ':', value);
-        if (field === 'timezone') {
-            setFormData(prev => ({ ...prev, [field]: value.time_zone }));
-        }
         setFormData(prev => ({ ...prev, [field]: value }));
     };
 
@@ -226,9 +219,8 @@ const CreateSession = ({ componentName }) => {
             start_time: formData.fromTime,
             end_time: endTime,
             message: formData.message,
-            platforms: formData.platforms,
-            meeting_url: 'http://example.com/meeting',
-            timezone: formData.timezone,
+            platform_id: formData.platform_id,
+            timezone_id : formData.timezone_id,
             event_status: 'scheduled',
             studentId: studentId,
             batchId: batchId,
@@ -242,8 +234,6 @@ const CreateSession = ({ componentName }) => {
             dispatch(closeScheduleNewSession());
         });
     };
-
-    console.log('FormData :', formData);
 
     const content = (
         <Box
@@ -311,17 +301,17 @@ const CreateSession = ({ componentName }) => {
                                     display="flex"
                                     justifyContent="center"
                                 >
-                                    <CustomFormControl
+                                    <CustomPlatformForm
                                         label="Platform"
-                                        name="platform"
+                                        name="platform_id"
                                         value={formData.platforms}
                                         onChange={e =>
                                             handleChange(
-                                                'platforms',
+                                                'platform_id',
                                                 e.target.value
                                             )
                                         }
-                                        options={platformOptions}
+                                        options={platforms}
                                         errors={!!error.platforms}
                                         helperText={error.platforms}
                                         sx={{ width: '100%' }}
@@ -405,8 +395,8 @@ const CreateSession = ({ componentName }) => {
                                     label="Timezone"
                                     name="timezone"
                                     value={formData.timezone}
-                                    onChange={timezone =>
-                                        handleChange('timezone', timezone)
+                                    onChange={e =>
+                                        handleChange('timezone_id', e.target.value)
                                     }
                                     options={timezones}
                                     errors={!!error.timezone}
@@ -576,9 +566,13 @@ const CreateSession = ({ componentName }) => {
     const actions = (
         <CustomButton
             onClick={handleSubmit}
-            backgroundColor="#F56D3B"
-            borderColor="#F56D3B"
-            color="#FFFFFF"
+            style={{
+                backgroundColor :"#F56D3B",
+                borderColor : "#F56D3B",
+                color : "#FFFFFF",
+                textTransform : 'none',
+                fontFamily : 'Bold'
+            }}
         >
             Submit
         </CustomButton>

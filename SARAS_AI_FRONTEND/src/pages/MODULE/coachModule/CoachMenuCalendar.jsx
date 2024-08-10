@@ -102,14 +102,19 @@ const CoachMenuCalendar = () => {
     useEffect(() => {
         if (coachSessions && coachSessions.length > 0) {
             const transformedEvents = coachSessions.map(event => ({
-                title: event.meeting_name,
+                id : event.id,
+                admin_user_id : event.admin_user_id,
+                meetingName : event.meeting_name,
+                meetingId: event.meeting_id,
+                platformId: event.platform_id,
                 start: new Date(
                     event.date.split(' ')[0] + 'T' + event.start_time
                 ),
                 end: new Date(event.date.split(' ')[0] + 'T' + event.end_time),
-                meetlink: event.meeting_url,
-                students: event.students,
-                batches: event.batch,
+                //platform_tools: event.platform_tool_details,
+                //platform_meet: event.platform_meeting_details,
+                students : event.students,
+                batch : event.batch,
             }));
             setSessionEvent(transformedEvents);
         }

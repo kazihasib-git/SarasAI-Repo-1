@@ -1,11 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
 import { baseUrl } from '../../../utils/baseURL';
 import axiosInstance from '../../services/httpService';
 import { toast } from 'react-toastify';
-import { act } from 'react';
-
-const accessToken = localStorage.getItem('accessToken');
 
 // Get Coach profile
 export const getCoachMenuProfile = createAsyncThunk(

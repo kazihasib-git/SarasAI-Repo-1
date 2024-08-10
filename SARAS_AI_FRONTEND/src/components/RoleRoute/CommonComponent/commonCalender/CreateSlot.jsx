@@ -100,7 +100,7 @@ const CreateSlot = ({ componentName }) => {
         repeat: 'onetime',
         fromTime: null,
         toTime: null,
-        timezone: 'Asia/Kolkata',
+        timezone_id: null,
     });
 
     const { timezones } = useSelector(state => state.util);
@@ -112,8 +112,8 @@ const CreateSlot = ({ componentName }) => {
 
     const handleChange = (field, value) => {
         console.log('field', field, ':', value);
-        if (field === 'timezone') {
-            //setFormData(prev => ({ ...prev, [field]: value.time_zone }));
+        if (field === 'timezone_id') {
+            setFormData(prev => ({ ...prev, [field]: value }));
         }
         setFormData(prev => ({ ...prev, [field]: value }));
     };
@@ -166,7 +166,7 @@ const CreateSlot = ({ componentName }) => {
             slot_date: formData.fromDate,
             from_time: formData.fromTime,
             to_time: formData.toTime,
-            timezone: formData.timezone,
+            timezone_id : formData.timezone_id,
             end_date:
                 formData.repeat === 'recurring'
                     ? formData.toDate
@@ -261,10 +261,11 @@ const CreateSlot = ({ componentName }) => {
                             justifyContent="center"
                         >
                             <CustomTimeZoneForm
+                                name="timezone_id"
                                 label="Time Zone"
                                 value={formData.timezone}
-                                onChange={value =>
-                                    handleChange('timezone', value)
+                                onChange={e =>
+                                    handleChange('timezone_id', e.target.value)
                                 }
                                 errors={!!errors.timezone}
                                 helperText={errors.timezone}
@@ -374,18 +375,27 @@ const CreateSlot = ({ componentName }) => {
         <>
             <CustomButton
                 onClick={() => dispatch(closeCreateNewSlot())}
-                backgroundColor="white"
-                color="#F56D3B"
-                borderColor="#F56D3B"
+                style={{
+                    backgroundColor : "white",
+                    color :"#F56D3B",
+                    borderColor : "#F56D3B",
+                    textTransform :'none',
+                    fontFamily : 'Bold'
+                }}
             >
                 Back
             </CustomButton>
             <CustomButton
                 type="submit"
                 onClick={handleSubmit}
-                backgroundColor="#F56D3B"
-                color="white"
-                borderColor="#F56D3B"
+                style={{
+                    backgroundColor : "#F56D3B",
+                    color : "white",
+                    borderColor :"#F56D3B",
+                    textTransform : 'none',
+                    fontFamily : 'Bold'
+                }}
+                
             >
                 Submit
             </CustomButton>
