@@ -324,7 +324,7 @@ const EditStudents = ({ componentname }) => {
         <ReusableDialog
             open={assignStudentOpen}
             handleClose={() => dispatch(closeDialogAction())}
-            title={`Assign Students to '${assignedTA}'`}
+            title={`Assign Students to Session`}
             content={content}
             actions={actions}
         />

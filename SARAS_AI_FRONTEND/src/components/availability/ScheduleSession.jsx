@@ -73,10 +73,12 @@ const ScheduleSession = ({ componentName }) => {
     const navigate = useNavigate();
     const [changeMode, setChangeMode] = useState(false);
     const [selectedPlatform, setSelectedPlatform] = useState();
+    const [copySuccess, setCopySuccess] = useState(false);
 
     const { platforms } = useSelector(state => state.util);
 
     useEffect(() => {
+        console.log('sessionData:');
         dispatch(getPlatforms());
     }, [dispatch]);
 
@@ -137,19 +139,19 @@ const ScheduleSession = ({ componentName }) => {
     console.log('sessionData', sessionData);
 
     const handleLinkCopy = () => {
-        if (sessionData.meetingLink) {
+        if (sessionData.platform_meet.host_meeting_url) {
             navigator.clipboard
-                .writeText(sessionData.meetingLink)
+                .writeText(sessionData.platform_meet.host_meeting_url)
                 .then(() => {
-                    console.log('Link copied to clipboard!');
-                    // Optionally, you can display a notification or message to the user
+                    setCopySuccess(true);
+                    setTimeout(() => setCopySuccess(false), 2000);
                 })
+
                 .catch(err => {
                     console.error('Failed to copy link: ', err);
-                    // Optionally, handle the error case
                 });
         } else {
-            console.error('No meeting link available to copy.');
+            console.error('No meeting link .');
         }
     };
 
@@ -173,11 +175,22 @@ const ScheduleSession = ({ componentName }) => {
         });
     };
 
+    // const handleJoinCall = data => {
+
+    //     window.open(sessionData.platform_meet.host_meeting_url, '_blank');
+    // };
     const handleJoinCall = data => {
+        const eventData = {
+            ...sessionData,
+            meetingName: sessionData.meetingName,
+
+            platformName: sessionData.platform_tools.name,
+        };
         window.open(sessionData.platform_meet.host_meeting_url, '_blank');
     };
 
     console.log('secletected Platform', selectedPlatform);
+    // Check if platform data is present
 
     const content = (
         <Box sx={{ textAlign: 'center' }}>
@@ -217,7 +230,7 @@ const ScheduleSession = ({ componentName }) => {
                         backgroundColor="#FFFFFF"
                         borderColor="#F56D38"
                         color="#F56D38"
-                        sx={{ mb: 2, mr: 2 }}
+                        sx={{ mb: 2, mr: 2, textTransform: 'none' }}
                     >
                         Join with {sessionData.platform_tools.name}
                     </CustomButton>
@@ -227,7 +240,7 @@ const ScheduleSession = ({ componentName }) => {
                         backgroundColor="#FFFFFF"
                         borderColor="transparent"
                         color="#F56D38"
-                        sx={{ mb: 2 }}
+                        sx={{ mb: 2, textTransform: 'none' }}
                     >
                         Change Mode
                     </CustomButton>
@@ -255,6 +268,11 @@ const ScheduleSession = ({ componentName }) => {
                 >
                     <ContentCopyIcon />
                 </IconButton>
+                {copySuccess && (
+                    <Typography variant="body2" sx={{ mt: 1, color: 'black' }}>
+                        Copied!
+                    </Typography>
+                )}
             </Typography>
         </Box>
     );
@@ -312,12 +330,14 @@ const ScheduleSession = ({ componentName }) => {
             </Grid>
         </Box>
     );
+    console.log('sessionData:', sessionData);
+    console.log('Platform Data:', sessionData.platform_tools.name);
 
     return (
         <ReusableDialog
             open={open}
             handleClose={() => dispatch(closePopup())}
-            title={`${sessionData.meetingName || 'No Title'}`}
+            title={`Session Name - ${sessionData.meetingName || 'No Title'}`}
             content={content}
             actions={actions}
         />

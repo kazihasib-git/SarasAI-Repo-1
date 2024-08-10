@@ -83,6 +83,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId }) => {
     const [selectedCoachId, setSelectedCoachId] = useState('');
     const [selectedAssessmentId, setSelectedAssessmentId] = useState('');
     const [selectedActivityId, setSelectedActivityId] = useState('');
+    const [videoUrl, setVideoUrl] = useState('');
 
     const onSubmit = async data => {
         // Prepare the payload
@@ -95,7 +96,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId }) => {
                 activityType === 'test'
                     ? selectedAssessmentId
                     : selectedActivityId, // Ensure this value is correctly set
-            link: data.virtualMeetLink, // Add other fields if needed
+            link: videoUrl || data.virtualMeetLink, // Add other fields if needed
         };
         console.log('payload', payload);
         console.log('ActivityId', selectedActivityId);
@@ -117,6 +118,11 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId }) => {
         dispatch(getCoach());
         // dispatch(getSlotsCoachTemplateModule());
     }, [dispatch]);
+
+    const handleVideoUploadComplete = url => {
+        setVideoUrl(url);
+        // You can handle the video URL here, such as updating state or making an API call
+    };
 
     const { typeList } = useSelector(state => state.activityType);
     const { coaches } = useSelector(state => state.coachModule);
@@ -268,7 +274,11 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId }) => {
                 />
             </Grid>
 
-            {activityType === 'videos' && <VideoUploadComponent />}
+            {activityType === 'videos' && (
+                <VideoUploadComponent
+                    onUploadComplete={handleVideoUploadComplete}
+                />
+            )}
             {activityType === 'pdf' && <PDFUploadComponent />}
 
             {activityType === 'link' && (

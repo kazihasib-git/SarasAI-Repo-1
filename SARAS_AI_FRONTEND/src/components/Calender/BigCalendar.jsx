@@ -17,6 +17,55 @@ moment.locale('en-GB');
 const localizer = momentLocalizer(moment);
 const allViews = Object.keys(Views).map(k => Views[k]);
 
+const CustomEvent = ({ event }) => {
+    return (
+        <div
+            style={{
+                color: 'white',
+                padding: '5px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                fontSize: '0.8em',
+                width: '100%',
+                boxSizing: 'border-box',
+            }}
+        >
+            <div
+                style={{
+                    fontSize: '0.9em',
+                    height: '28px',
+                    maxWidth: 'calc(100% - 70px)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}
+            >
+                {event.meetingName}
+            </div>
+            <div
+                style={{
+                    fontSize: '0.9em',
+                    color: '#28a745',
+                    backgroundColor: 'white',
+                    borderRadius: '5px',
+                    // height: '28px',
+                    // maxWidth: '200px',
+                    // display: 'flex',
+                    // alignItems: 'center',
+                    // justifyContent: 'center',
+                    // padding: '2px 5px',
+                    // flexShrink: 0, // Prevents shrinking of platform name
+                    // minWidth: '35px', // Minimum width for platform name
+                    // maxWidth: 'calc(100% - 70px)', // Ensures it doesn't exceed container width
+                }}
+            >
+                {event.platformName}
+            </div>
+        </div>
+    );
+};
+
 const CalendarComponent = ({ eventsList, slotData, componentName }) => {
     const dispatch = useDispatch();
     console.log('Event List', eventsList);
@@ -52,9 +101,19 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
             break;
     }
 
+    // const showSessionPopUp = event => {
+    //     console.log('Selected Event:', event);
+    //     dispatch(openPopup(event));
+    // };
+
     const showSessionPopUp = event => {
-        console.log('Selected Event:', event);
-        dispatch(openPopup(event));
+        dispatch(
+            openPopup({
+                ...event,
+                meetingName: event.meetingName, // Ensure meetingName is included
+                platformName: event.platformName,
+            })
+        );
     };
 
     const eventStyleGetter = event => {
@@ -119,6 +178,9 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
                     selectable
                     views={{ week: true }} // Only show week view
                     defaultView={Views.WEEK} // Set default view to week
+                    components={{
+                        event: CustomEvent, // Use the custom event component
+                    }}
                 />
             </div>
         </>
