@@ -45,6 +45,7 @@ const weekDays = [
 ];
 
 const  CreateNewSlot = ({ componentName, timezoneID }) => {
+    const { timezones } = useSelector(state => state.util);
     const taId = useParams();
     const dispatch = useDispatch();
 
@@ -54,7 +55,10 @@ const  CreateNewSlot = ({ componentName, timezoneID }) => {
     const [repeat, setRepeat] = useState('onetime');
     const [fromTime, setFromTime] = useState(null);
     const [toTime, setToTime] = useState(null);
-
+    useEffect(() => {
+        dispatch(getTimezone());
+    }, [dispatch]);
+    
     let sliceName, timezoneId, createSlotApi, getSlotsApi;
 
     switch (componentName) {
@@ -82,7 +86,6 @@ const  CreateNewSlot = ({ componentName, timezoneID }) => {
 
     const schedulingState = useSelector(state => state[sliceName]);
     const { createNewSlotOpen } = useSelector(state => state.taAvialability);
-    const { timezones } = useSelector(state => state.util);
 
     const {
         register,
@@ -97,14 +100,11 @@ const  CreateNewSlot = ({ componentName, timezoneID }) => {
                 return prev.filter(d => d !== day);
             } else {
                 return [...prev, day];
-            }
+            }   
         });
     };
 
-    useEffect(() => {
-        dispatch(getTimezone());
-    }, [dispatch]);
-
+ 
     const validate = () => {
         if (!fromDate) {
             toast.error('Please select From Date');
@@ -159,7 +159,7 @@ const  CreateNewSlot = ({ componentName, timezoneID }) => {
         const start_time = formData.from_time;
         const time_end = formData.to_time;
         const date_end = formData.end_date;
-        const timezonename = timezoneIdToName(timezones , formData.timezone_id);
+        const timezonename = timezoneIdToName(formData.timezone_id,timezones);
     
         console.log("data to convert:", { date_slot, start_time, time_end, date_end, timezonename });
         const utcval = await convertToUTC({ date_slot, start_time, time_end, date_end,timezonename});
