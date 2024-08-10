@@ -16,7 +16,7 @@ h1 {
 }
 
 .box1 {
-    width: Fixed (300px) px;
+    width: Fixed (500px) px;
     left: 0px;
     border-radius: 10px 0 0 10px;
     height: Fixed (837px) px; /* Ensure height is set properly */
@@ -41,6 +41,7 @@ h1 {
     border-bottom: 1px solid #ffffff;
     display: flex;
     align-items: center;
+    border-radius: 12px;
     margin-bottom: -10px;
 }
 
@@ -92,22 +93,41 @@ h1 {
 }
 
 .chat-list {
-    width: 100%;
+    width: 85%;
+    display: flex;
+    flex-direction: column;
     height: calc(600px - 88px); /* Adjust height to fit below search bar */
     /* padding: 20px 30px; */
+    align-items: center;
     box-sizing: border-box;
     overflow-y: auto; /* Allow scrolling if content exceeds height */
     background-color: #fff; /* White background for the chat list */
     /* border-radius: 10px; */
-    gap: 8px;
+    
 }
 
 .chat-item {
-    background-color: #f6f6f8;
+    /* background-color: #f6f6f8; */
+    width: 96%;
+    gap: 8px;
     display: flex;
     align-items: center;
     padding: 10px;
-    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+    /* border-bottom: 1px solid #ddd; */
+}
+
+.chat-item-active {
+    background-color: #615EF00F;
+    gap: 8px;
+    width: 96%;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    
+    border-radius: 12px;
+    cursor: pointer;
+    /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
 }
 
 .profile-pic {
