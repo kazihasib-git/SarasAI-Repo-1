@@ -18,9 +18,10 @@ import CustomFormControl from '../../../../components/CustomFields/CustomFromCon
 import CustomTextField from '../../../../components/CustomFields/CustomTextField';
 import CustomDateField from '../../../../components/CustomFields/CustomDateField';
 import CustomTimeField from '../../../../components/CustomFields/CustomTimeField';
-import { getActivityType } from '../../../../redux/features/adminModule/coach/activityTypeSlice';
+import  {getActivityType} from '../../../../redux/features/adminModule/coach/activityTypeSlice';
 import { getCoach } from '../../../../redux/features/adminModule/coach/coachSlice';
 import { linkActivity } from '../../../../redux/features/adminModule/coach/LinkActivitySlice';
+import  VirtualGroupSession  from './LinkActivityPopup/VirtualGroupSession'
 
 import {
     getCoachAvailableSlotsFromDate,

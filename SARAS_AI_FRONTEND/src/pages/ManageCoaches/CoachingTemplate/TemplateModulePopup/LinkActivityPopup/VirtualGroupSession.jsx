@@ -17,16 +17,12 @@ import CustomFormControl from '../../../../../components/CustomFields/CustomFrom
 import CustomTextField from '../../../../../components/CustomFields/CustomTextField';
 import CustomDateField from '../../../../../components/CustomFields/CustomDateField';
 import CustomTimeField from '../../../../../components/CustomFields/CustomTimeField';
-import { getActivityType } from '../../../../../redux/features/ActivityType/activityTypeSlice';
-import { getCoach } from '../../../../../redux/features/CoachModule/coachSlice';
-import { linkActivity } from '../../../../../redux/features/ActivityType/LinkActivitySlice';
-
-import { getCoachAvailableSlotsFromDate } from '../../../../../redux/features/CoachModule/coachSchedule';
-import { getTaAvailableSlotsFromDate } from '../../../../../redux/features/taModule/taScheduling';
-import { createCoachSchedule } from '../../../../../redux/features/CoachModule/coachSchedule';
+import { getCoachAvailableSlotsFromDate, createCoachSchedule } from '../../../../../redux/features/adminModule/coach/coachSchedule';
+import { getTaAvailableSlotsFromDate } from '../../../../../redux/features/adminModule/ta/taScheduling';
 
 
-const LinkActivityComponent = () => {
+
+const VirtualGroupSession = () => {
     const dispatch = useDispatch();
     const {
         handleSubmit,
@@ -247,4 +243,4 @@ const LinkActivityComponent = () => {
     );
 };
 
-export default LinkActivityComponent;
+export default VirtualGroupSession;

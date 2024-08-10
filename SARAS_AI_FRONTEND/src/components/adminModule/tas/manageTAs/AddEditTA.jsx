@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { IconButton, InputAdornment } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useForm, Controller } from 'react-hook-form';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './AddEdit.css';
@@ -65,7 +67,11 @@ const AddEditTA = ({ data }) => {
     const [selectedImage, setSelectedImage] = useState(null);
     const [isEditingDescription, setIsEditingDescription] = useState(false);
     const [editableDescription, setEditableDescription] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
 
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
     const dispatch = useDispatch();
     const { successPopup, assignStudentOpen, assignBatchOpen } = useSelector(
         state => state.taModule
@@ -89,7 +95,7 @@ const AddEditTA = ({ data }) => {
         if (data.profile_picture) {
             const blobUrl = base64ToBlobUrl(data.profile_picture);
             console.log('url', blobUrl)
-            setSelectedImage(data.profile_picture);
+            setSelectedImage(blobUrl);
         }
 
         if(data.description){
@@ -148,7 +154,7 @@ const AddEditTA = ({ data }) => {
     const onSubmit = async formData => {
         console.log("formData :", formData)
         
-        if (selectedImage) {
+        if (selectedImage  && selectedImage.startsWith('data:image/') ) {
             const base64Data = selectedImage.replace(
                 /^data:image\/(png|jpeg|jpg);base64,/,
                 ''
@@ -410,7 +416,7 @@ const AddEditTA = ({ data }) => {
                                 <CustomTextField
                                     label="Password"
                                     name="password"
-                                    type="password"
+                                    type={showPassword ? "text" : "password"}
                                     placeholder="Enter Password"
                                     register={register}
                                     validation={{
@@ -432,6 +438,21 @@ const AddEditTA = ({ data }) => {
                                         },
                                     }}
                                     errors={errors}
+                                    InputProps={{
+                                        endAdornment: (
+                                            <InputAdornment   >
+                                                <IconButton
+                                                    onClick={togglePasswordVisibility}
+                                                >
+                                                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        ),
+                                        style: {
+                                            height: '60px', borderRadius: '50px', padding: '18px 2px'  
+                                        },
+                                    }}
+                                
                                 />
                             </Grid>
                         )}
