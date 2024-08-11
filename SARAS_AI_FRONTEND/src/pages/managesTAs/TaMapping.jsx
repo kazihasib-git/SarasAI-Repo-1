@@ -12,7 +12,7 @@ const headers = [
     'S. No.',
     'TA Name',
     'Username',
-    'Time Zone',
+    // 'Time Zone',
     'Active Students',
     'Active Batches',
     'Actions',
@@ -45,7 +45,7 @@ const TaMapping = () => {
                         id: item.id,
                         name: item.name,
                         username: item.username,
-                        timezone_name: timezoneName,
+                        // timezone_name: timezoneName,
                         Active_Students: item.Active_Students,
                         Active_Batches: item.Active_Batches,
                         is_active: item.is_active

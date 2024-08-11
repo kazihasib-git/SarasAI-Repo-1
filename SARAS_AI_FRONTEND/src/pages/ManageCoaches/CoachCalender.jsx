@@ -93,6 +93,8 @@ const CoachCalender = () => {
         scheduleCoachData,
         deletingCoachFutureSlots,
         coachOpenEventData,
+        coachEditScheduledStudents,
+        coachEditScheduledBatches,
     } = useSelector(state => state.coachAvailability);
 
     const {
