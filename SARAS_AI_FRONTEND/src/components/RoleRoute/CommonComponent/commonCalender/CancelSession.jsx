@@ -8,61 +8,50 @@ import {
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ReusableDialog from '../../../CustomFields/ReusableDialog';
+import CustomButton from '../../../CustomFields/CustomButton';
+import { closeCancelSessionPopup, openCreatedSessions } from '../../../../redux/features/commonCalender/commonCalender';
+import { cancelScheduledSessionForLeave, getCoachMenuSessionForLeave, getCoachMenuSessions } from '../../../../redux/features/coachModule/coachmenuprofileSilce';
 
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                padding: '10px 20px',
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
 const CancelSession = ({ componentName }) => {
     const dispatch = useDispatch();
 
-    let sliceName;
+    let sliceName,
+        cancelSessionApi,
+        getSessionsApi,
+        openCreatedSessionsPopup;
     switch (componentName) {
         case 'TAMENU':
             sliceName = 'taMenu';
+            cancelSessionApi = '';
+            getSessionsApi = '';
             break;
         case 'COACHMENU':
             sliceName = 'coachMenu';
+            cancelSessionApi = cancelScheduledSessionForLeave
+            getSessionsApi = getCoachMenuSessionForLeave;
+            openCreatedSessionsPopup =  openCreatedSessions
             break;
         default:
             sliceName = null;
+            cancelSessionApi = null;
+            getSessionsApi = null;
             break;
     }
 
     const selectState = useSelector(state => state[sliceName]);
+    const { openCancelSession, sessionCancelData, slotsLeaveData } = useSelector((state) => state.commonCalender)
+
+    console.log("slot Leave Data", slotsLeaveData)
 
     const handleCancel = () => {
-        dispatch();
+        const sessionId = sessionCancelData.id;
+        dispatch(cancelSessionApi(sessionId))
+        .then(() => {
+            dispatch(getSessionsApi(slotsLeaveData))
+            dispatch(openCreatedSessionsPopup())
+        })
+
+        dispatch(closeCancelSessionPopup());
     };
 
     const actions = (
@@ -78,8 +67,8 @@ const CancelSession = ({ componentName }) => {
             </CustomButton>
             <CustomButton
                 onClick={() => {
-                    dispatch();
-                    dispatch();
+                    dispatch(closeCancelSessionPopup());
+                    dispatch(openCreatedSessions());
                 }}
                 backgroundColor="#F56D38"
                 borderColor="#F56D38"
@@ -93,14 +82,14 @@ const CancelSession = ({ componentName }) => {
     const content = (
         <>
             <DialogTitle>
-                {`'${schduldeCancelData['Session Name']}'`}
+                {`'${sessionCancelData['Session Name']}'`}
             </DialogTitle>
             <DialogContent
                 style={{ display: 'flex', justifyContent: 'center' }}
             >
                 <Typography>
                     Scheduled for
-                    {schduldeCancelData.Date} from {schduldeCancelData.Time}{' '}
+                    {sessionCancelData.Date} from {sessionCancelData.Time}{' '}
                 </Typography>
             </DialogContent>
         </>
@@ -108,10 +97,9 @@ const CancelSession = ({ componentName }) => {
 
     return (
         <ReusableDialog
-            open={cancelSessionState}
+            open={openCancelSession}
             handleClose={() => {
-                dispatch(closeSessionAction());
-                dispatch(openSessionAction());
+                dispatch(closeCancelSessionPopup());
             }}
             title="Are you sure that you want to cancel the session"
             content={content}

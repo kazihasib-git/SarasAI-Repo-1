@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 //import CoachMenu from './CoachMenu';
 
 import '../../pages/MODULE/coachModule/CoachMenuMessages.css';
@@ -16,6 +17,13 @@ import NotificationIcon from '../../assets/NotificationIcon.svg';
 import SearchIcon from '../../assets/messagesearchicon.svg';
 import FilterBackground from '../../assets/duedatebackground.svg';
 import profilePic from '../../assets/profile.png';
+import {
+    getTaCoachAllChats,
+    getChatRecordsByChatId,
+    createChatForTaCoach,
+    addUserToChat,
+    sentMessage,
+} from '../../redux/features/coachModule/coachmenuprofileSilce';
 
 import {
     TextField,
@@ -26,78 +34,34 @@ import {
     Divider,
 } from '@mui/material';
 
-// Sample student chat data
-const studentsData = [
-    {
-        id: 1,
-        name: 'John Doe',
-        profilePic: profilePic,
-        status: 'Online',
-        lastSeen: '2m',
-    },
-    {
-        id: 2,
-        name: 'Jane Smith',
-        profilePic: profilePic,
-        status: 'Offline',
-        lastSeen: '20m',
-    },
-    {
-        id: 3,
-        name: 'Alice Johnson',
-        profilePic: profilePic,
-        status: 'Online',
-        lastSeen: '4m',
-    },
-    {
-        id: 4,
-        name: 'Sandeep',
-        profilePic: profilePic,
-        status: 'Online',
-        lastSeen: '5m',
-    },
-    {
-        id: 5,
-        name: 'Nikesh',
-        profilePic: profilePic,
-        status: 'Online',
-        lastSeen: '5m',
-    },
-    {
-        id: 6,
-        name: 'Nikuu',
-        profilePic: profilePic,
-        status: 'Online',
-        lastSeen: '15m',
-    },
-    {
-        id: 7,
-        name: 'Manish',
-        profilePic: profilePic,
-        status: 'Online',
-        lastSeen: '15m',
-    },
-    {
-        id: 8,
-        name: 'Ayushman',
-        profilePic: profilePic,
-        status: 'Online',
-        lastSeen: '18m',
-    },
-    // Add more students as needed
-];
 
 const initialChatData = [
-    { sender: 'me', text: 'Hi, how are you?' },
-    { sender: 'other', text: 'I am good, thanks! How about you?' },
-    { sender: 'me', text: 'I am fine too. What’s up?' },
+    { sender: 'me', text: 'Hi, This is sample chat' },
+    { sender: 'other', text: 'There is some problem in getting the data' },
 ];
 
-const Messages = () => {
+const Messages = ({role}) => {
+    const dispatch = useDispatch();
     const [searchQuery, setSearchQuery] = useState('');
-    const [selectedStudent, setSelectedStudent] = useState(null);
+    const [selectedUser, setselectedUser] = useState(null);
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
+    const [assignedUsersData, setassignedUsersData] = useState([]);
+    const [chatUserMapping, setchatUserMappingData] = useState([]);
+    const [currentChatId, setcurrentChatId] = useState(0);
+
+
+    const {
+        coachProfileData,
+        assignedCoachStudents,
+        taCoachAllChatData,
+        chatRecordsbychatId,
+        createdChatId,
+    } = useSelector(state => state.coachMenu);
+
+    const {
+        assignedTaStudents
+    } = useSelector(state => state.taMenu);
 
     // Handle search input change
     const handleSearchChange = event => {
@@ -105,14 +69,27 @@ const Messages = () => {
     };
 
     // Filter students based on search query
-    const filteredStudents = studentsData.filter(student =>
-        student.name.toLowerCase().includes(searchQuery.toLowerCase())
+    const filteredUsers = assignedUsersData.filter(user =>
+        user.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     // Handle student selection
-    const handleStudentClick = student => {
-        setSelectedStudent(student);
-        setMessages(initialChatData); // Load initial dummy chat data
+    const handleUserClick = async (user) => {
+        setselectedUser(user);
+        if(role === 'coach' || role === 'ta') {
+            console.log("chat-mapping===>", chatUserMapping);
+            if (chatUserMapping.every(mappedUser => mappedUser.id !== user.id)) {
+                let data = {
+                    "chat_name" : coachProfileData.name + "-" + user.name
+                }
+                console.log(data);
+                await dispatch(createChatForTaCoach({role:role,data:data}));
+                console.log("new chat id===>>",currentChatId);
+            }else{
+                console.log("currect chat id==>", user.chat_id );
+                setcurrentChatId(user.chat_id);
+            }
+        } 
     };
 
     // Handle message input change
@@ -124,9 +101,119 @@ const Messages = () => {
     const handleSendMessage = () => {
         if (newMessage.trim()) {
             setMessages([...messages, { sender: 'me', text: newMessage }]);
+            let data = null;
+            if(role === 'coach' || role === 'ta') {
+                data = {
+                    "chat_id" : currentChatId,
+                    "message_text" : newMessage,
+                    "sender_type" : "AdminUsers"
+                }
+            }
+            dispatch(sentMessage({role:role,data:data}));
             setNewMessage('');
         }
     };
+
+    useEffect(() => {
+        const setUserToChat = async () => {
+            if (role === 'coach' || role === 'ta') {
+                if(selectedUser !== null){
+                    setcurrentChatId(createdChatId);
+                    const data = {
+                        "chat_id" : createdChatId,
+                        "users" : [{
+                            "user_id" : selectedUser['id'],
+                            "user_type" : "Student"
+                        }]
+                    }
+                    console.log(selectedUser['id']);
+                    console.log("data to add user to chat", data);
+                    await dispatch(addUserToChat({role:role,data:data}));
+                    console.log('new chat id created and updated',createdChatId);
+                }
+            }
+        };
+        setUserToChat();
+        dispatch(getTaCoachAllChats(role));
+    }, [createdChatId]);
+
+    useEffect(() => {
+        const fetchChatData = async () => {
+            if (currentChatId) {
+                console.log("Current Chat ID updated:", currentChatId);
+                if (role === 'coach' || role === 'ta') {
+                    await dispatch(getChatRecordsByChatId({role:role,chatId:currentChatId}));
+                }
+            }
+        };
+        fetchChatData();
+    }, [currentChatId]);
+
+    useEffect(() => {
+        let reformedChatData = [];
+        if (role === 'coach' || role === 'ta') {
+            console.log("chat records===>", chatRecordsbychatId);
+            let chatmessagesData = chatRecordsbychatId["chat_messages"];
+            console.log(chatmessagesData);
+
+            if (chatmessagesData !== undefined) {
+                for (let i = 0; i < chatmessagesData.length; i++) {
+                    let chatData = {
+                        sender: chatmessagesData[i].sender_type === "Modules\\Admin\\Models\\AdminUsers" ? 'me' : 'other',
+                        text: chatmessagesData[i].message_text,
+                    };
+                    reformedChatData.push(chatData);
+                }
+            } else {
+                reformedChatData = initialChatData;
+            }
+        }
+        setMessages(reformedChatData);
+    }, [chatRecordsbychatId]);
+
+    useEffect(() => {
+        if ( role === 'coach' || role === 'ta' ) {
+            let reformedStudentData = [];
+            let assignedTaCoachStudents = role === 'coach' ? assignedCoachStudents : assignedTaStudents;
+            for (let i = 0; i < assignedTaCoachStudents.length; i++) {
+                let student = {
+                    id: assignedTaCoachStudents[i]['student'].id,
+                    name: assignedTaCoachStudents[i]['student'].name,
+                    profilePic: profilePic,
+                    status: 'Online',
+                    lastSeen: '2m',
+                    lastMessage : '',
+                };
+                reformedStudentData.push(student);
+            }
+            setassignedUsersData(reformedStudentData);
+            // console.log('taCoachAllChatData', taCoachAllChatData);
+            let reformedMappingData = [];
+            for (let i = 0; i < taCoachAllChatData.length; i++) {
+                const lastMessage = taCoachAllChatData[i]['chat_messages'].length > 0 
+                    ? taCoachAllChatData[i]['chat_messages'][taCoachAllChatData[i]['chat_messages'].length - 1].message_text 
+                    : 'No Message';
+                let Data  = {
+                    id : taCoachAllChatData[i]['students'][0].id,
+                    name : taCoachAllChatData[i]['students'][0].name,
+                    profilePic : profilePic,
+                    status : 'Online',
+                    lastSeen : '2m',
+                    chat_id : taCoachAllChatData[i].id,
+                    lastMessage : lastMessage.length > 15 
+                    ? lastMessage.slice(0, 14) + '...' 
+                    : lastMessage,
+                }
+                reformedMappingData.push(Data);
+            }
+            setchatUserMappingData(reformedMappingData);
+        }
+
+    },[assignedTaStudents,assignedCoachStudents, taCoachAllChatData]);
+
+    // console.log('chatUserMapping', chatUserMapping);
+
+    const usersToDisplay = searchQuery === '' ? chatUserMapping : filteredUsers;
 
     return (
         <div className="container">
@@ -167,39 +254,49 @@ const Messages = () => {
                     </div>
                 </div>
                 <div className="chat-list">
-                    {filteredStudents.length > 0 ? (
-                        filteredStudents.map(student => (
+                    {usersToDisplay.length > 0 ? (
+                        usersToDisplay.map(user => (
                             <div
-                                key={student.id}
-                                className="chat-item"
-                                onClick={() => handleStudentClick(student)}
+                                key={user.id}
+                                className= {user.id === selectedUser?.id ? "chat-item-active" : "chat-item"}
+                                onClick={() => handleUserClick(user)}
                             >
                                 <img
-                                    src={student.profilePic}
-                                    alt={student.name}
+                                    src={user.profilePic}
+                                    alt={user.name}
                                     className="profile-pic"
                                 />
                                 <div className="chat-info">
                                     <div className="student-name">
-                                        {student.name}
+                                        {user.name}
                                     </div>
                                     <div className="last-message">
-                                        Sample chat message...
+                                        {user.lastMessage}
                                     </div>
                                 </div>
                                 <div className="last-seen">
-                                    {student.lastSeen}
+                                    {user.lastSeen}
                                 </div>
                             </div>
                         ))
                     ) : (
-                        <div>No students found</div>
+                        <div className="chat-item">
+                            <div className="profile-pic"></div>
+                            <div className="chat-info">
+                                <div className="student-name">
+                                    No Chat Found
+                                </div>
+                                <div className="last-message">
+                                    Start a new chat
+                                </div>
+                            </div>
+                        </div>
                     )}
                 </div>
             </div>
 
             <div className="box box2">
-                {selectedStudent && (
+                {selectedUser && (
                     <>
                         <Box
                             display="flex"
@@ -213,20 +310,20 @@ const Messages = () => {
                         >
                             <Box display="flex" alignItems="center" flex="1">
                                 <img
-                                    src={selectedStudent.profilePic}
-                                    alt={selectedStudent.name}
+                                    src={selectedUser.profilePic}
+                                    alt={selectedUser.name}
                                     className="profile-pic"
                                     style={{ width: '40px', height: '40px' }}
                                 />
                                 <Box ml={2}>
                                     <Typography variant="h6">
-                                        {selectedStudent.name}
+                                        {selectedUser.name}
                                     </Typography>
                                     <Typography
                                         variant="body2"
                                         color="textSecondary"
                                     >
-                                        {selectedStudent.status}
+                                        {selectedUser.status}
                                     </Typography>
                                 </Box>
                             </Box>
@@ -257,7 +354,7 @@ const Messages = () => {
                                 >
                                     {msg.sender === 'other' && (
                                         <img
-                                            src={selectedStudent.profilePic} // Use selected student's profile pic
+                                            src={selectedUser.profilePic} // Use selected student's profile pic
                                             alt="Profile Pic"
                                             className="profile-pic"
                                             style={{ marginRight: '8px' }}
@@ -271,7 +368,7 @@ const Messages = () => {
                                     </Box>
                                     {msg.sender === 'me' && (
                                         <img
-                                            src={selectedStudent.profilePic} // Use selected student's profile pic
+                                            src={selectedUser.profilePic} // Use selected student's profile pic
                                             alt="Profile Pic"
                                             className="profile-pic"
                                             style={{ marginLeft: '8px' }}

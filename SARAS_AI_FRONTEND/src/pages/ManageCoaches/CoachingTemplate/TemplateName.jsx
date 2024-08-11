@@ -16,8 +16,6 @@ import {
 } from '../../../redux/features/adminModule/coach/coachTemplateSlice';
 import TemplateModuleTable from './TemplateTable/TemplateModuleTable';
 import './TemplateName.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import AddActivity from './TemplateModulePopup/AddActivity';
 import EditModule from './TemplateModulePopup/EditModule';
 import LinkActivityPopup from './TemplateModulePopup/LinkActivity'; // Import the new component

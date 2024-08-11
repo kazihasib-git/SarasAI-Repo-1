@@ -6,13 +6,13 @@ import Header from '../../components/Header/Header';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import DynamicTable from '../../components/CommonComponent/DynamicTable';
 import { timezoneIdToName } from '../../utils/timezoneIdToName';
-import { deleteTaMapping } from '../../redux/features/adminModule/ta/taSlice';
-
+import {deleteTaMapping } from '../../redux/features/adminModule/ta/taSlice';
+import { getTimezone } from '../../redux/features/utils/utilSlice';
 const headers = [
     'S. No.',
     'TA Name',
     'Username',
-    'Time Zone',
+    // 'Time Zone',
     'Active Students',
     'Active Batches',
     'Actions',
@@ -29,30 +29,28 @@ const TaMapping = () => {
     const { taMapping, loading } = useSelector(state => state.taModule);
     const [taMappingData, setTaMappingData] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
+    const { timezones } = useSelector(state => state.util);
 
     useEffect(() => {
         dispatch(showTAMapping());
+        dispatch(getTimezone());
     }, [dispatch]);
 
     useEffect(() => {
         const fetchData = async () => {
             if (taMapping && taMapping.length > 0) {
-                const transformData = await Promise.all(
-                    taMapping.map(async item => {
-                        const timezoneName = await timezoneIdToName(
-                            item.timezone_id
-                        );
-                        return {
-                            id: item.id,
-                            name: item.name,
-                            username: item.username,
-                            timezone_name: timezoneName,
-                            Active_Students: item.Active_Students,
-                            Active_Batches: item.Active_Batches,
-                            is_active: item.is_active,
-                        };
-                    })
-                );
+                const transformData = await Promise.all(taMapping.map(async (item) => {
+                    const timezoneName = await timezoneIdToName(item.timezone_id , timezones);
+                    return {
+                        id: item.id,
+                        name: item.name,
+                        username: item.username,
+                        // timezone_name: timezoneName,
+                        Active_Students: item.Active_Students,
+                        Active_Batches: item.Active_Batches,
+                        is_active: item.is_active
+                    };
+                }));
 
                 setTaMappingData(transformData);
             } else {

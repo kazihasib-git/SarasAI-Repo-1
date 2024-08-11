@@ -29,8 +29,6 @@ import Sidebar from '../../components/Sidebar/Sidebar';
 import Schedule from '../../components/availability/Schedule';
 import { openCreateNewSlots } from '../../redux/features/adminModule/ta/taAvialability';
 import ScheduleSession from '../../components/availability/ScheduleSession';
-import EditBatchesFromSession from '../../components/availability/EditBatchesFromSession';
-import EditStudentsFromSession from '../../components/availability/EditStudentsFromSession';
 
 const CustomButton = ({
     onClick,
@@ -41,7 +39,7 @@ const CustomButton = ({
     sx,
     ...props
 }) => {
-    return (
+    return (    
         <Button
             variant="contained"
             onClick={onClick}
@@ -71,6 +69,8 @@ const CustomButton = ({
 const CoachCalender = () => {
     const dispatch = useDispatch();
     const { id, name } = useParams();
+
+    const [deleteFutureSlots, setDeleteFutureSlots] = useState(false);
 
     const [eventsList, setEventsList] = useState([]);
     const [slotViewData, setSlotViewData] = useState([]);

@@ -49,6 +49,7 @@ const authSlice = createSlice({
             localStorage.setItem('login', true);
             localStorage.setItem('accessToken', action.payload.access_token);
             localStorage.setItem('role', action.payload.role);
+            localStorage.setItem('timezone_id', action.payload.admin_user.timezone_id)
         });
         builder.addCase(login.rejected, (state, action) => {
             state.loading = false;
@@ -68,6 +69,7 @@ const authSlice = createSlice({
             localStorage.setItem('login', false);
             localStorage.setItem('accessToken', '');
             localStorage.setItem('role', '');
+            localStorage.setItem('timezone_id', '')
         });
     },
 });

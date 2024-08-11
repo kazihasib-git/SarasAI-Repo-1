@@ -94,7 +94,7 @@ const SelectBatches = ({ componentName }) => {
                 'S. No.': index + 1,
                 'Batch Name': batch.batch.name,
                 Branch: batch.batch.branch.name,
-                id: batch.id,
+                id: batch.batch.id,
             }));
 
             const filtered = transformedData.filter(batch => {
@@ -138,7 +138,7 @@ const SelectBatches = ({ componentName }) => {
                     'S. No': index + 1,
                     'Batch Name': batch.batch.name,
                     Branch: batch.batch.branch.name,
-                    id: batch.id,
+                    id: batch.batch.id,
                 }))
             );
         }
@@ -146,7 +146,7 @@ const SelectBatches = ({ componentName }) => {
 
     const handleSubmit = () => {
         const data = {
-            batches: selectedBatch ? selectedBatch.map(id => ({ id })) : [],
+            batchId: selectedBatch ? selectedBatch.map(id => ({ id })) : [],
         };
 
         dispatch(openScheduleNewSession(data));
@@ -210,6 +210,8 @@ const SelectBatches = ({ componentName }) => {
                 backgroundColor: '#F56D3B',
                 borderColor: '#F56D3B',
                 color: '#FFFFFF',
+                textTransform : 'none',
+                fontFamily : 'Bold'
             }}
         >
             Submit

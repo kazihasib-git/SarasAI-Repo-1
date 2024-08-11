@@ -162,7 +162,7 @@ const SelectStudents = ({ componentName }) => {
 
     const handleSubmit = () => {
         const data = {
-            students: selectedStudents
+            studentId: selectedStudents
                 ? selectedStudents.map(id => ({ id }))
                 : [],
         };
@@ -236,6 +236,8 @@ const SelectStudents = ({ componentName }) => {
                 backgroundColor: '#F56D3B',
                 borderColor: '#F56D3B',
                 color: '#FFFFFF',
+                textTransform : 'none',
+                fontFamily : 'Bold'
             }}
         >
             Submit

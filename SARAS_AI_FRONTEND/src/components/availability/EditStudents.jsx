@@ -10,7 +10,7 @@ import {
     openScheduleSession,
 } from '../../redux/features/adminModule/ta/taScheduling';
 
-import { closeCoachEditStudent } from '../../redux/features/adminModule/coach/coachSchedule';
+import { closeCoachEditStudent, openCoachScheduleSession } from '../../redux/features/adminModule/coach/coachSchedule';
 
 import { getCoachAssignStudents } from '../../redux/features/adminModule/coach/coachSlice';
 import { useParams } from 'react-router-dom';
@@ -35,7 +35,8 @@ const EditStudents = ({ componentname }) => {
         closeDialogAction,
         getAssignStudentAction,
         editStudentKey,
-        selectedStudentKey;
+        selectedStudentKey,
+        openSchedulingPopup;
 
     let schedulingState, nameKeyScheduling, idKeyScheduling;
 
@@ -46,12 +47,13 @@ const EditStudents = ({ componentname }) => {
             nameKey = 'coach_name';
             assignStudentOpenKey = 'openCoachEditStudent';
             editStudentKey = 'assignedStudents';
-            selectedStudentKey = 'student';
+            selectedStudentKey = 'students';
             closeDialogAction = closeCoachEditStudent;
             getAssignStudentAction = getCoachAssignStudents;
             schedulingState = useSelector(state => state.coachScheduling);
             nameKeyScheduling = 'coachName';
             idKeyScheduling = 'coachID';
+            openSchedulingPopup = openCoachScheduleSession;
             break;
 
         case 'TASCHEDULE':
@@ -60,12 +62,13 @@ const EditStudents = ({ componentname }) => {
             nameKey = 'ta_name';
             assignStudentOpenKey = 'openEditStudent';
             editStudentKey = 'assignedStudents';
-            selectedStudentKey = 'student';
+            selectedStudentKey = 'students';
             closeDialogAction = closeEditStudent;
             getAssignStudentAction = getAssignStudents;
             schedulingState = useSelector(state => state.taScheduling);
             nameKeyScheduling = 'taName';
             idKeyScheduling = 'taID';
+            openSchedulingPopup = openScheduleSession;
             break;
 
         default:
@@ -80,6 +83,7 @@ const EditStudents = ({ componentname }) => {
             schedulingState = null;
             nameKeyScheduling = null;
             idKeyScheduling = null;
+            openSchedulingPopup = null;
             break;
     }
 
@@ -209,6 +213,8 @@ const EditStudents = ({ componentname }) => {
         );
     };
 
+    console.log("Selected Students", selectedStudents)
+
     const handleSubmit = () => {
         const id =
             componentname === 'ADDITCOACH'
@@ -225,10 +231,10 @@ const EditStudents = ({ componentname }) => {
 
         console.log('SUBMIT DATA :', data);
         dispatch(
-            openScheduleSession({
+            openSchedulingPopup({
                 id,
                 name: assignedName,
-                student: selectedStudents.map(id => ({ id })),
+                student : selectedStudents.map(id => ({ id })),
             })
         );
 
@@ -320,7 +326,7 @@ const EditStudents = ({ componentname }) => {
         <ReusableDialog
             open={assignStudentOpen}
             handleClose={() => dispatch(closeDialogAction())}
-            title={`Assign Students to '${assignedTA}'`}
+            title={`Assign Students to Session`}
             content={content}
             actions={actions}
         />
