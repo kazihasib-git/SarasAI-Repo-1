@@ -52,9 +52,9 @@ const AddEditWOLQuestions = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        if (wolCategoryData.data && wolCategoryData.data.length > 0) {
+        if (wolCategoryData && wolCategoryData.length > 0) {
             console.log(wolCategoryData.message);
-            const transformData = wolCategoryData.data.map(item => ({
+            const transformData = wolCategoryData.map(item => ({
                 id: item.id,
                 name: item.name,
             }));
@@ -63,8 +63,8 @@ const AddEditWOLQuestions = () => {
     }, [wolCategoryData]);
 
     const WOLCategoriesOptions =
-        wolCategoryData.data && wolCategoryData.data.length > 0
-            ? wolCategoryData.data.map(item => ({
+        wolCategoryData && wolCategoryData.length > 0
+            ? wolCategoryData.map(item => ({
                   value: item.id,
                   label: item.name,
               }))
@@ -157,7 +157,7 @@ const AddEditWOLQuestions = () => {
     }, [editwolQuestionData]);
 
     const categoryName = editwolQuestionData
-        ? wolCategoryData.data?.find(
+        ? wolCategoryData?.find(
               item => item.id === editwolQuestionData.wol_category_id
           )?.name
         : 'No Category Selected';

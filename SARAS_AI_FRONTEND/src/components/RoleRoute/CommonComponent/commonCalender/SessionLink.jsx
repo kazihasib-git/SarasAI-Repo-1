@@ -118,7 +118,7 @@ const SessionLink = ({ componentName }) => {
                 backgroundColor="#FFFFFF"
                 borderColor="transparent"
                 color="#F56D38"
-                sx={{ mb: 2, textTransform: none }}
+                sx={{ mb: 2, textTransform: 'none' }}
             >
                 Change Mode
             </CustomButton>

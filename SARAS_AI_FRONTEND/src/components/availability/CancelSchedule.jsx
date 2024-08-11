@@ -38,8 +38,8 @@ const CancelSchedule = ({ componentName }) => {
 
     switch (componentName) {
         case 'TACALENDER':
-            (sliceName = 'taAvialability'),
-                (closeSessionAction = closeCancelSession);
+            sliceName = 'taAvialability',
+            closeSessionAction = closeCancelSession;
             cancelSessionAction = cancelScheduledSession;
             getSessionAction = getScheduleSession;
             eventSlotData = 'slotEventData';
@@ -97,8 +97,8 @@ const CancelSchedule = ({ componentName }) => {
         dispatch(cancelSessionAction(sessionNo))
             .unwrap()
             .then(() => {
-                dispatch(getSessionAction());
-                dispatch(openSessionAction(slotEventData));
+                dispatch(getSessionAction(slotEventData));
+                dispatch(openSessionAction());
             })
             .catch(error => {
                 console.error('Failed to cancel the session:', error);

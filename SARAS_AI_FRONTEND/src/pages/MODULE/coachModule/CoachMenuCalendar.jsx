@@ -29,6 +29,8 @@ import MarkLeaveDate from '../../../components/RoleRoute/CommonComponent/commonC
 import CreatedSlots from '../../../components/RoleRoute/CommonComponent/commonCalender/CreatedSlots';
 import SessionLink from '../../../components/RoleRoute/CommonComponent/commonCalender/SessionLink';
 import CreateSession from '../../../components/RoleRoute/CommonComponent/commonCalender/CreateSession';
+import CreatedSessions from '../../../components/RoleRoute/CommonComponent/commonCalender/CreatedSessions';
+import CancelSession from '../../../components/RoleRoute/CommonComponent/commonCalender/CancelSession';
 
 const CustomButton = ({
     onClick,
@@ -77,6 +79,8 @@ const CoachMenuCalendar = () => {
         selectBatchPopup,
         markLeave,
         createdSlots,
+        openCreatedSessions,
+        openCancelSession,
         openSession,
     } = useSelector(state => state.commonCalender);
 
@@ -217,11 +221,11 @@ const CoachMenuCalendar = () => {
 
                 {createdSlots && <CreatedSlots componentName={'COACHMENU'} />}
 
-                {leaveScheduledSessionPopup && (
-                    <ScheduledSessions componentName={'COACHMENU_CALENDER'} />
+                {openCreatedSessions && (
+                    <CreatedSessions componentName={'COACHMENU'} />
                 )}
-                {cancelSessionOnLeave && (
-                    <CancelSchedule componentName={'COACHMENU_CALENDER'} />
+                {openCancelSession && (
+                    <CancelSession componentName={'COACHMENU'} />
                 )}
                 {leaveRescheduleSessionPopup && (
                     <ReschedulingSession componentName={'COACHMENU_CALENDER'} />

@@ -15,10 +15,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
     createTaMenuSessions,
     getTaMenuSessions,
+    getTaMenuSlots,
 } from '../../../../redux/features/taModule/tamenuSlice';
 import {
     createCoachMenuSession,
     getCoachMenuSessions,
+    getCoachMenuSlots,
 } from '../../../../redux/features/coachModule/coachmenuprofileSilce';
 import {
     closeScheduleNewSession,
@@ -81,6 +83,8 @@ const weekDays = [
     'Saturday',
 ];
 
+const timezone = Number(localStorage.getItem('timezone_id'));
+
 const actionButtons = [
     {
         type: 'button',
@@ -100,30 +104,33 @@ const CreateSession = ({ componentName }) => {
         toDate: null,
         fromTime: null,
         toTime: null,
-        timezone_id : null,
+        timezone_id : timezone ? timezone : null,
         repeat: 'onetime',
         selectedDays: [],
     });
 
-    let sliceName, createSessionApi, getSessionApi;
+    let sliceName, createSessionApi, getSessionApi, getSlotApi;
 
     switch (componentName) {
         case 'TAMENU':
             sliceName = 'taMenu';
             createSessionApi = createTaMenuSessions;
             getSessionApi = getTaMenuSessions;
+            getSlotApi = getTaMenuSlots
             break;
 
         case 'COACHMENU':
             sliceName = 'coachMenu';
             createSessionApi = createCoachMenuSession;
             getSessionApi = getCoachMenuSessions;
+            getSlotApi = getCoachMenuSlots
             break;
 
         default:
             sliceName = null;
             createSessionApi = null;
             getSessionApi = null;
+            getSlotApi = null;
             break;
     }
 
@@ -200,7 +207,7 @@ const CreateSession = ({ componentName }) => {
         console.log('fromDateTime:', fromDateTime);
 
         // Assuming formData.duration is in the format "HH:MM:SS"
-        const [hours, minutes, seconds] = formData.duration
+        const [hours, minutes, seconds] = formData?.duration
             .split(':')
             .map(Number);
         const durationInMs = (hours * 3600 + minutes * 60 + seconds) * 1000;
@@ -230,7 +237,8 @@ const CreateSession = ({ componentName }) => {
         console.log('DATA :', data);
 
         dispatch(createSessionApi(data)).then(() => {
-            dispatch(getSessionApi());
+            dispatch(getSessionApi())
+            dispatch(getSlotApi());
             dispatch(closeScheduleNewSession());
         });
     };
@@ -373,6 +381,7 @@ const CreateSession = ({ componentName }) => {
                                     label="Message"
                                     name="message"
                                     value={formData.message}
+                                    placeholder="Enter your message"
                                     onChange={text =>
                                         handleChange(
                                             'message',
@@ -382,10 +391,12 @@ const CreateSession = ({ componentName }) => {
                                     errors={!!error.message}
                                     helperText={error.message}
                                     sx={{ width: '100%' }}
+                                    multiline
+                                    rows={4}
                                 />
                             </Grid>
 
-                            <Grid
+                            {/* <Grid
                                 item
                                 xs={12}
                                 display="flex"
@@ -394,7 +405,7 @@ const CreateSession = ({ componentName }) => {
                                 <CustomTimeZoneForm
                                     label="Timezone"
                                     name="timezone"
-                                    value={formData.timezone}
+                                    value={formData.timezone_id}
                                     onChange={e =>
                                         handleChange('timezone_id', e.target.value)
                                     }
@@ -403,7 +414,7 @@ const CreateSession = ({ componentName }) => {
                                     helperText={error.timezone}
                                     sx={{ width: '100%' }}
                                 />
-                            </Grid>
+                            </Grid> */}
 
                             <Grid
                                 item
@@ -421,17 +432,17 @@ const CreateSession = ({ componentName }) => {
                                         variant="contained"
                                         onClick={handleAssignStudents}
                                         sx={{
-                                            backgroundColor: '#F56D3B',
-                                            color: 'white',
-                                            height: '60px',
-                                            width: '201px',
+                                            backgroundColor: '#FEEBE3',
+                                            color: '#F56D38',
+                                            height: '34px',
                                             borderRadius: '50px',
                                             textTransform: 'none',
                                             padding: '18px 30px',
                                             fontWeight: '700',
+                                            fontFamily : 'Regular',
                                             fontSize: '16px',
                                             '&:hover': {
-                                                backgroundColor: '#D4522A',
+                                                backgroundColor: '#FEEBE3',
                                             },
                                         }}
                                     >
@@ -443,25 +454,26 @@ const CreateSession = ({ componentName }) => {
                                         sx={{
                                             backgroundColor: 'white',
                                             color: '#F56D3B',
-                                            height: '60px',
+                                            height: '34px',
                                             width: '194px',
                                             border: '2px solid #F56D3B',
                                             borderRadius: '50px',
                                             textTransform: 'none',
                                             fontWeight: '700',
                                             fontSize: '16px',
+                                            fontFamily : 'Regular',
                                             padding: '18px 30px',
                                             '&:hover': {
-                                                backgroundColor: '#F56D3B',
-                                                color: 'white',
+                                                backgroundColor: 'white',
+                                                border: '2px solid #F56D3B',
                                             },
                                         }}
                                     >
-                                        Edit Batches
+                                        Select Batches
                                     </Button>
                                 </Box>
                             </Grid>
-
+                       
                             <Grid
                                 container
                                 spacing={3}
@@ -556,6 +568,7 @@ const CreateSession = ({ componentName }) => {
                                     </Grid>
                                 </>
                             )}
+                        
                         </Grid>
                     </Box>
                 </form>

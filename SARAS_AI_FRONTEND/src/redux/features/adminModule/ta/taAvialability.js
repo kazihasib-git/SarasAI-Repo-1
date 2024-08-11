@@ -62,7 +62,7 @@ export const createSlots = createAsyncThunk(
     }
 );
 
-// Get Schedule Session for TA
+// Get Schedule Session for TA by slots
 export const getScheduleSession = createAsyncThunk(
     'taAvialability/getScheduleSession',
     async data => {

@@ -26,41 +26,6 @@ import CustomTimeField from '../../../CustomFields/CustomTimeField';
 import CustomTimeZoneForm from '../../../CustomFields/CustomTimeZoneForm';
 import ReusableDialog from '../../../CustomFields/ReusableDialog';
 
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                padding: '10px 20px',
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
-
 const weekDays = [
     'Sunday',
     'Monday',
@@ -71,8 +36,11 @@ const weekDays = [
     'Saturday',
 ];
 
+const timezone = Number(localStorage.getItem('timezone_id'))
+
 const CreateSlot = ({ componentName }) => {
     console.log('component Name :', componentName);
+    console.log('timezone', timezone)
 
     let createSlotApi, getSlotsApi;
 
@@ -100,7 +68,7 @@ const CreateSlot = ({ componentName }) => {
         repeat: 'onetime',
         fromTime: null,
         toTime: null,
-        timezone_id: null,
+        timezone_id: timezone ? timezone : null,
     });
 
     const { timezones } = useSelector(state => state.util);
@@ -179,6 +147,8 @@ const CreateSlot = ({ componentName }) => {
             dispatch(closeCreateNewSlot());
         });
     };
+
+    console.log('formData', formData.timezone_id)
 
     const content = (
         <Box
@@ -263,7 +233,7 @@ const CreateSlot = ({ componentName }) => {
                             <CustomTimeZoneForm
                                 name="timezone_id"
                                 label="Time Zone"
-                                value={formData.timezone}
+                                value={formData.timezone_id}
                                 onChange={e =>
                                     handleChange('timezone_id', e.target.value)
                                 }
