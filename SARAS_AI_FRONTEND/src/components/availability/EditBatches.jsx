@@ -301,7 +301,7 @@ const EditBatches = ({ componentname }) => {
         <ReusableDialog
             open={assignBatchOpen}
             handleClose={() => dispatch(closeDialogAction())}
-            title={`Assign Batches to ${assignedTA}`}
+            title={`Assign Batches to Session`}
             content={content}
             actions={actions}
         />
