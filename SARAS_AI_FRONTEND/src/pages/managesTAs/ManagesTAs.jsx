@@ -53,20 +53,30 @@ const ManageTA = () => {
             setTasData(transformData);
         }
     }, [tas]);
-
+    
     const actionButtons = [
         {
             type: 'switch',
-            onChange: () => setActionButtonToggled(prev => !prev), // Toggle state
+            onChange: (event) => {
+                if (event && event.preventDefault) {
+                    event.preventDefault(); // Prevent any default action
+                }
+                setActionButtonToggled(prev => !prev); // Toggle state
+            },
         },
         {
             type: 'edit',
-            onClick: id => {
+            onClick: (id, event) => {
+                if (event && event.preventDefault) {
+                    event.preventDefault(); // Prevent any default action
+                }
                 handleEditTa(id);
             },
-            disabled: actionButtonToggled, // Disable edit button based on toggle state
+            // disabled: actionButtonToggled, // Disable edit button based on toggle state
         },
     ];
+    
+    
 
     const handleAddTa = () => {
         dispatch(openCreateTa());
