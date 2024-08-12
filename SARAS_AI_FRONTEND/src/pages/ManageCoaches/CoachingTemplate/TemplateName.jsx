@@ -22,6 +22,7 @@ import LinkActivityPopup from './TemplateModulePopup/LinkActivity'; // Import th
 import PrerequisitesPopup from './TemplateModulePopup/Prerequisites';
 import { useLocation } from 'react-router-dom';
 import AddEditActivity from './TemplateModulePopup/EditActivity';
+import ViewActivityPopup from './TemplateModulePopup/ViewActivity';
 
 const TemplateName = () => {
     console.log('abc');
@@ -83,6 +84,7 @@ const TemplateName = () => {
         console.log('Closing Link Activity Popup');
         setLinkActivityPopupOpen(false);
     };
+
     const openPrerequisitesPopup = () => {
         setPrerequisitesPopupOpen(true);
     };

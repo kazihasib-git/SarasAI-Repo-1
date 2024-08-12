@@ -207,6 +207,14 @@ const ScheduledCall = ({ role }) => {
     const handleEditClick = data => {
         dispatch(openEditSession(data));
     };
+    
+    const handleOpenParticipantsDialog = participants => {
+        setSelectedParticipants(participants);
+        setParticipantsDialogOpen(true);
+    };
+    const handleCloseParticipantsDialog = () => {
+        setParticipantsDialogOpen(false);
+    };
 
     return (
         <div style={{ padding: '20px' }}>
@@ -221,7 +229,7 @@ const ScheduledCall = ({ role }) => {
                 <ParticipantsDialog
                     open={participantsDialogOpen}
                     onClose={handleCloseParticipantsDialog}
-                    participants={selectedParticipants} // Pass the selected participants data
+                    participantsData={selectedParticipants} // Pass the selected participants data
                 />
             )}
 
@@ -389,7 +397,7 @@ const ScheduledCall = ({ role }) => {
                                         <a
                                             onClick={() =>
                                                 handleOpenParticipantsDialog(
-                                                    call.participants // Pass participants data
+                                                    call.students // Pass participants data
                                                 )
                                             }
                                             style={{
