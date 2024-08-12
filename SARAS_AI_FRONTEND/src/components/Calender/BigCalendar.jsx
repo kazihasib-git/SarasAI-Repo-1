@@ -22,16 +22,16 @@ const formats = {
 };
 
 const CustomEvent = ({ event }) => {
-    let platformTools = { ...event.platform_tools }; 
+    let platformTools = { ...event.platform_tools };
 
-    if (platformTools.name === "Microsoft Teams") {
-        platformTools.name = "Teams";
-    } else if (platformTools.name === "Big Blue Button") {
-        platformTools.name = "BBB";
-    } else if (platformTools.name === "ZOOM") {
-        platformTools.name = "Zoom";
+    if (platformTools.name === 'Microsoft Teams') {
+        platformTools.name = 'Teams';
+    } else if (platformTools.name === 'Big Blue Button') {
+        platformTools.name = 'BBB';
+    } else if (platformTools.name === 'ZOOM') {
+        platformTools.name = 'Zoom';
     }
- 
+
     event.platform_tools = platformTools;
 
     return (

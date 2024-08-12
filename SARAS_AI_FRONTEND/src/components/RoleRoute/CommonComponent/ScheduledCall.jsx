@@ -207,7 +207,7 @@ const ScheduledCall = ({ role }) => {
     const handleEditClick = data => {
         dispatch(openEditSession(data));
     };
-    
+
     const handleOpenParticipantsDialog = participants => {
         setSelectedParticipants(participants);
         setParticipantsDialogOpen(true);

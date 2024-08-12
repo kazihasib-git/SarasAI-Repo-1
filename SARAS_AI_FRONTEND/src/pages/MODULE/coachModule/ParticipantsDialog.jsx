@@ -80,11 +80,9 @@ const ParticipantsDialog = ({ open, onClose, participantsData }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {participantsData.map((participant,index) => (
+                        {participantsData.map((participant, index) => (
                             <tr key={participant.id}>
-                                <td style={{ padding: '8px' }}>
-                                    {index+1}
-                                </td>
+                                <td style={{ padding: '8px' }}>{index + 1}</td>
                                 <td style={{ padding: '8px' }}>
                                     {participant.name}
                                 </td>
