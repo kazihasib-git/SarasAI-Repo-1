@@ -43,9 +43,8 @@ import AssignBatches from '../../AssignBatches';
 import CustomDateOfBirth from '../../../CustomFields/CustomDateOfBirth';
 import EditIcon from '@mui/icons-material/Edit';
 
-
 function AddEditCoach({ data }) {
-    console.log("coach Data", data)
+    console.log('coach Data', data);
     const {
         register,
         handleSubmit,
@@ -87,7 +86,6 @@ function AddEditCoach({ data }) {
     }, [data]);
 
     const populateForm = data => {
-
         dispatch(accessCoachName(data));
 
         if (data.profile_picture) {
@@ -95,7 +93,7 @@ function AddEditCoach({ data }) {
             setSelectedImage(blobUrl);
         }
 
-        if(data.description){
+        if (data.description) {
             setEditableDescription(data.description);
         }
 
@@ -107,13 +105,13 @@ function AddEditCoach({ data }) {
             address: data.address,
             pincode: data.pincode,
             phone: data.phone,
-            timezone_id : data.timezone_id,
+            timezone_id: data.timezone_id,
             gender: data.gender,
             email: data.email,
             date_of_birth: data.date_of_birth,
             highest_qualification: data.highest_qualification,
             about_me: data.about_me,
-            description: data.description
+            description: data.description,
         };
 
         Object.entries(formValues).forEach(([key, value]) =>
@@ -142,7 +140,6 @@ function AddEditCoach({ data }) {
     const handleDescriptionChange = event => {
         setEditableDescription(event.target.value);
     };
-
 
     const handleSaveDescription = () => {
         setIsEditingDescription(false);
@@ -291,7 +288,11 @@ function AddEditCoach({ data }) {
 
                                     <Button
                                         variant="contained"
-                                        onClick={() => setIsEditingDescription(!isEditingDescription)}
+                                        onClick={() =>
+                                            setIsEditingDescription(
+                                                !isEditingDescription
+                                            )
+                                        }
                                         sx={{
                                             backgroundColor: '#F56D3B',
                                             color: 'white',
@@ -336,12 +337,12 @@ function AddEditCoach({ data }) {
                                     </Box>
                                 ) : (
                                     <Typography variant="body1" sx={{ mt: 2 }}>
-                                        {editableDescription || 'Short Description'}
+                                        {editableDescription ||
+                                            'Short Description'}
                                     </Typography>
                                 )}
                             </Box>
                         </Box>
-                    
 
                         <Divider
                             sx={{ mt: 2, mb: 4, border: '1px solid #C2C2E7' }}
@@ -483,7 +484,7 @@ function AddEditCoach({ data }) {
                                     errors={errors}
                                 />
                             </Grid>
-                        
+
                             <Grid item xs={12} sm={6} md={4}>
                                 <CustomTextField
                                     label="PIN Code"
@@ -521,17 +522,16 @@ function AddEditCoach({ data }) {
                                         required: 'Time Zone is required',
                                     }}
                                     render={({ field }) => (
-                                            <CustomTimeZoneForm
-                                                label="Time Zone"
-                                                name="timezone_id"
-                                                placeholder="Time Zone"
-                                                value={field.value}
-                                                onChange={field.onChange}
-                                                errors={errors}
-                                                options={timezones}
-                                            />
-                                        )
-                                    }
+                                        <CustomTimeZoneForm
+                                            label="Time Zone"
+                                            name="timezone_id"
+                                            placeholder="Time Zone"
+                                            value={field.value}
+                                            onChange={field.onChange}
+                                            errors={errors}
+                                            options={timezones}
+                                        />
+                                    )}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6} md={4}>

@@ -1,10 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
 import { baseUrl } from '../../../utils/baseURL';
 import axiosInstance from '../../services/httpService';
 import { toast } from 'react-toastify';
-import { act } from 'react';
-const accessToken = localStorage.getItem('accessToken');
 
 // Get Coach profile
 export const getCoachMenuProfile = createAsyncThunk(
@@ -217,8 +214,7 @@ export const denyCallRequest = createAsyncThunk(
             `${baseUrl}/coach/call-request/denie-call-request/${id}`,
             {
                 // 'reject_reason': message,
-                reject_reason: message,  
-                
+                reject_reason: message,
             }
         );
         console.log(response.data, 'response.data');
@@ -243,15 +239,11 @@ export const getCoachScheduledCalls = createAsyncThunk(
 
 //coach call records
 export const getCoachCallRecords = createAsyncThunk(
-    'taMenu/getCoachCallRecords',
+    'coachMenu/getCoachCallRecords',
     async date => {
         const response = await axiosInstance.post(
             `${baseUrl}/coach/call-recording/get-call-recording`,
             {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json',
-                },
                 date: date,
             }
         );
@@ -260,38 +252,114 @@ export const getCoachCallRecords = createAsyncThunk(
     }
 );
 
-export const assignSessionNotes = createAsyncThunk(
-    'calls/assignSessionNotes',
-    async ({ id, data }, { rejectWithValue }) => {
-        try {
-            console.log('Assigning session notes with ID:', id);
-            if (!id) {
-                throw new Error('ID is required');
-            }
+//upload video
 
-            const response = await axios.put(
-                `${baseUrl}/coach/call-recording/assign-session-notes/${id}`,
-                data,
-                {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`,
-                        'Content-Type': 'application/json',
-                    },
-                }
-            );
-            return response.data;
-        } catch (error) {
-            console.error('Error assigning session notes:', error);
-            return rejectWithValue(
-                error.response ? error.response.data : error.message
-            );
-        }
+export const uploadSessionRecording = createAsyncThunk(
+    'coachMenu/uploadSessionRecording',
+    async ({ id, session_recording_url }) => {
+        const response = await axiosInstance.put(
+            `${baseUrl}/coach/call-recording/upload-session-recording/${id}`,
+            { session_recording_url }
+        );
+
+        return response.data;
     }
 );
 
+export const assignSessionNotes = createAsyncThunk(
+    'calls/assignSessionNotes',
+    async ({ id, data }) => {
+        const response = await axiosInstance.put(
+            `${baseUrl}/coach/call-recording/assign-session-notes/${id}`,
+            data
+        );
+        return response.data;
+    }
+);
+
+// All Chat apis are from here
+
+// to get all chats for a coach 
+
+export const getTaCoachAllChats = createAsyncThunk(
+    'coachMenu/getAllChats',
+    async (role) => {
+        const response = await axiosInstance.get(
+            `${baseUrl}/${role}/chat/get-my-chat`
+        );
+        return response.data;
+    }
+);
+
+// Chat Record by chat id
+export const getChatRecordsByChatId = createAsyncThunk(
+    'coachMenu/getChatRecordsByChatId',
+    async ({role,chatId}) => {
+        const response = await axiosInstance.get(
+            `${baseUrl}/${role}/chat/get-single-chat/${chatId}`
+        );
+        return response.data;
+    }
+);
+
+// create a chat
+export const createChatForTaCoach = createAsyncThunk(
+    'coachMenu/createChat',
+    async ({role,data}) => {
+        const response = await axiosInstance.post(
+            `${baseUrl}/${role}/chat/create-chat`,
+            data,
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+        return response.data;
+    }
+);
+
+// add user to the chat 
+export const addUserToChat = createAsyncThunk(
+    'coachMenu/addUserToChat',
+
+    async ({role,data}) => {
+        const response = await axiosInstance.post(
+            `${baseUrl}/${role}/chat/add/users`,
+            data,
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+        return response.data;
+    }
+);
+
+export const sentMessage = createAsyncThunk(
+    'coachMenu/sentMessage',
+    async ({role,data}) => {
+        const response = await axiosInstance.post(
+            `${baseUrl}/${role}/chat/sent-messages`,
+            data,
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+        return response.data;
+    }
+);
+
+
 const initialState = {
     coachProfileData: [], // Coach Profile Data
-    updateProfileData:[],
+    updateProfileData: [],
     coachSlots: [], // Coach Slots
     coachSlotsByDate: [], // Coach Slots By Date
     coachSessions: [], // Coach Sessions,
@@ -315,6 +383,10 @@ const initialState = {
     coachCallRecords: [],
     sessionNotesData: [],
 
+    taCoachAllChatData: [],  // All Chat Data
+    chatRecordsbychatId: [], // All Chat Records by Chat Id
+    createdChatId  : {}, // new chat id
+
     createCoachSlotsPopup: false,
     createCoachSessionPopup: false,
     selectStudent: false, // Select to Schedule Sessions
@@ -327,6 +399,8 @@ const initialState = {
     reasonForLeavePopup: false,
     cancelSessionOnLeave: false,
     viewStudentsOnReschedule: false,
+
+    sessionRecordingUrl: null,
 
     loading: false,
     error: null,
@@ -704,6 +778,18 @@ export const coachMenuSlice = createSlice({
             state.coachCallRecords = [];
         });
 
+        //video upload call record
+        builder.addCase(uploadSessionRecording.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(uploadSessionRecording.fulfilled, (state, action) => {
+            // Assuming the response contains session_recording_url
+            state.sessionRecordingUrl = action.payload.session_recording_url;
+        });
+        builder.addCase(uploadSessionRecording.rejected, (state, action) => {
+            state.error = action.payload;
+        });
+
         // session notes
         builder.addCase(assignSessionNotes.pending, state => {
             state.loading = true;
@@ -735,6 +821,63 @@ export const coachMenuSlice = createSlice({
                 state.error = action.error.message;
             }
         );
+
+        // Get Coach All Chats
+        builder.addCase(getTaCoachAllChats.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(getTaCoachAllChats.fulfilled, (state, action) => {
+            state.loading = false;
+            state.taCoachAllChatData = action.payload.data;
+        });
+        builder.addCase(getTaCoachAllChats.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+            state.taCoachAllChatData = [];
+        });
+
+        // Get Chat Records by Chat Id
+
+        builder.addCase(getChatRecordsByChatId.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(getChatRecordsByChatId.fulfilled, (state, action) => {
+            state.loading = false;
+            console.log('Chat Records by Chat Id in slice', action.payload.data);
+            state.chatRecordsbychatId = action.payload.data;
+        });
+        builder.addCase(getChatRecordsByChatId.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+            state.chatRecordsbychatId = [];
+        });
+
+        // Create Chat for TA/Coach
+        builder.addCase(createChatForTaCoach.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(createChatForTaCoach.fulfilled, (state, action) => {
+            state.loading = false;
+            state.createdChatId  = action.payload.data.id;
+            console.log('Chat Created Successfully', action.payload.data.id);
+        });
+        builder.addCase(createChatForTaCoach.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+        });
+
+        // Add User to Chat
+        builder.addCase(addUserToChat.pending, state => {
+            state.loading = true;
+            console.log('Adding User to Chat');
+        });
+        builder.addCase(addUserToChat.fulfilled, (state, action) => {
+            state.loading = false;
+        });
+        builder.addCase(addUserToChat.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+        });
     },
 });
 

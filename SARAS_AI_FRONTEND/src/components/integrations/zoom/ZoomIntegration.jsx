@@ -18,10 +18,10 @@ export const joinMeeting = (meetingId, userName, password) => {
         apiKey: API_KEY,
         meetingNumber: meetingId,
         userName: userName,
-        signature: generateSignature(meetingId, userName),  // Generate a Zoom signature
+        signature: generateSignature(meetingId, userName), // Generate a Zoom signature
         passWord: password,
         leaveUrl: 'http://localhost:3000/',
-        role: 0,  // 0 for participant, 1 for host
+        role: 0, // 0 for participant, 1 for host
     };
 
     zoomClient.init({
@@ -30,7 +30,7 @@ export const joinMeeting = (meetingId, userName, password) => {
         success: () => {
             zoomClient.join(meetingConfig);
         },
-        error: (error) => {
+        error: error => {
             console.log('Error initializing Zoom SDK', error);
         },
     });

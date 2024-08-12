@@ -1,5 +1,5 @@
 import React from 'react';
-//import Vimeo from '@u-wave/react-vimeo';
+import Vimeo from '@u-wave/react-vimeo';
 import { Dialog, DialogContent, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -44,21 +44,21 @@ const VideoPopup = ({ open, videoUrl, onClose }) => {
                     alignItems: 'center',
                 }}
             >
-                <ReactPlayer
+                {/* <ReactPlayer
                     video={videoUrl}
                     playing
                     controls
                     width="100%"
                     height="100%"
                     style={{ position: 'absolute', top: 0, left: 0 }}
-                />
-                {/* <Vimeo
+                /> */}
+                <Vimeo
                     video={videoUrl}
                     autoplay
-                    width="100%"
-                    height="100%"
-                    style={{ position: 'absolute', top: 0, left: 0 }}
-                /> */}
+                    // width="50%"
+                    // height="50%"
+                    // style={{ position: 'absolute', top: 0, left: 0 }}
+                />
             </DialogContent>
         </Dialog>
     );

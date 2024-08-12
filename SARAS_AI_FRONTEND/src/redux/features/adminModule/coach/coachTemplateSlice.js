@@ -287,7 +287,7 @@ export const coachTemplateSlice = createSlice({
                 state.loading = true;
             })
             .addCase(getCoachTemplateModuleId.fulfilled, (state, action) => {
-                console.log("ACtion playlod", action.payload)
+                console.log('ACtion playlod', action.payload);
                 state.loading = false;
                 state.coachTemplatesId = action.payload.data;
                 state.template_name = action.payload.data.name

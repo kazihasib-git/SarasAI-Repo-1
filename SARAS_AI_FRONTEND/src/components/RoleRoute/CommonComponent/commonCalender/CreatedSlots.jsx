@@ -4,43 +4,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getCoachMenuSessionForLeave } from '../../../../redux/features/coachModule/coachmenuprofileSilce';
 import { getTaMenuSessionForLeave } from '../../../../redux/features/taModule/tamenuSlice';
 import PopUpTable from '../../../CommonComponent/PopUpTable';
-import { closeCreatedSlots } from '../../../../redux/features/commonCalender/commonCalender';
+import { closeCreatedSlots, openCreatedSessions, openSessionPopup } from '../../../../redux/features/commonCalender/commonCalender';
 import ReusableDialog from '../../../CustomFields/ReusableDialog';
+import CustomButton from '../../../CustomFields/CustomButton';
 
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                padding: '10px 20px',
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
 
 const headers = ['S. No.', 'Date', 'Slot Time', 'Select'];
 
@@ -119,7 +86,7 @@ const CreatedSlots = ({ componentName }) => {
 
             dispatch(getSessionFromSlotsApi(requestBody)).then(() => {
                 dispatch(closeCreatedSlots());
-                // TODO : Open Sessions
+                dispatch(openCreatedSessions(requestBody));
             });
         }
     };

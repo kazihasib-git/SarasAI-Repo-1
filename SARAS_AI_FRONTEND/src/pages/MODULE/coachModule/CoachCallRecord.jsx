@@ -8,8 +8,6 @@ import DateRangeIcon from '@mui/icons-material/DateRange';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import SessionNotes from './SessionNotes';
 
-//import VideoUpload from './../../../components/integrations/videoUpload';
-
 import {
     getCoachCallRecords,
     assignSessionNotes,
@@ -25,6 +23,7 @@ import {
 } from '@mui/material';
 import calender from '../../../assets/calender.svg';
 import VideoUploadDialog from '../../../components/integrations/videoUpload';
+import VideoPopup from '../../../components/integrations/videoPlayerPopUp';
 
 const CustomButton = ({
     onClick,
@@ -64,43 +63,14 @@ const CustomButton = ({
 };
 
 const CoachCallRecord = () => {
-    // const calls = [
-    //     {
-    //         id: 1,
-    //         title: 'Aman Gupta Meeting',
-    //         time: '10 July | 12:30 PM',
-    //         participants: 'Aman Gupta, Amandeep',
-    //         status: 'Join Meeting',
-    //         description:
-    //             'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-    //     },
-    //     {
-    //         id: 2,
-    //         title: 'John Doe Meeting',
-    //         time: '11 July | 1:30 PM',
-    //         participants: 'John Doe, Jane Smith',
-    //         status: 'Join Meeting',
-    //         description:
-    //             'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-    //     },
-    //     {
-    //         id: 3,
-    //         title: 'Project Sync',
-    //         time: '12 July | 3:00 PM',
-    //         participants: 'Alice Johnson, Bob Brown',
-    //         status: 'Join Meeting',
-    //         description:
-    //             'Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-    //     },
-    // ];
-
-    const calls = useSelector(state => state.coachMenu.coachCallRecords);
-
     const [date, setDate] = useState(moment());
     const [selectedCall, setSelectedCall] = useState(null);
-    //const [videoDialogOpen, setVideoDialogOpen] = useState(false);
+    const [videoDialogOpen, setVideoDialogOpen] = useState(false);
     const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+    const [videoUrl, setVideoUrl] = useState('');
+    const [idVideo, setIdVideo] = useState(null);
 
+    const calls = useSelector(state => state.coachMenu.coachCallRecords);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -129,20 +99,36 @@ const CoachCallRecord = () => {
         }
     };
 
-    const handleDateChange = newDate => {
-        if (newDate && newDate.isValid()) {
-            setDate(newDate);
-            // handleCalendarClose();
+    const today = moment().startOf('day');
+
+    const handleIncrement = () => {
+        const nextDate = date.clone().add(1, 'days');
+        if (nextDate.isSameOrBefore(today, 'day')) {
+            setDate(nextDate);
         }
     };
 
-    const handleIncrement = () => {
-        setDate(prevDate => moment(prevDate).add(1, 'days'));
+    const handleDecrement = () => {
+        const newDate = moment(date).subtract(1, 'days');
+        setDate(newDate);
     };
 
-    const handleDecrement = () => {
-        setDate(prevDate => moment(prevDate).subtract(1, 'days'));
+    const handleOpenUploadDialog = call => {
+        setIdVideo(call.id);
+        setUploadDialogOpen(true);
     };
+    const handleCloseUploadDialog = () => {
+        setUploadDialogOpen(false);
+        setVideoUrl('');
+        setIdVideo(null);
+        dispatch(getCoachCallRecords(date.format('YYYY-MM-DD')));
+    };
+
+    const handlePlayVideo = url => {
+        setVideoUrl(url);
+        setVideoDialogOpen(true);
+    };
+
     return (
         <div>
             <CoachMenu />
@@ -185,7 +171,10 @@ const CoachCallRecord = () => {
                     >
                         <ArrowBackIosIcon />
                     </IconButton>
-                    <IconButton onClick={handleIncrement}>
+                    <IconButton
+                        onClick={handleIncrement}
+                        disabled={date.isSame(today, 'day')}
+                    >
                         <ArrowForwardIosIcon />
                     </IconButton>
                 </Box>
@@ -274,9 +263,11 @@ const CoachCallRecord = () => {
                                     </CustomButton>
                                     {call.session_recording_url ? (
                                         <CustomButton
-                                            // onClick={() =>
-                                            //     setVideoDialogOpen(true)
-                                            // }
+                                            onClick={() =>
+                                                handlePlayVideo(
+                                                    call.session_recording_url
+                                                )
+                                            }
                                             color="#F56D3B"
                                             backgroundColor="#FFFFFF"
                                             borderColor="#F56D3B"
@@ -293,7 +284,7 @@ const CoachCallRecord = () => {
                                             style={{ textTransform: 'none' }}
                                             open={uploadDialogOpen}
                                             onClick={() =>
-                                                setUploadDialogOpen(true)
+                                                handleOpenUploadDialog(call)
                                             }
                                         >
                                             Upload Recordings
@@ -310,12 +301,23 @@ const CoachCallRecord = () => {
                 onClose={handleClose}
                 onSave={handleSaveNotes}
                 selectedId={selectedCall}
-                role="Coach"
+                role="COACH"
             />
             <VideoUploadDialog
                 open={uploadDialogOpen}
-                onClose={() => setUploadDialogOpen(false)}
+                onClose={handleCloseUploadDialog}
+                //onClose={() => setUploadDialogOpen(false)}
+                role="COACH"
+                selectedId={idVideo}
             />
+
+            {videoDialogOpen && (
+                <VideoPopup
+                    open={videoDialogOpen}
+                    videoUrl={videoUrl}
+                    onClose={() => setVideoDialogOpen(false)}
+                />
+            )}
         </div>
     );
 };

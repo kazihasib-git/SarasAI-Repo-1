@@ -7,7 +7,7 @@ import Sidebar from '../../components/Sidebar/Sidebar';
 import DynamicTable from '../../components/CommonComponent/DynamicTable';
 import { timezoneIdToName } from '../../utils/timezoneIdToName';
 import {deleteTaMapping } from '../../redux/features/adminModule/ta/taSlice';
-
+import { getTimezone } from '../../redux/features/utils/utilSlice';
 const headers = [
     'S. No.',
     'TA Name',
@@ -29,16 +29,18 @@ const TaMapping = () => {
     const { taMapping, loading } = useSelector(state => state.taModule);
     const [taMappingData, setTaMappingData] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
+    const { timezones } = useSelector(state => state.util);
 
     useEffect(() => {
         dispatch(showTAMapping());
+        dispatch(getTimezone());
     }, [dispatch]);
 
     useEffect(() => {
         const fetchData = async () => {
             if (taMapping && taMapping.length > 0) {
                 const transformData = await Promise.all(taMapping.map(async (item) => {
-                    const timezoneName = await timezoneIdToName(item.timezone_id);
+                    const timezoneName = await timezoneIdToName(item.timezone_id , timezones);
                     return {
                         id: item.id,
                         name: item.name,
@@ -52,7 +54,7 @@ const TaMapping = () => {
 
                 setTaMappingData(transformData);
             } else {
-                setTaMappingData([]); 
+                setTaMappingData([]);
             }
         };
 
@@ -60,11 +62,11 @@ const TaMapping = () => {
     }, [taMapping]);
 
     const handleSearch = event => {
-        setSearchQuery(event.target.value); 
+        setSearchQuery(event.target.value);
     };
 
-    const filteredData = taMappingData.filter(
-        item => item.name.toLowerCase().includes(searchQuery.toLowerCase()) 
+    const filteredData = taMappingData.filter(item =>
+        item.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     return (
@@ -96,7 +98,7 @@ const TaMapping = () => {
                             sx={{ ml: 2, flex: 1 }}
                             placeholder="Search here ..."
                             value={searchQuery}
-                            onChange={handleSearch} 
+                            onChange={handleSearch}
                         />
                     </Box>
                 </Box>

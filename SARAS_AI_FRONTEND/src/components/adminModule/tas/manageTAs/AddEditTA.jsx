@@ -47,7 +47,7 @@ import { dateFormatter } from '../../../../utils/dateFormatter';
 import CustomDateOfBirth from '../../../CustomFields/CustomDateOfBirth';
 
 const AddEditTA = ({ data }) => {
-    console.log("DATA :", data)
+    console.log('DATA :', data);
     const {
         register,
         handleSubmit,
@@ -58,12 +58,12 @@ const AddEditTA = ({ data }) => {
     } = useForm({
         defaultValues: {
             gender: '',
-            timezone_id : null,
+            timezone_id: null,
             highest_qualification: '',
             date_of_birth: null,
         },
     });
-    
+
     const [selectedImage, setSelectedImage] = useState(null);
     const [isEditingDescription, setIsEditingDescription] = useState(false);
     const [editableDescription, setEditableDescription] = useState('');
@@ -98,7 +98,7 @@ const AddEditTA = ({ data }) => {
             setSelectedImage(blobUrl);
         }
 
-        if(data.description){
+        if (data.description) {
             setEditableDescription(data.description);
         }
 
@@ -110,7 +110,7 @@ const AddEditTA = ({ data }) => {
             address: data.address,
             pincode: data.pincode,
             phone: data.phone,
-            timezone_id : data.timezone_id,
+            timezone_id: data.timezone_id,
             gender: data.gender,
             email: data.email,
             date_of_birth: data.date_of_birth,
@@ -171,16 +171,13 @@ const AddEditTA = ({ data }) => {
                 dispatch(openSuccessPopup());
                 dispatch(accessTaName(updateRes));
             } else {
-                const createRes = await dispatch(
-                    createTA(formData)
-                ).unwrap();
+                const createRes = await dispatch(createTA(formData)).unwrap();
                 dispatch(openSuccessPopup());
                 dispatch(accessTaName(createRes.ta));
             }
         } catch (error) {
             console.error('Error submitting form:', error);
         }
-
     };
 
     const nameValue = watch('name', '');
@@ -321,7 +318,7 @@ const AddEditTA = ({ data }) => {
                                             fullWidth
                                             multiline
                                             rows={2}
-                                            name='description'
+                                            name="description"
                                             value={editableDescription}
                                             onChange={handleDescriptionChange}
                                             placeholder="sort description..."
@@ -528,17 +525,16 @@ const AddEditTA = ({ data }) => {
                                 control={control}
                                 rules={{ required: 'TimeZone is required' }}
                                 render={({ field }) => (
-                                        <CustomTimeZoneForm
-                                            label="Time Zone"
-                                            name="timezone_id"
-                                            placeholder="Time Zone"
-                                            value={field.value}
-                                            onChange={field.onChange}
-                                            errors={errors}
-                                            options={timezones}
-                                        />
-                                    )
-                                }
+                                    <CustomTimeZoneForm
+                                        label="Time Zone"
+                                        name="timezone_id"
+                                        placeholder="Time Zone"
+                                        value={field.value}
+                                        onChange={field.onChange}
+                                        errors={errors}
+                                        options={timezones}
+                                    />
+                                )}
                             />
                         </Grid>
 
@@ -680,7 +676,7 @@ const AddEditTA = ({ data }) => {
                             <CustomTextField
                                 label="About Me"
                                 name="about_me"
-                                placeholder="Enter About TA"
+                                placeholder="Enter About Coach"
                                 register={register}
                                 validation={{
                                     required: 'About Me is required',

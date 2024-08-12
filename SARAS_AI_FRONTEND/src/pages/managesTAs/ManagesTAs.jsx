@@ -13,6 +13,8 @@ import {
     closeEditTa,
 } from '../../redux/features/adminModule/ta/taSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import { getTimezone } from '../../redux/features/utils/utilSlice';
+import { timezoneIdToName } from '../../utils/timezoneIdToName';
 
 const headers = [
     'S. No.',
@@ -24,6 +26,8 @@ const headers = [
 ];
 
 const ManageTA = () => {
+    const { timezones } = useSelector(state => state.util);
+    
     const dispatch = useDispatch();
     const { tas, loading, error, createTAOpen, editTAOpen } = useSelector(
         state => state.taModule
@@ -36,6 +40,8 @@ const ManageTA = () => {
     useEffect(() => {
         dispatch(closeCreateTa());
         dispatch(closeEditTa());
+        dispatch(getTimezone()); // Fetch timezones when the component mounts
+
         dispatch(getTA());
     }, [dispatch]);
 
@@ -46,14 +52,12 @@ const ManageTA = () => {
                 'TA Name': item.name,
                 Username: item.username,
                 Location: item.location,
-                'Time Zone': item.time_zone,
+                'Time Zone': timezoneIdToName(item.timezone_id, timezones),
                 is_active: item.is_active,
             }));
-
             setTasData(transformData);
         }
     }, [tas]);
-    
     const actionButtons = [
         {
             type: 'switch',
