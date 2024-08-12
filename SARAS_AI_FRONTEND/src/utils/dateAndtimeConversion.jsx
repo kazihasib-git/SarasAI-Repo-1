@@ -7,8 +7,8 @@ async function convertFromUTC({ start_date, start_time, end_time, end_date, time
         const toDateTimeUTC = `${end_date} ${end_time}`;
 
         // Convert from UTC to the specified timezone
-        const fromDateTimeLocal = moment.tz(fromDateTimeUTC, 'UTC').tz('America/New_York');
-        const toDateTimeLocal = moment.tz(toDateTimeUTC, 'UTC').tz('America/New_York');
+        const fromDateTimeLocal = moment.tz(fromDateTimeUTC, 'UTC').tz(timezonename);
+        const toDateTimeLocal = moment.tz(toDateTimeUTC, 'UTC').tz(timezonename);
 
         const obbj = {
             start_date: fromDateTimeLocal.format('YYYY-MM-DD'),
