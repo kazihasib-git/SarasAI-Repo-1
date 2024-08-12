@@ -18,8 +18,7 @@ const localizer = momentLocalizer(moment);
 const allViews = Object.keys(Views).map(k => Views[k]);
 
 const CustomEvent = ({ event }) => {
-    console.log('event ................',event);
-    let platformTools = { ...event.platform_tools }; // Create a copy of the platform_tools object
+    let platformTools = { ...event.platform_tools }; 
 
     if (platformTools.name === "Microsoft Teams") {
         platformTools.name = "Teams";
@@ -29,7 +28,6 @@ const CustomEvent = ({ event }) => {
         platformTools.name = "Zoom";
     }
  
-    // Assign the modified object back to the event object if needed
     event.platform_tools = platformTools;
 
     return (

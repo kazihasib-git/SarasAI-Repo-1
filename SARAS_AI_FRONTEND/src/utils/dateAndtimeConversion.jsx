@@ -2,6 +2,8 @@ import moment from 'moment-timezone';
 
 async function convertFromUTC({ slot_date, from_time, to_time, end_date, timezonename }) {
     try {
+
+        console.log('data to convert', slot_date, from_time, to_time, end_date, timezonename);
         // Combine date and time for the start and end times
         const fromDateTimeUTC = `${slot_date} ${from_time}`;
         const toDateTimeUTC = `${end_date} ${to_time}`;

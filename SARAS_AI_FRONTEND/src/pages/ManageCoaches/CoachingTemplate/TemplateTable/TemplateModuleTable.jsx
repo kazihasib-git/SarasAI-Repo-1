@@ -151,7 +151,7 @@ const TemplateModuleTable = ({ modulesData }) => {
     };
     const handleActivityClick = (activity) => {
         console.log(activity.activity_type);
-        setSelectedActivity(activity.activity_type);
+        setSelectedActivity(activity);
         setViewActivityPopup(true);
     };
 

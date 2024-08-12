@@ -123,12 +123,13 @@ const SessionActivity = ({ activity, name }) => {
 const ViewActivityPopup = ({ open, onClose, activity }) => {
    console.log('.............',activity);
 
+
   const renderContent = () => {
     switch (activity.id) { 
       case 1:
       case 2:
       case 3:
-        return <VideoPdfActivity fileName={activity} name={activity.type_name} />;
+        return <VideoPdfActivity fileName={activity} name={activity.activity_type.type_name} />;
       case 4:
       case 5:
       case 6:

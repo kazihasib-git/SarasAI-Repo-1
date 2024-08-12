@@ -149,6 +149,7 @@ useEffect(() => {
   useEffect(() => {
     const timezonename = 'Asia/Kolkata';
     const convertSlots = async () => {
+
         if (slotData.data && slotData.data.length > 0) {
             const transformedSlots = await Promise.all(
                 slotData.data.map(async slot => {
@@ -156,11 +157,11 @@ useEffect(() => {
                         slot_date: slot.slot_date,
                         from_time: slot.from_time,
                         to_time: slot.to_time,
-                        end_date: slot.slot_date, 
+                        end_date: slot.slot_end_date, 
                         timezonename 
                     });
                     
-                    console.log('Converted Local Time:', localTime);
+                    //console.log('Converted Local Time:', localTime);
                     return {
                         startDate: new Date(localTime.date_slot + 'T' + localTime.start_time),
                         endDate: new Date(localTime.date_slot + 'T' + localTime.time_end),
