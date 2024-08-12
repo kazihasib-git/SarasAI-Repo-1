@@ -48,9 +48,7 @@ const WOLCategories = () => {
             onClick: id => {
                 console.log('Edit', id);
                 dispatch(
-                    setEditData(
-                        wolCategoryData.find(item => item.id === id)
-                    )
+                    setEditData(wolCategoryData.find(item => item.id === id))
                 );
                 dispatch(setAddEditWolCategory(true));
             },

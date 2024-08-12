@@ -210,8 +210,8 @@ const SelectBatches = ({ componentName }) => {
                 backgroundColor: '#F56D3B',
                 borderColor: '#F56D3B',
                 color: '#FFFFFF',
-                textTransform : 'none',
-                fontFamily : 'Bold'
+                textTransform: 'none',
+                fontFamily: 'Bold',
             }}
         >
             Submit

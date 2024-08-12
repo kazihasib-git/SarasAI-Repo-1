@@ -94,7 +94,7 @@ const AddEditTA = ({ data }) => {
 
         if (data.profile_picture) {
             const blobUrl = base64ToBlobUrl(data.profile_picture);
-            console.log('url', blobUrl)
+            console.log('url', blobUrl);
             setSelectedImage(blobUrl);
         }
 
@@ -152,9 +152,9 @@ const AddEditTA = ({ data }) => {
     };
 
     const onSubmit = async formData => {
-        console.log("formData :", formData)
-        
-        if (selectedImage  && selectedImage.startsWith('data:image/') ) {
+        console.log('formData :', formData);
+
+        if (selectedImage && selectedImage.startsWith('data:image/')) {
             const base64Data = selectedImage.replace(
                 /^data:image\/(png|jpeg|jpg);base64,/,
                 ''
@@ -413,7 +413,7 @@ const AddEditTA = ({ data }) => {
                                 <CustomTextField
                                     label="Password"
                                     name="password"
-                                    type={showPassword ? "text" : "password"}
+                                    type={showPassword ? 'text' : 'password'}
                                     placeholder="Enter Password"
                                     register={register}
                                     validation={{
@@ -437,19 +437,26 @@ const AddEditTA = ({ data }) => {
                                     errors={errors}
                                     InputProps={{
                                         endAdornment: (
-                                            <InputAdornment   >
+                                            <InputAdornment>
                                                 <IconButton
-                                                    onClick={togglePasswordVisibility}
+                                                    onClick={
+                                                        togglePasswordVisibility
+                                                    }
                                                 >
-                                                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                                                    {showPassword ? (
+                                                        <VisibilityOff />
+                                                    ) : (
+                                                        <Visibility />
+                                                    )}
                                                 </IconButton>
                                             </InputAdornment>
                                         ),
                                         style: {
-                                            height: '60px', borderRadius: '50px', padding: '18px 2px'  
+                                            height: '60px',
+                                            borderRadius: '50px',
+                                            padding: '18px 2px',
                                         },
                                     }}
-                                
                                 />
                             </Grid>
                         )}
@@ -676,7 +683,7 @@ const AddEditTA = ({ data }) => {
                             <CustomTextField
                                 label="About Me"
                                 name="about_me"
-                                placeholder="Enter About Coach"
+                                placeholder="Enter About TA"
                                 register={register}
                                 validation={{
                                     required: 'About Me is required',

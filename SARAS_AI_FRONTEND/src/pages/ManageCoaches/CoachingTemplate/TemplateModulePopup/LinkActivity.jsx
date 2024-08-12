@@ -18,9 +18,9 @@ import CustomFormControl from '../../../../components/CustomFields/CustomFromCon
 import CustomTextField from '../../../../components/CustomFields/CustomTextField';
 import CustomDateField from '../../../../components/CustomFields/CustomDateField';
 import CustomTimeField from '../../../../components/CustomFields/CustomTimeField';
-import  {getActivityType} from '../../../../redux/features/adminModule/coach/activityTypeSlice';
+import { getActivityType } from '../../../../redux/features/adminModule/coach/activityTypeSlice';
 import { getCoach } from '../../../../redux/features/adminModule/coach/coachSlice';
-import { linkActivity } from '../../../../redux/features/adminModule/coach/LinkActivitySlice';
+import { linkActivity , uploadpdf } from '../../../../redux/features/adminModule/coach/LinkActivitySlice';
 import  VirtualGroupSession  from './LinkActivityPopup/VirtualGroupSession'
 
 import {
@@ -88,6 +88,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId }) => {
 
     const onSubmit = async data => {
         // Prepare the payload
+       
         console.log('clicked');
         console.log('activity data', data);
         console.log('selected assessment id', selectedAssessmentId);
@@ -100,6 +101,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId }) => {
             link: videoUrl || data.virtualMeetLink, // Add other fields if needed
         };
         console.log('payload', payload);
+       
         console.log('ActivityId', selectedActivityId);
         try {
             await dispatch(linkActivity(payload))
@@ -130,6 +132,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId }) => {
     const { coachAvailableSlots } = useSelector(state => state.coachScheduling);
     console.log('coaches', coaches);
     console.log('coachesslot', coachAvailableSlots);
+
     const activityOptions = typeList
         .filter((_, index) => index < 5)
         .map(type => ({
@@ -168,6 +171,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId }) => {
         { value: 'slot4', label: '2:00 PM - 3:00 PM' },
         { value: 'slot5', label: '3:00 PM - 4:00 PM' },
     ];
+
     const formatTime = time => {
         const [hours, minutes] = time.split(':');
         const hour = parseInt(hours, 10);
@@ -176,6 +180,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId }) => {
         const formattedHour = hour % 12 || 12;
         return `${formattedHour}:${minute < 10 ? '0' : ''}${minute} ${ampm}`;
     };
+    
     const timeZones = [
         { value: 'UTC', label: 'UTC' },
         { value: 'GMT', label: 'GMT' },
@@ -280,6 +285,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId }) => {
                     onUploadComplete={handleVideoUploadComplete}
                 />
             )}
+
             {activityType === 'pdf' && <PDFUploadComponent />}
 
             {activityType === 'link' && (
@@ -400,8 +406,10 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId }) => {
                     setAskCoach={setAskCoach}
                 />
             )}
+
             {selectedSessionType === 'group' &&
                 activityType === 'virtual meet' && <VirtualGroupSession />}
+                
         </Grid>
     );
 

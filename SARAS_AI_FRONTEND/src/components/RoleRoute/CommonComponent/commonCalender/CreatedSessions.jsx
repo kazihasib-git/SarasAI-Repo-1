@@ -5,7 +5,10 @@ import PopUpTable from '../../../CommonComponent/PopUpTable';
 import ReusableDialog from '../../../CustomFields/ReusableDialog';
 import CustomButton from '../../../CustomFields/CustomButton';
 import { getCoachMenuSessionForLeave } from '../../../../redux/features/coachModule/coachmenuprofileSilce';
-import { closeCreatedSessions, openCancelSessionPopup } from '../../../../redux/features/commonCalender/commonCalender';
+import {
+    closeCreatedSessions,
+    openCancelSessionPopup,
+} from '../../../../redux/features/commonCalender/commonCalender';
 
 const headers = [
     'S. No.',
@@ -21,7 +24,7 @@ const studentHeader = ['S.No.', 'Student Name', 'Program', 'Batch'];
 const CreatedSessions = ({ componentName }) => {
     const dispatch = useDispatch();
 
-    let sliceName,  scheduledSessionState;
+    let sliceName, scheduledSessionState;
 
     switch (componentName) {
         case 'TAMENU':
@@ -41,7 +44,7 @@ const CreatedSessions = ({ componentName }) => {
     }
 
     const selectState = useSelector(state => state[sliceName]);
-    const { openCreatedSessions } = useSelector((state) => state.commonCalender)
+    const { openCreatedSessions } = useSelector(state => state.commonCalender);
 
     const { [scheduledSessionState]: sessionsData } = selectState;
     const [scheduledSessions, setScheduledSessions] = useState([]);
@@ -49,17 +52,15 @@ const CreatedSessions = ({ componentName }) => {
 
     useEffect(() => {
         if (sessionsData && sessionsData.length > 0) {
-            const formattedData = sessionsData.map(
-                (session, index) => ({
-                    'S. No.': index + 1,
-                    'Session Name': session.meeting_name,
-                    Date: session.date.split(' ')[0],
-                    Time: `${session.start_time} - ${session.end_time}`,
-                    Students: session.Students.length,
-                    StudentList: session.Students,
-                    id: session.id,
-                })
-            );
+            const formattedData = sessionsData.map((session, index) => ({
+                'S. No.': index + 1,
+                'Session Name': session.meeting_name,
+                Date: session.date.split(' ')[0],
+                Time: `${session.start_time} - ${session.end_time}`,
+                Students: session.Students.length,
+                StudentList: session.Students,
+                id: session.id,
+            }));
             setScheduledSessions(formattedData);
         }
     }, [sessionsData]);

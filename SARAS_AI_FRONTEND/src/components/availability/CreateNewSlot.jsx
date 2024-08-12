@@ -19,7 +19,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import CustomTimeZoneForm from '../CustomFields/CustomTimeZoneForm';
 import { getTimezone } from '../../redux/features/utils/utilSlice';
 import { useParams } from 'react-router-dom';
-
 import {
     createSlots,
     closeCreateNewSlots,
@@ -31,8 +30,7 @@ import {
 } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import { toast } from 'react-toastify';
 import CustomButton from '../CustomFields/CustomButton';
-import { convertToUTC } from '../../utils/dateAndtimeConversion';
-import { timezoneIdToName } from '../../utils/timezoneIdToName';
+
 
 const weekDays = [
     'Sunday',
@@ -44,7 +42,7 @@ const weekDays = [
     'Saturday',
 ];
 
-const  CreateNewSlot = ({ componentName, timezoneID }) => {
+const CreateNewSlot = ({ componentName, timezoneID }) => {
     const { timezones } = useSelector(state => state.util);
     const taId = useParams();
     const dispatch = useDispatch();
@@ -58,7 +56,7 @@ const  CreateNewSlot = ({ componentName, timezoneID }) => {
     useEffect(() => {
         dispatch(getTimezone());
     }, [dispatch]);
-    
+
     let sliceName, timezoneId, createSlotApi, getSlotsApi;
 
     switch (componentName) {
@@ -100,11 +98,10 @@ const  CreateNewSlot = ({ componentName, timezoneID }) => {
                 return prev.filter(d => d !== day);
             } else {
                 return [...prev, day];
-            }   
+            }
         });
     };
 
- 
     const validate = () => {
         if (!fromDate) {
             toast.error('Please select From Date');
@@ -154,22 +151,8 @@ const  CreateNewSlot = ({ componentName, timezoneID }) => {
         formData.end_date = repeat === 'recurring' ? toDate : fromDate;
         formData.weeks = weeksArray;
         formData.admin_user_id = taId.id;
+    
 
-        const date_slot = formData.slot_date;
-        const start_time = formData.from_time;
-        const time_end = formData.to_time;
-        const date_end = formData.end_date;
-        const timezonename = timezoneIdToName(formData.timezone_id,timezones);
-    
-        console.log("data to convert:", { date_slot, start_time, time_end, date_end, timezonename });
-        const utcval = await convertToUTC({ date_slot, start_time, time_end, date_end,timezonename});
-        console.log("timepass:", utcval);
-    
-        formData.slot_date = utcval.slot_date;
-        formData.from_time = utcval.from_time;
-        formData.to_time = utcval.to_time;
-        formData.end_date =
-            repeat === 'recurring' ? utcval.end_date : utcval.slot_date;
 
         dispatch(createSlotApi(formData)).then(() => {
             dispatch(closeCreateNewSlots());

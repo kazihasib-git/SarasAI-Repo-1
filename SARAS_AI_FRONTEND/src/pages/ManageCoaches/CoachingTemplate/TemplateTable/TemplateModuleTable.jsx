@@ -14,6 +14,7 @@ import {
     openTemplateActivityPopup,
     updateCoachActivity,
 } from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
+import ViewActivityPopup from '../TemplateModulePopup/ViewActivity';
 
 const CustomButton = styled(Button)(({ theme, backgroundColor = '' }) => ({
     borderRadius: '20px',
@@ -82,6 +83,9 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
 const TemplateModuleTable = ({ modulesData }) => {
     console.log('moduledata', modulesData);
     const [linkActivityPopupOpen, setLinkActivityPopupOpen] = useState(false);
+    const [viewActivityPopup, setViewActivityPopup] = useState(false);
+    const [selectedActivity, setSelectedActivity] = useState(null);
+
     const [prerequisitesPopupOpen, setPrerequisitesPopupOpen] = useState(false);
     const [selectedActivityId, setSelectedActivityId] = useState(null); // State for selected activity ID
     const dispatch = useDispatch();
@@ -145,9 +149,16 @@ const TemplateModuleTable = ({ modulesData }) => {
         console.log('Clicked Activity !');
         dispatch(openEditActivityPopup(activity));
     };
-    const handleActivityClick = activity => {
-        console.log('clicked');
+    const handleActivityClick = (activity) => {
+        console.log(activity.activity_type);
+        setSelectedActivity(activity);
+        setViewActivityPopup(true);
     };
+
+    const closeViewActivityPopUp = () =>{
+        setViewActivityPopup(false);
+        setSelectedActivity(null);
+    }
 
     const headers = [
         'S. No.',
@@ -320,11 +331,11 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                     >
                                                         {activity.activity_type_id ? (
                                                             <Button
-                                                                onClick={() =>
-                                                                    handleActivityClick(
-                                                                        activity
-                                                                    )
-                                                                }
+                                                                // onClick={() =>
+                                                                //     handleActivityClick(
+                                                                //         activity
+                                                                //     )
+                                                                // }
                                                                 style={{
                                                                     backgroundColor:
                                                                         'transparent',
@@ -337,6 +348,10 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                                     activity.activity_type_id
                                                                 )}
                                                                 <FontAwesomeIcon
+                                                                    onClick={() =>
+                                                                        handleActivityClick(
+                                                                            activity
+                                                                        )}
                                                                     icon={faEye}
                                                                     style={{
                                                                         marginLeft:
@@ -416,7 +431,6 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                             padding: '8px 5px',
                                                             borderBottom:
                                                                 '1px solid #e0e0e0',
-                                                              
                                                         }}
                                                     >
                                                         <AntSwitch
@@ -450,7 +464,11 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                                 )
                                                             }
                                                             className="editBtn"
-                                                            style={{ display: 'flex', alignItems: 'center' }} 
+                                                            style={{
+                                                                display: 'flex',
+                                                                alignItems:
+                                                                    'center',
+                                                            }}
                                                         >
                                                             <FontAwesomeIcon
                                                                 icon={
@@ -459,7 +477,8 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                                 className="icon" // Apply class name for icon
                                                                 style={{
                                                                     color: 'inherit',
-                                                                    marginRight: '0',
+                                                                    marginRight:
+                                                                        '0',
                                                                 }} // Inherit color from button
                                                             />
                                                             <span
@@ -469,7 +488,7 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                                         '14px',
                                                                     marginLeft:
                                                                         '0px',
-                                                                        
+
                                                                     color: 'inherit', // Inherit color from button
                                                                     textTransform:
                                                                         'none',
@@ -499,6 +518,9 @@ const TemplateModuleTable = ({ modulesData }) => {
                 open={prerequisitesPopupOpen}
                 handleClose={closePrerequisitesPopup}
             />
+            {viewActivityPopup && selectedActivity && (
+                <ViewActivityPopup open={viewActivityPopup} onClose={closeViewActivityPopUp} activity={selectedActivity} />
+            )}
         </>
     );
 };

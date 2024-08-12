@@ -318,7 +318,7 @@ export const taAvailabilitySlice = createSlice({
         });
         builder.addCase(fetchTAScheduleById.fulfilled, (state, action) => {
             state.loading = false;
-            state.scheduleData = action.payload;
+            state.scheduleData = action.payload.data;
         });
         builder.addCase(fetchTAScheduleById.rejected, (state, action) => {
             state.loading = false;
@@ -332,7 +332,7 @@ export const taAvailabilitySlice = createSlice({
         });
         builder.addCase(fetchTaSlots.fulfilled, (state, action) => {
             state.loading = false;
-            state.slotData = action.payload; // Update state with fetched data
+            state.slotData = action.payload.data; // Update state with fetched data
         });
         builder.addCase(fetchTaSlots.rejected, (state, action) => {
             state.loading = false;
