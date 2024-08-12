@@ -163,29 +163,35 @@ const DynamicTable = ({
         }
     };
 
-    const handleToggle = id => {
+    const handleToggle = (id, event) => {
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
         const updatedData = data.map(item =>
             item.id === id
                 ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
                 : item
         );
         setData(updatedData);
-        const toggleButton = actionButtons.find(
-            action => action.type === 'switch'
-        );
-        if (toggleButton && toggleButton.onChange) {
-            toggleButton.onChange(id);
-        }
+        // const toggleButton = actionButtons.find(
+        //     action => action.type === 'switch'
+        // );
+        // if (toggleButton && toggleButton.onChange) {
+        //     toggleButton.onChange(id);
+        // }
 
         const toggledItem = updatedData.find(item => item.id === id);
         const requestData = { is_active: toggledItem.is_active };
 
         switch (componentName) {
             case 'MANAGETA':
-                dispatch(updateTA({ id, data: requestData }));
+             
+                // dispatch(updateTA({ id, data: requestData }));
+               
                 break;
             case 'MANAGECOACH':
-                dispatch(updateCoach({ id, data: requestData }));
+                // dispatch(updateCoach({ id, data: requestData }));
                 break;
             case 'WOLCATEGORY':
                 console.log('WOL Categories : ', id, requestData);
@@ -348,11 +354,11 @@ const DynamicTable = ({
                                                     <AntSwitch
                                                         key={idx}
                                                         checked={item.is_active}
-                                                        onChange={(event) => {
-                                                            event.preventDefault(); 
-                                                            event.stopPropagation(); 
-                                                            handleToggle(item.id);
-                                                        }}
+                                                        onChange={() =>
+                                                            handleToggle(
+                                                                item.id
+                                                            )
+                                                        }
                                                         inputProps={{
                                                             'aria-label':
                                                                 'ant design',

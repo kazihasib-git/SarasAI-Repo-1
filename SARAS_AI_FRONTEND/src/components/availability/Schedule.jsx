@@ -443,13 +443,13 @@ const Schedule = ({ componentName }) => {
                                                 justifyContent="center"
                                             >
                                                 <CustomTimeField
-                                                    label="End Time"
-                                                    name="end_time"
+                                                    label="To Time"
+                                                    name="To_time"
                                                     value={toTime}
                                                     onChange={setToTime}
                                                     validation={{
                                                         required:
-                                                            'End Time is required',
+                                                            'To Time is required',
                                                     }}
                                                     errors={errors}
                                                 />
@@ -736,7 +736,7 @@ const Schedule = ({ componentName }) => {
             handleClose={() => {
                 dispatch(closeScheduleSessionAction());
             }}
-            title={`Schedule`}
+            title={`Schedule New Session`}
             // Session for ${adminUserName}`}
             content={content}
         />
