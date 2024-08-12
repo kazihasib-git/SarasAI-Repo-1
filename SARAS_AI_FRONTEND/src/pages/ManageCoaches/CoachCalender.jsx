@@ -13,7 +13,7 @@ import CancelSchedule from '../../components/availability/CancelSchedule';
 import ReasonForLeave from '../../components/availability/ReasonForLeave';
 import ReschedulingSession from '../../components/availability/ReschedulingSession';
 import ScheduledSessions from '../../components/availability/ScheduledSessions';
-
+import { convertFromUTC } from '../../utils/dateAndtimeConversion';
 import {
     openCoachMarkLeave,
     fetchCoachSlots,
@@ -29,7 +29,8 @@ import Sidebar from '../../components/Sidebar/Sidebar';
 import Schedule from '../../components/availability/Schedule';
 import { openCreateNewSlots } from '../../redux/features/adminModule/ta/taAvialability';
 import ScheduleSession from '../../components/availability/ScheduleSession';
-
+import { timezoneIdToName } from '../../utils/timezoneIdToName';
+import { getTimezone } from '../../redux/features/utils/utilSlice';
 const CustomButton = ({
     onClick,
     children,
@@ -67,8 +68,10 @@ const CustomButton = ({
 };
 
 const CoachCalender = () => {
+
     const dispatch = useDispatch();
     const { id, name } = useParams();
+    const [timezoneID, setTimezoneId] = useState(null);
 
     const [deleteFutureSlots, setDeleteFutureSlots] = useState(false);
 
@@ -80,6 +83,11 @@ const CoachCalender = () => {
     const { openEditStudent, openEditBatch } = useSelector(
         state => state.taScheduling
     );
+    const { timezones } = useSelector(state => state.util);
+
+  useEffect(() => {
+        dispatch(getTimezone());
+    }, [dispatch]);
 
     const {
         coachMarkLeaveOpen,
@@ -104,10 +112,18 @@ const CoachCalender = () => {
     } = useSelector(state => state.coachScheduling);
 
     useEffect(() => {
+        // Fetch timezoneID from localStorage
+        const storedTimezoneId = localStorage.getItem('timezone_id');
+        if (storedTimezoneId) {
+            setTimezoneId(storedTimezoneId);
+        }
+    }, []);
+
+    console.log("storedtimezoneid:" , timezoneID) ; 
+    useEffect(() => {
         dispatch(fetchCoachSlots(id));
         dispatch(fetchCoachScheduleById(id));
     }, [dispatch]);
-
     useEffect(() => {
         if (scheduleCoachData && scheduleCoachData.length > 0) {
             const transformedEvents = scheduleCoachData.map(event => ({
@@ -130,20 +146,41 @@ const CoachCalender = () => {
 
     console.log('Session Data', scheduleCoachData);
     console.log('Slots Data', slotCoachData);
-
+   
     useEffect(() => {
-        if (slotCoachData && slotCoachData.length > 0) {
-            const transformedSlots = slotCoachData.map(slot => ({
-                startDate: new Date(slot.slot_date + 'T' + slot.from_time),
-                endDate: new Date(slot.slot_date + 'T' + slot.to_time),
-                leave: slot?.leaves,
-            }));
-            setSlotViewData(transformedSlots);
-        } else {
-            setSlotViewData([]);
-        }
+        const timezonename = 'Asia/Kolkata'; // Replace with the correct timezone name if needed
+    
+        const convertSlots = async () => {
+            if (slotCoachData && slotCoachData.length > 0) {
+                const transformedSlots = await Promise.all(
+                    slotCoachData.map(async (slot) => {
+                        const localTime = await convertFromUTC({
+                            slot_date: slot.slot_date,
+                            from_time: slot.from_time,
+                            to_time: slot.to_time,
+                            end_date: slot.slot_date,
+                            timezonename,
+                        });
+    
+                        // Log the converted local time
+                        console.log('Converted Local Time:', localTime);
+    
+                        return {
+                            startDate: new Date(localTime.date_slot + 'T' + localTime.start_time),
+                            endDate: new Date(localTime.date_slot + 'T' + localTime.time_end),
+                            leave: slot?.leaves,
+                        };
+                    })
+                );
+                setSlotViewData(transformedSlots);
+            } else {
+                setSlotViewData([]);
+            }
+        };
+    
+        convertSlots();
     }, [slotCoachData]);
-
+    
     const handleScheduleNewSession = () => {
         dispatch(openCoachScheduleSession({ id, name }));
     };
