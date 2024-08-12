@@ -69,7 +69,6 @@ export const cancelCoachScheduledSession = createAsyncThunk(
     }
 );
 
-
 const initialState = {
     coachAvailableSlots: [],
     coachScheduledSessions: [],
@@ -94,7 +93,7 @@ const coachScheduling = createSlice({
     initialState,
     reducers: {
         openCoachScheduleSession(state, action) {
-            console.log('Open Action : ', action.payload);
+            console.log('Open Action  coach : ', action.payload);
             state.coachID = action.payload.id;
             state.coachName = action.payload.name;
             state.coachTimezone = action.payload.timezone;

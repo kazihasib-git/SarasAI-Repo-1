@@ -1,10 +1,4 @@
-import {
-    Box,
-    InputBase,
-    Button,
-    Snackbar,
-    Alert,
-} from '@mui/material';
+import { Box, InputBase, Button, Snackbar, Alert } from '@mui/material';
 import Header from '../../components/Header/Header';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import { useEffect, useState } from 'react';
@@ -150,7 +144,9 @@ const ManageCoaches = () => {
                                     sx={{ m1: 2, flex: 1, marginLeft: 5 }}
                                     placeholder="Search here ..."
                                     value={searchQuery}
-                                    onChange={e => setSearchQuery(e.target.value)}
+                                    onChange={e =>
+                                        setSearchQuery(e.target.value)
+                                    }
                                 />
                             </Box>
                             <Button

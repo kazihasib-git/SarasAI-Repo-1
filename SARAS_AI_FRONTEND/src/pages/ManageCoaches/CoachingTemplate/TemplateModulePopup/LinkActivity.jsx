@@ -18,9 +18,10 @@ import CustomFormControl from '../../../../components/CustomFields/CustomFromCon
 import CustomTextField from '../../../../components/CustomFields/CustomTextField';
 import CustomDateField from '../../../../components/CustomFields/CustomDateField';
 import CustomTimeField from '../../../../components/CustomFields/CustomTimeField';
-import { getActivityType } from '../../../../redux/features/adminModule/coach/activityTypeSlice';
+import  {getActivityType} from '../../../../redux/features/adminModule/coach/activityTypeSlice';
 import { getCoach } from '../../../../redux/features/adminModule/coach/coachSlice';
 import { linkActivity } from '../../../../redux/features/adminModule/coach/LinkActivitySlice';
+import  VirtualGroupSession  from './LinkActivityPopup/VirtualGroupSession'
 
 import {
     getCoachAvailableSlotsFromDate,
@@ -83,6 +84,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId }) => {
     const [selectedCoachId, setSelectedCoachId] = useState('');
     const [selectedAssessmentId, setSelectedAssessmentId] = useState('');
     const [selectedActivityId, setSelectedActivityId] = useState('');
+    const [videoUrl, setVideoUrl] = useState('');
 
     const onSubmit = async data => {
         // Prepare the payload
@@ -95,10 +97,10 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId }) => {
                 activityType === 'test'
                     ? selectedAssessmentId
                     : selectedActivityId, // Ensure this value is correctly set
-            link: data.virtualMeetLink, // Add other fields if needed
+            link: videoUrl || data.virtualMeetLink, // Add other fields if needed
         };
         console.log('payload', payload);
-        console.log("ActivityId", selectedActivityId);
+        console.log('ActivityId', selectedActivityId);
         try {
             await dispatch(linkActivity(payload))
                 .unwrap()
@@ -117,6 +119,11 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId }) => {
         dispatch(getCoach());
         // dispatch(getSlotsCoachTemplateModule());
     }, [dispatch]);
+
+    const handleVideoUploadComplete = url => {
+        setVideoUrl(url);
+        // You can handle the video URL here, such as updating state or making an API call
+    };
 
     const { typeList } = useSelector(state => state.activityType);
     const { coaches } = useSelector(state => state.coachModule);
@@ -198,22 +205,21 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId }) => {
             dispatch(getCoachAvailableSlotsFromDate(data));
 
             if (coachAvailableSlots) {
-              const data1 = {
-                admin_user_id: selectedCoachId,
-                meeting_name: 'Team Meeting',
-                meeting_url: 'http://example.com/meeting',
-                schedule_date: fromDate,
-                slot_id: coachAvailableSlots[0].id,
-                start_time: coachAvailableSlots[0].from_time,
-                end_time: coachAvailableSlots[0].to_time,
-                timezone: 'IST',
-                event_status: 'scheduled',
-                end_date: fromDate,
-                studentId: [1],
-                batchId: [2],
-                weeks:[0,0,0,0,0,0,0]
-                
-            };
+                const data1 = {
+                    admin_user_id: selectedCoachId,
+                    meeting_name: 'Team Meeting',
+                    meeting_url: 'http://example.com/meeting',
+                    schedule_date: fromDate,
+                    slot_id: coachAvailableSlots[0].id,
+                    start_time: coachAvailableSlots[0].from_time,
+                    end_time: coachAvailableSlots[0].to_time,
+                    timezone: 'IST',
+                    event_status: 'scheduled',
+                    end_date: fromDate,
+                    studentId: [1],
+                    batchId: [2],
+                    weeks: [0, 0, 0, 0, 0, 0, 0],
+                };
                 dispatch(createCoachSchedule(data1));
             }
         }
@@ -269,7 +275,11 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId }) => {
                 />
             </Grid>
 
-            {activityType === 'videos' && <VideoUploadComponent />}
+            {activityType === 'videos' && (
+                <VideoUploadComponent
+                    onUploadComplete={handleVideoUploadComplete}
+                />
+            )}
             {activityType === 'pdf' && <PDFUploadComponent />}
 
             {activityType === 'link' && (
@@ -391,7 +401,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId }) => {
                 />
             )}
             {selectedSessionType === 'group' &&
-                activityType === 'virtual meet' && <VirtualGroupSession/>}
+                activityType === 'virtual meet' && <VirtualGroupSession />}
         </Grid>
     );
 
@@ -402,6 +412,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId }) => {
                 backgroundColor="#F56D3B"
                 borderColor="#F56D3B"
                 color="#FFFFFF"
+                style={{ textTransform: 'none' }} // Inline style to transform text to lowercase
             >
                 Submit
             </CustomButton>

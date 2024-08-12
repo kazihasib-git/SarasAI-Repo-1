@@ -34,7 +34,7 @@ import CustomButton from '../CustomFields/CustomButton';
 
 const weekDays = [
     'Sunday',
-    'Monday',   
+    'Monday',
     'Tuesday',
     'Wednesday',
     'Thursday',
@@ -129,12 +129,12 @@ const  CreateNewSlot = ({ componentName, timezoneID }) => {
 
     const onSubmit = async formData => {
         console.log('form data', formData);
-    
+
         if (!validate()) {
             console.log('NOT VALID DATA');
             return;
         }
-    
+
         let weeksArray = Array(7).fill(0);
         if (repeat === 'recurring') {
             selectedDays.forEach(day => {
@@ -145,7 +145,7 @@ const  CreateNewSlot = ({ componentName, timezoneID }) => {
             const index = new Date(fromDate).getDay();
             weeksArray[index] = 1;
         }
-    
+
         formData.slot_date = fromDate;
         formData.from_time = fromTime;
         formData.to_time = toTime;
@@ -160,7 +160,6 @@ const  CreateNewSlot = ({ componentName, timezoneID }) => {
             dispatch(getSlotsApi(taId.id));
         });
     };
-    
 
     const content = (
         <Box

@@ -6,7 +6,9 @@ const initialState = {
     userId: '',
     userName: '',
     sessionEventData: [],
+    slotsLeaveData : [],
     sessionData: null, // select session data to edit
+    sessionCancelData : [],
 
     createNewSlotPopup: false, // for new slot popup
     scheduleNewSessionPopup: false, //  for new session Popup
@@ -14,6 +16,9 @@ const initialState = {
     selectBatchPopup: false,
     markLeave: false,
     createdSlots: false,
+    openCreatedSessions : false,
+    openCancelSession : false,
+
     openSession: false,
     editSession: false,
 };
@@ -32,14 +37,13 @@ const commonCalender = createSlice({
 
         // For New Session
         openScheduleNewSession: (state, action) => {
-            console.log('Payload :', action.payload);
             console.log('PAYLOAD DATA :', action.payload);
             state.scheduleNewSessionPopup = true;
-            if (action.payload?.students) {
-                state.students = action.payload.students;
+            if (action.payload?.studentId) {
+                state.students = action.payload.studentId;
             }
-            if (action.payload?.batches) {
-                state.batches = action.payload.batches;
+            if (action.payload?.batchId) {
+                state.batches = action.payload.batchId;
             }
         },
         closeScheduleNewSession: (state, action) => {
@@ -74,6 +78,24 @@ const commonCalender = createSlice({
         closeCreatedSlots: (state, action) => {
             state.createdSlots = false;
         },
+        openCreatedSessions : (state, action) => {
+            console.log("PAYLOAD ", action.payload);
+            state.openCreatedSessions = true;
+            state.slotsLeaveData = action.payload;
+        },
+        closeCreatedSessions : (state, action) => {
+            state.openCreatedSessions = false;
+        },
+        openCancelSessionPopup : (state, action) => {
+            state.openCancelSession = true;
+            state.sessionCancelData = action.payload;
+        },
+        closeCancelSessionPopup : (state, action) => {
+            state.openCancelSession = false;
+        },
+
+
+
         openSessionPopup(state, action) {
             state.sessionEventData = action.payload;
             state.openSession = true;
@@ -107,6 +129,12 @@ export const {
     closeMarkLeaveDate,
     openCreatedSlots,
     closeCreatedSlots,
+    openCreatedSessions,
+    closeCreatedSessions,
+    openCancelSessionPopup,
+    closeCancelSessionPopup,
+
+
     openSessionPopup,
     closeSessionPopup,
     openEditSession,

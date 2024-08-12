@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { IconButton, InputAdornment } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useForm, Controller } from 'react-hook-form';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './AddEdit.css';
@@ -45,7 +47,7 @@ import { dateFormatter } from '../../../../utils/dateFormatter';
 import CustomDateOfBirth from '../../../CustomFields/CustomDateOfBirth';
 
 const AddEditTA = ({ data }) => {
-    console.log("DATA :", data)
+    console.log('DATA :', data);
     const {
         register,
         handleSubmit,
@@ -56,16 +58,20 @@ const AddEditTA = ({ data }) => {
     } = useForm({
         defaultValues: {
             gender: '',
-            timezone_id : null,
+            timezone_id: null,
             highest_qualification: '',
             date_of_birth: null,
         },
     });
-    
+
     const [selectedImage, setSelectedImage] = useState(null);
     const [isEditingDescription, setIsEditingDescription] = useState(false);
     const [editableDescription, setEditableDescription] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
 
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
     const dispatch = useDispatch();
     const { successPopup, assignStudentOpen, assignBatchOpen } = useSelector(
         state => state.taModule
@@ -89,10 +95,10 @@ const AddEditTA = ({ data }) => {
         if (data.profile_picture) {
             const blobUrl = base64ToBlobUrl(data.profile_picture);
             console.log('url', blobUrl)
-            setSelectedImage(data.profile_picture);
+            setSelectedImage(blobUrl);
         }
 
-        if(data.description){
+        if (data.description) {
             setEditableDescription(data.description);
         }
 
@@ -104,7 +110,7 @@ const AddEditTA = ({ data }) => {
             address: data.address,
             pincode: data.pincode,
             phone: data.phone,
-            timezone_id : data.timezone_id,
+            timezone_id: data.timezone_id,
             gender: data.gender,
             email: data.email,
             date_of_birth: data.date_of_birth,
@@ -148,7 +154,7 @@ const AddEditTA = ({ data }) => {
     const onSubmit = async formData => {
         console.log("formData :", formData)
         
-        if (selectedImage) {
+        if (selectedImage  && selectedImage.startsWith('data:image/') ) {
             const base64Data = selectedImage.replace(
                 /^data:image\/(png|jpeg|jpg);base64,/,
                 ''
@@ -158,23 +164,20 @@ const AddEditTA = ({ data }) => {
 
         try {
             if (data) {
-                const { email, phone, profile_picture, ...updatedFormData } = formData;
+                const { email, phone, ...updatedFormData } = formData;
                 const updateRes = await dispatch(
                     updateTA({ id: data.id, data: updatedFormData })
                 ).unwrap();
                 dispatch(openSuccessPopup());
                 dispatch(accessTaName(updateRes));
             } else {
-                const createRes = await dispatch(
-                    createTA(formData)
-                ).unwrap();
+                const createRes = await dispatch(createTA(formData)).unwrap();
                 dispatch(openSuccessPopup());
                 dispatch(accessTaName(createRes.ta));
             }
         } catch (error) {
             console.error('Error submitting form:', error);
         }
-
     };
 
     const nameValue = watch('name', '');
@@ -315,7 +318,7 @@ const AddEditTA = ({ data }) => {
                                             fullWidth
                                             multiline
                                             rows={2}
-                                            name='description'
+                                            name="description"
                                             value={editableDescription}
                                             onChange={handleDescriptionChange}
                                             placeholder="sort description..."
@@ -410,7 +413,7 @@ const AddEditTA = ({ data }) => {
                                 <CustomTextField
                                     label="Password"
                                     name="password"
-                                    type="password"
+                                    type={showPassword ? "text" : "password"}
                                     placeholder="Enter Password"
                                     register={register}
                                     validation={{
@@ -432,6 +435,21 @@ const AddEditTA = ({ data }) => {
                                         },
                                     }}
                                     errors={errors}
+                                    InputProps={{
+                                        endAdornment: (
+                                            <InputAdornment   >
+                                                <IconButton
+                                                    onClick={togglePasswordVisibility}
+                                                >
+                                                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        ),
+                                        style: {
+                                            height: '60px', borderRadius: '50px', padding: '18px 2px'  
+                                        },
+                                    }}
+                                
                                 />
                             </Grid>
                         )}
@@ -507,17 +525,16 @@ const AddEditTA = ({ data }) => {
                                 control={control}
                                 rules={{ required: 'TimeZone is required' }}
                                 render={({ field }) => (
-                                        <CustomTimeZoneForm
-                                            label="Time Zone"
-                                            name="timezone_id"
-                                            placeholder="Time Zone"
-                                            value={field.value}
-                                            onChange={field.onChange}
-                                            errors={errors}
-                                            options={timezones}
-                                        />
-                                    )
-                                }
+                                    <CustomTimeZoneForm
+                                        label="Time Zone"
+                                        name="timezone_id"
+                                        placeholder="Time Zone"
+                                        value={field.value}
+                                        onChange={field.onChange}
+                                        errors={errors}
+                                        options={timezones}
+                                    />
+                                )}
                             />
                         </Grid>
 
@@ -659,7 +676,7 @@ const AddEditTA = ({ data }) => {
                             <CustomTextField
                                 label="About Me"
                                 name="about_me"
-                                placeholder="Enter About TA"
+                                placeholder="Enter About Coach"
                                 register={register}
                                 validation={{
                                     required: 'About Me is required',

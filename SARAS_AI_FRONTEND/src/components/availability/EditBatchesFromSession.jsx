@@ -12,7 +12,11 @@ import CustomButton from '../CustomFields/CustomButton';
 import { Divider, Grid, MenuItem, Typography } from '@mui/material';
 import PopUpTable from '../CommonComponent/PopUpTable';
 import CustomTextField from '../CustomFields/CustomTextField';
-import { closeCoachEditScheduledBatches, editCoachScheduledBatches, getCoachScheduledBatches } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
+import {
+    closeCoachEditScheduledBatches,
+    editCoachScheduledBatches,
+    getCoachScheduledBatches,
+} from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import { getCoachAssignBatches } from '../../redux/features/adminModule/coach/coachSlice';
 
 const headers = ['S. No.', 'Batch Name', 'Branch', 'Select'];
@@ -46,7 +50,7 @@ const EditBatchesFromSession = ({ componentName }) => {
             scheduledBatchesApi = getTAScheduledBatches;
             scheduledBatchesState = 'taScheduledBatches';
             editScheduledBatchesApi = editTASchdeuledBatches;
-            
+
             assignedBatchesApi = getAssignBatches;
             assignedBatchesState = 'assignedBatches';
             meetingIdState = 'meetingId';
@@ -55,11 +59,11 @@ const EditBatchesFromSession = ({ componentName }) => {
         case 'COACHCALENDER':
             sliceName = 'coachModule';
             availabilitySliceName = 'coachAvailability';
-            openPopState = 'coachEditScheduledBatches'
+            openPopState = 'coachEditScheduledBatches';
             closePopupActions = closeCoachEditScheduledBatches;
             scheduledBatchesApi = getCoachScheduledBatches;
             scheduledBatchesState = 'coachScheduledBatches';
-            editScheduledBatchesApi = editCoachScheduledBatches
+            editScheduledBatchesApi = editCoachScheduledBatches;
             assignedBatchesApi = getCoachAssignBatches;
             assignedBatchesState = 'assignedBatches';
             meetingIdState = 'meetingId';
@@ -121,7 +125,7 @@ const EditBatchesFromSession = ({ componentName }) => {
             });
 
             setFilteredBatches(filtered);
-        }else {
+        } else {
             setFilteredBatches();
         }
     }, [assignedBatches, selectedBranch, searchQuery]);
@@ -132,7 +136,7 @@ const EditBatchesFromSession = ({ componentName }) => {
 
     useEffect(() => {
         if (schdeuledBatches) {
-            setSelectedBatch(schdeuledBatches.map((batch) => batch.batch_id));
+            setSelectedBatch(schdeuledBatches.map(batch => batch.batch_id));
         }
     }, [schdeuledBatches]);
 
@@ -160,15 +164,14 @@ const EditBatchesFromSession = ({ componentName }) => {
     };
 
     const handleSubmit = () => {
-        const Id = meetingId
+        const Id = meetingId;
         const data = {
-            admin_user_id : Number(id),
-            batchId : selectedBatch.map(id => (id))
-        }
-        dispatch(editScheduledBatchesApi({ Id, data}))
-        .then(() => {
-            dispatch(closePopupActions())
-        })
+            admin_user_id: Number(id),
+            batchId: selectedBatch.map(id => id),
+        };
+        dispatch(editScheduledBatchesApi({ Id, data })).then(() => {
+            dispatch(closePopupActions());
+        });
     };
 
     const content = (

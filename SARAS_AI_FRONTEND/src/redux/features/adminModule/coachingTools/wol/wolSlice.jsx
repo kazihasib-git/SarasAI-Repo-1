@@ -224,7 +224,7 @@ export const selectedQuestionsList = createAsyncThunk(
 
 const initialState = {
     wolCategoryData: [], // to store all WOL Category data
-    instructionData: '', // to store all life instruction data
+    instructionData: [], // to store all life instruction data
     wolQuestionsData: [], // to store all WOL Questions data
     wolTestConfig: [],
     wolQuestionCategoryWise: [], // to store WOL Question category wise data
@@ -265,10 +265,11 @@ const wolSlice = createSlice({
         });
         builder.addCase(getWOLCategory.fulfilled, (state, action) => {
             state.loading = false;
-            state.wolCategoryData = action.payload;
+            state.wolCategoryData = action.payload.data;
         });
         builder.addCase(getWOLCategory.rejected, (state, action) => {
             state.loading = false;
+            state.wolCategoryData = [];
             state.error = action.payload || action.error.message;
         });
 
@@ -291,7 +292,7 @@ const wolSlice = createSlice({
         });
         builder.addCase(getLifeInstruction.fulfilled, (state, action) => {
             state.loading = false;
-            state.instructionData = action.payload;
+            state.instructionData = action.payload.data;
         });
         builder.addCase(getLifeInstruction.rejected, (state, action) => {
             state.loading = false;

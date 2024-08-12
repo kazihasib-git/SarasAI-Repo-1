@@ -5,16 +5,13 @@ import axiosInstance from '../../../services/httpService';
 
 export const linkActivity = createAsyncThunk(
     'linkActivity/link',
-    async (activityData, { rejectWithValue }) => {
-        try {
-            const response = await axiosInstance.post(
-                `${baseUrl}/admin/coaching-templates/link-activity`,
-                activityData
-            );
-            return response.data;
-        } catch (error) {
-            return rejectWithValue(error.response.data);
-        }
+    async activityData => {
+        const response = await axiosInstance.post(
+            `${baseUrl}/admin/coaching-templates/link-activity`,
+            activityData
+        );
+        const { activity_id, activity_type_id, link } = response.data;
+        return { activity_id, activity_type_id, link };
     }
 );
 
@@ -33,9 +30,10 @@ const linkActivitySlice = createSlice({
                 state.success = false;
                 state.error = null;
             })
-            .addCase(linkActivity.fulfilled, state => {
+            .addCase(linkActivity.fulfilled, (state, action) => {
                 state.loading = false;
                 state.success = true;
+                state.data = action.payload; // Store the response data
             })
             .addCase(linkActivity.rejected, (state, action) => {
                 state.loading = false;

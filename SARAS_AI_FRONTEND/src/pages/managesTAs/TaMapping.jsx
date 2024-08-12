@@ -12,7 +12,7 @@ const headers = [
     'S. No.',
     'TA Name',
     'Username',
-    'Time Zone',
+    // 'Time Zone',
     'Active Students',
     'Active Batches',
     'Actions',
@@ -45,7 +45,7 @@ const TaMapping = () => {
                         id: item.id,
                         name: item.name,
                         username: item.username,
-                        timezone_name: timezoneName,
+                        // timezone_name: timezoneName,
                         Active_Students: item.Active_Students,
                         Active_Batches: item.Active_Batches,
                         is_active: item.is_active
@@ -54,7 +54,7 @@ const TaMapping = () => {
 
                 setTaMappingData(transformData);
             } else {
-                setTaMappingData([]); 
+                setTaMappingData([]);
             }
         };
 
@@ -62,11 +62,11 @@ const TaMapping = () => {
     }, [taMapping]);
 
     const handleSearch = event => {
-        setSearchQuery(event.target.value); 
+        setSearchQuery(event.target.value);
     };
 
-    const filteredData = taMappingData.filter(
-        item => item.name.toLowerCase().includes(searchQuery.toLowerCase()) 
+    const filteredData = taMappingData.filter(item =>
+        item.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     return (
@@ -98,7 +98,7 @@ const TaMapping = () => {
                             sx={{ ml: 2, flex: 1 }}
                             placeholder="Search here ..."
                             value={searchQuery}
-                            onChange={handleSearch} 
+                            onChange={handleSearch}
                         />
                     </Box>
                 </Box>

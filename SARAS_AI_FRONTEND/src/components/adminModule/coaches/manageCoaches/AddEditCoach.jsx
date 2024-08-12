@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { IconButton, InputAdornment } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useForm, Controller } from 'react-hook-form';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import moment from 'moment-timezone';
@@ -41,9 +43,8 @@ import AssignBatches from '../../AssignBatches';
 import CustomDateOfBirth from '../../../CustomFields/CustomDateOfBirth';
 import EditIcon from '@mui/icons-material/Edit';
 
-
 function AddEditCoach({ data }) {
-    console.log("coach Data", data)
+    console.log('coach Data', data);
     const {
         register,
         handleSubmit,
@@ -63,7 +64,11 @@ function AddEditCoach({ data }) {
     const [selectedImage, setSelectedImage] = useState(null);
     const [editableDescription, setEditableDescription] = useState('');
     const [isEditingDescription, setIsEditingDescription] = useState(false);
-    
+    const [showPassword, setShowPassword] = useState(false);
+
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
 
     const dispatch = useDispatch();
     const { coachSuccessPopup, assignCoachStudentOpen, assignCoachBatchOpen } =
@@ -81,7 +86,6 @@ function AddEditCoach({ data }) {
     }, [data]);
 
     const populateForm = data => {
-
         dispatch(accessCoachName(data));
 
         if (data.profile_picture) {
@@ -89,7 +93,7 @@ function AddEditCoach({ data }) {
             setSelectedImage(blobUrl);
         }
 
-        if(data.description){
+        if (data.description) {
             setEditableDescription(data.description);
         }
 
@@ -101,13 +105,13 @@ function AddEditCoach({ data }) {
             address: data.address,
             pincode: data.pincode,
             phone: data.phone,
-            timezone_id : data.timezone_id,
+            timezone_id: data.timezone_id,
             gender: data.gender,
             email: data.email,
             date_of_birth: data.date_of_birth,
             highest_qualification: data.highest_qualification,
             about_me: data.about_me,
-            description: data.description
+            description: data.description,
         };
 
         Object.entries(formValues).forEach(([key, value]) =>
@@ -137,14 +141,13 @@ function AddEditCoach({ data }) {
         setEditableDescription(event.target.value);
     };
 
-
     const handleSaveDescription = () => {
         setIsEditingDescription(false);
         setValue('description', editableDescription);
     };
     const onSubmit = async (coachData) => {
         
-        if (selectedImage) {
+        if (selectedImage  && selectedImage.startsWith('data:image/')) {
             const base64Data = selectedImage.replace(
                 /^data:image\/(png|jpeg|jpg);base64,/,
                 ''
@@ -285,7 +288,11 @@ function AddEditCoach({ data }) {
 
                                     <Button
                                         variant="contained"
-                                        onClick={() => setIsEditingDescription(!isEditingDescription)}
+                                        onClick={() =>
+                                            setIsEditingDescription(
+                                                !isEditingDescription
+                                            )
+                                        }
                                         sx={{
                                             backgroundColor: '#F56D3B',
                                             color: 'white',
@@ -330,12 +337,12 @@ function AddEditCoach({ data }) {
                                     </Box>
                                 ) : (
                                     <Typography variant="body1" sx={{ mt: 2 }}>
-                                        {editableDescription || 'Short Description'}
+                                        {editableDescription ||
+                                            'Short Description'}
                                     </Typography>
                                 )}
                             </Box>
                         </Box>
-                    
 
                         <Divider
                             sx={{ mt: 2, mb: 4, border: '1px solid #C2C2E7' }}
@@ -399,34 +406,48 @@ function AddEditCoach({ data }) {
                             </Grid>
                             {!data && (
                                 <Grid item xs={12} sm={6} md={4}>
-                                    <CustomTextField
-                                        label="Password"
-                                        name="password"
-                                        type="password"
-                                        placeholder="Enter Password"
-                                        register={register}
-                                        validation={{
-                                            required: 'Password is required',
-                                            minLength: {
-                                                value: 8,
-                                                message:
-                                                    'Password must be at least 8 characters long',
-                                            },
-                                            maxLength: {
-                                                value: 20,
-                                                message:
-                                                    'Password cannot exceed 20 characters',
-                                            },
-                                            pattern: {
-                                                value: /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$/,
-                                                message:
-                                                    'Password must include at least one uppercase letter, one lowercase letter, one number, and one special character',
-                                            },
-                                        }}
-                                        errors={errors}
-                                        helperText={errors.password?.message}
-                                    />
-                                </Grid>
+                                <CustomTextField
+                                    label="Password"
+                                    name="password"
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="Enter Password"
+                                    register={register}
+                                    validation={{
+                                        required: 'Password is required',
+                                        minLength: {
+                                            value: 8,
+                                            message:
+                                                'Password must be at least 8 characters long',
+                                        },
+                                        maxLength: {
+                                            value: 20,
+                                            message:
+                                                'Password cannot exceed 20 characters',
+                                        },
+                                        pattern: {
+                                            value: /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$/,
+                                            message:
+                                                'Password must include at least one uppercase letter, one lowercase letter, one number, and one special character',
+                                        },
+                                    }}
+                                    errors={errors}
+                                    InputProps={{
+                                        endAdornment: (
+                                            <InputAdornment   >
+                                                <IconButton
+                                                    onClick={togglePasswordVisibility}
+                                                >
+                                                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        ),
+                                        style: {
+                                            height: '60px', borderRadius: '50px', padding: '18px 2px'  
+                                        },
+                                    }}
+                                
+                                />
+                            </Grid>
                             )}
                             <Grid item xs={12} sm={6} md={4}>
                                 <CustomTextField
@@ -463,7 +484,7 @@ function AddEditCoach({ data }) {
                                     errors={errors}
                                 />
                             </Grid>
-                        
+
                             <Grid item xs={12} sm={6} md={4}>
                                 <CustomTextField
                                     label="PIN Code"
@@ -501,17 +522,16 @@ function AddEditCoach({ data }) {
                                         required: 'Time Zone is required',
                                     }}
                                     render={({ field }) => (
-                                            <CustomTimeZoneForm
-                                                label="Time Zone"
-                                                name="timezone_id"
-                                                placeholder="Time Zone"
-                                                value={field.value}
-                                                onChange={field.onChange}
-                                                errors={errors}
-                                                options={timezones}
-                                            />
-                                        )
-                                    }
+                                        <CustomTimeZoneForm
+                                            label="Time Zone"
+                                            name="timezone_id"
+                                            placeholder="Time Zone"
+                                            value={field.value}
+                                            onChange={field.onChange}
+                                            errors={errors}
+                                            options={timezones}
+                                        />
+                                    )}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6} md={4}>
