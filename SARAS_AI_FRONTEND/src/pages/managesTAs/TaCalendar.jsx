@@ -80,7 +80,7 @@ const TaCalender = () => {
 
     const dispatch = useDispatch();
     const { id, name } = useParams();
-    
+
     const {
         slotData,
         scheduleData,
@@ -132,7 +132,7 @@ const TaCalender = () => {
                 }
                 try {
                     const transformedEvents = await Promise.all(
-                        scheduleData.data.map(async event => {
+                        scheduleData.map(async event => {
                             const localTime = await convertFromUTC({
                                 start_date: event.date.split(' ')[0],
                                 start_time: event.start_time,
@@ -173,6 +173,8 @@ const TaCalender = () => {
 
         convertEvents();
     }, [scheduleData, timezones, storedTimezoneId]);
+
+    console.log('setEventsList :', eventsList);
 
     useEffect(() => {
         const convertSlots = async () => {

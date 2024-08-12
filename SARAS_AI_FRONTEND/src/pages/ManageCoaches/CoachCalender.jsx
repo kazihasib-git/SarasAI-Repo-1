@@ -119,12 +119,11 @@ const CoachCalender = () => {
             const convertEvents = async () => {
                 if (
                     scheduleCoachData &&
-                    scheduleCoachData.data &&
-                    scheduleCoachData.data.length > 0 &&
+                    scheduleCoachData.length > 0 &&
                     timezonename
                 ) {
                     const transformedEvents = await Promise.all(
-                        scheduleCoachData.data.map(async event => {
+                        scheduleCoachData.map(async event => {
                             const localTime = await convertFromUTC({
                                 start_date: event.date.split(' ')[0],
                                 start_time: event.start_time,
@@ -175,10 +174,10 @@ const CoachCalender = () => {
                     const transformedSlots = await Promise.all(
                         slotCoachData.map(async slot => {
                             const localTime = await convertFromUTC({
-                                slot_date: slot.slot_date,
-                                from_time: slot.from_time,
-                                to_time: slot.to_time,
-                                slot_end_date: slot.slot_end_date,
+                                start_date: slot.slot_date,
+                                start_time: slot.from_time,
+                                end_time: slot.to_time,
+                                end_date: slot.slot_end_date,
                                 timezonename,
                             });
 
