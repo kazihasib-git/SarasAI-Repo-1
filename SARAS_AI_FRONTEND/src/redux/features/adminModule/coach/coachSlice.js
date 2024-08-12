@@ -150,6 +150,16 @@ export const deleteCoachAssignedStudent = createAsyncThunk(
         return response.data;
     }
 );
+export const deleteCoachMapping = createAsyncThunk(
+    'coachModule/deleteCoachMapping',
+    async id => {
+        console.log('ID to delete Ta Mapping : ', id);
+        const response = await axiosInstance.delete(
+            `${baseUrl}/admin/CoachMapping/${id}/deleteMapping`
+        );
+        return response.data;
+    }
+);
 
 export const deleteCoachAssignedBatch = createAsyncThunk(
     'coachModule/deleteCoachAssignedBatch',
@@ -294,10 +304,11 @@ export const coachSlice = createSlice({
         });
         builder.addCase(getCoachAssignStudents.fulfilled, (state, action) => {
             state.loading = false;
-            state.assignedStudents = action.payload;
+            state.assignedStudents = action.payload.data;
         });
         builder.addCase(getCoachAssignStudents.rejected, (state, action) => {
             state.loading = false;
+            state.assignedStudents = [];
             state.error = action.payload || action.error.message;
         });
 
@@ -307,10 +318,11 @@ export const coachSlice = createSlice({
         });
         builder.addCase(getCoachAssignBatches.fulfilled, (state, action) => {
             state.loading = false;
-            state.assignedBatches = action.payload;
+            state.assignedBatches = action.payload.data;
         });
         builder.addCase(getCoachAssignBatches.rejected, (state, action) => {
             state.loading = false;
+            state.assignedBatches = [];
             state.error = action.payload || action.error.message;
         });
 
@@ -333,6 +345,18 @@ export const coachSlice = createSlice({
             }
         );
 
+        // delete coach Mapping
+        builder.addCase(deleteCoachMapping.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(deleteCoachMapping.fulfilled, (state, action) => {
+            state.loading = false;
+        });
+        builder.addCase(deleteCoachMapping.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload || action.error.message;
+        });
+
         // delete assigned Batches
         builder.addCase(deleteCoachAssignedBatch.pending, state => {
             state.loading = true;
@@ -353,10 +377,11 @@ export const coachSlice = createSlice({
         builder.addCase(showCoachMapping.fulfilled, (state, action) => {
             console.log('Coach mapping action ', action.payload);
             state.loading = false;
-            state.coachMapping = action.payload;
+            state.coachMapping = action.payload.data;
         });
         builder.addCase(showCoachMapping.rejected, (state, action) => {
             state.loading = false;
+            state.coachMapping = [];
             state.error = action.payload || action.error.message;
         });
 

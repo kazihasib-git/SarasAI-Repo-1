@@ -106,7 +106,7 @@ const AssignStudents = ({ componentname }) => {
             if (componentname === 'ADDITCOACH') {
                 const id = coachID || assignedId;
                 dispatch(getCoachAssignStudents(id)).then(action => {
-                    const previouslyAssignedStudents = action.payload.map(
+                    const previouslyAssignedStudents = action.payload.data.map(
                         student => student.student.id
                     );
                     setSelectedStudents(previouslyAssignedStudents);
@@ -114,7 +114,7 @@ const AssignStudents = ({ componentname }) => {
             } else if (componentname === 'ADDEDITTA') {
                 const id = taID || assignedId;
                 dispatch(getAssignStudents(id)).then(action => {
-                    const previouslyAssignedStudents = action.payload.map(
+                    const previouslyAssignedStudents = action.payload.data.map(
                         student => student.student.id
                     );
                     setSelectedStudents(previouslyAssignedStudents);
@@ -124,7 +124,7 @@ const AssignStudents = ({ componentname }) => {
     }, [assignStudentOpen, dispatch, componentname, assignedId, coachID, taID]);
 
     useEffect(() => {
-        if (studentBatchMapping) {
+        if (studentBatchMapping && studentBatchMapping.length > 0) {
             const transformedData = studentBatchMapping.map(
                 (student, index) => ({
                     'S. No.': index + 1,
@@ -202,8 +202,8 @@ const AssignStudents = ({ componentname }) => {
                 ? coachID || assignedId
                 : taID || assignedId;
         const data = {
-            [componentname === 'ADDITCOACH' ? 'Coach_id' : 'ta_id']: id,
-            student: selectedStudents.map(id => ({ id: id.toString() })),
+            admin_user_id: id,
+            students: selectedStudents.map(id => ({ id: id.toString() })),
         };
         dispatch(postAssignAction({ id, data })).then(() => {
             if (assignedId) {
@@ -216,8 +216,9 @@ const AssignStudents = ({ componentname }) => {
                         })),
                     })
                 );
+            } else {
+                dispatch(openSuccessAction());
             }
-            dispatch(openSuccessAction());
         });
         dispatch(closeDialogAction());
     };

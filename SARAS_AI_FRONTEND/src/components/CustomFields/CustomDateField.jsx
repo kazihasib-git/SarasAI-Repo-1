@@ -16,7 +16,6 @@ const CustomDateField = ({
         const formattedDate = date ? moment(date).format('YYYY-MM-DD') : '';
         onChange(formattedDate);
     };
-
     return (
         <LocalizationProvider dateAdapter={AdapterMoment}>
             <DatePicker

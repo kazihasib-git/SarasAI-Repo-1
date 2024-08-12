@@ -60,6 +60,7 @@ const ScheduledSessions = ({ componentName }) => {
             openReasonAction = openReasonForLeave;
             reasonForLeaveAction = reasonForLeave;
             break;
+            
         case 'COACHCALENDER':
             scheduleSessionOpenKey = 'scheduledCoachSessionOpen';
             scheduledSessionDataKey = 'scheduledCoachSessionData';
@@ -71,32 +72,6 @@ const ScheduledSessions = ({ componentName }) => {
             slotEventKey = 'slotCoachEventData';
             openReasonAction = openCoachReasonForLeave;
             reasonForLeaveAction = reasonForCoachLeave;
-            break;
-
-        case 'COACHMENU_CALENDER':
-            scheduleSessionOpenKey = 'leaveScheduledSessionPopup';
-            scheduledSessionDataKey = 'coachSessionsForLeave';
-            schedulingStateKey = 'coachMenu';
-            closeSessionAction = closeScheduledSessionForLeave;
-            openCancelAction = openCancelSessionForLeave;
-            openRescheduleAction = openRescheduleSessionForLeave;
-            openSlotsAction = openScheduledSessionForLeave;
-            slotEventKey = 'slotsEventDataForLeave';
-            openReasonAction = openReasonForLeavePopup;
-            reasonForLeaveAction = closeReasonForLeavePopup;
-            break;
-
-        case 'TAMENU_CALENDER':
-            scheduleSessionOpenKey = '';
-            scheduledSessionDataKey = '';
-            schedulingStateKey = '';
-            closeSessionAction = '';
-            openCancelAction = '';
-            openRescheduleAction = '';
-            openSlotsAction = '';
-            slotEventKey = '';
-            openReasonAction = '';
-            reasonForLeaveAction = '';
             break;
 
         default:

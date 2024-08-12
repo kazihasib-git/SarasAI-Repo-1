@@ -127,8 +127,11 @@ const DynamicTable = ({
 
         const toggledItem = updatedData.find(item => item.id === id);
         const requestData = { is_active: toggledItem.is_active };
-        await dispatch(toggleAssignStudentStatus({ id, data: requestData }));
-        await dispatch(getAssignStudents(ta_id));
+        dispatch(toggleAssignStudentStatus({ id, data: requestData })).then(
+            () => {
+                dispatch(getAssignStudents(ta_id));
+            }
+        );
     };
 
     const handleDelete = (id, ta_id) => {
@@ -343,6 +346,7 @@ const AssignedStudent = () => {
             dispatch(getAssignStudents(id));
         }
     }, [dispatch, id]);
+
     useEffect(() => {
         if (assignedStudents && assignedStudents.length > 0) {
             const transformData = assignedStudents.map(item => {

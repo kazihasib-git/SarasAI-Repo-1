@@ -20,7 +20,10 @@ import {
 } from '../../../components/CustomFields/FormOptions';
 import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
-import { getCoachMenuProfile } from '../../../redux/features/coachModule/coachmenuprofileSilce';
+import {
+    getCoachMenuProfile,
+    updateCoachmenuprofile,
+} from '../../../redux/features/coachModule/coachmenuprofileSilce';
 import { formatInTimeZone } from 'date-fns-tz';
 
 const CoachMenuProfile = () => {
@@ -155,9 +158,8 @@ const CoachMenuProfile = () => {
     };
 
     const onSubmit = async formData => {
-        // Handle form submission
         const { email, ...updatedFormData } = formData;
-        setIsEditing(false); // Disable edit mode after submit
+        setIsEditing(false);
 
         updatedFormData.date_of_birth = dateOfBirth;
 
@@ -169,8 +171,17 @@ const CoachMenuProfile = () => {
             updatedFormData.profile_picture = base64Data;
         }
 
-        console.log('updatedFormData', updatedFormData);
-        dispatch(updateCoachmenuprofile(updatedFormData));
+        try {
+            await dispatch(updateCoachmenuprofile(updatedFormData)).unwrap();
+
+            dispatch(getCoachMenuProfile());
+            setIsEditing(false);
+        } catch (error) {
+            console.error('Update failed:', error);
+        }
+
+        // console.log('updatedFormData', updatedFormData);
+        // dispatch(updateCoachmenuprofile(updatedFormData));
     };
 
     return (
@@ -198,7 +209,12 @@ const CoachMenuProfile = () => {
                     }}
                 >
                     <form onSubmit={handleSubmit(onSubmit)} noValidate>
-                        <Box display="flex " alignItems="center" mb={3}>
+                        <Box
+                            display="flex "
+                            alignItems="center"
+                            mb={3}
+                            sx={{ position: 'relative' }}
+                        >
                             <AvatarInput
                                 name="profile_picture"
                                 selectedImage={selectedImage}
@@ -209,8 +225,9 @@ const CoachMenuProfile = () => {
                                 <Button
                                     onClick={toggleEdit}
                                     sx={{
-                                        top: 3,
-                                        left: 799,
+                                        position: 'absolute',
+                                        top: 0,
+                                        right: 0,
                                         borderRadius: 40,
                                         textTransform: 'none',
                                         backgroundColor: '#F56D3B',
@@ -350,6 +367,9 @@ const CoachMenuProfile = () => {
                                                 outline: 'none',
                                                 height: '60px',
                                                 // boxShadow: errors.phone ? "0 0 0 2px red" : "none",
+                                                color: isEditing
+                                                    ? 'inherit'
+                                                    : '#B0B0B0',
                                             }}
                                             buttonStyle={{
                                                 borderRadius: '50px 0 0 50px',
@@ -573,6 +593,7 @@ const CoachMenuProfile = () => {
                                     fontSize: '14px',
                                     fontWeight: '700',
                                     text: '#FFFFFF',
+                                    textTransform: 'none',
                                 }}
                             >
                                 Submit

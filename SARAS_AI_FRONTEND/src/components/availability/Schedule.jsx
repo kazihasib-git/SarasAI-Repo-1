@@ -33,12 +33,16 @@ import {
     openCoachEditBatch,
     openCoachEditStudent,
 } from '../../redux/features/adminModule/coach/coachSchedule';
-import { getTimezone } from '../../redux/features/utils/utilSlice';
+import {
+    getPlatforms,
+    getTimezone,
+} from '../../redux/features/utils/utilSlice';
 import CustomTimeZoneForm from '../CustomFields/CustomTimeZoneForm';
 import { fetchTAScheduleById } from '../../redux/features/adminModule/ta/taAvialability';
 import { toast } from 'react-toastify';
 import { fetchCoachScheduleById } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import CustomButton from '../CustomFields/CustomButton';
+import CustomPlatformForm from '../CustomFields/CustomPlatformForm';
 
 const headers = ['S. No.', 'Slot Date', 'From Time', 'To Time', 'Select'];
 
@@ -56,12 +60,6 @@ const actionButtons = [
     {
         type: 'button',
     },
-];
-
-const platforms = [
-    { label: 'Zoom', value: 1 },
-    { label: 'Team', value: 2 },
-    { label: 'BlueButton', value: 3 },
 ];
 
 const Schedule = ({ componentName }) => {
@@ -170,10 +168,11 @@ const Schedule = ({ componentName }) => {
         }
     }, [fromDate, dispatch, adminUserID, getAvailableSlotsAction]);
 
-    const { timezones } = useSelector(state => state.util);
+    const { timezones, platforms } = useSelector(state => state.util);
 
     useEffect(() => {
         dispatch(getTimezone());
+        dispatch(getPlatforms());
     }, [dispatch]);
 
     useEffect(() => {
@@ -304,7 +303,6 @@ const Schedule = ({ componentName }) => {
         }
 
         console.log('FORM DATA : ', formData);
-        console.log('selected timezone', timezone);
 
         formData.start_time = fromTime;
         formData.end_time = toTime;
@@ -314,8 +312,6 @@ const Schedule = ({ componentName }) => {
         formData.slot_id = selectedSlot[0].id; // Assuming single slot selection
         formData.event_status = 'scheduled';
         formData.weeks = weeksArray;
-        formData.meeting_url = 'https://zoom.in';
-        formData.timezone = 'Asia/Kolkata';
         formData.studentId = studentId;
         formData.batchId = batchId;
 
@@ -468,13 +464,13 @@ const Schedule = ({ componentName }) => {
                                                 justifyContent="center"
                                             >
                                                 <Controller
-                                                    name="timezone"
+                                                    name="timezone_id"
                                                     control={control}
                                                     // rules={{ required: "Time Zone is required" }}
                                                     render={({ field }) => (
                                                         <CustomTimeZoneForm
                                                             label="Time Zone"
-                                                            name="timezone"
+                                                            name="timezone_id"
                                                             value={field.value}
                                                             onChange={
                                                                 field.onChange
@@ -492,12 +488,12 @@ const Schedule = ({ componentName }) => {
                                                 justifyContent="center"
                                             >
                                                 <Controller
-                                                    name="platform"
+                                                    name="platform_id"
                                                     control={control}
                                                     render={({ field }) => (
-                                                        <CustomFormControl
+                                                        <CustomPlatformForm
                                                             label="Platform"
-                                                            name="platform"
+                                                            name="platform_id"
                                                             value={field.value}
                                                             onChange={
                                                                 field.onChange

@@ -84,9 +84,9 @@ const WOLTestConfig = () => {
     }, [wolTestConfig]);
 
     useEffect(() => {
-        if (wolCategoryData.data && wolCategoryData.data.length > 0) {
+        if (wolCategoryData && wolCategoryData.length > 0) {
             const numberOfWolCategories = Array.from(
-                { length: wolCategoryData.data.length },
+                { length: wolCategoryData.length },
                 (_, i) => ({
                     value: i + 1,
                     label: i + 1,
@@ -96,36 +96,21 @@ const WOLTestConfig = () => {
         }
     }, [wolCategoryData]);
 
-    useEffect(() => {
-        if (edit) {
-            // Reset categories when edit mode is enabled
-            setFormValues(prevValues => ({
-                ...prevValues,
-                categories: Array.from(
-                    { length: formValues.numberOfWolCategories },
-                    (_, i) => ({
-                        category_name:
-                            prevValues.categories[i]?.category_name || '',
-                        no_of_questions:
-                            prevValues.categories[i]?.no_of_questions || '',
-                    })
-                ),
-            }));
-        }
-    }, [edit, formValues.numberOfWolCategories]);
-
+    // Generate options based on the wol_questions_count for each category
     const WOLCategoriesOptions =
-        wolCategoryData.data && wolCategoryData.data.length > 0
-            ? wolCategoryData.data.map(item => ({
-                  value: item.id,
-                  label: item.name,
-              }))
-            : [];
+        wolCategoryData.map(item => ({
+            value: item.id,
+            label: item.name,
+        })) || [];
 
-    const numberOfQuestions = Array.from({ length: 10 }, (_, i) => ({
-        value: i + 1,
-        label: i + 1,
-    }));
+    const getNumberOfQuestionsOptions = categoryId => {
+        const category = wolCategoryData.find(cat => cat.id === categoryId);
+        const maxQuestions = category?.wol_questions_count || 0;
+        return Array.from({ length: maxQuestions }, (_, i) => ({
+            value: i + 1,
+            label: i + 1,
+        }));
+    };
 
     const handleSubmit = e => {
         e.preventDefault();
@@ -138,6 +123,7 @@ const WOLTestConfig = () => {
             }));
             return;
         }
+
         const newErrors = {};
 
         if (!formValues.numberOfWolCategories) {
@@ -157,10 +143,9 @@ const WOLTestConfig = () => {
     const handleFormSubmit = e => {
         e.preventDefault();
         const newErrors = {};
-        const selectedNumberOfWolCategories = formValues.numberOfWolCategories;
 
         const categories = Array.from(
-            { length: selectedNumberOfWolCategories },
+            { length: formValues.numberOfWolCategories },
             (_, i) => {
                 const categoryName =
                     formValues.categories[i]?.category_name || '';
@@ -189,11 +174,9 @@ const WOLTestConfig = () => {
         }
 
         const data = {
-            number_of_categories: selectedNumberOfWolCategories,
+            number_of_categories: formValues.numberOfWolCategories,
             categories: categories,
         };
-
-        console.log('Data :', data);
 
         dispatch(addWOLTestConfig(data));
         navigate('/WOLTestConfigSelectQuestions');
@@ -219,13 +202,7 @@ const WOLTestConfig = () => {
                         }}
                         onClick={() => navigate('/wheel-of-life')}
                     />
-                    <p
-                        style={{
-                            fontSize: '40px',
-                            fontWeight: 200,
-                            justifyContent: 'center',
-                        }}
-                    >
+                    <p style={{ fontSize: '40px', fontWeight: 200 }}>
                         Wheel Of Test Config
                     </p>
                 </Box>
@@ -242,7 +219,7 @@ const WOLTestConfig = () => {
             >
                 <form onSubmit={handleSubmit} noValidate>
                     <Grid container spacing={2}>
-                        {numberOfWolCategoriesOptions && (
+                        {numberOfWolCategoriesOptions.length > 0 && (
                             <Grid item xs={12} md={4}>
                                 <CustomFormControl
                                     label="Number of WOL Categories"
@@ -259,6 +236,11 @@ const WOLTestConfig = () => {
                                     options={numberOfWolCategoriesOptions}
                                     disabled={edit}
                                 />
+                                {errors.numberOfWolCategories && (
+                                    <p style={{ color: 'red' }}>
+                                        {errors.numberOfWolCategories}
+                                    </p>
+                                )}
                             </Grid>
                         )}
                         <Grid item xs={12} md={4}>
@@ -268,9 +250,9 @@ const WOLTestConfig = () => {
                                 variant="contained"
                                 sx={{
                                     borderRadius: '50px',
-                                    padding: '18px 30px',
-                                    margin: '0 8px',
+                                    padding: '14px 30px',
                                     textTransform: 'none',
+                                    fontFamily: 'Bold',
                                 }}
                             >
                                 {edit ? 'Update' : 'Submit'}
@@ -286,91 +268,152 @@ const WOLTestConfig = () => {
                         <Table sx={{ minWidth: 650 }} aria-label="simple table">
                             <TableHead>
                                 <TableRow>
-                                    <TableCell>S. No.</TableCell>
-                                    <TableCell align="left">
+                                    <TableCell style={{ fontFamily: 'Medium' }}>
+                                        S. No.
+                                    </TableCell>
+                                    <TableCell
+                                        style={{
+                                            fontFamily: 'Medium',
+                                            align: 'left',
+                                        }}
+                                    >
                                         Wheel of Life Category
                                     </TableCell>
-                                    <TableCell align="left">
+                                    <TableCell
+                                        style={{
+                                            fontFamily: 'Medium',
+                                            align: 'left',
+                                        }}
+                                    >
                                         No. of Questions
                                     </TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {Array.from({
-                                    length: formValues.numberOfWolCategories,
-                                }).map((_, index) => (
-                                    <TableRow key={index}>
-                                        <TableCell component="th" scope="row">
-                                            {index + 1}
-                                        </TableCell>
-                                        <TableCell align="left">
-                                            <CustomFormControl
-                                                label="Category Name"
-                                                name={`category_name_${index}`}
-                                                value={
-                                                    formValues.categories[index]
-                                                        ?.category_name || ''
-                                                }
-                                                onChange={e => {
-                                                    const newCategories = [
-                                                        ...formValues.categories,
-                                                    ];
-                                                    newCategories[index] = {
-                                                        ...newCategories[index],
-                                                        category_name:
-                                                            e.target.value,
-                                                    };
-                                                    setFormValues({
-                                                        ...formValues,
-                                                        categories:
-                                                            newCategories,
-                                                    });
+                                {Array.from(
+                                    {
+                                        length: formValues.numberOfWolCategories,
+                                    },
+                                    (_, index) => (
+                                        <TableRow key={index}>
+                                            <TableCell
+                                                component="th"
+                                                scope="row"
+                                            >
+                                                {index + 1}
+                                            </TableCell>
+                                            <TableCell
+                                                style={{
+                                                    fontFamily: 'Medium',
+                                                    align: 'left',
                                                 }}
-                                                errors={errors}
-                                                options={WOLCategoriesOptions}
-                                            />
-                                        </TableCell>
-                                        <TableCell align="left">
-                                            <CustomFormControl
-                                                label="No. of Questions"
-                                                name={`no_of_questions_${index}`}
-                                                value={
-                                                    formValues.categories[index]
-                                                        ?.no_of_questions || ''
-                                                }
-                                                onChange={e => {
-                                                    const newCategories = [
-                                                        ...formValues.categories,
-                                                    ];
-                                                    newCategories[index] = {
-                                                        ...newCategories[index],
-                                                        no_of_questions:
-                                                            e.target.value,
-                                                    };
-                                                    setFormValues({
-                                                        ...formValues,
-                                                        categories:
-                                                            newCategories,
-                                                    });
-                                                }}
-                                                errors={errors}
-                                                options={numberOfQuestions}
-                                            />
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
+                                            >
+                                                <CustomFormControl
+                                                    label="Category Name"
+                                                    name={`category_name_${index}`}
+                                                    value={
+                                                        formValues.categories[
+                                                            index
+                                                        ]?.category_name || ''
+                                                    }
+                                                    onChange={e => {
+                                                        const newCategories = [
+                                                            ...formValues.categories,
+                                                        ];
+                                                        newCategories[index] = {
+                                                            ...newCategories[
+                                                                index
+                                                            ],
+                                                            category_name:
+                                                                e.target.value,
+                                                        };
+                                                        setFormValues({
+                                                            ...formValues,
+                                                            categories:
+                                                                newCategories,
+                                                        });
+                                                    }}
+                                                    errors={errors}
+                                                    options={
+                                                        WOLCategoriesOptions
+                                                    }
+                                                />
+                                                {errors[
+                                                    `category_name_${index}`
+                                                ] && (
+                                                    <p style={{ color: 'red' }}>
+                                                        {
+                                                            errors[
+                                                                `category_name_${index}`
+                                                            ]
+                                                        }
+                                                    </p>
+                                                )}
+                                            </TableCell>
+                                            <TableCell align="left">
+                                                <CustomFormControl
+                                                    label="No. of Questions"
+                                                    name={`no_of_questions_${index}`}
+                                                    value={
+                                                        formValues.categories[
+                                                            index
+                                                        ]?.no_of_questions || ''
+                                                    }
+                                                    onChange={e => {
+                                                        const newCategories = [
+                                                            ...formValues.categories,
+                                                        ];
+                                                        newCategories[index] = {
+                                                            ...newCategories[
+                                                                index
+                                                            ],
+                                                            no_of_questions:
+                                                                e.target.value,
+                                                        };
+                                                        setFormValues({
+                                                            ...formValues,
+                                                            categories:
+                                                                newCategories,
+                                                        });
+                                                    }}
+                                                    errors={errors}
+                                                    options={getNumberOfQuestionsOptions(
+                                                        formValues.categories[
+                                                            index
+                                                        ]?.category_name
+                                                    )}
+                                                />
+                                                {errors[
+                                                    `no_of_questions_${index}`
+                                                ] && (
+                                                    <p style={{ color: 'red' }}>
+                                                        {
+                                                            errors[
+                                                                `no_of_questions_${index}`
+                                                            ]
+                                                        }
+                                                    </p>
+                                                )}
+                                            </TableCell>
+                                        </TableRow>
+                                    )
+                                )}
                             </TableBody>
                         </Table>
+                        <Box display="flex" justifyContent="flex-start" mt={2}>
+                            <SubmitButton
+                                type="submit"
+                                active={true}
+                                variant="contained"
+                                style={{
+                                    textTransform: 'none',
+                                    fontFamily: 'Bold',
+                                }}
+                            >
+                                Submit
+                            </SubmitButton>
+                        </Box>
                     </TableContainer>
-                    <Box display="flex" justifyContent="flex-start" mt={2}>
-                        <SubmitButton
-                            type="submit"
-                            active={true}
-                            variant="contained"
-                        >
-                            Submit
-                        </SubmitButton>
-                    </Box>
                 </form>
             )}
         </>

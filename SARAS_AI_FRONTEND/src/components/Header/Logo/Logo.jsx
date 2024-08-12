@@ -1,6 +1,6 @@
 import React from 'react';
 import './Logo.css';
-import sarasai_logo from '../../../assets/sarasai_logo.png';
+import sarasai_logo from '../../../assets/sarasai_Logo.svg';
 function Logo() {
     const handleToggleSideBar = () => {
         document.body.classList.toggle('toggle-sidebar');

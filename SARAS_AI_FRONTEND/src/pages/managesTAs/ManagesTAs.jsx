@@ -13,6 +13,8 @@ import {
     closeEditTa,
 } from '../../redux/features/adminModule/ta/taSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import { getTimezone } from '../../redux/features/utils/utilSlice';
+import { timezoneIdToName } from '../../utils/timezoneIdToName';
 
 const headers = [
     'S. No.',
@@ -20,10 +22,12 @@ const headers = [
     'Username',
     'Location',
     'Time Zone',
-    'Action',
+    'Actions',
 ];
 
 const ManageTA = () => {
+    const { timezones } = useSelector(state => state.util);
+    
     const dispatch = useDispatch();
     const { tas, loading, error, createTAOpen, editTAOpen } = useSelector(
         state => state.taModule
@@ -36,37 +40,47 @@ const ManageTA = () => {
     useEffect(() => {
         dispatch(closeCreateTa());
         dispatch(closeEditTa());
+        dispatch(getTimezone()); // Fetch timezones when the component mounts
+
         dispatch(getTA());
     }, [dispatch]);
 
     useEffect(() => {
-        if (tas.length > 0) {
+        if (tas && tas.length > 0) {
             const transformData = tas.map(item => ({
                 id: item.id,
                 'TA Name': item.name,
                 Username: item.username,
                 Location: item.location,
-                'Time Zone': item.time_zone,
+                'Time Zone': timezoneIdToName(item.timezone_id, timezones),
                 is_active: item.is_active,
             }));
-
             setTasData(transformData);
         }
     }, [tas]);
-
     const actionButtons = [
         {
             type: 'switch',
-            onChange: () => setActionButtonToggled(prev => !prev), // Toggle state
+            onChange: (event) => {
+                if (event && event.preventDefault) {
+                    event.preventDefault(); // Prevent any default action
+                }
+                setActionButtonToggled(prev => !prev); // Toggle state
+            },
         },
         {
             type: 'edit',
-            onClick: id => {
+            onClick: (id, event) => {
+                if (event && event.preventDefault) {
+                    event.preventDefault(); // Prevent any default action
+                }
                 handleEditTa(id);
             },
-            disabled: actionButtonToggled, // Disable edit button based on toggle state
+            // disabled: actionButtonToggled, // Disable edit button based on toggle state
         },
     ];
+    
+    
 
     const handleAddTa = () => {
         dispatch(openCreateTa());

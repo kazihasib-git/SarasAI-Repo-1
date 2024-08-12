@@ -2,21 +2,14 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axiosInstance from '../../services/httpService';
 import { baseUrl } from '../../../utils/baseURL';
 
-export const getPlatforms = createAsyncThunk(
-    'util/getPlatforms',
-    async ({ rejectWithValue }) => {
-        try {
-            const response = await axiosInstance.get(
-                `${baseUrl}/calling-tools`
-            );
-            return response.data;
-        } catch (error) {
-            return rejectWithValue(
-                error.response ? error.response.data : 'An Error occurred'
-            );
-        }
+export const getPlatforms = createAsyncThunk('util/getPlatforms', async () => {
+    try {
+        const response = await axiosInstance.get(`${baseUrl}/platform-tools`);
+        return response.data;
+    } catch (error) {
+        error.response ? error.response.data : 'An Error occurred';
     }
-);
+});
 
 export const getTimezone = createAsyncThunk('util/getTimezone', async () => {
     const response = await axiosInstance.get(`${baseUrl}/timezones`);

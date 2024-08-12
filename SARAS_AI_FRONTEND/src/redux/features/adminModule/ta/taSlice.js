@@ -3,6 +3,7 @@ import { baseUrl } from '../../../../utils/baseURL';
 import axiosInstance from '../../../services/httpService';
 
 export const createTA = createAsyncThunk('taModule/createTA', async data => {
+    console.log('create ta data :', data);
     const response = await axiosInstance.post(
         `${baseUrl}/admin/manage_tas`,
         data
@@ -57,7 +58,6 @@ export const getBatchMapping = createAsyncThunk(
     'taModule/getBatchMapping',
     async () => {
         const response = await axiosInstance.get(`${baseUrl}/admin/batches`);
-        console.log('Response : ', response);
         return response.data;
     }
 );
@@ -142,6 +142,17 @@ export const deleteAssignedStudent = createAsyncThunk(
         console.log('ID to delete STUDENT : ', id);
         const response = await axiosInstance.delete(
             `${baseUrl}/admin/TAMapping/${id.id}/deleteStudent`
+        );
+        return response.data;
+    }
+);
+
+export const deleteTaMapping = createAsyncThunk(
+    'taModule/deleteTaMapping',
+    async id => {
+        console.log('ID to delete Ta Mapping : ', id);
+        const response = await axiosInstance.delete(
+            `${baseUrl}/admin/TAMapping/${id}/deleteMapping`
         );
         return response.data;
     }
@@ -309,8 +320,7 @@ export const taSlice = createSlice({
         });
         builder.addCase(getBatchMapping.fulfilled, (state, action) => {
             state.loading = false;
-            // console.log("MAPPING PAYLOAD :", action.payload )
-            state.batchMapping = action.payload?.batches;
+            state.batchMapping = action.payload.batches;
         });
         builder.addCase(getBatchMapping.rejected, (state, action) => {
             state.loading = false;
@@ -324,7 +334,7 @@ export const taSlice = createSlice({
         builder.addCase(showTAMapping.fulfilled, (state, action) => {
             // console.log("TAMAPPING : ", action.payload);
             state.loading = false;
-            state.taMapping = action.payload;
+            state.taMapping = action.payload.data;
         });
         builder.addCase(showTAMapping.rejected, (state, action) => {
             state.loading = false;
@@ -338,7 +348,7 @@ export const taSlice = createSlice({
         builder.addCase(getAssignStudents.fulfilled, (state, action) => {
             console.log('ACTION : ', action.payload);
             state.loading = false;
-            state.assignedStudents = action.payload;
+            state.assignedStudents = action.payload.data;
         });
         builder.addCase(getAssignStudents.rejected, (state, action) => {
             state.loading = false;
@@ -352,7 +362,7 @@ export const taSlice = createSlice({
         });
         builder.addCase(getAssignBatches.fulfilled, (state, action) => {
             state.loading = false;
-            state.assignedBatches = action.payload;
+            state.assignedBatches = action.payload.data;
         });
         builder.addCase(getAssignBatches.rejected, (state, action) => {
             state.loading = false;
@@ -434,6 +444,18 @@ export const taSlice = createSlice({
             // state.assignedStudents = action.payload;
         });
         builder.addCase(deleteAssignedStudent.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload || action.error.message;
+        });
+
+        // delete Ta Mapping
+        builder.addCase(deleteTaMapping.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(deleteTaMapping.fulfilled, (state, action) => {
+            state.loading = false;
+        });
+        builder.addCase(deleteTaMapping.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload || action.error.message;
         });

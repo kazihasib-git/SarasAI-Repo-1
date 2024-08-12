@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     IconButton,
     Typography,
@@ -10,9 +10,19 @@ import {
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import { useDispatch, useSelector } from 'react-redux';
-import { closeSessionEvent } from '../../redux/features/adminModule/ta/taAvialability';
+import {
+    changePlatform,
+    closeSessionEvent,
+    fetchTAScheduleById,
+    openTaEditSchduledBatches,
+    openTaEditScheduledStudents,
+} from '../../redux/features/adminModule/ta/taAvialability';
 import { formatDateTime } from '../../utils/dateFormatter';
-import { closeCoachSessionEvent } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
+import {
+    closeCoachSessionEvent,
+    openCoachEditSchduledBatches,
+    openCoachEditScheduledStudents,
+} from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import {
     openEditStudent,
     openEditBatch,
@@ -24,6 +34,10 @@ import {
 
 import editImg from '../../assets/editIcon_White.png';
 import editImage from '../../assets/editIcon.png';
+import { useNavigate } from 'react-router-dom';
+import CustomFormControl from '../CustomFields/CustomFromControl';
+import { getPlatforms } from '../../redux/features/utils/utilSlice';
+import CustomPlatformForm from '../CustomFields/CustomPlatformForm';
 
 const CustomButton = ({
     onClick,
@@ -62,13 +76,26 @@ const CustomButton = ({
 
 const ScheduleSession = ({ componentName }) => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const [changeMode, setChangeMode] = useState(false);
+    const [selectedPlatform, setSelectedPlatform] = useState();
+    const [copySuccess, setCopySuccess] = useState(false);
+
+    const { platforms } = useSelector(state => state.util);
+
+    useEffect(() => {
+        console.log('sessionData:');
+        dispatch(getPlatforms());
+    }, [dispatch]);
 
     let sliceName,
         sessionDataState,
         closePopup,
         openPopupState,
         openEditBatches,
-        openEditStudents;
+        openEditStudents,
+        openStudentsPopup,
+        openBatchesPopup;
 
     switch (componentName) {
         case 'TACALENDER':
@@ -78,6 +105,8 @@ const ScheduleSession = ({ componentName }) => {
             openPopupState = 'openEventData';
             openEditBatches = openEditBatch;
             openEditStudents = openEditStudent;
+            openStudentsPopup = openTaEditScheduledStudents;
+            openBatchesPopup = openTaEditSchduledBatches;
             break;
 
         case 'COACHCALENDER':
@@ -87,6 +116,8 @@ const ScheduleSession = ({ componentName }) => {
             openPopupState = 'coachOpenEventData'; // Assuming this is correct
             openEditBatches = openCoachEditBatch;
             openEditStudents = openCoachEditStudent;
+            openStudentsPopup = openCoachEditScheduledStudents;
+            openBatchesPopup = openCoachEditSchduledBatches;
             break;
 
         default:
@@ -96,6 +127,8 @@ const ScheduleSession = ({ componentName }) => {
             openPopupState = null;
             openEditBatches = null;
             openEditStudents = null;
+            openStudentsPopup = null;
+            openBatchesPopup = null;
             break;
     }
 
@@ -110,58 +143,128 @@ const ScheduleSession = ({ componentName }) => {
     console.log('SESSION DATA :', sessionData);
 
     const handleEditStudents = () => {
-        dispatch(openEditStudents());
+        dispatch(openStudentsPopup({ id: sessionData.id }));
     };
 
     const handleEditBatches = () => {
-        dispatch(openEditBatches());
+        dispatch(openBatchesPopup({ id: sessionData.id }));
     };
 
+    console.log('sessionData', sessionData);
+
     const handleLinkCopy = () => {
-        if (sessionData.meetingLink) {
+        if (sessionData.platform_meet.host_meeting_url) {
             navigator.clipboard
-                .writeText(sessionData.meetingLink)
+                .writeText(sessionData.platform_meet.host_meeting_url)
                 .then(() => {
-                    console.log('Link copied to clipboard!');
-                    // Optionally, you can display a notification or message to the user
+                    setCopySuccess(true);
+                    setTimeout(() => setCopySuccess(false), 2000);
                 })
+
                 .catch(err => {
                     console.error('Failed to copy link: ', err);
-                    // Optionally, handle the error case
                 });
         } else {
-            console.error('No meeting link available to copy.');
+            console.error('No meeting link .');
         }
     };
 
-    const handleChangeMode = () => {};
+    const handleChangeMode = () => {
+        setChangeMode(true);
+    };
+
+    const handlePlatformChange = event => {
+        setSelectedPlatform(event.target.value);
+    };
+
+    const handleChangePlatform = sessionData => {
+        const id = sessionData.id;
+        const data = {
+            admin_user_id: sessionData.admin_user_id,
+            platform_id: selectedPlatform,
+        };
+        console.log('data and id', data, id);
+        dispatch(changePlatform({ id, data })).then(() => {
+            dispatch(fetchTAScheduleById(sessionData.admin_user_id));
+        });
+    };
+
+    // const handleJoinCall = data => {
+
+    //     window.open(sessionData.platform_meet.host_meeting_url, '_blank');
+    // };
+    const handleJoinCall = data => {
+        const eventData = {
+            ...sessionData,
+            meetingName: sessionData.meetingName,
+
+            platformName: sessionData.platform_tools.name,
+        };
+        window.open(sessionData.platform_meet.host_meeting_url, '_blank');
+    };
+
+    console.log('secletected Platform', selectedPlatform);
+    // Check if platform data is present
 
     const content = (
         <Box sx={{ textAlign: 'center' }}>
             <Typography variant="body1" sx={{ mb: 2 }}>
                 {formatDateTime(sessionData)}
             </Typography>
-            <CustomButton
-                onClick={() => handleJoinZoom(sessionData)}
-                backgroundColor="#FFFFFF"
-                borderColor="#F56D38"
-                color="#F56D38"
-                sx={{ mb: 2, mr: 2 }}
+            {changeMode ? (
+                <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
+                    <CustomPlatformForm
+                        label="Change Mode"
+                        name="platform"
+                        placeholder="Select Platform"
+                        value={
+                            selectedPlatform
+                                ? selectedPlatform
+                                : sessionData.platform_tools.id
+                        }
+                        onChange={handlePlatformChange}
+                        errors={''}
+                        options={platforms}
+                        sx={{ width: '100px' }} // Adjust the width as needed
+                    />
+                    <CustomButton
+                        onClick={() => handleChangePlatform(sessionData)}
+                        backgroundColor="#F56D3B"
+                        color="white"
+                        borderColor="#F56D3B"
+                        style={{ textTransform: 'none' }}
+                    >
+                        Submit
+                    </CustomButton>
+                </Box>
+            ) : (
+                <>
+                    <CustomButton
+                        onClick={() => handleJoinCall(sessionData)}
+                        backgroundColor="#FFFFFF"
+                        borderColor="#F56D38"
+                        color="#F56D38"
+                        sx={{ mb: 2, mr: 2, textTransform: 'none' }}
+                    >
+                        Join with {sessionData.platform_tools.name}
+                    </CustomButton>
+                    <CustomButton
+                        onClick={handleChangeMode}
+                        variant="text"
+                        backgroundColor="#FFFFFF"
+                        borderColor="transparent"
+                        color="#F56D38"
+                        sx={{ mb: 2, textTransform: 'none' }}
+                    >
+                        Change Mode
+                    </CustomButton>
+                </>
+            )}
+            <Typography
+                variant="body2"
+                sx={{ mb: 2, overflow: 'hidden', textOverflow: 'ellipsis' }}
             >
-                Join with Zoom
-            </CustomButton>
-            <CustomButton
-                onClick={handleChangeMode}
-                variant="text"
-                backgroundColor="#FFFFFF"
-                borderColor="transparent"
-                color="#F56D38"
-                sx={{ mb: 2 }}
-            >
-                Change Mode
-            </CustomButton>
-            <Typography variant="body2" sx={{ mb: 2 }}>
-                {sessionData.meetingLink}
+                {sessionData.platform_meet.host_meeting_url}
                 <IconButton
                     size="small"
                     sx={{
@@ -179,6 +282,11 @@ const ScheduleSession = ({ componentName }) => {
                 >
                     <ContentCopyIcon />
                 </IconButton>
+                {copySuccess && (
+                    <Typography variant="body2" sx={{ mt: 1, color: 'black' }}>
+                        Copied!
+                    </Typography>
+                )}
             </Typography>
         </Box>
     );
@@ -236,12 +344,14 @@ const ScheduleSession = ({ componentName }) => {
             </Grid>
         </Box>
     );
+    console.log('sessionData:', sessionData);
+    console.log('Platform Data:', sessionData.platform_tools.name);
 
     return (
         <ReusableDialog
             open={open}
             handleClose={() => dispatch(closePopup())}
-            title={`${sessionData.title || 'No Title'}`}
+            title={`Session Name - ${sessionData.meetingName || 'No Title'}`}
             content={content}
             actions={actions}
         />

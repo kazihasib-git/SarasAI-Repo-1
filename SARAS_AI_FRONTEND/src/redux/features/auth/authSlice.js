@@ -4,16 +4,14 @@ import { baseUrl } from '../../../utils/baseURL';
 import { toast } from 'react-toastify';
 import axiosInstance from '../../services/httpService';
 
-const url = 'http://34.100.233.67:8080/api';
-
 // login api
 export const login = createAsyncThunk('login', async data => {
-    const response = await axiosInstance.post(`${url}/login`, data);
+    const response = await axiosInstance.post(`${baseUrl}/login`, data);
     return response.data;
 });
 
 export const logout = createAsyncThunk('logout', async () => {
-    const response = await axiosInstance.post(`${url}/logout`);
+    const response = await axiosInstance.post(`${baseUrl}/logout`);
     return response.data;
 });
 
@@ -51,6 +49,7 @@ const authSlice = createSlice({
             localStorage.setItem('login', true);
             localStorage.setItem('accessToken', action.payload.access_token);
             localStorage.setItem('role', action.payload.role);
+            localStorage.setItem('timezone_id', action.payload.admin_user.timezone_id)
         });
         builder.addCase(login.rejected, (state, action) => {
             state.loading = false;
@@ -70,6 +69,7 @@ const authSlice = createSlice({
             localStorage.setItem('login', false);
             localStorage.setItem('accessToken', '');
             localStorage.setItem('role', '');
+            localStorage.setItem('timezone_id', '')
         });
     },
 });

@@ -99,6 +99,8 @@ const AssignBatches = ({ componentname }) => {
         loading,
     } = stateSelector || {};
 
+    console.log('id', taID, coachID);
+
     useEffect(() => {
         if (stateModuleKey && assignBatchOpen) {
             dispatch(getBatchMappingAction());
@@ -110,7 +112,7 @@ const AssignBatches = ({ componentname }) => {
             if (componentname === 'ADDITCOACH') {
                 const id = coachID || assignedId;
                 dispatch(getCoachAssignBatches(id)).then(action => {
-                    const previouslyAssignedStudents = action.payload.map(
+                    const previouslyAssignedStudents = action.payload.data.map(
                         batches => batches.batch.id
                     );
                     setSelectedBatch(previouslyAssignedStudents);
@@ -119,7 +121,7 @@ const AssignBatches = ({ componentname }) => {
                 const id = taID || assignedId;
                 dispatch(getAssignBatches(id)).then(action => {
                     console.log(action.payload);
-                    const previouslyAssignedStudents = action.payload.map(
+                    const previouslyAssignedStudents = action.payload.data.map(
                         batches => batches.batch.id
                     );
                     setSelectedBatch(previouslyAssignedStudents);
@@ -129,7 +131,7 @@ const AssignBatches = ({ componentname }) => {
     }, [assignBatchOpen, dispatch, componentname, assignedId, coachID, taID]);
 
     useEffect(() => {
-        if (Array.isArray(batchMapping)) {
+        if (batchMapping && batchMapping.length > 0) {
             console.log('BATCHMAPPING : ', batchMapping);
             const transformedData = batchMapping.map((batch, index) => ({
                 'S. No.': index + 1,
@@ -188,8 +190,9 @@ const AssignBatches = ({ componentname }) => {
             componentname === 'ADDITCOACH'
                 ? coachID || assignedId
                 : taID || assignedId;
+
         const data = {
-            [componentname === 'ADDITCOACH' ? 'Coach_id' : 'ta_id']: id,
+            admin_user_id: id,
             batches: selectedBatch.map(id => ({ id: id.toString() })),
         };
         dispatch(postAssignAction({ id, data })).then(() => {

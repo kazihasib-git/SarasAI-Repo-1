@@ -33,6 +33,8 @@ import EditStudents from '../../components/availability/EditStudents';
 import Header from '../../components/Header/Header';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import ScheduleSession from '../../components/availability/ScheduleSession';
+import EditStudentsFromSession from '../../components/availability/EditStudentsFromSession';
+import EditBatchesFromSession from '../../components/availability/EditBatchesFromSession';
 
 const CustomButton = ({
     onClick,
@@ -86,6 +88,8 @@ const TaCalender = () => {
         scheduledSlotsData,
         deletingCoachFutureSlots,
         openEventData,
+        taEditScheduledStudents,
+        taEditScheduledBatches,
     } = useSelector(state => state.taAvialability);
 
     const {
@@ -107,12 +111,17 @@ const TaCalender = () => {
     useEffect(() => {
         if (scheduleData && scheduleData.data) {
             const transformedEvents = scheduleData.data.map(event => ({
-                title: event.meeting_name,
+                id: event.id,
+                admin_user_id: event.admin_user_id,
+                meetingName: event.meeting_name,
+                meetingId: event.meeting_id,
+                platformId: event.platform_id,
                 start: new Date(
                     event.date.split(' ')[0] + 'T' + event.start_time
                 ),
                 end: new Date(event.date.split(' ')[0] + 'T' + event.end_time),
-                meetingLink: event.meeting_url,
+                platform_tools: event.platform_tool_details,
+                platform_meet: event.platform_meeting_details,
             }));
             setEventsList(transformedEvents);
         } else {
@@ -211,6 +220,9 @@ const TaCalender = () => {
                                         style={{ textTransform: 'none' }}
                                     >
                                         {/* <AddCircleOutlineIcon /> */}
+                                        <AddCircleOutlineIcon
+                                            sx={{ marginRight: 1 }}
+                                        />
                                         Create New Slot
                                     </CustomButton>
                                 </Box>
@@ -282,6 +294,12 @@ const TaCalender = () => {
                     )}
                     {openEventData && (
                         <ScheduleSession componentName={'TACALENDER'} />
+                    )}
+                    {taEditScheduledStudents && (
+                        <EditStudentsFromSession componentName={'TACALENDER'} />
+                    )}
+                    {taEditScheduledBatches && (
+                        <EditBatchesFromSession componentName={'TACALENDER'} />
                     )}
                 </Box>
             </Box>

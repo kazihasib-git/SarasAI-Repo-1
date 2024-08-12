@@ -144,17 +144,14 @@ const WOLOptionsConfig = () => {
             tempErrors.scaleRange =
                 'Maximum Scale must be greater than Minimum Scale';
         formValues.details.forEach((detail, index) => {
-            if (
-                (index === 0 || index === formValues.details.length - 1) &&
-                !detail.text
-            ) {
-                tempErrors[`detailText${index}`] = 'Text is required';
-            }
-            if (
-                (index === 0 || index === formValues.details.length - 1) &&
-                !detail.icon
-            ) {
-                tempErrors[`detailIcon${index}`] = 'Icon is required';
+            if (index === 0 || index / 2 === 0) {
+                // Check if the point is a multiple of 5 starting from 1
+                if (!detail.text) {
+                    tempErrors[`detailText${index}`] = 'Text is required';
+                }
+                if (!detail.icon) {
+                    tempErrors[`detailIcon${index}`] = 'Icon is required';
+                }
             }
         });
         setErrors(tempErrors);
@@ -249,6 +246,7 @@ const WOLOptionsConfig = () => {
                             fontSize: '44px',
                             fontWeight: 200,
                             justifyContent: 'center',
+                            fontFamily: 'ExtraLight',
                         }}
                     >
                         Wheel Of Life Options Config
@@ -271,6 +269,7 @@ const WOLOptionsConfig = () => {
                         color: '#1A1E3D',
                         fontSize: '16px',
                         fontWeight: 500,
+                        fontFamily: 'Medium',
                         marginBottom: '20px',
                     }}
                     component="h4"
@@ -313,6 +312,7 @@ const WOLOptionsConfig = () => {
                                     padding: '18px 30px',
                                     margin: '0 8px',
                                     textTransform: 'none',
+                                    fontFamily: 'Bold',
                                 }}
                             >
                                 <span className="buttonText">
@@ -322,156 +322,113 @@ const WOLOptionsConfig = () => {
                         </Grid>
                     </Grid>
                     {errors.scaleRange && (
-                        <Typography color="error" sx={{ mt: 2 }}>
+                        <Typography color="error">
                             {errors.scaleRange}
                         </Typography>
                     )}
                 </form>
             </Box>
-
             {edit && (
-                <form onSubmit={handleFormSubmit} noValidate>
-                    <TableContainer
+                <Box
+                    sx={{
+                        mt: 4,
+                        mb: 4,
+                        backgroundColor: 'white',
+                        borderRadius: 2,
+                        minHeight: 160,
+                        padding: 2,
+                    }}
+                >
+                    {/* <Typography
+                        variant="h4"
                         sx={{
-                            padding: 2,
+                            color: '#1A1E3D',
+                            fontSize: '16px',
+                            fontWeight: 500,
+                            marginBottom: '20px',
                         }}
-                        component={Paper}
+                        component="h4"
+                        gutterBottom
                     >
-                        <Table aria-label="simple table">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell align="left">Point</TableCell>
-                                    <TableCell align="left">Text</TableCell>
-                                    <TableCell align="left">Icon</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {formValues.details.map((detail, index) => (
-                                    <TableRow key={index}>
-                                        <TableCell component="th" scope="row">
-                                            {detail.point}{' '}
-                                            {index === 0 && (
-                                                <img src={star} alt="str" />
-                                            )}{' '}
-                                            {index ===
-                                                formValues.details.length -
-                                                    1 && (
-                                                <img src={star} alt="str" />
-                                            )}
-                                        </TableCell>
-                                        <TableCell align="right">
-                                            <CustomTextField
-                                                label="Text"
-                                                name="text"
-                                                placeholder="Enter Text"
-                                                value={
-                                                    detail.text
-                                                        ? detail.text
-                                                        : ''
-                                                }
-                                                onChange={e =>
-                                                    handleDetailChange(e, index)
-                                                }
-                                                error={
-                                                    errors[`detailText${index}`]
-                                                }
-                                                fullWidth
-                                            />
-                                        </TableCell>
-                                        {/* <TableCell align="right">
-                                            <CustomFormControl
-                                                label="Icon"
-                                                name="icon"
-                                                value={
-                                                    detail.icon
-                                                        ? detail.icon
-                                                        : ''
-                                                }
-                                                onChange={e =>
-                                                    handleDetailChange(e, index)
-                                                }
-                                                errors={errors}
-                                                options={feedbackIcons}
-                                            />
-                                        </TableCell> */}
-                                        <TableCell align="left">
-                                            {detail.icon && (
+                        Options Configurations
+                    </Typography> */}
+
+                    <form onSubmit={handleFormSubmit}>
+                        <TableContainer component={Paper}>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        {headers.map(header => (
+                                            <TableCell
+                                                key={header}
+                                                style={{ fontFamily: 'Medium' }}
+                                            >
+                                                {header}
+                                            </TableCell>
+                                        ))}
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {formValues.details.map((detail, index) => (
+                                        <TableRow key={index}>
+                                            <TableCell
+                                                style={{
+                                                    fontFamily: 'Regular',
+                                                }}
+                                            >
                                                 <Box
-                                                    position="relative"
-                                                    display="inline-block"
-                                                    sx={{
-                                                        width: '40px',
-                                                        height: '40px',
-                                                    }} // Ensure the Box has a fixed width and height
+                                                    display="flex"
+                                                    alignItems="center"
                                                 >
-                                                    <img
-                                                        src={detail.icon}
-                                                        alt="icon"
-                                                        style={{
-                                                            width: '100%',
-                                                            height: '100%',
-                                                            objectFit: 'cover', // Ensure the image covers the Box area
-                                                        }}
-                                                        onClick={() =>
-                                                            handleImageRemove(
-                                                                index
-                                                            )
-                                                        }
-                                                    />
-                                                    <IconButton
-                                                        component="label"
-                                                        sx={{
-                                                            position:
-                                                                'relative',
-                                                            bottom: 0,
-                                                            right: 0,
-                                                            padding: '4px',
-                                                            borderRadius: '50%',
-                                                            backgroundColor:
-                                                                'rgba(245, 109, 59, 0.08)',
-                                                        }}
-                                                    >
-                                                        <UploadFileIcon
-                                                            sx={{
-                                                                color: '#F56D3B',
-                                                                fontSize:
-                                                                    '18px',
+                                                    {detail.point}
+                                                    {(index === 0 ||
+                                                        (index + 1) % 5 ===
+                                                            0) && (
+                                                        <img
+                                                            src={star}
+                                                            alt="star"
+                                                            style={{
+                                                                marginLeft:
+                                                                    '5px',
                                                             }}
                                                         />
-                                                        <input
-                                                            type="file"
-                                                            accept="image/*"
-                                                            hidden
-                                                            onChange={e =>
-                                                                handleImageChange(
-                                                                    e,
-                                                                    index
-                                                                )
-                                                            }
-                                                        />
-                                                    </IconButton>
+                                                    )}
                                                 </Box>
-                                            )}
-                                            {!detail.icon && (
-                                                <IconButton
-                                                    component="label"
-                                                    sx={{
-                                                        padding: '4px',
-                                                        borderRadius: '50%',
-                                                        backgroundColor:
-                                                            'rgba(245, 109, 59, 0.08)',
-                                                    }}
+                                            </TableCell>
+                                            <TableCell>
+                                                <CustomTextField
+                                                    name="text"
+                                                    value={detail.text}
+                                                    onChange={e =>
+                                                        handleDetailChange(
+                                                            e,
+                                                            index
+                                                        )
+                                                    }
+                                                    error={
+                                                        errors[
+                                                            `detailText${index}`
+                                                        ]
+                                                    }
+                                                    helperText={
+                                                        errors[
+                                                            `detailText${index}`
+                                                        ]
+                                                    }
+                                                />
+                                            </TableCell>
+                                            <TableCell>
+                                                <Box
+                                                    display="flex"
+                                                    alignItems="center"
                                                 >
-                                                    <UploadFileIcon
-                                                        sx={{
-                                                            color: '#F56D3B',
-                                                            fontSize: '18px',
-                                                        }}
-                                                    />
                                                     <input
-                                                        type="file"
                                                         accept="image/*"
-                                                        hidden
+                                                        style={{
+                                                            display: 'none',
+                                                        }}
+                                                        id={`icon-upload-${index}`}
+                                                        type="file"
                                                         onChange={e =>
                                                             handleImageChange(
                                                                 e,
@@ -479,42 +436,64 @@ const WOLOptionsConfig = () => {
                                                             )
                                                         }
                                                     />
-                                                </IconButton>
-                                            )}
-                                            {errors[`detailIcon${index}`] && (
-                                                <Typography
-                                                    variant="caption"
-                                                    color="error"
-                                                >
-                                                    {
-                                                        errors[
-                                                            `detailIcon${index}`
-                                                        ]
-                                                    }
-                                                </Typography>
-                                            )}
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                    <Box display="flex" mt={2}>
-                        <CustomButton
-                            type="submit"
-                            active={true}
-                            variant="contained"
-                            sx={{
-                                borderRadius: '50px',
-                                padding: '18px 30px',
-                                margin: '0 8px',
-                                textTransform: 'none',
-                            }}
-                        >
-                            <span className="buttonText">Submit</span>
-                        </CustomButton>
-                    </Box>
-                </form>
+                                                    <label
+                                                        htmlFor={`icon-upload-${index}`}
+                                                    >
+                                                        <IconButton
+                                                            component="span"
+                                                            color="primary"
+                                                        >
+                                                            <UploadFileIcon />
+                                                        </IconButton>
+                                                    </label>
+                                                    {detail.icon && (
+                                                        <IconButton
+                                                            onClick={() =>
+                                                                handleImageRemove(
+                                                                    index
+                                                                )
+                                                            }
+                                                        >
+                                                            <img
+                                                                src={
+                                                                    detail.icon
+                                                                }
+                                                                alt={`icon-${index}`}
+                                                                style={{
+                                                                    height: '32px',
+                                                                    width: '32px',
+                                                                    marginLeft:
+                                                                        '10px',
+                                                                }}
+                                                            />
+                                                        </IconButton>
+                                                    )}
+                                                </Box>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                        <Box mt={2}>
+                            <CustomButton
+                                type="submit"
+                                active={true}
+                                variant="contained"
+                                color="primary"
+                                sx={{
+                                    borderRadius: '50px',
+                                    padding: '10px 20px',
+                                    margin: '0 8px',
+                                    textTransform: 'none',
+                                    fontFamily: 'Bold',
+                                }}
+                            >
+                                Submit
+                            </CustomButton>
+                        </Box>
+                    </form>
+                </Box>
             )}
         </>
     );

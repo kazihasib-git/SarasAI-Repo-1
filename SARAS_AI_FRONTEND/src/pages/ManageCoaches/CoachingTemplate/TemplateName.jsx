@@ -16,8 +16,6 @@ import {
 } from '../../../redux/features/adminModule/coach/coachTemplateSlice';
 import TemplateModuleTable from './TemplateTable/TemplateModuleTable';
 import './TemplateName.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import AddActivity from './TemplateModulePopup/AddActivity';
 import EditModule from './TemplateModulePopup/EditModule';
 import LinkActivityPopup from './TemplateModulePopup/LinkActivity'; // Import the new component
@@ -45,6 +43,7 @@ const TemplateName = () => {
     const { newTemplateData } = location.state || {};
 
     console.log('Tempete name is', template_name);
+
     console.log('coach templete', coachTemplates);
     console.log('coachtemplate id', coachTemplatesId);
 
@@ -105,7 +104,8 @@ const TemplateName = () => {
         'After Due Date',
         'Actions',
     ];
-
+    console.log('coachtemplateid', coachTemplatesId);
+    console.log('Tempete name is>>>>>>>>>>>>>>>>>>', coachTemplatesId[0]?.name);
     const actionButtons = [
         {
             type: 'switch',
@@ -137,7 +137,7 @@ const TemplateName = () => {
                 >
                     {newTemplateData?.name ||
                         template_name ||
-                        coachTemplatesId[0]?.template.name}
+                        coachTemplatesId[0]?.name}
                 </p>
                 <div className="inputBtnContainer">
                     <button className="buttonContainer" onClick={handleModule}>

@@ -3,7 +3,7 @@ import store from '../../store.js';
 
 const initialState = {
   timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-  offset: new Date().getTimezoneOffset(), // offset in minutes
+  offset: new Date().getTimezoneOffset(), 
 };
 
 const timeZoneSlice = createSlice({
@@ -32,7 +32,6 @@ export const utcToLocal = (utcTime) => {
   return localTime;
 };
   
-// Convert local time to UTC
 export const localToUtc = (localTime) => {
   const { offset } = store.getState().timeZone;
   const utcTime = new Date(localTime);
@@ -40,7 +39,7 @@ export const localToUtc = (localTime) => {
   return utcTime;
 };
   
-// Function to change the time zone
+
 export const changeTimeZone = (newTimeZone) => {
   store.dispatch(setTimeZone(newTimeZone));
 };

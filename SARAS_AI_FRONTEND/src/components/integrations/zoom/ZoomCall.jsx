@@ -16,7 +16,7 @@ const url = process.env.REACT_APP_FRONTEND_URL;
 const signature = process.env.REACT_APP_ZOOM_SIGNATURE;
 const apiKey = process.env.REACT_APP_ZOOM_API_KEY;
 
-const ZoomCall = () => {
+const ZoomCall = data => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
@@ -31,10 +31,10 @@ const ZoomCall = () => {
                     ZoomMtg.join({
                         signature: signature,
                         apiKey: apiKey,
-                        meetingNumber: 'your_meeting_number',
-                        userName: 'Your Name',
-                        userEmail: 'user@example.com',
-                        passWord: 'your_meeting_password',
+                        meetingNumber: data.platform_meet.platform_meeting_id,
+                        userName: 'sandeep',
+                        userEmail: 'sandeeppatel@dynapt.co.in',
+                        passWord: data.platform_meet.h323 - password,
                         success: res => {
                             setLoading(false);
                             setSuccess('Joined the meeting successfully!');
