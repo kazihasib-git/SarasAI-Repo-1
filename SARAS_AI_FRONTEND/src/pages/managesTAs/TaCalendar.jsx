@@ -39,6 +39,7 @@ import EditBatchesFromSession from '../../components/availability/EditBatchesFro
 import { convertFromUTC } from '../../utils/dateAndtimeConversion';
 import { timezoneIdToName } from '../../utils/timezoneIdToName';
 import { getTimezone } from '../../redux/features/utils/utilSlice';
+
 const CustomButton = ({
     onClick,
     children,
@@ -73,14 +74,13 @@ const CustomButton = ({
         </Button>
     );
 };
-
+const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
 const TaCalender = () => {
     const { timezones } = useSelector(state => state.util);
 
     const dispatch = useDispatch();
     const { id, name } = useParams();
-    const [timezoneID, setTimezoneId] = useState(null);
-
+    
     const {
         slotData,
         scheduleData,
@@ -113,28 +113,24 @@ const TaCalender = () => {
         dispatch(getTimezone());
     }, [dispatch]);
 
-
     useEffect(() => {
         dispatch(fetchTaSlots(id));
         dispatch(fetchTAScheduleById(id));
     }, [dispatch]);
 
-useEffect(() => {
-        // Fetch timezoneID from localStorage
-        const storedTimezoneId = localStorage.getItem('timezone_id');
-        if (storedTimezoneId) {
-            setTimezoneId(storedTimezoneId);
-        }
-    }, []);
-
     useEffect(() => {
-        if (timezones && timezoneID) {
-            const timezoneObject = timezones.find(tz => tz.id === parseInt(timezoneID));
-            const timezonename = timezoneObject?.time_zone;
-            console.log("timezonename--------------->", timezonename);
-    
-            const convertEvents = async () => {
-                if (scheduleData && scheduleData.data && scheduleData.data.length > 0 && timezonename) {
+        const convertEvents = async () => {
+            if (scheduleData && scheduleData.length > 0 && storedTimezoneId) {
+                const timezonename = timezoneIdToName(
+                    storedTimezoneId,
+                    timezones
+                );
+                if (!timezonename) {
+                    console.error('Invalid timezone name');
+                    setEventsList([]);
+                    return;
+                }
+                try {
                     const transformedEvents = await Promise.all(
                         scheduleData.data.map(async event => {
                             const localTime = await convertFromUTC({
@@ -142,68 +138,90 @@ useEffect(() => {
                                 start_time: event.start_time,
                                 end_time: event.end_time,
                                 end_date: event.date.split(' ')[0],
-                                timezonename
+                                timezonename,
                             });
-                            console.log('Converted Local Schedule Time:', localTime);
+                            console.log(
+                                'Converted Local Schedule Time:',
+                                localTime
+                            );
                             return {
                                 id: event.id,
                                 admin_user_id: event.admin_user_id,
                                 meetingName: event.meeting_name,
                                 meetingId: event.meeting_id,
                                 platformId: event.platform_id,
-                                start: new Date(localTime.start_date + 'T' + localTime.start_time),
-                                end: new Date(localTime.end_date + 'T' + localTime.end_time),
+                                start: new Date(
+                                    `${localTime.start_date}T${localTime.start_time}`
+                                ),
+                                end: new Date(
+                                    `${localTime.end_date}T${localTime.end_time}`
+                                ),
                                 platform_tools: event.platform_tool_details,
                                 platform_meet: event.platform_meeting_details,
                             };
                         })
                     );
                     setEventsList(transformedEvents);
-                } else {
-                    setEventsList([]);
+                } catch (error) {
+                    console.error('Error converting events:', error);
+                    setEventsList([]); // Reset to empty array on error
                 }
-            };
-    
-            convertEvents();
-        }
-    }, [scheduleData, timezones, timezoneID]);
+            } else {
+                setEventsList([]);
+            }
+        };
 
+        convertEvents();
+    }, [scheduleData, timezones, storedTimezoneId]);
 
     useEffect(() => {
-        if (timezones && timezoneID) {
-            const timezoneObject = timezones.find(tz => tz.id === parseInt(timezoneID));
-            const timezonename = timezoneObject?.time_zone;
-            console.log("timezonename--------------->", timezonename);
-    
-            const convertSlots = async () => {
-                if (slotData.data && slotData.data.length > 0 && timezonename) {
+        const convertSlots = async () => {
+            if (
+                slotData &&
+                slotData.length > 0 &&
+                timezones &&
+                storedTimezoneId
+            ) {
+                const timezonename = timezoneIdToName(
+                    storedTimezoneId,
+                    timezones
+                );
+                try {
                     const transformedSlots = await Promise.all(
-                        slotData.data.map(async slot => {
+                        slotData.map(async slot => {
                             const localTime = await convertFromUTC({
-                                slot_date: slot.slot_date,
-                                from_time: slot.from_time,
-                                to_time: slot.to_time,
-                                slot_end_date: slot.slot_end_date,
-                                timezonename 
+                                start_date: slot.slot_date,
+                                start_time: slot.from_time,
+                                end_time: slot.to_time,
+                                end_date: slot.slot_end_date,
+                                timezonename,
                             });
-                            console.log('Converted Local Time:', localTime);
+
                             return {
-                                startDate: new Date(localTime.start_date + 'T' + localTime.start_time),
-                                endDate: new Date(localTime.end_date + 'T' + localTime.end_time),
+                                startDate: new Date(
+                                    `${localTime.start_date}T${localTime.start_time}`
+                                ),
+                                endDate: new Date(
+                                    `${localTime.end_date}T${localTime.end_time}`
+                                ),
                                 leave: slot?.leaves,
                             };
                         })
                     );
                     setSlotViewData(transformedSlots);
-                } else {
-                    setSlotViewData([]);
+                } catch (error) {
+                    console.error('Error converting slots:', error);
+                    setSlotViewData([]); // Reset to empty array on error
                 }
-            };
-    
-            convertSlots();
-        }
-    }, [slotData, timezones, timezoneID]);
+            } else {
+                setSlotViewData([]);
+            }
+        };
 
+        convertSlots();
+    }, [slotData, timezones, storedTimezoneId]);
+
+    console.log('transformedSlots :', slotViewData);
 
     const handleScheduleNewSession = () => {
         dispatch(openScheduleSession({ id, name }));

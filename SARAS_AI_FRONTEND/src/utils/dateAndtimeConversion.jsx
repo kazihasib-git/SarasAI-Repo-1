@@ -25,33 +25,35 @@ async function convertFromUTC({ start_date, start_time, end_time, end_date, time
     }
 }
 
-async function convertFromUTC({
-    date_slot,
-    start_time,
-    time_end,
-    date_end,
-    timezonename,
-}) {
-    try {
-        const fromDateTimeUTC = `${date_slot} ${start_time}`;
-        const toDateTimeUTC = `${date_end} ${time_end}`;
+// async function convertFromUTC({
+//     date_slot,
+//     start_time,
+//     time_end,
+//     date_end,
+//     timezonename,
+// }) {
+//     try {
+//         const fromDateTimeUTC = `${date_slot} ${start_time}`;
+//         const toDateTimeUTC = `${date_end} ${time_end}`;
 
-        const fromDateTime = moment.utc(fromDateTimeUTC).tz(timezonename);
-        const toDateTime = moment.utc(toDateTimeUTC).tz(timezonename);
+//         const fromDateTime = moment.utc(fromDateTimeUTC).tz(timezonename);
+//         const toDateTime = moment.utc(toDateTimeUTC).tz(timezonename);
 
-        const result = {
-            slot_date: fromDateTime.format('YYYY-MM-DD'),
-            from_time: fromDateTime.format('HH:mm:ss'),
-            to_time: toDateTime.format('HH:mm:ss'),
-            end_date: toDateTime.format('YYYY-MM-DD'),
-        };
+//         console.log("FormDataTime", fromDateTime, "toDateTime", toDateTime, timezonename)
 
-        console.log('LocalTime==/====/==/===/=///==/==>>>>>>', result);
-        return result;
-    } catch (error) {
-        console.error('Error in convertFromUTC:', error);
-        throw error;
-    }
-}
+//         const result = {
+//             slot_date: fromDateTime.format('YYYY-MM-DD'),
+//             from_time: fromDateTime.format('HH:mm:ss'),
+//             to_time: toDateTime.format('HH:mm:ss'),
+//             end_date: toDateTime.format('YYYY-MM-DD'),
+//         };
 
-export { convertToUTC, convertFromUTC };
+//         console.log('LocalTime==/====/==/===/=///==/==>>>>>>', result);
+//         return result;
+//     } catch (error) {
+//         console.error('Error in convertFromUTC:', error);
+//         throw error;
+//     }
+// }
+
+export { convertFromUTC };
