@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { baseUrl } from '../../../utils/baseURL';
 import { toast } from 'react-toastify';
+
 import axiosInstance from '../../services/httpService';
 
 // login api
@@ -20,6 +21,7 @@ const initialState = {
     login: false,
     role: null,
     accessToken: null,
+    timezone_id: null,
     loading: false,
     error: [],
 };
@@ -36,19 +38,22 @@ const authSlice = createSlice({
         },
     },
     extraReducers: builder => {
-        //user login
+        // user login
         builder.addCase(login.pending, state => {
             state.loading = true;
         });
         builder.addCase(login.fulfilled, (state, action) => {
             state.loading = false;
-            state.userData = action.payload;
+            state.userData = action.payload.admin_user;  // Update to use the correct user object
             state.login = true;
             state.role = action.payload.role;
             state.accessToken = action.payload.access_token;
+            state.timezone_id = action.payload.admin_user.timezone_id;
+            
             localStorage.setItem('login', true);
             localStorage.setItem('accessToken', action.payload.access_token);
             localStorage.setItem('role', action.payload.role);
+            localStorage.setItem('timezone_id', action.payload.admin_user.timezone_id); // Store timezone_id
         });
         builder.addCase(login.rejected, (state, action) => {
             state.loading = false;
@@ -65,9 +70,12 @@ const authSlice = createSlice({
             state.loading = false;
             state.login = false;
             state.userData = [];
+            state.timezone_id = null; // Clear timezone_id in state
+            
             localStorage.setItem('login', false);
             localStorage.setItem('accessToken', '');
             localStorage.setItem('role', '');
+            localStorage.removeItem('timezone_id'); // Remove timezone_id from localStorage
         });
     },
 });
