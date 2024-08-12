@@ -124,32 +124,55 @@ const CoachCalender = () => {
         dispatch(fetchCoachSlots(id));
         dispatch(fetchCoachScheduleById(id));
     }, [dispatch]);
-    useEffect(() => {
-        if (scheduleCoachData && scheduleCoachData.length > 0) {
-            const transformedEvents = scheduleCoachData.map(event => ({
-                id: event.id,
-                meetingName: event.meeting_name,
-                meetingId: event.meeting_id,
-                platformId: event.platform_id,
-                start: new Date(
-                    event.date.split(' ')[0] + 'T' + event.start_time
-                ),
-                end: new Date(event.date.split(' ')[0] + 'T' + event.end_time),
-                platform_tools: event.platform_tool_details,
-                platform_meet: event.platform_meeting_details,
-            }));
-            setEventsList(transformedEvents);
-        } else {
-            setEventsList([]);
-        }
-    }, [scheduleCoachData]);
 
+    useEffect(() => {
+    if (timezones && timezoneID) {
+        const timezoneObject = timezones.find(tz => tz.id === parseInt(timezoneID));
+        const timezonename = timezoneObject?.time_zone;
+        console.log("timezonename--------------->", timezonename);
+
+        const convertEvents = async () => {
+            if (scheduleData && scheduleData.data && scheduleData.data.length > 0 && timezonename) {
+                const transformedEvents = await Promise.all(
+                    scheduleData.data.map(async event => {
+                        const localTime = await convertFromUTC({
+                            start_date: event.date.split(' ')[0],
+                            start_time: event.start_time,
+                            end_time: event.end_time,
+                            end_date: event.date.split(' ')[0],
+                            timezonename
+                        });
+                        console.log('Converted Local Schedule Time:', localTime);
+                        return {
+                            id: event.id,
+                            admin_user_id: event.admin_user_id,
+                            meetingName: event.meeting_name,
+                            meetingId: event.meeting_id,
+                            platformId: event.platform_id,
+                            start: new Date(localTime.start_date + 'T' + localTime.start_time),
+                            end: new Date(localTime.end_date + 'T' + localTime.end_time),
+                            platform_tools: event.platform_tool_details,
+                            platform_meet: event.platform_meeting_details,
+                        };
+                    })
+                );
+                setEventsList(transformedEvents);
+            } else {
+                setEventsList([]);
+            }
+        };
+
+        convertEvents();
+    }
+}, [scheduleData, timezones, timezoneID]);
     console.log('Session Data', scheduleCoachData);
     console.log('Slots Data', slotCoachData);
    
     useEffect(() => {
-        const timezonename = 'Asia/Kolkata'; // Replace with the correct timezone name if needed
-    
+        if(timezones && timezoneID){
+            const timezoneObject = timezones.find(tz => tz.id === parseInt(timezoneID));
+            const timezonename = timezoneObject?.time_zone;
+            console.log("timezonename--------------->", timezonename);
         const convertSlots = async () => {
             if (slotCoachData && slotCoachData.length > 0) {
                 const transformedSlots = await Promise.all(
@@ -158,7 +181,7 @@ const CoachCalender = () => {
                             slot_date: slot.slot_date,
                             from_time: slot.from_time,
                             to_time: slot.to_time,
-                            end_date: slot.slot_date,
+                            slot_end_date: slot.slot_end_date,
                             timezonename,
                         });
     
@@ -166,9 +189,9 @@ const CoachCalender = () => {
                         console.log('Converted Local Time:', localTime);
     
                         return {
-                            startDate: new Date(localTime.date_slot + 'T' + localTime.start_time),
-                            endDate: new Date(localTime.date_slot + 'T' + localTime.time_end),
-                            leave: slot?.leaves,
+                            startDate: new Date(localTime.start_date + 'T' + localTime.start_time),
+                            endDate: new Date(localTime.end_date + 'T' + localTime.end_time),
+                            leave: slot?.leaves,    
                         };
                     })
                 );
@@ -179,7 +202,7 @@ const CoachCalender = () => {
         };
     
         convertSlots();
-    }, [slotCoachData]);
+}    }, [slotCoachData, timezones, timezoneID]);
     
     const handleScheduleNewSession = () => {
         dispatch(openCoachScheduleSession({ id, name }));

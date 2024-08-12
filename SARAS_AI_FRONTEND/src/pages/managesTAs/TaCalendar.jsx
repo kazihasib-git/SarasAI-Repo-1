@@ -75,6 +75,8 @@ const CustomButton = ({
 };
 
 const TaCalender = () => {
+    const { timezones } = useSelector(state => state.util);
+
     const dispatch = useDispatch();
     const { id, name } = useParams();
     const [timezoneID, setTimezoneId] = useState(null);
@@ -126,57 +128,81 @@ useEffect(() => {
     }, []);
 
     useEffect(() => {
-        if (scheduleData && scheduleData.data) {
-            const transformedEvents = scheduleData.data.map(event => ({
-                id: event.id,
-                admin_user_id: event.admin_user_id,
-                meetingName: event.meeting_name,
-                meetingId: event.meeting_id,
-                platformId: event.platform_id,
-                start: new Date(
-                    event.date.split(' ')[0] + 'T' + event.start_time
-                ),
-                end: new Date(event.date.split(' ')[0] + 'T' + event.end_time),
-                platform_tools: event.platform_tool_details,
-                platform_meet: event.platform_meeting_details,
-            }));
-            setEventsList(transformedEvents);
-        } else {
-            setEventsList([]);
+        if (timezones && timezoneID) {
+            const timezoneObject = timezones.find(tz => tz.id === parseInt(timezoneID));
+            const timezonename = timezoneObject?.time_zone;
+            console.log("timezonename--------------->", timezonename);
+    
+            const convertEvents = async () => {
+                if (scheduleData && scheduleData.data && scheduleData.data.length > 0 && timezonename) {
+                    const transformedEvents = await Promise.all(
+                        scheduleData.data.map(async event => {
+                            const localTime = await convertFromUTC({
+                                start_date: event.date.split(' ')[0],
+                                start_time: event.start_time,
+                                end_time: event.end_time,
+                                end_date: event.date.split(' ')[0],
+                                timezonename
+                            });
+                            console.log('Converted Local Schedule Time:', localTime);
+                            return {
+                                id: event.id,
+                                admin_user_id: event.admin_user_id,
+                                meetingName: event.meeting_name,
+                                meetingId: event.meeting_id,
+                                platformId: event.platform_id,
+                                start: new Date(localTime.start_date + 'T' + localTime.start_time),
+                                end: new Date(localTime.end_date + 'T' + localTime.end_time),
+                                platform_tools: event.platform_tool_details,
+                                platform_meet: event.platform_meeting_details,
+                            };
+                        })
+                    );
+                    setEventsList(transformedEvents);
+                } else {
+                    setEventsList([]);
+                }
+            };
+    
+            convertEvents();
         }
-    }, [scheduleData]);
+    }, [scheduleData, timezones, timezoneID]);
 
-  useEffect(() => {
-    const timezonename = 'Asia/Kolkata';
-    const convertSlots = async () => {
-        if (slotData.data && slotData.data.length > 0) {
-            const transformedSlots = await Promise.all(
-                slotData.data.map(async slot => {
-                    const localTime = await convertFromUTC({
-                        slot_date: slot.slot_date,
-                        from_time: slot.from_time,
-                        to_time: slot.to_time,
-                        end_date: slot.slot_date, 
-                        timezonename 
-                    });
-                    
-                    console.log('Converted Local Time:', localTime);
-                    return {
-                        startDate: new Date(localTime.date_slot + 'T' + localTime.start_time),
-                        endDate: new Date(localTime.date_slot + 'T' + localTime.time_end),
-                        leave: slot?.leaves,
-                    };
-                })
-            );
 
-            setSlotViewData(transformedSlots);
-        } else {
-            setSlotViewData([]);
+    useEffect(() => {
+        if (timezones && timezoneID) {
+            const timezoneObject = timezones.find(tz => tz.id === parseInt(timezoneID));
+            const timezonename = timezoneObject?.time_zone;
+            console.log("timezonename--------------->", timezonename);
+    
+            const convertSlots = async () => {
+                if (slotData.data && slotData.data.length > 0 && timezonename) {
+                    const transformedSlots = await Promise.all(
+                        slotData.data.map(async slot => {
+                            const localTime = await convertFromUTC({
+                                slot_date: slot.slot_date,
+                                from_time: slot.from_time,
+                                to_time: slot.to_time,
+                                slot_end_date: slot.slot_end_date,
+                                timezonename 
+                            });
+                            console.log('Converted Local Time:', localTime);
+                            return {
+                                startDate: new Date(localTime.start_date + 'T' + localTime.start_time),
+                                endDate: new Date(localTime.end_date + 'T' + localTime.end_time),
+                                leave: slot?.leaves,
+                            };
+                        })
+                    );
+                    setSlotViewData(transformedSlots);
+                } else {
+                    setSlotViewData([]);
+                }
+            };
+    
+            convertSlots();
         }
-    };
-
-    convertSlots();
-}, [slotData]);
+    }, [slotData, timezones, timezoneID]);
 
 
     const handleScheduleNewSession = () => {
