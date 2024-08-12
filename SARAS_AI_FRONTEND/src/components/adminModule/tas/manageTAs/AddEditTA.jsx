@@ -683,7 +683,7 @@ const AddEditTA = ({ data }) => {
                             <CustomTextField
                                 label="About Me"
                                 name="about_me"
-                                placeholder="Enter About Coach"
+                                placeholder="Enter About TA"
                                 register={register}
                                 validation={{
                                     required: 'About Me is required',

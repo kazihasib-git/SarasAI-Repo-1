@@ -22,6 +22,20 @@ const formats = {
 };
 
 const CustomEvent = ({ event }) => {
+    console.log('event ................',event);
+    let platformTools = { ...event.platform_tools }; // Create a copy of the platform_tools object
+
+    if (platformTools.name === "Microsoft Teams") {
+        platformTools.name = "Teams";
+    } else if (platformTools.name === "Big Blue Button") {
+        platformTools.name = "BBB";
+    } else if (platformTools.name === "ZOOM") {
+        platformTools.name = "Zoom";
+    }
+ 
+    // Assign the modified object back to the event object if needed
+    event.platform_tools = platformTools;
+
     return (
         <div
             style={{
@@ -51,20 +65,20 @@ const CustomEvent = ({ event }) => {
                 style={{
                     fontSize: '0.9em',
                     color: '#28a745',
-                    // backgroundColor: 'white',
-                    // borderRadius: '5px',
-                    // height: '28px',
-                    // maxWidth: '200px',
-                    // display: 'flex',
-                    // alignItems: 'center',
-                    // justifyContent: 'center',
-                    // padding: '2px 5px',
-
-                    // minWidth: '35px',
-                    // maxWidth: 'calc(100% - 70px)',
+                    backgroundColor: 'white',
+                    borderRadius: '5px',
+                    height: '28px',
+                    maxWidth: '200px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '2px 5px',
+                    flexShrink: 0, // Prevents shrinking of platform name
+                    minWidth: '35px', // Minimum width for platform name
+                    maxWidth: 'calc(100% - 70px)', // Ensures it doesn't exceed container width
                 }}
             >
-                {event.platformName}
+                {event.platform_tools.name}
             </div>
         </div>
     );

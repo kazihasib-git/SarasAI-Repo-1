@@ -10,14 +10,15 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
-const participantsData = [
-    { id: 1, name: 'Name Here', program: 'Program 1', batch: 'Batch 1' },
-    { id: 2, name: 'Name Here', program: 'Program 2', batch: 'Batch 2' },
-    { id: 3, name: 'Name Here', program: 'Program 3', batch: 'Batch 3' },
-    { id: 4, name: 'Name Here', program: 'Program 4', batch: 'Batch 4' },
-];
+// const participantsData = [
+//     { id: 1, name: 'Name Here', program: 'Program 1', batch: 'Batch 1' },
+//     { id: 2, name: 'Name Here', program: 'Program 2', batch: 'Batch 2' },
+//     { id: 3, name: 'Name Here', program: 'Program 3', batch: 'Batch 3' },
+//     { id: 4, name: 'Name Here', program: 'Program 4', batch: 'Batch 4' },
+// ];
 
-const ParticipantsDialog = ({ open, onClose }) => {
+const ParticipantsDialog = ({ open, onClose, participantsData }) => {
+    console.log(participantsData);
     return (
         <Dialog
             open={open}
@@ -79,10 +80,10 @@ const ParticipantsDialog = ({ open, onClose }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {participantsData.map(participant => (
+                        {participantsData.map((participant,index) => (
                             <tr key={participant.id}>
                                 <td style={{ padding: '8px' }}>
-                                    {participant.id}
+                                    {index+1}
                                 </td>
                                 <td style={{ padding: '8px' }}>
                                     {participant.name}
