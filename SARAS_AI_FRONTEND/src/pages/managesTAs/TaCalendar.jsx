@@ -36,6 +36,9 @@ import ScheduleSession from '../../components/availability/ScheduleSession';
 import EditStudentsFromSession from '../../components/availability/EditStudentsFromSession';
 import EditBatchesFromSession from '../../components/availability/EditBatchesFromSession';
 
+import { convertFromUTC } from '../../utils/dateAndtimeConversion';
+import { timezoneIdToName } from '../../utils/timezoneIdToName';
+import { getTimezone } from '../../redux/features/utils/utilSlice';
 const CustomButton = ({
     onClick,
     children,
@@ -74,6 +77,7 @@ const CustomButton = ({
 const TaCalender = () => {
     const dispatch = useDispatch();
     const { id, name } = useParams();
+    const [timezoneID, setTimezoneId] = useState(null);
 
     const {
         slotData,
@@ -104,9 +108,22 @@ const TaCalender = () => {
     const [slotViewData, setSlotViewData] = useState([]);
 
     useEffect(() => {
+        dispatch(getTimezone());
+    }, [dispatch]);
+
+
+    useEffect(() => {
         dispatch(fetchTaSlots(id));
         dispatch(fetchTAScheduleById(id));
     }, [dispatch]);
+
+useEffect(() => {
+        // Fetch timezoneID from localStorage
+        const storedTimezoneId = localStorage.getItem('timezone_id');
+        if (storedTimezoneId) {
+            setTimezoneId(storedTimezoneId);
+        }
+    }, []);
 
     useEffect(() => {
         if (scheduleData && scheduleData.data) {
@@ -129,18 +146,38 @@ const TaCalender = () => {
         }
     }, [scheduleData]);
 
-    useEffect(() => {
+  useEffect(() => {
+    const timezonename = 'Asia/Kolkata';
+    const convertSlots = async () => {
         if (slotData.data && slotData.data.length > 0) {
-            const transformedSlots = slotData.data.map(slot => ({
-                startDate: new Date(slot.slot_date + 'T' + slot.from_time),
-                endDate: new Date(slot.slot_date + 'T' + slot.to_time),
-                leave: slot?.leaves,
-            }));
+            const transformedSlots = await Promise.all(
+                slotData.data.map(async slot => {
+                    const localTime = await convertFromUTC({
+                        slot_date: slot.slot_date,
+                        from_time: slot.from_time,
+                        to_time: slot.to_time,
+                        end_date: slot.slot_date, 
+                        timezonename 
+                    });
+                    
+                    console.log('Converted Local Time:', localTime);
+                    return {
+                        startDate: new Date(localTime.date_slot + 'T' + localTime.start_time),
+                        endDate: new Date(localTime.date_slot + 'T' + localTime.time_end),
+                        leave: slot?.leaves,
+                    };
+                })
+            );
+
             setSlotViewData(transformedSlots);
         } else {
             setSlotViewData([]);
         }
-    }, [slotData]);
+    };
+
+    convertSlots();
+}, [slotData]);
+
 
     const handleScheduleNewSession = () => {
         dispatch(openScheduleSession({ id, name }));
