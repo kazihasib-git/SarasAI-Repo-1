@@ -1,10 +1,14 @@
 import moment from 'moment-timezone';
 import { timezoneIdToName } from './timezoneIdToName';
 
-async function convertToUTC({ date_slot, start_time, time_end, date_end, timezonename }) {
+async function convertToUTC({
+    date_slot,
+    start_time,
+    time_end,
+    date_end,
+    timezonename,
+}) {
     try {
-        
-        
         const fromDateTime = `${date_slot} ${start_time}`;
         const toDateTime = `${date_end} ${time_end}`;
 
@@ -26,11 +30,14 @@ async function convertToUTC({ date_slot, start_time, time_end, date_end, timezon
     }
 }
 
-
-async function convertFromUTC({ date_slot, start_time, time_end, date_end, timezonename }) {
+async function convertFromUTC({
+    date_slot,
+    start_time,
+    time_end,
+    date_end,
+    timezonename,
+}) {
     try {
-      
-        
         const fromDateTimeUTC = `${date_slot} ${start_time}`;
         const toDateTimeUTC = `${date_end} ${time_end}`;
 
@@ -41,10 +48,10 @@ async function convertFromUTC({ date_slot, start_time, time_end, date_end, timez
             slot_date: fromDateTime.format('YYYY-MM-DD'),
             from_time: fromDateTime.format('HH:mm:ss'),
             to_time: toDateTime.format('HH:mm:ss'),
-            end_date: toDateTime.format('YYYY-MM-DD')
+            end_date: toDateTime.format('YYYY-MM-DD'),
         };
 
-        console.log("LocalTime==/====/==/===/=///==/==>>>>>>", result);
+        console.log('LocalTime==/====/==/===/=///==/==>>>>>>', result);
         return result;
     } catch (error) {
         console.error('Error in convertFromUTC:', error);
@@ -52,5 +59,4 @@ async function convertFromUTC({ date_slot, start_time, time_end, date_end, timez
     }
 }
 
-
-export { convertToUTC ,convertFromUTC };
+export { convertToUTC, convertFromUTC };

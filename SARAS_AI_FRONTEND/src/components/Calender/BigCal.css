@@ -23,9 +23,9 @@
 }
 
 .rbc-event-session {
-    background-color: #28a745; /* Dark green for sessions */
+    background-color: #28a745;
     color: #fff;
-    border: 1px solid #caffd8; /* Border color */
+    border: 1px solid #caffd8;
 }
 
 .rbc-event-label {
@@ -33,8 +33,16 @@
     color: #ffffff;
 }
 
+/* .rbc-toolbar-label {
+    color: #121d22;
+} */
+
+.rbc-toolbar {
+    display: flex;
+    justify-content: flex-start; /* Align buttons to the left */
+}
 .rbc-toolbar-label {
-    color: #121d22; /* Toolbar label color */
+    display: none; /* Hide the date range text */
 }
 
 .rbc-today {
@@ -53,11 +61,57 @@
     border-left: 1px solid #eee;
 }
 
+/* .rbc-header {
+    background-color: #f1f1fb;
+    color: #5f6368;
+    border: none;
+  
+} */
+
+.rbc-time-header-cell {
+    padding: 0 !important; /* Removes padding inside header cells */
+
+    margin: 0 !important; /* Removes any extra margin */
+}
+
+.rbc-time-header {
+    margin-bottom: 0px !important; /* Removes the margin below the header */
+}
+
+.rbc-time-content {
+    border-top: 0 !important; /* Removes the top border that might cause extra space */
+}
+
+.rbc-timeslot-group {
+    min-height: 50px !important; /* Adjust this to change the height of each time slot */
+
+    line-height: 1 !important; /* Ensures no extra space within time slots */
+}
+
+.rbc-time-view {
+    padding: 0 !important; /* Removes padding within the entire time view */
+
+    margin: 0 !important; /* Removes margin within the entire time view */
+}
+
 .rbc-header {
     background-color: #f1f1fb;
     color: #5f6368;
-    border: 1px solid #eee;
+    border: none;
 }
+
+.rbc-header:nth-child(4) {
+    background-color: #4e18a5;
+    color: white;
+}
+
+/* .rbc-toolbar > .rbc-btn-group {
+    display: none; 
+} */
+
+/* .rbc-time-content {
+    border-top: 1px solid #4ec641; 
+} */
 
 .rbc-day-slot .rbc-time-slot {
     border: 0px;

@@ -353,10 +353,12 @@ const DynamicTable = ({
                                                     <AntSwitch
                                                         key={idx}
                                                         checked={item.is_active}
-                                                        onChange={(event) => {
-                                                            event.preventDefault(); 
-                                                            event.stopPropagation(); 
-                                                            handleToggle(item.id);
+                                                        onChange={event => {
+                                                            event.preventDefault();
+                                                            event.stopPropagation();
+                                                            handleToggle(
+                                                                item.id
+                                                            );
                                                         }}
                                                         inputProps={{
                                                             'aria-label':

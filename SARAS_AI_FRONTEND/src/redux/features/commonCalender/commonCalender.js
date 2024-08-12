@@ -6,9 +6,9 @@ const initialState = {
     userId: '',
     userName: '',
     sessionEventData: [],
-    slotsLeaveData : [],
+    slotsLeaveData: [],
     sessionData: null, // select session data to edit
-    sessionCancelData : [],
+    sessionCancelData: [],
 
     createNewSlotPopup: false, // for new slot popup
     scheduleNewSessionPopup: false, //  for new session Popup
@@ -16,8 +16,8 @@ const initialState = {
     selectBatchPopup: false,
     markLeave: false,
     createdSlots: false,
-    openCreatedSessions : false,
-    openCancelSession : false,
+    openCreatedSessions: false,
+    openCancelSession: false,
 
     openSession: false,
     editSession: false,
@@ -78,23 +78,21 @@ const commonCalender = createSlice({
         closeCreatedSlots: (state, action) => {
             state.createdSlots = false;
         },
-        openCreatedSessions : (state, action) => {
-            console.log("PAYLOAD ", action.payload);
+        openCreatedSessions: (state, action) => {
+            console.log('PAYLOAD ', action.payload);
             state.openCreatedSessions = true;
             state.slotsLeaveData = action.payload;
         },
-        closeCreatedSessions : (state, action) => {
+        closeCreatedSessions: (state, action) => {
             state.openCreatedSessions = false;
         },
-        openCancelSessionPopup : (state, action) => {
+        openCancelSessionPopup: (state, action) => {
             state.openCancelSession = true;
             state.sessionCancelData = action.payload;
         },
-        closeCancelSessionPopup : (state, action) => {
+        closeCancelSessionPopup: (state, action) => {
             state.openCancelSession = false;
         },
-
-
 
         openSessionPopup(state, action) {
             state.sessionEventData = action.payload;
@@ -133,7 +131,6 @@ export const {
     closeCreatedSessions,
     openCancelSessionPopup,
     closeCancelSessionPopup,
-
 
     openSessionPopup,
     closeSessionPopup,

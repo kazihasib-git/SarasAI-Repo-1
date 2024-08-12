@@ -10,7 +10,10 @@ import {
     openScheduleSession,
 } from '../../redux/features/adminModule/ta/taScheduling';
 
-import { closeCoachEditStudent, openCoachScheduleSession } from '../../redux/features/adminModule/coach/coachSchedule';
+import {
+    closeCoachEditStudent,
+    openCoachScheduleSession,
+} from '../../redux/features/adminModule/coach/coachSchedule';
 
 import { getCoachAssignStudents } from '../../redux/features/adminModule/coach/coachSlice';
 import { useParams } from 'react-router-dom';
@@ -213,7 +216,7 @@ const EditStudents = ({ componentname }) => {
         );
     };
 
-    console.log("Selected Students", selectedStudents)
+    console.log('Selected Students', selectedStudents);
 
     const handleSubmit = () => {
         const id =
@@ -234,7 +237,7 @@ const EditStudents = ({ componentname }) => {
             openSchedulingPopup({
                 id,
                 name: assignedName,
-                student : selectedStudents.map(id => ({ id })),
+                student: selectedStudents.map(id => ({ id })),
             })
         );
 

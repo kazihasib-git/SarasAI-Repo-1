@@ -158,7 +158,7 @@ export const coachTemplateSlice = createSlice({
     reducers: {
         accessCoachTemplateName(state, action) {
             //   console.log("ACTION : ", action);
-              console.log("ACTION PAYLOAD : ", action.payload);
+            console.log('ACTION PAYLOAD : ', action.payload);
             // state.template_name = action.payload.name;
             state.templateId = action.payload.id;
         },
@@ -290,7 +290,7 @@ export const coachTemplateSlice = createSlice({
                 console.log('ACtion playlod', action.payload);
                 state.loading = false;
                 state.coachTemplatesId = action.payload.data;
-                state.template_name = action.payload.data.name
+                state.template_name = action.payload.data.name;
             })
             .addCase(getCoachTemplateModuleId.rejected, (state, action) => {
                 state.loading = false;

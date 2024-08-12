@@ -29,7 +29,9 @@ const ManageCoaches = () => {
     const [searchQuery, setSearchQuery] = useState('');
 
     // Get coaches and timezones from Redux store
-    const { coaches, createCoachOpen, editCoachOpen } = useSelector(state => state.coachModule);
+    const { coaches, createCoachOpen, editCoachOpen } = useSelector(
+        state => state.coachModule
+    );
     const { timezones } = useSelector(state => state.util);
 
     useEffect(() => {
@@ -44,7 +46,10 @@ const ManageCoaches = () => {
             if (coaches.length > 0 && timezones.length > 0) {
                 const transformed = await Promise.all(
                     coaches.map(async item => {
-                        const timezonename = await timezoneIdToName(item.timezone_id, timezones);
+                        const timezonename = await timezoneIdToName(
+                            item.timezone_id,
+                            timezones
+                        );
                         console.log('timezonename: ', timezonename);
                         return {
                             id: item.id,

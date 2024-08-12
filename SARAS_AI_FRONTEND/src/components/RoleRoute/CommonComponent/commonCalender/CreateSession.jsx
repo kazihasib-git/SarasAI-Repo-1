@@ -33,7 +33,10 @@ import CustomFormControl from '../../../CustomFields/CustomFromControl';
 import CustomDateField from '../../../CustomFields/CustomDateField';
 import CustomTimeField from '../../../CustomFields/CustomTimeField';
 import CustomTimeZoneForm from '../../../CustomFields/CustomTimeZoneForm';
-import { getPlatforms, getTimezone } from '../../../../redux/features/utils/utilSlice';
+import {
+    getPlatforms,
+    getTimezone,
+} from '../../../../redux/features/utils/utilSlice';
 import CustomPlatformForm from '../../../CustomFields/CustomPlatformForm';
 
 const CustomButton = ({
@@ -104,7 +107,7 @@ const CreateSession = ({ componentName }) => {
         toDate: null,
         fromTime: null,
         toTime: null,
-        timezone_id : timezone ? timezone : null,
+        timezone_id: timezone ? timezone : null,
         repeat: 'onetime',
         selectedDays: [],
     });
@@ -116,14 +119,14 @@ const CreateSession = ({ componentName }) => {
             sliceName = 'taMenu';
             createSessionApi = createTaMenuSessions;
             getSessionApi = getTaMenuSessions;
-            getSlotApi = getTaMenuSlots
+            getSlotApi = getTaMenuSlots;
             break;
 
         case 'COACHMENU':
             sliceName = 'coachMenu';
             createSessionApi = createCoachMenuSession;
             getSessionApi = getCoachMenuSessions;
-            getSlotApi = getCoachMenuSlots
+            getSlotApi = getCoachMenuSlots;
             break;
 
         default:
@@ -140,7 +143,7 @@ const CreateSession = ({ componentName }) => {
     );
 
     useEffect(() => {
-        dispatch(getTimezone())
+        dispatch(getTimezone());
         dispatch(getPlatforms());
     }, [dispatch]);
 
@@ -227,7 +230,7 @@ const CreateSession = ({ componentName }) => {
             end_time: endTime,
             message: formData.message,
             platform_id: formData.platform_id,
-            timezone_id : formData.timezone_id,
+            timezone_id: formData.timezone_id,
             event_status: 'scheduled',
             studentId: studentId,
             batchId: batchId,
@@ -237,7 +240,7 @@ const CreateSession = ({ componentName }) => {
         console.log('DATA :', data);
 
         dispatch(createSessionApi(data)).then(() => {
-            dispatch(getSessionApi())
+            dispatch(getSessionApi());
             dispatch(getSlotApi());
             dispatch(closeScheduleNewSession());
         });
@@ -439,7 +442,7 @@ const CreateSession = ({ componentName }) => {
                                             textTransform: 'none',
                                             padding: '18px 30px',
                                             fontWeight: '700',
-                                            fontFamily : 'Regular',
+                                            fontFamily: 'Regular',
                                             fontSize: '16px',
                                             '&:hover': {
                                                 backgroundColor: '#FEEBE3',
@@ -461,7 +464,7 @@ const CreateSession = ({ componentName }) => {
                                             textTransform: 'none',
                                             fontWeight: '700',
                                             fontSize: '16px',
-                                            fontFamily : 'Regular',
+                                            fontFamily: 'Regular',
                                             padding: '18px 30px',
                                             '&:hover': {
                                                 backgroundColor: 'white',
@@ -473,7 +476,7 @@ const CreateSession = ({ componentName }) => {
                                     </Button>
                                 </Box>
                             </Grid>
-                       
+
                             <Grid
                                 container
                                 spacing={3}
@@ -568,7 +571,6 @@ const CreateSession = ({ componentName }) => {
                                     </Grid>
                                 </>
                             )}
-                        
                         </Grid>
                     </Box>
                 </form>
@@ -580,11 +582,11 @@ const CreateSession = ({ componentName }) => {
         <CustomButton
             onClick={handleSubmit}
             style={{
-                backgroundColor :"#F56D3B",
-                borderColor : "#F56D3B",
-                color : "#FFFFFF",
-                textTransform : 'none',
-                fontFamily : 'Bold'
+                backgroundColor: '#F56D3B',
+                borderColor: '#F56D3B',
+                color: '#FFFFFF',
+                textTransform: 'none',
+                fontFamily: 'Bold',
             }}
         >
             Submit

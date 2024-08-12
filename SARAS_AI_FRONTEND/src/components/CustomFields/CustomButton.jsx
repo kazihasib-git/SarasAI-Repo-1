@@ -23,7 +23,7 @@ const CustomButton = ({
                 padding: '10px 20px',
                 border: `2px solid ${borderColor}`,
                 textTransform: 'none',
-                fontFamily : 'Bold',
+                fontFamily: 'Bold',
                 '&:hover': {
                     backgroundColor: color,
                     color: backgroundColor,
