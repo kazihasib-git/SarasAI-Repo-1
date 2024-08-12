@@ -197,7 +197,7 @@ const AddEditActivity = () => {
                         <MenuItem value={'Close Activity'}>
                             Close Activity
                         </MenuItem>
-                        <MenuItem value={'No Points'}>No Penalty</MenuItem>
+                        <MenuItem value={'No Points'}>No Points</MenuItem>
                         <MenuItem value={'No Effect'}>No Effect</MenuItem>
                     </Select>
                 </FormControl>
@@ -231,7 +231,7 @@ const AddEditActivity = () => {
             // Create new activity
             dispatch(createCoachTemplateActivity(data));
         }
-
+        console.log('Selectedcoachtemplate', selectedCoachTemplate);
         dispatch(getAllCoachTemplateModules(selectedCoachTemplate));
         dispatch(getAllCoachTemplates());
         dispatch(closeEditActivityPopup());

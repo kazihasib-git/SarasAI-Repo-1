@@ -3,41 +3,12 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PopUpTable from '../../../CommonComponent/PopUpTable';
 import ReusableDialog from '../../../CustomFields/ReusableDialog';
-
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                padding: '10px 20px',
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
+import CustomButton from '../../../CustomFields/CustomButton';
+import { getCoachMenuSessionForLeave } from '../../../../redux/features/coachModule/coachmenuprofileSilce';
+import {
+    closeCreatedSessions,
+    openCancelSessionPopup,
+} from '../../../../redux/features/commonCalender/commonCalender';
 
 const headers = [
     'S. No.',
@@ -58,55 +29,44 @@ const CreatedSessions = ({ componentName }) => {
     switch (componentName) {
         case 'TAMENU':
             sliceName = 'taMenu';
-            scheduledSessionData = '';
+            scheduledSessionState = '';
             break;
 
         case 'COACHMENU':
             sliceName = 'coachMenu';
-            scheduledSessionData = '';
+            scheduledSessionState = 'coachSessionsForLeave';
             break;
 
         default:
             sliceName = null;
-            scheduledSessionData = '';
+            scheduledSessionState = null;
             break;
     }
 
     const selectState = useSelector(state => state[sliceName]);
+    const { openCreatedSessions } = useSelector(state => state.commonCalender);
 
-    const { [scheduledSessionState]: scheduledSessionData } = selectState;
+    const { [scheduledSessionState]: sessionsData } = selectState;
     const [scheduledSessions, setScheduledSessions] = useState([]);
     const [students, setStudent] = useState([]);
 
     useEffect(() => {
-        if (scheduledSessionData && scheduledSessionData.length > 0) {
-            const formattedData = scheduledSessionData.map(
-                (session, index) => ({
-                    'S. No.': index + 1,
-                    'Session Name': session.meeting_name,
-                    Date: session.date.split(' ')[0],
-                    Time: `${session.start_time} - ${session.end_time}`,
-                    Students: session.Students.length,
-                    StudentList: session.Students,
-                    id: session.id,
-                })
-            );
+        if (sessionsData && sessionsData.length > 0) {
+            const formattedData = sessionsData.map((session, index) => ({
+                'S. No.': index + 1,
+                'Session Name': session.meeting_name,
+                Date: session.date.split(' ')[0],
+                Time: `${session.start_time} - ${session.end_time}`,
+                Students: session.Students.length,
+                StudentList: session.Students,
+                id: session.id,
+            }));
             setScheduledSessions(formattedData);
-
-            const formattedStudentsData = scheduledSessionData.Students.map(
-                (student, index) => ({
-                    'S. No.': index + 1,
-                    'Student Name': student.name,
-                    Program: '',
-                    Batch: '',
-                })
-            );
-            setStudent(formattedStudentsData);
         }
-    }, [scheduledSessionData]);
+    }, [sessionsData]);
 
     const handleViewClick = students => {
-        <PopUpTable headers={studentHeader} initialData={students} />;
+        console.log('View clicked!', students);
     };
 
     const handleRescheduleClick = session => {
@@ -115,12 +75,13 @@ const CreatedSessions = ({ componentName }) => {
     };
 
     const handleCancelClick = session => {
-        dispatch();
-        dispatch();
+        dispatch(openCancelSessionPopup(session));
+        dispatch(closeCreatedSessions());
     };
 
     const handleSubmit = () => {
         dispatch();
+        dispatch(closeCreatedSessions());
     };
 
     const content =
@@ -155,14 +116,13 @@ const CreatedSessions = ({ componentName }) => {
 
     return (
         <ReusableDialog
-            open={scheduledSessionOpen}
+            open={openCreatedSessions}
             handleClose={() => {
-                dispatch(openSlotsAction());
-                dispatch(closeSessionAction());
+                dispatch(closeCreatedSessions());
             }}
             title="Scheduled Sessions"
             content={content}
-            actions={scheduledSessions.length === 0 ? actions : undefined}
+            actions={sessionsData.length === 0 ? actions : undefined}
         />
     );
 };

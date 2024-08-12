@@ -29,6 +29,8 @@ import MarkLeaveDate from '../../../components/RoleRoute/CommonComponent/commonC
 import CreatedSlots from '../../../components/RoleRoute/CommonComponent/commonCalender/CreatedSlots';
 import SessionLink from '../../../components/RoleRoute/CommonComponent/commonCalender/SessionLink';
 import CreateSession from '../../../components/RoleRoute/CommonComponent/commonCalender/CreateSession';
+import CreatedSessions from '../../../components/RoleRoute/CommonComponent/commonCalender/CreatedSessions';
+import CancelSession from '../../../components/RoleRoute/CommonComponent/commonCalender/CancelSession';
 
 const CustomButton = ({
     onClick,
@@ -77,6 +79,8 @@ const CoachMenuCalendar = () => {
         selectBatchPopup,
         markLeave,
         createdSlots,
+        openCreatedSessions,
+        openCancelSession,
         openSession,
     } = useSelector(state => state.commonCalender);
 
@@ -102,14 +106,19 @@ const CoachMenuCalendar = () => {
     useEffect(() => {
         if (coachSessions && coachSessions.length > 0) {
             const transformedEvents = coachSessions.map(event => ({
-                title: event.meeting_name,
+                id: event.id,
+                admin_user_id: event.admin_user_id,
+                meetingName: event.meeting_name,
+                meetingId: event.meeting_id,
+                platformId: event.platform_id,
                 start: new Date(
                     event.date.split(' ')[0] + 'T' + event.start_time
                 ),
                 end: new Date(event.date.split(' ')[0] + 'T' + event.end_time),
-                meetlink: event.meeting_url,
+                //platform_tools: event.platform_tool_details,
+                //platform_meet: event.platform_meeting_details,
                 students: event.students,
-                batches: event.batch,
+                batch: event.batch,
             }));
             setSessionEvent(transformedEvents);
         }
@@ -212,11 +221,11 @@ const CoachMenuCalendar = () => {
 
                 {createdSlots && <CreatedSlots componentName={'COACHMENU'} />}
 
-                {leaveScheduledSessionPopup && (
-                    <ScheduledSessions componentName={'COACHMENU_CALENDER'} />
+                {openCreatedSessions && (
+                    <CreatedSessions componentName={'COACHMENU'} />
                 )}
-                {cancelSessionOnLeave && (
-                    <CancelSchedule componentName={'COACHMENU_CALENDER'} />
+                {openCancelSession && (
+                    <CancelSession componentName={'COACHMENU'} />
                 )}
                 {leaveRescheduleSessionPopup && (
                     <ReschedulingSession componentName={'COACHMENU_CALENDER'} />

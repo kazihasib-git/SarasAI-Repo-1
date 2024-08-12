@@ -75,7 +75,6 @@ export const showCoachMapping = createAsyncThunk(
             `${baseUrl}/admin/CoachMapping/CoachswithActiveStudentnBatches`
         );
         return response.data;
-        
     }
 );
 export const getCoachAssignStudents = createAsyncThunk(
@@ -346,13 +345,12 @@ export const coachSlice = createSlice({
             }
         );
 
-         // delete coach Mapping
-         builder.addCase(deleteCoachMapping.pending, state => {
+        // delete coach Mapping
+        builder.addCase(deleteCoachMapping.pending, state => {
             state.loading = true;
         });
         builder.addCase(deleteCoachMapping.fulfilled, (state, action) => {
             state.loading = false;
-            
         });
         builder.addCase(deleteCoachMapping.rejected, (state, action) => {
             state.loading = false;
@@ -383,7 +381,7 @@ export const coachSlice = createSlice({
         });
         builder.addCase(showCoachMapping.rejected, (state, action) => {
             state.loading = false;
-            state.coachMapping = []
+            state.coachMapping = [];
             state.error = action.payload || action.error.message;
         });
 

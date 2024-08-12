@@ -107,7 +107,7 @@ const EditSession = ({ componentName }) => {
         students: sessionData.students || [],
         batches: sessionData.batchId || [],
         platforms: sessionData.platforms || null,
-        fromDate: sessionData.schedule_date || null,
+        fromDate: sessionData.date || null,
         toDate: sessionData.to_date || null,
         fromTime: sessionData.start_time || null,
         toTime: sessionData.end_time || null,

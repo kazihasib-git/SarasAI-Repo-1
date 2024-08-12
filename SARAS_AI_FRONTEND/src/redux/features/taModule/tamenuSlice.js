@@ -173,10 +173,6 @@ export const getTaCallRecords = createAsyncThunk(
         const response = await axiosInstance.post(
             `${baseUrl}/ta/call-recording/get-call-recording`,
             {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json',
-                },
                 date: date,
             }
         );
@@ -211,6 +207,23 @@ export const getTaMenuAssignedBatches = createAsyncThunk(
     'coachMenu/getAssignedBatches',
     async () => {
         const response = await axiosInstance.get(`${baseUrl}/ta/get-batches`);
+        return response.data;
+    }
+);
+
+//upload video
+
+export const uploadSessionRecording = createAsyncThunk(
+    'taMenu/uploadSessionRecording',
+    async ({ id, session_recording_url }) => {
+        console.log('Assigning session notes with ID:', id);
+
+        const response = await axiosInstance.put(
+            `${baseUrl}/ta/call-recording/upload-session-recording/${id}`,
+
+            { session_recording_url }
+        );
+
         return response.data;
     }
 );
@@ -257,6 +270,8 @@ const initialState = {
     assignedTaStudents: [],
     assignedTaBatches: [],
     taCallRecords: [], //call recording
+
+    sessionRecordingUrl: null,
 
     //For Leave
     slotsBetweenDates: [],
@@ -537,6 +552,17 @@ export const taMenuSlice = createSlice({
             state.loading = false;
             state.error = action.error.message;
             state.assignedTaBatches = [];
+        });
+
+        //upload video
+        builder.addCase(uploadSessionRecording.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(uploadSessionRecording.fulfilled, (state, action) => {
+            state.sessionRecordingUrl = action.payload.session_recording_url;
+        });
+        builder.addCase(uploadSessionRecording.rejected, (state, action) => {
+            state.error = action.payload;
         });
 
         //session notes

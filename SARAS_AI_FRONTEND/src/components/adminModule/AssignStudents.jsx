@@ -202,8 +202,8 @@ const AssignStudents = ({ componentname }) => {
                 ? coachID || assignedId
                 : taID || assignedId;
         const data = {
-            'admin_user_id' : id,
-            students : selectedStudents.map(id => ({ id: id.toString() })),
+            admin_user_id: id,
+            students: selectedStudents.map(id => ({ id: id.toString() })),
         };
         dispatch(postAssignAction({ id, data })).then(() => {
             if (assignedId) {
@@ -216,10 +216,9 @@ const AssignStudents = ({ componentname }) => {
                         })),
                     })
                 );
-            }else{
+            } else {
                 dispatch(openSuccessAction());
             }
-           
         });
         dispatch(closeDialogAction());
     };

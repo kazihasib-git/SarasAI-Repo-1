@@ -97,8 +97,8 @@ const CancelSchedule = ({ componentName }) => {
         dispatch(cancelSessionAction(sessionNo))
             .unwrap()
             .then(() => {
-                dispatch(getSessionAction());
-                dispatch(openSessionAction(slotEventData));
+                dispatch(getSessionAction(slotEventData));
+                dispatch(openSessionAction());
             })
             .catch(error => {
                 console.error('Failed to cancel the session:', error);

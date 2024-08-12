@@ -33,7 +33,10 @@ import {
     openCoachEditBatch,
     openCoachEditStudent,
 } from '../../redux/features/adminModule/coach/coachSchedule';
-import { getPlatforms, getTimezone } from '../../redux/features/utils/utilSlice';
+import {
+    getPlatforms,
+    getTimezone,
+} from '../../redux/features/utils/utilSlice';
 import CustomTimeZoneForm from '../CustomFields/CustomTimeZoneForm';
 import { fetchTAScheduleById } from '../../redux/features/adminModule/ta/taAvialability';
 import { toast } from 'react-toastify';
@@ -169,7 +172,7 @@ const Schedule = ({ componentName }) => {
 
     useEffect(() => {
         dispatch(getTimezone());
-        dispatch(getPlatforms())
+        dispatch(getPlatforms());
     }, [dispatch]);
 
     useEffect(() => {
@@ -443,13 +446,13 @@ const Schedule = ({ componentName }) => {
                                                 justifyContent="center"
                                             >
                                                 <CustomTimeField
-                                                    label="End Time"
-                                                    name="end_time"
+                                                    label="To Time"
+                                                    name="To_time"
                                                     value={toTime}
                                                     onChange={setToTime}
                                                     validation={{
                                                         required:
-                                                            'End Time is required',
+                                                            'To Time is required',
                                                     }}
                                                     errors={errors}
                                                 />
@@ -736,7 +739,7 @@ const Schedule = ({ componentName }) => {
             handleClose={() => {
                 dispatch(closeScheduleSessionAction());
             }}
-            title={`Schedule`}
+            title={`Schedule New Session`}
             // Session for ${adminUserName}`}
             content={content}
         />

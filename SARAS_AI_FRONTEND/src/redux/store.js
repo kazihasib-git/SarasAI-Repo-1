@@ -17,6 +17,7 @@ import taMenuSliceReducer from './features/taModule/tamenuSlice';
 import authReducer from './features/auth/authSlice';
 import commonCalenderReducer from './features/commonCalender/commonCalender';
 import utilReducer from './features/utils/utilSlice';
+import timeZoneReducer from './features/timeZone/timezone'
 
 const store = configureStore({
     reducer: {
@@ -35,6 +36,7 @@ const store = configureStore({
         taMenu: taMenuSliceReducer,
         commonCalender: commonCalenderReducer,
         util: utilReducer,
+        timeZone: timeZoneReducer,
         [studentsApi.reducerPath]: studentsApi.reducer,
         [batchesApi.reducerPath]: batchesApi.reducer,
         [coursesApi.reducerPath]: coursesApi.reducer,
