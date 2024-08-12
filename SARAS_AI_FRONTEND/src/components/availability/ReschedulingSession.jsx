@@ -6,8 +6,8 @@ import CustomTimeField from '../CustomFields/CustomTimeField';
 import { useDispatch, useSelector } from 'react-redux';
 import PopUpTable from '../CommonComponent/PopUpTable';
 import { useParams } from 'react-router-dom';
-import { rescheduleSession } from '../../redux/features/taModule/taScheduling';
-import { rescheduleCoachSession } from '../../redux/features/CoachModule/coachSchedule';
+import { rescheduleSession } from '../../redux/features/adminModule/ta/taScheduling';
+import { rescheduleCoachSession } from '../../redux/features/adminModule/coach/coachSchedule';
 
 import {
     closeRescheduleSession,
@@ -15,7 +15,7 @@ import {
     getScheduleSession,
     openReasonForLeave,
     openScheduledSession,
-} from '../../redux/features/taModule/taAvialability';
+} from '../../redux/features/adminModule/ta/taAvialability';
 
 import {
     closeCoachRescheduleSession,
@@ -23,50 +23,8 @@ import {
     openCoachReasonForLeave,
     openCoachScheduledSession,
     fetchCoachAvailableSlots,
-} from '../../redux/features/CoachModule/CoachAvailabilitySlice';
-import {
-    closeRescheduleSessionForLeave,
-    getCoachMenuSessions,
-    getCoachMenuSlotsByData,
-    getSessionForLeave,
-    openScheduledSessionForLeave,
-    rescheduleSessionForCoachLeave,
-} from '../../redux/features/coach/coachmenuprofileSilce';
-
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                padding: '10px 20px',
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
+} from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
+import CustomButton from '../CustomFields/CustomButton';
 
 const headers = ['S. No.', 'Slots Available', 'Select'];
 
@@ -117,32 +75,6 @@ const ReschedulingSession = ({ componentName }) => {
             reschduleSessionAction = rescheduleCoachSession;
             break;
 
-        case 'COACHMENU_CALENDER':
-            sliceName = 'coachMenu';
-            rescheduleSessionOpenKey = 'leaveRescheduleSessionPopup';
-            closeRescheduleSessionAction = closeRescheduleSessionForLeave;
-            fetchAvailableSlotsAction = getCoachMenuSlotsByData;
-            getScheduleSessionAction = getSessionForLeave;
-            openScheduledSessionAction = openScheduledSessionForLeave;
-            availableSlotsAction = 'coachSlotsByDate';
-            sessionEventAction = 'sessionsEventDataForLeave';
-            slotEventAction = 'scheduledSessionForLeaveData';
-            reschduleSessionAction = rescheduleSessionForCoachLeave;
-            break;
-
-        case 'TAMENU_CALENDER':
-            sliceName = 'taMenu';
-            rescheduleSessionOpenKey = '';
-            closeRescheduleSessionAction = '';
-            fetchAvailableSlotsAction = '';
-            getScheduleSessionAction = '';
-            openScheduledSessionAction = '';
-            availableSlotsAction = '';
-            sessionEventAction = '';
-            slotEventAction = '';
-            reschduleSessionAction = '';
-            break;
-
         default:
             sliceName = null;
             rescheduleSessionOpenKey = null;
@@ -156,8 +88,6 @@ const ReschedulingSession = ({ componentName }) => {
             reschduleSessionAction;
             break;
     }
-
-    console.log('slice Name :', sliceName);
 
     const {
         [rescheduleSessionOpenKey]: rescheduleSessionOpen,
@@ -225,8 +155,8 @@ const ReschedulingSession = ({ componentName }) => {
             .then(() => {
                 // console.log("SLOT EVENT DATA : ", slotEventData)
                 dispatch(closeRescheduleSessionAction());
-                dispatch(getScheduleSessionAction(slotEventData));
-                dispatch(openScheduledSessionAction());
+                dispatch(getScheduleSessionAction());
+                dispatch(openScheduledSessionAction(slotEventData));
             })
             .catch(error => {
                 console.error('Error rescheduling session:', error);

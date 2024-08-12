@@ -18,7 +18,7 @@ import {
     getCoachAssignStudents,
     toggleCoachAssignBatchStatus,
     toggleCoachAssignStudentStatus,
-} from '../../redux/features/CoachModule/coachSlice';
+} from '../../redux/features/adminModule/coach/coachSlice';
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
     borderRadius: '50px',
@@ -121,27 +121,46 @@ const AdminDataTable = ({
     };
 
     const handleToggle = id => {
+        // Log the initial state of the item being toggled
+        console.log('Toggling ID:', id);
+        console.log(
+            'Before Toggle:',
+            data.find(item => item.id === id)
+        );
+
         const updatedData = data.map(item =>
             item.id === id
                 ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
                 : item
         );
+
+        // Log the updated state of the item
+        console.log(
+            'After Toggle:',
+            updatedData.find(item => item.id === id)
+        );
+
         setData(updatedData);
-        console.log('ID : handle toggle : ', id);
+
         const toggledItem = updatedData.find(item => item.id === id);
         const requestData = { is_active: toggledItem.is_active };
+
         switch (componentName) {
             case 'ASSIGNCOACHSTUDENT':
                 dispatch(
                     toggleCoachAssignStudentStatus({ id, data: requestData })
-                );
-                dispatch(getCoachAssignStudents(ta_id));
+                ).then(() => {
+                    dispatch(getCoachAssignStudents(ta_id));
+                });
+
                 break;
             case 'ASSIGNCOACHBATCH':
                 dispatch(
                     toggleCoachAssignBatchStatus({ id, data: requestData })
-                );
-                dispatch(getCoachAssignBatches(ta_id));
+                ).then(() => {
+                    dispatch(getCoachAssignBatches(ta_id));
+                });
+
                 break;
             default:
                 console.warn(
@@ -154,12 +173,14 @@ const AdminDataTable = ({
     const handleDelete = id => {
         switch (componentName) {
             case 'ASSIGNCOACHSTUDENT':
-                dispatch(deleteCoachAssignedStudent({ id }));
-                dispatch(getCoachAssignStudents(ta_id));
+                dispatch(deleteCoachAssignedStudent({ id })).then(() => {
+                    dispatch(getCoachAssignStudents(ta_id));
+                });
                 break;
             case 'ASSIGNCOACHBATCH':
-                dispatch(deleteCoachAssignedBatch({ id }));
-                dispatch(getCoachAssignBatches(ta_id));
+                dispatch(deleteCoachAssignedBatch({ id })).then(() => {
+                    dispatch(getCoachAssignBatches(ta_id));
+                });
                 break;
             default:
                 console.warn(
@@ -244,7 +265,7 @@ const AdminDataTable = ({
                                         verticalAlign: 'middle',
                                     }}
                                 >
-                                    {actionButtons?.map((button, idx) => {
+                                    {actionButtons.map((button, idx) => {
                                         if (button.type === 'switch') {
                                             return (
                                                 <AntSwitch

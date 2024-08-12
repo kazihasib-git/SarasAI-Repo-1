@@ -17,63 +17,21 @@ import ReusableDialog from '../CustomFields/ReusableDialog';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomTimeZoneForm from '../CustomFields/CustomTimeZoneForm';
-import { getTimezone } from '../../redux/features/timezone/timezoneSlice';
+import { getTimezone } from '../../redux/features/utils/utilSlice';
 import { useParams } from 'react-router-dom';
-
 import {
     createSlots,
     closeCreateNewSlots,
-    fetchCoachSlots,
-} from '../../redux/features/taModule/taAvialability';
+    fetchTaSlots,
+} from '../../redux/features/adminModule/ta/taAvialability';
 import {
     createCoachSlots,
-    closeCoachCreateNewSlots,
-} from '../../redux/features/CoachModule/CoachAvailabilitySlice';
+    fetchCoachSlots,
+} from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import { toast } from 'react-toastify';
-import {
-    closeCreateSlotsPopup,
-    createCoachMenuSlot,
-    createCoachSlot,
-    getCoachSlots,
-} from '../../redux/features/coach/coachmenuprofileSilce';
-import {
-    closeTaMenuCreateSlotsPopup,
-    createTaMenuSlots,
-} from '../../redux/features/teachingAssistant/tamenuSlice';
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                padding: '10px 20px',
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
+import CustomButton from '../CustomFields/CustomButton';
+
+
 const weekDays = [
     'Sunday',
     'Monday',
@@ -84,10 +42,9 @@ const weekDays = [
     'Saturday',
 ];
 
-const CreateNewSlot = ({ componentName }) => {
+const CreateNewSlot = ({ componentName, timezoneID }) => {
+    const { timezones } = useSelector(state => state.util);
     const taId = useParams();
-    console.log('taId', taId.id);
-
     const dispatch = useDispatch();
 
     const [fromDate, setFromDate] = useState(null);
@@ -96,74 +53,37 @@ const CreateNewSlot = ({ componentName }) => {
     const [repeat, setRepeat] = useState('onetime');
     const [fromTime, setFromTime] = useState(null);
     const [toTime, setToTime] = useState(null);
+    useEffect(() => {
+        dispatch(getTimezone());
+    }, [dispatch]);
 
-    let schedulingStateKey,
-        createNewSlotAction,
-        slotEventKey,
-        createSlotActions,
-        closeCreateNewSlotAction,
-        openCreateNewSlotAction;
+    let sliceName, timezoneId, createSlotApi, getSlotsApi;
+
     switch (componentName) {
         case 'TACALENDER':
-            schedulingStateKey = 'taAvialability';
-            slotEventKey = 'slotEventData';
-            createNewSlotAction = '';
-            createSlotActions = createSlots;
-            closeCreateNewSlotAction = closeCreateNewSlots;
-            openCreateNewSlotAction = 'createNewSlotOpen';
+            sliceName = 'taAvialability';
+            timezoneID = '';
+            createSlotApi = createSlots;
+            getSlotsApi = fetchTaSlots;
             break;
 
         case 'COACHCALENDER':
-            schedulingStateKey = 'coachAvailability';
-            slotEventKey = 'slotCoachEventData';
-            createNewSlotAction = '';
-            createSlotActions = createCoachSlots;
-            closeCreateNewSlotAction = closeCoachCreateNewSlots;
-            openCreateNewSlotAction = 'createNewCoachSlotOpen';
-            break;
-
-        case 'COACHMENU_CALENDER':
-            schedulingStateKey = 'coachMenu';
-            slotEventKey = 'slotsEventDataForLeave';
-            createNewSlotAction = '';
-            createSlotActions = createCoachMenuSlot;
-            closeCreateNewSlotAction = closeCreateSlotsPopup;
-            openCreateNewSlotAction = 'openCreteSlotsPopup';
-            break;
-
-        case 'TAMENU_CALENDER':
-            schedulingStateKey = 'taMenu';
-            slotEventKey = '';
-            createNewSlotAction = '';
-            createSlotActions = createTaMenuSlots;
-            closeCreateNewSlotAction = closeTaMenuCreateSlotsPopup;
-            openCreateNewSlotAction = 'createTaSlotsPopup';
+            sliceName = 'coachAvailability';
+            timezoneId = '';
+            createSlotApi = createCoachSlots;
+            getSlotsApi = fetchCoachSlots;
             break;
 
         default:
-            schedulingStateKey = null;
-            slotEventKey = null;
-            createNewSlotAction = null;
-            createSlotActions = null;
-            closeCreateNewSlotAction = null;
-            openCreateNewSlotAction = null;
+            sliceName = null;
+            timezoneId = null;
+            createSlotApi = null;
+            getSlotsApi = null;
             break;
     }
 
-    console.log({
-        schedulingStateKey,
-        createNewSlotAction,
-        slotEventKey,
-        createSlotActions,
-        closeCreateNewSlotAction,
-        openCreateNewSlotAction,
-    });
-
-    const schedulingState = useSelector(state =>
-        schedulingStateKey ? state[schedulingStateKey] : {}
-    );
-
-    const { [slotEventKey]: slotEventData } = schedulingState;
+    const schedulingState = useSelector(state => state[sliceName]);
+    const { createNewSlotOpen } = useSelector(state => state.taAvialability);
 
     const {
         register,
@@ -171,8 +91,6 @@ const CreateNewSlot = ({ componentName }) => {
         handleSubmit,
         formState: { errors },
     } = useForm();
-
-    const { timezones } = useSelector(state => state.timezone);
 
     const handleDayChange = day => {
         setSelectedDays(prev => {
@@ -183,10 +101,6 @@ const CreateNewSlot = ({ componentName }) => {
             }
         });
     };
-
-    useEffect(() => {
-        dispatch(getTimezone());
-    }, [dispatch]);
 
     const validate = () => {
         if (!fromDate) {
@@ -212,10 +126,11 @@ const CreateNewSlot = ({ componentName }) => {
         return true;
     };
 
-    const onSubmit = formData => {
+    const onSubmit = async formData => {
         console.log('form data', formData);
 
         if (!validate()) {
+            console.log('NOT VALID DATA');
             return;
         }
 
@@ -233,14 +148,15 @@ const CreateNewSlot = ({ componentName }) => {
         formData.slot_date = fromDate;
         formData.from_time = fromTime;
         formData.to_time = toTime;
-        formData.timezone = 'Asia/Kolkata';
         formData.end_date = repeat === 'recurring' ? toDate : fromDate;
         formData.weeks = weeksArray;
         formData.admin_user_id = taId.id;
+    
 
-        dispatch(createSlotActions(formData)).then(() => {
-            dispatch(closeCreateNewSlotAction());
-            return dispatch(fetchCoachSlots(taId.id));
+
+        dispatch(createSlotApi(formData)).then(() => {
+            dispatch(closeCreateNewSlots());
+            dispatch(getSlotsApi(taId.id));
         });
     };
 
@@ -334,13 +250,13 @@ const CreateNewSlot = ({ componentName }) => {
                             justifyContent="center"
                         >
                             <Controller
-                                name="time_zone"
+                                name="timezone_id"
                                 control={control}
                                 // rules={{ required: 'Time Zone is required' }}
                                 render={({ field }) => (
                                     <CustomTimeZoneForm
                                         label="Time Zone"
-                                        name="time_zone"
+                                        name="timezone_id"
                                         value={field.value}
                                         onChange={field.onChange}
                                         errors={errors}
@@ -449,7 +365,7 @@ const CreateNewSlot = ({ componentName }) => {
     const actions = (
         <>
             <CustomButton
-                onClick={() => dispatch(closeCreateNewSlotAction())}
+                onClick={() => dispatch(closeCreateNewSlots())}
                 backgroundColor="white"
                 color="#F56D3B"
                 borderColor="#F56D3B"
@@ -470,8 +386,8 @@ const CreateNewSlot = ({ componentName }) => {
 
     return (
         <ReusableDialog
-            open={openCreateNewSlotAction}
-            handleClose={() => dispatch(closeCreateNewSlotAction())}
+            open={createNewSlotOpen}
+            handleClose={() => dispatch(closeCreateNewSlots())}
             title="Create New Slot"
             actions={actions}
             content={content}

@@ -11,6 +11,7 @@ const CustomFormControl = ({
     label,
     name,
     value,
+    placeholder,
     onChange,
     errors,
     options,
@@ -21,6 +22,7 @@ const CustomFormControl = ({
     return (
         <FormControl variant="outlined" fullWidth>
             <InputLabel
+                shrink
                 style={{ margin: 0 }}
                 sx={{
                     color: hasError ? 'red' : '#1A1E3D',
@@ -30,6 +32,7 @@ const CustomFormControl = ({
                     '&.MuiFormLabel-filled': {
                         color: hasError ? 'red' : '#1A1E3D', // Change label color when the field is filled
                     },
+                    backgroundColor: 'white',
                 }}
             >
                 {label}
@@ -38,6 +41,7 @@ const CustomFormControl = ({
                 label={label}
                 name={name}
                 value={value}
+                placeholder={placeholder}
                 onChange={onChange}
                 error={hasError}
                 disabled={disabled}

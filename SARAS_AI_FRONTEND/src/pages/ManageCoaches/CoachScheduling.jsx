@@ -1,23 +1,17 @@
 import { Box, InputBase, Button, Modal, Typography } from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
-import { mockMappingDat } from '../../fakeData/mappingData';
 import Header from '../../components/Header/Header';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import { useEffect, useState } from 'react';
-import { OnOffSwitch } from '../../components/Switch';
-import editIcon from '../../assets/editIcon.png';
 import DynamicTable from '../../components/CommonComponent/DynamicTable';
 import { useDispatch, useSelector } from 'react-redux';
 import Schedule from '../../components/availability/Schedule';
-import AssignStudents from '../../components/adminModule/AssignStudents';
-import AssignBatches from '../../components/adminModule/AssignBatches';
-import { showCoachMapping } from '../../redux/features/CoachModule/coachSlice';
+import { showCoachMapping } from '../../redux/features/adminModule/coach/coachSlice';
 import EditBatches from '../../components/availability/EditBatches';
 import EditStudents from '../../components/availability/EditStudents';
 import {
     openCoachEditBatch,
     openCoachEditStudent,
-} from '../../redux/features/CoachModule/coachSchedule';
+} from '../../redux/features/adminModule/coach/coachSchedule';
 
 const CoachSheduling = () => {
     const dispatch = useDispatch();
@@ -41,8 +35,6 @@ const CoachSheduling = () => {
                 id: item.id,
                 name: item.name,
                 Username: item.username,
-                // Active_Students: item.Active_Batches,
-                // Active_Batches: item.Active_Students,
                 Active_Students: item.Active_Students,
                 Active_Batches: item.Active_Batches,
                 timezone: item.time_zone,

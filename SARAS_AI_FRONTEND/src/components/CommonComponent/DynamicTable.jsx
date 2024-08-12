@@ -11,9 +11,7 @@ import {
     Typography,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import CallMadeOutlinedIcon from '@mui/icons-material/CallMadeOutlined';
-import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import { styled } from '@mui/material/styles';
 import './DynamicTable.css';
 import { useNavigate } from 'react-router-dom';
@@ -21,12 +19,21 @@ import editIcon from '../../assets/editIcon.png';
 import bin from '../../assets/bin.png';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { useDispatch } from 'react-redux';
-import { activeDeactiveWOLCategory } from '../../redux/features/coachingTools/wol/wolSlice';
-import { openScheduleSession } from '../../redux/features/taModule/taScheduling';
+import { activeDeactiveWOLCategory } from '../../redux/features/adminModule/coachingTools/wol/wolSlice';
+import { openScheduleSession } from '../../redux/features/adminModule/ta/taScheduling';
 
-import { updateTA } from '../../redux/features/taModule/taSlice';
-import { updateCoach } from '../../redux/features/CoachModule/coachSlice';
-import { openCoachScheduleSession } from '../../redux/features/CoachModule/coachSchedule';
+import { updateTA } from '../../redux/features/adminModule/ta/taSlice';
+import { updateCoach } from '../../redux/features/adminModule/coach/coachSlice';
+import { openCoachScheduleSession } from '../../redux/features/adminModule/coach/coachSchedule';
+import AssessmentDialog from '../../pages/MODULE/coachModule/AssessmentDialog';
+import {
+    deleteTaMapping,
+    showTAMapping,
+} from '../../redux/features/adminModule/ta/taSlice';
+import {
+    deleteCoachMapping,
+    showCoachMapping,
+} from '../../redux/features/adminModule/coach/coachSlice';
 
 const DynamicTable = ({
     headers,
@@ -42,8 +49,10 @@ const DynamicTable = ({
     );
 
     const [currentPage, setCurrentPage] = useState(1);
+    const [assessmentModalOpen, setassessmentModalOpen] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
     const [modalData, setModalData] = useState(null);
+    const [assessmentData, setAssessmentData] = useState([]);
 
     useEffect(() => {
         setData(
@@ -69,6 +78,17 @@ const DynamicTable = ({
     };
 
     const handleDelete = id => {
+        console.log('COMPONENTNAME : ', componentName);
+        if (componentName === 'TAMAPPING') {
+            dispatch(deleteTaMapping(id)).then(() => {
+                dispatch(showTAMapping());
+            });
+        } else if (componentName === 'COACHMAPPING') {
+            dispatch(deleteCoachMapping(id)).then(() => {
+                dispatch(showCoachMapping());
+            });
+        }
+
         console.log('Deleting item with id:', id);
     };
 
@@ -96,9 +116,37 @@ const DynamicTable = ({
             }
         } else if (componentName === 'MYSTUDENTS') {
             const item = data.find(item => item.id === id);
-            setModalData(item);
-            setModalOpen(true);
-            //navigate(`/student_details/${id}`);
+            // setModalData(item);
+            // setModalOpen(true);
+            navigate(`/student_details/${id}`);
+        } else if (componentName === 'ASSESSMENT') {
+            const dummyAssessmentData = [
+                {
+                    name: 'Assessment 1',
+                    status: 'Completed',
+                    source: 'Wheel of Life',
+                },
+                {
+                    name: 'Assessment 2',
+                    status: 'Completed',
+                    source: 'Wheel of Life',
+                },
+                {
+                    name: 'Assessment 3',
+                    status: 'In Progress',
+                    source: 'Core Values',
+                },
+                {
+                    name: 'Assessment 4',
+                    status: 'Not Attempted',
+                    source: 'Core Values II',
+                },
+            ];
+
+            if (type === 'view report') {
+                setAssessmentData(dummyAssessmentData);
+                setassessmentModalOpen(true);
+            }
         } else {
             if (componentName === 'COACHMAPPING') {
                 if (type === 'students') {
@@ -120,29 +168,35 @@ const DynamicTable = ({
         }
     };
 
-    const handleToggle = id => {
+    const handleToggle = (id, event) => {
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
         const updatedData = data.map(item =>
             item.id === id
                 ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
                 : item
         );
         setData(updatedData);
-        const toggleButton = actionButtons.find(
-            action => action.type === 'switch'
-        );
-        if (toggleButton && toggleButton.onChange) {
-            toggleButton.onChange(id);
-        }
+        // const toggleButton = actionButtons.find(
+        //     action => action.type === 'switch'
+        // );
+        // if (toggleButton && toggleButton.onChange) {
+        //     toggleButton.onChange(id);
+        // }
 
         const toggledItem = updatedData.find(item => item.id === id);
         const requestData = { is_active: toggledItem.is_active };
 
         switch (componentName) {
             case 'MANAGETA':
-                dispatch(updateTA({ id, data: requestData }));
+             
+                // dispatch(updateTA({ id, data: requestData }));
+               
                 break;
             case 'MANAGECOACH':
-                dispatch(updateCoach({ id, data: requestData }));
+                // dispatch(updateCoach({ id, data: requestData }));
                 break;
             case 'WOLCATEGORY':
                 console.log('WOL Categories : ', id, requestData);
@@ -507,6 +561,13 @@ const DynamicTable = ({
                 />
             </div>
             {/* Modal Component */}
+            {assessmentModalOpen && (
+                <AssessmentDialog
+                    open={assessmentModalOpen}
+                    onClose={() => setassessmentModalOpen(false)}
+                    assessmentData={assessmentData}
+                />
+            )}
             <Modal
                 open={modalOpen}
                 onClose={handleCloseModal}

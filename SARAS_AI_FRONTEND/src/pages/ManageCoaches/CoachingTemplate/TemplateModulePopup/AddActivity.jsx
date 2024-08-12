@@ -10,7 +10,7 @@ import {
     closeTemplateActivityPopup,
     createCoachTemplateActivity,
     getCoachTemplateModuleId,
-} from '../../../../redux/features/CoachModule/CoachTemplateSlice';
+} from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
 
 // Custom button component for consistent styling
 const CustomButton = ({
@@ -178,7 +178,7 @@ const AddActivity = () => {
                                     value: 'Close Activity',
                                     label: 'Close Activity',
                                 },
-                                { value: 'No Points', label: 'No Penalty' },
+                                { value: 'No Points', label: 'No Points' },
                                 { value: 'No Effect', label: 'No Effect' },
                             ]}
                         />

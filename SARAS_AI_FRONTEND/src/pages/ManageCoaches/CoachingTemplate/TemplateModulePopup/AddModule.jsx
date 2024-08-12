@@ -7,7 +7,7 @@ import {
     createCoachTemplateModule,
     getAllCoachTemplateModules,
     getCoachTemplateModuleId,
-} from '../../../../redux/features/CoachModule/CoachTemplateSlice';
+} from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
 import { useDispatch, useSelector } from 'react-redux';
 
 const CustomButton = ({

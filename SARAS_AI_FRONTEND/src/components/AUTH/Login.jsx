@@ -7,7 +7,7 @@ import useAuth from '../Hooks/useAuth';
 const LOGIN_URL = 'http://34.100.233.67:8080/api/login';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { login } from '../../redux/features/auth/loginSlice';
+import { login } from '../../redux/features/auth/authSlice';
 
 const Login = () => {
     const { setAuth } = useAuth();

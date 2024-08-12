@@ -3,10 +3,7 @@ import Header from '../../components/Header/Header';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-    getCoachAssignBatches,
-    getAssignStudents,
-} from '../../redux/features/CoachModule/coachSlice';
+import { getCoachAssignBatches } from '../../redux/features/adminModule/coach/coachSlice';
 import AdminDataTable from '../../components/CommonComponent/AdminDataTable';
 const headers = ['Sr. No.', 'Batch Name', 'Branch', 'Actions'];
 const actionButtons = [
@@ -54,7 +51,7 @@ const AssignCoachBatches = () => {
             <AdminDataTable
                 headers={headers}
                 initialData={CoachAssignBatchesData}
-                title="Assign Batches"
+                title="Assigned Batches"
                 actionButtons={actionButtons}
                 ta_id={id}
                 dispatch={dispatch}

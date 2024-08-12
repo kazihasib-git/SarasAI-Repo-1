@@ -8,15 +8,13 @@ import Header from '../../components/Header/Header';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { AssignedBatchesData } from '../../fakeData/AssignedBatchesData';
 import bin from '../../assets/bin.png';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     deleteAssignedBatch,
     getAssignBatches,
     toggleAssignBatchStatus,
-} from '../../redux/features/taModule/taSlice';
-import AdminDataTable from '../../components/CommonComponent/AdminDataTable';
+} from '../../redux/features/adminModule/ta/taSlice';
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
     borderRadius: '50px',
@@ -145,8 +143,9 @@ const DynamicTable = ({
     const handleDelete = (id, ta_id) => {
         // Implement delete functionality here
         console.log('Deleting item with id:', id);
-        dispatch(deleteAssignedBatch({ id }));
-        dispatch(getAssignBatches(ta_id));
+        dispatch(deleteAssignedBatch({ id })).then(() => {
+            dispatch(getAssignBatches(ta_id));
+        });
     };
 
     const handleNavigate = path => {
@@ -346,7 +345,6 @@ const actionButtons = [
 
 const AssignBatches = () => {
     const { id } = useParams();
-    console.log('c', id);
     const dispatch = useDispatch();
     const { assignedBatches, loading } = useSelector(state => state.taModule);
     const [taAssignBatchesData, setTaAssignBatchesData] = useState([]);
@@ -356,6 +354,8 @@ const AssignBatches = () => {
             dispatch(getAssignBatches(id));
         }
     }, [dispatch, id]);
+
+    console.log('assigned Batches');
 
     useEffect(() => {
         if (assignedBatches && assignedBatches.length > 0) {

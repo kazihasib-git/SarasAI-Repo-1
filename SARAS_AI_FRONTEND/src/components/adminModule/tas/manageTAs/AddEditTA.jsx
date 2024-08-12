@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { IconButton, InputAdornment } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useForm, Controller } from 'react-hook-form';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './AddEdit.css';
@@ -11,7 +13,9 @@ import {
     Grid,
     DialogActions,
     Divider,
+    TextField,
 } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
 import AssignStudents from '../../AssignStudents';
 import AssignBatches from '../../AssignBatches';
 import CustomFormControl from '../../../CustomFields/CustomFromControl';
@@ -31,17 +35,19 @@ import {
     openSuccessPopup,
     updateTA,
     accessTaName,
-} from '../../../../redux/features/taModule/taSlice';
+} from '../../../../redux/features/adminModule/ta/taSlice';
 import SubmitPopup from '../../SubmitPopup';
 import dayjs from 'dayjs';
 import AvatarInput from '../../../CustomFields/AvatarInput';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
-import { getTimezone } from '../../../../redux/features/timezone/timezoneSlice';
+import { getTimezone } from '../../../../redux/features/utils/utilSlice';
 import CustomTimeZoneForm from '../../../CustomFields/CustomTimeZoneForm';
 import { dateFormatter } from '../../../../utils/dateFormatter';
 import CustomDateOfBirth from '../../../CustomFields/CustomDateOfBirth';
+
 const AddEditTA = ({ data }) => {
+    console.log('DATA :', data);
     const {
         register,
         handleSubmit,
@@ -52,25 +58,26 @@ const AddEditTA = ({ data }) => {
     } = useForm({
         defaultValues: {
             gender: '',
-            time_zone: '',
+            timezone_id: null,
             highest_qualification: '',
             date_of_birth: null,
         },
     });
 
     const [selectedImage, setSelectedImage] = useState(null);
-    const [dateOfBirth, setDateOfBirth] = useState(null);
-    const [phoneNumber, setPhoneNumber] = useState('');
+    const [isEditingDescription, setIsEditingDescription] = useState(false);
+    const [editableDescription, setEditableDescription] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
 
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
     const dispatch = useDispatch();
     const { successPopup, assignStudentOpen, assignBatchOpen } = useSelector(
         state => state.taModule
     );
-    const { timezones } = useSelector(state => state.timezone);
+    const { timezones } = useSelector(state => state.util);
 
-    useEffect(() => {
-        dispatch(getTimezone());
-    }, [dispatch]);
     useEffect(() => {
         dispatch(getTimezone());
     }, [dispatch]);
@@ -82,13 +89,17 @@ const AddEditTA = ({ data }) => {
     }, [data]);
 
     const populateForm = data => {
-        const formattedDate = moment(data.date_of_birth).format('YYYY-MM-DD');
-        setDateOfBirth(formattedDate);
+        // formattedDate = moment(data.date_of_birth).format('YYYY-MM-DD');
         dispatch(accessTaName(data));
 
         if (data.profile_picture) {
             const blobUrl = base64ToBlobUrl(data.profile_picture);
+            console.log('url', blobUrl);
             setSelectedImage(blobUrl);
+        }
+
+        if (data.description) {
+            setEditableDescription(data.description);
         }
 
         const formValues = {
@@ -99,22 +110,18 @@ const AddEditTA = ({ data }) => {
             address: data.address,
             pincode: data.pincode,
             phone: data.phone,
-            time_zone: data.time_zone,
+            timezone_id: data.timezone_id,
             gender: data.gender,
             email: data.email,
-            date_of_birth: formattedDate,
+            date_of_birth: data.date_of_birth,
             highest_qualification: data.highest_qualification,
             about_me: data.about_me,
+            description: data.description,
         };
 
         Object.entries(formValues).forEach(([key, value]) =>
             setValue(key, value)
         );
-        Object.entries(formValues).forEach(([key, value]) =>
-            setValue(key, value)
-        );
-
-        // setPhoneNumber(data.phone);
     };
 
     const base64ToBlobUrl = base64Data => {
@@ -135,37 +142,36 @@ const AddEditTA = ({ data }) => {
         dispatch(openAssignBatches());
     };
 
+    const handleDescriptionChange = event => {
+        setEditableDescription(event.target.value);
+    };
+
+    const handleSaveDescription = () => {
+        setIsEditingDescription(false);
+        setValue('description', editableDescription);
+    };
+
     const onSubmit = async formData => {
-        // setTAName(formData.name);
-
-        const { email, time_zone, ...updatedFormData } = formData;
-
         console.log('formData :', formData);
 
-        updatedFormData.date_of_birth = dateOfBirth;
-
-        if (selectedImage) {
+        if (selectedImage && selectedImage.startsWith('data:image/')) {
             const base64Data = selectedImage.replace(
                 /^data:image\/(png|jpeg|jpg);base64,/,
                 ''
             );
-            updatedFormData.profile_picture = base64Data;
+            formData.profile_picture = base64Data;
         }
 
         try {
             if (data) {
+                const { email, phone, ...updatedFormData } = formData;
                 const updateRes = await dispatch(
                     updateTA({ id: data.id, data: updatedFormData })
                 ).unwrap();
-                console.log('UPDATE RES : ', updateRes);
                 dispatch(openSuccessPopup());
                 dispatch(accessTaName(updateRes));
             } else {
-                updatedFormData.email = email;
-                updatedFormData.time_zone = time_zone;
-                const createRes = await dispatch(
-                    createTA(updatedFormData)
-                ).unwrap();
+                const createRes = await dispatch(createTA(formData)).unwrap();
                 dispatch(openSuccessPopup());
                 dispatch(accessTaName(createRes.ta));
             }
@@ -175,13 +181,6 @@ const AddEditTA = ({ data }) => {
     };
 
     const nameValue = watch('name', '');
-    const aboutMeValue = watch('about_me', '');
-
-    const handleDateChange = (date, field) => {
-        const formattedDate = date ? moment(date).format('YYYY-MM-DD') : '';
-        setDateOfBirth(formattedDate);
-        field.onChange(formattedDate);
-    };
 
     return (
         <Box m={'20px'}>
@@ -207,7 +206,7 @@ const AddEditTA = ({ data }) => {
                                             backgroundColor: 'white',
                                             color: '#F56D3B',
                                             height: '60px',
-                                            width: '194px',
+                                            width: '220px',
                                             border: '2px solid #F56D3B',
                                             borderRadius: '50px',
                                             textTransform: 'none',
@@ -249,7 +248,10 @@ const AddEditTA = ({ data }) => {
                         </>
                     ) : (
                         <Grid item xs>
-                            <Typography variant="h4" sx={{ mb: 4 }}>
+                            <Typography
+                                variant="h4"
+                                sx={{ mb: 4, fontFamily: 'ExtraLight' }}
+                            >
                                 Create TA
                             </Typography>
                         </Grid>
@@ -267,49 +269,87 @@ const AddEditTA = ({ data }) => {
                 }}
             >
                 <form onSubmit={handleSubmit(onSubmit)} noValidate>
-                    <Box display="flex " alignItems="center" mb={4}>
-                        <AvatarInput
-                            name="x_picture"
-                            selectedImage={selectedImage}
-                            setSelectedImage={setSelectedImage}
-                        />
-                        <Box ml={4}>
-                            <Typography
-                                variant="h5"
-                                sx={{
-                                    fontSize: '24px',
-                                    fontWeight: '600',
-                                    font: 'Nunito Sans',
-                                    color: '#1A1E3D',
-                                }}
-                            >
-                                {nameValue || 'Name of the TA'}
-                            </Typography>
-                            <Typography
-                                variant="body2"
-                                sx={{
-                                    fontSize: '16px',
-                                    fontWeight: '400',
-                                    mb: 4,
-                                    color: '#5F6383',
-                                    font: 'Nunito Sans',
-                                }}
-                            >
-                                {aboutMeValue || 'Short Description'}
-                            </Typography>
-                            {/* <CustomTextField
-                label="Short Description"
-                name="short_description"
-                placeholder="Enter About TA"
-                register={register}
-                validation={{ required: "About Me is required" }}
-                errors={errors}
-                multiline
-                rows={2}
-                sx={{ width: "400px" }}
-              /> */}
+                    <Box mb={4}>
+                        <Box display="flex" alignItems="center" mb={2}>
+                            <AvatarInput
+                                name="x_picture"
+                                selectedImage={selectedImage}
+                                setSelectedImage={setSelectedImage}
+                            />
+                            <Box ml={4} display="flex" flexDirection="column">
+                                <Box display="flex" alignItems="center" gap={2}>
+                                    <Typography
+                                        variant="h5"
+                                        sx={{
+                                            fontSize: '24px',
+                                            fontWeight: '600',
+                                            font: 'Nunito Sans',
+                                            color: '#1A1E3D',
+                                        }}
+                                    >
+                                        {nameValue || 'Name of the TA'}
+                                    </Typography>
+
+                                    <Button
+                                        variant="contained"
+                                        onClick={() =>
+                                            setIsEditingDescription(
+                                                !isEditingDescription
+                                            )
+                                        }
+                                        sx={{
+                                            backgroundColor: '#F56D3B',
+                                            color: 'white',
+                                            borderRadius: '20px',
+                                            textTransform: 'none',
+                                            height: '32px',
+                                            minWidth: 'auto',
+                                            padding: '0 16px',
+                                        }}
+                                    >
+                                        <EditIcon />
+                                        Edit
+                                    </Button>
+                                </Box>
+
+                                {isEditingDescription ? (
+                                    <Box mt={2}>
+                                        <CustomTextField
+                                            fullWidth
+                                            multiline
+                                            rows={2}
+                                            name="description"
+                                            value={editableDescription}
+                                            onChange={handleDescriptionChange}
+                                            placeholder="sort description..."
+                                        />
+                                        <Button
+                                            variant="contained"
+                                            onClick={handleSaveDescription}
+                                            sx={{
+                                                mt: 2,
+                                                backgroundColor: '#F56D3B',
+                                                color: 'white',
+                                                borderRadius: '20px',
+                                                textTransform: 'none',
+                                                height: '32px',
+                                                minWidth: 'auto',
+                                                padding: '0 16px',
+                                            }}
+                                        >
+                                            Save
+                                        </Button>
+                                    </Box>
+                                ) : (
+                                    <Typography variant="body1" sx={{ mt: 2 }}>
+                                        {editableDescription ||
+                                            'Short Description'}
+                                    </Typography>
+                                )}
+                            </Box>
                         </Box>
                     </Box>
+
                     <Divider
                         sx={{ mt: 2, mb: 4, border: '1px solid #C2C2E7' }}
                     />
@@ -364,6 +404,7 @@ const AddEditTA = ({ data }) => {
                                     },
                                 }}
                                 errors={errors}
+                                //disabled={!isEditing}
                             />
                         </Grid>
 
@@ -372,7 +413,7 @@ const AddEditTA = ({ data }) => {
                                 <CustomTextField
                                     label="Password"
                                     name="password"
-                                    type="password"
+                                    type={showPassword ? 'text' : 'password'}
                                     placeholder="Enter Password"
                                     register={register}
                                     validation={{
@@ -394,6 +435,28 @@ const AddEditTA = ({ data }) => {
                                         },
                                     }}
                                     errors={errors}
+                                    InputProps={{
+                                        endAdornment: (
+                                            <InputAdornment>
+                                                <IconButton
+                                                    onClick={
+                                                        togglePasswordVisibility
+                                                    }
+                                                >
+                                                    {showPassword ? (
+                                                        <VisibilityOff />
+                                                    ) : (
+                                                        <Visibility />
+                                                    )}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        ),
+                                        style: {
+                                            height: '60px',
+                                            borderRadius: '50px',
+                                            padding: '18px 2px',
+                                        },
+                                    }}
                                 />
                             </Grid>
                         )}
@@ -464,21 +527,41 @@ const AddEditTA = ({ data }) => {
 
                         <Grid item xs={12} sm={6} md={4}>
                             <Controller
-                                name="time_zone"
+                                name="timezone_id"
+                                placeholder="Time Zone"
                                 control={control}
                                 rules={{ required: 'TimeZone is required' }}
-                                render={({ field }) => {
-                                    return (
-                                        <CustomTimeZoneForm
-                                            label="Time Zone"
-                                            name="time_zone"
-                                            value={field.value}
-                                            onChange={field.onChange}
-                                            errors={errors}
-                                            options={timezones}
-                                        />
-                                    );
-                                }}
+                                render={({ field }) => (
+                                    <CustomTimeZoneForm
+                                        label="Time Zone"
+                                        name="timezone_id"
+                                        placeholder="Time Zone"
+                                        value={field.value}
+                                        onChange={field.onChange}
+                                        errors={errors}
+                                        options={timezones}
+                                    />
+                                )}
+                            />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6} md={4}>
+                            <Controller
+                                name="gender"
+                                placeholder="Gender"
+                                control={control}
+                                rules={{ required: 'Gender is required' }}
+                                render={({ field }) => (
+                                    <CustomFormControl
+                                        label="Gender"
+                                        name="gender"
+                                        placeholder="Gender"
+                                        value={field.value}
+                                        onChange={field.onChange}
+                                        errors={errors}
+                                        options={genders}
+                                    />
+                                )}
                             />
                         </Grid>
 
@@ -490,38 +573,18 @@ const AddEditTA = ({ data }) => {
                                     <CustomDateOfBirth
                                         label="Date of Birth"
                                         name="date_of_birth"
-                                        value={dateOfBirth}
-                                        onChange={date =>
-                                            handleDateChange(date, field)
-                                        }
+                                        value={field.value}
+                                        onChange={field.onChange}
                                         error={!!errors.date_of_birth}
                                         helperText={
                                             errors.date_of_birth?.message
                                         }
-                                        sx={{ width: '100%' }}
+                                        sx={{ width: '100%' }} // Ensure full width
                                     />
                                 )}
                                 rules={{
                                     required: 'Date of Birth is required',
                                 }}
-                            />
-                        </Grid>
-
-                        <Grid item xs={12} sm={6} md={4}>
-                            <Controller
-                                name="gender"
-                                control={control}
-                                rules={{ required: 'Gender is required' }}
-                                render={({ field }) => (
-                                    <CustomFormControl
-                                        label="Gender"
-                                        name="gender"
-                                        value={field.value}
-                                        onChange={field.onChange}
-                                        errors={errors}
-                                        options={genders}
-                                    />
-                                )}
                             />
                         </Grid>
 
@@ -644,18 +707,13 @@ const AddEditTA = ({ data }) => {
                             fontSize: '16px',
                             fontWeight: '700px',
                             text: '#FFFFFF',
+                            textTransform: 'none',
                         }}
                     >
                         Submit
                     </Button>
                 </form>
 
-                {/* <ReusableDialog
-          open={successPopup}
-          handleClose={() => dispatch(closeSuccessPopup())}
-          title= {`${taName} successfully created.`}
-          actions={actions}
-        /> */}
                 {successPopup && <SubmitPopup componentname={'ADDEDITTA'} />}
                 {assignStudentOpen && (
                     <AssignStudents componentname={'ADDEDITTA'} />

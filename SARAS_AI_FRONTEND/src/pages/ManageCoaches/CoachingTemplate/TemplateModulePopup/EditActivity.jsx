@@ -17,7 +17,7 @@ import {
     updateEditActivity,
     getAllCoachTemplateModules,
     getAllCoachTemplates,
-} from '../../../../redux/features/CoachModule/CoachTemplateSlice';
+} from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
 
 const CustomButton = ({
     onClick,
@@ -197,7 +197,7 @@ const AddEditActivity = () => {
                         <MenuItem value={'Close Activity'}>
                             Close Activity
                         </MenuItem>
-                        <MenuItem value={'No Points'}>No Penalty</MenuItem>
+                        <MenuItem value={'No Points'}>No Points</MenuItem>
                         <MenuItem value={'No Effect'}>No Effect</MenuItem>
                     </Select>
                 </FormControl>
@@ -224,12 +224,14 @@ const AddEditActivity = () => {
                         module_id: editActivityData.module_id,
                     },
                 })
-            );
+            ).then(() => {
+                dispatch(getCoachTemplateModuleId(selectedCoachTemplate));
+            });
         } else {
             // Create new activity
             dispatch(createCoachTemplateActivity(data));
         }
-
+        console.log('Selectedcoachtemplate', selectedCoachTemplate);
         dispatch(getAllCoachTemplateModules(selectedCoachTemplate));
         dispatch(getAllCoachTemplates());
         dispatch(closeEditActivityPopup());

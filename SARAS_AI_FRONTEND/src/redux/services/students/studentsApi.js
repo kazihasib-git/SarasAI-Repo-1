@@ -6,7 +6,8 @@ export const studentsApi = createApi({
     baseQuery: fetchBaseQuery({ baseUrl }),
     endpoints: builder => ({
         getStudents: builder.query({
-            query: () => `/admin/students`,
+            query: () =>
+                `/admin/student-batch-mapping/getAllStudentWithBatches`,
         }),
     }),
 });

@@ -11,16 +11,18 @@ const CustomTimeZoneForm = ({
     label,
     name,
     value,
+    placeholder,
     onChange,
     errors,
     options,
     disabled,
 }) => {
     const hasError = !!errors[name];
-    // console.log("label", label , name , value )
+
     return (
         <FormControl variant="outlined" disabled={disabled} fullWidth>
             <InputLabel
+                shrink
                 style={{ margin: 0 }}
                 sx={{
                     color: hasError ? 'red' : '#1A1E3D',
@@ -30,6 +32,7 @@ const CustomTimeZoneForm = ({
                     '&.MuiFormLabel-filled': {
                         color: hasError ? 'red' : '#1A1E3D', // Change label color when the field is filled
                     },
+                    backgroundColor: 'white',
                 }}
             >
                 {label}
@@ -38,6 +41,7 @@ const CustomTimeZoneForm = ({
                 label={label}
                 name={name}
                 value={value}
+                placeholder={placeholder}
                 onChange={onChange}
                 error={!!errors[name]}
                 disabled={disabled}
@@ -65,7 +69,7 @@ const CustomTimeZoneForm = ({
                 }}
             >
                 {options.map(option => (
-                    <MenuItem key={option.country} value={option.utc_offset}>
+                    <MenuItem key={option.id} value={option.id}>
                         {option.time_zone}
                     </MenuItem>
                 ))}

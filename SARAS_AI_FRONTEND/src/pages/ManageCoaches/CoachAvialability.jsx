@@ -1,6 +1,6 @@
 import { Box, Button, InputBase, Typography, useTheme } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { getTodayCoachAvailability } from '../../redux/features/CoachModule/CoachAvailabilitySlice';
+import { getTodayCoachAvailability } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import { useEffect, useState } from 'react';
 import Header from '../../components/Header/Header';
 import Sidebar from '../../components/Sidebar/Sidebar';

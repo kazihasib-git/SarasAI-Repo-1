@@ -3,61 +3,33 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     closeReasonForLeave,
+    fetchTAScheduleById,
+    fetchTaSlots,
     reasonForLeave,
-} from '../../redux/features/taModule/taAvialability';
-import { closeCoachReasonForLeave } from '../../redux/features/CoachModule/CoachAvailabilitySlice';
-
+} from '../../redux/features/adminModule/ta/taAvialability';
+import {
+    closeCoachReasonForLeave,
+    fetchCoachScheduleById,
+    fetchCoachSlots,
+    reasonForCoachLeave,
+} from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import CustomTextField from '../CustomFields/CustomTextField';
 import ReusableDialog from '../CustomFields/ReusableDialog';
-import {
-    closeReasonForLeavePopup,
-    reasonForCoachMenuLeave,
-} from '../../redux/features/coach/coachmenuprofileSilce';
-
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                padding: '10px 20px',
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
+import { useParams } from 'react-router-dom';
+import CustomButton from '../CustomFields/CustomButton';
 
 const ReasonForLeave = ({ componentName }) => {
     const dispatch = useDispatch();
+    const { id, name } = useParams();
 
     let reasonForLeaveOpenKey,
         closeReasonForLeaveAction,
         markLeaveKey,
         slotEventKey,
         reasonForLeaveAction,
-        sliceName;
+        sliceName,
+        getSlotsApi,
+        getSessionApi;
 
     switch (componentName) {
         case 'TACALENDER':
@@ -66,33 +38,22 @@ const ReasonForLeave = ({ componentName }) => {
             closeReasonForLeaveAction = closeReasonForLeave;
             markLeaveKey = 'markLeaveData';
             slotEventKey = 'slotEventData';
-            reasonForLeaveAction = 'reasonForLeave';
+            reasonForLeaveAction = reasonForLeave;
+            getSlotsApi = fetchTaSlots;
+            getSessionApi = fetchTAScheduleById;
             break;
+
         case 'COACHCALENDER':
             sliceName = 'coachAvailability';
             reasonForLeaveOpenKey = 'reasonForCoachLeaveOpen'; // Adjust based on your actual key
             closeReasonForLeaveAction = closeCoachReasonForLeave;
             markLeaveKey = 'markLeaveData';
-            slotEventKey = 'slotEventData';
-            reasonForLeaveAction = '';
-            break;
-        case 'COACHMENU_CALENDER':
-            sliceName = 'coachMenu';
-            reasonForLeaveOpenKey = 'reasonForLeavePopup';
-            closeReasonForLeaveAction = closeReasonForLeavePopup;
-            markLeaveKey = 'markForLeaveData';
-            slotEventKey = 'scheduledSessionForLeaveData';
-            reasonForLeaveAction = reasonForCoachMenuLeave;
+            slotEventKey = 'slotCoachEventData';
+            reasonForLeaveAction = reasonForCoachLeave;
+            getSlotsApi = fetchCoachSlots;
+            getSessionApi = fetchCoachScheduleById;
             break;
 
-        case 'TAMENU_CALENDER':
-            sliceName = 'taMenu';
-            reasonForLeaveOpenKey = null;
-            closeReasonForLeaveAction = null;
-            markLeaveKey = null;
-            slotEventKey = null;
-            reasonForLeaveAction = null;
-            break;
         default:
             sliceName = null;
             reasonForLeaveOpenKey = null;
@@ -100,6 +61,8 @@ const ReasonForLeave = ({ componentName }) => {
             markLeaveKey = null;
             slotEventKey = null;
             reasonForLeaveAction = null;
+            getSlotsApi = null;
+            getSessionApi = null;
             break;
     }
 
@@ -112,6 +75,7 @@ const ReasonForLeave = ({ componentName }) => {
     );
 
     console.log('slots EVENT Details', slotEventDetails);
+    console.log('markLeaveData :', markLeaveData);
 
     const handleSubmit = () => {
         if (slotEventDetails && slotEventDetails.length > 0) {
@@ -153,18 +117,19 @@ const ReasonForLeave = ({ componentName }) => {
                 data: slots.map(slot => slot),
             };
 
-            console.log('SLOT EVENT DATA: ', requestBody);
-            if (sliceName === 'coachMenu') {
-                const { id, ...details } = requestBody;
-                dispatch(reasonForCoachMenuLeave(details));
-            } else {
-                dispatch(reasonForLeaveAction(requestBody));
-            }
-
+            dispatch(reasonForLeaveAction(requestBody)).then(() => {
+                dispatch(getSlotsApi(id));
+                dispatch(getSessionApi(id));
+            });
             dispatch(closeReasonForLeaveAction());
         } else {
             console.log('No slots selected, opening reason for leave');
-            dispatch(reasonForLeaveAction(markLeaveData));
+            console.log('mark leave data', markLeaveData);
+
+            dispatch(reasonForLeaveAction(markLeaveData)).then(() => {
+                dispatch(getSlotsApi(id));
+                dispatch(getSessionApi(id));
+            });
             dispatch(closeReasonForLeaveAction());
         }
     };

@@ -1,7 +1,14 @@
 import React, { useState } from 'react';
 import Profile from '../../../assets/profile.png';
+import { useDispatch } from 'react-redux';
+import { logout } from '../../../redux/features/auth/authSlice';
 function NavAvator() {
     const [isOnline, setIsOnline] = useState(true);
+    const dispatch = useDispatch();
+
+    const handleLogout = () => {
+        dispatch(logout());
+    };
 
     return (
         <li className="nav-item dropdown pe-3">
@@ -89,6 +96,7 @@ function NavAvator() {
                     <a
                         href="#"
                         className="dropdown-item d-flex align-items-center"
+                        onClick={handleLogout}
                     >
                         <i className="bi bi-box-arrow-right"></i>
                         <span>Sign Out</span>

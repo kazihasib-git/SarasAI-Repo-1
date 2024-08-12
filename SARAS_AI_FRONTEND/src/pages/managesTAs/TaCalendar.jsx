@@ -13,7 +13,9 @@ import {
     fetchTAScheduleById,
     selectTAScheduleData,
     openCreateNewSlots,
-} from '../../redux/features/taModule/taAvialability';
+    fetchTaSlots,
+    openDeleteTaSlots,
+} from '../../redux/features/adminModule/ta/taAvialability';
 import { useDispatch, useSelector } from 'react-redux';
 import Slots from '../../components/availability/Slots';
 import ScheduledSessions from '../../components/availability/ScheduledSessions';
@@ -24,12 +26,19 @@ import { useParams } from 'react-router-dom';
 import {
     getTAScheduledSessions,
     openScheduleSession,
-} from '../../redux/features/taModule/taScheduling';
+} from '../../redux/features/adminModule/ta/taScheduling';
 import Schedule from '../../components/availability/Schedule';
 import EditBatches from '../../components/availability/EditBatches';
 import EditStudents from '../../components/availability/EditStudents';
 import Header from '../../components/Header/Header';
 import Sidebar from '../../components/Sidebar/Sidebar';
+import ScheduleSession from '../../components/availability/ScheduleSession';
+import EditStudentsFromSession from '../../components/availability/EditStudentsFromSession';
+import EditBatchesFromSession from '../../components/availability/EditBatchesFromSession';
+
+import { convertFromUTC } from '../../utils/dateAndtimeConversion';
+import { timezoneIdToName } from '../../utils/timezoneIdToName';
+import { getTimezone } from '../../redux/features/utils/utilSlice';
 
 const CustomButton = ({
     onClick,
@@ -65,13 +74,13 @@ const CustomButton = ({
         </Button>
     );
 };
-
+const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
 const TaCalender = () => {
+    const { timezones } = useSelector(state => state.util);
+
     const dispatch = useDispatch();
     const { id, name } = useParams();
-
-    const [deleteFutureSlots, setDeleteFutureSlots] = useState(false);
-
+    
     const {
         slotData,
         scheduleData,
@@ -83,6 +92,10 @@ const TaCalender = () => {
         resheduleSessionOpen,
         createNewSlotOpen,
         scheduledSlotsData,
+        deletingCoachFutureSlots,
+        openEventData,
+        taEditScheduledStudents,
+        taEditScheduledBatches,
     } = useSelector(state => state.taAvialability);
 
     const {
@@ -97,42 +110,120 @@ const TaCalender = () => {
     const [slotViewData, setSlotViewData] = useState([]);
 
     useEffect(() => {
-        dispatch(fetchCoachSlots(id));
+        dispatch(getTimezone());
+    }, [dispatch]);
+
+    useEffect(() => {
+        dispatch(fetchTaSlots(id));
         dispatch(fetchTAScheduleById(id));
     }, [dispatch]);
 
     useEffect(() => {
-        if (scheduleData && scheduleData.data) {
-            const transformedEvents = scheduleData.data.map(event => ({
-                title: event.meeting_name,
-                start: new Date(
-                    event.date.split(' ')[0] + 'T' + event.start_time
-                ),
-                end: new Date(event.date.split(' ')[0] + 'T' + event.end_time),
-            }));
-            setEventsList(transformedEvents);
-        } else {
-            setEventsList([]);
-        }
-    }, [scheduleData]);
+        const convertEvents = async () => {
+            if (scheduleData && scheduleData.length > 0 && storedTimezoneId) {
+                const timezonename = timezoneIdToName(
+                    storedTimezoneId,
+                    timezones
+                );
+                if (!timezonename) {
+                    console.error('Invalid timezone name');
+                    setEventsList([]);
+                    return;
+                }
+                try {
+                    const transformedEvents = await Promise.all(
+                        scheduleData.data.map(async event => {
+                            const localTime = await convertFromUTC({
+                                start_date: event.date.split(' ')[0],
+                                start_time: event.start_time,
+                                end_time: event.end_time,
+                                end_date: event.date.split(' ')[0],
+                                timezonename,
+                            });
+                            console.log(
+                                'Converted Local Schedule Time:',
+                                localTime
+                            );
+                            return {
+                                id: event.id,
+                                admin_user_id: event.admin_user_id,
+                                meetingName: event.meeting_name,
+                                meetingId: event.meeting_id,
+                                platformId: event.platform_id,
+                                start: new Date(
+                                    `${localTime.start_date}T${localTime.start_time}`
+                                ),
+                                end: new Date(
+                                    `${localTime.end_date}T${localTime.end_time}`
+                                ),
+                                platform_tools: event.platform_tool_details,
+                                platform_meet: event.platform_meeting_details,
+                            };
+                        })
+                    );
+                    setEventsList(transformedEvents);
+                } catch (error) {
+                    console.error('Error converting events:', error);
+                    setEventsList([]); // Reset to empty array on error
+                }
+            } else {
+                setEventsList([]);
+            }
+        };
+
+        convertEvents();
+    }, [scheduleData, timezones, storedTimezoneId]);
 
     useEffect(() => {
-        if (slotData.data && slotData.data.length > 0) {
-            const transformedSlots = slotData.data.map(slot => ({
-                startDate: new Date(slot.slot_date + 'T' + slot.from_time),
-                endDate: new Date(slot.slot_date + 'T' + slot.to_time),
-            }));
-            setSlotViewData(transformedSlots);
-        } else {
-            setSlotViewData([]);
-        }
-    }, [slotData]);
+        const convertSlots = async () => {
+            if (
+                slotData &&
+                slotData.length > 0 &&
+                timezones &&
+                storedTimezoneId
+            ) {
+                const timezonename = timezoneIdToName(
+                    storedTimezoneId,
+                    timezones
+                );
+                try {
+                    const transformedSlots = await Promise.all(
+                        slotData.map(async slot => {
+                            const localTime = await convertFromUTC({
+                                start_date: slot.slot_date,
+                                start_time: slot.from_time,
+                                end_time: slot.to_time,
+                                end_date: slot.slot_end_date,
+                                timezonename,
+                            });
 
-    // console.log("slotData", slotData, "scheduleData", scheduleData);
+                            return {
+                                startDate: new Date(
+                                    `${localTime.start_date}T${localTime.start_time}`
+                                ),
+                                endDate: new Date(
+                                    `${localTime.end_date}T${localTime.end_time}`
+                                ),
+                                leave: slot?.leaves,
+                            };
+                        })
+                    );
+                    setSlotViewData(transformedSlots);
+                } catch (error) {
+                    console.error('Error converting slots:', error);
+                    setSlotViewData([]); // Reset to empty array on error
+                }
+            } else {
+                setSlotViewData([]);
+            }
+        };
+
+        convertSlots();
+    }, [slotData, timezones, storedTimezoneId]);
+
+    console.log('transformedSlots :', slotViewData);
 
     const handleScheduleNewSession = () => {
-        // console.log("Pressed")
-        // setSheduleNewSession()
         dispatch(openScheduleSession({ id, name }));
     };
 
@@ -141,14 +232,15 @@ const TaCalender = () => {
     };
 
     const handleDeleteFutureSlots = () => {
-        setDeleteFutureSlots(true);
+        const data = { id, name };
+        dispatch(openDeleteTaSlots(data));
     };
 
     const handleCreateNewSlot = () => {
         dispatch(openCreateNewSlots());
     };
 
-    // console.log("session", scheduleData);
+    console.log('SlotViewData', slotViewData);
     // console.log("sessiond data", scheduleData.data);
 
     return (
@@ -209,6 +301,9 @@ const TaCalender = () => {
                                         style={{ textTransform: 'none' }}
                                     >
                                         {/* <AddCircleOutlineIcon /> */}
+                                        <AddCircleOutlineIcon
+                                            sx={{ marginRight: 1 }}
+                                        />
                                         Create New Slot
                                     </CustomButton>
                                 </Box>
@@ -230,7 +325,6 @@ const TaCalender = () => {
                     {openEditStudent && (
                         <EditStudents componentname={'TASCHEDULE'} />
                     )}
-                    {/*{sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} componentName={"TACALENDER"} />} */}
                     {markLeaveOpen && (
                         <MarkLeave
                             id={id}
@@ -273,17 +367,20 @@ const TaCalender = () => {
                             componentName={'TACALENDER'}
                         />
                     )}
-                    {deleteFutureSlots && (
-                        <DeleteAllSlots
-                            open={deleteFutureSlots}
-                            handleClose={() => setDeleteFutureSlots(false)}
-                            id={id}
-                            name={name}
-                            componentName={'TACALENDER'}
-                        />
+                    {deletingCoachFutureSlots && (
+                        <DeleteAllSlots componentName={'TACALENDER'} />
                     )}
                     {createNewSlotOpen && (
                         <CreateNewSlot componentName={'TACALENDER'} />
+                    )}
+                    {openEventData && (
+                        <ScheduleSession componentName={'TACALENDER'} />
+                    )}
+                    {taEditScheduledStudents && (
+                        <EditStudentsFromSession componentName={'TACALENDER'} />
+                    )}
+                    {taEditScheduledBatches && (
+                        <EditBatchesFromSession componentName={'TACALENDER'} />
                     )}
                 </Box>
             </Box>

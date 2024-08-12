@@ -61,10 +61,12 @@ td {
 td {
     /* border-bottom: 1px solid #C2C2E7; */
     /* border-bottom-width: 90%; */
+    font-family: 'Nohemi', sans-serif;
+    font-weight: 550; /* Updated font weight */
     padding: 10px;
-    font-family: 'Light';
+    /* font-family: 'Light'; */
     letter-spacing: 0.8px;
-    font-size: 16px;
+    font-size: 18px;
 }
 
 .custom-button {

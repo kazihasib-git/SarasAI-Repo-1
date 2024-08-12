@@ -14,59 +14,15 @@ import {
     getScheduleSession,
     openReasonForLeave,
     openScheduledSession,
-} from '../../redux/features/taModule/taAvialability';
-
+} from '../../redux/features/adminModule/ta/taAvialability';
 import {
     closeCoachCancelSession,
     getCoachScheduleSession,
     openCoachScheduledSession,
-} from '../../redux/features/CoachModule/CoachAvailabilitySlice';
-
-import { cancelScheduledSession } from '../../redux/features/taModule/taScheduling';
-
-import { cancelCoachScheduledSession } from '../../redux/features/CoachModule/coachSchedule';
-import {
-    cancelScheduledSessionForLeave,
-    closeCancelSessionForLeave,
-    getSessionForLeave,
-    openCancelSessionForLeave,
-    openScheduledSessionForLeave,
-} from '../../redux/features/coach/coachmenuprofileSilce';
-
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                padding: '10px 20px',
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
+} from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
+import { cancelScheduledSession } from '../../redux/features/adminModule/ta/taScheduling';
+import { cancelCoachScheduledSession } from '../../redux/features/adminModule/coach/coachSchedule';
+import CustomButton from '../CustomFields/CustomButton';
 
 const CancelSchedule = ({ componentName }) => {
     const dispatch = useDispatch();
@@ -86,9 +42,9 @@ const CancelSchedule = ({ componentName }) => {
                 (closeSessionAction = closeCancelSession);
             cancelSessionAction = cancelScheduledSession;
             getSessionAction = getScheduleSession;
-            (eventSlotData = 'slotEventData'),
-                (cancelScheduledData = 'schduldeCancelData'),
-                (openSessionAction = openScheduledSession);
+            eventSlotData = 'slotEventData';
+            cancelScheduledData = 'schduldeCancelData';
+            openSessionAction = openScheduledSession;
             cancelSessionState = 'cancelSessionOpen';
             break;
 
@@ -101,28 +57,6 @@ const CancelSchedule = ({ componentName }) => {
             cancelScheduledData = 'schduldeCoachCancelData';
             openSessionAction = openCoachScheduledSession;
             cancelSessionState = 'cancelCoachSessionOpen';
-            break;
-
-        case 'COACHMENU_CALENDER':
-            sliceName = 'coachMenu';
-            closeSessionAction = closeCancelSessionForLeave;
-            cancelSessionAction = cancelScheduledSessionForLeave;
-            getSessionAction = getSessionForLeave;
-            (eventSlotData = 'slotsEventDataForLeave'),
-                (cancelScheduledData = 'sessionsEventDataForLeave'),
-                (openSessionAction = openScheduledSessionForLeave);
-            cancelSessionState = 'cancelSessionOnLeave';
-            break;
-
-        case 'TAMENU_CALENDER':
-            sliceName = 'taMenu';
-            closeSessionAction = '';
-            cancelSessionAction = '';
-            getSessionAction = '';
-            eventSlotData = '';
-            cancelScheduledData = '';
-            openSessionAction = '';
-            cancelSessionState = '';
             break;
 
         default:
@@ -143,12 +77,6 @@ const CancelSchedule = ({ componentName }) => {
         [eventSlotData]: slotEventData,
     } = schedulingState;
 
-    console.log(
-        'scheduleCande Data : ',
-        schduldeCancelData,
-        'slotEventData :',
-        slotEventData
-    );
     // For coachAvailability specific data
     const {
         cancelCoachSessionOpen,
@@ -159,8 +87,6 @@ const CancelSchedule = ({ componentName }) => {
     console.log('schduldeCancelData ', schduldeCancelData, slotEventData);
 
     const handleCancel = () => {
-        // console.log("SLOT EVENT DATA : ", slotEventData)
-        // console.log("SLOT COACH EVENT DATA : ", slotCoachEventData)
         dispatch(closeSessionAction());
         const sessionData = schduldeCancelData;
 
@@ -213,7 +139,7 @@ const CancelSchedule = ({ componentName }) => {
                 style={{ display: 'flex', justifyContent: 'center' }}
             >
                 <Typography>
-                    Scheduled for
+                    Scheduled for &nbsp;
                     {schduldeCancelData.Date} from {schduldeCancelData.Time}{' '}
                 </Typography>
             </DialogContent>
@@ -225,7 +151,7 @@ const CancelSchedule = ({ componentName }) => {
             open={cancelSessionState}
             handleClose={() => {
                 dispatch(closeSessionAction());
-                dispatch(openSessionAction());
+                //dispatch(openSessionAction());
             }}
             title="Are you sure that you want to cancel the session"
             content={content}

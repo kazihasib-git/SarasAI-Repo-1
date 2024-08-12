@@ -1,77 +1,22 @@
 import React, { useState } from 'react';
-import {
-    DialogContent,
-    Grid,
-    TextField,
-    Button,
-    IconButton,
-} from '@mui/material';
-import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import CloseIcon from '@mui/icons-material/Close';
+import { Grid, Button } from '@mui/material';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import CustomDateField from '../CustomFields/CustomDateField';
 import { toast } from 'react-toastify';
-import Slots from './Slots';
-
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import { useParams } from 'react-router-dom';
-
 import {
     openScheduledSlots,
     closeMarkLeave,
     getSlots,
-} from '../../redux/features/taModule/taAvialability';
-
+} from '../../redux/features/adminModule/ta/taAvialability';
 import {
     openCoachScheduledSlots,
     closeCoachMarkLeave,
     getCoachSlots,
-} from '../../redux/features/CoachModule/CoachAvailabilitySlice';
-import {
-    closeMarkLeavePopup,
-    getCoachMenuSlotsByData,
-    getSlotsForLeave,
-    openMarkLeavePopup,
-    openScheduledSessionForLeave,
-    openSlotsForLeave,
-} from '../../redux/features/coach/coachmenuprofileSilce';
-
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                padding: '10px 20px',
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
+} from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
+import CustomButton from '../CustomFields/CustomButton';
 
 const MarkLeave = ({ componentName }) => {
     const { id: taId } = useParams(); // Ensure taId is correctly extracted
@@ -103,24 +48,6 @@ const MarkLeave = ({ componentName }) => {
             openAvailableSlotsAction = openCoachScheduledSlots;
             closeMarkLeaveAction = closeCoachMarkLeave;
             getSlotsAction = getCoachSlots;
-            break;
-
-        case 'COACHMENU_CALENDER':
-            (sliceName = 'coachMenu'),
-                (scheduleSessionOpenKey = 'createCoachLeavePopup');
-            schedulingStateKey = 'coachMenu';
-            openAvailableSlotsAction = openSlotsForLeave;
-            closeMarkLeaveAction = closeMarkLeavePopup;
-            getSlotsAction = getSlotsForLeave;
-            break;
-
-        case 'TAMENU_CALENDER':
-            sliceName = 'taMenu';
-            scheduleSessionOpenKey = '';
-            schedulingStateKey = 'taMenu';
-            openAvailableSlotsAction = '';
-            closeMarkLeaveAction = '';
-            getSlotsAction = '';
             break;
 
         default:
@@ -177,6 +104,7 @@ const MarkLeave = ({ componentName }) => {
                 .catch(error => {
                     console.error('Failed to fetch scheduled slots:', error);
                     dispatch(openAvailableSlotsAction(leaveData));
+                    dispatch(closeMarkLeaveAction());
                 });
         }
     };
@@ -192,14 +120,14 @@ const MarkLeave = ({ componentName }) => {
                 textAlign: 'center',
             }}
         >
-            <Grid item xs={12} sm={6}>
+           <Grid item xs={12} sm={6} sx={{ pr: 2 }}>
                 <CustomDateField
                     label="From Date"
                     value={fromDate}
                     onChange={setFromDate}
                 />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={6} sx={{ pl: 2 }}>
                 <CustomDateField
                     label="To Date"
                     value={toDate}
