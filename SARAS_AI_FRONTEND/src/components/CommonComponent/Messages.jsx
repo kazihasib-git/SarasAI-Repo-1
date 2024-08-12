@@ -11,7 +11,7 @@ import filterIcon from '../../assets/filtericon1.svg';
 //import SearchIcon from '@mui/icons-material/Search';
 //import NotificationsIcon from '@mui/icons-material/Notifications';
 import PaperclipIcon from '../../assets/paperclip.svg';
-import VoiceIcon from '../../assets/voice.svg';
+import VoiceIcon from '../../assets/voice1.svg';
 import SendButtonIcon from '../../assets/sendbutton.svg';
 import NotificationIcon from '../../assets/NotificationIcon.svg';
 import SearchIcon from '../../assets/messagesearchicon.svg';
@@ -34,13 +34,12 @@ import {
     Divider,
 } from '@mui/material';
 
-
 const initialChatData = [
     { sender: 'me', text: 'Hi, This is sample chat' },
     { sender: 'other', text: 'There is some problem in getting the data' },
 ];
 
-const Messages = ({role}) => {
+const Messages = ({ role }) => {
     const dispatch = useDispatch();
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedUser, setselectedUser] = useState(null);
@@ -50,7 +49,6 @@ const Messages = ({role}) => {
     const [chatUserMapping, setchatUserMappingData] = useState([]);
     const [currentChatId, setcurrentChatId] = useState(0);
 
-
     const {
         coachProfileData,
         assignedCoachStudents,
@@ -59,9 +57,7 @@ const Messages = ({role}) => {
         createdChatId,
     } = useSelector(state => state.coachMenu);
 
-    const {
-        assignedTaStudents
-    } = useSelector(state => state.taMenu);
+    const { assignedTaStudents } = useSelector(state => state.taMenu);
 
     // Handle search input change
     const handleSearchChange = event => {
@@ -74,22 +70,26 @@ const Messages = ({role}) => {
     );
 
     // Handle student selection
-    const handleUserClick = async (user) => {
+    const handleUserClick = async user => {
         setselectedUser(user);
-        if(role === 'coach' || role === 'ta') {
-            console.log("chat-mapping===>", chatUserMapping);
-            if (chatUserMapping.every(mappedUser => mappedUser.id !== user.id)) {
+        if (role === 'coach' || role === 'ta') {
+            console.log('chat-mapping===>', chatUserMapping);
+            if (
+                chatUserMapping.every(mappedUser => mappedUser.id !== user.id)
+            ) {
                 let data = {
-                    "chat_name" : coachProfileData.name + "-" + user.name
-                }
+                    chat_name: coachProfileData.name + '-' + user.name,
+                };
                 console.log(data);
-                await dispatch(createChatForTaCoach({role:role,data:data}));
-                console.log("new chat id===>>",currentChatId);
-            }else{
-                console.log("currect chat id==>", user.chat_id );
+                await dispatch(
+                    createChatForTaCoach({ role: role, data: data })
+                );
+                console.log('new chat id===>>', currentChatId);
+            } else {
+                console.log('currect chat id==>', user.chat_id);
                 setcurrentChatId(user.chat_id);
             }
-        } 
+        }
     };
 
     // Handle message input change
@@ -102,14 +102,14 @@ const Messages = ({role}) => {
         if (newMessage.trim()) {
             setMessages([...messages, { sender: 'me', text: newMessage }]);
             let data = null;
-            if(role === 'coach' || role === 'ta') {
+            if (role === 'coach' || role === 'ta') {
                 data = {
-                    "chat_id" : currentChatId,
-                    "message_text" : newMessage,
-                    "sender_type" : "AdminUsers"
-                }
+                    chat_id: currentChatId,
+                    message_text: newMessage,
+                    sender_type: 'AdminUsers',
+                };
             }
-            dispatch(sentMessage({role:role,data:data}));
+            dispatch(sentMessage({ role: role, data: data }));
             setNewMessage('');
         }
     };
@@ -117,19 +117,24 @@ const Messages = ({role}) => {
     useEffect(() => {
         const setUserToChat = async () => {
             if (role === 'coach' || role === 'ta') {
-                if(selectedUser !== null){
+                if (selectedUser !== null) {
                     setcurrentChatId(createdChatId);
                     const data = {
-                        "chat_id" : createdChatId,
-                        "users" : [{
-                            "user_id" : selectedUser['id'],
-                            "user_type" : "Student"
-                        }]
-                    }
+                        chat_id: createdChatId,
+                        users: [
+                            {
+                                user_id: selectedUser['id'],
+                                user_type: 'Student',
+                            },
+                        ],
+                    };
                     console.log(selectedUser['id']);
-                    console.log("data to add user to chat", data);
-                    await dispatch(addUserToChat({role:role,data:data}));
-                    console.log('new chat id created and updated',createdChatId);
+                    console.log('data to add user to chat', data);
+                    await dispatch(addUserToChat({ role: role, data: data }));
+                    console.log(
+                        'new chat id created and updated',
+                        createdChatId
+                    );
                 }
             }
         };
@@ -140,9 +145,14 @@ const Messages = ({role}) => {
     useEffect(() => {
         const fetchChatData = async () => {
             if (currentChatId) {
-                console.log("Current Chat ID updated:", currentChatId);
+                console.log('Current Chat ID updated:', currentChatId);
                 if (role === 'coach' || role === 'ta') {
-                    await dispatch(getChatRecordsByChatId({role:role,chatId:currentChatId}));
+                    await dispatch(
+                        getChatRecordsByChatId({
+                            role: role,
+                            chatId: currentChatId,
+                        })
+                    );
                 }
             }
         };
@@ -152,14 +162,18 @@ const Messages = ({role}) => {
     useEffect(() => {
         let reformedChatData = [];
         if (role === 'coach' || role === 'ta') {
-            console.log("chat records===>", chatRecordsbychatId);
-            let chatmessagesData = chatRecordsbychatId["chat_messages"];
+            console.log('chat records===>', chatRecordsbychatId);
+            let chatmessagesData = chatRecordsbychatId['chat_messages'];
             console.log(chatmessagesData);
 
             if (chatmessagesData !== undefined) {
                 for (let i = 0; i < chatmessagesData.length; i++) {
                     let chatData = {
-                        sender: chatmessagesData[i].sender_type === "Modules\\Admin\\Models\\AdminUsers" ? 'me' : 'other',
+                        sender:
+                            chatmessagesData[i].sender_type ===
+                            'Modules\\Admin\\Models\\AdminUsers'
+                                ? 'me'
+                                : 'other',
                         text: chatmessagesData[i].message_text,
                     };
                     reformedChatData.push(chatData);
@@ -172,9 +186,10 @@ const Messages = ({role}) => {
     }, [chatRecordsbychatId]);
 
     useEffect(() => {
-        if ( role === 'coach' || role === 'ta' ) {
+        if (role === 'coach' || role === 'ta') {
             let reformedStudentData = [];
-            let assignedTaCoachStudents = role === 'coach' ? assignedCoachStudents : assignedTaStudents;
+            let assignedTaCoachStudents =
+                role === 'coach' ? assignedCoachStudents : assignedTaStudents;
             for (let i = 0; i < assignedTaCoachStudents.length; i++) {
                 let student = {
                     id: assignedTaCoachStudents[i]['student'].id,
@@ -182,7 +197,7 @@ const Messages = ({role}) => {
                     profilePic: profilePic,
                     status: 'Online',
                     lastSeen: '2m',
-                    lastMessage : '',
+                    lastMessage: '',
                 };
                 reformedStudentData.push(student);
             }
@@ -190,26 +205,29 @@ const Messages = ({role}) => {
             // console.log('taCoachAllChatData', taCoachAllChatData);
             let reformedMappingData = [];
             for (let i = 0; i < taCoachAllChatData.length; i++) {
-                const lastMessage = taCoachAllChatData[i]['chat_messages'].length > 0 
-                    ? taCoachAllChatData[i]['chat_messages'][taCoachAllChatData[i]['chat_messages'].length - 1].message_text 
-                    : 'No Message';
-                let Data  = {
-                    id : taCoachAllChatData[i]['students'][0].id,
-                    name : taCoachAllChatData[i]['students'][0].name,
-                    profilePic : profilePic,
-                    status : 'Online',
-                    lastSeen : '2m',
-                    chat_id : taCoachAllChatData[i].id,
-                    lastMessage : lastMessage.length > 15 
-                    ? lastMessage.slice(0, 14) + '...' 
-                    : lastMessage,
-                }
+                const lastMessage =
+                    taCoachAllChatData[i]['chat_messages'].length > 0
+                        ? taCoachAllChatData[i]['chat_messages'][
+                              taCoachAllChatData[i]['chat_messages'].length - 1
+                          ].message_text
+                        : 'No Message';
+                let Data = {
+                    id: taCoachAllChatData[i]['students'][0].id,
+                    name: taCoachAllChatData[i]['students'][0].name,
+                    profilePic: profilePic,
+                    status: 'Online',
+                    lastSeen: '2m',
+                    chat_id: taCoachAllChatData[i].id,
+                    lastMessage:
+                        lastMessage.length > 15
+                            ? lastMessage.slice(0, 14) + '...'
+                            : lastMessage,
+                };
                 reformedMappingData.push(Data);
             }
             setchatUserMappingData(reformedMappingData);
         }
-
-    },[assignedTaStudents,assignedCoachStudents, taCoachAllChatData]);
+    }, [assignedTaStudents, assignedCoachStudents, taCoachAllChatData]);
 
     // console.log('chatUserMapping', chatUserMapping);
 
@@ -258,7 +276,11 @@ const Messages = ({role}) => {
                         usersToDisplay.map(user => (
                             <div
                                 key={user.id}
-                                className= {user.id === selectedUser?.id ? "chat-item-active" : "chat-item"}
+                                className={
+                                    user.id === selectedUser?.id
+                                        ? 'chat-item-active'
+                                        : 'chat-item'
+                                }
                                 onClick={() => handleUserClick(user)}
                             >
                                 <img
@@ -274,9 +296,7 @@ const Messages = ({role}) => {
                                         {user.lastMessage}
                                     </div>
                                 </div>
-                                <div className="last-seen">
-                                    {user.lastSeen}
-                                </div>
+                                <div className="last-seen">{user.lastSeen}</div>
                             </div>
                         ))
                     ) : (
@@ -304,8 +324,11 @@ const Messages = ({role}) => {
                             height="80px"
                             p={2}
                             sx={{
-                                backgroundColor: '#f6f6f8',
+                                // backgroundColor: '#f6f6f8',
+                                backgroundColor: '#ffffff',
                                 borderRadius: '0 10px 10px 0',
+
+                                // borderLeft: '1px solid #C2C2E7', // Add this line
                             }}
                         >
                             <Box display="flex" alignItems="center" flex="1">
@@ -315,16 +338,26 @@ const Messages = ({role}) => {
                                     className="profile-pic"
                                     style={{ width: '40px', height: '40px' }}
                                 />
-                                <Box ml={2}>
+                                <Box ml={2} className="status-container">
                                     <Typography variant="h6">
                                         {selectedUser.name}
                                     </Typography>
-                                    <Typography
-                                        variant="body2"
-                                        color="textSecondary"
-                                    >
-                                        {selectedUser.status}
-                                    </Typography>
+                                    <Box display="flex" alignItems="center">
+                                        <div
+                                            className={`status-indicator ${
+                                                selectedUser.status === 'Online'
+                                                    ? 'online'
+                                                    : ''
+                                            }`}
+                                        />
+                                        <Typography
+                                            variant="body2"
+                                            color="textSecondary"
+                                            sx={{ ml: 1 }} // margin-left for spacing
+                                        >
+                                            {selectedUser.status}
+                                        </Typography>
+                                    </Box>
                                 </Box>
                             </Box>
                             <IconButton className="notification-icon">
@@ -388,6 +421,15 @@ const Messages = ({role}) => {
                                 sx={{
                                     borderRadius: '20px',
                                     marginRight: '10px',
+                                    flexGrow: 1,
+                                    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline':
+                                        {
+                                            borderColor: 'rgba(0, 0, 0, 0.23)',
+                                        },
+                                    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline':
+                                        {
+                                            borderColor: 'rgba(0, 0, 0, 0.23)',
+                                        },
                                 }}
                             />
                             <div className="chat-input-icons">

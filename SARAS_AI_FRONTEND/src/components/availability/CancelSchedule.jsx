@@ -38,8 +38,8 @@ const CancelSchedule = ({ componentName }) => {
 
     switch (componentName) {
         case 'TACALENDER':
-            sliceName = 'taAvialability',
-            closeSessionAction = closeCancelSession;
+            (sliceName = 'taAvialability'),
+                (closeSessionAction = closeCancelSession);
             cancelSessionAction = cancelScheduledSession;
             getSessionAction = getScheduleSession;
             eventSlotData = 'slotEventData';

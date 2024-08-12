@@ -39,7 +39,7 @@ const CustomButton = ({
     sx,
     ...props
 }) => {
-    return (    
+    return (
         <Button
             variant="contained"
             onClick={onClick}

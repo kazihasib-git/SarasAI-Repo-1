@@ -4,10 +4,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getCoachMenuSessionForLeave } from '../../../../redux/features/coachModule/coachmenuprofileSilce';
 import { getTaMenuSessionForLeave } from '../../../../redux/features/taModule/tamenuSlice';
 import PopUpTable from '../../../CommonComponent/PopUpTable';
-import { closeCreatedSlots, openCreatedSessions, openSessionPopup } from '../../../../redux/features/commonCalender/commonCalender';
+import {
+    closeCreatedSlots,
+    openCreatedSessions,
+    openSessionPopup,
+} from '../../../../redux/features/commonCalender/commonCalender';
 import ReusableDialog from '../../../CustomFields/ReusableDialog';
 import CustomButton from '../../../CustomFields/CustomButton';
-
 
 const headers = ['S. No.', 'Date', 'Slot Time', 'Select'];
 

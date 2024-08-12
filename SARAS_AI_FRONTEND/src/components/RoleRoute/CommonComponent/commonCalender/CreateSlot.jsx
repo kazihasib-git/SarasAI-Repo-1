@@ -37,11 +37,11 @@ const weekDays = [
     'Saturday',
 ];
 
-const timezone = Number(localStorage.getItem('timezone_id'))
+const timezone = Number(localStorage.getItem('timezone_id'));
 
 const CreateSlot = ({ componentName }) => {
     console.log('component Name :', componentName);
-    console.log('timezone', timezone)
+    console.log('timezone', timezone);
 
     let createSlotApi, getSlotsApi;
 
@@ -135,7 +135,7 @@ const CreateSlot = ({ componentName }) => {
             slot_date: formData.fromDate,
             from_time: formData.fromTime,
             to_time: formData.toTime,
-            timezone_id : formData.timezone_id,
+            timezone_id: formData.timezone_id,
             end_date:
                 formData.repeat === 'recurring'
                     ? formData.toDate
@@ -149,7 +149,7 @@ const CreateSlot = ({ componentName }) => {
         });
     };
 
-    console.log('formData', formData.timezone_id)
+    console.log('formData', formData.timezone_id);
 
     const content = (
         <Box
@@ -347,11 +347,11 @@ const CreateSlot = ({ componentName }) => {
             <CustomButton
                 onClick={() => dispatch(closeCreateNewSlot())}
                 style={{
-                    backgroundColor : "white",
-                    color :"#F56D3B",
-                    borderColor : "#F56D3B",
-                    textTransform :'none',
-                    fontFamily : 'Bold'
+                    backgroundColor: 'white',
+                    color: '#F56D3B',
+                    borderColor: '#F56D3B',
+                    textTransform: 'none',
+                    fontFamily: 'Bold',
                 }}
             >
                 Back
@@ -360,13 +360,12 @@ const CreateSlot = ({ componentName }) => {
                 type="submit"
                 onClick={handleSubmit}
                 style={{
-                    backgroundColor : "#F56D3B",
-                    color : "white",
-                    borderColor :"#F56D3B",
-                    textTransform : 'none',
-                    fontFamily : 'Bold'
+                    backgroundColor: '#F56D3B',
+                    color: 'white',
+                    borderColor: '#F56D3B',
+                    textTransform: 'none',
+                    fontFamily: 'Bold',
                 }}
-                
             >
                 Submit
             </CustomButton>

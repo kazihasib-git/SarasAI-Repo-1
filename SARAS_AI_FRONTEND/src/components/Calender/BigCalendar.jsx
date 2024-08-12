@@ -17,6 +17,10 @@ moment.locale('en-GB');
 const localizer = momentLocalizer(moment);
 const allViews = Object.keys(Views).map(k => Views[k]);
 
+const formats = {
+    timeGutterFormat: 'h:mm A', // Time format with AM/PM
+};
+
 const CustomEvent = ({ event }) => {
     return (
         <div
@@ -47,17 +51,17 @@ const CustomEvent = ({ event }) => {
                 style={{
                     fontSize: '0.9em',
                     color: '#28a745',
-                    backgroundColor: 'white',
-                    borderRadius: '5px',
+                    // backgroundColor: 'white',
+                    // borderRadius: '5px',
                     // height: '28px',
                     // maxWidth: '200px',
                     // display: 'flex',
                     // alignItems: 'center',
                     // justifyContent: 'center',
                     // padding: '2px 5px',
-                    // flexShrink: 0, // Prevents shrinking of platform name
-                    // minWidth: '35px', // Minimum width for platform name
-                    // maxWidth: 'calc(100% - 70px)', // Ensures it doesn't exceed container width
+
+                    // minWidth: '35px',
+                    // maxWidth: 'calc(100% - 70px)',
                 }}
             >
                 {event.platformName}
@@ -110,7 +114,7 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
         dispatch(
             openPopup({
                 ...event,
-                meetingName: event.meetingName, // Ensure meetingName is included
+                meetingName: event.meetingName,
                 platformName: event.platformName,
             })
         );
@@ -181,6 +185,7 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
                     components={{
                         event: CustomEvent, // Use the custom event component
                     }}
+                    formats={formats}
                 />
             </div>
         </>

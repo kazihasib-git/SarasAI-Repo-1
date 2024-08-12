@@ -63,8 +63,8 @@ const EditBatches = ({ componentname }) => {
             schedulingState = useSelector(state => state.coachScheduling);
             nameKeyScheduling = 'coachName';
             idKeyScheduling = 'coachID';
-            openSchedulingPopup = openCoachScheduleSession
-            
+            openSchedulingPopup = openCoachScheduleSession;
+
             break;
 
         case 'TASCHEDULE':
@@ -203,7 +203,7 @@ const EditBatches = ({ componentname }) => {
             openSchedulingPopup({
                 id,
                 name: assignedName,
-                batches : selectedBatch.map(id => ({ id })),
+                batches: selectedBatch.map(id => ({ id })),
             })
         );
         dispatch(closeDialogAction());

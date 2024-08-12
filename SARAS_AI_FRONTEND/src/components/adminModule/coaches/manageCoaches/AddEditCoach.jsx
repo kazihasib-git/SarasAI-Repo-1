@@ -145,9 +145,8 @@ function AddEditCoach({ data }) {
         setIsEditingDescription(false);
         setValue('description', editableDescription);
     };
-    const onSubmit = async (coachData) => {
-        
-        if (selectedImage  && selectedImage.startsWith('data:image/')) {
+    const onSubmit = async coachData => {
+        if (selectedImage && selectedImage.startsWith('data:image/')) {
             const base64Data = selectedImage.replace(
                 /^data:image\/(png|jpeg|jpg);base64,/,
                 ''
@@ -406,48 +405,57 @@ function AddEditCoach({ data }) {
                             </Grid>
                             {!data && (
                                 <Grid item xs={12} sm={6} md={4}>
-                                <CustomTextField
-                                    label="Password"
-                                    name="password"
-                                    type={showPassword ? "text" : "password"}
-                                    placeholder="Enter Password"
-                                    register={register}
-                                    validation={{
-                                        required: 'Password is required',
-                                        minLength: {
-                                            value: 8,
-                                            message:
-                                                'Password must be at least 8 characters long',
-                                        },
-                                        maxLength: {
-                                            value: 20,
-                                            message:
-                                                'Password cannot exceed 20 characters',
-                                        },
-                                        pattern: {
-                                            value: /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$/,
-                                            message:
-                                                'Password must include at least one uppercase letter, one lowercase letter, one number, and one special character',
-                                        },
-                                    }}
-                                    errors={errors}
-                                    InputProps={{
-                                        endAdornment: (
-                                            <InputAdornment   >
-                                                <IconButton
-                                                    onClick={togglePasswordVisibility}
-                                                >
-                                                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                                                </IconButton>
-                                            </InputAdornment>
-                                        ),
-                                        style: {
-                                            height: '60px', borderRadius: '50px', padding: '18px 2px'  
-                                        },
-                                    }}
-                                
-                                />
-                            </Grid>
+                                    <CustomTextField
+                                        label="Password"
+                                        name="password"
+                                        type={
+                                            showPassword ? 'text' : 'password'
+                                        }
+                                        placeholder="Enter Password"
+                                        register={register}
+                                        validation={{
+                                            required: 'Password is required',
+                                            minLength: {
+                                                value: 8,
+                                                message:
+                                                    'Password must be at least 8 characters long',
+                                            },
+                                            maxLength: {
+                                                value: 20,
+                                                message:
+                                                    'Password cannot exceed 20 characters',
+                                            },
+                                            pattern: {
+                                                value: /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$/,
+                                                message:
+                                                    'Password must include at least one uppercase letter, one lowercase letter, one number, and one special character',
+                                            },
+                                        }}
+                                        errors={errors}
+                                        InputProps={{
+                                            endAdornment: (
+                                                <InputAdornment>
+                                                    <IconButton
+                                                        onClick={
+                                                            togglePasswordVisibility
+                                                        }
+                                                    >
+                                                        {showPassword ? (
+                                                            <VisibilityOff />
+                                                        ) : (
+                                                            <Visibility />
+                                                        )}
+                                                    </IconButton>
+                                                </InputAdornment>
+                                            ),
+                                            style: {
+                                                height: '60px',
+                                                borderRadius: '50px',
+                                                padding: '18px 2px',
+                                            },
+                                        }}
+                                    />
+                                </Grid>
                             )}
                             <Grid item xs={12} sm={6} md={4}>
                                 <CustomTextField

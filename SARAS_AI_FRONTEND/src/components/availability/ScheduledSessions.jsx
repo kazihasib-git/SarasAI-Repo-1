@@ -60,7 +60,7 @@ const ScheduledSessions = ({ componentName }) => {
             openReasonAction = openReasonForLeave;
             reasonForLeaveAction = reasonForLeave;
             break;
-            
+
         case 'COACHCALENDER':
             scheduleSessionOpenKey = 'scheduledCoachSessionOpen';
             scheduledSessionDataKey = 'scheduledCoachSessionData';

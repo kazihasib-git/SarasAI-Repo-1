@@ -44,7 +44,7 @@ const weekDays = [
     'Saturday',
 ];
 
-const  CreateNewSlot = ({ componentName, timezoneID }) => {
+const CreateNewSlot = ({ componentName, timezoneID }) => {
     const { timezones } = useSelector(state => state.util);
     const taId = useParams();
     const dispatch = useDispatch();
@@ -58,7 +58,7 @@ const  CreateNewSlot = ({ componentName, timezoneID }) => {
     useEffect(() => {
         dispatch(getTimezone());
     }, [dispatch]);
-    
+
     let sliceName, timezoneId, createSlotApi, getSlotsApi;
 
     switch (componentName) {
@@ -100,11 +100,10 @@ const  CreateNewSlot = ({ componentName, timezoneID }) => {
                 return prev.filter(d => d !== day);
             } else {
                 return [...prev, day];
-            }   
+            }
         });
     };
 
- 
     const validate = () => {
         if (!fromDate) {
             toast.error('Please select From Date');
@@ -159,12 +158,24 @@ const  CreateNewSlot = ({ componentName, timezoneID }) => {
         const start_time = formData.from_time;
         const time_end = formData.to_time;
         const date_end = formData.end_date;
-        const timezonename = timezoneIdToName(formData.timezone_id,timezones);
-    
-        console.log("data to convert:", { date_slot, start_time, time_end, date_end, timezonename });
-        const utcval = await convertToUTC({ date_slot, start_time, time_end, date_end,timezonename});
-        console.log("timepass:", utcval);
-    
+        const timezonename = timezoneIdToName(formData.timezone_id, timezones);
+
+        console.log('data to convert:', {
+            date_slot,
+            start_time,
+            time_end,
+            date_end,
+            timezonename,
+        });
+        const utcval = await convertToUTC({
+            date_slot,
+            start_time,
+            time_end,
+            date_end,
+            timezonename,
+        });
+        console.log('timepass:', utcval);
+
         formData.slot_date = utcval.slot_date;
         formData.from_time = utcval.from_time;
         formData.to_time = utcval.to_time;

@@ -9,16 +9,20 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ReusableDialog from '../../../CustomFields/ReusableDialog';
 import CustomButton from '../../../CustomFields/CustomButton';
-import { closeCancelSessionPopup, openCreatedSessions } from '../../../../redux/features/commonCalender/commonCalender';
-import { cancelScheduledSessionForLeave, getCoachMenuSessionForLeave, getCoachMenuSessions } from '../../../../redux/features/coachModule/coachmenuprofileSilce';
+import {
+    closeCancelSessionPopup,
+    openCreatedSessions,
+} from '../../../../redux/features/commonCalender/commonCalender';
+import {
+    cancelScheduledSessionForLeave,
+    getCoachMenuSessionForLeave,
+    getCoachMenuSessions,
+} from '../../../../redux/features/coachModule/coachmenuprofileSilce';
 
 const CancelSession = ({ componentName }) => {
     const dispatch = useDispatch();
 
-    let sliceName,
-        cancelSessionApi,
-        getSessionsApi,
-        openCreatedSessionsPopup;
+    let sliceName, cancelSessionApi, getSessionsApi, openCreatedSessionsPopup;
     switch (componentName) {
         case 'TAMENU':
             sliceName = 'taMenu';
@@ -27,9 +31,9 @@ const CancelSession = ({ componentName }) => {
             break;
         case 'COACHMENU':
             sliceName = 'coachMenu';
-            cancelSessionApi = cancelScheduledSessionForLeave
+            cancelSessionApi = cancelScheduledSessionForLeave;
             getSessionsApi = getCoachMenuSessionForLeave;
-            openCreatedSessionsPopup =  openCreatedSessions
+            openCreatedSessionsPopup = openCreatedSessions;
             break;
         default:
             sliceName = null;
@@ -39,17 +43,17 @@ const CancelSession = ({ componentName }) => {
     }
 
     const selectState = useSelector(state => state[sliceName]);
-    const { openCancelSession, sessionCancelData, slotsLeaveData } = useSelector((state) => state.commonCalender)
+    const { openCancelSession, sessionCancelData, slotsLeaveData } =
+        useSelector(state => state.commonCalender);
 
-    console.log("slot Leave Data", slotsLeaveData)
+    console.log('slot Leave Data', slotsLeaveData);
 
     const handleCancel = () => {
         const sessionId = sessionCancelData.id;
-        dispatch(cancelSessionApi(sessionId))
-        .then(() => {
-            dispatch(getSessionsApi(slotsLeaveData))
-            dispatch(openCreatedSessionsPopup())
-        })
+        dispatch(cancelSessionApi(sessionId)).then(() => {
+            dispatch(getSessionsApi(slotsLeaveData));
+            dispatch(openCreatedSessionsPopup());
+        });
 
         dispatch(closeCancelSessionPopup());
     };

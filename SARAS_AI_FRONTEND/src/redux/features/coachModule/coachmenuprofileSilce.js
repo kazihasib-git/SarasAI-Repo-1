@@ -279,11 +279,11 @@ export const assignSessionNotes = createAsyncThunk(
 
 // All Chat apis are from here
 
-// to get all chats for a coach 
+// to get all chats for a coach
 
 export const getTaCoachAllChats = createAsyncThunk(
     'coachMenu/getAllChats',
-    async (role) => {
+    async role => {
         const response = await axiosInstance.get(
             `${baseUrl}/${role}/chat/get-my-chat`
         );
@@ -294,7 +294,7 @@ export const getTaCoachAllChats = createAsyncThunk(
 // Chat Record by chat id
 export const getChatRecordsByChatId = createAsyncThunk(
     'coachMenu/getChatRecordsByChatId',
-    async ({role,chatId}) => {
+    async ({ role, chatId }) => {
         const response = await axiosInstance.get(
             `${baseUrl}/${role}/chat/get-single-chat/${chatId}`
         );
@@ -305,35 +305,23 @@ export const getChatRecordsByChatId = createAsyncThunk(
 // create a chat
 export const createChatForTaCoach = createAsyncThunk(
     'coachMenu/createChat',
-    async ({role,data}) => {
+    async ({ role, data }) => {
         const response = await axiosInstance.post(
             `${baseUrl}/${role}/chat/create-chat`,
-            data,
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json',
-                },
-            }
+            data
         );
         return response.data;
     }
 );
 
-// add user to the chat 
+// add user to the chat
 export const addUserToChat = createAsyncThunk(
     'coachMenu/addUserToChat',
 
-    async ({role,data}) => {
+    async ({ role, data }) => {
         const response = await axiosInstance.post(
             `${baseUrl}/${role}/chat/add/users`,
-            data,
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json',
-                },
-            }
+            data
         );
         return response.data;
     }
@@ -341,21 +329,14 @@ export const addUserToChat = createAsyncThunk(
 
 export const sentMessage = createAsyncThunk(
     'coachMenu/sentMessage',
-    async ({role,data}) => {
+    async ({ role, data }) => {
         const response = await axiosInstance.post(
             `${baseUrl}/${role}/chat/sent-messages`,
-            data,
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json',
-                },
-            }
+            data
         );
         return response.data;
     }
 );
-
 
 const initialState = {
     coachProfileData: [], // Coach Profile Data
@@ -383,9 +364,9 @@ const initialState = {
     coachCallRecords: [],
     sessionNotesData: [],
 
-    taCoachAllChatData: [],  // All Chat Data
+    taCoachAllChatData: [], // All Chat Data
     chatRecordsbychatId: [], // All Chat Records by Chat Id
-    createdChatId  : {}, // new chat id
+    createdChatId: {}, // new chat id
 
     createCoachSlotsPopup: false,
     createCoachSessionPopup: false,
@@ -843,7 +824,10 @@ export const coachMenuSlice = createSlice({
         });
         builder.addCase(getChatRecordsByChatId.fulfilled, (state, action) => {
             state.loading = false;
-            console.log('Chat Records by Chat Id in slice', action.payload.data);
+            console.log(
+                'Chat Records by Chat Id in slice',
+                action.payload.data
+            );
             state.chatRecordsbychatId = action.payload.data;
         });
         builder.addCase(getChatRecordsByChatId.rejected, (state, action) => {
@@ -858,7 +842,7 @@ export const coachMenuSlice = createSlice({
         });
         builder.addCase(createChatForTaCoach.fulfilled, (state, action) => {
             state.loading = false;
-            state.createdChatId  = action.payload.data.id;
+            state.createdChatId = action.payload.data.id;
             console.log('Chat Created Successfully', action.payload.data.id);
         });
         builder.addCase(createChatForTaCoach.rejected, (state, action) => {

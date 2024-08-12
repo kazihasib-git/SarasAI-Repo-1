@@ -416,7 +416,6 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                             padding: '8px 5px',
                                                             borderBottom:
                                                                 '1px solid #e0e0e0',
-                                                              
                                                         }}
                                                     >
                                                         <AntSwitch
@@ -450,7 +449,11 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                                 )
                                                             }
                                                             className="editBtn"
-                                                            style={{ display: 'flex', alignItems: 'center' }} 
+                                                            style={{
+                                                                display: 'flex',
+                                                                alignItems:
+                                                                    'center',
+                                                            }}
                                                         >
                                                             <FontAwesomeIcon
                                                                 icon={
@@ -459,7 +462,8 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                                 className="icon" // Apply class name for icon
                                                                 style={{
                                                                     color: 'inherit',
-                                                                    marginRight: '0',
+                                                                    marginRight:
+                                                                        '0',
                                                                 }} // Inherit color from button
                                                             />
                                                             <span
@@ -469,7 +473,7 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                                         '14px',
                                                                     marginLeft:
                                                                         '0px',
-                                                                        
+
                                                                     color: 'inherit', // Inherit color from button
                                                                     textTransform:
                                                                         'none',

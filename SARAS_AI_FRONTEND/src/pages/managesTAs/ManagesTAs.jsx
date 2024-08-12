@@ -27,7 +27,7 @@ const headers = [
 
 const ManageTA = () => {
     const { timezones } = useSelector(state => state.util);
-    
+
     const dispatch = useDispatch();
     const { tas, loading, error, createTAOpen, editTAOpen } = useSelector(
         state => state.taModule
@@ -61,7 +61,7 @@ const ManageTA = () => {
     const actionButtons = [
         {
             type: 'switch',
-            onChange: (event) => {
+            onChange: event => {
                 if (event && event.preventDefault) {
                     event.preventDefault(); // Prevent any default action
                 }
@@ -79,8 +79,6 @@ const ManageTA = () => {
             // disabled: actionButtonToggled, // Disable edit button based on toggle state
         },
     ];
-    
-    
 
     const handleAddTa = () => {
         dispatch(openCreateTa());
