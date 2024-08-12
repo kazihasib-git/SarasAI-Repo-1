@@ -73,7 +73,11 @@ const PDFUploadComponent = () => {
                     </Typography>
                 )}
                 {error && (
-                    <Typography variant="body2" color="error" style={{ marginTop: '10px' }}>
+                    <Typography
+                        variant="body2"
+                        color="error"
+                        style={{ marginTop: '10px' }}
+                    >
                         {error}
                     </Typography>
                 )}

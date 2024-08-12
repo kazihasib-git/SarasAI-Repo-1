@@ -191,9 +191,8 @@ const DynamicTable = ({
 
         switch (componentName) {
             case 'MANAGETA':
-             
                 // dispatch(updateTA({ id, data: requestData }));
-               
+
                 break;
             case 'MANAGECOACH':
                 // dispatch(updateCoach({ id, data: requestData }));

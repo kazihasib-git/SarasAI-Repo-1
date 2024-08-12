@@ -44,16 +44,19 @@ const authSlice = createSlice({
         });
         builder.addCase(login.fulfilled, (state, action) => {
             state.loading = false;
-            state.userData = action.payload.admin_user;  // Update to use the correct user object
+            state.userData = action.payload.admin_user; // Update to use the correct user object
             state.login = true;
             state.role = action.payload.role;
             state.accessToken = action.payload.access_token;
             state.timezone_id = action.payload.admin_user.timezone_id;
-            
+
             localStorage.setItem('login', true);
             localStorage.setItem('accessToken', action.payload.access_token);
             localStorage.setItem('role', action.payload.role);
-            localStorage.setItem('timezone_id', action.payload.admin_user.timezone_id); // Store timezone_id
+            localStorage.setItem(
+                'timezone_id',
+                action.payload.admin_user.timezone_id
+            ); // Store timezone_id
         });
         builder.addCase(login.rejected, (state, action) => {
             state.loading = false;
@@ -71,7 +74,7 @@ const authSlice = createSlice({
             state.login = false;
             state.userData = [];
             state.timezone_id = null; // Clear timezone_id in state
-            
+
             localStorage.setItem('login', false);
             localStorage.setItem('accessToken', '');
             localStorage.setItem('role', '');
