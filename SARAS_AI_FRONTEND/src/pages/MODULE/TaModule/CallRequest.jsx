@@ -16,7 +16,7 @@ import {
     getTaCallRequests,
     approveCallRequest,
     denyCallRequest,
-} from '../../../redux/features/teachingAssistant/tamenuSlice';
+} from '../../../redux/features/taModule/tamenuSlice';
 
 import { useDispatch, useSelector } from 'react-redux';
 

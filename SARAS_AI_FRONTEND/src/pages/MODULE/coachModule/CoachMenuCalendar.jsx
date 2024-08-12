@@ -16,7 +16,7 @@ import {
     getCoachMenuSessions,
     getCoachMenuSlots,
     openMarkLeavePopup,
-} from '../../../redux/features/coach/coachmenuprofileSilce';
+} from '../../../redux/features/coachModule/coachmenuprofileSilce';
 import CreateSlot from '../../../components/RoleRoute/CommonComponent/commonCalender/CreateSlot';
 import {
     openCreateNewSlot,

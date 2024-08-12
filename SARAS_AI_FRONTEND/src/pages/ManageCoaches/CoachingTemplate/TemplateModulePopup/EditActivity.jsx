@@ -17,7 +17,7 @@ import {
     updateEditActivity,
     getAllCoachTemplateModules,
     getAllCoachTemplates,
-} from '../../../../redux/features/CoachModule/CoachTemplateSlice';
+} from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
 
 const CustomButton = ({
     onClick,

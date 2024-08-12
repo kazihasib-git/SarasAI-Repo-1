@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
     getCoachAssignBatches,
     getAssignStudents,
-} from '../../redux/features/CoachModule/coachSlice';
+} from '../../redux/features/adminModule/coach/coachSlice';
 import AdminDataTable from '../../components/CommonComponent/AdminDataTable';
 const headers = ['Sr. No.', 'Batch Name', 'Branch', 'Actions'];
 const actionButtons = [

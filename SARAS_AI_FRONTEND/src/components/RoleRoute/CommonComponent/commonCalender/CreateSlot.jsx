@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getTimezone } from '../../../../redux/features/timezone/timezoneSlice';
+import { getTimezone } from '../../../../redux/features/utils/utilSlice';
 import {
     createCoachMenuSlot,
     getCoachMenuSlots,
-} from '../../../../redux/features/coach/coachmenuprofileSilce';
+} from '../../../../redux/features/coachModule/coachmenuprofileSilce';
 import {
     createTaMenuSlots,
     getTaMenuSlots,
-} from '../../../../redux/features/teachingAssistant/tamenuSlice';
+} from '../../../../redux/features/taModule/tamenuSlice';
 import { closeCreateNewSlot } from '../../../../redux/features/commonCalender/commonCalender';
 import {
     Box,
@@ -103,7 +103,7 @@ const CreateSlot = ({ componentName }) => {
         timezone: 'Asia/Kolkata',
     });
 
-    const { timezones } = useSelector(state => state.timezone);
+    const { timezones } = useSelector(state => state.util);
     const { createNewSlotPopup } = useSelector(state => state.commonCalender);
 
     useEffect(() => {

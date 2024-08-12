@@ -15,11 +15,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
     createTaMenuSessions,
     getTaMenuSessions,
-} from '../../../../redux/features/teachingAssistant/tamenuSlice';
+} from '../../../../redux/features/taModule/tamenuSlice';
 import {
     createCoachMenuSession,
     getCoachMenuSessions,
-} from '../../../../redux/features/coach/coachmenuprofileSilce';
+} from '../../../../redux/features/coachModule/coachmenuprofileSilce';
 import {
     closeScheduleNewSession,
     openSelectBatches,
@@ -31,7 +31,7 @@ import CustomFormControl from '../../../CustomFields/CustomFromControl';
 import CustomDateField from '../../../CustomFields/CustomDateField';
 import CustomTimeField from '../../../CustomFields/CustomTimeField';
 import CustomTimeZoneForm from '../../../CustomFields/CustomTimeZoneForm';
-import { getTimezone } from '../../../../redux/features/timezone/timezoneSlice';
+import { getTimezone } from '../../../../redux/features/utils/utilSlice';
 
 const CustomButton = ({
     onClick,
@@ -105,7 +105,7 @@ const CreateSession = ({ componentName }) => {
         toDate: null,
         fromTime: null,
         toTime: null,
-        timezone: 'Asia/Kolkata',
+        timezone: '1',
         repeat: 'onetime',
         selectedDays: [],
     });
@@ -132,7 +132,7 @@ const CreateSession = ({ componentName }) => {
             break;
     }
 
-    const { timezones } = useSelector(state => state.timezone);
+    const { timezones } = useSelector(state => state.util);
     const { scheduleNewSessionPopup, students, batches } = useSelector(
         state => state.commonCalender
     );

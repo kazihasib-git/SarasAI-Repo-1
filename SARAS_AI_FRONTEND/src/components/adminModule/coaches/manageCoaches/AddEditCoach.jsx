@@ -19,7 +19,7 @@ import {
     openCoachSuccessPopup,
     updateCoach,
     accessCoachName,
-} from '../../../../redux/features/CoachModule/coachSlice';
+} from '../../../../redux/features/adminModule/coach/coachSlice';
 import AssignStudents from '../../AssignStudents';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
@@ -35,7 +35,7 @@ import {
 } from '../../../CustomFields/FormOptions';
 import Header from '../../../Header/Header';
 import Sidebar from '../../../Sidebar/Sidebar';
-import { getTimezone } from '../../../../redux/features/timezone/timezoneSlice';
+import { getTimezone } from '../../../../redux/features/utils/utilSlice';
 import CustomTimeZoneForm from '../../../CustomFields/CustomTimeZoneForm';
 import AssignBatches from '../../AssignBatches';
 import CustomDateOfBirth from '../../../CustomFields/CustomDateOfBirth';
@@ -65,7 +65,7 @@ function AddEditCoach({ data }) {
 
     const { coachSuccessPopup, assignCoachStudentOpen, assignCoachBatchOpen } =
         useSelector(state => state.coachModule);
-    const { timezones } = useSelector(state => state.timezone);
+    const { timezones } = useSelector(state => state.util);
 
     useEffect(() => {
         dispatch(getTimezone());
@@ -135,7 +135,7 @@ function AddEditCoach({ data }) {
     const onSubmit = async coachData => {
         const { email, time_zone, ...updatedFormData } = coachData;
 
-        updatedFormData.date_of_birth = dateOfBirth;
+        //updatedFormData.date_of_birth = dateOfBirth;
         // updatedFormData.phone = phoneNumber;
 
         if (selectedImage) {
@@ -154,7 +154,7 @@ function AddEditCoach({ data }) {
                 dispatch(accessCoachName(updateRes));
             } else {
                 updatedFormData.email = email;
-                updatedFormData.time_zone = time_zone;
+                updatedFormData.time_zone = 'Asia/Kolkata';
                 const createRes = await dispatch(
                     createCoach(updatedFormData)
                 ).unwrap();
@@ -670,6 +670,7 @@ function AddEditCoach({ data }) {
                                 fontSize: '16px',
                                 fontWeight: '700px',
                                 text: '#FFFFFF',
+                                textTransform: 'none',
                             }}
                         >
                             Submit

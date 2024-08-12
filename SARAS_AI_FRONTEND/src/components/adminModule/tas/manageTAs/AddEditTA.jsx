@@ -11,7 +11,9 @@ import {
     Grid,
     DialogActions,
     Divider,
+    TextField,
 } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
 import AssignStudents from '../../AssignStudents';
 import AssignBatches from '../../AssignBatches';
 import CustomFormControl from '../../../CustomFields/CustomFromControl';
@@ -31,16 +33,17 @@ import {
     openSuccessPopup,
     updateTA,
     accessTaName,
-} from '../../../../redux/features/taModule/taSlice';
+} from '../../../../redux/features/adminModule/ta/taSlice';
 import SubmitPopup from '../../SubmitPopup';
 import dayjs from 'dayjs';
 import AvatarInput from '../../../CustomFields/AvatarInput';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
-import { getTimezone } from '../../../../redux/features/timezone/timezoneSlice';
+import { getTimezone } from '../../../../redux/features/utils/utilSlice';
 import CustomTimeZoneForm from '../../../CustomFields/CustomTimeZoneForm';
 import { dateFormatter } from '../../../../utils/dateFormatter';
 import CustomDateOfBirth from '../../../CustomFields/CustomDateOfBirth';
+
 const AddEditTA = ({ data }) => {
     const {
         register,
@@ -61,16 +64,16 @@ const AddEditTA = ({ data }) => {
     const [selectedImage, setSelectedImage] = useState(null);
     const [dateOfBirth, setDateOfBirth] = useState(null);
     const [phoneNumber, setPhoneNumber] = useState('');
+    const [isEditingDescription, setIsEditingDescription] = useState(false);
+    const [editableDescription, setEditableDescription] = useState('');
+    const [editableAboutMe, setEditableAboutMe] = useState('');
 
     const dispatch = useDispatch();
     const { successPopup, assignStudentOpen, assignBatchOpen } = useSelector(
         state => state.taModule
     );
-    const { timezones } = useSelector(state => state.timezone);
+    const { timezones } = useSelector(state => state.util);
 
-    useEffect(() => {
-        dispatch(getTimezone());
-    }, [dispatch]);
     useEffect(() => {
         dispatch(getTimezone());
     }, [dispatch]);
@@ -107,21 +110,12 @@ const AddEditTA = ({ data }) => {
             about_me: data.about_me,
         };
 
-        Object.entries(formValues).forEach(([key, value]) =>
-            setValue(key, value)
-        );
-        Object.entries(formValues).forEach(([key, value]) =>
-            setValue(key, value)
-        );
-
-        // setPhoneNumber(data.phone);
+        Object.entries(formValues).forEach(([key, value]) => setValue(key, value));
     };
 
     const base64ToBlobUrl = base64Data => {
         const byteCharacters = atob(base64Data);
-        const byteNumbers = Array.from(byteCharacters, char =>
-            char.charCodeAt(0)
-        );
+        const byteNumbers = Array.from(byteCharacters, char => char.charCodeAt(0));
         const byteArray = new Uint8Array(byteNumbers);
         const blob = new Blob([byteArray], { type: 'image/jpeg' });
         return URL.createObjectURL(blob);
@@ -135,34 +129,37 @@ const AddEditTA = ({ data }) => {
         dispatch(openAssignBatches());
     };
 
-    const onSubmit = async formData => {
-        // setTAName(formData.name);
+    const handleDescriptionChange = event => {
+        setEditableDescription(event.target.value);
+    };
 
+    const handleAboutMeChange = event => {
+        setEditableAboutMe(event.target.value);
+    };
+
+    const handleSaveDescription = () => {
+        setIsEditingDescription(false);
+        setValue('about_me', editableDescription);
+    };
+
+    const onSubmit = async formData => {
         const { email, time_zone, ...updatedFormData } = formData;
 
-        console.log('formData :', formData);
-
-        updatedFormData.date_of_birth = dateOfBirth;
+        // updatedFormData.date_of_birth = dateOfBirth;
 
         if (selectedImage) {
-            const base64Data = selectedImage.replace(
-                /^data:image\/(png|jpeg|jpg);base64,/,
-                ''
-            );
+            const base64Data = selectedImage.replace(/^data:image\/(png|jpeg|jpg);base64,/, '');
             updatedFormData.profile_picture = base64Data;
         }
 
         try {
             if (data) {
-                const updateRes = await dispatch(
-                    updateTA({ id: data.id, data: updatedFormData })
-                ).unwrap();
-                console.log('UPDATE RES : ', updateRes);
+                const updateRes = await dispatch(updateTA({ id: data.id, data: updatedFormData })).unwrap();
                 dispatch(openSuccessPopup());
                 dispatch(accessTaName(updateRes));
             } else {
                 updatedFormData.email = email;
-                updatedFormData.time_zone = time_zone;
+                updatedFormData.time_zone = 'Asia/Kolkata';
                 const createRes = await dispatch(
                     createTA(updatedFormData)
                 ).unwrap();
@@ -175,7 +172,6 @@ const AddEditTA = ({ data }) => {
     };
 
     const nameValue = watch('name', '');
-    const aboutMeValue = watch('about_me', '');
 
     const handleDateChange = (date, field) => {
         const formattedDate = date ? moment(date).format('YYYY-MM-DD') : '';
@@ -195,11 +191,7 @@ const AddEditTA = ({ data }) => {
                                 </Typography>
                             </Grid>
                             <Grid item>
-                                <Box
-                                    display="flex"
-                                    justifyContent="center"
-                                    gap={2}
-                                >
+                                <Box display="flex" justifyContent="center" gap={2}>
                                     <Button
                                         variant="contained"
                                         onClick={handleAssignStudents}
@@ -207,7 +199,7 @@ const AddEditTA = ({ data }) => {
                                             backgroundColor: 'white',
                                             color: '#F56D3B',
                                             height: '60px',
-                                            width: '194px',
+                                            width: '220px',
                                             border: '2px solid #F56D3B',
                                             borderRadius: '50px',
                                             textTransform: 'none',
@@ -267,49 +259,84 @@ const AddEditTA = ({ data }) => {
                 }}
             >
                 <form onSubmit={handleSubmit(onSubmit)} noValidate>
-                    <Box display="flex " alignItems="center" mb={4}>
-                        <AvatarInput
-                            name="x_picture"
-                            selectedImage={selectedImage}
-                            setSelectedImage={setSelectedImage}
-                        />
-                        <Box ml={4}>
-                            <Typography
-                                variant="h5"
-                                sx={{
-                                    fontSize: '24px',
-                                    fontWeight: '600',
-                                    font: 'Nunito Sans',
-                                    color: '#1A1E3D',
-                                }}
-                            >
-                                {nameValue || 'Name of the TA'}
-                            </Typography>
-                            <Typography
-                                variant="body2"
-                                sx={{
-                                    fontSize: '16px',
-                                    fontWeight: '400',
-                                    mb: 4,
-                                    color: '#5F6383',
-                                    font: 'Nunito Sans',
-                                }}
-                            >
-                                {aboutMeValue || 'Short Description'}
-                            </Typography>
-                            {/* <CustomTextField
-                label="Short Description"
-                name="short_description"
-                placeholder="Enter About TA"
-                register={register}
-                validation={{ required: "About Me is required" }}
-                errors={errors}
-                multiline
-                rows={2}
-                sx={{ width: "400px" }}
-              /> */}
+                    <Box mb={4}>
+                        <Box display="flex" alignItems="center" mb={2}>
+                            <AvatarInput
+                                name="x_picture"
+                                selectedImage={selectedImage}
+                                setSelectedImage={setSelectedImage}
+                            />
+                            <Box ml={4} display="flex" flexDirection="column">
+                                <Box display="flex" alignItems="center" gap={2}>
+                                    <Typography
+                                        variant="h5"
+                                        sx={{
+                                            fontSize: '24px',
+                                            fontWeight: '600',
+                                            font: 'Nunito Sans',
+                                            color: '#1A1E3D',
+                                        }}
+                                    >
+                                        {nameValue || 'Name of the TA'}
+                                    </Typography>
+
+                                    <Button
+                                        variant="contained"
+                                        onClick={() => setIsEditingDescription(!isEditingDescription)}
+                                        sx={{
+                                            backgroundColor: '#F56D3B',
+                                            color: 'white',
+                                            borderRadius: '20px',
+                                            textTransform: 'none',
+                                            height: '32px',
+                                            minWidth: 'auto',
+                                            padding: '0 16px',
+                                        }}
+                                    >
+                                        <EditIcon />
+                                        Edit
+                                    </Button>
+                                </Box>
+
+                                {isEditingDescription ? (
+                                    <Box mt={2}>
+                                        <CustomTextField
+                                            fullWidth
+                                            multiline
+                                            rows={2}
+                                            value={editableDescription}
+                                            onChange={handleDescriptionChange}
+                                            placeholder="Add a brief description..."
+                                        />
+                                        <Button
+                                            variant="contained"
+                                            onClick={handleSaveDescription}
+                                            sx={{
+                                                mt: 2,
+                                                backgroundColor: '#F56D3B',
+                                                color: 'white',
+                                                borderRadius: '20px',
+                                                textTransform: 'none',
+                                                height: '32px',
+                                                minWidth: 'auto',
+                                                padding: '0 16px',
+                                            }}
+                                        >
+                                            Save
+                                        </Button>
+                                    </Box>
+                                ) : (
+                                    <Typography variant="body1" sx={{ mt: 2 }}>
+                                        {editableDescription || 'Short Description'}
+                                    </Typography>
+                                )}
+                            </Box>
                         </Box>
                     </Box>
+
+
+
+
                     <Divider
                         sx={{ mt: 2, mb: 4, border: '1px solid #C2C2E7' }}
                     />
@@ -490,15 +517,11 @@ const AddEditTA = ({ data }) => {
                                     <CustomDateOfBirth
                                         label="Date of Birth"
                                         name="date_of_birth"
-                                        value={dateOfBirth}
-                                        onChange={date =>
-                                            handleDateChange(date, field)
-                                        }
+                                        value={field.value}
+                                        onChange={field.onChange}
                                         error={!!errors.date_of_birth}
-                                        helperText={
-                                            errors.date_of_birth?.message
-                                        }
-                                        sx={{ width: '100%' }}
+                                        helperText={errors.date_of_birth?.message}
+                                        sx={{ width: '100%' }} // Ensure full width
                                     />
                                 )}
                                 rules={{
@@ -617,7 +640,7 @@ const AddEditTA = ({ data }) => {
                             )}
                         </Grid>
                         <Grid item xs={12}>
-                            <CustomTextField
+                        <CustomTextField
                                 label="About Me"
                                 name="about_me"
                                 placeholder="Enter About TA"
@@ -628,6 +651,8 @@ const AddEditTA = ({ data }) => {
                                 errors={errors}
                                 multiline
                                 rows={4}
+                                value={editableAboutMe}
+                                onChange={handleAboutMeChange}
                             />
                         </Grid>
                     </Grid>
@@ -644,6 +669,7 @@ const AddEditTA = ({ data }) => {
                             fontSize: '16px',
                             fontWeight: '700px',
                             text: '#FFFFFF',
+                            textTransform: 'none',
                         }}
                     >
                         Submit

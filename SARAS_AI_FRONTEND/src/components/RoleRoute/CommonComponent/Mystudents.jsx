@@ -22,10 +22,10 @@ const Mystudents = ({ role }) => {
 
     useEffect(() => {
         const dataToUse = useDummyData ? studentDummyDatadata : apiData;
-        if (dataToUse) {
-            const transformedData = dataToUse.map(item => ({
-                id: item.id,
-                Name: item.name,
+        if (apiData) {
+            const transformedData = apiData.map(item => ({
+                id: item.student_id,
+                Name: item.student_name,
                 'Activities Sceduled': '',
                 'Activities Completed': '',
                 'Due Dates Missed': '',
@@ -55,12 +55,18 @@ const Mystudents = ({ role }) => {
     const actionButtons = [
         {
             type: 'view',
+            onClick: student => {
+                navigate(`/student-detail/${student.id}`, {
+                    state: { student },
+                });
+            },
         },
     ];
     // Filter students based on the search input
-    const filteredStudents = students.filter(student =>
-        student.Name.toLowerCase().includes(input.toLowerCase())
-    );
+    const filteredStudents = students;
+    // .filter(student =>
+    //     student.Name.toLowerCase().includes(input.toLowerCase())
+    // );
 
     return (
         <>

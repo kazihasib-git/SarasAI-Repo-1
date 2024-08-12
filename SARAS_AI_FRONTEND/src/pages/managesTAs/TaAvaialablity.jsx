@@ -10,7 +10,7 @@ import Sidebar from '../../components/Sidebar/Sidebar';
 import { mockDataAvilable } from '../../fakeData/availableData';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { getTodayTaAvailability } from '../../redux/features/taModule/taAvialability';
+import { getTodayTaAvailability } from '../../redux/features/adminModule/ta/taAvialability';
 import DynamicTable from '../../components/CommonComponent/DynamicTable';
 
 const CustomButton = styled(Button)(({ theme }) => ({

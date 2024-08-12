@@ -71,18 +71,25 @@ const VideoPdfActivity = ({ activity, name, fileName}) => {
 )};
 
 // Component for Session Activity
-const SessionActivity = ({ details, name }) => (
+const SessionActivity = ({ activity, name }) => {
+
+  const {
+    formState: { errors },
+  } = useForm();
+
+
+  return(
   <Grid container justifyContent="center">
     <Grid item xs={12} sm={6} md={6} style={{ margin: '10px 0', width: '80%' }}>
         <CustomFormControl
             label="Activity Type"
             name="activityType"
             value={name}
-            options={[{ value: 'video', label: 'video'}, {value: 'pdf', label: 'pdf'}, {value: 'link', label:'link' }]}
+            options={[{ value: 'Wheel of Life', label: 'test'}, {value:'Core Value', label: 'test'}, {value:'Belief', label: 'test'}, {value: 'Virtual meet', label: 'Virtual meet'}]}
             errors={errors}
-        />
+        /> 
     </Grid>
-    <Grid item xs={12} sm={6} md={6} style={{ margin: '10px 0', width: '80%' }}>
+    {/* <Grid item xs={12} sm={6} md={6} style={{ margin: '10px 0', width: '80%' }}>
       <CustomFormControl
         label="Coach"
         value={activity.details.coach}
@@ -90,7 +97,7 @@ const SessionActivity = ({ details, name }) => (
       />
     </Grid>
     <Grid item xs={12} sm={6} md={6} style={{ margin: '10px 0', width: '80%' }}>
-      <CustomDateField label="Date" value={details.date} />
+      <CustomDateField label="Date" value={activity.details.date} />
     </Grid>
     <Grid item xs={12} sm={6} md={6} style={{ margin: '10px 0', width: '80%' }}>
       <CustomTextField
@@ -100,21 +107,21 @@ const SessionActivity = ({ details, name }) => (
       />
     </Grid>
     <Grid item xs={12} sm={6} md={6} style={{ margin: '10px 0', width: '80%' }}>
-      <CustomTextField label="To Time" value={details.toTime} type="time" />
+      <CustomTextField label="To Time" value={activity.details.toTime} type="time" />
     </Grid>
     <Grid item xs={12} sm={6} md={6} style={{ margin: '10px 0', width: '80%' }}>
       <CustomFormControl
         label="Time Zone"
-        value={details.timeZone}
+        value={activity.details.timeZone}
         options={[{ value: 'GMT+5:30', label: 'GMT+5:30' }]}
       />
-    </Grid>
+    </Grid> */}
   </Grid>
-);
+)};
 
 // Main Popup Component
 const ViewActivityPopup = ({ open, onClose, activity }) => {
-   console.log('.............',activity.type_name);
+   console.log('.............',activity);
 
   const renderContent = () => {
     switch (activity.id) { 
@@ -122,8 +129,11 @@ const ViewActivityPopup = ({ open, onClose, activity }) => {
       case 2:
       case 3:
         return <VideoPdfActivity fileName={activity} name={activity.type_name} />;
-      case 'session':
-        return <SessionActivity details={activity} />;
+      case 4:
+      case 5:
+      case 6:
+      case 7:
+        return <SessionActivity details={activity} name={activity.type_name} />;
       default:
         return null;
     }

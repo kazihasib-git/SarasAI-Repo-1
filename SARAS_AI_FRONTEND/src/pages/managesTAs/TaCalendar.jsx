@@ -15,7 +15,7 @@ import {
     openCreateNewSlots,
     fetchTaSlots,
     openDeleteTaSlots,
-} from '../../redux/features/taModule/taAvialability';
+} from '../../redux/features/adminModule/ta/taAvialability';
 import { useDispatch, useSelector } from 'react-redux';
 import Slots from '../../components/availability/Slots';
 import ScheduledSessions from '../../components/availability/ScheduledSessions';
@@ -26,7 +26,7 @@ import { useParams } from 'react-router-dom';
 import {
     getTAScheduledSessions,
     openScheduleSession,
-} from '../../redux/features/taModule/taScheduling';
+} from '../../redux/features/adminModule/ta/taScheduling';
 import Schedule from '../../components/availability/Schedule';
 import EditBatches from '../../components/availability/EditBatches';
 import EditStudents from '../../components/availability/EditStudents';
@@ -72,8 +72,6 @@ const CustomButton = ({
 const TaCalender = () => {
     const dispatch = useDispatch();
     const { id, name } = useParams();
-
-    const [deleteFutureSlots, setDeleteFutureSlots] = useState(false);
 
     const {
         slotData,
@@ -234,7 +232,6 @@ const TaCalender = () => {
                     {openEditStudent && (
                         <EditStudents componentname={'TASCHEDULE'} />
                     )}
-                    {/*{sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} componentName={"TACALENDER"} />} */}
                     {markLeaveOpen && (
                         <MarkLeave
                             id={id}

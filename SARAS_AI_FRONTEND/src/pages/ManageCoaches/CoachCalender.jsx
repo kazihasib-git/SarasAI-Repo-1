@@ -20,14 +20,14 @@ import {
     fetchCoachScheduleById,
     openCoachCreateNewSlots,
     openDeleteCoachSlots,
-} from '../../redux/features/CoachModule/CoachAvailabilitySlice';
+} from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import EditBatches from '../../components/availability/EditBatches';
 import EditStudents from '../../components/availability/EditStudents';
-import { openCoachScheduleSession } from '../../redux/features/CoachModule/coachSchedule';
+import { openCoachScheduleSession } from '../../redux/features/adminModule/coach/coachSchedule';
 import Header from '../../components/Header/Header';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Schedule from '../../components/availability/Schedule';
-import { openCreateNewSlots } from '../../redux/features/taModule/taAvialability';
+import { openCreateNewSlots } from '../../redux/features/adminModule/ta/taAvialability';
 import ScheduleSession from '../../components/availability/ScheduleSession';
 
 const CustomButton = ({

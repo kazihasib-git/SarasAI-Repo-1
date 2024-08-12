@@ -13,7 +13,7 @@ import {
     approveCallRequest,
     denyCallRequest,
     getCoachCallRequests,
-} from '../../../redux/features/coach/coachmenuprofileSilce';
+} from '../../../redux/features/coachModule/coachmenuprofileSilce';
 import { useDispatch, useSelector } from 'react-redux';
 
 const CoachCallRequest = () => {

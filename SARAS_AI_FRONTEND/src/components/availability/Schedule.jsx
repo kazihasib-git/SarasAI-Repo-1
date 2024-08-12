@@ -25,54 +25,20 @@ import {
     getTaAvailableSlotsFromDate,
     openEditBatch,
     openEditStudent,
-} from '../../redux/features/taModule/taScheduling';
+} from '../../redux/features/adminModule/ta/taScheduling';
 import {
     closeCoachScheduleSession,
     createCoachSchedule,
     getCoachAvailableSlotsFromDate,
     openCoachEditBatch,
     openCoachEditStudent,
-} from '../../redux/features/CoachModule/coachSchedule';
-import { getTimezone } from '../../redux/features/timezone/timezoneSlice';
+} from '../../redux/features/adminModule/coach/coachSchedule';
+import { getTimezone } from '../../redux/features/utils/utilSlice';
 import CustomTimeZoneForm from '../CustomFields/CustomTimeZoneForm';
-import { fetchTAScheduleById } from '../../redux/features/taModule/taAvialability';
+import { fetchTAScheduleById } from '../../redux/features/adminModule/ta/taAvialability';
 import { toast } from 'react-toastify';
-import { fetchCoachScheduleById } from '../../redux/features/CoachModule/CoachAvailabilitySlice';
-
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                padding: '10px 20px',
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
+import { fetchCoachScheduleById } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
+import CustomButton from '../CustomFields/CustomButton';
 
 const headers = ['S. No.', 'Slot Date', 'From Time', 'To Time', 'Select'];
 
@@ -132,7 +98,8 @@ const Schedule = ({ componentName }) => {
             idKey = 'taID';
             nameKey = 'taName';
             timezoneKey = 'taTimezone';
-            (studentKey = 'students'), (batchKey = 'batches');
+            studentKey = 'students';
+            batchKey = 'batches';
             getAvailableSlotsAction = getTaAvailableSlotsFromDate;
             getScheduledSessionApi = fetchTAScheduleById;
             closeScheduleSessionAction = closeScheduleSession;
@@ -203,7 +170,7 @@ const Schedule = ({ componentName }) => {
         }
     }, [fromDate, dispatch, adminUserID, getAvailableSlotsAction]);
 
-    const { timezones } = useSelector(state => state.timezone);
+    const { timezones } = useSelector(state => state.util);
 
     useEffect(() => {
         dispatch(getTimezone());
@@ -241,16 +208,6 @@ const Schedule = ({ componentName }) => {
                 return prev.filter(d => d !== day);
             } else {
                 return [...prev, day];
-            }
-        });
-    };
-
-    const handleSelectSlots = id => {
-        setSelectedSlot(prev => {
-            if (prev.includes(id)) {
-                return prev.filter(sid => sid !== id);
-            } else {
-                return [...prev, id];
             }
         });
     };
@@ -347,11 +304,10 @@ const Schedule = ({ componentName }) => {
         }
 
         console.log('FORM DATA : ', formData);
-        console.log('selected slots', selectedSlot);
+        console.log('selected timezone', timezone);
 
         formData.start_time = fromTime;
         formData.end_time = toTime;
-        formData.timezone = timezone;
         formData.schedule_date = fromDate;
         formData.end_date = repeat === 'recurring' ? toDate : fromDate;
         formData.admin_user_id = adminUserID;
@@ -359,7 +315,6 @@ const Schedule = ({ componentName }) => {
         formData.event_status = 'scheduled';
         formData.weeks = weeksArray;
         formData.meeting_url = 'https://zoom.in';
-        // formData.timezone = adminUserTimezone;
         formData.timezone = 'Asia/Kolkata';
         formData.studentId = studentId;
         formData.batchId = batchId;
@@ -754,6 +709,7 @@ const Schedule = ({ componentName }) => {
                                                         fontSize: '16px',
                                                         fontWeight: '700px',
                                                         text: '#FFFFFF',
+                                                        textTransform: 'none',
                                                     }}
                                                 >
                                                     Submit

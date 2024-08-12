@@ -10,8 +10,8 @@ import Header from '../Header/Header';
 import Sidebar from '../Sidebar/Sidebar';
 import ScheduleSession from '../availability/ScheduleSession';
 import { useDispatch } from 'react-redux';
-import { openSessionEvent } from '../../redux/features/taModule/taAvialability';
-import { openCoachSessionEvent } from '../../redux/features/CoachModule/CoachAvailabilitySlice';
+import { openSessionEvent } from '../../redux/features/adminModule/ta/taAvialability';
+import { openCoachSessionEvent } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import { openSessionPopup } from '../../redux/features/commonCalender/commonCalender';
 
 moment.locale('en-GB');

@@ -18,17 +18,19 @@ import CustomFormControl from '../../../../components/CustomFields/CustomFromCon
 import CustomTextField from '../../../../components/CustomFields/CustomTextField';
 import CustomDateField from '../../../../components/CustomFields/CustomDateField';
 import CustomTimeField from '../../../../components/CustomFields/CustomTimeField';
-import { getActivityType } from '../../../../redux/features/ActivityType/activityTypeSlice';
-import { getCoach } from '../../../../redux/features/CoachModule/coachSlice';
-import { linkActivity } from '../../../../redux/features/ActivityType/LinkActivitySlice';
+import { getActivityType } from '../../../../redux/features/adminModule/coach/activityTypeSlice';
+import { getCoach } from '../../../../redux/features/adminModule/coach/coachSlice';
+import { linkActivity } from '../../../../redux/features/adminModule/coach/LinkActivitySlice';
 
-import { getCoachAvailableSlotsFromDate } from '../../../../redux/features/CoachModule/coachSchedule';
-import { getTaAvailableSlotsFromDate } from '../../../../redux/features/taModule/taScheduling';
-import { createCoachSchedule } from '../../../../redux/features/CoachModule/coachSchedule';
+import {
+    getCoachAvailableSlotsFromDate,
+    createCoachSchedule,
+} from '../../../../redux/features/adminModule/coach/coachSchedule';
+import { getTaAvailableSlotsFromDate } from '../../../../redux/features/adminModule/ta/taScheduling';
 import TestActivityComponent from './Components/TestActivityComponent';
 import OneOnOneSessionComponent from './Components/OneonOneSessionComponent';
 import PDFUploadComponent from './Components/PDFUploadComponent';
-import { getCoachTemplateModuleId } from '../../../../redux/features/CoachModule/CoachTemplateSlice';
+import { getCoachTemplateModuleId } from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
 const CustomButton = ({
     onClick,
     children,

@@ -8,7 +8,7 @@ import {
     getTA,
     postAssignBatches,
     getAssignBatches,
-} from '../../redux/features/taModule/taSlice';
+} from '../../redux/features/adminModule/ta/taSlice';
 
 import {
     closeCoachAssignBatches,
@@ -17,47 +17,13 @@ import {
     postCoachAssignBatches,
     getCoachBatchMapping,
     getCoachAssignBatches,
-} from '../../redux/features/CoachModule/coachSlice';
+} from '../../redux/features/adminModule/coach/coachSlice';
 
 import CustomTextField from '../CustomFields/CustomTextField';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import PopUpTable from '../CommonComponent/PopUpTable';
-import { openScheduleSession } from '../../redux/features/taModule/taScheduling';
-
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                padding: '10px 20px',
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
+import { openScheduleSession } from '../../redux/features/adminModule/ta/taScheduling';
+import CustomButton from '../CustomFields/CustomButton';
 
 const AssignBatches = ({ componentname }) => {
     const dispatch = useDispatch();

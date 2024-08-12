@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import VideoUploadAndPlayer from './VideoPlayer';
+const VIMEO_ACCESS_TOKEN = process.env.VIMEO_ACCESS_TOKEN;
 
 const Video = () => {
     const [file, setFile] = useState(null);
@@ -17,7 +18,7 @@ const Video = () => {
                     file={file}
                     name="Your Video Name"
                     description="Your Video Description"
-                    VIMEO_ACCESS_TOKEN="7d93a352d9b20c0a2141bf3269860df5"
+                    VIMEO_ACCESS_TOKEN={VIMEO_ACCESS_TOKEN}
                 />
             )}
         </div>

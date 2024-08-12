@@ -4,78 +4,37 @@ import { useDispatch, useSelector } from 'react-redux';
 import CustomTextField from '../CustomFields/CustomTextField';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import PopUpTable from '../CommonComponent/PopUpTable';
-import {
-    closeAssignBatches,
-    openSuccessPopup,
-    postAssignBatches,
-    getAssignBatches,
-} from '../../redux/features/taModule/taSlice';
+import { getAssignBatches } from '../../redux/features/adminModule/ta/taSlice';
 
-import {
-    closeCoachAssignBatches,
-    openCoachSuccessPopup,
-    postCoachAssignBatches,
-    getCoachAssignBatches,
-} from '../../redux/features/CoachModule/coachSlice';
+import { getCoachAssignBatches } from '../../redux/features/adminModule/coach/coachSlice';
 
 import {
     closeEditBatch,
     openScheduleSession,
-} from '../../redux/features/taModule/taScheduling';
+} from '../../redux/features/adminModule/ta/taScheduling';
 
 import {
     closeCoachEditBatch,
     openCoachScheduleSession,
-} from '../../redux/features/CoachModule/coachSchedule';
+} from '../../redux/features/adminModule/coach/coachSchedule';
 import {
     closeSelectBatches,
     getCoachMenuAssignedBatches,
     openCreateSessionPopup,
-} from '../../redux/features/coach/coachmenuprofileSilce';
+} from '../../redux/features/coachModule/coachmenuprofileSilce';
 import {
     closeTaMenuSelectBatches,
     getTaMenuAssignedBatches,
     openTaMenuCreateSessionsPopup,
-} from '../../redux/features/teachingAssistant/tamenuSlice';
-
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                padding: '10px 20px',
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
+} from '../../redux/features/taModule/tamenuSlice';
+import { useParams } from 'react-router-dom';
+import CustomButton from '../CustomFields/CustomButton';
 
 const EditBatches = ({ componentname }) => {
     console.log('COMPONENT NAME EDITBATCH: ', componentname);
+    const { id, name } = useParams();
     const dispatch = useDispatch();
+
     const [selectedBatch, setSelectedBatch] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedBranch, setSelectedBranch] = useState('');
@@ -181,11 +140,7 @@ const EditBatches = ({ componentname }) => {
 
     useEffect(() => {
         if (stateModuleKey && assignBatchOpen) {
-            if (stateModuleKey === 'coachMenu' || stateModuleKey === 'taMenu') {
-                dispatch(getAssignBatchesAction());
-            } else {
-                dispatch(getAssignBatchesAction(assignedId));
-            }
+            dispatch(getAssignBatchesAction(assignedId));
         }
     }, [
         dispatch,
@@ -194,8 +149,6 @@ const EditBatches = ({ componentname }) => {
         assignedId,
         getAssignBatchesAction,
     ]);
-
-    console.log('Assigned Batches', assignedBatches);
 
     useEffect(() => {
         if (assignedBatches) {
@@ -266,19 +219,8 @@ const EditBatches = ({ componentname }) => {
             batches: selectedBatch ? selectedBatch.map(id => ({ id })) : [],
         };
         console.log('DATA: ', data);
-
-        if (componentname === 'COACHMENU_CALENDER') {
-            const batches = selectedBatch.map(id => ({ id }));
-            dispatch(openCreateSessionPopup({ batches }));
-            dispatch(closeDialogAction());
-        } else if (componentname === 'TAMENU_CALENDER') {
-            const batches = selectedBatch.map(id => ({ id }));
-            dispatch(openTaMenuCreateSessionsPopup({ batches }));
-            dispatch(closeDialogAction());
-        } else {
-            dispatch(openScheduleSession(data));
-            dispatch(closeDialogAction());
-        }
+        dispatch(openScheduleSession(data));
+        dispatch(closeDialogAction());
     };
 
     const headers = ['S. No.', 'Batch Name', 'Branch', 'Select'];
@@ -352,30 +294,15 @@ const EditBatches = ({ componentname }) => {
 
     const assignedTA = assignedTAName || assignedName;
 
-    if (
-        componentname === 'COACHMENU_CALENDER' ||
-        componentname === 'TAMENU_CALENDER'
-    ) {
-        return (
-            <ReusableDialog
-                open={assignBatchOpen}
-                handleClose={() => dispatch(closeDialogAction())}
-                title={`Assign Batches`}
-                content={content}
-                actions={actions}
-            />
-        );
-    } else {
-        return (
-            <ReusableDialog
-                open={assignBatchOpen}
-                handleClose={() => dispatch(closeDialogAction())}
-                title={`Assign Batches to ${assignedTA}`}
-                content={content}
-                actions={actions}
-            />
-        );
-    }
+    return (
+        <ReusableDialog
+            open={assignBatchOpen}
+            handleClose={() => dispatch(closeDialogAction())}
+            title={`Assign Batches to ${assignedTA}`}
+            content={content}
+            actions={actions}
+        />
+    );
 };
 
 export default EditBatches;
