@@ -35,6 +35,7 @@ import TestActivityComponent from './Components/TestActivityComponent';
 import OneOnOneSessionComponent from './Components/OneonOneSessionComponent';
 import PDFUploadComponent from './Components/PDFUploadComponent';
 import { getCoachTemplateModuleId } from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
+// import { uploadpdf } from '../../../../redux/features/adminModule/coach/LinkActivitySlice';
 const CustomButton = ({
     onClick,
     children,
@@ -70,7 +71,7 @@ const CustomButton = ({
     );
 };
 
-const LinkActivityPopup = ({ open, handleClose, activityId, templateId }) => {
+const LinkActivityPopup = ({ open, handleClose, activityId, templateId, LinkActivitytype }) => {
     const dispatch = useDispatch();
     console.log('template id', templateId);
     const {
@@ -79,6 +80,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId }) => {
         reset,
         formState: { errors },
     } = useForm();
+    const { upload_pdf_url } = useSelector(state => state.linkActivity  );
     const [fromDate, setFromDate] = useState(null);
     const [activityType, setActivityType] = useState('');
     const [selectedSessionType, setSelectedSessionType] = useState('');
@@ -90,22 +92,14 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId }) => {
     const [videoUrl, setVideoUrl] = useState('');
 
     const onSubmit = async data => {
-        // Prepare the payload
-
-        console.log('clicked');
-        console.log('activity data', data);
-        console.log('selected assessment id', selectedAssessmentId);
         const payload = {
             activity_id: activityId, // Ensure this value is correctly set
             activity_type_id:
                 activityType === 'test'
                     ? selectedAssessmentId
                     : selectedActivityId, // Ensure this value is correctly set
-            link: videoUrl || data.virtualMeetLink, // Add other fields if needed
+            link: videoUrl || data.virtualMeetLink || upload_pdf_url, // Add other fields if needed
         };
-        console.log('payload', payload);
-
-        console.log('ActivityId', selectedActivityId);
         try {
             await dispatch(linkActivity(payload))
                 .unwrap()

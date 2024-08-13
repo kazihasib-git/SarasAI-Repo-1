@@ -524,6 +524,7 @@ const TemplateModuleTable = ({ modulesData }) => {
                     open={viewActivityPopup}
                     onClose={closeViewActivityPopUp}
                     activity={selectedActivity}
+                    templateId={selectedCoachTemplate}
                 />
             )}
         </>
