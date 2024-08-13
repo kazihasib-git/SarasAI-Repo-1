@@ -25,6 +25,7 @@ import {
     updateCoachmenuprofile,
 } from '../../../redux/features/coachModule/coachmenuprofileSilce';
 import { formatInTimeZone } from 'date-fns-tz';
+import { getTimezone } from '../../../redux/features/utils/utilSlice';
 
 const CoachMenuProfile = () => {
     const dispatch = useDispatch();
@@ -38,13 +39,17 @@ const CoachMenuProfile = () => {
     } = useForm({
         defaultValues: {
             gender: '',
-            time_zone: '',
+            timezone_id: null,
             highest_qualification: '',
             date_of_birth: null,
         },
     });
 
     const { coachProfileData } = useSelector(state => state.coachMenu);
+    const { timezones } = useSelector(state => state.util);
+    useEffect(() => {
+        dispatch(getTimezone());
+    }, [dispatch]);
 
     //edit button
     const [isEditing, setIsEditing] = useState(false);
@@ -106,7 +111,7 @@ const CoachMenuProfile = () => {
             return convertTimezone(
                 currentTime,
                 ipData.timezone,
-                coachProfileData.time_zone
+                coachProfileData.timezone_id
             );
         }
         return null;
@@ -129,13 +134,14 @@ const CoachMenuProfile = () => {
             address: data.address,
             pincode: data.pincode,
             phone: data.phone,
-            time_zone: data.time_zone,
+            timezone_id: data.timezone_id,
             gender: data.gender,
             email: data.email,
             date_of_birth: formattedDate,
             highest_qualification: data.highest_qualification,
             about_me: data.about_me,
         };
+        console.log('data', data);
 
         Object.entries(formValues).forEach(([key, value]) =>
             setValue(key, value)
@@ -183,6 +189,7 @@ const CoachMenuProfile = () => {
         // console.log('updatedFormData', updatedFormData);
         // dispatch(updateCoachmenuprofile(updatedFormData));
         dispatch(updateCoachmenuprofile(updatedFormData));
+        console.log('data', updatedFormData);
     };
 
     return (
@@ -356,7 +363,7 @@ const CoachMenuProfile = () => {
                                     render={({ field }) => (
                                         <PhoneInput
                                             {...field}
-                                            country={'in'}
+                                            timezone_id={'in'}
                                             // containerStyle={{ width: "100%" }}
 
                                             inputStyle={{
@@ -406,20 +413,20 @@ const CoachMenuProfile = () => {
 
                             <Grid item xs={12} sm={6} md={4}>
                                 <Controller
-                                    name="time_zone"
+                                    name="timezone_id"
                                     control={control}
                                     rules={{
                                         required: 'Time Zone is required',
                                     }}
                                     render={({ field }) => {
                                         return (
-                                            <CustomFormControl
+                                            <CustomTimeZoneForm
                                                 label="Time Zone"
-                                                name="time_zone"
+                                                name="timezone_id"
                                                 value={field.value}
                                                 onChange={field.onChange}
                                                 errors={errors}
-                                                options={transformedTimeZones}
+                                                options={timezones}
                                                 disabled={!isEditing}
                                             />
                                         );

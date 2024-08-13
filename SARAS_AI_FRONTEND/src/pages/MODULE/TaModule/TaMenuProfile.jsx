@@ -25,6 +25,7 @@ import {
 } from '../../../redux/features/taModule/tamenuSlice';
 import moment from 'moment';
 import CustomDateOfBirth from '../../../components/CustomFields/CustomDateOfBirth';
+import { getTimezone } from '../../../redux/features/utils/utilSlice';
 
 const TaMenuProfile = () => {
     const dispatch = useDispatch();
@@ -38,13 +39,19 @@ const TaMenuProfile = () => {
     } = useForm({
         defaultValues: {
             gender: '',
-            time_zone: '',
+            timezone_id: null,
             highest_qualification: '',
             date_of_birth: null,
         },
     });
 
     const { taProfileData } = useSelector(state => state.taMenu);
+
+    const { timezones } = useSelector(state => state.util);
+    useEffect(() => {
+        dispatch(getTimezone());
+    }, [dispatch]);
+
     const [isEditing, setIsEditing] = useState(false);
 
     const toggleEdit = () => {
@@ -91,7 +98,7 @@ const TaMenuProfile = () => {
             address: data.address,
             pincode: data.pincode,
             phone: data.phone,
-            time_zone: data.time_zone,
+            timezone_id: data.timezone_id,
             gender: data.gender,
             email: data.email,
             date_of_birth: formattedDate,
@@ -121,7 +128,7 @@ const TaMenuProfile = () => {
 
     const onSubmit = async formData => {
         // Handle form submission
-        const { email, time_zone, ...updatedFormData } = formData;
+        const { email, timezone_id, ...updatedFormData } = formData;
 
         updatedFormData.date_of_birth = dateOfBirth;
         setIsEditing(false); // Disable edit mode after submit
@@ -361,20 +368,20 @@ const TaMenuProfile = () => {
 
                             <Grid item xs={12} sm={6} md={4}>
                                 <Controller
-                                    name="time_zone"
+                                    name="timezone_id"
                                     control={control}
                                     rules={{
                                         required: 'Time Zone is required',
                                     }}
                                     render={({ field }) => {
                                         return (
-                                            <CustomFormControl
+                                            <CustomTimeZoneForm
                                                 label="Time Zone"
-                                                name="time_zone"
+                                                name="timezone_id"
                                                 value={field.value}
                                                 onChange={field.onChange}
                                                 errors={errors}
-                                                options={transformedTimeZones}
+                                                options={timezones}
                                                 disabled={!isEditing}
                                             />
                                         );
@@ -452,7 +459,7 @@ const TaMenuProfile = () => {
 
                             {/* <Grid item xs={12} sm={6} md={4}>
                                 <Controller
-                                    name="time_zone"
+                                    name="timezone_id"
                                     control={control}
                                     rules={{
                                         required: 'Time Zone is required',
@@ -461,7 +468,7 @@ const TaMenuProfile = () => {
                                         return (
                                             <CustomFormControl
                                                 label="Time Zone"
-                                                name="time_zone"
+                                                name="timezone_id"
                                                 value={field.value}
                                                 onChange={field.onChange}
                                                 errors={errors}
