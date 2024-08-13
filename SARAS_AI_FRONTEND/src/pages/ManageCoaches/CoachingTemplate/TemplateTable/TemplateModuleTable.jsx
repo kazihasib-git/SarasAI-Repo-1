@@ -164,7 +164,7 @@ const TemplateModuleTable = ({ modulesData }) => {
         'S. No.',
         'Activity Name',
         'Due Date',
-        'Activity',
+        'Link',
         'Points',
         'Prerequisites',
         'After Due Date',

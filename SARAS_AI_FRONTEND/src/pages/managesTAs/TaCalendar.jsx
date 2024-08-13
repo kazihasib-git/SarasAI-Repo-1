@@ -223,6 +223,7 @@ const TaCalender = () => {
                 );
                 try {
                     const processedSlots = [];
+                    const processedSlots = [];
                     const transformedSlots = await Promise.all(
                         slotData.map(async slot => {
                             const localTime = await convertFromUTC({
@@ -268,6 +269,8 @@ const TaCalender = () => {
                             }
                         })
                     );
+                    console.log('transformed slots',processedSlots);
+                    setSlotViewData(processedSlots);
                     console.log('transformed slots',processedSlots);
                     setSlotViewData(processedSlots);
                 } catch (error) {
