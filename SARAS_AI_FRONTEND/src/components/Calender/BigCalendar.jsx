@@ -156,6 +156,8 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
             const slotDate = moment(slot.startDate).format('YYYY-MM-DD');
             const slotStartTime = moment(slot.startDate).format('HH:mm');
             const slotEndTime = moment(slot.endDate).format('HH:mm');
+
+            const isOnLeave = slot.leave && slot.leave.length > 0;
             if (
                 dateString === slotDate &&
                 timeString >= slotStartTime &&
@@ -170,6 +172,7 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
                         opacity: 0.5,
                         border: 'none',
                     },
+                    className: isOnLeave ? 'on-leave-slot' : '',
                 };
             }
         }

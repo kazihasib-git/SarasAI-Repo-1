@@ -35,9 +35,24 @@ import {
 } from '@mui/material';
 
 const initialChatData = [
-    { sender: 'me', text: 'Hi, This is sample chat' },
-    { sender: 'other', text: 'There is some problem in getting the data' },
+    { sender: 'me', text: 'Hi, This is sample chat', timestamp: new Date() },
+    {
+        sender: 'other',
+        text: 'There is some problem in getting the data',
+        timestamp: new Date(),
+    },
 ];
+
+const getTimeAgo = timestamp => {
+    const now = new Date();
+    const diff = Math.floor((now - new Date(timestamp)) / 1000); // difference in seconds
+
+    if (diff < 60) return `${diff} s`;
+    if (diff < 3600) return `${Math.floor(diff / 60)} m`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)} h`;
+    if (diff < 604800) return `${Math.floor(diff / 86400)} days ago`;
+    return `${Math.floor(diff / 604800)} weeks ago`;
+};
 
 const Messages = ({ role }) => {
     const dispatch = useDispatch();
@@ -211,12 +226,19 @@ const Messages = ({ role }) => {
                               taCoachAllChatData[i]['chat_messages'].length - 1
                           ].message_text
                         : 'No Message';
+
+                const lastMessageTimestamp =
+                    taCoachAllChatData[i]['chat_messages'].length > 0
+                        ? taCoachAllChatData[i]['chat_messages'][
+                              taCoachAllChatData[i]['chat_messages'].length - 1
+                          ].created_at
+                        : new Date();
                 let Data = {
                     id: taCoachAllChatData[i]['students'][0].id,
                     name: taCoachAllChatData[i]['students'][0].name,
                     profilePic: profilePic,
                     status: 'Online',
-                    lastSeen: '2m',
+                    lastSeen: getTimeAgo(lastMessageTimestamp), // Calculate last seen dynamically
                     chat_id: taCoachAllChatData[i].id,
                     lastMessage:
                         lastMessage.length > 15
