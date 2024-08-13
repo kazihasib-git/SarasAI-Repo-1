@@ -112,17 +112,9 @@ const CoachCalender = () => {
         dispatch(fetchCoachSlots(id));
         dispatch(fetchCoachScheduleById(id));
     }, [dispatch]);
-
     const convertEvents = async () => {
-        if (
-            scheduleCoachData &&
-            scheduleCoachData.data &&
-            scheduleCoachData.data.length > 0 
-        ){
-            const timezonename = timezoneIdToName(
-                storedTimezoneId,
-                timezones
-            );
+        if (scheduleCoachData && scheduleCoachData.length > 0 && storedTimezoneId) {
+            const timezonename = timezoneIdToName(storedTimezoneId, timezones);
             if (!timezonename) {
                 console.error('Invalid timezone name');
                 setEventsList([]);
@@ -131,7 +123,7 @@ const CoachCalender = () => {
             try {
                 const processedEvents = [];
                 const transformedEvents = await Promise.all(
-                    scheduleCoachData.data.map(async event => {
+                    scheduleCoachData.map(async event => {
                         const localTime = await convertFromUTC({
                             start_date: event.date.split(' ')[0],
                             start_time: event.start_time,
@@ -139,14 +131,10 @@ const CoachCalender = () => {
                             end_date: event.date.split(' ')[0],
                             timezonename,
                         });
-                        console.log(
-                            'Converted Local Schedule Time:',
-                            localTime
-                        );
-    
+                        console.log('Converted Local Schedule Time:', localTime);
                         const startDateTime = new Date(`${localTime.start_date}T${localTime.start_time}`);
                         const endDateTime = new Date(`${localTime.end_date}T${localTime.end_time}`);
-    
+
                         if (localTime.start_date !== localTime.end_date) {
                             const event1 = {
                                 id: event.id,
@@ -159,7 +147,7 @@ const CoachCalender = () => {
                                 platform_tools: event.platform_tool_details,
                                 platform_meet: event.platform_meeting_details,
                             };
-    
+
                             const event2 = {
                                 id: event.id,
                                 admin_user_id: event.admin_user_id,
@@ -171,7 +159,7 @@ const CoachCalender = () => {
                                 platform_tools: event.platform_tool_details,
                                 platform_meet: event.platform_meeting_details,
                             };
-    
+
                             console.log('events created', event1, event2);
                             processedEvents.push(event1, event2);
                             return [event1, event2];
@@ -196,7 +184,7 @@ const CoachCalender = () => {
                 setEventsList(processedEvents);
             } catch (error) {
                 console.error('Error converting events:', error);
-                setEventsList([]); // Reset to empty array on error
+                setEventsList([]);
             }
         } else {
             setEventsList([]);
@@ -205,22 +193,11 @@ const CoachCalender = () => {
 
     useEffect(() => {
         convertEvents();
-    }, [scheduleCoachData]);
- 
-    console.log('setEventsList :', eventsList);
+    }, [scheduleCoachData, timezones, storedTimezoneId]);
 
     const convertSlots = async () => {
-        if (
-            slotCoachData &&
-            slotCoachData.length > 0 &&
-            timezones &&
-            storedTimezoneId
-        ) {
-           
-            const timezonename = timezoneIdToName(
-                storedTimezoneId,
-                timezones
-            );
+        if (slotCoachData && slotCoachData.length > 0 && timezones && storedTimezoneId) {
+            const timezonename = timezoneIdToName(storedTimezoneId, timezones);
             try {
                 const processedSlots = [];
                 const transformedSlots = await Promise.all(
@@ -235,23 +212,22 @@ const CoachCalender = () => {
 
                         const startDateTime = new Date(`${localTime.start_date}T${localTime.start_time}`);
                         const endDateTime = new Date(`${localTime.end_date}T${localTime.end_time}`);
-                   
+
                         if (localTime.start_date !== localTime.end_date) {
                             const slot1 = {
                                 startDate: startDateTime,
                                 endDate: new Date(`${localTime.start_date}T23:59:59`),
                                 leave: slot?.leaves,
                             };
-               
+
                             const slot2 = {
                                 startDate: new Date(`${localTime.end_date}T00:00:00`),
                                 endDate: endDateTime,
                                 leave: slot?.leaves,
                             };
-               
-                            console.log('slots created',slot1,slot2);
-                           
-                            processedSlots.push(slot1,slot2);
+
+                            console.log('slots created', slot1, slot2);
+                            processedSlots.push(slot1, slot2);
                             return [slot1, slot2];
                         } else {
                             const newSlot = {
@@ -260,30 +236,24 @@ const CoachCalender = () => {
                                 leave: slot?.leaves,
                             };
                             processedSlots.push(newSlot);
-                            return {
-                                startDate: startDateTime,
-                                endDate: endDateTime,
-                                leave: slot?.leaves,
-                            };
+                            return newSlot;
                         }
                     })
                 );
-                console.log('transformed slots',processedSlots);
+                console.log('transformed slots', processedSlots);
                 setSlotViewData(processedSlots);
             } catch (error) {
                 console.error('Error converting slots:', error);
-                setSlotViewData([]); // Reset to empty array on error
+                setSlotViewData([]);
             }
         } else {
             setSlotViewData([]);
         }
-};
+    };
 
-useEffect(() => {
-    convertSlots();
-}, [slotCoachData]);
-
-console.log('transformedSlots :', slotViewData);
+    useEffect(() => {
+        convertSlots();
+    }, [slotCoachData, timezones, storedTimezoneId]);
 
     const handleScheduleNewSession = () => {
         dispatch(openCoachScheduleSession({ id, name }));
@@ -375,7 +345,7 @@ console.log('transformedSlots :', slotViewData);
 
                     <CalendarComponent
                         eventsList={eventsList}
-                        slotCoachData={slotViewData}
+                        slotData={slotViewData}
                         componentName={'COACHCALENDER'}
                     />
 

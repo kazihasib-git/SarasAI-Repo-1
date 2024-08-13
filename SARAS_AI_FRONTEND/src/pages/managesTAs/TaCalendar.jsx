@@ -111,12 +111,10 @@ const TaCalender = () => {
     const [slotViewData, setSlotViewData] = useState([]);
  
     useEffect(() => {
-        dispatch(getTimezone());
-    }, [dispatch]);
- 
-    useEffect(() => {
         dispatch(fetchTaSlots(id));
         dispatch(fetchTAScheduleById(id));
+        dispatch(getTimezone());
+
     }, [dispatch]);
  
     const convertEvents = async () => {
@@ -207,7 +205,7 @@ const TaCalender = () => {
         convertEvents();
     }, [scheduleData]);
  
-    console.log('setEventsList :', eventsList);
+    
  
     const convertSlots = async () => {
             if (
@@ -223,7 +221,7 @@ const TaCalender = () => {
                 );
                 try {
                     const processedSlots = [];
-                    const processedSlots = [];
+                    
                     const transformedSlots = await Promise.all(
                         slotData.map(async slot => {
                             const localTime = await convertFromUTC({
@@ -306,7 +304,6 @@ const TaCalender = () => {
     };
  
     console.log('SlotViewData', slotViewData);
-    // console.log("sessiond data", scheduleData.data);
  
     return (
         <>

@@ -283,7 +283,6 @@ const { timezones } = useSelector(state => state.util);
                         </Grid>
                     </Grid>
                 </DialogActions>
-
                 <CalendarComponent
                     eventsList={eventsList}
                     slotData={slotViewData}
