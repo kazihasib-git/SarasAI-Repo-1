@@ -106,13 +106,14 @@ const WOLOptionsConfig = () => {
         if (optionsConfigData.data && optionsConfigData.data.length > 0) {
             const { minimum_scale, maximum_scale, get_config_details } =
                 optionsConfigData.data[0];
+            setMaxScale(maximum_scale);
             setFormValues({
                 minScale: minimum_scale,
                 maxScale: maximum_scale,
                 details: get_config_details.map(detail => ({
                     point: detail.point,
                     text: detail.text,
-                    icon: detail.icon,
+                    icon: detail.icon ? `data:image/png;base64,${detail.icon}`: null,
                 })),
             });
             setEdit(true);
@@ -144,13 +145,13 @@ const WOLOptionsConfig = () => {
             tempErrors.scaleRange =
                 'Maximum Scale must be greater than Minimum Scale';
         formValues.details.forEach((detail, index) => {
-            if (index === 0 || index / 2 === 0) {
+            if (index === 0 || (index+1) % maxScale === 0) {
                 // Check if the point is a multiple of 5 starting from 1
                 if (!detail.text) {
                     tempErrors[`detailText${index}`] = 'Text is required';
                 }
                 if (!detail.icon) {
-                    tempErrors[`detailIcon${index}`] = 'Icon is required';
+                    tempErrors[`detailText${index}`] = 'Icon is required';
                 }
             }
         });
@@ -169,6 +170,7 @@ const WOLOptionsConfig = () => {
         } else {
             if (validate()) {
                 const details = [];
+                setMaxScale(formValues.maxScale);
                 for (
                     let i = Number(formValues.minScale);
                     i <= Number(formValues.maxScale);
@@ -186,13 +188,14 @@ const WOLOptionsConfig = () => {
         e.preventDefault();
         if (validate()) {
             const { minScale, maxScale, details } = formValues;
+            
             const payload = {
                 minimum_scale: minScale,
                 maximum_scale: maxScale,
                 details: details.map((detail, index) => ({
-                    point: minScale + index,
+                    point: Number(minScale) + Number(index),
                     text: detail.text,
-                    icon: detail.icon,
+                    icon: detail.icon ? detail.icon.split(',')[1] : null,
                 })),
             };
             dispatch(addWOLOptionConfig(payload));
@@ -382,7 +385,7 @@ const WOLOptionsConfig = () => {
                                                 >
                                                     {detail.point}
                                                     {(index === 0 ||
-                                                        (index + 1) % 5 ===
+                                                        (index + 1) % maxScale ===
                                                             0) && (
                                                         <img
                                                             src={star}

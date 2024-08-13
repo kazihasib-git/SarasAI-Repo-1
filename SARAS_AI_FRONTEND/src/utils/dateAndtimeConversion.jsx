@@ -27,7 +27,7 @@ async function convertFromUTC({
             end_date: toDateTimeLocal.format('YYYY-MM-DD'),
         };
 
-        // console.log("UTC TO Local=== > ", obbj);
+        //console.log("UTC TO Local=== > ", obbj);
         return obbj;
     } catch (error) {
         console.error('Error in convertToUTC:', error);
