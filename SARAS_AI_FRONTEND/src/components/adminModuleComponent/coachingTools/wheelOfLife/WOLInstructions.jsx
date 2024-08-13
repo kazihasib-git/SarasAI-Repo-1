@@ -70,7 +70,7 @@ const WOLInstructions = () => {
             console.log('INSTRUCTION DATA : ', instructionData[0].message);
             // Extract points from HTML message
             const points = extractPoints(instructionData[0].message);
-            setInstruction(points); // Update state with the array of points
+            setInstruction(instructionData[0].message); // Update state with the array of points
         }
     }, [instructionData]);
 
@@ -246,13 +246,14 @@ const WOLInstructions = () => {
                         variant="body1"
                         gutterBottom
                     >
-                        {instruction.length > 0 && (
+                        {/* {instruction.length > 0 && (
                             <ul>
                                 {instruction.map((point, index) => (
                                     <li key={index}>{point}</li>
                                 ))}
                             </ul>
-                        )}
+                        )} */}
+                        <div dangerouslySetInnerHTML={{ __html: instruction }} />
                     </Typography>
                 )}
             </Box>

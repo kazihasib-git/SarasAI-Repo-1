@@ -39,6 +39,7 @@ import EditBatchesFromSession from '../../components/availability/EditBatchesFro
 import { convertFromUTC } from '../../utils/dateAndtimeConversion';
 import { timezoneIdToName } from '../../utils/timezoneIdToName';
 import { getTimezone } from '../../redux/features/utils/utilSlice';
+import { ConnectingAirportsOutlined } from '@mui/icons-material';
 
 const CustomButton = ({
     onClick,
@@ -118,8 +119,7 @@ const TaCalender = () => {
         dispatch(fetchTAScheduleById(id));
     }, [dispatch]);
 
-    useEffect(() => {
-        const convertEvents = async () => {
+    const convertEvents = async () => {
             if (scheduleData && scheduleData.length > 0 && storedTimezoneId) {
                 const timezonename = timezoneIdToName(
                     storedTimezoneId,
@@ -169,26 +169,28 @@ const TaCalender = () => {
             } else {
                 setEventsList([]);
             }
-        };
+    };
 
+    useEffect(() => {
         convertEvents();
-    }, [scheduleData, timezones, storedTimezoneId]);
+    }, [scheduleData]);
 
     console.log('setEventsList :', eventsList);
 
-    useEffect(() => {
-        const convertSlots = async () => {
+    const convertSlots = async () => {
             if (
                 slotData &&
                 slotData.length > 0 &&
                 timezones &&
                 storedTimezoneId
             ) {
+                
                 const timezonename = timezoneIdToName(
                     storedTimezoneId,
                     timezones
                 );
                 try {
+                    const processedSlots = [];
                     const transformedSlots = await Promise.all(
                         slotData.map(async slot => {
                             const localTime = await convertFromUTC({
@@ -199,18 +201,43 @@ const TaCalender = () => {
                                 timezonename,
                             });
 
-                            return {
-                                startDate: new Date(
-                                    `${localTime.start_date}T${localTime.start_time}`
-                                ),
-                                endDate: new Date(
-                                    `${localTime.end_date}T${localTime.end_time}`
-                                ),
-                                leave: slot?.leaves,
-                            };
+                            const startDateTime = new Date(`${localTime.start_date}T${localTime.start_time}`);
+                            const endDateTime = new Date(`${localTime.end_date}T${localTime.end_time}`);
+                        
+                            if (localTime.start_date !== localTime.end_date) {
+                                const slot1 = {
+                                    startDate: startDateTime,
+                                    endDate: new Date(`${localTime.start_date}T23:59:59`),
+                                    leave: slot?.leaves,
+                                };
+                    
+                                const slot2 = {
+                                    startDate: new Date(`${localTime.end_date}T00:00:00`),
+                                    endDate: endDateTime,
+                                    leave: slot?.leaves,
+                                };
+                    
+                                console.log('slots created',slot1,slot2);
+                                
+                                processedSlots.push(slot1,slot2);
+                                return [slot1, slot2];
+                            } else {
+                                const newSlot = {
+                                    startDate: startDateTime,
+                                    endDate: endDateTime,
+                                    leave: slot?.leaves,
+                                };
+                                processedSlots.push(newSlot);
+                                return {
+                                    startDate: startDateTime,
+                                    endDate: endDateTime,
+                                    leave: slot?.leaves,
+                                };
+                            }
                         })
                     );
-                    setSlotViewData(transformedSlots);
+                    console.log('transformed slots',processedSlots);
+                    setSlotViewData(processedSlots);
                 } catch (error) {
                     console.error('Error converting slots:', error);
                     setSlotViewData([]); // Reset to empty array on error
@@ -218,10 +245,11 @@ const TaCalender = () => {
             } else {
                 setSlotViewData([]);
             }
-        };
+    };
 
+    useEffect(() => {
         convertSlots();
-    }, [slotData, timezones, storedTimezoneId]);
+    }, [slotData]);
 
     console.log('transformedSlots :', slotViewData);
 

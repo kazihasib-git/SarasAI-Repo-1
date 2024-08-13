@@ -71,8 +71,10 @@ const Schedule = ({ componentName }) => {
     const [repeat, setRepeat] = useState('onetime');
     const [selectedDays, setSelectedDays] = useState([]);
     const [slotData, setSlotData] = useState([{}]);
-    const [selectedSlot, setSelectedSlot] = useState([{}]);
+    const [selectedSlot, setSelectedSlot] = useState([]);
     const [availableSlotsOptions, setAvailableSlotsOptions] = useState([]);
+    const [dateSelected, setDateSelected] = useState(false);
+
 
     const dispatch = useDispatch();
     let scheduleSessionOpenKey,
@@ -158,15 +160,31 @@ const Schedule = ({ componentName }) => {
     console.log('available slots', availableSlots);
 
     useEffect(() => {
-        if (fromDate || !availableSlots.length > 0) {
+        if (dateSelected && (fromDate || !availableSlots.length > 0)) {
             dispatch(
                 getAvailableSlotsAction({
                     admin_user_id: adminUserID,
                     date: fromDate,
                 })
-            );
+            ).then(()=>{
+                setSelectedSlot([]);
+            });
         }
     }, [fromDate, dispatch, adminUserID, getAvailableSlotsAction]);
+
+    const handleDateSubmit = () =>{
+        if(fromDate){
+            dispatch(
+                getAvailableSlotsAction({
+                    admin_user_id: adminUserID,
+                    date: fromDate,
+                })
+            ).then(()=>{
+                setSelectedSlot([]);
+                setDateSelected(true);
+            });
+        }
+    }
 
     const { timezones, platforms } = useSelector(state => state.util);
 
@@ -347,18 +365,18 @@ const Schedule = ({ componentName }) => {
                                 justifyContent="center"
                             >
                                 <CustomDateField
-                                    label="From Date"
+                                    label="Date"
                                     value={fromDate}
                                     onChange={setFromDate}
                                     name="schedule_date"
                                     register={register}
                                     validation={{
-                                        required: 'From Date is required',
+                                        required: 'Date is required',
                                     }}
                                     sx={{ width: '100%' }}
                                 />
                             </Grid>
-                            {fromDate && (
+                            {fromDate && dateSelected && (
                                 <>
                                     {availableSlotsOptions.length === 0 ? (
                                         <Grid
@@ -401,6 +419,8 @@ const Schedule = ({ componentName }) => {
                                                     errors={errors}
                                                 />
                                             </Grid>
+                                            {selectedSlot.length>0 && (
+                                            <>
                                             <Grid
                                                 item
                                                 xs={12}
@@ -711,8 +731,41 @@ const Schedule = ({ componentName }) => {
                                                     Submit
                                                 </Button>
                                             </Grid>
+                                            </>
+                                            )}
                                         </>
                                     )}
+                                </>
+                            )}
+                            {!dateSelected && (
+                                <>
+                                <Grid
+                                    item
+                                    xs={12}
+                                    display="flex"
+                                    justifyContent="center"
+                                >
+                                    <Button
+                                        type="button"
+                                        variant="contained"
+                                        style={{
+                                            borderRadius: '50px',
+                                            padding: '18px 30px',
+                                            marginTop: 30,
+                                            backgroundColor:
+                                                '#F56D3B',
+                                            height: '60px',
+                                            width: '121px',
+                                            fontSize: '16px',
+                                            fontWeight: '700px',
+                                            text: '#FFFFFF',
+                                            textTransform: 'none',
+                                        }}
+                                        onClick={handleDateSubmit}
+                                    >
+                                        Submit
+                                    </Button>
+                                </Grid>
                                 </>
                             )}
                         </Grid>
