@@ -149,13 +149,14 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
 
     const slotPropGetter = date => {
         const dateString = moment(date).format('YYYY-MM-DD');
-        const timeString = moment(date).format('HH:mm');
-
+        const timeString = moment(date).format('YYYY-MM-DD HH:mm');;
+        console.log(dateString);
+        console.log(timeString);
         for (let i = 0; i < slotData.length; i++) {
             const slot = slotData[i];
             const slotDate = moment(slot.startDate).format('YYYY-MM-DD');
-            const slotStartTime = moment(slot.startDate).format('HH:mm');
-            const slotEndTime = moment(slot.endDate).format('HH:mm');
+            const slotStartTime = moment(slot.startDate).format('YYYY-MM-DD HH:mm');;
+            const slotEndTime = moment(slot.endDate).format('YYYY-MM-DD HH:mm');;
 
             const isOnLeave = slot.leave && slot.leave.length > 0;
             if (
