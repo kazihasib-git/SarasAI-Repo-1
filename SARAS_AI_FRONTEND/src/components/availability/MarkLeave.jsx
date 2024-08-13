@@ -120,7 +120,7 @@ const MarkLeave = ({ componentName }) => {
                 textAlign: 'center',
             }}
         >
-           <Grid item xs={12} sm={6} sx={{ pr: 2 }}>
+            <Grid item xs={12} sm={6} sx={{ pr: 2 }}>
                 <CustomDateField
                     label="From Date"
                     value={fromDate}

@@ -149,16 +149,16 @@ const TemplateModuleTable = ({ modulesData }) => {
         console.log('Clicked Activity !');
         dispatch(openEditActivityPopup(activity));
     };
-    const handleActivityClick = (activity) => {
+    const handleActivityClick = activity => {
         console.log(activity.activity_type);
         setSelectedActivity(activity);
         setViewActivityPopup(true);
     };
 
-    const closeViewActivityPopUp = () =>{
+    const closeViewActivityPopUp = () => {
         setViewActivityPopup(false);
         setSelectedActivity(null);
-    }
+    };
 
     const headers = [
         'S. No.',
@@ -351,7 +351,8 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                                     onClick={() =>
                                                                         handleActivityClick(
                                                                             activity
-                                                                        )}
+                                                                        )
+                                                                    }
                                                                     icon={faEye}
                                                                     style={{
                                                                         marginLeft:
@@ -519,7 +520,11 @@ const TemplateModuleTable = ({ modulesData }) => {
                 handleClose={closePrerequisitesPopup}
             />
             {viewActivityPopup && selectedActivity && (
-                <ViewActivityPopup open={viewActivityPopup} onClose={closeViewActivityPopUp} activity={selectedActivity} />
+                <ViewActivityPopup
+                    open={viewActivityPopup}
+                    onClose={closeViewActivityPopUp}
+                    activity={selectedActivity}
+                />
             )}
         </>
     );

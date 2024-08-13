@@ -20,8 +20,11 @@ import CustomDateField from '../../../../components/CustomFields/CustomDateField
 import CustomTimeField from '../../../../components/CustomFields/CustomTimeField';
 import { getActivityType } from '../../../../redux/features/adminModule/coach/activityTypeSlice';
 import { getCoach } from '../../../../redux/features/adminModule/coach/coachSlice';
-import { linkActivity , uploadpdf } from '../../../../redux/features/adminModule/coach/LinkActivitySlice';
-import  VirtualGroupSession  from './LinkActivityPopup/VirtualGroupSession'
+import {
+    linkActivity,
+    uploadpdf,
+} from '../../../../redux/features/adminModule/coach/LinkActivitySlice';
+import VirtualGroupSession from './LinkActivityPopup/VirtualGroupSession';
 
 import {
     getCoachAvailableSlotsFromDate,
@@ -88,7 +91,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId }) => {
 
     const onSubmit = async data => {
         // Prepare the payload
-       
+
         console.log('clicked');
         console.log('activity data', data);
         console.log('selected assessment id', selectedAssessmentId);
@@ -101,7 +104,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId }) => {
             link: videoUrl || data.virtualMeetLink, // Add other fields if needed
         };
         console.log('payload', payload);
-       
+
         console.log('ActivityId', selectedActivityId);
         try {
             await dispatch(linkActivity(payload))
@@ -180,7 +183,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId }) => {
         const formattedHour = hour % 12 || 12;
         return `${formattedHour}:${minute < 10 ? '0' : ''}${minute} ${ampm}`;
     };
-    
+
     const timeZones = [
         { value: 'UTC', label: 'UTC' },
         { value: 'GMT', label: 'GMT' },
@@ -409,7 +412,6 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId }) => {
 
             {selectedSessionType === 'group' &&
                 activityType === 'virtual meet' && <VirtualGroupSession />}
-                
         </Grid>
     );
 

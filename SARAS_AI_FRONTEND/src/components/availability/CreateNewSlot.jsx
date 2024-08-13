@@ -31,7 +31,6 @@ import {
 import { toast } from 'react-toastify';
 import CustomButton from '../CustomFields/CustomButton';
 
-
 const weekDays = [
     'Sunday',
     'Monday',
@@ -151,8 +150,6 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
         formData.end_date = repeat === 'recurring' ? toDate : fromDate;
         formData.weeks = weeksArray;
         formData.admin_user_id = taId.id;
-    
-
 
         dispatch(createSlotApi(formData)).then(() => {
             dispatch(closeCreateNewSlots());
