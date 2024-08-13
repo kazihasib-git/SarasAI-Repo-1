@@ -67,6 +67,22 @@
     border: none;
   
 } */
+.on-leave-slot {
+    position: relative;
+}
+
+ .on-leave-slot::before {
+    content: 'On Leave';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 0.9em;
+   
+    
+
+} 
 
 .rbc-time-header-cell {
     padding: 0 !important; /* Removes padding inside header cells */
