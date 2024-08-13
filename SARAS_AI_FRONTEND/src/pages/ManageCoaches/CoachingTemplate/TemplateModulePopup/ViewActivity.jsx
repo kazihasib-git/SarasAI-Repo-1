@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { act } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Grid } from '@mui/material';
 import ReusableDialog from '../../../../components/CustomFields/ReusableDialog';
@@ -7,75 +7,171 @@ import CustomFormControl from '../../../../components/CustomFields/CustomFromCon
 import CustomDateField from '../../../../components/CustomFields/CustomDateField';
 import { Button } from '@mui/material';
 import { useForm } from 'react-hook-form';
+import  { useState } from 'react';
+import { linkActivity } from '../../../../redux/features/adminModule/coach/LinkActivitySlice';
+import PDFUploadComponent from './Components/PDFUploadComponent';
+import LinkActivityPopup from './LinkActivity';
+import { getCoachTemplateModuleId } from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
 
 // Custom button component for consistent styling
 const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
+  onClick,
+  children,
+  color = '#FFFFFF',
+  backgroundColor = '#4E18A5',
+  borderColor = '#FFFFFF',
+  sx,
+  ...props
 }) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                padding: '10px 20px',
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
+  return (
+      <Button
+          variant="contained"
+          onClick={onClick}
+          sx={{
+              backgroundColor: backgroundColor,
+              color: color,
+              fontWeight: '700',
+              fontSize: '14px', // Reduced font size
+              borderRadius: '50px',
+              padding: '8px 16px', // Reduced padding
+              border: `2px solid ${borderColor}`,
+              '&:hover': {
+                  backgroundColor: color,
+                  color: backgroundColor,
+                  borderColor: color,
+              },
+              ...sx,
+          }}
+          {...props}
+      >
+          {children}
+      </Button>
+  );
 };
 
 // Component for Video/PDF/Link Activity
-const VideoPdfActivity = ({ activity, name, fileName }) => {
-    const {
-        formState: { errors },
-    } = useForm();
+const VideoPdfActivity = ({ handleClose, name, fileName ,activity_id, activity_type_id, activity_url, template_id }) => {
+  const dispatch = useDispatch();
+const {
+  handleSubmit,
+  control,
+  reset,
+  formState: { errors },
+} = useForm();
 
-    return (
-        <Grid container justifyContent="center">
-            <Grid
-                item
-                xs={12}
-                sm={6}
-                md={6}
-                style={{ margin: '10px 0', width: '80%' }}
+const onSubmit = async data => {
+
+  const payload = {
+      activity_id: activity_id, // Ensure this value is correctly set
+      activity_type_id: activity_type_id,
+      link: activity_url, // Add other fields if needed
+  };
+  try {
+      await dispatch(linkActivity(payload))
+          .unwrap()
+          .then(() => {
+              // Refetch the data to update the table
+              dispatch(getCoachTemplateModuleId(template_id));
+          });
+      handleClose();
+  } catch (error) {
+      console.error('Failed to link activity:', error);
+  }
+};
+  const [showFileName, setShowFileName] = useState(true);
+
+  const handleRemoveFileName = () => {
+    setShowFileName(false);
+  };
+
+  return (
+    <Grid container justifyContent="center">
+      <Grid
+        item
+        xs={12}
+        sm={6}
+        md={6}
+        style={{ margin: '10px 0', width: '80%' }}
+      >
+        <CustomFormControl
+          label="Activity Type"
+          name="activityType"
+          value={name}
+          options={[
+            { value: name, label: name },
+          ]}
+          errors={errors}
+        />
+      </Grid>
+
+      {showFileName ? (
+        <Grid
+          item
+          xs={12}
+          style={{
+            margin: '10px 0',
+            width: '80%',
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
+          <button
+            onClick={handleRemoveFileName}
+            style={{
+              background: '#F56D3B',
+              width: '24px',
+              height: '24px',
+              borderRadius: '50%',
+              border: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginRight: '8px',
+              cursor: 'pointer',
+            }}
+          >
+            <span
+              style={{
+                color: 'white',
+                fontSize: '16px',
+                lineHeight: '16px',
+              }}
             >
-                <CustomFormControl
-                    label="Activity Type"
-                    name="activityType"
-                    value={name}
-                    options={[
-                        { value: 'videos', label: 'videos' },
-                        { value: 'pdf', label: 'pdf' },
-                        { value: 'link', label: 'link' },
-                    ]}
-                    errors={errors}
-                />
-            </Grid>
-            {/* <Grid item xs={12} style={{ margin: '10px 0', width: '80%' }}>
-      <p>{fileName}</p>
-    </Grid> */}
+              &times;
+            </span>
+          </button>
+          <p style={{ margin: 0 }}>{fileName.activity_url}</p>
         </Grid>
-    );
+      ) : (
+       
+      
+        <Grid 
+        item 
+        xs={12} 
+        style={{ 
+          marginTop: '20px', // Add margin for spacing from the previous item
+          display: 'flex', 
+          justifyContent: 'center' // Center horizontally
+        }}
+      >
+        <PDFUploadComponent />
+       
+      </Grid>
+      
+   
+      )}
+       <CustomButton
+                onClick={handleSubmit(onSubmit)}
+                backgroundColor="#F56D3B"
+                borderColor="#F56D3B"
+                color="#FFFFFF"
+                style={{ textTransform: 'none' }} // Inline style to transform text to lowercase
+            >
+                Submit
+            </CustomButton>
+    </Grid>
+    
+  );
 };
 
 // Component for Session Activity
@@ -98,10 +194,7 @@ const SessionActivity = ({ activity, name }) => {
                     name="activityType"
                     value={name}
                     options={[
-                        { value: 'Wheel of Life', label: 'test' },
-                        { value: 'Core Value', label: 'test' },
-                        { value: 'Belief', label: 'test' },
-                        { value: 'Virtual meet', label: 'Virtual meet' },
+                      { value: name , label: name },
                     ]}
                     errors={errors}
                 />
@@ -138,18 +231,26 @@ const SessionActivity = ({ activity, name }) => {
 };
 
 // Main Popup Component
-const ViewActivityPopup = ({ open, onClose, activity }) => {
+const ViewActivityPopup = ({ open, onClose, activity, templateId }) => {
     console.log('............. Activity', activity);
     const activity_type = activity.activity_type;
+    console.log("activitygid",activity.id);
+    console.log("activitygid",activity.activity_type_id);
+    console.log("activityurl",activity.activity_url)
     console.log('atcijdcidcdcdic', activity.activity_type?.type_name);
     const renderContent = () => {
-        switch (activity.id) {
+        switch (activity.activity_type.id) {
             case 1:
             case 2:
             case 3:
                 return (
                     <VideoPdfActivity
+                        handleClose={onClose}
                         fileName={activity}
+                        activity_id={activity.id}
+                        template_id={templateId}
+                        activity_type_id={activity.activity_type_id}
+                        activity_url={activity.activity_url}
                         name={activity.activity_type?.type_name}
                     />
                 );
@@ -160,7 +261,7 @@ const ViewActivityPopup = ({ open, onClose, activity }) => {
                 return (
                     <SessionActivity
                         details={activity}
-                        name={activity.type_name}
+                        name={activity.activity_type?.type_name}
                     />
                 );
             default:
