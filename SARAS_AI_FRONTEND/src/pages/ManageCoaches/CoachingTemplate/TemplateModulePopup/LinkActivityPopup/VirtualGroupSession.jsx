@@ -22,6 +22,10 @@ import {
     createCoachSchedule,
 } from '../../../../../redux/features/adminModule/coach/coachSchedule';
 import { getTaAvailableSlotsFromDate } from '../../../../../redux/features/adminModule/ta/taScheduling';
+import { getPlatforms, getTimezone } from '../../../../../redux/features/utils/utilSlice';
+import { timezoneIdToName } from '../../../../../utils/timezoneIdToName';
+import { convertFromUTC } from '../../../../../utils/dateAndtimeConversion';
+import CustomPlatformForm from '../../../../../components/CustomFields/CustomPlatformForm';
 
 const VirtualGroupSession = () => {
     const dispatch = useDispatch();
@@ -33,7 +37,17 @@ const VirtualGroupSession = () => {
     const [fromDate, setFromDate] = useState(null);
     const [selectedCoachId, setSelectedCoachId] = useState(null);
     const [coachTimeZone, setCoachTimeZone] = useState(null);
+    const [coachSlots, setCoachSlots] = useState(null);
+    const [selectedPlatform, setSelectedPlatform] = useState(null);
     const { coaches } = useSelector(state => state.coachModule);
+    const { timezones, platforms } = useSelector(state => state.util);
+    const [selectedSlot, setSelectedSlot] = useState(''); 
+
+    const handleSlotChange = (event) => {
+        console.log(event.target.value);
+        setSelectedSlot(event.target.value); 
+    };
+
     let weeksArray = Array(7).fill(0);
 
     const index = new Date(fromDate).getDay();
@@ -42,6 +56,7 @@ const VirtualGroupSession = () => {
     const { coachAvailableSlots } = useSelector(state => state.coachScheduling);
     console.log('coaches', coaches);
     console.log('coachesslot', coachAvailableSlots);
+
     const formatTime = time => {
         const [hours, minutes] = time.split(':');
         const hour = parseInt(hours, 10);
@@ -50,12 +65,48 @@ const VirtualGroupSession = () => {
         const formattedHour = hour % 12 || 12;
         return `${formattedHour}:${minute < 10 ? '0' : ''}${minute} ${ampm}`;
     };
-    const timeZones = [
-        { value: 'UTC', label: 'UTC' },
-        { value: 'GMT', label: 'GMT' },
-        { value: 'PST', label: 'Pacific Standard Time' },
-        { value: 'EST', label: 'Eastern Standard Time' },
-    ];
+
+    const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
+
+    const tranformSlots = async (coachAvailableSlots) =>{
+        const timezonename = timezoneIdToName(
+            storedTimezoneId,
+            timezones
+        );
+        const transformedSlots = await Promise.all(
+            coachAvailableSlots.map(async slot => {
+                console.log(slot);
+                const localTime = await convertFromUTC({
+                    start_date: slot.slot_date.split(' ')[0],
+                    start_time: slot.from_time,
+                    end_time: slot.to_time,
+                    end_date: slot.slot_end_date.split(' ')[0],
+                    timezonename,
+                });
+                console.log(
+                    'Converted Local Schedule Time:',
+                    localTime);
+                const newSlot = {
+                    from_time: localTime.start_time,
+                    to_time: localTime.end_time,
+                    id: slot.id
+                }
+                return newSlot; 
+            }
+        ))
+        console.log('transformed slots',transformedSlots);
+        setCoachSlots(transformedSlots);
+    }
+
+    useEffect(()=>{
+        tranformSlots(coachAvailableSlots);
+    },[coachAvailableSlots]);
+
+    useEffect(()=>{
+        dispatch(getTimezone());
+        dispatch(getPlatforms());
+    },[dispatch]);
+
     const coachOptions = coaches.map(coach => ({
         value: coach.name,
         label: coach.name,
@@ -71,41 +122,33 @@ const VirtualGroupSession = () => {
             console.log('Selected Coach ID:', selected.id); // Log the selected coach ID
         }
     };
+
     useEffect(() => {
+        const selectedCoachTimeZone = timezones.find(timezone => timezone.id===coachTimeZone);
+
+        if(selectedCoachTimeZone){
         const data = {
             admin_user_id: selectedCoachId,
             date: fromDate,
+            timezone_name: selectedCoachTimeZone.time_zone,
         };
         console.log('data', data);
         if (fromDate && selectedCoachId) {
             dispatch(getTaAvailableSlotsFromDate(data));
             dispatch(getCoachAvailableSlotsFromDate(data));
-
-            if (coachAvailableSlots.length > 0) {
-                const data1 = {
-                    admin_user_id: selectedCoachId,
-                    meeting_name: 'Team Meeting',
-                    meeting_url: 'http://example.com/meeting',
-                    schedule_date: fromDate,
-                    slot_id: coachAvailableSlots[0].id,
-                    start_time: coachAvailableSlots[0].from_time,
-                    end_time: coachAvailableSlots[0].to_time,
-                    timezone: 'IST',
-                    event_status: 'scheduled',
-                    end_date: fromDate,
-                    studentId: [],
-                    batchId: [],
-                    weeks: weeksArray,
-                };
-                dispatch(createCoachSchedule(data1));
-            }
+        }
         }
     }, [fromDate, dispatch]);
 
     useEffect(()=>{
-       const selectedCoach = coaches.map(coach => coach.id===selectedCoachId);
-       console.log('newlyselectedcoach',selectedCoach);
+       const selectedCoach = coaches.find(coach => coach.id===selectedCoachId);
+       if(selectedCoach) setCoachTimeZone(selectedCoach.timezone_id);
     },[selectedCoachId]);
+
+    const handlePlatformChange = event =>{
+        setSelectedPlatform(event.target.value);
+    }
+
     return (
         <>
             <Grid
@@ -127,7 +170,6 @@ const VirtualGroupSession = () => {
                             onChange={e => {
                                 field.onChange(e);
                                 handleCoachChange(e);
-                                // handleCoachChange(e); // Uncomment if you have a handleCoachChange function
                             }}
                             errors={errors}
                             options={coachOptions}
@@ -165,20 +207,33 @@ const VirtualGroupSession = () => {
                     <>
                     <Grid item xs={12} style={{ margin: '5px 0px', width: '80%' }}>
                         <Typography variant="h6">Available Slots</Typography>
-                        {coachAvailableSlots && coachAvailableSlots.length > 0 ? (
-                            <RadioGroup>
-                                {coachAvailableSlots.map((slot, index) => (
-                                    <FormControlLabel
+                        {coachSlots && coachSlots.length > 0 ? (
+                            <RadioGroup value={selectedSlot} onChange={handleSlotChange}>
+                                {coachSlots.map((slot, index) => (
+                                    <FormControlLabel 
                                         key={index}
                                         control={<Radio />}
                                         label={`${formatTime(slot.from_time)} - ${formatTime(slot.to_time)}`}
-                                        value={slot.timeFrom}
+                                        value={slot.id}
                                     />
                                 ))}
                             </RadioGroup>
                         ) : (
                             <Typography>No slots available</Typography>
                         )}
+
+                    <CustomPlatformForm
+                        label="Platform"
+                        name="platform"
+                        placeholder="Select Platform"
+                        value={
+                            selectedPlatform
+                        }
+                        onChange={handlePlatformChange}
+                        errors={''}
+                        options={platforms}
+                        sx={{ width: '100px' }} // Adjust the width as needed
+                    />
                     </Grid>
                     <Grid
                         container
@@ -229,14 +284,12 @@ const VirtualGroupSession = () => {
                                 <CustomFormControl
                                     label="Time Zone"
                                     name="timezone"
-                                    value={field.value}
-                                    onChange={e => {
-                                        field.onChange(e);
-                                    }}
+                                    value={coachTimeZone}
+                                    disabled={true}
                                     errors={errors}
-                                    options={timeZones.map(zone => ({
-                                        value: zone.value,
-                                        label: zone.label,
+                                    options={timezones.map(zone => ({
+                                        value: zone.id,
+                                        label: zone.time_zone,
                                     }))}
                                 />
                             )}
