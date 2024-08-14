@@ -95,7 +95,12 @@ const TAMenuCalendar = () => {
     }, [taSlots, timezones]);
 
     const convertEvents = async () => {
-        if (taSessions && taSessions.length > 0 && storedTimezoneId && timezones) {
+        if (
+            taSessions &&
+            taSessions.length > 0 &&
+            storedTimezoneId &&
+            timezones
+        ) {
             const timezonename = timezoneIdToName(storedTimezoneId, timezones);
             if (!timezonename) {
                 console.error('Invalid timezone name');
@@ -113,22 +118,33 @@ const TAMenuCalendar = () => {
                             end_date: event.date.split(' ')[0],
                             timezonename,
                         });
-                        
-                        const startDateTime = new Date(`${localTime.start_date}T${localTime.start_time}`);
-                        const endDateTime = new Date(`${localTime.end_date}T${localTime.end_time}`);
+
+                        const startDateTime = new Date(
+                            `${localTime.start_date}T${localTime.start_time}`
+                        );
+                        const endDateTime = new Date(
+                            `${localTime.end_date}T${localTime.end_time}`
+                        );
 
                         if (localTime.start_date !== localTime.end_date) {
-                            processedEvents.push({
-                                id: event.id,
-                                title: event.meeting_name,
-                                start: startDateTime,
-                                end: new Date(`${localTime.start_date}T23:59:59`),
-                            }, {
-                                id: event.id,
-                                title: event.meeting_name,
-                                start: new Date(`${localTime.end_date}T00:00:00`),
-                                end: endDateTime,
-                            });
+                            processedEvents.push(
+                                {
+                                    id: event.id,
+                                    title: event.meeting_name,
+                                    start: startDateTime,
+                                    end: new Date(
+                                        `${localTime.start_date}T23:59:59`
+                                    ),
+                                },
+                                {
+                                    id: event.id,
+                                    title: event.meeting_name,
+                                    start: new Date(
+                                        `${localTime.end_date}T00:00:00`
+                                    ),
+                                    end: endDateTime,
+                                }
+                            );
                         } else {
                             processedEvents.push({
                                 id: event.id,
@@ -163,19 +179,30 @@ const TAMenuCalendar = () => {
                             end_date: slot.slot_end_date,
                             timezonename,
                         });
-                        const startDateTime = new Date(`${localTime.start_date}T${localTime.start_time}`);
-                        const endDateTime = new Date(`${localTime.end_date}T${localTime.end_time}`);
+                        const startDateTime = new Date(
+                            `${localTime.start_date}T${localTime.start_time}`
+                        );
+                        const endDateTime = new Date(
+                            `${localTime.end_date}T${localTime.end_time}`
+                        );
 
                         if (localTime.start_date !== localTime.end_date) {
-                            processedSlots.push({
-                                startDate: startDateTime,
-                                endDate: new Date(`${localTime.start_date}T23:59:59`),
-                                leave: slot.leave,
-                            }, {
-                                startDate: new Date(`${localTime.end_date}T00:00:00`),
-                                endDate: endDateTime,
-                                leave: slot.leave,
-                            });
+                            processedSlots.push(
+                                {
+                                    startDate: startDateTime,
+                                    endDate: new Date(
+                                        `${localTime.start_date}T23:59:59`
+                                    ),
+                                    leave: slot.leave,
+                                },
+                                {
+                                    startDate: new Date(
+                                        `${localTime.end_date}T00:00:00`
+                                    ),
+                                    endDate: endDateTime,
+                                    leave: slot.leave,
+                                }
+                            );
                         } else {
                             processedSlots.push({
                                 startDate: startDateTime,
@@ -216,7 +243,10 @@ const TAMenuCalendar = () => {
                 <DialogActions sx={{ p: 2 }}>
                     <Grid container alignItems="center">
                         <Grid item xs>
-                            <Typography variant="h4" sx={{ mb: 4, fontFamily: 'ExtraLight' }}>
+                            <Typography
+                                variant="h4"
+                                sx={{ mb: 4, fontFamily: 'ExtraLight' }}
+                            >
                                 {'My Calendar'}
                             </Typography>
                         </Grid>
@@ -250,7 +280,9 @@ const TAMenuCalendar = () => {
                                     onClick={handleCreateNewSlot}
                                     style={{ textTransform: 'none' }}
                                 >
-                                    <AddCircleOutlineIcon sx={{ marginRight: 1 }} />
+                                    <AddCircleOutlineIcon
+                                        sx={{ marginRight: 1 }}
+                                    />
                                     Create New Slot
                                 </CustomButton>
                             </Box>
@@ -264,8 +296,12 @@ const TAMenuCalendar = () => {
                     componentName={'TAMENU'}
                 />
                 {createNewSlotPopup && <CreateSlot componentName={'TAMENU'} />}
-                {scheduleNewSessionPopup && <CreateSession componentName={'TAMENU'} />}
-                {selectStudentPopup && <SelectStudents componentName={'TAMENU'} />}
+                {scheduleNewSessionPopup && (
+                    <CreateSession componentName={'TAMENU'} />
+                )}
+                {selectStudentPopup && (
+                    <SelectStudents componentName={'TAMENU'} />
+                )}
                 {selectBatchPopup && <SelectBatches componentName={'TAMENU'} />}
                 {markLeave && <MarkLeaveDate componentName={'TAMENU'} />}
                 {createdSlots && <CreatedSlots componentName={'TAMENU'} />}

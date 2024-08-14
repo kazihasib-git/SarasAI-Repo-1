@@ -30,7 +30,7 @@ export const uploadpdf = createAsyncThunk(
 
         // const { activity_id, activity_type_id, link } = response.data;
         // return { activity_id, activity_type_id, link };
-      
+
         return response.data;
     }
 );
@@ -40,7 +40,7 @@ const linkActivitySlice = createSlice({
     initialState: {
         loading: false,
         success: false,
-        upload_pdf_url : null,
+        upload_pdf_url: null,
         error: null,
     },
     reducers: {},
@@ -54,7 +54,7 @@ const linkActivitySlice = createSlice({
             .addCase(linkActivity.fulfilled, (state, action) => {
                 state.loading = false;
                 state.success = true;
-                console.log("action>>>>>>>>>>>>>>>",action.payload)
+                console.log('action>>>>>>>>>>>>>>>', action.payload);
                 state.data = action.payload; // Store the response data
             })
             .addCase(linkActivity.rejected, (state, action) => {
@@ -62,18 +62,17 @@ const linkActivitySlice = createSlice({
                 state.success = false;
                 state.error = action.payload;
             })
-        //upload pdf
-      
+            //upload pdf
+
             .addCase(uploadpdf.pending, state => {
                 state.loading = true;
                 state.success = false;
                 state.error = null;
             })
             .addCase(uploadpdf.fulfilled, (state, action) => {
-              
                 state.loading = false;
                 state.success = true;
-                console.log("action>>>>>>>>>>>", action.payload.url);
+                console.log('action>>>>>>>>>>>', action.payload.url);
                 state.upload_pdf_url = action.payload.url; // Store the response data
             })
             .addCase(uploadpdf.rejected, (state, action) => {

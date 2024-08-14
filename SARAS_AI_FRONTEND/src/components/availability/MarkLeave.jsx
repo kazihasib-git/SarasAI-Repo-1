@@ -72,7 +72,7 @@ const MarkLeave = ({ componentName }) => {
         }
         return true;
     };
-
+    const { timezones } = useSelector(state => state.util);
     const handleSubmit = () => {
         if (validateDates()) {
             const formattedFromDate = moment(fromDate).format('YYYY-MM-DD');
@@ -87,6 +87,7 @@ const MarkLeave = ({ componentName }) => {
                         : formattedToDate,
                 start_time: '00:00:00',
                 end_time: '23:59:59',
+                timezone_name: timezones[taId].time_zone,
             };
 
             dispatch(getSlotsAction(leaveData))

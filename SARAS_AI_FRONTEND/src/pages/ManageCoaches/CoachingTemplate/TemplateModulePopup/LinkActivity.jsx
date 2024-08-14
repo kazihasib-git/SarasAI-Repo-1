@@ -71,7 +71,13 @@ const CustomButton = ({
     );
 };
 
-const LinkActivityPopup = ({ open, handleClose, activityId, templateId, LinkActivitytype }) => {
+const LinkActivityPopup = ({
+    open,
+    handleClose,
+    activityId,
+    templateId,
+    LinkActivitytype,
+}) => {
     const dispatch = useDispatch();
     console.log('template id', templateId);
     const {
@@ -80,7 +86,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId, LinkActi
         reset,
         formState: { errors },
     } = useForm();
-    const { upload_pdf_url } = useSelector(state => state.linkActivity  );
+    const { upload_pdf_url } = useSelector(state => state.linkActivity);
     const [fromDate, setFromDate] = useState(null);
     const [activityType, setActivityType] = useState('');
     const [selectedSessionType, setSelectedSessionType] = useState('');

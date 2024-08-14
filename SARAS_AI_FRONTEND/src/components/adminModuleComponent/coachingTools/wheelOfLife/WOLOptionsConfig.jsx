@@ -113,7 +113,9 @@ const WOLOptionsConfig = () => {
                 details: get_config_details.map(detail => ({
                     point: detail.point,
                     text: detail.text,
-                    icon: detail.icon ? `data:image/png;base64,${detail.icon}`: null,
+                    icon: detail.icon
+                        ? `data:image/png;base64,${detail.icon}`
+                        : null,
                 })),
             });
             setEdit(true);
@@ -145,7 +147,7 @@ const WOLOptionsConfig = () => {
             tempErrors.scaleRange =
                 'Maximum Scale must be greater than Minimum Scale';
         formValues.details.forEach((detail, index) => {
-            if (index === 0 || (index+1) % maxScale === 0) {
+            if (index === 0 || (index + 1) % maxScale === 0) {
                 // Check if the point is a multiple of 5 starting from 1
                 if (!detail.text) {
                     tempErrors[`detailText${index}`] = 'Text is required';
@@ -188,7 +190,7 @@ const WOLOptionsConfig = () => {
         e.preventDefault();
         if (validate()) {
             const { minScale, maxScale, details } = formValues;
-            
+
             const payload = {
                 minimum_scale: minScale,
                 maximum_scale: maxScale,
@@ -385,7 +387,8 @@ const WOLOptionsConfig = () => {
                                                 >
                                                     {detail.point}
                                                     {(index === 0 ||
-                                                        (index + 1) % maxScale ===
+                                                        (index + 1) %
+                                                            maxScale ===
                                                             0) && (
                                                         <img
                                                             src={star}
