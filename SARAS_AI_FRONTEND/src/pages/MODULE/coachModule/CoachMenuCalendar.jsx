@@ -31,7 +31,10 @@ import SessionLink from '../../../components/RoleRoute/CommonComponent/commonCal
 import CreateSession from '../../../components/RoleRoute/CommonComponent/commonCalender/CreateSession';
 import CreatedSessions from '../../../components/RoleRoute/CommonComponent/commonCalender/CreatedSessions';
 import CancelSession from '../../../components/RoleRoute/CommonComponent/commonCalender/CancelSession';
-
+import { convertFromUTC } from '../../../utils/dateAndtimeConversion';
+import { timezoneIdToName } from '../../../utils/timezoneIdToName';
+import { getTimezone } from '../../../redux/features/utils/utilSlice';
+const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
 const CustomButton = ({
     onClick,
     children,
@@ -40,7 +43,7 @@ const CustomButton = ({
     borderColor = '#FFFFFF',
     sx,
     ...props
-}) => {
+}) => { 
     return (
         <Button
             variant="contained"
@@ -68,9 +71,11 @@ const CustomButton = ({
 };
 
 const CoachMenuCalendar = () => {
+const { timezones } = useSelector(state => state.util);
+
     const dispatch = useDispatch();
-    const [slotEvent, setSlotEvent] = useState([]);
-    const [sessionEvent, setSessionEvent] = useState([]);
+    const [eventsList, setEventsList] = useState([]);
+    const [slotViewData, setSlotViewData] = useState([]);
 
     const {
         createNewSlotPopup,
@@ -98,41 +103,121 @@ const CoachMenuCalendar = () => {
     useEffect(() => {
         dispatch(getCoachMenuSlots());
         dispatch(getCoachMenuSessions());
+        dispatch(getTimezone());
     }, [dispatch]);
+
+    useEffect(() => {
+        convertEvents();
+    }, [coachSessions, timezones]);
+
+    useEffect(() => {
+        convertSlots();
+    }, [coachSlots, timezones]);
 
     console.log('coach slots :', coachSlots);
     console.log('coachSessions', coachSessions);
 
-    useEffect(() => {
-        if (coachSessions && coachSessions.length > 0) {
-            const transformedEvents = coachSessions.map(event => ({
-                id: event.id,
-                admin_user_id: event.admin_user_id,
-                meetingName: event.meeting_name,
-                meetingId: event.meeting_id,
-                platformId: event.platform_id,
-                start: new Date(
-                    event.date.split(' ')[0] + 'T' + event.start_time
-                ),
-                end: new Date(event.date.split(' ')[0] + 'T' + event.end_time),
-                //platform_tools: event.platform_tool_details,
-                //platform_meet: event.platform_meeting_details,
-                students: event.students,
-                batch: event.batch,
-            }));
-            setSessionEvent(transformedEvents);
-        }
-    }, [coachSessions]);
+    const convertEvents = async () => {
+        if (coachSessions && coachSessions.length > 0 && storedTimezoneId && timezones) {
+            const timezonename = timezoneIdToName(storedTimezoneId, timezones);
+            if (!timezonename) {
+                console.error('Invalid timezone name');
+                setEventsList([]);
+                return;
+            }
+            try {
+                const processedEvents = [];
+                await Promise.all(
+                    coachSessions.map(async event => {
+                        const localTime = await convertFromUTC({
+                            start_date: event.date.split(' ')[0],
+                            start_time: event.start_time,
+                            end_time: event.end_time,
+                            end_date: event.date.split(' ')[0],
+                            timezonename,
+                        });
+                        
+                        const startDateTime = new Date(`${localTime.start_date}T${localTime.start_time}`);
+                        const endDateTime = new Date(`${localTime.end_date}T${localTime.end_time}`);
 
-    useEffect(() => {
-        if (coachSlots && coachSlots.length > 0) {
-            const transformedSlots = coachSlots.map(slot => ({
-                startDate: new Date(slot.slot_date + 'T' + slot.from_time),
-                endDate: new Date(slot.slot_date + 'T' + slot.to_time),
-            }));
-            setSlotEvent(transformedSlots);
+                        if (localTime.start_date !== localTime.end_date) {
+                            processedEvents.push({
+                                id: event.id,
+                                title: event.meeting_name,
+                                start: startDateTime,
+                                end: new Date(`${localTime.start_date}T23:59:59`),
+                            }, {
+                                id: event.id,
+                                title: event.meeting_name,
+                                start: new Date(`${localTime.end_date}T00:00:00`),
+                                end: endDateTime,
+                            });
+                        } else {
+                            processedEvents.push({
+                                id: event.id,
+                                title: event.meeting_name,
+                                start: startDateTime,
+                                end: endDateTime,
+                            });
+                        }
+                    })
+                );
+                setEventsList(processedEvents);
+            } catch (error) {
+                console.error('Error converting events:', error);
+                setEventsList([]);
+            }
+        } else {
+            setEventsList([]);
         }
-    }, [coachSlots]);
+    };
+
+
+    const convertSlots = async () => {
+        if (coachSlots && coachSlots.length > 0 && storedTimezoneId && timezones) {
+            const timezonename = timezoneIdToName(storedTimezoneId, timezones);
+            try {
+                const processedSlots = [];
+                await Promise.all(
+                    coachSlots.map(async slot => {
+                        const localTime = await convertFromUTC({
+                            start_date: slot.slot_date,
+                            start_time: slot.from_time,
+                            end_time: slot.to_time,
+                            end_date: slot.slot_end_date,
+                            timezonename,
+                        });
+                        const startDateTime = new Date(`${localTime.start_date}T${localTime.start_time}`);
+                        const endDateTime = new Date(`${localTime.end_date}T${localTime.end_time}`);
+
+                        if (localTime.start_date !== localTime.end_date) {
+                            processedSlots.push({
+                                startDate: startDateTime,
+                                endDate: new Date(`${localTime.start_date}T23:59:59`),
+                                leave: slot.leave,
+                            }, {
+                                startDate: new Date(`${localTime.end_date}T00:00:00`),
+                                endDate: endDateTime,
+                                leave: slot.leave,
+                            });
+                        } else {
+                            processedSlots.push({
+                                startDate: startDateTime,
+                                endDate: endDateTime,
+                                leave: slot.leave,
+                            });
+                        }
+                    })
+                );
+                setSlotViewData(processedSlots);
+            } catch (error) {
+                console.error('Error converting slots:', error);
+                setSlotViewData([]);
+            }
+        } else {
+            setSlotViewData([]);
+        }
+    };
 
     const handleScheduleNewSession = () => {
         dispatch(openScheduleNewSession());
@@ -198,10 +283,9 @@ const CoachMenuCalendar = () => {
                         </Grid>
                     </Grid>
                 </DialogActions>
-
                 <CalendarComponent
-                    eventsList={sessionEvent}
-                    slotData={slotEvent}
+                    eventsList={eventsList}
+                    slotData={slotViewData}
                     componentName={'COACHMENU'}
                 />
                 {createNewSlotPopup && (

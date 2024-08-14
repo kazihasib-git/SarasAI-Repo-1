@@ -2,7 +2,6 @@ import { Box, DialogActions, Grid, Typography, Button } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import CalendarComponent from '../../../components/Calender/BigCalendar';
-
 import { useDispatch, useSelector } from 'react-redux';
 import TaMenuSidebar from './TeachingAssistantSidebar';
 import Header from '../../../components/Header/Header';
@@ -22,6 +21,9 @@ import SelectBatches from '../../../components/RoleRoute/CommonComponent/commonC
 import MarkLeaveDate from '../../../components/RoleRoute/CommonComponent/commonCalender/MarkLeaveDate';
 import CreatedSlots from '../../../components/RoleRoute/CommonComponent/commonCalender/CreatedSlots';
 import SessionLink from '../../../components/RoleRoute/CommonComponent/commonCalender/SessionLink';
+import { convertFromUTC } from '../../../utils/dateAndtimeConversion';
+import { timezoneIdToName } from '../../../utils/timezoneIdToName';
+import { getTimezone } from '../../../redux/features/utils/utilSlice';
 
 const CustomButton = ({
     onClick,
@@ -58,10 +60,13 @@ const CustomButton = ({
     );
 };
 
+const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
+
 const TAMenuCalendar = () => {
+    const { timezones } = useSelector(state => state.util);
     const dispatch = useDispatch();
-    const [slotEvent, setSlotEvent] = useState([]);
-    const [sessionEvent, setSessionEvent] = useState([]);
+    const [eventsList, setEventsList] = useState([]);
+    const [slotViewData, setSlotViewData] = useState([]);
 
     const {
         createNewSlotPopup,
@@ -78,30 +83,117 @@ const TAMenuCalendar = () => {
     useEffect(() => {
         dispatch(getTaMenuSlots());
         dispatch(getTaMenuSessions());
+        dispatch(getTimezone());
     }, [dispatch]);
 
     useEffect(() => {
-        if (taSessions && taSessions.length > 0) {
-            const transformedEvents = taSessions.map(event => ({
-                title: event.meeting_name,
-                start: new Date(
-                    event.date.split(' ')[0] + 'T' + event.start_time
-                ),
-                end: new Date(event.date.split(' ')[0] + 'T' + event.end_time),
-            }));
-            setSessionEvent(transformedEvents);
-        }
-    }, [taSessions]);
+        convertEvents();
+    }, [taSessions, timezones]);
 
     useEffect(() => {
-        if (taSlots && taSlots.length > 0) {
-            const transformedSlots = taSlots.map(slot => ({
-                startDate: new Date(slot.slot_date + 'T' + slot.from_time),
-                endDate: new Date(slot.slot_date + 'T' + slot.to_time),
-            }));
-            setSlotEvent(transformedSlots);
+        convertSlots();
+    }, [taSlots, timezones]);
+
+    const convertEvents = async () => {
+        if (taSessions && taSessions.length > 0 && storedTimezoneId && timezones) {
+            const timezonename = timezoneIdToName(storedTimezoneId, timezones);
+            if (!timezonename) {
+                console.error('Invalid timezone name');
+                setEventsList([]);
+                return;
+            }
+            try {
+                const processedEvents = [];
+                await Promise.all(
+                    taSessions.map(async event => {
+                        const localTime = await convertFromUTC({
+                            start_date: event.date.split(' ')[0],
+                            start_time: event.start_time,
+                            end_time: event.end_time,
+                            end_date: event.date.split(' ')[0],
+                            timezonename,
+                        });
+                        
+                        const startDateTime = new Date(`${localTime.start_date}T${localTime.start_time}`);
+                        const endDateTime = new Date(`${localTime.end_date}T${localTime.end_time}`);
+
+                        if (localTime.start_date !== localTime.end_date) {
+                            processedEvents.push({
+                                id: event.id,
+                                title: event.meeting_name,
+                                start: startDateTime,
+                                end: new Date(`${localTime.start_date}T23:59:59`),
+                            }, {
+                                id: event.id,
+                                title: event.meeting_name,
+                                start: new Date(`${localTime.end_date}T00:00:00`),
+                                end: endDateTime,
+                            });
+                        } else {
+                            processedEvents.push({
+                                id: event.id,
+                                title: event.meeting_name,
+                                start: startDateTime,
+                                end: endDateTime,
+                            });
+                        }
+                    })
+                );
+                setEventsList(processedEvents);
+            } catch (error) {
+                console.error('Error converting events:', error);
+                setEventsList([]);
+            }
+        } else {
+            setEventsList([]);
         }
-    }, [taSlots]);
+    };
+
+    const convertSlots = async () => {
+        if (taSlots && taSlots.length > 0 && storedTimezoneId && timezones) {
+            const timezonename = timezoneIdToName(storedTimezoneId, timezones);
+            try {
+                const processedSlots = [];
+                await Promise.all(
+                    taSlots.map(async slot => {
+                        const localTime = await convertFromUTC({
+                            start_date: slot.slot_date,
+                            start_time: slot.from_time,
+                            end_time: slot.to_time,
+                            end_date: slot.slot_end_date,
+                            timezonename,
+                        });
+                        const startDateTime = new Date(`${localTime.start_date}T${localTime.start_time}`);
+                        const endDateTime = new Date(`${localTime.end_date}T${localTime.end_time}`);
+
+                        if (localTime.start_date !== localTime.end_date) {
+                            processedSlots.push({
+                                startDate: startDateTime,
+                                endDate: new Date(`${localTime.start_date}T23:59:59`),
+                                leave: slot.leave,
+                            }, {
+                                startDate: new Date(`${localTime.end_date}T00:00:00`),
+                                endDate: endDateTime,
+                                leave: slot.leave,
+                            });
+                        } else {
+                            processedSlots.push({
+                                startDate: startDateTime,
+                                endDate: endDateTime,
+                                leave: slot.leave,
+                            });
+                        }
+                    })
+                );
+                setSlotViewData(processedSlots);
+            } catch (error) {
+                console.error('Error converting slots:', error);
+                setSlotViewData([]);
+            }
+        } else {
+            setSlotViewData([]);
+        }
+    };
 
     const handleScheduleNewSession = () => {
         dispatch(openScheduleNewSession());
@@ -124,10 +216,7 @@ const TAMenuCalendar = () => {
                 <DialogActions sx={{ p: 2 }}>
                     <Grid container alignItems="center">
                         <Grid item xs>
-                            <Typography
-                                variant="h4"
-                                sx={{ mb: 4, fontFamily: 'ExtraLight' }}
-                            >
+                            <Typography variant="h4" sx={{ mb: 4, fontFamily: 'ExtraLight' }}>
                                 {'My Calendar'}
                             </Typography>
                         </Grid>
@@ -161,7 +250,7 @@ const TAMenuCalendar = () => {
                                     onClick={handleCreateNewSlot}
                                     style={{ textTransform: 'none' }}
                                 >
-                                    {/* <AddCircleOutlineIcon /> */}
+                                    <AddCircleOutlineIcon sx={{ marginRight: 1 }} />
                                     Create New Slot
                                 </CustomButton>
                             </Box>
@@ -170,76 +259,17 @@ const TAMenuCalendar = () => {
                 </DialogActions>
 
                 <CalendarComponent
-                    eventsList={sessionEvent}
-                    slotData={slotEvent}
+                    eventsList={eventsList}
+                    slotData={slotViewData}
                     componentName={'TAMENU'}
                 />
                 {createNewSlotPopup && <CreateSlot componentName={'TAMENU'} />}
-                {scheduleNewSessionPopup && (
-                    <CreateSession componentName={'TAMENU'} />
-                )}
-
-                {selectStudentPopup && (
-                    <SelectStudents componentName={'TAMENU'} />
-                )}
+                {scheduleNewSessionPopup && <CreateSession componentName={'TAMENU'} />}
+                {selectStudentPopup && <SelectStudents componentName={'TAMENU'} />}
                 {selectBatchPopup && <SelectBatches componentName={'TAMENU'} />}
-
                 {markLeave && <MarkLeaveDate componentName={'TAMENU'} />}
                 {createdSlots && <CreatedSlots componentName={'TAMENU'} />}
                 {openSession && <SessionLink componentName={'TAMENU'} />}
-                {/*
-                
-                {/*{sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} componentName={"TACALENDER"} />} */}
-                {/* {markLeaveOpen && (
-                    <MarkLeave
-                        id={id}
-                        name={name}
-                        componentName={'TACALENDER'}
-                    />
-                )}
-                {scheduledSlotsOpen && (
-                    <Slots id={id} name={name} componentName={'TACALENDER'} />
-                )}
-                {scheduledSessionOpen && (
-                    <ScheduledSessions
-                        id={id}
-                        name={name}
-                        componentName={'TACALENDER'}
-                    />
-                )}
-                {cancelSessionOpen && (
-                    <CancelSchedule
-                        id={id}
-                        name={name}
-                        componentName={'TACALENDER'}
-                    />
-                )}
-                {reasonForLeaveOpen && (
-                    <ReasonForLeave
-                        id={id}
-                        name={name}
-                        componentName={'TACALENDER'}
-                    />
-                )}
-                {resheduleSessionOpen && (
-                    <ReschedulingSession
-                        id={id}
-                        name={name}
-                        componentName={'TACALENDER'}
-                    />
-                )} */}
-                {/* {deleteFutureSlots && (
-        <DeleteAllSlots
-          open={deleteFutureSlots}
-          handleClose={() => setDeleteFutureSlots(false)}
-          id={id}
-          name={name}
-          componentName={"TACALENDER"}
-        />
-      )} */}
-
-                {/* {assignStudentOpen && <AssignStudents componentname="ADDEDITTA" />}
-                {assignBatchOpen && <AssignBatches componentname="ADDEDITTA" />} */}
             </Box>
         </>
     );
