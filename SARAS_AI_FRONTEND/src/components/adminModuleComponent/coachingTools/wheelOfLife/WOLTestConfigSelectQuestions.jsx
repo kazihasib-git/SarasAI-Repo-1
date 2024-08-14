@@ -58,7 +58,7 @@ const WOLTestConfigSelectQuestions = () => {
 
     useEffect(() => {
         if (wolTestConfigCategoryWise.data) {
-            // console.log("Wol Test Config Category Wise", wolTestConfigCategoryWise.data)
+            console.log("Wol Test Config Category Wise", wolTestConfigCategoryWise.data)
             setTotalQuestions(wolTestConfigCategoryWise.data.total_questions);
             setSelectedQuestions(
                 wolTestConfigCategoryWise.data.selected_questions
