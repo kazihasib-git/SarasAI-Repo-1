@@ -31,7 +31,8 @@ const VirtualGroupSession = () => {
         formState: { errors },
     } = useForm();
     const [fromDate, setFromDate] = useState(null);
-    const [selectedCoachId, setSelectedCoachId] = useState('');
+    const [selectedCoachId, setSelectedCoachId] = useState(null);
+    const [coachTimeZone, setCoachTimeZone] = useState(null);
     const { coaches } = useSelector(state => state.coachModule);
     let weeksArray = Array(7).fill(0);
 
@@ -100,6 +101,11 @@ const VirtualGroupSession = () => {
             }
         }
     }, [fromDate, dispatch]);
+
+    useEffect(()=>{
+       const selectedCoach = coaches.map(coach => coach.id===selectedCoachId);
+       console.log('newlyselectedcoach',selectedCoach);
+    },[selectedCoachId]);
     return (
         <>
             <Grid
@@ -130,108 +136,116 @@ const VirtualGroupSession = () => {
                 />
             </Grid>
 
-            <Grid
-                item
-                xs={12}
-                sm={6}
-                md={6}
-                style={{ margin: '5px 0px', width: '80%' }}
-            >
-                <Controller
-                    name="date"
-                    control={control}
-                    defaultValue={null}
-                    render={({ field }) => (
-                        <CustomDateField
-                            label="Select Date"
-                            name="date"
-                            value={fromDate}
-                            onChange={setFromDate}
-                            fullWidth
-                        />
-                    )}
-                />
-            </Grid>
+           {selectedCoachId && ( 
+            <>
+                <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    md={6}
+                    style={{ margin: '5px 0px', width: '80%' }}
+                >
+                    <Controller
+                        name="date"
+                        control={control}
+                        defaultValue={null}
+                        render={({ field }) => (
+                            <CustomDateField
+                                label="Select Date"
+                                name="date"
+                                value={fromDate}
+                                onChange={setFromDate}
+                                fullWidth
+                            />
+                        )}
+                    />
+                </Grid>
 
-            <Grid item xs={12} style={{ margin: '5px 0px', width: '80%' }}>
-                <Typography variant="h6">Available Slots</Typography>
-                {coachAvailableSlots && coachAvailableSlots.length > 0 ? (
-                    <RadioGroup>
-                        {coachAvailableSlots.map((slot, index) => (
-                            <FormControlLabel
-                                key={index}
-                                control={<Radio />}
-                                label={`${formatTime(slot.from_time)} - ${formatTime(slot.to_time)}`}
-                                value={slot.timeFrom}
-                            />
-                        ))}
-                    </RadioGroup>
-                ) : (
-                    <Typography>No slots available</Typography>
-                )}
-            </Grid>
-            <Grid
-                container
-                spacing={1}
-                style={{ margin: '5px 0px', width: '80%' }}
-            >
-                <Grid item xs={6}>
-                    <Controller
-                        name="fromTime"
-                        control={control}
-                        defaultValue=""
-                        render={({ field }) => (
-                            <CustomTimeField
-                                {...field}
-                                label="From Time"
-                                fullWidth
-                            />
+                {fromDate && (
+                    <>
+                    <Grid item xs={12} style={{ margin: '5px 0px', width: '80%' }}>
+                        <Typography variant="h6">Available Slots</Typography>
+                        {coachAvailableSlots && coachAvailableSlots.length > 0 ? (
+                            <RadioGroup>
+                                {coachAvailableSlots.map((slot, index) => (
+                                    <FormControlLabel
+                                        key={index}
+                                        control={<Radio />}
+                                        label={`${formatTime(slot.from_time)} - ${formatTime(slot.to_time)}`}
+                                        value={slot.timeFrom}
+                                    />
+                                ))}
+                            </RadioGroup>
+                        ) : (
+                            <Typography>No slots available</Typography>
                         )}
-                    />
-                </Grid>
-                <Grid item xs={6}>
-                    <Controller
-                        name="toTime"
-                        control={control}
-                        defaultValue=""
-                        render={({ field }) => (
-                            <CustomTimeField
-                                {...field}
-                                label="To Time"
-                                fullWidth
+                    </Grid>
+                    <Grid
+                        container
+                        spacing={1}
+                        style={{ margin: '5px 0px', width: '80%' }}
+                    >
+                        <Grid item xs={6}>
+                            <Controller
+                                name="fromTime"
+                                control={control}
+                                defaultValue=""
+                                render={({ field }) => (
+                                    <CustomTimeField
+                                        {...field}
+                                        label="From Time"
+                                        fullWidth
+                                    />
+                                )}
                             />
-                        )}
-                    />
-                </Grid>
-            </Grid>
-            <Grid
-                item
-                xs={12}
-                sm={6}
-                md={6}
-                style={{ margin: '5px 0px', width: '80%' }}
-            >
-                <Controller
-                    name="timezone"
-                    control={control}
-                    defaultValue="IST"
-                    render={({ field }) => (
-                        <CustomFormControl
-                            label="Time Zone"
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Controller
+                                name="toTime"
+                                control={control}
+                                defaultValue=""
+                                render={({ field }) => (
+                                    <CustomTimeField
+                                        {...field}
+                                        label="To Time"
+                                        fullWidth
+                                    />
+                                )}
+                            />
+                        </Grid>
+                    </Grid>
+                    <Grid
+                        item
+                        xs={12}
+                        sm={6}
+                        md={6}
+                        style={{ margin: '5px 0px', width: '80%' }}
+                    >
+                        <Controller
                             name="timezone"
-                            value={field.value}
-                            onChange={e => {
-                                field.onChange(e);
-                            }}
-                            errors={errors}
-                            options={timeZones.map(zone => ({
-                                value: zone.value,
-                                label: zone.label,
-                            }))}
+                            control={control}
+                            defaultValue="IST"
+                            render={({ field }) => (
+                                <CustomFormControl
+                                    label="Time Zone"
+                                    name="timezone"
+                                    value={field.value}
+                                    onChange={e => {
+                                        field.onChange(e);
+                                    }}
+                                    errors={errors}
+                                    options={timeZones.map(zone => ({
+                                        value: zone.value,
+                                        label: zone.label,
+                                    }))}
+                                />
+                            )}
                         />
-                    )}
-                />
-            </Grid>
+                    </Grid>
+                    </>
+                )}
+            </>
+            )}
         </>
     );
 };

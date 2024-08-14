@@ -98,20 +98,30 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId, LinkActi
                 activityType === 'test'
                     ? selectedAssessmentId
                     : selectedActivityId, // Ensure this value is correctly set
-            link: videoUrl || data.virtualMeetLink || upload_pdf_url, // Add other fields if needed
+            link: videoUrl || upload_pdf_url || data.link || data.virtualMeetLink , // Add other fields if needed
         };
         try {
+            if(payload.link){
             await dispatch(linkActivity(payload))
                 .unwrap()
                 .then(() => {
                     // Refetch the data to update the table
                     dispatch(getCoachTemplateModuleId(templateId));
                 });
-            handleClose();
+            handlePopUpClose();
+            }
         } catch (error) {
             console.error('Failed to link activity:', error);
         }
     };
+
+    const handlePopUpClose = () =>{
+        setActivityType('');
+        setSelectedActivityId('');
+        reset();
+        setVideoUrl(null);
+        handleClose();
+    }
 
     useEffect(() => {
         dispatch(getActivityType());
@@ -148,7 +158,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId, LinkActi
                 type.type_name.charAt(0).toUpperCase() +
                 type.type_name.slice(1), // Capitalize the first letter of each type_name
             id: type.id,
-        }));
+    }));
 
     const sessionTypes = [
         { value: 'one-on-one', label: 'One-on-one session' },
@@ -426,7 +436,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId, LinkActi
     return (
         <ReusableDialog
             open={open}
-            handleClose={handleClose}
+            handleClose={handlePopUpClose}
             title="Link Activity"
             content={contentComponent}
             actions={actions}

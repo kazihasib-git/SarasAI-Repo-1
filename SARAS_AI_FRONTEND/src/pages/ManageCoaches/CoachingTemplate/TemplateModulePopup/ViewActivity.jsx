@@ -6,12 +6,15 @@ import CustomTextField from '../../../../components/CustomFields/CustomTextField
 import CustomFormControl from '../../../../components/CustomFields/CustomFromControl';
 import CustomDateField from '../../../../components/CustomFields/CustomDateField';
 import { Button } from '@mui/material';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import  { useState } from 'react';
 import { linkActivity } from '../../../../redux/features/adminModule/coach/LinkActivitySlice';
 import PDFUploadComponent from './Components/PDFUploadComponent';
 import LinkActivityPopup from './LinkActivity';
 import { getCoachTemplateModuleId } from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
+import VideoUploadComponent from './videoUpload/VideoUploadComponent';
+import { set } from 'date-fns';
+import TestActivityComponent from './Components/TestActivityComponent';
 
 // Custom button component for consistent styling
 const CustomButton = ({
@@ -52,32 +55,41 @@ const CustomButton = ({
 // Component for Video/PDF/Link Activity
 const VideoPdfActivity = ({ handleClose, name, fileName ,activity_id, activity_type_id, activity_url, template_id }) => {
   const dispatch = useDispatch();
-const {
-  handleSubmit,
-  control,
-  reset,
-  formState: { errors },
-} = useForm();
+  const [videoUrl, setVideoUrl]=useState(null);
+  const { upload_pdf_url } = useSelector(state => state.linkActivity  );
 
-const onSubmit = async data => {
-
-  const payload = {
-      activity_id: activity_id, // Ensure this value is correctly set
-      activity_type_id: activity_type_id,
-      link: activity_url, // Add other fields if needed
-  };
-  try {
-      await dispatch(linkActivity(payload))
-          .unwrap()
-          .then(() => {
-              // Refetch the data to update the table
-              dispatch(getCoachTemplateModuleId(template_id));
-          });
-      handleClose();
-  } catch (error) {
-      console.error('Failed to link activity:', error);
+  const handleVideoUploadComplete = url =>{
+        setVideoUrl(url);
   }
-};
+
+  const {
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors },
+  } = useForm();
+
+  const onSubmit = async data => {
+    const payload = {
+        activity_id: activity_id, // Ensure this value is correctly set
+        activity_type_id: activity_type_id,
+        link: videoUrl || upload_pdf_url || data.link, // Add other fields if needed
+    };
+    try {
+        await dispatch(linkActivity(payload))
+            .unwrap()
+            .then(() => {
+                // Refetch the data to update the table
+                setVideoUrl(null);
+                data.link=null;
+                dispatch(getCoachTemplateModuleId(template_id));
+            });
+        handleClose();
+    } catch (error) {
+        console.error('Failed to link activity:', error);
+    }
+  };
+
   const [showFileName, setShowFileName] = useState(true);
 
   const handleRemoveFileName = () => {
@@ -154,7 +166,43 @@ const onSubmit = async data => {
           justifyContent: 'center' // Center horizontally
         }}
       >
-        <PDFUploadComponent />
+         {activity_type_id === 1 && (
+                <VideoUploadComponent
+                    onUploadComplete={handleVideoUploadComplete}
+                />
+            )}
+
+            {activity_type_id === 2 && <PDFUploadComponent />}
+
+            {activity_type_id === 3 && (
+                <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    md={6}
+                    style={{ margin: '5px 0px', width: '80%' }}
+                >
+                    <Controller
+                        name="link"
+                        control={control}
+                        defaultValue=""
+                        render={({ field }) => (
+                            <CustomTextField
+                                label="Link"
+                                name="virtualMeetLink"
+                                variant="outlined"
+                                value={field.value}
+                                onChange={e => {
+                                    field.onChange(e);
+                                }}
+                                placeholder="Enter Link"
+                                fullWidth
+                            />
+                        )}
+                    />
+                </Grid>
+            )}
+
        
       </Grid>
       
@@ -230,6 +278,72 @@ const SessionActivity = ({ activity, name }) => {
     );
 };
 
+// component for test activity type
+const TestActivity = ({activity,name}) =>{
+  console.log('testactivity',activity);
+  const {
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors },
+  } = useForm();
+
+  return(
+    <>
+    <Grid
+            container
+            spacing={1} // Reduced spacing between items
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                textAlign: 'center',
+                width: '100%',
+            }}
+        >
+    <Grid
+      item
+      xs={12}
+      sm={6}
+      md={6}
+      style={{ margin: '10px 0', width: '80%' }}
+    >
+      <CustomFormControl
+        label="Activity Type"
+        name="activityType"
+        value="test"
+        options={[
+          { value: 'test', label: 'test' },
+        ]}
+        errors={errors}
+      />
+    </Grid>
+
+    <Grid
+      item
+      xs={12}
+      sm={6}
+      md={6}
+      style={{ margin: '10px 0', width: '80%' }}
+    >
+      <CustomFormControl
+        label="Assessment"
+        name="assessment"
+        value={name}
+        options={[
+          { value: name, label: name },
+        ]}
+        errors={errors}
+      />
+    </Grid>
+
+    </Grid>
+    </>
+
+  )
+
+};
+
 // Main Popup Component
 const ViewActivityPopup = ({ open, onClose, activity, templateId }) => {
     console.log('............. Activity', activity);
@@ -255,15 +369,22 @@ const ViewActivityPopup = ({ open, onClose, activity, templateId }) => {
                     />
                 );
             case 4:
-            case 5:
-            case 6:
-            case 7:
-                return (
+              return (
                     <SessionActivity
                         details={activity}
                         name={activity.activity_type?.type_name}
                     />
                 );
+            case 5:
+            case 6:
+            case 7:
+              return(
+                    <TestActivity
+                       activity={activity}
+                       name={activity.activity_type?.type_name}
+                    />
+
+              )
             default:
                 return null;
         }
