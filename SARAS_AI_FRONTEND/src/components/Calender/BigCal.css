@@ -11,7 +11,7 @@
 }
 .custom-override
     .rbc-time-content
-    .rbc-time-gutter
+    /* .rbc-time-gutter */
     .rbc-time-column
     .rbc-timeslot-group
     .rbc-time-slot {
@@ -113,3 +113,4 @@
 .rbc-day-slot .rbc-time-slot {
     border: 0px;
 }
+
