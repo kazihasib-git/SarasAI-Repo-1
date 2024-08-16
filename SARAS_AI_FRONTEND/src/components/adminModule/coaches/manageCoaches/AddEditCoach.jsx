@@ -89,8 +89,8 @@ function AddEditCoach({ data }) {
         dispatch(accessCoachName(data));
 
         if (data.profile_picture) {
-            const blobUrl = base64ToBlobUrl(data.profile_picture);
-            setSelectedImage(blobUrl);
+           // const blobUrl = base64ToBlobUrl(data.profile_picture);
+            setSelectedImage(data.profile_picture);
         }
 
         if (data.description) {

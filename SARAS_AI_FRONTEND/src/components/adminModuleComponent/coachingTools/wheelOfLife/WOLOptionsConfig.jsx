@@ -113,7 +113,9 @@ const WOLOptionsConfig = () => {
                 details: get_config_details.map(detail => ({
                     point: detail.point,
                     text: detail.text,
-                    icon: detail.icon ? `data:image/png;base64,${detail.icon}`: null,
+                    //icon: detail.icon ? `data:image/png;base64,${detail.icon}`: null,
+                    // need to change this to remove the hardcoded text
+                    icon: detail.icon,
                 })),
             });
             setEdit(true);
