@@ -40,7 +40,7 @@ import { convertFromUTC } from '../../utils/dateAndtimeConversion';
 import { timezoneIdToName } from '../../utils/timezoneIdToName';
 import { getTimezone } from '../../redux/features/utils/utilSlice';
 import { ConnectingAirportsOutlined } from '@mui/icons-material';
-
+import { getTodayTaAvailability } from '../../redux/features/adminModule/ta/taAvialability';
 const CustomButton = ({
     onClick,
     children,
@@ -75,13 +75,19 @@ const CustomButton = ({
         </Button>
     );
 };
-const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
 const TaCalender = () => {
+    const [selectedTA, setSelectedTA] = useState(null);
+
     const { timezones } = useSelector(state => state.util);
 
-    const dispatch = useDispatch();
-    const { id, name } = useParams();
 
+
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(getTodayTaAvailability());
+    }, [dispatch]);
+
+    const { id, name } = useParams();
     const {
         slotData,
         scheduleData,
@@ -97,6 +103,7 @@ const TaCalender = () => {
         openEventData,
         taEditScheduledStudents,
         taEditScheduledBatches,
+        todaysAvailableTa
     } = useSelector(state => state.taAvialability);
 
     const {
@@ -109,15 +116,33 @@ const TaCalender = () => {
     //calendar
     const [eventsList, setEventsList] = useState([]);
     const [slotViewData, setSlotViewData] = useState([]);
+    
+
+    const findTaTimeZone = (todaysAvailableTa) => {
+        if (todaysAvailableTa && Number(id)) {
+            const selectedTa = todaysAvailableTa.find(ta => ta.id === Number(id));
+            setSelectedTA(selectedTa || null);  // Set to null if not found
+        } else {
+            setSelectedTA(null);  // Set to null if conditions are not met
+        }
+    }
+    useEffect(() => {
+        findTaTimeZone(todaysAvailableTa);
+    }, [id, todaysAvailableTa]);
+
+     const storedTimezoneId = selectedTA ? selectedTA.timezone_id : null;
+ 
+console.log("//////////////////////////", storedTimezoneId) ;
 
     useEffect(() => {
         dispatch(fetchTaSlots(id));
         dispatch(fetchTAScheduleById(id));
         dispatch(getTimezone());
-    }, [dispatch]);
+    }, [dispatch ,id]);
 
     const convertEvents = async () => {
-        if (scheduleData && scheduleData.length > 0 && storedTimezoneId) {
+        if (scheduleData && scheduleData.length > 0 && storedTimezoneId &&
+            selectedTA) {
             const timezonename = timezoneIdToName(storedTimezoneId, timezones);
             if (!timezonename) {
                 console.error('Invalid timezone name');
@@ -207,7 +232,7 @@ const TaCalender = () => {
     };
     useEffect(() => {
         convertEvents();
-    }, [scheduleData]);
+    }, [scheduleData , timezones, storedTimezoneId, selectedTA]);
 
     const convertSlots = async () => {
         if (slotData && slotData.length > 0 && timezones && storedTimezoneId) {
@@ -434,7 +459,7 @@ const TaCalender = () => {
                         <DeleteAllSlots componentName={'TACALENDER'} />
                     )}
                     {createNewSlotOpen && (
-                        <CreateNewSlot componentName={'TACALENDER'} />
+                        <CreateNewSlot componentName={'TACALENDER'} timezoneID={storedTimezoneId} />
                     )}
                     {openEventData && (
                         <ScheduleSession componentName={'TACALENDER'} />

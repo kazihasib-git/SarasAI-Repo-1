@@ -42,6 +42,8 @@ const weekDays = [
 ];
 
 const CreateNewSlot = ({ componentName, timezoneID }) => {
+
+    
     const { timezones } = useSelector(state => state.util);
     const taId = useParams();
     const dispatch = useDispatch();
@@ -258,7 +260,7 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
                                         onChange={field.onChange}
                                         errors={errors}
                                         options={timezones}
-                                    />
+                                    />  
                                 )}
                             />
                         </Grid>
