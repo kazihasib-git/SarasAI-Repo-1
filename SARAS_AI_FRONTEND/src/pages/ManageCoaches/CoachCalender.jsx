@@ -113,7 +113,11 @@ const CoachCalender = () => {
         dispatch(fetchCoachScheduleById(id));
     }, [dispatch]);
     const convertEvents = async () => {
-        if (scheduleCoachData && scheduleCoachData.length > 0 && storedTimezoneId) {
+        if (
+            scheduleCoachData &&
+            scheduleCoachData.length > 0 &&
+            storedTimezoneId
+        ) {
             const timezonename = timezoneIdToName(storedTimezoneId, timezones);
             if (!timezonename) {
                 console.error('Invalid timezone name');
@@ -131,9 +135,16 @@ const CoachCalender = () => {
                             end_date: event.date.split(' ')[0],
                             timezonename,
                         });
-                        console.log('Converted Local Schedule Time:', localTime);
-                        const startDateTime = new Date(`${localTime.start_date}T${localTime.start_time}`);
-                        const endDateTime = new Date(`${localTime.end_date}T${localTime.end_time}`);
+                        console.log(
+                            'Converted Local Schedule Time:',
+                            localTime
+                        );
+                        const startDateTime = new Date(
+                            `${localTime.start_date}T${localTime.start_time}`
+                        );
+                        const endDateTime = new Date(
+                            `${localTime.end_date}T${localTime.end_time}`
+                        );
 
                         if (localTime.start_date !== localTime.end_date) {
                             const event1 = {
@@ -143,7 +154,9 @@ const CoachCalender = () => {
                                 meetingId: event.meeting_id,
                                 platformId: event.platform_id,
                                 start: startDateTime,
-                                end: new Date(`${localTime.start_date}T23:59:59`),
+                                end: new Date(
+                                    `${localTime.start_date}T23:59:59`
+                                ),
                                 platform_tools: event.platform_tool_details,
                                 platform_meet: event.platform_meeting_details,
                             };
@@ -154,7 +167,9 @@ const CoachCalender = () => {
                                 meetingName: event.meeting_name,
                                 meetingId: event.meeting_id,
                                 platformId: event.platform_id,
-                                start: new Date(`${localTime.end_date}T00:00:00`),
+                                start: new Date(
+                                    `${localTime.end_date}T00:00:00`
+                                ),
                                 end: endDateTime,
                                 platform_tools: event.platform_tool_details,
                                 platform_meet: event.platform_meeting_details,
@@ -196,7 +211,12 @@ const CoachCalender = () => {
     }, [scheduleCoachData, timezones, storedTimezoneId]);
 
     const convertSlots = async () => {
-        if (slotCoachData && slotCoachData.length > 0 && timezones && storedTimezoneId) {
+        if (
+            slotCoachData &&
+            slotCoachData.length > 0 &&
+            timezones &&
+            storedTimezoneId
+        ) {
             const timezonename = timezoneIdToName(storedTimezoneId, timezones);
             try {
                 const processedSlots = [];
@@ -210,18 +230,26 @@ const CoachCalender = () => {
                             timezonename,
                         });
 
-                        const startDateTime = new Date(`${localTime.start_date}T${localTime.start_time}`);
-                        const endDateTime = new Date(`${localTime.end_date}T${localTime.end_time}`);
+                        const startDateTime = new Date(
+                            `${localTime.start_date}T${localTime.start_time}`
+                        );
+                        const endDateTime = new Date(
+                            `${localTime.end_date}T${localTime.end_time}`
+                        );
 
                         if (localTime.start_date !== localTime.end_date) {
                             const slot1 = {
                                 startDate: startDateTime,
-                                endDate: new Date(`${localTime.start_date}T23:59:59`),
+                                endDate: new Date(
+                                    `${localTime.start_date}T23:59:59`
+                                ),
                                 leave: slot?.leaves,
                             };
 
                             const slot2 = {
-                                startDate: new Date(`${localTime.end_date}T00:00:00`),
+                                startDate: new Date(
+                                    `${localTime.end_date}T00:00:00`
+                                ),
                                 endDate: endDateTime,
                                 leave: slot?.leaves,
                             };

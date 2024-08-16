@@ -43,7 +43,7 @@ const CustomButton = ({
     borderColor = '#FFFFFF',
     sx,
     ...props
-}) => { 
+}) => {
     return (
         <Button
             variant="contained"
@@ -71,7 +71,7 @@ const CustomButton = ({
 };
 
 const CoachMenuCalendar = () => {
-const { timezones } = useSelector(state => state.util);
+    const { timezones } = useSelector(state => state.util);
 
     const dispatch = useDispatch();
     const [eventsList, setEventsList] = useState([]);
@@ -118,7 +118,12 @@ const { timezones } = useSelector(state => state.util);
     console.log('coachSessions', coachSessions);
 
     const convertEvents = async () => {
-        if (coachSessions && coachSessions.length > 0 && storedTimezoneId && timezones) {
+        if (
+            coachSessions &&
+            coachSessions.length > 0 &&
+            storedTimezoneId &&
+            timezones
+        ) {
             const timezonename = timezoneIdToName(storedTimezoneId, timezones);
             if (!timezonename) {
                 console.error('Invalid timezone name');
@@ -136,22 +141,33 @@ const { timezones } = useSelector(state => state.util);
                             end_date: event.date.split(' ')[0],
                             timezonename,
                         });
-                        
-                        const startDateTime = new Date(`${localTime.start_date}T${localTime.start_time}`);
-                        const endDateTime = new Date(`${localTime.end_date}T${localTime.end_time}`);
+
+                        const startDateTime = new Date(
+                            `${localTime.start_date}T${localTime.start_time}`
+                        );
+                        const endDateTime = new Date(
+                            `${localTime.end_date}T${localTime.end_time}`
+                        );
 
                         if (localTime.start_date !== localTime.end_date) {
-                            processedEvents.push({
-                                id: event.id,
-                                title: event.meeting_name,
-                                start: startDateTime,
-                                end: new Date(`${localTime.start_date}T23:59:59`),
-                            }, {
-                                id: event.id,
-                                title: event.meeting_name,
-                                start: new Date(`${localTime.end_date}T00:00:00`),
-                                end: endDateTime,
-                            });
+                            processedEvents.push(
+                                {
+                                    id: event.id,
+                                    title: event.meeting_name,
+                                    start: startDateTime,
+                                    end: new Date(
+                                        `${localTime.start_date}T23:59:59`
+                                    ),
+                                },
+                                {
+                                    id: event.id,
+                                    title: event.meeting_name,
+                                    start: new Date(
+                                        `${localTime.end_date}T00:00:00`
+                                    ),
+                                    end: endDateTime,
+                                }
+                            );
                         } else {
                             processedEvents.push({
                                 id: event.id,
@@ -172,9 +188,13 @@ const { timezones } = useSelector(state => state.util);
         }
     };
 
-
     const convertSlots = async () => {
-        if (coachSlots && coachSlots.length > 0 && storedTimezoneId && timezones) {
+        if (
+            coachSlots &&
+            coachSlots.length > 0 &&
+            storedTimezoneId &&
+            timezones
+        ) {
             const timezonename = timezoneIdToName(storedTimezoneId, timezones);
             try {
                 const processedSlots = [];
@@ -187,19 +207,30 @@ const { timezones } = useSelector(state => state.util);
                             end_date: slot.slot_end_date,
                             timezonename,
                         });
-                        const startDateTime = new Date(`${localTime.start_date}T${localTime.start_time}`);
-                        const endDateTime = new Date(`${localTime.end_date}T${localTime.end_time}`);
+                        const startDateTime = new Date(
+                            `${localTime.start_date}T${localTime.start_time}`
+                        );
+                        const endDateTime = new Date(
+                            `${localTime.end_date}T${localTime.end_time}`
+                        );
 
                         if (localTime.start_date !== localTime.end_date) {
-                            processedSlots.push({
-                                startDate: startDateTime,
-                                endDate: new Date(`${localTime.start_date}T23:59:59`),
-                                leave: slot.leave,
-                            }, {
-                                startDate: new Date(`${localTime.end_date}T00:00:00`),
-                                endDate: endDateTime,
-                                leave: slot.leave,
-                            });
+                            processedSlots.push(
+                                {
+                                    startDate: startDateTime,
+                                    endDate: new Date(
+                                        `${localTime.start_date}T23:59:59`
+                                    ),
+                                    leave: slot.leave,
+                                },
+                                {
+                                    startDate: new Date(
+                                        `${localTime.end_date}T00:00:00`
+                                    ),
+                                    endDate: endDateTime,
+                                    leave: slot.leave,
+                                }
+                            );
                         } else {
                             processedSlots.push({
                                 startDate: startDateTime,

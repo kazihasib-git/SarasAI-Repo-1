@@ -18,38 +18,38 @@ import TestActivityComponent from './Components/TestActivityComponent';
 
 // Custom button component for consistent styling
 const CustomButton = ({
-  onClick,
-  children,
-  color = '#FFFFFF',
-  backgroundColor = '#4E18A5',
-  borderColor = '#FFFFFF',
-  sx,
-  ...props
+    onClick,
+    children,
+    color = '#FFFFFF',
+    backgroundColor = '#4E18A5',
+    borderColor = '#FFFFFF',
+    sx,
+    ...props
 }) => {
-  return (
-      <Button
-          variant="contained"
-          onClick={onClick}
-          sx={{
-              backgroundColor: backgroundColor,
-              color: color,
-              fontWeight: '700',
-              fontSize: '14px', // Reduced font size
-              borderRadius: '50px',
-              padding: '8px 16px', // Reduced padding
-              border: `2px solid ${borderColor}`,
-              '&:hover': {
-                  backgroundColor: color,
-                  color: backgroundColor,
-                  borderColor: color,
-              },
-              ...sx,
-          }}
-          {...props}
-      >
-          {children}
-      </Button>
-  );
+    return (
+        <Button
+            variant="contained"
+            onClick={onClick}
+            sx={{
+                backgroundColor: backgroundColor,
+                color: color,
+                fontWeight: '700',
+                fontSize: '14px', // Reduced font size
+                borderRadius: '50px',
+                padding: '8px 16px', // Reduced padding
+                border: `2px solid ${borderColor}`,
+                '&:hover': {
+                    backgroundColor: color,
+                    color: backgroundColor,
+                    borderColor: color,
+                },
+                ...sx,
+            }}
+            {...props}
+        >
+            {children}
+        </Button>
+    );
 };
 
 // Component for Video/PDF/Link Activity
@@ -92,29 +92,27 @@ const VideoPdfActivity = ({ handleClose, name, fileName ,activity_id, activity_t
 
   const [showFileName, setShowFileName] = useState(true);
 
-  const handleRemoveFileName = () => {
-    setShowFileName(false);
-  };
+    const handleRemoveFileName = () => {
+        setShowFileName(false);
+    };
 
-  return (
-    <Grid container justifyContent="center">
-      <Grid
-        item
-        xs={12}
-        sm={6}
-        md={6}
-        style={{ margin: '10px 0', width: '80%' }}
-      >
-        <CustomFormControl
-          label="Activity Type"
-          name="activityType"
-          value={name}
-          options={[
-            { value: name, label: name },
-          ]}
-          errors={errors}
-        />
-      </Grid>
+    return (
+        <Grid container justifyContent="center">
+            <Grid
+                item
+                xs={12}
+                sm={6}
+                md={6}
+                style={{ margin: '10px 0', width: '80%' }}
+            >
+                <CustomFormControl
+                    label="Activity Type"
+                    name="activityType"
+                    value={name}
+                    options={[{ value: name, label: name }]}
+                    errors={errors}
+                />
+            </Grid>
 
       {showFileName ? (
         <Grid
@@ -217,9 +215,8 @@ const VideoPdfActivity = ({ handleClose, name, fileName ,activity_id, activity_t
             >
                 Edit
             </CustomButton>
-    </Grid>
-    
-  );
+        </Grid>
+    );
 };
 
 // Component for Session Activity
@@ -241,9 +238,7 @@ const SessionActivity = ({ activity, name }) => {
                     label="Activity Type"
                     name="activityType"
                     value={name}
-                    options={[
-                      { value: name , label: name },
-                    ]}
+                    options={[{ value: name, label: name }]}
                     errors={errors}
                 />
             </Grid>
@@ -474,9 +469,9 @@ const TestActivity = ({ handleClose, activity, name, template_id }) => {
 const ViewActivityPopup = ({ open, onClose, activity, templateId }) => {
     console.log('............. Activity', activity);
     const activity_type = activity.activity_type;
-    console.log("activitygid",activity.id);
-    console.log("activitygid",activity.activity_type_id);
-    console.log("activityurl",activity.activity_url)
+    console.log('activitygid', activity.id);
+    console.log('activitygid', activity.activity_type_id);
+    console.log('activityurl', activity.activity_url);
     console.log('atcijdcidcdcdic', activity.activity_type?.type_name);
     const renderContent = () => {
         switch (activity.activity_type.id) {

@@ -54,7 +54,7 @@ export const rescheduleSession = createAsyncThunk(
     'taScheduling/rescheduleSession',
     async ({ id, data }) => {
         const response = await axiosInstance.put(
-            `${baseUrl}/admin/taschedules/${id}`,
+            `${baseUrl}/admin/taschedules/reschedule/${id}`,
             data
         );
         return response.data;

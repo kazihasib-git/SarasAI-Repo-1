@@ -75,7 +75,13 @@ const CustomButton = ({
     );
 };
 
-const LinkActivityPopup = ({ open, handleClose, activityId, templateId, LinkActivitytype }) => {
+const LinkActivityPopup = ({
+    open,
+    handleClose,
+    activityId,
+    templateId,
+    LinkActivitytype,
+}) => {
     const dispatch = useDispatch();
     console.log('template id', templateId);
     const {

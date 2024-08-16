@@ -1,5 +1,5 @@
 import moment from 'moment-timezone';
-
+ 
 async function convertFromUTC({
     start_date,
     start_time,
@@ -27,12 +27,12 @@ async function convertFromUTC({
             end_time: toDateTimeLocal.format('HH:mm:ss'),
             end_date: toDateTimeLocal.format('YYYY-MM-DD'),
         };
-
+ 
         return obj;
     } catch (error) {
         console.error('Error in convertFromUTC:', error);
         throw error;
     }
 }
-
+ 
 export { convertFromUTC };
