@@ -102,6 +102,7 @@ const ReschedulingSession = ({ componentName }) => {
             const data = {
                 admin_user_id: taId.id,
                 date: selectDate,
+                timezone_name : 'Asia/Kolkata'
             };
             dispatch(fetchAvailableSlotsAction(data));
         }

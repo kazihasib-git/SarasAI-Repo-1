@@ -17,9 +17,18 @@ import {
     getCoachScheduleSession,
 } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import CustomButton from '../CustomFields/CustomButton';
+import { timezoneIdToName } from '../../utils/timezoneIdToName';
+import { convertFromUTC } from '../../utils/dateAndtimeConversion';
+import { getTimezone } from '../../redux/features/utils/utilSlice';
 
+const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
 const Slots = ({ componentName }) => {
+    const { timezones, platforms } = useSelector(state => state.util);
+   
     const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(getTimezone());
+    }, [dispatch]);
     const { id } = useParams();
     const [selectedSlots, setSelectedSlots] = useState([]);
     const [data, setData] = useState([]);
@@ -72,21 +81,51 @@ const Slots = ({ componentName }) => {
         [markLeaveKey]: markLeaveData,
     } = schedulingState;
 
-    useEffect(() => {
-        if (scheduledSlotsData) {
-            const formattedData = scheduledSlotsData.map((slot, index) => ({
-                'S. No.': index + 1,
-                Date: slot.slot_date,
-                'Slot Time': `${slot.from_time} - ${slot.to_time}`,
-                Select: selectedSlots.includes(slot.id),
-                id: slot.id,
-            }));
-            setData(formattedData);
+
+    const convertSlots = async () => {
+        console.log('Scheduled slots data:', scheduledSlotsData);
+        console.log('Selected slots:', selectedSlots);
+    
+        if (scheduledSlotsData && scheduledSlotsData.length > 0 && timezones && storedTimezoneId) {
+            const timezonename = timezoneIdToName(storedTimezoneId, timezones);
+    
+            try {
+                const processedSlots = await Promise.all(
+                    scheduledSlotsData.map(async (slot, index) => {
+                        const localTime = await convertFromUTC({
+                            start_date: slot.slot_date,
+                            start_time: slot.from_time,
+                            end_time: slot.to_time,
+                            end_date: slot.slot_date,
+                            timezonename,
+                        });
+                        const startDateTime = new Date(`${localTime.start_date}T${localTime.start_time}`);
+                        const endDateTime = new Date(`${localTime.end_date}T${localTime.end_time}`);
+                        return {
+                            'S. No.': index + 1,
+                            Date: localTime.start_date,
+                            'Slot Time': `${localTime.start_time} - ${localTime.end_time}`,
+                            Select: selectedSlots.includes(slot.id),
+                            id: slot.id,
+                            startDate: startDateTime,
+                            
+                        };
+                    })
+                );
+                setData(processedSlots);
+            } catch (error) {
+                console.error('Error converting slots:', error);
+                setData([]);
+            }
         } else {
             setData([]);
             setSelectedSlots([]);
         }
-    }, [scheduledSlotsData]);
+    };
+    
+    useEffect(() => {
+        convertSlots();
+    }, [scheduledSlotsData, timezones, storedTimezoneId]);
 
     const handleSelect = id => {
         setSelectedSlots(prev =>
@@ -164,5 +203,4 @@ const Slots = ({ componentName }) => {
         />
     );
 };
-
 export default Slots;
