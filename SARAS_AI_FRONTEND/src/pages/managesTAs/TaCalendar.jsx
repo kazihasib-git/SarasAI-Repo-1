@@ -103,8 +103,8 @@ const TaCalender = () => {
         openEventData,
         taEditScheduledStudents,
         taEditScheduledBatches,
-        todaysAvailableTa
-        todaysAvailableTa
+        todaysAvailableTa,
+        
     } = useSelector(state => state.taAvialability);
 
     const {
