@@ -33,17 +33,17 @@
     color: #ffffff;
 }
 
-/* .rbc-toolbar-label {
+.rbc-toolbar-label {
     color: #121d22;
-} */
+}
 
 .rbc-toolbar {
     display: flex;
     justify-content: flex-start; /* Align buttons to the left */
 }
-.rbc-toolbar-label {
-    display: none; /* Hide the date range text */
-}
+/* .rbc-toolbar-label {
+    display: none; 
+} */
 
 .rbc-today {
     background-color: #ecebff;
