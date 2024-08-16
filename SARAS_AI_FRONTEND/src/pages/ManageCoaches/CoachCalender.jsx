@@ -100,6 +100,7 @@ const CoachCalender = () => {
         coachOpenEventData,
         coachEditScheduledStudents,
         coachEditScheduledBatches,
+        todaysAvailableCoach
     } = useSelector(state => state.coachAvailability);
 
     const {
@@ -112,6 +113,21 @@ const CoachCalender = () => {
         dispatch(fetchCoachSlots(id));
         dispatch(fetchCoachScheduleById(id));
     }, [dispatch]);
+
+    const findTaTimeZone = (todaysAvailableCoach) =>{
+        if(todaysAvailableCoach && Number(id)){
+        const selectedTa = todaysAvailableCoach.find(ta => ta.id === Number(id));
+        console.log('..../',selectedTa);
+        }
+    }
+
+    useEffect(()=>{
+       findTaTimeZone(todaysAvailableCoach);
+    },[dispatch, todaysAvailableCoach, id]);
+
+
+
+
     const convertEvents = async () => {
         if (
             scheduleCoachData &&

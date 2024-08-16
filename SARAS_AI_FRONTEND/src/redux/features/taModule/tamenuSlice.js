@@ -154,12 +154,10 @@ export const denyCallRequest = createAsyncThunk(
 //ta scheduled Calls
 export const getTaScheduledCalls = createAsyncThunk(
     'taMenu/getTaScheduledCalls',
-    async date => {
+    async data => {
         const response = await axiosInstance.post(
             `${baseUrl}/ta/schedule-call/get-schedule-call`,
-            {
-                date: date,
-            }
+            data
         );
         console.log(response.data, 'response.data');
         return response.data;
