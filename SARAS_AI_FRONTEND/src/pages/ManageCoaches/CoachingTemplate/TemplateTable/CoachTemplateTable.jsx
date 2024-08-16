@@ -13,6 +13,7 @@ const CoachTemplateTable = ({
     headers,
     initialData,
     actionButtons,
+    onAssignedToClick, 
     componentName,
 }) => {
     const [data, setData] = useState(
@@ -97,6 +98,7 @@ const CoachTemplateTable = ({
     //         return "#000000";
     //     }
     //   };
+    
     return (
         <div className="tableContainer">
             <table>

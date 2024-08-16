@@ -499,6 +499,7 @@ const ViewActivityPopup = ({ open, onClose, activity, templateId }) => {
             case 5:
             case 6:
             case 7:
+            case 8:
               return(
                     <TestActivity
                        handleClose={onClose}

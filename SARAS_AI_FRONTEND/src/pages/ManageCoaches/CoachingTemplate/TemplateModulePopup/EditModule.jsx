@@ -89,6 +89,7 @@ const EditModule = () => {
             module_id: editModuleData?.id,
             template_id: selectedCoachTemplate,
             is_active: data.status === 1,
+            module_name: data.moduleName
         };
         dispatch(updateCoachTemplateModule(updatedData))
             .unwrap()

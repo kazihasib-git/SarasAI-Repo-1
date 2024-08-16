@@ -104,6 +104,7 @@ const TaCalender = () => {
         taEditScheduledStudents,
         taEditScheduledBatches,
         todaysAvailableTa
+        todaysAvailableTa
     } = useSelector(state => state.taAvialability);
 
     const {

@@ -95,7 +95,7 @@ const LinkActivityPopup = ({
     const [activityType, setActivityType] = useState('');
     const [selectedSessionType, setSelectedSessionType] = useState('');
     const [askCoach, setAskCoach] = useState(false);
-    const [selectedAssessmentId, setSelectedAssessmentId] = useState('');
+    const [selectedAssessmentId, setSelectedAssessmentId] = useState(null);
     const [selectedActivityId, setSelectedActivityId] = useState('');
     const [videoUrl, setVideoUrl] = useState('');
 
@@ -119,6 +119,7 @@ const LinkActivityPopup = ({
             link: videoUrl || upload_pdf_url || data.link  , // Add other fields if needed
         };
         try {
+            if(payload.link || (activityType === 'test' && selectedAssessmentId) || (activityType ==='virtual meet')){
             if(activityType ==='virtual meet' && selectedSessionType=="group"){
                 const dataToGenrateLink = {
                     "admin_user_id": selectedCoachId,
@@ -155,6 +156,7 @@ const LinkActivityPopup = ({
                 });
             }
             handlePopUpClose();
+            }
         } catch (error) {
             console.error('Failed to link activity:', error);
         }
