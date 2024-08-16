@@ -9,8 +9,14 @@ async function convertFromUTC({
 }) {
     try {
         // Combine date and time for the start and end times
-        const fromDateTimeUTC = moment.utc(`${start_date} ${start_time}`, 'YYYY-MM-DD HH:mm:ss');
-        const toDateTimeUTC = moment.utc(`${end_date} ${end_time}`, 'YYYY-MM-DD HH:mm:ss');
+        const fromDateTimeUTC = moment.utc(
+            `${start_date} ${start_time}`,
+            'YYYY-MM-DD HH:mm:ss'
+        );
+        const toDateTimeUTC = moment.utc(
+            `${end_date} ${end_time}`,
+            'YYYY-MM-DD HH:mm:ss'
+        );
 
         // Convert from UTC to the specified timezone
         const fromDateTimeLocal = fromDateTimeUTC.tz(timezonename);

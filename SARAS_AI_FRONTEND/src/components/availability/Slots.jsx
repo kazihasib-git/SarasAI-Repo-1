@@ -96,6 +96,7 @@ const Slots = ({ componentName }) => {
         );
     };
 
+    // const timezone = timezones[slotId];
     const handleSubmit = () => {
         if (selectedSlots.length > 0) {
             const data = selectedSlots.map(slotId => {

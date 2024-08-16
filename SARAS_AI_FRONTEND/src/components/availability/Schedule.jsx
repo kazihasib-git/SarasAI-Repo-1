@@ -75,7 +75,6 @@ const Schedule = ({ componentName }) => {
     const [availableSlotsOptions, setAvailableSlotsOptions] = useState([]);
     const [dateSelected, setDateSelected] = useState(false);
 
-
     const dispatch = useDispatch();
     let scheduleSessionOpenKey,
         schedulingStateKey,
@@ -165,26 +164,29 @@ const Schedule = ({ componentName }) => {
                 getAvailableSlotsAction({
                     admin_user_id: adminUserID,
                     date: fromDate,
+                    timezone_name: timezones[adminUserID].time_zone,
                 })
-            ).then(()=>{
+            ).then(() => {
                 setSelectedSlot([]);
             });
         }
     }, [fromDate, dispatch, adminUserID, getAvailableSlotsAction]);
 
-    const handleDateSubmit = () =>{
-        if(fromDate){
+    const handleDateSubmit = () => {
+        console.log('timezone', timezones[adminUserID].time_zone);
+        if (fromDate) {
             dispatch(
                 getAvailableSlotsAction({
                     admin_user_id: adminUserID,
                     date: fromDate,
+                    timezone_name: timezones[adminUserID].time_zone,
                 })
-            ).then(()=>{
+            ).then(() => {
                 setSelectedSlot([]);
                 setDateSelected(true);
             });
         }
-    }
+    };
 
     const { timezones, platforms } = useSelector(state => state.util);
 
@@ -419,267 +421,25 @@ const Schedule = ({ componentName }) => {
                                                     errors={errors}
                                                 />
                                             </Grid>
-                                            {selectedSlot.length>0 && (
-                                            <>
-                                            <Grid
-                                                item
-                                                xs={12}
-                                                display="flex"
-                                                justifyContent="center"
-                                            >
-                                                <CustomTextField
-                                                    label="Meeting Name"
-                                                    name="meeting_name"
-                                                    placeholder="Enter Meeting Name"
-                                                    register={register}
-                                                    validation={{
-                                                        required:
-                                                            'Meeting Name is required',
-                                                    }}
-                                                    errors={errors}
-                                                />
-                                            </Grid>
-                                            <Grid
-                                                item
-                                                xs={12}
-                                                sm={6}
-                                                display="flex"
-                                                justifyContent="center"
-                                            >
-                                                <CustomTimeField
-                                                    label="From Time"
-                                                    name="start_time"
-                                                    value={fromTime}
-                                                    onChange={setFromTime}
-                                                    validation={{
-                                                        required:
-                                                            'From Time is required',
-                                                    }}
-                                                    errors={errors}
-                                                />
-                                            </Grid>
-                                            <Grid
-                                                item
-                                                xs={12}
-                                                sm={6}
-                                                display="flex"
-                                                justifyContent="center"
-                                            >
-                                                <CustomTimeField
-                                                    label="To Time"
-                                                    name="To_time"
-                                                    value={toTime}
-                                                    onChange={setToTime}
-                                                    validation={{
-                                                        required:
-                                                            'To Time is required',
-                                                    }}
-                                                    errors={errors}
-                                                />
-                                            </Grid>
-                                            <Grid
-                                                item
-                                                xs={12}
-                                                display="flex"
-                                                justifyContent="center"
-                                            >
-                                                <Controller
-                                                    name="timezone_id"
-                                                    control={control}
-                                                    // rules={{ required: "Time Zone is required" }}
-                                                    render={({ field }) => (
-                                                        <CustomTimeZoneForm
-                                                            label="Time Zone"
-                                                            name="timezone_id"
-                                                            value={field.value}
-                                                            onChange={
-                                                                field.onChange
-                                                            }
-                                                            errors={errors}
-                                                            options={timezones}
-                                                        />
-                                                    )}
-                                                />
-                                            </Grid>
-                                            <Grid
-                                                item
-                                                xs={12}
-                                                display="flex"
-                                                justifyContent="center"
-                                            >
-                                                <Controller
-                                                    name="platform_id"
-                                                    control={control}
-                                                    render={({ field }) => (
-                                                        <CustomPlatformForm
-                                                            label="Platform"
-                                                            name="platform_id"
-                                                            value={field.value}
-                                                            onChange={
-                                                                field.onChange
-                                                            }
-                                                            errors={errors}
-                                                            options={platforms}
-                                                        />
-                                                    )}
-                                                />
-                                            </Grid>
-                                            <Grid
-                                                item
-                                                xs={12}
-                                                display="flex"
-                                                justifyContent="center"
-                                            >
-                                                <Box
-                                                    display="flex"
-                                                    justifyContent="center"
-                                                    gap={2}
-                                                    sx={{ mb: 3 }}
-                                                >
-                                                    <Button
-                                                        variant="contained"
-                                                        onClick={
-                                                            handleAssignStudents
-                                                        }
-                                                        sx={{
-                                                            backgroundColor:
-                                                                '#F56D3B',
-                                                            color: 'white',
-                                                            height: '60px',
-                                                            width: '201px',
-                                                            borderRadius:
-                                                                '50px',
-                                                            textTransform:
-                                                                'none',
-                                                            padding:
-                                                                '18px 30px',
-                                                            fontWeight: '700',
-                                                            fontSize: '16px',
-                                                            '&:hover': {
-                                                                backgroundColor:
-                                                                    '#D4522A',
-                                                            },
-                                                        }}
-                                                    >
-                                                        Edit Students
-                                                    </Button>
-                                                    <Button
-                                                        variant="outlined"
-                                                        onClick={
-                                                            handleAssignBatches
-                                                        }
-                                                        sx={{
-                                                            backgroundColor:
-                                                                'white',
-                                                            color: '#F56D3B',
-                                                            height: '60px',
-                                                            width: '194px',
-                                                            border: '2px solid #F56D3B',
-                                                            borderRadius:
-                                                                '50px',
-                                                            textTransform:
-                                                                'none',
-                                                            fontWeight: '700',
-                                                            fontSize: '16px',
-                                                            padding:
-                                                                '18px 30px',
-                                                            '&:hover': {
-                                                                backgroundColor:
-                                                                    '#F56D3B',
-                                                                color: 'white',
-                                                            },
-                                                        }}
-                                                    >
-                                                        Edit Batches
-                                                    </Button>
-                                                </Box>
-                                            </Grid>
-                                            <Grid
-                                                container
-                                                spacing={3}
-                                                justifyContent="center"
-                                                sx={{ pt: 3 }}
-                                            >
-                                                <Grid
-                                                    item
-                                                    xs={12}
-                                                    display="flex"
-                                                    justifyContent="center"
-                                                >
-                                                    <FormControl component="fieldset">
-                                                        <RadioGroup
-                                                            row
-                                                            value={repeat}
-                                                            onChange={e =>
-                                                                setRepeat(
-                                                                    e.target
-                                                                        .value
-                                                                )
-                                                            }
-                                                            sx={{
-                                                                justifyContent:
-                                                                    'center',
-                                                            }}
-                                                        >
-                                                            <FormControlLabel
-                                                                value="onetime"
-                                                                control={
-                                                                    <Radio />
-                                                                }
-                                                                label="One-Time"
-                                                            />
-                                                            <FormControlLabel
-                                                                value="recurring"
-                                                                control={
-                                                                    <Radio />
-                                                                }
-                                                                label="Recurring"
-                                                            />
-                                                        </RadioGroup>
-                                                    </FormControl>
-                                                </Grid>
-                                            </Grid>
-                                            {repeat === 'recurring' && (
+                                            {selectedSlot.length > 0 && (
                                                 <>
                                                     <Grid
-                                                        container
-                                                        spacing={3}
+                                                        item
+                                                        xs={12}
+                                                        display="flex"
                                                         justifyContent="center"
-                                                        sx={{ pt: 3 }}
                                                     >
-                                                        <Grid item xs={12}>
-                                                            <FormControl component="fieldset">
-                                                                <FormGroup row>
-                                                                    {weekDays.map(
-                                                                        day => (
-                                                                            <FormControlLabel
-                                                                                key={
-                                                                                    day
-                                                                                }
-                                                                                control={
-                                                                                    <Checkbox
-                                                                                        checked={selectedDays.includes(
-                                                                                            day
-                                                                                        )}
-                                                                                        onChange={() =>
-                                                                                            handleDayChange(
-                                                                                                day
-                                                                                            )
-                                                                                        }
-                                                                                        name={
-                                                                                            day
-                                                                                        }
-                                                                                    />
-                                                                                }
-                                                                                label={
-                                                                                    day
-                                                                                }
-                                                                            />
-                                                                        )
-                                                                    )}
-                                                                </FormGroup>
-                                                            </FormControl>
-                                                        </Grid>
+                                                        <CustomTextField
+                                                            label="Meeting Name"
+                                                            name="meeting_name"
+                                                            placeholder="Enter Meeting Name"
+                                                            register={register}
+                                                            validation={{
+                                                                required:
+                                                                    'Meeting Name is required',
+                                                            }}
+                                                            errors={errors}
+                                                        />
                                                     </Grid>
                                                     <Grid
                                                         item
@@ -688,50 +448,333 @@ const Schedule = ({ componentName }) => {
                                                         display="flex"
                                                         justifyContent="center"
                                                     >
-                                                        <CustomDateField
-                                                            label="To Date"
-                                                            value={toDate}
-                                                            onChange={setToDate}
-                                                            name="end_date"
-                                                            register={register}
+                                                        <CustomTimeField
+                                                            label="From Time"
+                                                            name="start_time"
+                                                            value={fromTime}
+                                                            onChange={
+                                                                setFromTime
+                                                            }
                                                             validation={{
                                                                 required:
-                                                                    'To Date is required',
+                                                                    'From Time is required',
                                                             }}
-                                                            sx={{
-                                                                width: '100%',
-                                                            }}
+                                                            errors={errors}
                                                         />
                                                     </Grid>
+                                                    <Grid
+                                                        item
+                                                        xs={12}
+                                                        sm={6}
+                                                        display="flex"
+                                                        justifyContent="center"
+                                                    >
+                                                        <CustomTimeField
+                                                            label="To Time"
+                                                            name="To_time"
+                                                            value={toTime}
+                                                            onChange={setToTime}
+                                                            validation={{
+                                                                required:
+                                                                    'To Time is required',
+                                                            }}
+                                                            errors={errors}
+                                                        />
+                                                    </Grid>
+                                                    <Grid
+                                                        item
+                                                        xs={12}
+                                                        display="flex"
+                                                        justifyContent="center"
+                                                    >
+                                                        <Controller
+                                                            name="timezone_id"
+                                                            control={control}
+                                                            // rules={{ required: "Time Zone is required" }}
+                                                            render={({
+                                                                field,
+                                                            }) => (
+                                                                <CustomTimeZoneForm
+                                                                    label="Time Zone"
+                                                                    name="timezone_id"
+                                                                    value={
+                                                                        field.value
+                                                                    }
+                                                                    onChange={
+                                                                        field.onChange
+                                                                    }
+                                                                    errors={
+                                                                        errors
+                                                                    }
+                                                                    options={
+                                                                        timezones
+                                                                    }
+                                                                />
+                                                            )}
+                                                        />
+                                                    </Grid>
+                                                    <Grid
+                                                        item
+                                                        xs={12}
+                                                        display="flex"
+                                                        justifyContent="center"
+                                                    >
+                                                        <Controller
+                                                            name="platform_id"
+                                                            control={control}
+                                                            render={({
+                                                                field,
+                                                            }) => (
+                                                                <CustomPlatformForm
+                                                                    label="Platform"
+                                                                    name="platform_id"
+                                                                    value={
+                                                                        field.value
+                                                                    }
+                                                                    onChange={
+                                                                        field.onChange
+                                                                    }
+                                                                    errors={
+                                                                        errors
+                                                                    }
+                                                                    options={
+                                                                        platforms
+                                                                    }
+                                                                />
+                                                            )}
+                                                        />
+                                                    </Grid>
+                                                    <Grid
+                                                        item
+                                                        xs={12}
+                                                        display="flex"
+                                                        justifyContent="center"
+                                                    >
+                                                        <Box
+                                                            display="flex"
+                                                            justifyContent="center"
+                                                            gap={2}
+                                                            sx={{ mb: 3 }}
+                                                        >
+                                                            <Button
+                                                                variant="contained"
+                                                                onClick={
+                                                                    handleAssignStudents
+                                                                }
+                                                                sx={{
+                                                                    backgroundColor:
+                                                                        '#F56D3B',
+                                                                    color: 'white',
+                                                                    height: '60px',
+                                                                    width: '201px',
+                                                                    borderRadius:
+                                                                        '50px',
+                                                                    textTransform:
+                                                                        'none',
+                                                                    padding:
+                                                                        '18px 30px',
+                                                                    fontWeight:
+                                                                        '700',
+                                                                    fontSize:
+                                                                        '16px',
+                                                                    '&:hover': {
+                                                                        backgroundColor:
+                                                                            '#D4522A',
+                                                                    },
+                                                                }}
+                                                            >
+                                                                Edit Students
+                                                            </Button>
+                                                            <Button
+                                                                variant="outlined"
+                                                                onClick={
+                                                                    handleAssignBatches
+                                                                }
+                                                                sx={{
+                                                                    backgroundColor:
+                                                                        'white',
+                                                                    color: '#F56D3B',
+                                                                    height: '60px',
+                                                                    width: '194px',
+                                                                    border: '2px solid #F56D3B',
+                                                                    borderRadius:
+                                                                        '50px',
+                                                                    textTransform:
+                                                                        'none',
+                                                                    fontWeight:
+                                                                        '700',
+                                                                    fontSize:
+                                                                        '16px',
+                                                                    padding:
+                                                                        '18px 30px',
+                                                                    '&:hover': {
+                                                                        backgroundColor:
+                                                                            '#F56D3B',
+                                                                        color: 'white',
+                                                                    },
+                                                                }}
+                                                            >
+                                                                Edit Batches
+                                                            </Button>
+                                                        </Box>
+                                                    </Grid>
+                                                    <Grid
+                                                        container
+                                                        spacing={3}
+                                                        justifyContent="center"
+                                                        sx={{ pt: 3 }}
+                                                    >
+                                                        <Grid
+                                                            item
+                                                            xs={12}
+                                                            display="flex"
+                                                            justifyContent="center"
+                                                        >
+                                                            <FormControl component="fieldset">
+                                                                <RadioGroup
+                                                                    row
+                                                                    value={
+                                                                        repeat
+                                                                    }
+                                                                    onChange={e =>
+                                                                        setRepeat(
+                                                                            e
+                                                                                .target
+                                                                                .value
+                                                                        )
+                                                                    }
+                                                                    sx={{
+                                                                        justifyContent:
+                                                                            'center',
+                                                                    }}
+                                                                >
+                                                                    <FormControlLabel
+                                                                        value="onetime"
+                                                                        control={
+                                                                            <Radio />
+                                                                        }
+                                                                        label="One-Time"
+                                                                    />
+                                                                    <FormControlLabel
+                                                                        value="recurring"
+                                                                        control={
+                                                                            <Radio />
+                                                                        }
+                                                                        label="Recurring"
+                                                                    />
+                                                                </RadioGroup>
+                                                            </FormControl>
+                                                        </Grid>
+                                                    </Grid>
+                                                    {repeat === 'recurring' && (
+                                                        <>
+                                                            <Grid
+                                                                container
+                                                                spacing={3}
+                                                                justifyContent="center"
+                                                                sx={{ pt: 3 }}
+                                                            >
+                                                                <Grid
+                                                                    item
+                                                                    xs={12}
+                                                                >
+                                                                    <FormControl component="fieldset">
+                                                                        <FormGroup
+                                                                            row
+                                                                        >
+                                                                            {weekDays.map(
+                                                                                day => (
+                                                                                    <FormControlLabel
+                                                                                        key={
+                                                                                            day
+                                                                                        }
+                                                                                        control={
+                                                                                            <Checkbox
+                                                                                                checked={selectedDays.includes(
+                                                                                                    day
+                                                                                                )}
+                                                                                                onChange={() =>
+                                                                                                    handleDayChange(
+                                                                                                        day
+                                                                                                    )
+                                                                                                }
+                                                                                                name={
+                                                                                                    day
+                                                                                                }
+                                                                                            />
+                                                                                        }
+                                                                                        label={
+                                                                                            day
+                                                                                        }
+                                                                                    />
+                                                                                )
+                                                                            )}
+                                                                        </FormGroup>
+                                                                    </FormControl>
+                                                                </Grid>
+                                                            </Grid>
+                                                            <Grid
+                                                                item
+                                                                xs={12}
+                                                                sm={6}
+                                                                display="flex"
+                                                                justifyContent="center"
+                                                            >
+                                                                <CustomDateField
+                                                                    label="To Date"
+                                                                    value={
+                                                                        toDate
+                                                                    }
+                                                                    onChange={
+                                                                        setToDate
+                                                                    }
+                                                                    name="end_date"
+                                                                    register={
+                                                                        register
+                                                                    }
+                                                                    validation={{
+                                                                        required:
+                                                                            'To Date is required',
+                                                                    }}
+                                                                    sx={{
+                                                                        width: '100%',
+                                                                    }}
+                                                                />
+                                                            </Grid>
+                                                        </>
+                                                    )}
+                                                    <Grid
+                                                        item
+                                                        xs={12}
+                                                        display="flex"
+                                                        justifyContent="center"
+                                                    >
+                                                        <Button
+                                                            type="submit"
+                                                            variant="contained"
+                                                            style={{
+                                                                borderRadius:
+                                                                    '50px',
+                                                                padding:
+                                                                    '18px 30px',
+                                                                marginTop: 30,
+                                                                backgroundColor:
+                                                                    '#F56D3B',
+                                                                height: '60px',
+                                                                width: '121px',
+                                                                fontSize:
+                                                                    '16px',
+                                                                fontWeight:
+                                                                    '700px',
+                                                                text: '#FFFFFF',
+                                                                textTransform:
+                                                                    'none',
+                                                            }}
+                                                        >
+                                                            Submit
+                                                        </Button>
+                                                    </Grid>
                                                 </>
-                                            )}
-                                            <Grid
-                                                item
-                                                xs={12}
-                                                display="flex"
-                                                justifyContent="center"
-                                            >
-                                                <Button
-                                                    type="submit"
-                                                    variant="contained"
-                                                    style={{
-                                                        borderRadius: '50px',
-                                                        padding: '18px 30px',
-                                                        marginTop: 30,
-                                                        backgroundColor:
-                                                            '#F56D3B',
-                                                        height: '60px',
-                                                        width: '121px',
-                                                        fontSize: '16px',
-                                                        fontWeight: '700px',
-                                                        text: '#FFFFFF',
-                                                        textTransform: 'none',
-                                                    }}
-                                                >
-                                                    Submit
-                                                </Button>
-                                            </Grid>
-                                            </>
                                             )}
                                         </>
                                     )}
@@ -739,33 +782,32 @@ const Schedule = ({ componentName }) => {
                             )}
                             {!dateSelected && (
                                 <>
-                                <Grid
-                                    item
-                                    xs={12}
-                                    display="flex"
-                                    justifyContent="center"
-                                >
-                                    <Button
-                                        type="button"
-                                        variant="contained"
-                                        style={{
-                                            borderRadius: '50px',
-                                            padding: '18px 30px',
-                                            marginTop: 30,
-                                            backgroundColor:
-                                                '#F56D3B',
-                                            height: '60px',
-                                            width: '121px',
-                                            fontSize: '16px',
-                                            fontWeight: '700px',
-                                            text: '#FFFFFF',
-                                            textTransform: 'none',
-                                        }}
-                                        onClick={handleDateSubmit}
+                                    <Grid
+                                        item
+                                        xs={12}
+                                        display="flex"
+                                        justifyContent="center"
                                     >
-                                        Submit
-                                    </Button>
-                                </Grid>
+                                        <Button
+                                            type="button"
+                                            variant="contained"
+                                            style={{
+                                                borderRadius: '50px',
+                                                padding: '18px 30px',
+                                                marginTop: 30,
+                                                backgroundColor: '#F56D3B',
+                                                height: '60px',
+                                                width: '121px',
+                                                fontSize: '16px',
+                                                fontWeight: '700px',
+                                                text: '#FFFFFF',
+                                                textTransform: 'none',
+                                            }}
+                                            onClick={handleDateSubmit}
+                                        >
+                                            Submit
+                                        </Button>
+                                    </Grid>
                                 </>
                             )}
                         </Grid>
