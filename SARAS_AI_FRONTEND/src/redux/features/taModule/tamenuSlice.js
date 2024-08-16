@@ -184,7 +184,7 @@ export const createTaMenuSessions = createAsyncThunk(
     'taMenu/createTaMenuSessions',
     async data => {
         const response = await axiosInstance.post(
-            `${baseUrl}/ta/calendar/create-sessions`,
+            `${baseUrl}/ta/schedule-call/schedule-calls`,
             data
         );
         return response.data;
