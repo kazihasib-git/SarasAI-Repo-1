@@ -8,6 +8,7 @@ import DynamicTable from '../../components/CommonComponent/DynamicTable';
 import { timezoneIdToName } from '../../utils/timezoneIdToName';
 import { deleteTaMapping } from '../../redux/features/adminModule/ta/taSlice';
 import { getTimezone } from '../../redux/features/utils/utilSlice';
+//import ConfirmationDialog from '../../components/RoleRoute/CommonComponent/ConfirmationDialog';
 const headers = [
     'S. No.',
     'TA Name',
@@ -30,6 +31,8 @@ const TaMapping = () => {
     const [taMappingData, setTaMappingData] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const { timezones } = useSelector(state => state.util);
+    // const [openDialog, setOpenDialog] = useState(false);
+    // const [itemToDelete, setItemToDelete] = useState(null);
 
     useEffect(() => {
         dispatch(showTAMapping());
@@ -74,6 +77,23 @@ const TaMapping = () => {
         item.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
+    // const handleOpenDialog = id => {
+    //     setItemToDelete(id);
+    //     setOpenDialog(true);
+    // };
+
+    // const handleCloseDialog = () => {
+    //     setOpenDialog(false);
+    //     setItemToDelete(null);
+    // };
+
+    // const handleDelete = () => {
+    //     if (itemToDelete !== null) {
+    //         dispatch(deleteTaMapping(itemToDelete));
+    //     }
+    //     handleCloseDialog();
+    // };
+
     return (
         <Box m="20px">
             <Header />
@@ -112,8 +132,19 @@ const TaMapping = () => {
                 headers={headers}
                 initialData={filteredData}
                 actionButtons={actionButtons}
+                // actionButtons={[
+                //     {
+                //         type: 'delete',
+                //         onClick: id => handleOpenDialog(id), // Pass handleOpenDialog
+                //     },
+                // ]}
                 componentName={'TAMAPPING'}
             />
+            {/* <ConfirmationDialog
+                open={openDialog}
+                onClose={handleCloseDialog}
+                onConfirm={handleDelete}
+            /> */}
         </Box>
     );
 };

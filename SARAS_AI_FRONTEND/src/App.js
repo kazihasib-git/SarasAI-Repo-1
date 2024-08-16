@@ -101,6 +101,12 @@ function App() {
     const userRole = localStorage.getItem('role');
 
     useEffect(() => {
+        if (location.pathname !== '/login') {
+            localStorage.setItem('lastRoute', location.pathname);
+        }
+    }, [location]);
+
+    useEffect(() => {
         if (access_token) {
             dispatch(
                 setLogin({
@@ -112,21 +118,48 @@ function App() {
         }
     }, [access_token]);
 
+    // useEffect(() => {
+    //     if (login) {
+    //         console.log('inside user Effect in app.js', role);
+    //         //const lastRoute = localStorage.getItem('lastRoute');
+
+    //         if (role.includes(1984)) {
+    //             // Coach role
+    //             navigate('/coachmenu_profile', { replace: true });
+    //         } else if (role.includes(2001)) {
+    //             // Teaching role
+    //             navigate('/tamenu_profile', { replace: true });
+    //         } else if (role.includes(5150)) {
+    //             // Admin role
+    //             navigate('/', { replace: true });
+    //         } else {
+    //             navigate(from, { replace: true });
+    //         }
+    //     } else {
+    //         navigate('/login', { replace: true });
+    //     }
+    // }, [login, role, accessToken]);
+
     useEffect(() => {
         if (login) {
             console.log('inside user Effect in app.js', role);
+            const lastRoute = localStorage.getItem('lastRoute');
 
-            if (role.includes(1984)) {
-                // Coach role
-                navigate('/coachmenu_profile', { replace: true });
-            } else if (role.includes(2001)) {
-                // Teaching role
-                navigate('/tamenu_profile', { replace: true });
-            } else if (role.includes(5150)) {
-                // Admin role
-                navigate('/', { replace: true });
+            if (lastRoute && lastRoute !== '/login') {
+                navigate(lastRoute, { replace: true });
             } else {
-                navigate(from, { replace: true });
+                if (role.includes(1984)) {
+                    // Coach role
+                    navigate('/coachmenu_profile', { replace: true });
+                } else if (role.includes(2001)) {
+                    // Teaching role
+                    navigate('/tamenu_profile', { replace: true });
+                } else if (role.includes(5150)) {
+                    // Admin role
+                    navigate('/', { replace: true });
+                } else {
+                    navigate('/login', { replace: true });
+                }
             }
         } else {
             navigate('/login', { replace: true });

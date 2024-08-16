@@ -80,7 +80,7 @@ const PopUpTable = ({
     onViewClick,
     onRescheduleClick,
     onCancelClick,
-    itemsPerPage = 4,
+    itemsPerPage = 10,
 }) => {
     const [data, setData] = useState(initialData ?? []);
     const [openPopup, setOpenPopup] = useState(false);
@@ -277,7 +277,10 @@ const PopUpTable = ({
                                                             </CustomButton>
                                                         </>
                                                     ) : header === 'S. No.' ? (
-                                                        index + 1
+                                                        (currentPage - 1) *
+                                                            itemsPerPage +
+                                                        index +
+                                                        1
                                                     ) : typeof item[header] ===
                                                       'object' ? (
                                                         JSON.stringify(
