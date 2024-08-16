@@ -97,30 +97,30 @@ const WOLTestConfig = () => {
     }, [wolCategoryData]);
 
     // Generate options based on the wol_questions_count for each category
-    const WOLCategoriesOptions =
-        wolCategoryData.map(item => ({
-            value: item.id,
-            label: item.name,
-        })) || [];
+    const WOLCategoriesOptions = wolCategoryData.map(item => ({
+        value: item.id,
+        label: item.name,
+     })) || [];
+    
+  
 
-    const getNumberOfQuestionsOptions = categoryId => {
-        const category = wolCategoryData.find(cat => cat.id === categoryId);
-        const maxQuestions = category?.wol_questions_count || 0;
-        return Array.from({ length: maxQuestions }, (_, i) => ({
-            value: i + 1,
-            label: i + 1,
-        }));
-    };
-
+        const getNumberOfQuestionsOptions = categoryId => {
+            const maxQuestions = 10; // Set the max questions to 10 always
+            return Array.from({ length: maxQuestions }, (_, i) => ({
+                value: i + 1,
+                label: i + 1,
+            }));
+        };
+        
     const handleSubmit = e => {
         e.preventDefault();
 
         if (edit) {
             setEdit(false);
-            setFormValues(prevValues => ({
-                numberOfWolCategories: '',
-                categories: [],
-            }));
+            // setFormValues(prevValues => ({
+            //     numberOfWolCategories: '',
+            //     categories: [],
+            // }));
             return;
         }
 
@@ -255,7 +255,8 @@ const WOLTestConfig = () => {
                                     fontFamily: 'Bold',
                                 }}
                             >
-                                {edit ? 'Update' : 'Submit'}
+                                
+                                {edit ? 'Update' : ('Submit' )}
                             </CustomButton>
                         </Grid>
                     </Grid>

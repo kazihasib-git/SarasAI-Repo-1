@@ -6,11 +6,10 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { createCoachTemplate } from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
 
-const durations = [
-    { value: 30, label: '30 mins' },
-    { value: 45, label: '45 mins' },
-    { value: 60, label: '60 mins' },
-];
+const durations = Array.from({ length: 12 }, (_, index) => ({
+    value: index + 1,
+    label: `${index + 1} month${index + 1 > 1 ? 's' : ''}`,
+}));
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
     borderRadius: '50px',

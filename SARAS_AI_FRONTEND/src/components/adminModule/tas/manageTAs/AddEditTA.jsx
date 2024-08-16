@@ -321,7 +321,7 @@ const AddEditTA = ({ data }) => {
                                             name="description"
                                             value={editableDescription}
                                             onChange={handleDescriptionChange}
-                                            placeholder="sort description..."
+                                            placeholder="Add a brief description..."
                                         />
                                         <Button
                                             variant="contained"
