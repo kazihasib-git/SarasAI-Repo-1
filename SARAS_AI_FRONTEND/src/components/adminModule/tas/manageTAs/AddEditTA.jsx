@@ -155,6 +155,7 @@ const AddEditTA = ({ data }) => {
         console.log('formData :', formData);
 
         if (selectedImage && selectedImage.startsWith('data:image/')) {
+            console.log('/////////////////////',selectedImage);
             const base64Data = selectedImage.replace(
                 /^data:image\/(png|jpeg|jpg);base64,/,
                 ''
@@ -321,7 +322,7 @@ const AddEditTA = ({ data }) => {
                                             name="description"
                                             value={editableDescription}
                                             onChange={handleDescriptionChange}
-                                            placeholder="sort description..."
+                                            placeholder="short description..."
                                         />
                                         <Button
                                             variant="contained"

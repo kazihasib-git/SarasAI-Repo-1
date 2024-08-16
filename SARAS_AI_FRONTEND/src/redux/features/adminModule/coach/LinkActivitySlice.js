@@ -56,6 +56,7 @@ const linkActivitySlice = createSlice({
                 state.success = true;
                 console.log('action>>>>>>>>>>>>>>>', action.payload);
                 state.data = action.payload; // Store the response data
+                state.upload_pdf_url=null;
             })
             .addCase(linkActivity.rejected, (state, action) => {
                 state.loading = false;
