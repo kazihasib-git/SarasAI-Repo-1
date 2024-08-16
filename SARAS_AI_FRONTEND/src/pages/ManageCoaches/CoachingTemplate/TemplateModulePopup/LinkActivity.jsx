@@ -100,7 +100,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId, LinkActi
     const [selectedPlatform, setSelectedPlatform] = useState(null);
 
     const { timezones, platforms } = useSelector(state => state.util);
-    const [selectedSlot, setSelectedSlot] = useState(''); 
+    const [selectedSlot, setSelectedSlot] = useState(null); 
 
     const onSubmit = async data => {
         console.log('////////////////////////',data);
@@ -110,7 +110,7 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId, LinkActi
                 activityType === 'test'
                     ? selectedAssessmentId
                     : selectedActivityId, // Ensure this value is correctly set
-            link: videoUrl || upload_pdf_url || data.link || data.virtualMeetLink , // Add other fields if needed
+            link: videoUrl || upload_pdf_url || data.link  , // Add other fields if needed
         };
         try {
             if(activityType ==='virtual meet' && selectedSessionType=="group"){
@@ -130,29 +130,25 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId, LinkActi
                     "batchId": [],
                     "weeks": weeksArray
                 }
-                dispatch(createCoachSchedule(dataToGenrateLink))
-                .then((response)=>{
-                     console.log('..............................................',response);
-                     if(response.payload){
-                        payload.link = response.payload.data[0].meeting_id;
-                        dispatch(linkActivity(payload))
-                        .unwrap()
-                        .then(() => {
-                            // Refetch the data to update the table
-                            dispatch(getCoachTemplateModuleId(templateId));
-                        });
-                     }
-                });
+                const response = await dispatch(createCoachSchedule(dataToGenrateLink));
+                console.log('..............................................', response);
 
+                if(response.payload){
+                        payload.link = response.payload.data[0].meeting_id;
+
+                        await dispatch(linkActivity(payload)).unwrap();
+
+                        dispatch(getCoachTemplateModuleId(templateId));
+                }
             }else{ 
-                dispatch(linkActivity(payload))
+                await dispatch(linkActivity(payload))
                 .unwrap()
                 .then(() => {
                     // Refetch the data to update the table
-                    dispatch(getCoachTemplateModuleId(templateId));
+                    dispatch(getCoachTemplateModuleId(templateId))  
                 });
             }
-           // handlePopUpClose();
+            handlePopUpClose();
         } catch (error) {
             console.error('Failed to link activity:', error);
         }
@@ -163,6 +159,11 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId, LinkActi
         setSelectedActivityId('');
         reset();
         setVideoUrl(null);
+        setSelectedCoachId(null);
+        setFromDate(null);
+        setSelectedSlot(null);
+        setCoachTimeZone(null);
+        setSelectedPlatform(null);
         handleClose();
     }
 
@@ -291,21 +292,23 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId, LinkActi
     };
 
     useEffect(() => {
-        const selectedCoachTimeZone = timezones.find(timezone => timezone.id===coachTimeZone);
+        if(coachTimeZone){
+            const selectedCoachTimeZone = timezones.find(timezone => timezone.id===coachTimeZone);
 
-        if(selectedCoachTimeZone){
-        const data = {
-            admin_user_id: selectedCoachId,
-            date: fromDate,
-            timezone_name: selectedCoachTimeZone.time_zone,
-        };
-        console.log('data', data);
-        if (fromDate && selectedCoachId) {
-            dispatch(getTaAvailableSlotsFromDate(data));
-            dispatch(getCoachAvailableSlotsFromDate(data));
+            if(selectedCoachTimeZone){
+            const data = {
+                admin_user_id: selectedCoachId,
+                date: fromDate,
+                timezone_name: selectedCoachTimeZone.time_zone,
+            };
+            console.log('data', data);
+            if (fromDate && selectedCoachId) {
+                dispatch(getTaAvailableSlotsFromDate(data));
+                dispatch(getCoachAvailableSlotsFromDate(data));
+            }
+            }
         }
-        }
-    }, [fromDate, dispatch]);
+    }, [selectedCoachId, fromDate, dispatch]);
 
     useEffect(()=>{
        const selectedCoach = coaches.find(coach => coach.id===selectedCoachId);
@@ -477,7 +480,6 @@ const LinkActivityPopup = ({ open, handleClose, activityId, templateId, LinkActi
                         <Controller
                             name="coach"
                             control={control}
-                            defaultValue="coach"
                             render={({ field }) => (
                                 <CustomFormControl
                                     label="Select Coach"

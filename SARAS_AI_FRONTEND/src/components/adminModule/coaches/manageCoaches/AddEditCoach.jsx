@@ -315,7 +315,7 @@ function AddEditCoach({ data }) {
                                             rows={2}
                                             value={editableDescription}
                                             onChange={handleDescriptionChange}
-                                            placeholder="Add a brief description..."
+                                            placeholder="short description..."
                                         />
                                         <Button
                                             variant="contained"

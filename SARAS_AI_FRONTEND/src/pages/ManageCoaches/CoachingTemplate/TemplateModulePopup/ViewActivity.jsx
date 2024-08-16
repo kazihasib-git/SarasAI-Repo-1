@@ -215,7 +215,7 @@ const VideoPdfActivity = ({ handleClose, name, fileName ,activity_id, activity_t
                 color="#FFFFFF"
                 style={{ textTransform: 'none' }} // Inline style to transform text to lowercase
             >
-                Submit
+                Edit
             </CustomButton>
     </Grid>
     
@@ -279,8 +279,72 @@ const SessionActivity = ({ activity, name }) => {
 };
 
 // component for test activity type
-const TestActivity = ({activity,name}) =>{
-  console.log('testactivity',activity);
+// const TestActivity = ({activity,name}) =>{
+//   console.log('testactivity',activity);
+//   const {
+//     handleSubmit,
+//     control,
+//     reset,
+//     formState: { errors },
+//   } = useForm();
+
+//   return(
+//     <>
+//     <Grid
+//             container
+//             spacing={1} // Reduced spacing between items
+//             sx={{
+//                 display: 'flex',
+//                 flexDirection: 'column',
+//                 alignItems: 'center',
+//                 textAlign: 'center',
+//                 width: '100%',
+//             }}
+//         >
+//     <Grid
+//       item
+//       xs={12}
+//       sm={6}
+//       md={6}
+//       style={{ margin: '10px 0', width: '80%' }}
+//     >
+//       <CustomFormControl
+//         label="Activity Type"
+//         name="activityType"
+//         value="test"
+//         options={[
+//           { value: 'test', label: 'test' },
+//         ]}
+//         errors={errors}
+//       />
+//     </Grid>
+
+//     <Grid
+//       item
+//       xs={12}
+//       sm={6}
+//       md={6}
+//       style={{ margin: '10px 0', width: '80%' }}
+//     >
+//       <CustomFormControl
+//         label="Assessment"
+//         name="assessment"
+//         value={name}
+//         options={[
+//           { value: name, label: name },
+//         ]}
+//         errors={errors}
+//       />
+//     </Grid>
+
+//     </Grid>
+//     </>
+
+//   )
+
+// };
+
+const TestActivity = ({ handleClose, activity, name, template_id }) => {
   const {
     handleSubmit,
     control,
@@ -288,60 +352,122 @@ const TestActivity = ({activity,name}) =>{
     formState: { errors },
   } = useForm();
 
-  return(
+  const [selectedAssessment, setSelectedAssessment] = useState(name);
+  const [selectedAssessmentId, setSelectedAssessmentId] = useState(null);
+  const [showEditButton, setShowEditButton] = useState(false);
+  const { typeList } = useSelector(state => state.activityType);
+  const dispatch = useDispatch();
+
+  const assessmentOptions = typeList
+        .filter((_, index) => index >= 5)
+        .map(type => ({
+            value: type.type_name,
+            label:
+                type.type_name.charAt(0).toUpperCase() +
+                type.type_name.slice(1), // Capitalize the first letter of each type_name
+            id: type.id,
+    }));
+
+    const handleAssessmentChange = (e) => {
+      const selectedValue = e.target.value;
+      setSelectedAssessment(selectedValue);
+      const selectedOption = assessmentOptions.find(
+        option => option.value === selectedValue
+      );
+      setSelectedAssessmentId(
+          selectedOption ? selectedOption.id : ''
+      );
+      setShowEditButton(true);
+    };
+
+  
+    const onSubmit = async data => {
+      const payload = {
+          activity_id: activity.id, 
+          activity_type_id: selectedAssessmentId,
+      };
+      try {
+          await dispatch(linkActivity(payload))
+              .unwrap()
+              .then(() => {
+                  dispatch(getCoachTemplateModuleId(template_id));
+              });
+          handleClose();
+      } catch (error) {
+          console.error('Failed to link activity:', error);
+      }
+    };
+
+  return (
     <>
-    <Grid
-            container
-            spacing={1} // Reduced spacing between items
-            sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                textAlign: 'center',
-                width: '100%',
-            }}
+      <Grid
+        container
+        spacing={1}
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          textAlign: 'center',
+          width: '100%',
+        }}
+      >
+        <Grid
+          item
+          xs={12}
+          sm={6}
+          md={6}
+          style={{ margin: '10px 0', width: '80%' }}
         >
-    <Grid
-      item
-      xs={12}
-      sm={6}
-      md={6}
-      style={{ margin: '10px 0', width: '80%' }}
-    >
-      <CustomFormControl
-        label="Activity Type"
-        name="activityType"
-        value="test"
-        options={[
-          { value: 'test', label: 'test' },
-        ]}
-        errors={errors}
-      />
-    </Grid>
+          <CustomFormControl
+            label="Activity Type"
+            name="activityType"
+            value="test"
+            options={[{ value: 'test', label: 'test' }]}
+            errors={errors}
+            control={control}
+          />
+        </Grid>
 
-    <Grid
-      item
-      xs={12}
-      sm={6}
-      md={6}
-      style={{ margin: '10px 0', width: '80%' }}
-    >
-      <CustomFormControl
-        label="Assessment"
-        name="assessment"
-        value={name}
-        options={[
-          { value: name, label: name },
-        ]}
-        errors={errors}
-      />
-    </Grid>
+        <Grid
+          item
+          xs={12}
+          sm={6}
+          md={6}
+          style={{ margin: '10px 0', width: '80%' }}
+        >
+          <CustomFormControl
+            label="Assessment"
+            name="assessment"
+            value={selectedAssessment}
+            options={assessmentOptions}
+            onChange={handleAssessmentChange}
+            errors={errors}
+            control={control}
+          />
+        </Grid>
 
-    </Grid>
+        {showEditButton && (
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={6}
+            style={{ margin: '10px 0', width: '80%' }}
+          >
+            <CustomButton
+              onClick={handleSubmit(onSubmit)}
+              backgroundColor="#F56D3B"
+              borderColor="#F56D3B"
+              color="#FFFFFF"
+              style={{ textTransform: 'none' }}
+            >
+              Edit
+            </CustomButton>
+          </Grid>
+        )}
+      </Grid>
     </>
-
-  )
-
+  );
 };
 
 // Main Popup Component
@@ -380,8 +506,10 @@ const ViewActivityPopup = ({ open, onClose, activity, templateId }) => {
             case 7:
               return(
                     <TestActivity
+                       handleClose={onClose}
                        activity={activity}
                        name={activity.activity_type?.type_name}
+                       template_id={templateId}
                     />
 
               )
