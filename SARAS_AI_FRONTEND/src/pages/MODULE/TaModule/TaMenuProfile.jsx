@@ -133,7 +133,7 @@ const TaMenuProfile = () => {
         updatedFormData.date_of_birth = dateOfBirth;
         setIsEditing(false); // Disable edit mode after submit
 
-        if (selectedImage) {
+        if (selectedImage && selectedImage.startsWith('data:image/')) {
             const base64Data = selectedImage.replace(
                 /^data:image\/(png|jpeg|jpg);base64,/,
                 ''

@@ -125,8 +125,7 @@ const CreatedSessions = ({ componentName }) => {
     };
 
     const handleRescheduleClick = session => {
-        dispatch();
-        dispatch();
+       
     };
 
     const handleCancelClick = session => {
@@ -135,7 +134,7 @@ const CreatedSessions = ({ componentName }) => {
     };
 
     const handleSubmit = () => {
-        dispatch();
+        //dispatch();
         dispatch(closeCreatedSessions());
     };
 
