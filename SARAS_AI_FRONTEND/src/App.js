@@ -82,6 +82,9 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLogin } from './redux/features/auth/authSlice';
 import StudentDetails from './components/CommonComponent/studentDetails';
+import CoursePage from './pages/adminModulePages/users/courses/CoursePage.jsx';
+import CoachCourseMapping from './pages/ManageCoaches/CoachCourseMapping.jsx';
+import AssignCoachCourses from './pages/ManageCoaches/AssignedCoachCourses.jsx';
 
 const ROLES = {
     Teaching: 2001,
@@ -222,6 +225,12 @@ function App() {
                             }
                         />
                         <Route
+                            path="/active-Coach-courses/:id"
+                            element={
+                                <AssignCoachCourses page="Assigned Coach Courses" />
+                            }
+                        />
+                        <Route
                             path="ta-availability"
                             element={<TAAvailability page="TA Availability" />}
                         />
@@ -281,8 +290,17 @@ function App() {
                                 <CoachScheduling page="Coach Scheduling" />
                             }
                         />
+                        <Route
+                            path="coach-course-mapping"
+                            element={
+                                <CoachCourseMapping page="Coach Course Mapping" />
+                            }
+                        />
+                        
+
                         <Route path="students" element={<StudentPage />} />
                         <Route path="batches" element={<BatchPage />} />
+                        <Route path="courses" element={<CoursePage />} />
                         {/* <Route path='/student-list' element={<StudentList page="Student" />} /> */}
                         <Route path="wheel-of-life" element={<WheelOfLife />} />
                         <Route

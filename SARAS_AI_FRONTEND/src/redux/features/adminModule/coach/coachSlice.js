@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { baseUrl } from '../../../../utils/baseURL';
 import axiosInstance from '../../../services/httpService';
+import CoachCourseMapping from '../../../../pages/ManageCoaches/CoachCourseMapping';
 
 export const createCoach = createAsyncThunk(
     'coachModule/createCoach',
@@ -77,6 +78,18 @@ export const showCoachMapping = createAsyncThunk(
         return response.data;
     }
 );
+
+export const showCoachCourseMapping = createAsyncThunk(
+    'coachModule/showCoachCourseMapping',
+    async () => {
+        const response = await axiosInstance.get(
+            `${baseUrl}/admin/coach-course/getAllCoachesWithCourses`
+        );
+        return response.data;
+    }
+);
+
+
 export const getCoachAssignStudents = createAsyncThunk(
     'coachModule/getCoachAssignStudents',
     async id => {
@@ -177,6 +190,7 @@ const initialState = {
     coachStudentBatchMapping: [],
     coachBatchMapping: null,
     coachMapping: null,
+    coachCourseMappingData: null,
     coachSchedule: null,
     assignedStudents: [],
     assignedBatches: [],
@@ -384,6 +398,21 @@ export const coachSlice = createSlice({
             state.coachMapping = [];
             state.error = action.payload || action.error.message;
         });
+
+        builder.addCase(showCoachCourseMapping.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(showCoachCourseMapping.fulfilled, (state, action) => {
+            console.log('Coach mapping action ', action.payload);
+            state.loading = false;
+            state.coachCourseMappingData = action.payload.coaches;
+        });
+        builder.addCase(showCoachCourseMapping.rejected, (state, action) => {
+            state.loading = false;
+            state.coachCourseMappingData = [];
+            state.error = action.payload || action.error.message;
+        });
+
 
         // get all students
         builder.addCase(getCoachStudentBatchMapping.pending, state => {
