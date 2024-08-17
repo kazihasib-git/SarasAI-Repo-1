@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     FormControl,
     InputLabel,
+    Autocomplete,
     TextField,
     Typography,
+    OutlinedInput,
 } from '@mui/material';
 
 const CustomTimeZoneForm = ({
@@ -13,8 +15,11 @@ const CustomTimeZoneForm = ({
     placeholder,
     onChange,
     errors,
+    options,
     disabled,
 }) => {
+    const [inputValue, setInputValue] = useState('');
+
     const hasError = !!errors[name];
 
     return (
@@ -25,37 +30,70 @@ const CustomTimeZoneForm = ({
                 sx={{
                     color: hasError ? '#d32f2f' : '#1A1E3D',
                     '&.Mui-focused': {
-                        color: '#1A1E3D',
+                        color: '#1A1E3D', // Change label color on focus regardless of error
                     },
                     '&.MuiFormLabel-filled': {
-                        color: hasError ? '#d32f2f' : '#1A1E3D',
+                        color: hasError ? '#d32f2f' : '#1A1E3D', // Change label color when the field is filled
                     },
                     backgroundColor: 'white',
                 }}
             >
                 {label}
             </InputLabel>
-            <TextField
-                name={name}
-                value={value}
-                onChange={onChange}
-                placeholder={placeholder}
-                variant="outlined"
-                error={hasError}
+            <Autocomplete
+                value={options.find(option => option.id === value) || null}
+                onChange={(event, newValue) => {
+                    onChange({
+                        target: {
+                            name,
+                            value: newValue ? newValue.id : '',
+                        },
+                    });
+                }}
+                inputValue={inputValue}
+                onInputChange={(event, newInputValue) => {
+                    setInputValue(newInputValue);
+                }}
                 disabled={disabled}
+                options={options}
+                getOptionLabel={(option) => option.time_zone}
+                renderInput={(params) => (
+                    <TextField
+                        {...params}
+                        //label={label}
+                        placeholder={placeholder}
+                        variant="outlined"
+                        error={hasError}
+                        sx={{
+                            '& .MuiOutlinedInput-root': {
+                                borderRadius: '50px',
+                                height: '60px',
+                                padding: '18px 2px',
+                                '& fieldset': {
+                                    borderColor: '#D0D0EC', // Default border color
+                                },
+                                '&:hover fieldset': {
+                                    borderColor: '#D0D0EC',//'rgb(245, 109, 59)', // Border color on hover
+                                },
+                                '&.Mui-focused fieldset': {
+                                    borderColor: hasError ? '#d32f2f' : 'rgb(245, 109, 59)', // Border color on focus
+                                },
+                            },
+                        }}
+                    />
+                )}
                 sx={{
-                    '& .MuiOutlinedInput-root': {
-                        borderRadius: '50px',
-                        height: '60px',
-                        padding: '18px 2px',
-                        '& fieldset': {
-                            borderColor: '#D0D0EC',
-                        },
-                        '&:hover fieldset': {
-                            borderColor: '#D0D0EC',
-                        },
-                        '&.Mui-focused fieldset': {
-                            borderColor: hasError ? '#d32f2f' : 'rgb(245, 109, 59)',
+                    '& .MuiAutocomplete-popover': {
+                        '& .MuiOutlinedInput-root': {
+                            '& fieldset': {
+                                borderColor: '#D0D0EC', // Border color of the dropdown
+                            },
+                            '&:hover fieldset': {
+                                borderColor: 'rgb(245, 109, 59)', // Border color on hover
+                            },
+                            '&.Mui-focused fieldset': {
+                                borderColor: hasError ? '#d32f2f' : 'rgb(245, 109, 59)', // Border color on focus
+                            },
                         },
                     },
                 }}

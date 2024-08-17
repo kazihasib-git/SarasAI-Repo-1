@@ -151,7 +151,7 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
         formData.end_date = repeat === 'recurring' ? toDate : fromDate;
         formData.weeks = weeksArray;
         formData.admin_user_id = taId.id;
-
+        formData.timezone_id = `${timezoneID}`
         dispatch(createSlotApi(formData)).then(() => {
             dispatch(closeCreateNewSlots());
             dispatch(getSlotsApi(taId.id));
@@ -255,11 +255,12 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
                                     <CustomTimeZoneForm
                                         label="Time Zone"
                                         name="timezone_id"
-                                        value={timezoneName}
+                                        value={timezoneID}
                                         onChange={field.onChange}
+                                        disabled={timezoneID!=null}
+                                        options={timezones}
                                         errors={errors}
-                                        disabled={true}
-                                    />  
+                                    />      
                                 )}
                             />
                         </Grid>

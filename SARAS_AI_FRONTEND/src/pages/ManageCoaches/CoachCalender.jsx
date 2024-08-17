@@ -419,6 +419,8 @@ console.log("//////////////////////////", storedTimezoneId) ;
                             id={id}
                             name={name}
                             componentName={'COACHCALENDER'}
+                            timezoneID={storedTimezoneId}
+
                         />
                     )}
 
@@ -426,7 +428,7 @@ console.log("//////////////////////////", storedTimezoneId) ;
                         <Slots
                             id={id}
                             name={name}
-                            componentName={'COACHCALENDER'}
+                            componentName={'COACHCALENDER'} timezoneID={storedTimezoneId}
                         />
                     )}
 
@@ -435,6 +437,8 @@ console.log("//////////////////////////", storedTimezoneId) ;
                             id={id}
                             name={name}
                             componentName={'COACHCALENDER'}
+                            timezoneID={storedTimezoneId}
+
                         />
                     )}
 
@@ -442,7 +446,7 @@ console.log("//////////////////////////", storedTimezoneId) ;
                         <CancelSchedule
                             id={id}
                             name={name}
-                            componentName={'COACHCALENDER'}
+                            componentName={'COACHCALENDER'} timezoneID={storedTimezoneId}
                         />
                     )}
 
@@ -450,7 +454,7 @@ console.log("//////////////////////////", storedTimezoneId) ;
                         <ReasonForLeave
                             id={id}
                             name={name}
-                            componentName={'COACHCALENDER'}
+                            componentName={'COACHCALENDER'} timezoneID={storedTimezoneId}
                         />
                     )}
 
@@ -458,12 +462,12 @@ console.log("//////////////////////////", storedTimezoneId) ;
                         <ReschedulingSession
                             id={id}
                             name={name}
-                            componentName={'COACHCALENDER'}
+                            componentName={'COACHCALENDER'} timezoneID={storedTimezoneId}
                         />
                     )}
 
                     {deletingCoachFutureSlots && (
-                        <DeleteAllSlots componentName={'COACHCALENDER'} />
+                        <DeleteAllSlots componentName={'COACHCALENDER'} timezoneID={storedTimezoneId} />
                     )}
 
                     {createNewSlotOpen && (
@@ -471,10 +475,11 @@ console.log("//////////////////////////", storedTimezoneId) ;
                             // addEvent={addEvent}
                             componentName={'COACHCALENDER'}
                             timezoneID={storedTimezoneId}
+
                         />
                     )}
                     {coachOpenEventData && (
-                        <ScheduleSession componentName={'COACHCALENDER'} />
+                        <ScheduleSession componentName={'COACHCALENDER'} timezoneID={storedTimezoneId}/>
                     )}
                     {coachEditScheduledBatches && (
                         <EditBatchesFromSession

@@ -62,9 +62,11 @@ const actionButtons = [
         type: 'button',
     },
 ];
-const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
 
-const Schedule = ({ componentName }) => {
+const Schedule = ({ componentName , timezoneID}) => {
+
+    console.log('timezoneID:',  timezoneID) ; 
+    
     const [fromDate, setFromDate] = useState(null);
     const [toDate, setToDate] = useState(null);
     const [fromTime, setFromTime] = useState(null);
@@ -201,9 +203,8 @@ const Schedule = ({ componentName }) => {
         console.log('AVAILABLE KEY : ', availableKey);
         console.log('Available slots : ', availableSlots);
         
-        if (availableSlots && availableSlots.length > 0 && timezones && storedTimezoneId) {
-            const timezonename = timezoneIdToName(storedTimezoneId, timezones);
-            
+        if (availableSlots && availableSlots.length > 0 && timezones && timezoneID) {
+            const timezonename = timezoneIdToName(timezoneID, timezones);
             try {
                 const processedSlots = await Promise.all(
                     availableSlots.map(async (slot, index) => {
@@ -250,7 +251,7 @@ const Schedule = ({ componentName }) => {
     
     useEffect(() => {
         convertSessions();
-    }, [availableSlots, timezones, storedTimezoneId]);
+    }, [availableSlots, timezones, timezoneID]);
 
     const handleDayChange = day => {
         setSelectedDays(prev => {
@@ -365,7 +366,7 @@ const Schedule = ({ componentName }) => {
         formData.weeks = weeksArray;
         formData.studentId = studentId;
         formData.batchId = batchId;
-
+        formData.timezone_id = `${timezoneID}`
         console.log('form Data :', formData);
         dispatch(createScheduleAction(formData))
             .then(() => {
@@ -529,16 +530,18 @@ const Schedule = ({ componentName }) => {
                                                                     label="Time Zone"
                                                                     name="timezone_id"
                                                                     value={
-                                                                        field.value
+                                                                        timezoneID
                                                                     }
                                                                     onChange={
                                                                         field.onChange
                                                                     }
-                                                                    errors={
-                                                                        errors
-                                                                    }
+                                                                    disabled={timezoneID!=null}
+
                                                                     options={
                                                                         timezones
+                                                                    }
+                                                                    errors={
+                                                                        errors
                                                                     }
                                                                 />
                                                             )}
