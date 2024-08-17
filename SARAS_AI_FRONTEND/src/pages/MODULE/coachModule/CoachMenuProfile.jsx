@@ -227,6 +227,7 @@ const CoachMenuProfile = () => {
                                 name="profile_picture"
                                 selectedImage={selectedImage}
                                 setSelectedImage={setSelectedImage}
+                                disabled={!isEditing}
                             />
 
                             {!isEditing && (
