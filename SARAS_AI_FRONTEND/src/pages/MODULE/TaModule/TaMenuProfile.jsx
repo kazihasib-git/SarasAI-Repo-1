@@ -23,6 +23,7 @@ import {
     getTaMenuProfile,
     updateTaMenuProfile,
 } from '../../../redux/features/taModule/tamenuSlice';
+import { formatInTimeZone } from 'date-fns-tz';
 import moment from 'moment';
 import CustomDateOfBirth from '../../../components/CustomFields/CustomDateOfBirth';
 import { getTimezone } from '../../../redux/features/utils/utilSlice';
@@ -61,7 +62,8 @@ const TaMenuProfile = () => {
     const [selectedImage, setSelectedImage] = useState(null);
     const [dateOfBirth, setDateOfBirth] = useState(null);
     const [phoneNumber, setPhoneNumber] = useState('');
-
+    const [ipData, setIpData] = useState(null);
+    const [error, setError] = useState(null);
     const nameValue = watch('name', '');
     const aboutMeValue = watch('about_me', '');
 
@@ -81,6 +83,42 @@ const TaMenuProfile = () => {
         }
     }, [taProfileData]);
 
+    useEffect(() => {
+        const fetchIP = async () => {
+            try {
+                // Fetch IP data from ipapi
+                const response = await axios.get('https://ipapi.co/json/');
+                setIpData(response.data);
+            } catch (err) {
+                setError(err.message);
+            }
+        };
+
+        fetchIP();
+    }, []);
+
+    const convertTimezone = (time, fromTimeZone, toTimeZone) => {
+        const formattedTime = formatInTimeZone(
+            time,
+            fromTimeZone,
+            'yyyy-MM-dd HH:mm:ssXXX',
+            { timeZone: toTimeZone }
+        );
+        return formattedTime;
+    };
+
+    const getConvertedTime = () => {
+        if (ipData && ipData.timezone) {
+            const currentTime = new Date();
+            return convertTimezone(
+                currentTime,
+                ipData.timezone,
+                taProfileData.timezone_id
+            );
+        }
+        return null;
+    };
+
     const populateForm = data => {
         const formattedDate = moment(data.date_of_birth).format('YYYY-MM-DD');
         setDateOfBirth(formattedDate);
@@ -88,6 +126,7 @@ const TaMenuProfile = () => {
         if (data.profile_picture) {
             //const blobUrl = base64ToBlobUrl(data.profile_picture);
             setSelectedImage(data.profile_picture);
+            //setSelectedImage(blobUrl);
         }
 
         const formValues = {
@@ -128,7 +167,7 @@ const TaMenuProfile = () => {
 
     const onSubmit = async formData => {
         // Handle form submission
-        const { email, timezone_id, ...updatedFormData } = formData;
+        const { email, ...updatedFormData } = formData;
 
         updatedFormData.date_of_birth = dateOfBirth;
         setIsEditing(false); // Disable edit mode after submit
@@ -141,8 +180,19 @@ const TaMenuProfile = () => {
             updatedFormData.profile_picture = base64Data;
         }
 
-        console.log('updatedFormData', updatedFormData);
+        try {
+            await dispatch(updateTaMenuProfile(updatedFormData)).unwrap();
+
+            dispatch(getTaMenuProfile());
+            setIsEditing(false);
+        } catch (error) {
+            console.error('Update failed:', error);
+        }
+
+        // console.log('updatedFormData', updatedFormData);
+        // dispatch(updateCoachmenuprofile(updatedFormData));
         dispatch(updateTaMenuProfile(updatedFormData));
+        console.log('data', updatedFormData);
     };
 
     return (
