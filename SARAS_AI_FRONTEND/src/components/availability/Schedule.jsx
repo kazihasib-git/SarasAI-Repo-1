@@ -364,7 +364,6 @@ const Schedule = ({ componentName, storedTimezoneId }) => {
         formData.weeks = weeksArray;
         formData.studentId = studentId;
         formData.batchId = batchId;
-        formData.timezone_id = storedTimezoneId;
 
         console.log('form Data :', formData);
         dispatch(createScheduleAction(formData))
@@ -522,6 +521,7 @@ const Schedule = ({ componentName, storedTimezoneId }) => {
                                                             name="timezone_id"
                                                             control={control}
                                                             // rules={{ required: "Time Zone is required" }}
+                                                            defaultValue={storedTimezoneId}
                                                             render={({
                                                                 field,
                                                             }) => (
@@ -529,7 +529,7 @@ const Schedule = ({ componentName, storedTimezoneId }) => {
                                                                     label="Time Zone"
                                                                     name="timezone_id"
                                                                     value={
-                                                                        storedTimezoneId
+                                                                        field.value
                                                                     }
                                                                     onChange={
                                                                         field.onChange
@@ -540,7 +540,6 @@ const Schedule = ({ componentName, storedTimezoneId }) => {
                                                                     options={
                                                                         timezones
                                                                     }
-                                                                    disabled={true}
                                                                 />
                                                             )}
                                                         />
