@@ -20,6 +20,7 @@ import CustomButton from '../CustomFields/CustomButton';
 import { timezoneIdToName } from '../../utils/timezoneIdToName';
 import { convertFromUTC } from '../../utils/dateAndtimeConversion';
 import { getTimezone } from '../../redux/features/utils/utilSlice';
+import { addDataToFindScheduleInSlot } from '../../redux/features/commonCalender/commonCalender';
 
 const Slots = ({ componentName , timezoneID }) => {
     const { timezones, platforms } = useSelector(state => state.util);
@@ -163,6 +164,7 @@ const Slots = ({ componentName , timezoneID }) => {
 
             console.log('Submitting selected slots:', requestData);
 
+            dispatch(addDataToFindScheduleInSlot(requestData));
             dispatch(getScheduleSessionAction(requestData))
                 .then(response => {
                     console.log('API response:', response);

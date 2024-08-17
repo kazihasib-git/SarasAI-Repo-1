@@ -46,6 +46,8 @@ const ReschedulingSession = ({ componentName ,timezoneID }) => {
     const [toTime, setToTime] = useState(null);
     const [transformedSlotsData, setTransformedSlotsData] = useState([]);
 
+    const { dataToFindScheduleInSlot } = useSelector(state => state.commonCalender);
+
     let rescheduleSessionOpenKey,
         closeRescheduleSessionAction,
         fetchAvailableSlotsAction,
@@ -200,7 +202,7 @@ const ReschedulingSession = ({ componentName ,timezoneID }) => {
             .then(() => {
                 // console.log("SLOT EVENT DATA : ", slotEventData)
                 dispatch(closeRescheduleSessionAction());
-                dispatch(getScheduleSessionAction());
+                dispatch(getScheduleSessionAction(dataToFindScheduleInSlot));
                 dispatch(openScheduledSessionAction(slotEventData));
             })
             .catch(error => {
