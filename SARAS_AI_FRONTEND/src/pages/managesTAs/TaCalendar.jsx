@@ -406,10 +406,10 @@ const TaCalender = () => {
                         componentName={'TACALENDER'}
                     />
                     {scheduleSessionOpen && (
-                        <Schedule componentName={'TASCHEDULE'} storedTimezoneId={storedTimezoneId}/>
+                        <Schedule componentName={'TASCHEDULE'} timezoneID={storedTimezoneId} />
                     )}
                     {openEditBatch && (
-                        <EditBatches componentname={'TASCHEDULE'} />
+                        <EditBatches componentname={'TASCHEDULE'}  />
                     )}
                     {openEditStudent && (
                         <EditStudents componentname={'TASCHEDULE'} />
@@ -418,52 +418,52 @@ const TaCalender = () => {
                         <MarkLeave
                             id={id}
                             name={name}
-                            componentName={'TACALENDER'}
+                            componentName={'TACALENDER' } timezoneID={storedTimezoneId}
                         />
                     )}
                     {scheduledSlotsOpen && (
                         <Slots
                             id={id}
                             name={name}
-                            componentName={'TACALENDER'}
+                            componentName={'TACALENDER'} timezoneID={storedTimezoneId}
                         />
                     )}
                     {scheduledSessionOpen && (
                         <ScheduledSessions
                             id={id}
                             name={name}
-                            componentName={'TACALENDER'}
+                            componentName={'TACALENDER'} timezoneID={storedTimezoneId}
                         />
                     )}
                     {cancelSessionOpen && (
                         <CancelSchedule
                             id={id}
                             name={name}
-                            componentName={'TACALENDER'}
+                            componentName={'TACALENDER'} timezoneID={storedTimezoneId}
                         />
                     )}
                     {reasonForLeaveOpen && (
                         <ReasonForLeave
                             id={id}
                             name={name}
-                            componentName={'TACALENDER'}
+                            componentName={'TACALENDER'} timezoneID={storedTimezoneId}
                         />
                     )}
                     {resheduleSessionOpen && (
                         <ReschedulingSession
                             id={id}
                             name={name}
-                            componentName={'TACALENDER'}
+                            componentName={'TACALENDER'} timezoneID={storedTimezoneId}
                         />
                     )}
                     {deletingCoachFutureSlots && (
-                        <DeleteAllSlots componentName={'TACALENDER'} />
+                        <DeleteAllSlots componentName={'TACALENDER'} timezoneID={storedTimezoneId} />
                     )}
                     {createNewSlotOpen && (
                         <CreateNewSlot componentName={'TACALENDER'} timezoneID={storedTimezoneId} />
                     )}
                     {openEventData && (
-                        <ScheduleSession componentName={'TACALENDER'} />
+                        <ScheduleSession componentName={'TACALENDER'}  timezoneID={storedTimezoneId}/>
                     )}
                     {taEditScheduledStudents && (
                         <EditStudentsFromSession componentName={'TACALENDER'} />
