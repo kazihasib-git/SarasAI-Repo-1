@@ -46,7 +46,7 @@ const CustomButton = ({
     );
 };
 
-const DenyDialog = ({ open, handleClose, handleDenySubmit }) => {
+const DenyDialog = ({ open, handleClose, handleDenySubmit, denyRequestId }) => {
     const [message, setMessage] = useState('');
 
     const handleDenyDialogClose = () => {
@@ -55,7 +55,7 @@ const DenyDialog = ({ open, handleClose, handleDenySubmit }) => {
     };
 
     const handleSubmit = () => {
-        handleDenySubmit(message);
+        handleDenySubmit(denyRequestId, message);
         handleDenyDialogClose();
     };
 
