@@ -168,7 +168,7 @@ const Schedule = ({ componentName , timezoneID}) => {
                 getAvailableSlotsAction({
                     admin_user_id: adminUserID,
                     date: fromDate,
-                    timezone_name: timezoneIdToName(storedTimezoneId, timezones),
+                    timezone_name: timezoneIdToName(timezoneID, timezones),
                 })
             ).then(() => {
                 setSelectedSlot([]);
@@ -177,13 +177,13 @@ const Schedule = ({ componentName , timezoneID}) => {
     }, [fromDate, dispatch, adminUserID, getAvailableSlotsAction]);
 
     const handleDateSubmit = () => {
-        console.log('timezone', timezoneIdToName(storedTimezoneId, timezones));
+        console.log('timezone', timezoneIdToName(timezoneID, timezones));
         if (fromDate) {
             dispatch(
                 getAvailableSlotsAction({
                     admin_user_id: adminUserID,
                     date: fromDate,
-                    timezone_name: timezoneIdToName(storedTimezoneId, timezones),
+                    timezone_name: timezoneIdToName(timezoneID, timezones),
                 })
             ).then(() => {
                 setSelectedSlot([]);
@@ -523,7 +523,7 @@ const Schedule = ({ componentName , timezoneID}) => {
                                                             name="timezone_id"
                                                             control={control}
                                                             // rules={{ required: "Time Zone is required" }}
-                                                            defaultValue={storedTimezoneId}
+                                                            defaultValue={timezoneID}
                                                             render={({
                                                                 field,
                                                             }) => (
