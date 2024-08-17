@@ -157,7 +157,7 @@ const DynamicTable = ({
             } else if (componentName === 'COACHCOURSEMAPPING') {
                 if (type === 'courses') {
                     console.log(id);
-                    navigate(`/active-Coach-courses/${id}`); // Append id as a parameter
+                    //navigate(`/active-Coach-courses/${id}`); // Append id as a parameter
                 } 
             }
         }
