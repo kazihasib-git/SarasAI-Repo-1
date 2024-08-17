@@ -131,9 +131,9 @@ const TaCalender = () => {
         findTaTimeZone(todaysAvailableTa);
     }, [id, todaysAvailableTa]);
 
-     const storedTimezoneId = selectedTA ? selectedTA.timezone_id : null;
+    const storedTimezoneId = selectedTA ? selectedTA.timezone_id : Number(localStorage.getItem('timezone_id'));
  
-console.log("//////////////////////////", storedTimezoneId) ;
+   console.log("//////////////////////////", storedTimezoneId) ;
 
     useEffect(() => {
         dispatch(fetchTaSlots(id));
@@ -406,7 +406,7 @@ console.log("//////////////////////////", storedTimezoneId) ;
                         componentName={'TACALENDER'}
                     />
                     {scheduleSessionOpen && (
-                        <Schedule componentName={'TASCHEDULE'} />
+                        <Schedule componentName={'TASCHEDULE'} storedTimezoneId={storedTimezoneId}/>
                     )}
                     {openEditBatch && (
                         <EditBatches componentname={'TASCHEDULE'} />

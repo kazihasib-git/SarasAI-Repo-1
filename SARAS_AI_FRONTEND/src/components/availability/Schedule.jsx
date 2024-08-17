@@ -62,9 +62,8 @@ const actionButtons = [
         type: 'button',
     },
 ];
-const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
 
-const Schedule = ({ componentName }) => {
+const Schedule = ({ componentName, storedTimezoneId }) => {
     const [fromDate, setFromDate] = useState(null);
     const [toDate, setToDate] = useState(null);
     const [fromTime, setFromTime] = useState(null);
@@ -166,7 +165,7 @@ const Schedule = ({ componentName }) => {
                 getAvailableSlotsAction({
                     admin_user_id: adminUserID,
                     date: fromDate,
-                    timezone_name: timezones[adminUserID].time_zone,
+                    timezone_name: timezoneIdToName(storedTimezoneId, timezones),
                 })
             ).then(() => {
                 setSelectedSlot([]);
@@ -175,13 +174,13 @@ const Schedule = ({ componentName }) => {
     }, [fromDate, dispatch, adminUserID, getAvailableSlotsAction]);
 
     const handleDateSubmit = () => {
-        console.log('timezone', timezones[adminUserID].time_zone);
+        console.log('timezone', timezoneIdToName(storedTimezoneId, timezones));
         if (fromDate) {
             dispatch(
                 getAvailableSlotsAction({
                     admin_user_id: adminUserID,
                     date: fromDate,
-                    timezone_name: timezones[adminUserID].time_zone,
+                    timezone_name: timezoneIdToName(storedTimezoneId, timezones),
                 })
             ).then(() => {
                 setSelectedSlot([]);
@@ -365,6 +364,7 @@ const Schedule = ({ componentName }) => {
         formData.weeks = weeksArray;
         formData.studentId = studentId;
         formData.batchId = batchId;
+        formData.timezone_id = storedTimezoneId;
 
         console.log('form Data :', formData);
         dispatch(createScheduleAction(formData))
@@ -529,7 +529,7 @@ const Schedule = ({ componentName }) => {
                                                                     label="Time Zone"
                                                                     name="timezone_id"
                                                                     value={
-                                                                        field.value
+                                                                        storedTimezoneId
                                                                     }
                                                                     onChange={
                                                                         field.onChange
@@ -540,6 +540,7 @@ const Schedule = ({ componentName }) => {
                                                                     options={
                                                                         timezones
                                                                     }
+                                                                    disabled={true}
                                                                 />
                                                             )}
                                                         />

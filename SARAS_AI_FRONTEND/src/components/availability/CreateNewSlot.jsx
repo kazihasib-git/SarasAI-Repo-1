@@ -255,10 +255,11 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
                                     <CustomTimeZoneForm
                                         label="Time Zone"
                                         name="timezone_id"
-                                        value={timezoneName}
+                                        value={timezoneID}
                                         onChange={field.onChange}
                                         errors={errors}
                                         disabled={true}
+                                        options={timezones}
                                     />  
                                 )}
                             />
