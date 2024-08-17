@@ -191,8 +191,8 @@ const TaMenuProfile = () => {
 
         // console.log('updatedFormData', updatedFormData);
         // dispatch(updateCoachmenuprofile(updatedFormData));
-        dispatch(updateTaMenuProfile(updatedFormData));
-        console.log('data', updatedFormData);
+        // dispatch(updateTaMenuProfile(updatedFormData));
+        // console.log('data', updatedFormData);
     };
 
     return (
@@ -230,6 +230,7 @@ const TaMenuProfile = () => {
                                 name="profile_picture"
                                 selectedImage={selectedImage}
                                 setSelectedImage={setSelectedImage}
+                                disabled={!isEditing}
                             />
 
                             {!isEditing && (
