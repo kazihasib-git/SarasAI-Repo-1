@@ -406,7 +406,7 @@ console.log("//////////////////////////", storedTimezoneId) ;
                     )} */}
 
                     {scheduleCoachSessionOpen && (
-                        <Schedule componentName={'COACHSCHEDULE'} />
+                        <Schedule componentName={'COACHSCHEDULE'} storedTimezoneId={storedTimezoneId}/>
                     )}
                     {openCoachEditBatch && (
                         <EditBatches componentname={'COACHSCHEDULE'} />
