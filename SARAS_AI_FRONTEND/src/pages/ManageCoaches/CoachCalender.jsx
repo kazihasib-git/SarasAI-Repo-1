@@ -79,8 +79,8 @@ const CoachCalender = () => {
    
     const findTaTimeZone = (todaysAvailableCoach) => {
         if (todaysAvailableCoach && Number(id)) {
-            const selectedTa = todaysAvailableCoach.find(ta => ta.id === Number(id));
-            setSelectedCoach(selectedTa || null);  // Set to null if not found
+            const selectedcoach = todaysAvailableCoach.find(ta => ta.id === Number(id));
+            setSelectedCoach(selectedcoach || null);  // Set to null if not found
         } else {
             setSelectedCoach(null);  // Set to null if conditions are not met
         }
@@ -89,9 +89,9 @@ const CoachCalender = () => {
         findTaTimeZone(todaysAvailableCoach);
     }, [id, todaysAvailableCoach]);
 
-     const storedTimezoneId = selectedCoach ? selectedCoach.timezone_id : null;
+    const storedTimezoneId = selectedCoach ? selectedCoach.timezone_id : Number(localStorage.getItem('timezone_id'));
  
-console.log("//////////////////////////", storedTimezoneId) ;
+console.log("selected sending to schedule time zone id", storedTimezoneId) ;
     const [eventsList, setEventsList] = useState([]);
     const [slotViewData, setSlotViewData] = useState([]);
 
@@ -303,7 +303,7 @@ console.log("//////////////////////////", storedTimezoneId) ;
 
     useEffect(() => {
         convertSlots();
-    }, [slotCoachData, timezones, storedTimezoneId]);
+    }, [slotCoachData]);
 
     const handleScheduleNewSession = () => {
         dispatch(openCoachScheduleSession({ id, name }));
@@ -406,13 +406,13 @@ console.log("//////////////////////////", storedTimezoneId) ;
                     )} */}
 
                     {scheduleCoachSessionOpen && (
-                        <Schedule componentName={'COACHSCHEDULE'} />
+                        <Schedule componentName={'COACHSCHEDULE'} timezoneID={storedTimezoneId}/>
                     )}
                     {openCoachEditBatch && (
-                        <EditBatches componentname={'COACHSCHEDULE'} />
+                        <EditBatches componentname={'COACHSCHEDULE'} timezoneID={storedTimezoneId}/>
                     )}
                     {openCoachEditStudent && (
-                        <EditStudents componentname={'COACHSCHEDULE'} />
+                        <EditStudents componentname={'COACHSCHEDULE'} timezoneID={storedTimezoneId}/>
                     )}
                     {coachMarkLeaveOpen && (
                         <MarkLeave
@@ -483,12 +483,12 @@ console.log("//////////////////////////", storedTimezoneId) ;
                     )}
                     {coachEditScheduledBatches && (
                         <EditBatchesFromSession
-                            componentName={'COACHCALENDER'}
+                            componentName={'COACHCALENDER'} timezoneID={storedTimezoneId}
                         />
                     )}
                     {coachEditScheduledStudents && (
                         <EditStudentsFromSession
-                            componentName={'COACHCALENDER'}
+                            componentName={'COACHCALENDER'} timezoneID={storedTimezoneId}
                         />
                     )}
                 </Box>
