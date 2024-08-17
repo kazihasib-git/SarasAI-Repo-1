@@ -1,15 +1,10 @@
-/* .container {
-    position: relative;
-    padding-top: 10px;
-} */
-
 .container {
     position: relative;
     display: flex;
     flex-direction: row;
     padding-top: 10px;
     height: 100vh; /* Ensure full viewport height */
-    overflow: hidden;
+    /* overflow: hidden; */
 }
 
 h1 {

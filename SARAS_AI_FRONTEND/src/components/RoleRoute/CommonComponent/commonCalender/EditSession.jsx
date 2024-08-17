@@ -30,7 +30,7 @@ import CustomFormControl from '../../../CustomFields/CustomFromControl';
 import CustomDateField from '../../../CustomFields/CustomDateField';
 import CustomTimeField from '../../../CustomFields/CustomTimeField';
 import CustomTimeZoneForm from '../../../CustomFields/CustomTimeZoneForm';
-import { getTimezone } from '../../../../redux/features/utils/utilSlice';
+import { getPlatforms, getTimezone } from '../../../../redux/features/utils/utilSlice';
 
 const CustomButton = ({
     onClick,
@@ -93,7 +93,7 @@ const platformOptions = [
 
 const EditSession = ({ componentName }) => {
     const dispatch = useDispatch();
-    const { timezones } = useSelector(state => state.util);
+    const { timezones, platforms } = useSelector(state => state.util);
     const { editSession, students, batches, sessionData } = useSelector(
         state => state.commonCalender
     );
@@ -112,12 +112,6 @@ const EditSession = ({ componentName }) => {
         fromTime: sessionData.start_time || null,
         toTime: sessionData.end_time || null,
         timezone: 'Asia/Kolkata',
-        repeat: sessionData.weeks ? 'recurring' : 'onetime',
-        selectedDays: sessionData.weeks
-            ? sessionData.weeks
-                  .map((day, index) => (day === 1 ? weekDays[index] : null))
-                  .filter(Boolean)
-            : [],
     });
 
     let sliceName, updateSessionApi, getSessionApi;
@@ -144,10 +138,9 @@ const EditSession = ({ componentName }) => {
 
     useEffect(() => {
         dispatch(getTimezone());
+        dispatch(getPlatforms());
     }, [dispatch]);
 
-    const [selectedSlot, setSelectedSlot] = useState();
-    const [availableSlotsOptions, setAvailableSlotsOptions] = useState([]);
     const [error, setError] = useState({});
 
     const durationOptions = [
@@ -192,17 +185,6 @@ const EditSession = ({ componentName }) => {
 
         const studentId = students.map(student => student.id);
         const batchId = batches.map(batch => batch.id);
-
-        let weeksArray = Array(7).fill(0);
-        if (formData.repeat === 'recurring') {
-            formData.selectedDays.forEach(day => {
-                const index = weekDays.indexOf(day);
-                weeksArray[index] = 1;
-            });
-        } else if (formData.repeat === 'onetime') {
-            const index = new Date(formData.fromDate).getDay();
-            weeksArray[index] = 1;
-        }
 
         const fromDateTimeString = `${formData.fromDate}T${formData.fromTime}`;
         const fromDateTime = new Date(fromDateTimeString);
@@ -467,100 +449,6 @@ const EditSession = ({ componentName }) => {
                                 </Box>
                             </Grid>
 
-                            <Grid
-                                container
-                                spacing={3}
-                                justifyContent="center"
-                                sx={{ pt: 3 }}
-                            >
-                                <Grid
-                                    item
-                                    xs={12}
-                                    display="flex"
-                                    justifyContent="center"
-                                >
-                                    <FormControl component="fieldset">
-                                        <RadioGroup
-                                            row
-                                            value={formData.repeat}
-                                            onChange={e =>
-                                                handleChange(
-                                                    'repeat',
-                                                    e.target.value
-                                                )
-                                            }
-                                            sx={{ justifyContent: 'center' }}
-                                        >
-                                            <FormControlLabel
-                                                value="onetime"
-                                                control={<Radio />}
-                                                label="One-Time"
-                                            />
-                                            <FormControlLabel
-                                                value="recurring"
-                                                control={<Radio />}
-                                                label="Recurring"
-                                            />
-                                        </RadioGroup>
-                                    </FormControl>
-                                </Grid>
-                            </Grid>
-
-                            {formData.repeat === 'recurring' && (
-                                <>
-                                    <Grid
-                                        container
-                                        spacing={3}
-                                        justifyContent="center"
-                                        sx={{ pt: 3 }}
-                                    >
-                                        <Grid item xs={12}>
-                                            <FormControl component="fieldset">
-                                                <FormGroup row>
-                                                    {weekDays.map(day => (
-                                                        <FormControlLabel
-                                                            key={day}
-                                                            control={
-                                                                <Checkbox
-                                                                    checked={formData.selectedDays.includes(
-                                                                        day
-                                                                    )}
-                                                                    onChange={() =>
-                                                                        handleDayChange(
-                                                                            day
-                                                                        )
-                                                                    }
-                                                                    name={day}
-                                                                />
-                                                            }
-                                                            label={day}
-                                                        />
-                                                    ))}
-                                                </FormGroup>
-                                            </FormControl>
-                                        </Grid>
-                                    </Grid>
-                                    <Grid
-                                        item
-                                        xs={12}
-                                        sm={6}
-                                        display="flex"
-                                        sx={{ pt: 3 }}
-                                        justifyContent="center"
-                                    >
-                                        <CustomDateField
-                                            label="To Date"
-                                            value={formData.toDate}
-                                            onChange={date =>
-                                                handleChange('toDate', date)
-                                            }
-                                            errors={!!error.toDate}
-                                            helperText={error.toDate}
-                                            sx={{ width: '100%' }}
-                                        />
-                                    </Grid>
-                                </>
-                            )}
                         </Grid>
                     </Box>
                 </form>

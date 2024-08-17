@@ -33,6 +33,7 @@ import {
 import SessionLink from './commonCalender/SessionLink';
 import EditSession from './commonCalender/EditSession';
 import ParticipantsDialog from '../../../pages/MODULE/coachModule/ParticipantsDialog';
+import { convertFromUTC } from '../../../utils/dateAndtimeConversion';
 
 const CustomButton = ({
     onClick,
@@ -87,6 +88,11 @@ const ScheduledCall = ({ role }) => {
         editSession,
     } = useSelector(state => state.commonCalender);
 
+    const { taProfileData } = useSelector(state => state.taMenu);
+    const { coachProfileData } = useSelector(state => state.coachMenu);
+
+    const { timezones } = useSelector(state => state.util);
+
     function formatDate(date) {
         const localDate = new Date(date);
         const offset = 5.5 * 60 * 60000;
@@ -95,14 +101,31 @@ const ScheduledCall = ({ role }) => {
     }
 
     useEffect(() => {
-        if (role == 'Coach') {
-            dispatch(getCoachScheduledCalls(formatDate(date)));
-        } else if (role == 'TA') {
-            dispatch(getTaScheduledCalls(formatDate(date)))
+        if (role == 'Coach' && coachProfileData && timezones) {
+            
+            const coachTimeZone = timezones.find(timezone => timezone.id === coachProfileData.timezone_id);
+
+            const data = {
+                "date": formatDate(date),
+                "timezone_name": coachTimeZone.time_zone
+            }
+
+            dispatch(getCoachScheduledCalls(data));
+        } else if (role == 'TA' && taProfileData && timezones) {
+           
+            const taTimeZone = timezones.find(timezone => timezone.id === taProfileData.timezone_id);
+
+
+            const data = {
+                "date": formatDate(date),
+                "timezone_name": taTimeZone.time_zone
+            }
+            
+            dispatch(getTaScheduledCalls(data))
                 .then(response => console.log(response))
                 .catch(error => console.error(error));
         }
-    }, [dispatch, date, role, scheduleNewSessionPopup]);
+    }, [dispatch, date, role, scheduleNewSessionPopup, taProfileData, coachProfileData, timezones]);
 
     function convertTo12HourFormat(time24) {
         // Split the time into hours, minutes, and seconds
@@ -132,14 +155,39 @@ const ScheduledCall = ({ role }) => {
         }
     };
 
-    const processScheduledCalls = requests => {
+    const processScheduledCalls = async requests => {
         const newRequests = requests.map(request => ({ ...request }));
 
         const sortedRequests = newRequests.sort((a, b) => {
             return a.start_time.localeCompare(b.start_time);
         });
 
-        const processedCalls = sortedRequests.map(request => ({
+        const transformedRequests= await Promise.all(
+            sortedRequests.map(async request => {
+                const selectedTimeZone = timezones.find(timezone => timezone.id === request.timezone_id);
+                const timezonename = selectedTimeZone.time_zone;
+
+                const localTime = await convertFromUTC({
+                    start_date: request.date.split(' ')[0],
+                    start_time: request.start_time,
+                    end_time: request.end_time,
+                    end_date: request.end_date,
+                    timezonename,
+                });
+                
+                const newRequest = {
+                    ...request,
+                    date: localTime.start_date,
+                    end_date: localTime.end_date,
+                    start_time: localTime.start_time,
+                    end_time: localTime.end_time
+                }
+
+                return newRequest; 
+                }
+        ))
+
+        const processedCalls = transformedRequests.map(request => ({
             ...request,
             time: `${convertTo12HourFormat(request.start_time)} - ${convertTo12HourFormat(request.end_time)}`,
             callStatus: getCallStatus(request.start_time, request.end_time),

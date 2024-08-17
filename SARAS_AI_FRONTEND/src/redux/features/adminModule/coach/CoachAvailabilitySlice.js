@@ -72,7 +72,6 @@ export const getCoachScheduleSession = createAsyncThunk(
         return response.data;
     }
 );
-
 export const fetchCoachAvailableSlots = createAsyncThunk(
     'coachAvailability/fetchCoachAvailableSlots',
     async data => {

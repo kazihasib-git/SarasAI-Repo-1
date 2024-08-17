@@ -76,15 +76,7 @@ const CustomButton = ({
 
 const headers = ['S. No.', 'Slot Date', 'From Time', 'To Time', 'Select'];
 
-const weekDays = [
-    'Sunday',
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-];
+
 
 const timezone = Number(localStorage.getItem('timezone_id'));
 
@@ -108,8 +100,6 @@ const CreateSession = ({ componentName }) => {
         fromTime: null,
         toTime: null,
         timezone_id: timezone ? timezone : null,
-        repeat: 'onetime',
-        selectedDays: [],
     });
 
     let sliceName, createSessionApi, getSessionApi, getSlotApi;
@@ -147,8 +137,6 @@ const CreateSession = ({ componentName }) => {
         dispatch(getPlatforms());
     }, [dispatch]);
 
-    const [selectedSlot, setSelectedSlot] = useState();
-    const [availableSlotsOptions, setAvailableSlotsOptions] = useState([]);
     const [error, setError] = useState({});
 
     const durationOptions = [
@@ -167,14 +155,6 @@ const CreateSession = ({ componentName }) => {
         setFormData(prev => ({ ...prev, [field]: value }));
     };
 
-    const handleDayChange = day => {
-        setFormData(prev => {
-            const newSelectedDays = prev.selectedDays.includes(day)
-                ? prev.selectedDays.filter(d => d !== day)
-                : [...prev.selectedDays, day];
-            return { ...prev, selectedDays: newSelectedDays };
-        });
-    };
 
     const handleAssignStudents = () => {
         dispatch(openSelectStudents());
@@ -184,24 +164,12 @@ const CreateSession = ({ componentName }) => {
         dispatch(openSelectBatches());
     };
 
-    const validate = () => {};
 
     const handleSubmit = e => {
         e.preventDefault();
 
         const studentId = students.map(student => student.id);
         const batchId = batches.map(batch => batch.id);
-
-        let weeksArray = Array(7).fill(0);
-        if (formData.repeat === 'recurring') {
-            selectedDays.forEach(day => {
-                const index = weekDays.indexOf(day);
-                weeksArray[index] = 1;
-            });
-        } else if (formData.repeat === 'onetime') {
-            const index = new Date(formData.fromDate).getDay();
-            weeksArray[index] = 1;
-        }
 
         const fromDateTimeString = `${formData.fromDate}T${formData.fromTime}`;
         console.log('fromDateTimeString:', fromDateTimeString);
@@ -234,7 +202,6 @@ const CreateSession = ({ componentName }) => {
             event_status: 'scheduled',
             studentId: studentId,
             batchId: batchId,
-            weeks: weeksArray,
         };
         console.log('Form Data : ', formData);
         console.log('DATA :', data);
@@ -399,7 +366,7 @@ const CreateSession = ({ componentName }) => {
                                 />
                             </Grid>
 
-                            {/* <Grid
+                            <Grid
                                 item
                                 xs={12}
                                 display="flex"
@@ -417,7 +384,7 @@ const CreateSession = ({ componentName }) => {
                                     helperText={error.timezone}
                                     sx={{ width: '100%' }}
                                 />
-                            </Grid> */}
+                            </Grid>
 
                             <Grid
                                 item
@@ -449,7 +416,7 @@ const CreateSession = ({ componentName }) => {
                                             },
                                         }}
                                     >
-                                        Edit Students
+                                        Select Students
                                     </Button>
                                     <Button
                                         variant="outlined"
@@ -477,100 +444,6 @@ const CreateSession = ({ componentName }) => {
                                 </Box>
                             </Grid>
 
-                            <Grid
-                                container
-                                spacing={3}
-                                justifyContent="center"
-                                sx={{ pt: 3 }}
-                            >
-                                <Grid
-                                    item
-                                    xs={12}
-                                    display="flex"
-                                    justifyContent="center"
-                                >
-                                    <FormControl component="fieldset">
-                                        <RadioGroup
-                                            row
-                                            value={formData.repeat}
-                                            onChange={e =>
-                                                handleChange(
-                                                    'repeat',
-                                                    e.target.value
-                                                )
-                                            }
-                                            sx={{ justifyContent: 'center' }}
-                                        >
-                                            <FormControlLabel
-                                                value="onetime"
-                                                control={<Radio />}
-                                                label="One-Time"
-                                            />
-                                            <FormControlLabel
-                                                value="recurring"
-                                                control={<Radio />}
-                                                label="Recurring"
-                                            />
-                                        </RadioGroup>
-                                    </FormControl>
-                                </Grid>
-                            </Grid>
-
-                            {formData.repeat === 'recurring' && (
-                                <>
-                                    <Grid
-                                        container
-                                        spacing={3}
-                                        justifyContent="center"
-                                        sx={{ pt: 3 }}
-                                    >
-                                        <Grid item xs={12}>
-                                            <FormControl component="fieldset">
-                                                <FormGroup row>
-                                                    {weekDays.map(day => (
-                                                        <FormControlLabel
-                                                            key={day}
-                                                            control={
-                                                                <Checkbox
-                                                                    checked={formData.selectedDays.includes(
-                                                                        day
-                                                                    )}
-                                                                    onChange={() =>
-                                                                        handleDayChange(
-                                                                            day
-                                                                        )
-                                                                    }
-                                                                    name={day}
-                                                                />
-                                                            }
-                                                            label={day}
-                                                        />
-                                                    ))}
-                                                </FormGroup>
-                                            </FormControl>
-                                        </Grid>
-                                    </Grid>
-                                    <Grid
-                                        item
-                                        xs={12}
-                                        sm={6}
-                                        display="flex"
-                                        sx={{ pt: 3 }}
-                                        justifyContent="center"
-                                    >
-                                        <CustomDateField
-                                            label="To Date"
-                                            value={formData.toDate}
-                                            onChange={date =>
-                                                handleChange('toDate', date)
-                                            }
-                                            errors={!!error.toDate}
-                                            helperText={error.toDate}
-                                            sx={{ width: '100%' }}
-                                        />
-                                    </Grid>
-                                </>
-                            )}
                         </Grid>
                     </Box>
                 </form>

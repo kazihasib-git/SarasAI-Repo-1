@@ -253,7 +253,9 @@ const WOLInstructions = () => {
                                 ))}
                             </ul>
                         )} */}
-                        <div dangerouslySetInnerHTML={{ __html: instruction }} />
+                        <div
+                            dangerouslySetInnerHTML={{ __html: instruction }}
+                        />
                     </Typography>
                 )}
             </Box>

@@ -33,17 +33,17 @@
     color: #ffffff;
 }
 
-/* .rbc-toolbar-label {
+.rbc-toolbar-label {
     color: #121d22;
-} */
+}
 
 .rbc-toolbar {
     display: flex;
     justify-content: flex-start; /* Align buttons to the left */
 }
-.rbc-toolbar-label {
-    display: none; /* Hide the date range text */
-}
+/* .rbc-toolbar-label {
+    display: none; 
+} */
 
 .rbc-today {
     background-color: #ecebff;
@@ -61,14 +61,15 @@
     border-left: 1px solid #eee;
 }
 
-.rbc-time-header { /* Example class */
+.rbc-time-header {
+    /* Example class */
     background-color: unset !important; /* Ensure no background color is being inherited */
 }
 .on-leave-slot {
     position: relative;
 }
 
- .on-leave-slot::before {
+.on-leave-slot::before {
     content: 'On Leave';
     position: absolute;
     top: 50%;
@@ -76,10 +77,7 @@
     transform: translate(-50%, -50%);
     color: white;
     font-size: 0.9em;
-   
-    
-
-} 
+}
 
 .rbc-time-header-cell {
     padding: 0 !important; /* Removes padding inside header cells */
@@ -129,7 +127,3 @@
 .rbc-day-slot .rbc-time-slot {
     border: 0px;
 }
-
-
-
-

@@ -116,7 +116,9 @@ const WOLSelectQuestions = () => {
 
         const data = {
             wol_test_category_id: categoryIdToSubmitSelectedQuestions,
-            wol_questions_id: selectedQuestionsOfCategory.map(question => question.id),
+            wol_questions_id: selectedQuestionsOfCategory.map(
+                question => question.id
+            ),
         };
         dispatch(addQuestionToCategory(data)).then(() => {
             dispatch(getWolTestConfigCategoryWise());
