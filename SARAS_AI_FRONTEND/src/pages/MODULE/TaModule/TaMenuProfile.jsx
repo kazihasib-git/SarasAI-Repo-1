@@ -429,6 +429,7 @@ const TaMenuProfile = () => {
                                             <CustomTimeZoneForm
                                                 label="Time Zone"
                                                 name="timezone_id"
+                                                placeholder="Time Zone"
                                                 value={field.value}
                                                 onChange={field.onChange}
                                                 errors={errors}

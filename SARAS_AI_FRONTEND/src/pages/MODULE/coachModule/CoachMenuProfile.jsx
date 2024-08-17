@@ -423,13 +423,11 @@ const CoachMenuProfile = () => {
                                             <CustomTimeZoneForm
                                                 label="Time Zone"
                                                 name="timezone_id"
+                                                placeholder="Time Zone"
                                                 value={field.value}
                                                 onChange={field.onChange}
                                                 errors={errors}
-                                                options={timezones.map(zone => ({
-                                                    value: zone.id,
-                                                    label: zone.time_zone,
-                                                }))}
+                                                options={timezones}
                                                 disabled={!isEditing}
                                             />
                                         );
