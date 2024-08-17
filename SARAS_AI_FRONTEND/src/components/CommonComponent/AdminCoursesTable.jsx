@@ -51,21 +51,22 @@ const AdminCoursesTable = ({ coachId }) => {
                 }
                 : item
         );
-
+    
         setData(updatedData);
-
-        const updatedCourse = updatedData.find(item => item.id === courseId);
-
+    
+        const assignedCourses = updatedData
+            .filter(item => item.coaches.includes(coachId))
+            .map(item => ({ id: item.id }));
+    
         const requestData = {
-            course_id: courseId,
-            coach_id: coachId,
-            assigned: updatedCourse.coaches.includes(coachId),
+            Coach_id: coachId,
+            courses: assignedCourses,
         };
-
+    
         console.log(requestData);
-
+    
         // Dispatch the API call to assign/unassign the coach to/from the course
-        //dispatch(assignCoachToCourse(requestData));
+        //dispatch(assignCourseToCoach(requestData));
     };
 
     return (

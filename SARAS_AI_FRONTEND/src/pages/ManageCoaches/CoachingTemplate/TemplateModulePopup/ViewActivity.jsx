@@ -76,6 +76,7 @@ const VideoPdfActivity = ({ handleClose, name, fileName ,activity_id, activity_t
         link: videoUrl || upload_pdf_url || data.link, // Add other fields if needed
     };
     try {
+      if(payload.link){
         await dispatch(linkActivity(payload))
             .unwrap()
             .then(() => {
@@ -85,6 +86,7 @@ const VideoPdfActivity = ({ handleClose, name, fileName ,activity_id, activity_t
                 dispatch(getCoachTemplateModuleId(template_id));
             });
         handleClose();
+      }
     } catch (error) {
         console.error('Failed to link activity:', error);
     }
