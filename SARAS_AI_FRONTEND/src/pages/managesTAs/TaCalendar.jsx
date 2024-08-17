@@ -97,6 +97,7 @@ const TaCalender = () => {
         openEventData,
         taEditScheduledStudents,
         taEditScheduledBatches,
+        todaysAvailableTa
     } = useSelector(state => state.taAvialability);
 
     const {
@@ -114,8 +115,20 @@ const TaCalender = () => {
         dispatch(fetchTaSlots(id));
         dispatch(fetchTAScheduleById(id));
         dispatch(getTimezone());
+          
     }, [dispatch]);
 
+    const findTaTimeZone = (todaysAvailableTa) =>{
+        if(todaysAvailableTa && Number(id)){
+        const selectedTa = todaysAvailableTa.find(ta => ta.id === Number(id));
+        console.log('..../',selectedTa);
+        }
+    }
+
+    useEffect(()=>{
+       findTaTimeZone(todaysAvailableTa);
+    },[dispatch, todaysAvailableTa, id]);
+ 
     const convertEvents = async () => {
         if (scheduleData && scheduleData.length > 0 && storedTimezoneId) {
             const timezonename = timezoneIdToName(storedTimezoneId, timezones);

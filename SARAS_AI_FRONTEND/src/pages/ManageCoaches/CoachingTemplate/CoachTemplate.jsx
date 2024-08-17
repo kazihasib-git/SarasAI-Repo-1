@@ -33,11 +33,11 @@ const CoachTemplate = () => {
             const transformData = coachTemplates.map(item => ({
                 id: item.id,
                 'Template Name': item.name,
-                Duration: `${item.duration} mins`,
+                Duration: item.duration == 1 ? "1 Month" : `${item.duration} Months`,
                 Activities: item?.modules
                     ?.map(module => module?.module_name)
                     .join(', '),
-                'Assigned To': 'John Doe',
+                'Assigned To': item.student_count + ' students',
                 is_active: item.is_active,
             }));
             setCoachTemplatesData(transformData);
@@ -101,6 +101,7 @@ const CoachTemplate = () => {
             activities: [],
         },
     ];
+
     const actionButtons = [
         {
             type: 'switch',
@@ -121,6 +122,11 @@ const CoachTemplate = () => {
         dispatch(openCreateTemplateCoach());
         navigation('/create-template');
     };
+
+    const handleAssignedToClick = (id) => {
+        console.log("Assigned To clicked for ID:", id);
+    };
+    
 
     return (
         <>
@@ -163,6 +169,7 @@ const CoachTemplate = () => {
                             initialData={coachTemplatesData}
                             actionButtons={actionButtons}
                             componentName={'COACHTEMPLATE'}
+                            onAssignedToClick={handleAssignedToClick}
                         />
                     )}
                 </>

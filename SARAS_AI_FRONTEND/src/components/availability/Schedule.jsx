@@ -18,7 +18,8 @@ import CustomDateField from '../CustomFields/CustomDateField';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import CustomFormControl from '../CustomFields/CustomFromControl';
 import { useForm, Controller } from 'react-hook-form';
-
+import { timezoneIdToName } from '../../utils/timezoneIdToName';
+import { convertFromUTC } from '../../utils/dateAndtimeConversion';
 import {
     closeScheduleSession,
     createTASchedule,
@@ -61,6 +62,7 @@ const actionButtons = [
         type: 'button',
     },
 ];
+const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
 
 const Schedule = ({ componentName }) => {
     const [fromDate, setFromDate] = useState(null);
@@ -195,31 +197,60 @@ const Schedule = ({ componentName }) => {
         dispatch(getPlatforms());
     }, [dispatch]);
 
-    useEffect(() => {
-        console.log('AVIALABLE KEY : ', availableKey);
-        console.log('Avaialable slots : ', availableSlots);
-        if (availableSlots && availableSlots.length > 0) {
-            const transformData = availableSlots.map((item, index) => ({
-                'S. No.': index + 1,
-                'Slot Date': item.slot_date,
-                'From Time': item.from_time,
-                'To Time': item.to_time,
-                id: item.id,
-            }));
-
-            const options = availableSlots.map(item => ({
-                label: `${item.from_time} - ${item.to_time}`,
-                value: item.id,
-            }));
-
-            setAvailableSlotsOptions(options);
-
-            setSlotData(transformData);
+    const convertSessions = async () => {
+        console.log('AVAILABLE KEY : ', availableKey);
+        console.log('Available slots : ', availableSlots);
+        
+        if (availableSlots && availableSlots.length > 0 && timezones && storedTimezoneId) {
+            const timezonename = timezoneIdToName(storedTimezoneId, timezones);
+            
+            try {
+                const processedSlots = await Promise.all(
+                    availableSlots.map(async (slot, index) => {
+                        const localTime = await convertFromUTC({
+                            start_date: slot.slot_date,
+                            start_time: slot.from_time,
+                            end_time: slot.to_time,
+                            end_date: slot.slot_date, // Assuming end_date is the same as slot_date
+                            timezonename,
+                        });
+    
+                        const startDateTime = new Date(`${localTime.start_date}T${localTime.start_time}`);
+                        const endDateTime = new Date(`${localTime.end_date}T${localTime.end_time}`);
+    
+                        return {
+                            'S. No.': index + 1,
+                            'Slot Date': localTime.start_date,
+                            'From Time': localTime.start_time,
+                            'To Time': localTime.end_time,
+                            id: slot.id,
+                            startDate: startDateTime,
+                            endDate: endDateTime,
+                        };
+                    })
+                );
+    
+                const options = processedSlots.map(item => ({
+                    label: `${item['From Time']} - ${item['To Time']}`,
+                    value: item.id,
+                }));
+    
+                setAvailableSlotsOptions(options);
+                setSlotData(processedSlots);
+            } catch (error) {
+                console.error('Error converting sessions:', error);
+                setAvailableSlotsOptions([]);
+                setSlotData([{}]);
+            }
         } else {
             setAvailableSlotsOptions([]);
             setSlotData([{}]);
         }
-    }, [availableSlots]);
+    };
+    
+    useEffect(() => {
+        convertSessions();
+    }, [availableSlots, timezones, storedTimezoneId]);
 
     const handleDayChange = day => {
         setSelectedDays(prev => {

@@ -86,8 +86,8 @@ const TaMenuProfile = () => {
         setDateOfBirth(formattedDate);
 
         if (data.profile_picture) {
-            const blobUrl = base64ToBlobUrl(data.profile_picture);
-            setSelectedImage(blobUrl);
+            //const blobUrl = base64ToBlobUrl(data.profile_picture);
+            setSelectedImage(data.profile_picture);
         }
 
         const formValues = {
@@ -133,7 +133,7 @@ const TaMenuProfile = () => {
         updatedFormData.date_of_birth = dateOfBirth;
         setIsEditing(false); // Disable edit mode after submit
 
-        if (selectedImage) {
+        if (selectedImage && selectedImage.startsWith('data:image/')) {
             const base64Data = selectedImage.replace(
                 /^data:image\/(png|jpeg|jpg);base64,/,
                 ''

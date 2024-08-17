@@ -152,8 +152,6 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
     const slotPropGetter = date => {
         const dateString = moment(date).format('YYYY-MM-DD');
         const timeString = moment(date).format('YYYY-MM-DD HH:mm');
-        // console.log(dateString);
-        // console.log(timeString);
         for (let i = 0; i < slotData.length; i++) {
             const slot = slotData[i];
             const slotDate = moment(slot.startDate).format('YYYY-MM-DD');

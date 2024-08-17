@@ -2,12 +2,24 @@ import React, { useState } from 'react';
 import Profile from '../../../assets/profile.png';
 import { useDispatch } from 'react-redux';
 import { logout } from '../../../redux/features/auth/authSlice';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
+
 function NavAvator() {
     const [isOnline, setIsOnline] = useState(true);
     const dispatch = useDispatch();
+    const navigate = useNavigate(); // Initialize navigate
 
     const handleLogout = () => {
+        // Clear the route and other relevant data from localStorage
+        localStorage.removeItem('lastRoute');
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('role');
+
+        // Dispatch logout action to clear Redux state
         dispatch(logout());
+
+        // Redirect to the login page
+        navigate('/login');
     };
 
     return (
@@ -42,7 +54,7 @@ function NavAvator() {
 
             <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                 <li className="dropdown-header">
-                    <h6>Chris </h6>
+                    <h6>Chris</h6>
                     <span>Coach Teacher</span>
                 </li>
 

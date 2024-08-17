@@ -61,7 +61,7 @@ const DynamicTable = ({
                 is_active: item.is_active !== undefined ? item.is_active : 0,
             }))
         );
-        setCurrentPage(1); // Reset to first page whenever initialData changes
+        //setCurrentPage(1); // Reset to first page whenever initialData changes
     }, [initialData]);
 
     const itemsPerPage = 10;
@@ -435,6 +435,11 @@ const DynamicTable = ({
                                                                 item.id
                                                             )
                                                         }
+                                                        // onClick={() =>
+                                                        //     button.onClick(
+                                                        //         item.id
+                                                        //     )
+                                                        // }
                                                     >
                                                         <img
                                                             src={bin}
