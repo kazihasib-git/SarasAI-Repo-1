@@ -7,7 +7,6 @@ import CalendarComponent from '../../components/Calender/BigCalendar';
 import MarkLeave from '../../components/availability/MarkLeave';
 import DeleteAllSlots from '../../components/availability/DeleteAllSlots';
 import CreateNewSlot from '../../components/availability/CreateNewSlot';
-// import ScheduleSession from '../../components/availability/ScheduleSession';
 import Slots from '../../components/availability/Slots';
 import CancelSchedule from '../../components/availability/CancelSchedule';
 import ReasonForLeave from '../../components/availability/ReasonForLeave';
@@ -31,6 +30,8 @@ import { openCreateNewSlots } from '../../redux/features/adminModule/ta/taAviala
 import ScheduleSession from '../../components/availability/ScheduleSession';
 import { timezoneIdToName } from '../../utils/timezoneIdToName';
 import { getTimezone } from '../../redux/features/utils/utilSlice';
+import { getTodayCoachAvailability } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
+
 const CustomButton = ({
     onClick,
     children,
@@ -50,7 +51,6 @@ const CustomButton = ({
                 fontWeight: '700',
                 fontSize: '16px',
                 borderRadius: '50px',
-                // padding: "18px 25px",
                 border: `1.5px solid ${borderColor}`,
                 textTransform: 'none',
                 '&:hover': {
@@ -66,12 +66,32 @@ const CustomButton = ({
         </Button>
     );
 };
-const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
-
 const CoachCalender = () => {
+    const { todaysAvailableCoach } = useSelector(state => state.coachAvailability);
+    const [selectedCoach, setSelectedCoach] = useState(null);
+
     const dispatch = useDispatch();
     const { id, name } = useParams();
+    
+    useEffect(() => {
+        dispatch(getTodayCoachAvailability());
+    }, [dispatch]);
+   
+    const findTaTimeZone = (todaysAvailableCoach) => {
+        if (todaysAvailableCoach && Number(id)) {
+            const selectedTa = todaysAvailableCoach.find(ta => ta.id === Number(id));
+            setSelectedCoach(selectedTa || null);  // Set to null if not found
+        } else {
+            setSelectedCoach(null);  // Set to null if conditions are not met
+        }
+    }
+    useEffect(() => {
+        findTaTimeZone(todaysAvailableCoach);
+    }, [id, todaysAvailableCoach]);
 
+     const storedTimezoneId = selectedCoach ? selectedCoach.timezone_id : null;
+ 
+console.log("//////////////////////////", storedTimezoneId) ;
     const [eventsList, setEventsList] = useState([]);
     const [slotViewData, setSlotViewData] = useState([]);
 
@@ -100,7 +120,6 @@ const CoachCalender = () => {
         coachOpenEventData,
         coachEditScheduledStudents,
         coachEditScheduledBatches,
-        todaysAvailableCoach
     } = useSelector(state => state.coachAvailability);
 
     const {
@@ -112,27 +131,14 @@ const CoachCalender = () => {
     useEffect(() => {
         dispatch(fetchCoachSlots(id));
         dispatch(fetchCoachScheduleById(id));
-    }, [dispatch]);
-
-    const findTaTimeZone = (todaysAvailableCoach) =>{
-        if(todaysAvailableCoach && Number(id)){
-        const selectedTa = todaysAvailableCoach.find(ta => ta.id === Number(id));
-        console.log('..../',selectedTa);
-        }
-    }
-
-    useEffect(()=>{
-       findTaTimeZone(todaysAvailableCoach);
-    },[dispatch, todaysAvailableCoach, id]);
-
-
-
+    }, [dispatch, id]);
 
     const convertEvents = async () => {
         if (
             scheduleCoachData &&
             scheduleCoachData.length > 0 &&
-            storedTimezoneId
+            storedTimezoneId &&
+            selectedCoach  // Add this check
         ) {
             const timezonename = timezoneIdToName(storedTimezoneId, timezones);
             if (!timezonename) {
@@ -224,7 +230,7 @@ const CoachCalender = () => {
 
     useEffect(() => {
         convertEvents();
-    }, [scheduleCoachData, timezones, storedTimezoneId]);
+    }, [scheduleCoachData, timezones, storedTimezoneId, selectedCoach]);
 
     const convertSlots = async () => {
         if (
@@ -317,7 +323,6 @@ const CoachCalender = () => {
     };
 
     console.log('event Data', eventsList);
-
     console.log('slots View', slotViewData);
 
     return (
@@ -465,6 +470,7 @@ const CoachCalender = () => {
                         <CreateNewSlot
                             // addEvent={addEvent}
                             componentName={'COACHCALENDER'}
+                            timezoneID={storedTimezoneId}
                         />
                     )}
                     {coachOpenEventData && (

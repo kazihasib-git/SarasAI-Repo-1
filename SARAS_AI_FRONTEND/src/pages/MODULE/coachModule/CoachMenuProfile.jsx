@@ -426,7 +426,10 @@ const CoachMenuProfile = () => {
                                                 value={field.value}
                                                 onChange={field.onChange}
                                                 errors={errors}
-                                                options={timezones}
+                                                options={timezones.map(zone => ({
+                                                    value: zone.id,
+                                                    label: zone.time_zone,
+                                                }))}
                                                 disabled={!isEditing}
                                             />
                                         );

@@ -71,7 +71,6 @@ export const cancelScheduledSession = createAsyncThunk(
         return response.data;
     }
 );
-
 const initialState = {
     taAvailableSlots: [], // TA Available Slots
     taScheduledSessions: [], // TA Scheduled Sessions
@@ -160,7 +159,6 @@ const taScheduling = createSlice({
             state.loading = false;
             state.error = action.error.message;
         });
-
         // Get TA Scheduled Sessions
         builder.addCase(getTAScheduledSessions.pending, state => {
             state.loading = true;
