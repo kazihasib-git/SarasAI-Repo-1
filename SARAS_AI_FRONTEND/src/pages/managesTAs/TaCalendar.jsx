@@ -139,7 +139,7 @@ const TaCalender = () => {
         dispatch(fetchTaSlots(id));
         dispatch(fetchTAScheduleById(id));
         dispatch(getTimezone());
-    }, [dispatch ,id]);
+    }, [dispatch ,id , resheduleSessionOpen]);
 
     const convertEvents = async () => {
         if (scheduleData && scheduleData.length > 0 && storedTimezoneId &&

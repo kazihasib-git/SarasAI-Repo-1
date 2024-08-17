@@ -25,13 +25,21 @@ import {
     fetchCoachAvailableSlots,
 } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import CustomButton from '../CustomFields/CustomButton';
-
+import { timezoneIdToName } from '../../utils/timezoneIdToName';
+import { convertFromUTC } from '../../utils/dateAndtimeConversion';
+import { getTimezone } from '../../redux/features/utils/utilSlice';
 const headers = ['S. No.', 'Slots Available', 'Select'];
 
-const ReschedulingSession = ({ componentName }) => {
+const ReschedulingSession = ({ componentName ,timezoneID }) => {
+
+    const { timezones, platforms } = useSelector(state => state.util);
+
     console.log('componentName : ', componentName);
     const taId = useParams();
     const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(getTimezone());
+    }, [dispatch]);
     const [selectDate, setSelectDate] = useState(null);
     const [selectedSlots, setSelectedSlots] = useState([]);
     const [fromTime, setFromTime] = useState(null);
@@ -102,25 +110,61 @@ const ReschedulingSession = ({ componentName }) => {
             const data = {
                 admin_user_id: taId.id,
                 date: selectDate,
-                timezone_name : 'Asia/Kolkata'
+                timezone_name : timezoneIdToName(timezoneID, timezones)
             };
             dispatch(fetchAvailableSlotsAction(data));
         }
     }, [selectDate, taId.id, dispatch, fetchAvailableSlotsAction]);
+    const formatTime = time => {
+        const [hours, minutes] = time.split(':');
+        const hour = parseInt(hours, 10);
+        const minute = parseInt(minutes, 10);
+        const ampm = hour >= 12 ? 'pm' : 'am';
+        const formattedHour = hour % 12 || 12;
+        return `${formattedHour}:${minute < 10 ? '0' : ''}${minute} ${ampm}`;
+    };
 
-    useEffect(() => {
+    const convertavailableSlotData = async () => {
         console.log('Available Slots Data:', availableSlotsData);
-        if (availableSlotsData && availableSlotsData.length > 0) {
-            const transformedData = availableSlotsData.map((slot, index) => ({
-                'S. No.': index + 1,
-                'Slots Available': `${slot.from_time} - ${slot.to_time}`,
-                id: slot.id,
-            }));
-            setTransformedSlotsData(transformedData);
+    
+        if (availableSlotsData && availableSlotsData.length > 0 && timezones && timezoneID) {
+            const timezonename = timezoneIdToName(timezoneID, timezones);
+    
+            try {
+                const transformedData = await Promise.all(
+                    availableSlotsData.map(async (slot, index) => {
+                        const localTime = await convertFromUTC({
+                            start_date: slot.slot_date, // Assuming slot_date is available in availableSlotsData
+                            start_time: slot.from_time,
+                            end_time: slot.to_time,
+                            end_date: slot.slot_date, // Assuming slot_date is available in availableSlotsData
+                            timezonename,
+                        });
+                        const startDateTime = new Date(`${localTime.start_date}T${localTime.start_time}`);
+                        const endDateTime = new Date(`${localTime.end_date}T${localTime.end_time}`);
+                        return {
+                            'S. No.': index + 1,
+                            'Slots Available': `${formatTime(localTime.start_time)} - ${formatTime(localTime.end_time)}`,
+                            id: slot.id,
+                            Date: localTime.start_date,
+                            startDate: startDateTime,
+                            endDate:endDateTime,
+                        };
+                    })
+                );
+                setTransformedSlotsData(transformedData);
+            } catch (error) {
+                console.error('Error converting available slots:', error);
+                setTransformedSlotsData([]);
+            }
         } else {
             setTransformedSlotsData([]);
         }
-    }, [availableSlotsData]);
+    };
+    
+    useEffect(() => {
+        convertavailableSlotData();
+    }, [availableSlotsData, timezones, timezoneID]);
 
     const handleDateChange = date => {
         setSelectDate(date);
@@ -147,7 +191,7 @@ const ReschedulingSession = ({ componentName }) => {
                     slot_id: selectedSlots[0], // Assuming only one slot can be selected
                     start_time: fromTime,
                     end_time: toTime,
-                    timezone: 'IST',
+                    timezone_id : timezoneID,
                     event_status: 'rescheduled',
                 },
             })

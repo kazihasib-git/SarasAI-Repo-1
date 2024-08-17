@@ -21,8 +21,7 @@ import { timezoneIdToName } from '../../utils/timezoneIdToName';
 import { convertFromUTC } from '../../utils/dateAndtimeConversion';
 import { getTimezone } from '../../redux/features/utils/utilSlice';
 
-const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
-const Slots = ({ componentName }) => {
+const Slots = ({ componentName , timezoneID }) => {
     const { timezones, platforms } = useSelector(state => state.util);
    
     const dispatch = useDispatch();
@@ -81,13 +80,21 @@ const Slots = ({ componentName }) => {
         [markLeaveKey]: markLeaveData,
     } = schedulingState;
 
-
+    const formatTime = time => {
+        const [hours, minutes] = time.split(':');
+        const hour = parseInt(hours, 10);
+        const minute = parseInt(minutes, 10);
+        const ampm = hour >= 12 ? 'pm' : 'am';
+        const formattedHour = hour % 12 || 12;
+        return `${formattedHour}:${minute < 10 ? '0' : ''}${minute} ${ampm}`;
+    };
+    
     const convertSlots = async () => {
         console.log('Scheduled slots data:', scheduledSlotsData);
         console.log('Selected slots:', selectedSlots);
     
-        if (scheduledSlotsData && scheduledSlotsData.length > 0 && timezones && storedTimezoneId) {
-            const timezonename = timezoneIdToName(storedTimezoneId, timezones);
+        if (scheduledSlotsData && scheduledSlotsData.length > 0 && timezones && timezoneID) {
+            const timezonename = timezoneIdToName(timezoneID, timezones);
     
             try {
                 const processedSlots = await Promise.all(
@@ -104,7 +111,7 @@ const Slots = ({ componentName }) => {
                         return {
                             'S. No.': index + 1,
                             Date: localTime.start_date,
-                            'Slot Time': `${localTime.start_time} - ${localTime.end_time}`,
+                            'Slot Time': `${formatTime(localTime.start_time)} - ${formatTime(localTime.end_time)}`,
                             Select: selectedSlots.includes(slot.id),
                             id: slot.id,
                             startDate: startDateTime,
@@ -125,7 +132,7 @@ const Slots = ({ componentName }) => {
     
     useEffect(() => {
         convertSlots();
-    }, [scheduledSlotsData, timezones, storedTimezoneId]);
+    }, [scheduledSlotsData, timezones, timezoneID]);
 
     const handleSelect = id => {
         setSelectedSlots(prev =>
@@ -135,7 +142,7 @@ const Slots = ({ componentName }) => {
         );
     };
 
-    // const timezone = timezones[slotId];
+
     const handleSubmit = () => {
         if (selectedSlots.length > 0) {
             const data = selectedSlots.map(slotId => {
@@ -143,14 +150,15 @@ const Slots = ({ componentName }) => {
                 return {
                     slot_id: slot.id,
                     date: slot.slot_date,
-                    start_time: slot.from_time,
-                    end_time: slot.to_time,
+                    start_time:slot.from_time,
+                    end_time: slot.to_time ,
                 };
             });
 
             const requestData = {
                 admin_user_id: id,
                 data,
+                timezone_id : timezoneID
             };
 
             console.log('Submitting selected slots:', requestData);
