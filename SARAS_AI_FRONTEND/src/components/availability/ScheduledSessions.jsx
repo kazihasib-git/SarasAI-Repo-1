@@ -36,7 +36,7 @@ import { timezoneIdToName } from '../../utils/timezoneIdToName';
 import { convertFromUTC } from '../../utils/dateAndtimeConversion';
 import { getTimezone } from '../../redux/features/utils/utilSlice';
 const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
-const ScheduledSessions = ({ componentName }) => {
+const ScheduledSessions = ({ componentName , timezoneID}) => {
     const { timezones, platforms } = useSelector(state => state.util);
     const [sessionData , setSessionData] = useState([]) ; 
     const dispatch = useDispatch();
@@ -115,6 +115,17 @@ const ScheduledSessions = ({ componentName }) => {
     ];
 
 
+    
+    const formatTime = time => {
+        const [hours, minutes] = time.split(':');
+        const hour = parseInt(hours, 10);
+        const minute = parseInt(minutes, 10);
+        const ampm = hour >= 12 ? 'pm' : 'am';
+        const formattedHour = hour % 12 || 12;
+        return `${formattedHour}:${minute < 10 ? '0' : ''}${minute} ${ampm}`;
+    };
+    
+
     const convertSessions = async () => {
         // console.log('Scheduled sessions data:', scheduledSessionData);
     
@@ -139,7 +150,7 @@ const ScheduledSessions = ({ componentName }) => {
                             'S. No.': index + 1,
                             'Session Name': session.meeting_name,
                             Date: localTime.start_date,
-                            Time: `${localTime.start_time} - ${localTime.end_time}`,
+                            Time: `${formatTime(localTime.start_time)} - ${formatTime(localTime.end_time)}`,
                             Students: session.Students.length,
                             StudentList: session.Students,
                             id: session.id,

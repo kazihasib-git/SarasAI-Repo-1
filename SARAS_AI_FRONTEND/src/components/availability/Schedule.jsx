@@ -230,9 +230,18 @@ const Schedule = ({ componentName , timezoneID}) => {
                         };
                     })
                 );
+
+                const formatTime = time => {
+                    const [hours, minutes] = time.split(':');
+                    const hour = parseInt(hours, 10);
+                    const minute = parseInt(minutes, 10);
+                    const ampm = hour >= 12 ? 'pm' : 'am';
+                    const formattedHour = hour % 12 || 12;
+                    return `${formattedHour}:${minute < 10 ? '0' : ''}${minute} ${ampm}`;
+                };
     
                 const options = processedSlots.map(item => ({
-                    label: `${item['From Time']} - ${item['To Time']}`,
+                    label: `${formatTime(item['From Time'])} - ${formatTime(item['To Time'])}`,
                     value: item.id,
                 }));
     
