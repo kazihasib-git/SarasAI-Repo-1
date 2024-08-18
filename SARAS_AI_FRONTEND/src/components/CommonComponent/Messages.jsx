@@ -16,7 +16,7 @@ import SendButtonIcon from '../../assets/sendbutton.svg';
 import NotificationIcon from '../../assets/NotificationIcon.svg';
 import SearchIcon from '../../assets/messagesearchicon.svg';
 import FilterBackground from '../../assets/duedatebackground.svg';
-import profilePic from '../../assets/profile.png';
+import userimg from '../../assets/userimg.png';
 import {
     getTaCoachAllChats,
     getChatRecordsByChatId,
@@ -35,12 +35,7 @@ import {
 } from '@mui/material';
 
 const initialChatData = [
-    { sender: 'me', text: 'Hi, This is sample chat', timestamp: new Date() },
-    {
-        sender: 'other',
-        text: 'There is some problem in getting the data',
-        timestamp: new Date(),
-    },
+    { sender: 'me', text: 'Loading...', timestamp: new Date() },
 ];
 
 const getTimeAgo = timestamp => {
@@ -72,7 +67,10 @@ const Messages = ({ role }) => {
         createdChatId,
     } = useSelector(state => state.coachMenu);
 
-    const { assignedTaStudents } = useSelector(state => state.taMenu);
+    const { 
+        taProfileData,
+        assignedTaStudents 
+    } = useSelector(state => state.taMenu);
 
     // Handle search input change
     const handleSearchChange = event => {
@@ -93,7 +91,7 @@ const Messages = ({ role }) => {
                 chatUserMapping.every(mappedUser => mappedUser.id !== user.id)
             ) {
                 let data = {
-                    chat_name: coachProfileData.name + '-' + user.name,
+                    chat_name: (role === 'ta' ? taProfileData.name : coachProfileData.name) + '-' + user.name,
                 };
                 console.log(data);
                 await dispatch(
@@ -209,7 +207,7 @@ const Messages = ({ role }) => {
                 let student = {
                     id: assignedTaCoachStudents[i]['student'].id,
                     name: assignedTaCoachStudents[i]['student'].name,
-                    profilePic: profilePic,
+                    profilePic: userimg,
                     status: 'Online',
                     lastSeen: '2m',
                     lastMessage: '',
@@ -236,7 +234,7 @@ const Messages = ({ role }) => {
                 let Data = {
                     id: taCoachAllChatData[i]['students'][0].id,
                     name: taCoachAllChatData[i]['students'][0].name,
-                    profilePic: profilePic,
+                    profilePic: userimg,
                     status: 'Online',
                     lastSeen: getTimeAgo(lastMessageTimestamp), // Calculate last seen dynamically
                     chat_id: taCoachAllChatData[i].id,
@@ -309,7 +307,7 @@ const Messages = ({ role }) => {
                             >
                                 <img
                                     src={user.profilePic}
-                                    alt={user.name}
+                                    alt={userimg}
                                     className="profile-pic"
                                 />
                                 <div className="chat-info">
@@ -360,7 +358,6 @@ const Messages = ({ role }) => {
                                     src={selectedUser.profilePic}
                                     alt={selectedUser.name}
                                     className="profile-pic"
-                                    style={{ width: '40px', height: '40px' }}
                                 />
                                 <Box ml={2} className="status-container">
                                     <Typography variant="h6">
@@ -425,7 +422,7 @@ const Messages = ({ role }) => {
                                     </Box>
                                     {msg.sender === 'me' && (
                                         <img
-                                            src={selectedUser.profilePic} // Use selected student's profile pic
+                                            src={role==='coach'? coachProfileData.profile_picture : taProfileData.profile_picture} // Use selected student's profile pic
                                             alt="Profile Pic"
                                             className="profile-pic"
                                             style={{ marginLeft: '8px' }}

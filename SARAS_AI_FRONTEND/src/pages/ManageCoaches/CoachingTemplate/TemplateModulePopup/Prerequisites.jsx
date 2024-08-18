@@ -10,11 +10,13 @@ import {
     Grid,
     Typography,
 } from '@mui/material';
+import { useDispatch } from 'react-redux';
 import CustomTimeField from '../../../../components/CustomFields/CustomTimeField';
 import CustomDateField from '../../../../components/CustomFields/CustomDateField';
 import { Controller, useForm } from 'react-hook-form';
 import CustomFormControl from '../../../../components/CustomFields/CustomFromControl';
 import ReusableDialog from '../../../../components/CustomFields/ReusableDialog';
+import {addPrerequisites} from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
 
 const CustomButton = ({
     onClick,
@@ -52,6 +54,7 @@ const CustomButton = ({
 };
 
 const PrerequisitesPopup = ({ open, handleClose }) => {
+    const dispatch = useDispatch();
     const {
         handleSubmit,
         control,
@@ -60,7 +63,22 @@ const PrerequisitesPopup = ({ open, handleClose }) => {
     const [activityDependence, setActivityDependence] = useState(false);
     const [fromTime, setFromTime] = useState('');
     const onSubmit = data => {
-        console.log(data);
+        // TODO: Add API call here
+        const prereqData = {
+            module_id : 1,
+            activity_id: 1,
+            template_id: 1,
+            lock_until_date: data.lockUntil,
+            time: "12:15:00",
+            data : [
+                {
+                    prerequisite_activity_id: 4,
+                    prerequisite_module_id : 5
+                }
+            ]
+        }
+        // dispatch(addPrerequisites(prereqData));
+        console.log("prereq formdata: -->",data);
         handleClose();
     };
 
