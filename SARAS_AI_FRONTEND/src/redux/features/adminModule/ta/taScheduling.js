@@ -54,7 +54,7 @@ export const rescheduleSession = createAsyncThunk(
     'taScheduling/rescheduleSession',
     async ({ id, data }) => {
         const response = await axiosInstance.put(
-            `${baseUrl}/admin/taschedules/${id}`,
+            `${baseUrl}/admin/taschedules/reschedule/${id}`,
             data
         );
         return response.data;
@@ -66,12 +66,11 @@ export const cancelScheduledSession = createAsyncThunk(
     'taScheduling/cancelScheduledSession',
     async id => {
         const response = await axiosInstance.put(
-            `${baseUrl}/admin/taschedules/${id}/cancel`
+            `${baseUrl}/admin/taschedules/cancel/${id}`
         );
         return response.data;
     }
 );
-
 const initialState = {
     taAvailableSlots: [], // TA Available Slots
     taScheduledSessions: [], // TA Scheduled Sessions
@@ -160,7 +159,6 @@ const taScheduling = createSlice({
             state.loading = false;
             state.error = action.error.message;
         });
-
         // Get TA Scheduled Sessions
         builder.addCase(getTAScheduledSessions.pending, state => {
             state.loading = true;

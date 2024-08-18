@@ -241,9 +241,11 @@ const Messages = ({ role }) => {
                     lastSeen: getTimeAgo(lastMessageTimestamp), // Calculate last seen dynamically
                     chat_id: taCoachAllChatData[i].id,
                     lastMessage:
-                        lastMessage.length > 15
-                            ? lastMessage.slice(0, 14) + '...'
-                            : lastMessage,
+                        lastMessage 
+                        ? (lastMessage.length > 15
+                            ? lastMessage.slice(0, 14) + '...' 
+                            : lastMessage)
+                        : '',
                 };
                 reformedMappingData.push(Data);
             }

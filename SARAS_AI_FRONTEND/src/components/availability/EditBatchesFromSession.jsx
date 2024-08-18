@@ -109,7 +109,7 @@ const EditBatchesFromSession = ({ componentName }) => {
                 'S. No.': index + 1,
                 'Batch Name': batch.batch.name,
                 Branch: batch.batch.branch.name,
-                id: batch.id,
+                id: batch.batch.id,
             }));
 
             const filtered = transformedData.filter(batch => {

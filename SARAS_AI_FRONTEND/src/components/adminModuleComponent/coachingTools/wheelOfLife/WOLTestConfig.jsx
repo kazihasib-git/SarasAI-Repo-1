@@ -104,8 +104,8 @@ const WOLTestConfig = () => {
         })) || [];
 
     const getNumberOfQuestionsOptions = categoryId => {
-        const category = wolCategoryData.find(cat => cat.id === categoryId);
-        const maxQuestions = category?.wol_questions_count || 0;
+        //const category = wolCategoryData.find(cat => cat.id === categoryId);
+        const maxQuestions = 10;
         return Array.from({ length: maxQuestions }, (_, i) => ({
             value: i + 1,
             label: i + 1,
@@ -178,8 +178,9 @@ const WOLTestConfig = () => {
             categories: categories,
         };
 
-        dispatch(addWOLTestConfig(data));
-        navigate('/WOLTestConfigSelectQuestions');
+        dispatch(addWOLTestConfig(data)).then(()=>{
+             navigate('/WOLTestConfigSelectQuestions');
+        });
     };
 
     return (
@@ -312,32 +313,32 @@ const WOLTestConfig = () => {
                                                     label="Category Name"
                                                     name={`category_name_${index}`}
                                                     value={
-                                                        formValues.categories[
-                                                            index
-                                                        ]?.category_name || ''
+                                                        formValues.categories[index]?.category_name || ''
                                                     }
                                                     onChange={e => {
-                                                        const newCategories = [
-                                                            ...formValues.categories,
-                                                        ];
+                                                        const selectedCategory = e.target.value;
+
+                                                        const newCategories = [...formValues.categories];
                                                         newCategories[index] = {
-                                                            ...newCategories[
-                                                                index
-                                                            ],
-                                                            category_name:
-                                                                e.target.value,
+                                                            ...newCategories[index],
+                                                            category_name: selectedCategory,
                                                         };
+
                                                         setFormValues({
                                                             ...formValues,
-                                                            categories:
-                                                                newCategories,
+                                                            categories: newCategories,
                                                         });
                                                     }}
                                                     errors={errors}
                                                     options={
-                                                        WOLCategoriesOptions
+                                                        WOLCategoriesOptions.filter(option => 
+                                                            !formValues.categories.some(
+                                                                category => category.category_name === option.value
+                                                            ) || option.value === formValues.categories[index]?.category_name
+                                                        )
                                                     }
                                                 />
+
                                                 {errors[
                                                     `category_name_${index}`
                                                 ] && (

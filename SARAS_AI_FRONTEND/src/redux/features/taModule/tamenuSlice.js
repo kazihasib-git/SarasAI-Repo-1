@@ -98,14 +98,8 @@ export const getTaMenuSessionForLeave = createAsyncThunk(
 export const getTaCallRequests = createAsyncThunk(
     'taMenu/getCallRequests',
     async () => {
-        const response = await axios.get(
-            `${baseUrl}/ta/call-request/get-call-request`,
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json',
-                },
-            }
+        const response = await axiosInstance.get(
+            `${baseUrl}/ta/call-request/get-call-request`
         );
         console.log(response.data, 'response.data');
         return response.data;
@@ -116,14 +110,8 @@ export const getTaCallRequests = createAsyncThunk(
 export const approveCallRequest = createAsyncThunk(
     'taMenu/approveCallRequest',
     async id => {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
             `${baseUrl}/ta/call-request/approve-call-request/${id}`,
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json',
-                },
-            }
         );
         console.log(response.data, 'response.data');
         return response.data;
@@ -134,17 +122,11 @@ export const approveCallRequest = createAsyncThunk(
 export const denyCallRequest = createAsyncThunk(
     'taMenu/denyCallRequest',
     async (id, reason) => {
-        const response = await axios.put(
+        const response = await axiosInstance.put(
             `${baseUrl}/ta/call-request/denie-call-request/${id}`,
             {
                 'reject-reason': reason,
             },
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json',
-                },
-            }
         );
         console.log(response.data, 'response.data');
         return response.data;
@@ -154,12 +136,10 @@ export const denyCallRequest = createAsyncThunk(
 //ta scheduled Calls
 export const getTaScheduledCalls = createAsyncThunk(
     'taMenu/getTaScheduledCalls',
-    async date => {
+    async data => {
         const response = await axiosInstance.post(
             `${baseUrl}/ta/schedule-call/get-schedule-call`,
-            {
-                date: date,
-            }
+            data
         );
         console.log(response.data, 'response.data');
         return response.data;
@@ -186,7 +166,7 @@ export const createTaMenuSessions = createAsyncThunk(
     'taMenu/createTaMenuSessions',
     async data => {
         const response = await axiosInstance.post(
-            `${baseUrl}/ta/calendar/create-sessions`,
+            `${baseUrl}/ta/schedule-call/schedule-calls`,
             data
         );
         return response.data;

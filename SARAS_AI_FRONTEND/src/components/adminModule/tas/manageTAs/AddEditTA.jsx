@@ -93,9 +93,9 @@ const AddEditTA = ({ data }) => {
         dispatch(accessTaName(data));
 
         if (data.profile_picture) {
-            const blobUrl = base64ToBlobUrl(data.profile_picture);
-            console.log('url', blobUrl);
-            setSelectedImage(blobUrl);
+            // const blobUrl = base64ToBlobUrl(data.profile_picture);
+            // console.log('url', blobUrl);
+            setSelectedImage(data.profile_picture);
         }
 
         if (data.description) {
@@ -155,6 +155,7 @@ const AddEditTA = ({ data }) => {
         console.log('formData :', formData);
 
         if (selectedImage && selectedImage.startsWith('data:image/')) {
+            console.log('/////////////////////',selectedImage);
             const base64Data = selectedImage.replace(
                 /^data:image\/(png|jpeg|jpg);base64,/,
                 ''
@@ -321,7 +322,7 @@ const AddEditTA = ({ data }) => {
                                             name="description"
                                             value={editableDescription}
                                             onChange={handleDescriptionChange}
-                                            placeholder="sort description..."
+                                            placeholder="short description..."
                                         />
                                         <Button
                                             variant="contained"

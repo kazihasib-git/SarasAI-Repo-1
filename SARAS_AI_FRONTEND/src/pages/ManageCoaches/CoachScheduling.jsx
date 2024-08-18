@@ -28,6 +28,26 @@ const CoachSheduling = () => {
         dispatch(showCoachMapping());
     }, [dispatch]);
 
+    const { coachID } = useSelector(state => state.coachScheduling);
+    const { todaysAvailableCoach } = useSelector(state => state.coachAvailability);
+    const [selectedCoach, setSelectedCoach] = useState(null);
+    
+
+    const findTaTimeZone = (todaysAvailableCoach) => {
+        if (todaysAvailableCoach && Number(coachID)) {
+            const selectedCoach = todaysAvailableCoach.find(coach => coach.id === Number(coachID));
+            setSelectedCoach(selectedCoach || null);  // Set to null if not found
+        } else {
+            setSelectedCoach(null);  // Set to null if conditions are not met
+        }
+    }
+    useEffect(() => {
+        findTaTimeZone(todaysAvailableCoach);
+    }, [coachID, todaysAvailableCoach]);
+
+
+    const storedTimezoneId = selectedCoach ? selectedCoach.timezone_id : Number(localStorage.getItem('timezone_id'));
+
     useEffect(() => {
         console.log('COACHSCHEDULE : ', coachMapping);
         if (coachMapping && coachMapping.length > 0) {
@@ -114,17 +134,17 @@ const CoachSheduling = () => {
                 />
             </Box>
             {scheduleCoachSessionOpen && (
-                <Schedule componentName={'COACHSCHEDULE'} />
+                <Schedule componentName={'COACHSCHEDULE'} timezoneID={storedTimezoneId}/>
             )}
             {/* {assignCoachStudentOpen && (
         <AssignStudents componentname={"ADDITCOACH"} />
       )}
       {assignCoachBatchOpen && <AssignBatches componentname={"ADDITCOACH"} />} */}
             {openCoachEditBatch && (
-                <EditBatches componentname={'COACHSCHEDULE'} />
+                <EditBatches componentname={'COACHSCHEDULE'} timezoneID={storedTimezoneId}/>
             )}
             {openCoachEditStudent && (
-                <EditStudents componentname={'COACHSCHEDULE'} />
+                <EditStudents componentname={'COACHSCHEDULE'} timezoneID={storedTimezoneId}/>
             )}
         </>
     );

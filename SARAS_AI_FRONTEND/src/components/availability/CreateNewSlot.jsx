@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Grid,
-    Button,
     FormControl,
     RadioGroup,
     FormControlLabel,
@@ -12,13 +11,13 @@ import {
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import CustomDateField from '../CustomFields/CustomDateField';
-import CustomTimeField from '../CustomFields/CustomTimeField'; // Assuming you have a CustomTimeField component
+import CustomTimeField from '../CustomFields/CustomTimeField';
 import ReusableDialog from '../CustomFields/ReusableDialog';
-import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomTimeZoneForm from '../CustomFields/CustomTimeZoneForm';
 import { getTimezone } from '../../redux/features/utils/utilSlice';
 import { useParams } from 'react-router-dom';
+import { timezoneIdToName } from '../../utils/timezoneIdToName';
 import {
     createSlots,
     closeCreateNewSlots,
@@ -52,35 +51,33 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
     const [repeat, setRepeat] = useState('onetime');
     const [fromTime, setFromTime] = useState(null);
     const [toTime, setToTime] = useState(null);
+
     useEffect(() => {
         dispatch(getTimezone());
     }, [dispatch]);
 
-    let sliceName, timezoneId, createSlotApi, getSlotsApi;
-
+    let sliceName, createSlotApi, getSlotsApi;
+    const timezoneName = timezoneIdToName(timezoneID , timezones) ; 
     switch (componentName) {
         case 'TACALENDER':
             sliceName = 'taAvialability';
-            timezoneID = '';
             createSlotApi = createSlots;
             getSlotsApi = fetchTaSlots;
             break;
 
         case 'COACHCALENDER':
             sliceName = 'coachAvailability';
-            timezoneId = '';
             createSlotApi = createCoachSlots;
             getSlotsApi = fetchCoachSlots;
             break;
 
         default:
             sliceName = null;
-            timezoneId = null;
             createSlotApi = null;
             getSlotsApi = null;
             break;
     }
-
+     
     const schedulingState = useSelector(state => state[sliceName]);
     const { createNewSlotOpen } = useSelector(state => state.taAvialability);
 
@@ -89,7 +86,11 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
         control,
         handleSubmit,
         formState: { errors },
-    } = useForm();
+    } = useForm({
+        defaultValues: {
+            timezone_id: timezoneID
+        }
+    });
 
     const handleDayChange = day => {
         setSelectedDays(prev => {
@@ -150,7 +151,7 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
         formData.end_date = repeat === 'recurring' ? toDate : fromDate;
         formData.weeks = weeksArray;
         formData.admin_user_id = taId.id;
-
+        formData.timezone_id = `${timezoneID}`
         dispatch(createSlotApi(formData)).then(() => {
             dispatch(closeCreateNewSlots());
             dispatch(getSlotsApi(taId.id));
@@ -249,16 +250,17 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
                             <Controller
                                 name="timezone_id"
                                 control={control}
-                                // rules={{ required: 'Time Zone is required' }}
+                                defaultValue={timezoneID}
                                 render={({ field }) => (
                                     <CustomTimeZoneForm
                                         label="Time Zone"
                                         name="timezone_id"
-                                        value={field.value}
+                                        value={timezoneID}
                                         onChange={field.onChange}
-                                        errors={errors}
+                                        disabled={timezoneID!=null}
                                         options={timezones}
-                                    />
+                                        errors={errors}
+                                    />      
                                 )}
                             />
                         </Grid>

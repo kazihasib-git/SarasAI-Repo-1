@@ -122,8 +122,8 @@ const CoachMenuProfile = () => {
         setDateOfBirth(formattedDate);
 
         if (data.profile_picture) {
-            const blobUrl = base64ToBlobUrl(data.profile_picture);
-            setSelectedImage(blobUrl);
+            //const blobUrl = base64ToBlobUrl(data.profile_picture);
+            setSelectedImage(data.profile_picture);
         }
 
         const formValues = {
@@ -169,7 +169,7 @@ const CoachMenuProfile = () => {
 
         updatedFormData.date_of_birth = dateOfBirth;
 
-        if (selectedImage) {
+        if (selectedImage && selectedImage.startsWith('data:image/')) {
             const base64Data = selectedImage.replace(
                 /^data:image\/(png|jpeg|jpg);base64,/,
                 ''
@@ -227,6 +227,7 @@ const CoachMenuProfile = () => {
                                 name="profile_picture"
                                 selectedImage={selectedImage}
                                 setSelectedImage={setSelectedImage}
+                                disabled={!isEditing}
                             />
 
                             {!isEditing && (
@@ -423,6 +424,7 @@ const CoachMenuProfile = () => {
                                             <CustomTimeZoneForm
                                                 label="Time Zone"
                                                 name="timezone_id"
+                                                placeholder="Time Zone"
                                                 value={field.value}
                                                 onChange={field.onChange}
                                                 errors={errors}

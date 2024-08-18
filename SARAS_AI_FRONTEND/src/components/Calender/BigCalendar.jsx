@@ -13,6 +13,7 @@ import { useDispatch } from 'react-redux';
 import { openSessionEvent } from '../../redux/features/adminModule/ta/taAvialability';
 import { openCoachSessionEvent } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import { openSessionPopup } from '../../redux/features/commonCalender/commonCalender';
+import CustomDateField from '../CustomFields/CustomDateField';
 moment.locale('en-GB');
 const localizer = momentLocalizer(moment);
 const allViews = Object.keys(Views).map(k => Views[k]);
@@ -84,6 +85,7 @@ const CustomEvent = ({ event }) => {
 
 const CalendarComponent = ({ eventsList, slotData, componentName }) => {
     const dispatch = useDispatch();
+
     console.log('Event List', eventsList);
 
     console.log('Slot Data : ', slotData);
@@ -150,13 +152,13 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
     const slotPropGetter = date => {
         const dateString = moment(date).format('YYYY-MM-DD');
         const timeString = moment(date).format('YYYY-MM-DD HH:mm');
-        // console.log(dateString);
-        // console.log(timeString);
         for (let i = 0; i < slotData.length; i++) {
             const slot = slotData[i];
             const slotDate = moment(slot.startDate).format('YYYY-MM-DD');
-            const slotStartTime = moment(slot.startDate).format('YYYY-MM-DD HH:mm');;
-            const slotEndTime = moment(slot.endDate).format('YYYY-MM-DD HH:mm');;
+            const slotStartTime = moment(slot.startDate).format(
+                'YYYY-MM-DD HH:mm'
+            );
+            const slotEndTime = moment(slot.endDate).format('YYYY-MM-DD HH:mm');
 
             const isOnLeave = slot.leave && slot.leave.length > 0;
             if (
@@ -200,6 +202,7 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
                     defaultView={Views.WEEK} // Set default view to week
                     components={{
                         event: CustomEvent, // Use the custom event component
+                        //toolbar: CustomToolbar,
                     }}
                     formats={formats}
                 />

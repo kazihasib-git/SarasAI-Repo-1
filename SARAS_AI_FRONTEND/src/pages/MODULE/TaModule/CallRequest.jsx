@@ -19,6 +19,8 @@ import {
 } from '../../../redux/features/taModule/tamenuSlice';
 
 import { useDispatch, useSelector } from 'react-redux';
+import { timezoneIdToName } from '../../../utils/timezoneIdToName';
+import { convertFromUTC } from '../../../utils/dateAndtimeConversion';
 
 const CallRequest = () => {
     //const [openDenyDialog, setOpenDenyDialog] = useState(false);
@@ -35,12 +37,37 @@ const CallRequest = () => {
         dispatch(getTaCallRequests());
     }, [dispatch]);
 
-    const processTaCallRequests = requests => {
+    const { timezones } = useSelector(state => state.util);
+    const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
+    const timezonename = timezoneIdToName(storedTimezoneId, timezones);
+
+    const processTaCallRequests = async requests => {
+        await Promise.all(
+            requests.map(async (request) => {
+                const localTime = await convertFromUTC({
+                    start_date: request.date,
+                    start_time: request.start_time,
+                    end_time: request.end_time,
+                    end_date: request.end_date,
+                    timezonename,
+                });
+        
+                return {
+                    ...request,
+                    date: localTime.start_date,
+                    start_time: localTime.start_time,
+                    end_time: localTime.end_time,
+                    end_date: localTime.end_date,
+                };
+            })
+        );
+
         const processedRequests = requests.map(request => ({
             ...request,
             title: `Meeting request by ${request.sender.name}`,
             For: `${request.date} | ${request.start_time}`,
         }));
+
         setCallRequests(processedRequests);
     };
     useEffect(() => {
@@ -49,32 +76,7 @@ const CallRequest = () => {
         }
     }, [taCallRequests]);
 
-    // const [callRequests, setCallRequests] = useState([
-    //     {
-    //         id: 2,
-    //         title: 'Meeting Request By Aman',
-    //         for: '10 July, 2014 | 12:30 PM',
-    //         requestedBy: 'Aman',
-    //         messages:
-    //             'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-    //     },
-    //     {
-    //         id: 3,
-    //         title: 'Meeting Request By Aman',
-    //         for: '10 July, 2014 | 12:30 PM',
-    //         requestedBy: 'Aman',
-    //         messages:
-    //             'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-    //     },
-    //     {
-    //         id: 5,
-    //         title: 'Meeting Request By Raman',
-    //         for: '11 July, 2014 | 12:35 PM',
-    //         requestedBy: 'Raman',
-    //         messages:
-    //             'Lorem Ipsum is simply dummy text of the printing and typesetting industry Lorem Ipsum is simply dummy text of the printing and typesetting industryLorem Ipsum is simply dummy text of the printing and typesetting industry.',
-    //     },
-    // ]);
+   
     const [showFullMessages, setShowFullMessages] = useState({});
 
     const handleClickOpen = id => {
@@ -165,7 +167,7 @@ const CallRequest = () => {
                                 <Typography gutterBottom sx={{ ml: 2 }}>
                                     For:{' '}
                                     <span style={{ color: '#5F6383' }}>
-                                        {callRequest.for}
+                                        {callRequest.For}
                                     </span>
                                 </Typography>
                                 <Typography gutterBottom sx={{ ml: 2 }}>

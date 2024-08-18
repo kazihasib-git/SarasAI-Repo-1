@@ -225,12 +225,10 @@ export const denyCallRequest = createAsyncThunk(
 //get Coach scheduled Calls
 export const getCoachScheduledCalls = createAsyncThunk(
     'coachMenu/getScheduledCalls',
-    async date => {
+    async data => {
         const response = await axiosInstance.post(
             `${baseUrl}/coach/schedule-call/get-schedule-call`,
-            {
-                date: date,
-            }
+            data
         );
         console.log(response.data, 'response.data');
         return response.data;

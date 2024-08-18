@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { baseUrl } from '../../../../utils/baseURL';
 import axiosInstance from '../../../services/httpService';
+import CoachCourseMapping from '../../../../pages/ManageCoaches/CoachCourseMapping';
 
 export const createCoach = createAsyncThunk(
     'coachModule/createCoach',
@@ -77,6 +78,41 @@ export const showCoachMapping = createAsyncThunk(
         return response.data;
     }
 );
+
+export const showCoachCourseMapping = createAsyncThunk(
+    'coachModule/showCoachCourseMapping',
+    async () => {
+        const response = await axiosInstance.get(
+            `${baseUrl}/admin/coach-course/getAllCoachesWithCourses`
+        );
+        return response.data;
+    }
+);
+
+export const getAllCoursesWithCoaches = createAsyncThunk(
+    'coachModule/getAllCoursesWithCoaches',
+    async () => {
+        const response = await axiosInstance.get(
+            `${baseUrl}/admin/coach-course/getAllCoursesWithCoaches`
+        );
+        return response.data;
+    }
+);
+
+export const assignCourseToCoach = createAsyncThunk(
+    'coachModule/assignCourseToCoach',
+    async (data) => {
+        const response = await axiosInstance.post(
+            `${baseUrl}/admin/coach-course`,
+            data
+        );
+        return response.data;
+    }
+);
+
+
+
+
 export const getCoachAssignStudents = createAsyncThunk(
     'coachModule/getCoachAssignStudents',
     async id => {
@@ -177,6 +213,8 @@ const initialState = {
     coachStudentBatchMapping: [],
     coachBatchMapping: null,
     coachMapping: null,
+    coachCourseMappingData: [],
+    allCoursesWithCoaches: [],
     coachSchedule: null,
     assignedStudents: [],
     assignedBatches: [],
@@ -384,6 +422,51 @@ export const coachSlice = createSlice({
             state.coachMapping = [];
             state.error = action.payload || action.error.message;
         });
+
+        //coaches with course assigned
+        builder.addCase(showCoachCourseMapping.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(showCoachCourseMapping.fulfilled, (state, action) => {
+            console.log('Coach mapping action ', action.payload);
+            state.loading = false;
+            state.coachCourseMappingData = action.payload.coaches;
+        });
+        builder.addCase(showCoachCourseMapping.rejected, (state, action) => {
+            state.loading = false;
+            state.coachCourseMappingData = [];
+            state.error = action.payload || action.error.message;
+        });
+
+        //courses with coach assigned
+        builder.addCase(getAllCoursesWithCoaches.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(getAllCoursesWithCoaches.fulfilled, (state, action) => {
+            console.log('Coach mapping action ', action.payload);
+            state.loading = false;
+            state.allCoursesWithCoaches = action.payload.courses;
+        });
+        builder.addCase(getAllCoursesWithCoaches.rejected, (state, action) => {
+            state.loading = false;
+            state.allCoursesWithCoaches = [];
+            state.error = action.payload || action.error.message;
+        });
+
+        //assign course to caoch
+        builder.addCase(assignCourseToCoach.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(assignCourseToCoach.fulfilled, (state, action) => {
+            console.log('Coach mapping action ', action.payload);
+            state.loading = false;
+        });
+        builder.addCase(assignCourseToCoach.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload || action.error.message;
+        });
+
+
 
         // get all students
         builder.addCase(getCoachStudentBatchMapping.pending, state => {

@@ -54,6 +54,7 @@ const CustomTimeZoneForm = ({
                 onInputChange={(event, newInputValue) => {
                     setInputValue(newInputValue);
                 }}
+                disabled={disabled}
                 options={options}
                 getOptionLabel={(option) => option.time_zone}
                 renderInput={(params) => (

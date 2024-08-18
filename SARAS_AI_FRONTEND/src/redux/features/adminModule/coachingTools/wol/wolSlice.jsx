@@ -484,6 +484,7 @@ const wolSlice = createSlice({
         builder.addCase(selectedQuestionsList.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload || action.error.message;
+            state.selectedQuestionsListData = [];
         });
     },
 });

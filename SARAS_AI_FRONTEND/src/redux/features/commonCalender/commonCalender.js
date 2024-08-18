@@ -21,6 +21,9 @@ const initialState = {
 
     openSession: false,
     editSession: false,
+
+
+    dataToFindScheduleInSlot:null,
 };
 
 const commonCalender = createSlice({
@@ -111,6 +114,13 @@ const commonCalender = createSlice({
             state.editSession = false;
             state.sessionData = null;
         },
+
+
+        //add data from slot in reschedule to find sessions again after rescheduling
+        addDataToFindScheduleInSlot(state, action){
+            state.dataToFindScheduleInSlot = action.payload;
+        }
+        
     },
 });
 
@@ -136,6 +146,7 @@ export const {
     closeSessionPopup,
     openEditSession,
     closeEditSession,
+    addDataToFindScheduleInSlot
 } = commonCalender.actions;
 
 export default commonCalender.reducer;
