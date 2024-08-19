@@ -62,9 +62,11 @@ const actionButtons = [
         type: 'button',
     },
 ];
-const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
 
-const Schedule = ({ componentName }) => {
+const Schedule = ({ componentName , timezoneID}) => {
+
+    console.log('timezoneID:',  timezoneID) ; 
+    
     const [fromDate, setFromDate] = useState(null);
     const [toDate, setToDate] = useState(null);
     const [fromTime, setFromTime] = useState(null);
@@ -166,7 +168,7 @@ const Schedule = ({ componentName }) => {
                 getAvailableSlotsAction({
                     admin_user_id: adminUserID,
                     date: fromDate,
-                    timezone_name: timezones[adminUserID].time_zone,
+                    timezone_name: timezoneIdToName(timezoneID, timezones),
                 })
             ).then(() => {
                 setSelectedSlot([]);
@@ -175,13 +177,13 @@ const Schedule = ({ componentName }) => {
     }, [fromDate, dispatch, adminUserID, getAvailableSlotsAction]);
 
     const handleDateSubmit = () => {
-        console.log('timezone', timezones[adminUserID].time_zone);
+        console.log('timezone', timezoneIdToName(timezoneID, timezones));
         if (fromDate) {
             dispatch(
                 getAvailableSlotsAction({
                     admin_user_id: adminUserID,
                     date: fromDate,
-                    timezone_name: timezones[adminUserID].time_zone,
+                    timezone_name: timezoneIdToName(timezoneID, timezones),
                 })
             ).then(() => {
                 setSelectedSlot([]);
@@ -201,9 +203,8 @@ const Schedule = ({ componentName }) => {
         console.log('AVAILABLE KEY : ', availableKey);
         console.log('Available slots : ', availableSlots);
         
-        if (availableSlots && availableSlots.length > 0 && timezones && storedTimezoneId) {
-            const timezonename = timezoneIdToName(storedTimezoneId, timezones);
-            
+        if (availableSlots && availableSlots.length > 0 && timezones && timezoneID) {
+            const timezonename = timezoneIdToName(timezoneID, timezones);
             try {
                 const processedSlots = await Promise.all(
                     availableSlots.map(async (slot, index) => {
@@ -229,9 +230,18 @@ const Schedule = ({ componentName }) => {
                         };
                     })
                 );
+
+                const formatTime = time => {
+                    const [hours, minutes] = time.split(':');
+                    const hour = parseInt(hours, 10);
+                    const minute = parseInt(minutes, 10);
+                    const ampm = hour >= 12 ? 'pm' : 'am';
+                    const formattedHour = hour % 12 || 12;
+                    return `${formattedHour}:${minute < 10 ? '0' : ''}${minute} ${ampm}`;
+                };
     
                 const options = processedSlots.map(item => ({
-                    label: `${item['From Time']} - ${item['To Time']}`,
+                    label: `${formatTime(item['From Time'])} - ${formatTime(item['To Time'])}`,
                     value: item.id,
                 }));
     
@@ -250,7 +260,7 @@ const Schedule = ({ componentName }) => {
     
     useEffect(() => {
         convertSessions();
-    }, [availableSlots, timezones, storedTimezoneId]);
+    }, [availableSlots, timezones, timezoneID]);
 
     const handleDayChange = day => {
         setSelectedDays(prev => {
@@ -365,7 +375,7 @@ const Schedule = ({ componentName }) => {
         formData.weeks = weeksArray;
         formData.studentId = studentId;
         formData.batchId = batchId;
-
+        formData.timezone_id = `${timezoneID}`
         console.log('form Data :', formData);
         dispatch(createScheduleAction(formData))
             .then(() => {
@@ -522,6 +532,7 @@ const Schedule = ({ componentName }) => {
                                                             name="timezone_id"
                                                             control={control}
                                                             // rules={{ required: "Time Zone is required" }}
+                                                            defaultValue={timezoneID}
                                                             render={({
                                                                 field,
                                                             }) => (
@@ -529,16 +540,18 @@ const Schedule = ({ componentName }) => {
                                                                     label="Time Zone"
                                                                     name="timezone_id"
                                                                     value={
-                                                                        field.value
+                                                                        timezoneID
                                                                     }
                                                                     onChange={
                                                                         field.onChange
                                                                     }
-                                                                    errors={
-                                                                        errors
-                                                                    }
+                                                                    disabled={timezoneID!=null}
+
                                                                     options={
                                                                         timezones
+                                                                    }
+                                                                    errors={
+                                                                        errors
                                                                     }
                                                                 />
                                                             )}

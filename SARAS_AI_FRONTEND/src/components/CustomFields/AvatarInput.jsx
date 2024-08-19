@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Avatar, IconButton, Box } from '@mui/material';
 import { PhotoCamera } from '@mui/icons-material';
 
-const AvatarInput = ({ selectedImage, setSelectedImage }) => {
+const AvatarInput = ({ selectedImage, setSelectedImage, disabled }) => {
     const handleFileChange = e => {
         const file = e.target.files[0];
         const reader = new FileReader();
@@ -25,7 +25,9 @@ const AvatarInput = ({ selectedImage, setSelectedImage }) => {
                 style={{ display: 'none' }}
                 accept="image/*"
                 onChange={handleFileChange}
+                disabled={disabled}
             />
+            {!disabled && (
             <label
                 htmlFor="profilePicture"
                 style={{ position: 'absolute', bottom: 4, right: -12 }}
@@ -33,10 +35,12 @@ const AvatarInput = ({ selectedImage, setSelectedImage }) => {
                 <IconButton
                     component="span"
                     style={{ backgroundColor: '#F56D3B', color: 'white' }}
+                   
                 >
                     <PhotoCamera />
                 </IconButton>
             </label>
+            )}
         </Box>
     );
 };

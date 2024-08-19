@@ -86,7 +86,7 @@ const actionButtons = [
     },
 ];
 
-const CreateSession = ({ componentName }) => {
+const CreateSession = ({ componentName , timezoneID}) => {
     const dispatch = useDispatch();
     const [formData, setFormData] = useState({
         sessionName: '',

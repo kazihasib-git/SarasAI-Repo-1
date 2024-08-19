@@ -227,6 +227,7 @@ const CoachMenuProfile = () => {
                                 name="profile_picture"
                                 selectedImage={selectedImage}
                                 setSelectedImage={setSelectedImage}
+                                disabled={!isEditing}
                             />
 
                             {!isEditing && (
@@ -423,6 +424,7 @@ const CoachMenuProfile = () => {
                                             <CustomTimeZoneForm
                                                 label="Time Zone"
                                                 name="timezone_id"
+                                                placeholder="Time Zone"
                                                 value={field.value}
                                                 onChange={field.onChange}
                                                 errors={errors}

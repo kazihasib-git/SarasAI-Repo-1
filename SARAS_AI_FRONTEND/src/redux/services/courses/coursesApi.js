@@ -6,7 +6,7 @@ export const coursesApi = createApi({
     baseQuery: fetchBaseQuery({ baseUrl }),
     endpoints: builder => ({
         getCourses: builder.query({
-            query: id => `/courses`,
+            query: id => `/admin/courses`,
         }),
     }),
 });
