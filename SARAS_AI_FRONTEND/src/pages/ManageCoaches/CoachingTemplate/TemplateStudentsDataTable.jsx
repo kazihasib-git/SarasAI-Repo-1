@@ -198,10 +198,10 @@ const TemplateStudentsDataTable = ({
         <div className="table-container">
             <Box display={'flex'} justifyContent={'space-between'}>
                 <Box>
-                    <ArrowBackIosIcon
+                    {/* <ArrowBackIosIcon
                         style={{ fontSize: "25px", marginBottom: "17px" }}
                         onClick={() => navigate("/coach-template")}
-                    />
+                    /> */}
 
                     <p
                         style={{
