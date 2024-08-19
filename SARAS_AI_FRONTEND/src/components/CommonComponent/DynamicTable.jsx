@@ -154,6 +154,11 @@ const DynamicTable = ({
                 } else if (type === 'batches') {
                     navigate(`/active-Coach-batches/${id}`); // Append id as a parameter
                 }
+            } else if (componentName === 'COACHCOURSEMAPPING') {
+                if (type === 'courses') {
+                    console.log(id);
+                    navigate(`/active-Coach-courses/${id}`); // Append id as a parameter
+                } 
             }
         }
     };
@@ -319,7 +324,28 @@ const DynamicTable = ({
                                                 </CustomButton>
                                             </td>
                                         );
-                                    } else if (
+                                    } else if (key === 'Active_Courses') {
+                                        return (
+                                            <td key={idx}>
+                                                {item[key]}{' '}
+                                                <CustomButton
+                                                    variant="outlined"
+                                                    color="secondary"
+                                                    endIcon={
+                                                        <CallMadeOutlinedIcon />
+                                                    }
+                                                    onClick={() =>
+                                                        handleView(
+                                                            'courses',
+                                                            item.id
+                                                        )
+                                                    }
+                                                >
+                                                    View
+                                                </CustomButton>
+                                            </td>
+                                        );
+                                    }else if (
                                         key !== 'id' &&
                                         key !== 'is_active' &&
                                         key !== 'timezone'

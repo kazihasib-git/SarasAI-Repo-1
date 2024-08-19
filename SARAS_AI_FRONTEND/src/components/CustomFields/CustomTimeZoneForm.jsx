@@ -54,9 +54,10 @@ const CustomTimeZoneForm = ({
                 onInputChange={(event, newInputValue) => {
                     setInputValue(newInputValue);
                 }}
+                disabled={disabled}
                 options={options}
-                getOptionLabel={option => option.time_zone}
-                renderInput={params => (
+                getOptionLabel={(option) => option.time_zone}
+                renderInput={(params) => (
                     <TextField
                         {...params}
                         //label={label}
@@ -72,12 +73,10 @@ const CustomTimeZoneForm = ({
                                     borderColor: '#D0D0EC', // Default border color
                                 },
                                 '&:hover fieldset': {
-                                    borderColor: '#D0D0EC', //'rgb(245, 109, 59)', // Border color on hover
+                                    borderColor: '#D0D0EC',//'rgb(245, 109, 59)', // Border color on hover
                                 },
                                 '&.Mui-focused fieldset': {
-                                    borderColor: hasError
-                                        ? '#d32f2f'
-                                        : 'rgb(245, 109, 59)', // Border color on focus
+                                    borderColor: hasError ? '#d32f2f' : 'rgb(245, 109, 59)', // Border color on focus
                                 },
                             },
                         }}
@@ -93,9 +92,7 @@ const CustomTimeZoneForm = ({
                                 borderColor: 'rgb(245, 109, 59)', // Border color on hover
                             },
                             '&.Mui-focused fieldset': {
-                                borderColor: hasError
-                                    ? '#d32f2f'
-                                    : 'rgb(245, 109, 59)', // Border color on focus
+                                borderColor: hasError ? '#d32f2f' : 'rgb(245, 109, 59)', // Border color on focus
                             },
                         },
                     },

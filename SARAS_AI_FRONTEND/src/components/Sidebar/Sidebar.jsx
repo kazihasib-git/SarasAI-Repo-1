@@ -260,6 +260,23 @@ const Sidebar = () => {
                                 </span>
                             </Link>
                         </li>
+                        <li>
+                            <Link
+                                to={'/coach-course-mapping'}
+                                className={
+                                    activeLink === '/coach-course-mapping'
+                                        ? 'active-link'
+                                        : ''
+                                }
+                                onClick={() =>
+                                    handleLinkClick('/coach-course-mapping')
+                                }
+                            >
+                                <span className="SideSubHeading">
+                                    Coach Course Mapping
+                                </span>
+                            </Link>
+                        </li>
                     </ul>
                 </li>
 
@@ -322,6 +339,19 @@ const Sidebar = () => {
                                 onClick={() => handleLinkClick('/batches')}
                             >
                                 <span className="SideSubHeading">Batches</span>
+                            </Link>
+                        </li>
+                        <li>
+                            <Link
+                                to="/courses"
+                                className={
+                                    activeLink === '/courses'
+                                        ? 'active-link'
+                                        : ''
+                                }
+                                onClick={() => handleLinkClick('/courses')}
+                            >
+                                <span className="SideSubHeading">Courses</span>
                             </Link>
                         </li>
                     </ul>
