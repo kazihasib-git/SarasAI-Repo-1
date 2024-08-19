@@ -25,7 +25,7 @@ export const createCoachTemplate = createAsyncThunk(
 
 export const getAllCoachTemplateModules = createAsyncThunk(
     'coachTemplate/getAllCoachTemplateModules',
-    async () => {
+    async templateId => {
         const response = await axiosInstance.get(
             `${baseUrl}/admin/coaching-templates/modules/${templateId}`
         );
@@ -121,6 +121,19 @@ export const updateEditActivity = createAsyncThunk(
                 error.response ? error.response.data : error.message
             );
         }
+    }
+);
+
+// add prerequisites to the activity
+
+export const addPrerequisites = createAsyncThunk(
+    'coachTemplate/addPrerequisites',
+    async data => {
+        const response = await axiosInstance.post(
+            `${baseUrl}/admin/coaching-templates/activity-prerequisite`,
+            data
+        );
+        return response.data;
     }
 );
 
@@ -358,6 +371,20 @@ export const coachTemplateSlice = createSlice({
                 state.loading = false;
                 state.error = action.error.message;
             });
+        
+        // addPrerequisites
+        builder
+            .addCase(addPrerequisites.pending, state => {
+                state.loading = true;
+            })
+            .addCase(addPrerequisites.fulfilled, (state, action) => {
+                state.loading = false;
+                // state.coachTemplates.push(action.payload.data);
+            })
+            .addCase(addPrerequisites.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+            })
     },
 });
 

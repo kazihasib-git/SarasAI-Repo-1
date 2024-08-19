@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { useGetStudentsQuery } from '../../../redux/services/students/studentsApi'; // Import your API hook
+// import { useGetStudentsQuery } from '../../../redux/services/students/studentsApi'; // Import your API hook
 import { Box } from '@mui/material';
 import Pagination from '@mui/material/Pagination';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../Header/Header';
 import Sidebar from '../../Sidebar/Sidebar';
-import { studentDummyDatadata } from '../../../fakeData/studentData';
+import {useDispatch, useSelector} from 'react-redux';
 import DynamicTable from '../../CommonComponent/DynamicTable';
+import { getMyStudents } from '../../../redux/features/taModule/tamenuSlice';
 
 const Mystudents = ({ role }) => {
+    const dispatch = useDispatch();
     const [input, setInput] = useState('');
     const [students, setStudents] = useState([]);
 
@@ -16,35 +18,33 @@ const Mystudents = ({ role }) => {
         setInput(value);
     };
 
-    const useDummyData = false;
-
-    const { data: apiData, error, isLoading } = useGetStudentsQuery();
+    const { myStudentData }  = useSelector(state => state.taMenu);
 
     useEffect(() => {
-        const dataToUse = useDummyData ? studentDummyDatadata : apiData;
-        if (apiData) {
-            const transformedData = apiData.map(item => ({
-                id: item.student_id,
-                Name: item.student_name,
-                'Activities Sceduled': '',
-                'Activities Completed': '',
-                'Due Dates Missed': '',
-                'Acedemic Term': item.academic_term,
-                Batch: item.primary_phone,
+        dispatch(getMyStudents());
+    }, []);
+
+    useEffect(() => {
+        if (myStudentData) {
+            console.log('myStudentData', myStudentData);
+            const transformedData = Object.values(myStudentData).map(item => ({
+                id: item.Student_Id,
+                Name: item.Student_Name,
+                Program: item.Program,
+                Batch: item.Batch,
+                'Activities Scheduled': item.Live_Sessions_Scheduled,
+                'Activities Completed': item.Live_Sessions_Attended,
+                'Due Dates Missed': '',  
             }));
             setStudents(transformedData);
         }
-    }, [apiData, useDummyData]);
-
-    if (isLoading) {
-        return <div>Loading....</div>;
-    }
+    }, [myStudentData]);
 
     // const headers = ['S.No', 'Student Name', 'Acadamic Term', 'Batch', 'Live Sesions Scheduled', 'Live Sessions Attended', 'Status'];
     const headers = [
         'S.No',
         'Student Name',
-        'Acadamic Term',
+        'Program',
         'Batch',
         'Activities Scheduled',
         'Activities Completed',
