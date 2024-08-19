@@ -133,21 +133,27 @@ const CoachTemplateTable = ({
                                 </td>
                                 {Object.keys(item).map((key, idx) => {
                                     // {console.log("KEY : ", key)}
-                                    //   if (key === "Availability") {
-                                    //     return (
-                                    //       <td
-                                    //         key={idx}
-                                    //         style={{
-                                    //           color: getColorForAvailability(item[key]),
-                                    //           fontFamily: "Regular",
-                                    //           letterSpacing: "0.8px",
-                                    //         }}
-                                    //       >
-                                    //         {item[key]}
-                                    //       </td>
-                                    //     );
-                                    //   }  else
-                                    if (
+                                      if (key === "Assigned To") {
+                                        return (
+                                            <td
+                                                key={idx}
+                                                onClick={() => onAssignedToClick(item.id)}
+                                                style={{
+                                                    cursor: 'pointer',  
+                                                    color: '#000',     
+                                                }}
+                                                onMouseOver={(e) => {
+                                                    e.target.style.color = '#F56D3B';  
+                                                }}
+                                                onMouseOut={(e) => {
+                                                    e.target.style.color = '#000'; 
+                                                }}
+                                            >
+                                                {item[key]}
+                                            </td>
+                                        );
+                                      }  
+                                      else if (
                                         key !== 'id' &&
                                         key !== 'is_active' &&
                                         key !== 'timezone'
