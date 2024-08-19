@@ -35,6 +35,7 @@ import { convertFromUTC } from '../../../utils/dateAndtimeConversion';
 import { timezoneIdToName } from '../../../utils/timezoneIdToName';
 import { getTimezone } from '../../../redux/features/utils/utilSlice';
 const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
+
 const CustomButton = ({
     onClick,
     children,
@@ -77,6 +78,10 @@ const CoachMenuCalendar = () => {
     const [eventsList, setEventsList] = useState([]);
     const [slotViewData, setSlotViewData] = useState([]);
 
+    const [platformName, setPlatformName] = useState(null);
+    const [platformUrl, setplatformUrl] = useState(null);
+    const [selectedSession, setSelectedSession] = useState(null);
+
     const {
         createNewSlotPopup,
         scheduleNewSessionPopup,
@@ -87,6 +92,7 @@ const CoachMenuCalendar = () => {
         openCreatedSessions,
         openCancelSession,
         openSession,
+        sessionEventData,
     } = useSelector(state => state.commonCalender);
 
     const {
@@ -114,8 +120,8 @@ const CoachMenuCalendar = () => {
         convertSlots();
     }, [coachSlots, timezones]);
 
-    console.log('coach slots :', coachSlots);
-    console.log('coachSessions', coachSessions);
+    // console.log('coach slots :', coachSlots);
+    // console.log('coachSessions', coachSessions);
 
     const convertEvents = async () => {
         if (
@@ -261,6 +267,55 @@ const CoachMenuCalendar = () => {
     const handleCreateNewSlot = () => {
         dispatch(openCreateNewSlot());
     };
+    const handleSessionSelect = coachSessions => {
+        setSelectedSession(coachSessions.id);
+    };
+
+    // coachSessions.forEach(session => {
+    //     const platformName = session.platform_tool_details?.name;
+    //     const platformUrl = session.platform_meeting_details?.host_meeting_url;
+    //     setPlatformName(platformName);
+    //     setplatformUrl(platformUrl);
+    //     console.log(`Platform Name: ${platformName}`);
+    //     console.log(`Platform Meeting URL: ${platformUrl}`);
+    //     // Perform other actions with platformName and platformUrl
+    // });
+
+    // useEffect(() => {
+    //     coachSessions.map(session => {
+    //         const platformName = session.platform_tool_details?.name;
+    //         const platformUrl =
+    //             session.platform_meeting_details?.host_meeting_url;
+    //         setPlatformName(platformName);
+    //         setplatformUrl(platformUrl);
+    //     });
+    //     console.log(`Platform Name: ${platformName}`);
+    //     console.log(`Platform Meeting URL: ${platformUrl}`);
+    // }, [coachSessions]);
+
+    const targetSessionId = sessionEventData.id;
+    console.log(targetSessionId);
+
+    useEffect(() => {
+        const targetSession = coachSessions.find(
+            session => session.id === targetSessionId
+        );
+
+        if (targetSession) {
+            const platformName = targetSession.platform_tool_details?.name;
+            const platformUrl =
+                targetSession.platform_meeting_details?.host_meeting_url;
+
+            setPlatformName(platformName);
+            setplatformUrl(platformUrl);
+        } else {
+            setPlatformName('');
+            setplatformUrl('');
+        }
+
+        console.log(`Platform Name: ${platformName}`);
+        console.log(`Platform Meeting URL: ${platformUrl}`);
+    }, [coachSessions, targetSessionId]);
 
     return (
         <>
@@ -318,6 +373,7 @@ const CoachMenuCalendar = () => {
                     eventsList={eventsList}
                     slotData={slotViewData}
                     componentName={'COACHMENU'}
+                    onSelectEvent={handleSessionSelect}
                 />
                 {createNewSlotPopup && (
                     <CreateSlot componentName={'COACHMENU'} />
@@ -348,9 +404,14 @@ const CoachMenuCalendar = () => {
                 {reasonForLeavePopup && (
                     <ReasonForLeave componentName={'COACHMENU_CALENDER'} />
                 )}
-                {openSession && <SessionLink componentName={'COACHMENU'} />}
-                {/*{sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} componentName={"TACALENDER"} />}
-                 */}
+                {openSession && (
+                    <SessionLink
+                        componentName={'COACHMENU'}
+                        coachSessions={coachSessions}
+                        platformName={platformName}
+                        platformUrl={platformUrl}
+                    />
+                )}
             </Box>
         </>
     );
