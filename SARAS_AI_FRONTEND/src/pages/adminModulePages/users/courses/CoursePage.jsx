@@ -48,7 +48,7 @@ const CoursePage = () => {
                 marginTop={3}
                 alignItems={'center'}
             >
-                <p style={{ fontSize: '44px', justifyContent: 'center' }}>
+                <p style={{ fontFamily:'ExtraLight', fontSize: '40px', justifyContent: 'center', lineHeight:'40.18px' }}>
                     Courses
                 </p>
                 <div className="inputBtnContainer">
