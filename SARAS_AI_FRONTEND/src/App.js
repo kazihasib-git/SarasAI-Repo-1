@@ -85,6 +85,7 @@ import StudentDetails from './components/CommonComponent/studentDetails';
 import CoursePage from './pages/adminModulePages/users/courses/CoursePage.jsx';
 import CoachCourseMapping from './pages/ManageCoaches/CoachCourseMapping.jsx';
 import AssignCoachCourses from './pages/ManageCoaches/AssignedCoachCourses.jsx';
+import AssignedTemplateStudents from './pages/ManageCoaches/CoachingTemplate/AssignedTemplateStudents.jsx';
 
 const ROLES = {
     Teaching: 2001,
@@ -277,6 +278,10 @@ function App() {
                         <Route
                             path="template-name"
                             element={<TemplateName page="Template Name" />}
+                        />
+                        <Route
+                            path="coach-template/template-students/:id"
+                            element={<AssignedTemplateStudents page="Assigned Template Students"/>}
                         />
                         <Route
                             path="coach-availability"

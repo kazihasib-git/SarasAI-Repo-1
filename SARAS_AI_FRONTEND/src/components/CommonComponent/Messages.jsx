@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 //import CoachMenu from './CoachMenu';
 
@@ -12,6 +12,7 @@ import filterIcon from '../../assets/filtericon1.svg';
 //import NotificationsIcon from '@mui/icons-material/Notifications';
 import PaperclipIcon from '../../assets/paperclip.svg';
 import VoiceIcon from '../../assets/voice1.svg';
+import MicNoneIcon from '@mui/icons-material/MicNone';
 import SendButtonIcon from '../../assets/sendbutton.svg';
 import NotificationIcon from '../../assets/NotificationIcon.svg';
 import SearchIcon from '../../assets/messagesearchicon.svg';
@@ -45,8 +46,8 @@ const getTimeAgo = timestamp => {
     if (diff < 60) return `${diff} s`;
     if (diff < 3600) return `${Math.floor(diff / 60)} m`;
     if (diff < 86400) return `${Math.floor(diff / 3600)} h`;
-    if (diff < 604800) return `${Math.floor(diff / 86400)} days ago`;
-    return `${Math.floor(diff / 604800)} weeks ago`;
+    if (diff < 604800) return `${Math.floor(diff / 86400)} days`;
+    return `${Math.floor(diff / 604800)} weeks`;
 };
 
 const Messages = ({ role }) => {
@@ -55,6 +56,7 @@ const Messages = ({ role }) => {
     const [selectedUser, setselectedUser] = useState(null);
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
+    const fileInputRef = useRef(null);
     const [assignedUsersData, setassignedUsersData] = useState([]);
     const [chatUserMapping, setchatUserMappingData] = useState([]);
     const [currentChatId, setcurrentChatId] = useState(0);
@@ -126,6 +128,21 @@ const Messages = ({ role }) => {
             setNewMessage('');
         }
     };
+
+    const HandleSentFile = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
+
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            // Handle the selected file here
+            console.log('Selected file:', file);
+        }
+    };
+
 
     useEffect(() => {
         const setUserToChat = async () => {
@@ -294,7 +311,7 @@ const Messages = ({ role }) => {
                     </div>
                 </div>
                 <div className="chat-list">
-                    {usersToDisplay.length > 0 ? (
+                    {(usersToDisplay !== undefined && usersToDisplay.length > 0) ? (
                         usersToDisplay.map(user => (
                             <div
                                 key={user.id}
@@ -393,46 +410,65 @@ const Messages = ({ role }) => {
                         />
 
                         <Box className="chat-messages">
-                            {messages.map((msg, index) => (
-                                <Box
-                                    key={index}
-                                    className={`message ${msg.sender}`}
-                                    display="flex"
-                                    justifyContent={
-                                        msg.sender === 'me'
-                                            ? 'flex-end'
-                                            : 'flex-start'
-                                    }
-                                    mb={1}
-                                    alignItems="flex-start"
-                                >
-                                    {msg.sender === 'other' && (
-                                        <img
-                                            src={selectedUser.profilePic} // Use selected student's profile pic
-                                            alt="Profile Pic"
-                                            className="profile-pic"
-                                            style={{ marginRight: '8px' }}
-                                        />
-                                    )}
+                            {messages.map((msg, index) => {
+                                const isFirstMessageFromSameSender =
+                                    index === 0 || messages[index - 1].sender !== msg.sender;
+                                return (
                                     <Box
-                                        p={1}
-                                        className={`message-bubble ${msg.sender}`}
+                                        key={index}
+                                        display="flex"
+                                        justifyContent={
+                                            msg.sender === 'me' ? 'flex-end' : 'flex-start'
+                                        }
+                                        mb={1}
+                                        alignItems="center"
                                     >
-                                        {msg.text}
+                                        {msg.sender === 'other' && (
+                                            <img
+                                                src={selectedUser.profilePic}
+                                                alt="Profile Pic"
+                                                className="profile-pic"
+                                                style={{
+                                                    marginRight: '8px',
+                                                    visibility: isFirstMessageFromSameSender ? 'visible' : 'hidden',
+                                                }}
+                                            />
+                                        )}
+                                        <Box
+                                            p={1}
+                                            className={`message-bubble ${msg.sender}`}
+                                            style={{
+                                                maxWidth: '60%',
+                                                borderRadius: '15px',
+                                            }}
+                                        >
+                                            {msg.text}
+                                        </Box>
+                                        {msg.sender === 'me' && (
+                                            <img
+                                                src={
+                                                    role === 'coach'
+                                                        ? coachProfileData.profile_picture
+                                                        : taProfileData.profile_picture
+                                                }
+                                                alt="Profile Pic"
+                                                className="profile-pic"
+                                                style={{
+                                                    marginLeft: '8px',
+                                                    visibility: isFirstMessageFromSameSender ? 'visible' : 'hidden',
+                                                }}
+                                            />
+                                        )}
                                     </Box>
-                                    {msg.sender === 'me' && (
-                                        <img
-                                            src={role==='coach'? coachProfileData.profile_picture : taProfileData.profile_picture} // Use selected student's profile pic
-                                            alt="Profile Pic"
-                                            className="profile-pic"
-                                            style={{ marginLeft: '8px' }}
-                                        />
-                                    )}
-                                </Box>
-                            ))}
+                                );
+                            })}
                         </Box>
 
-                        <Box className="chat-input-container">
+                        <Box className="chat-input-container"
+                            sx={{
+                                borderRadius: '42px',
+                            }}
+                        >
                             <TextField
                                 variant="outlined"
                                 placeholder="Type a message..."
@@ -440,25 +476,30 @@ const Messages = ({ role }) => {
                                 onChange={handleMessageChange}
                                 fullWidth
                                 sx={{
-                                    borderRadius: '20px',
+                                    borderRadius: '42px',
                                     marginRight: '10px',
                                     flexGrow: 1,
-                                    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline':
-                                        {
+                                    '& .MuiOutlinedInput-root': {
+                                        borderRadius: '42px',
+                                        backgroundColor: '#f6f6f8',
+                                        '& fieldset': {
                                             borderColor: 'rgba(0, 0, 0, 0.23)',
                                         },
-                                    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline':
-                                        {
+                                        '&:hover fieldset': {
                                             borderColor: 'rgba(0, 0, 0, 0.23)',
                                         },
+                                        '&.Mui-focused fieldset': {
+                                            borderColor: 'rgba(0, 0, 0, 0.23)',
+                                        },
+                                    },
                                 }}
                             />
                             <div className="chat-input-icons">
-                                <IconButton className="input-icon">
+                                <IconButton className="input-icon" onClick={HandleSentFile}>
                                     <img src={PaperclipIcon} alt="Attach" />
                                 </IconButton>
                                 <IconButton className="input-icon">
-                                    <img src={VoiceIcon} alt="Voice" />
+                                   <MicNoneIcon />
                                 </IconButton>
                                 <IconButton
                                     className="input-icon"

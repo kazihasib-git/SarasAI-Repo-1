@@ -25,32 +25,61 @@ const Mystudents = ({ role }) => {
     }, []);
 
     useEffect(() => {
-        if (myStudentData) {
-            console.log('myStudentData', myStudentData);
-            const transformedData = Object.values(myStudentData).map(item => ({
-                id: item.Student_Id,
-                Name: item.Student_Name,
-                Program: item.Program,
-                Batch: item.Batch,
-                'Activities Scheduled': item.Live_Sessions_Scheduled,
-                'Activities Completed': item.Live_Sessions_Attended,
-                'Due Dates Missed': '',  
-            }));
-            setStudents(transformedData);
+        if(role=='TA'){
+            if (myStudentData) {
+                console.log('myStudentData', myStudentData);
+                const transformedData = Object.values(myStudentData).map(item => ({
+                    id: item.Student_Id,
+                    Name: item.Student_Name,
+                    Program: item.Program,
+                    Batch: item.Batch,
+                    'Live Sessions Scheduled': item.Live_Sessions_Scheduled,
+                    'Live Sessions Attended': item.Live_Sessions_Attended, 
+                }));
+                setStudents(transformedData);
+            }
+        }else{
+            if (myStudentData) {
+                console.log('myStudentData', myStudentData);
+                const transformedData = Object.values(myStudentData).map(item => ({
+                    id: item.Student_Id,
+                    Name: item.Student_Name,
+                    Program: item.Program,
+                    Batch: item.Batch,
+                    'Activities Scheduled': '',
+                    'Activities Completed': '',
+                    'Due Dates Missed': '',  
+                }));
+                setStudents(transformedData);
+            }
         }
+        
     }, [myStudentData]);
 
-    // const headers = ['S.No', 'Student Name', 'Acadamic Term', 'Batch', 'Live Sesions Scheduled', 'Live Sessions Attended', 'Status'];
-    const headers = [
-        'S.No',
-        'Student Name',
-        'Program',
-        'Batch',
-        'Activities Scheduled',
-        'Activities Completed',
-        'Due Dates Missed',
-        'Status',
-    ];
+    let headers = [];
+
+    if(role === 'TA') {
+        headers = [
+            'S.No',
+            'Student Name',
+            'Program',
+            'Batch',
+            'Live Sessions Scheduled',
+            'Live Sessions Attended',
+            'Status',
+        ];
+    }else{
+        headers = [
+            'S.No',
+            'Student Name',
+            'Program',
+            'Batch',
+            'Activities Scheduled',
+            'Activities Completed',
+            'Due Dates Missed',
+            'Status',
+        ];
+    }
 
     const actionButtons = [
         {
@@ -77,7 +106,7 @@ const Mystudents = ({ role }) => {
                 marginTop={3}
                 alignItems={'center'}
             >
-                <p style={{ fontSize: '44px', justifyContent: 'center' }}>
+                <p style={{fontFamily:'ExtraLight', fontSize:'40px', justifyContent: 'center' }}>
                     My Students
                 </p>
                 <div className="inputBtnContainer">
