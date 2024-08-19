@@ -124,6 +124,19 @@ export const updateEditActivity = createAsyncThunk(
     }
 );
 
+// add prerequisites to the activity
+
+export const addPrerequisites = createAsyncThunk(
+    'coachTemplate/addPrerequisites',
+    async data => {
+        const response = await axiosInstance.post(
+            `${baseUrl}/admin/coaching-templates/activity-prerequisite`,
+            data
+        );
+        return response.data;
+    }
+);
+
 const initialState = {
     coachesTemplateList: [],
     coachTemplates: [],
@@ -358,6 +371,20 @@ export const coachTemplateSlice = createSlice({
                 state.loading = false;
                 state.error = action.error.message;
             });
+        
+        // addPrerequisites
+        builder
+            .addCase(addPrerequisites.pending, state => {
+                state.loading = true;
+            })
+            .addCase(addPrerequisites.fulfilled, (state, action) => {
+                state.loading = false;
+                // state.coachTemplates.push(action.payload.data);
+            })
+            .addCase(addPrerequisites.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+            })
     },
 });
 
