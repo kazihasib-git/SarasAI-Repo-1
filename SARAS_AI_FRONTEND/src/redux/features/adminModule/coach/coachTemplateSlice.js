@@ -25,7 +25,7 @@ export const createCoachTemplate = createAsyncThunk(
 
 export const getAllCoachTemplateModules = createAsyncThunk(
     'coachTemplate/getAllCoachTemplateModules',
-    async () => {
+    async templateId => {
         const response = await axiosInstance.get(
             `${baseUrl}/admin/coaching-templates/modules/${templateId}`
         );
