@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Dialog,
     DialogActions,
@@ -10,13 +10,15 @@ import {
     Grid,
     Typography,
 } from '@mui/material';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import CustomTimeField from '../../../../components/CustomFields/CustomTimeField';
 import CustomDateField from '../../../../components/CustomFields/CustomDateField';
 import { Controller, useForm } from 'react-hook-form';
 import CustomFormControl from '../../../../components/CustomFields/CustomFromControl';
 import ReusableDialog from '../../../../components/CustomFields/ReusableDialog';
-import {addPrerequisites} from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
+import {addPrerequisites, getAllCoachTemplateModules, getCoachTemplateModuleId, setSelectedModule} from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
+import CustomModuleFormControl from '../../../../components/CustomFields/CustomModuleFormControl';
+import CustomActivityFormControl from '../../../../components/CustomFields/CustomActivityFormControl';
 
 const CustomButton = ({
     onClick,
@@ -53,40 +55,93 @@ const CustomButton = ({
     );
 };
 
-const PrerequisitesPopup = ({ open, handleClose }) => {
+const PrerequisitesPopup = ({ open, prereqModuleData, prereqActivityData, handleClose }) => {
+
+
+    console.log("Pre Req Data :", prereqModuleData, prereqActivityData)
+
     const dispatch = useDispatch();
-    const {
-        handleSubmit,
-        control,
-        formState: { errors },
-    } = useForm();
+    const { control, handleSubmit, watch, register, reset, formState: { errors } } = useForm();
+
     const [activityDependence, setActivityDependence] = useState(false);
-    const [fromTime, setFromTime] = useState('');
+    // const [moduleData, setModuleData] = useState([]);
+    const [moduleOptions, setModuleOptions] = useState([])
+    const [activityOptions, setActivityOptions] = useState([])
+    const [fromTime, setFromTime] = useState();
+
+    const { coachTemplatesId } = useSelector((state) => state.coachTemplate)
+    
+    useEffect(() => {   
+        if(prereqModuleData && prereqModuleData.id){
+            dispatch(getCoachTemplateModuleId(prereqModuleData.id));
+        }
+    },[dispatch, prereqModuleData])
+
+
+    useEffect(() => {
+        console.log("COACH TEMPLATE DATTA :", coachTemplatesId)
+        if(coachTemplatesId && coachTemplatesId.modules && coachTemplatesId.modules.length > 0){
+            console.log("MODULE DATA :", coachTemplatesId)
+            const options = coachTemplatesId.modules.map((module) => ({
+                value: module.id,
+                label: module.module_name,
+            }));
+            setModuleOptions(options);
+        }
+    },[coachTemplatesId])
+
+    useEffect(() => {
+        const selectedModuleId = watch("module");
+        console.log("Selected Module Id :", selectedModuleId)
+        if (selectedModuleId && coachTemplatesId && coachTemplatesId.modules && coachTemplatesId.modules.length > 0) {
+            const selectedModule = coachTemplatesId.modules.find((mod) => mod.id === selectedModuleId);
+            console.log("Selected Module :", selectedModule)
+            if (selectedModule) {
+                const options = selectedModule.activities?.map((activity) => ({
+                    value: activity.id,
+                    label: activity.activity_name,
+                })) || [];
+                setActivityOptions(options);
+            }
+        }
+    }, [watch("module"), coachTemplatesId]);
+
+
     const onSubmit = data => {
+        console.log("Form DATA :", data, fromTime)
         // TODO: Add API call here
         const prereqData = {
-            module_id : 1,
-            activity_id: 1,
-            template_id: 1,
+            module_id : prereqModuleData.id,
+            activity_id: prereqActivityData.id,
+            template_id: prereqModuleData.template_id,
             lock_until_date: data.lockUntil,
-            time: "12:15:00",
-            data : [
-                {
-                    prerequisite_activity_id: 4,
-                    prerequisite_module_id : 5
-                }
-            ]
+            time: fromTime,
+            data : data?.activity.map(act => ({
+                prerequisite_activity_id: act,
+                prerequisite_module_id: data.module,
+            }))
         }
-        // dispatch(addPrerequisites(prereqData));
-        console.log("prereq formdata: -->",data);
-        handleClose();
+        dispatch(addPrerequisites(prereqData))
+        .then(() => {
+            dispatch(getCoachTemplateModuleId(prereqModuleData.id))
+        });
+        console.log("prereq formdata: -->",prereqData);
+        handleClosePopup();
     };
 
     const handleCheckboxChange = event => {
         setActivityDependence(event.target.checked);
     };
 
-    const { register } = useForm();
+    const handleClosePopup = () => {
+        reset(); // Reset form values
+        setActivityDependence(false); // Reset checkbox state
+        setFromTime(null); // Reset time state
+        setModuleOptions([]); // Clear module options
+        setActivityOptions([]); // Clear activity options
+        handleClose(); // Close the popup
+    };
+    
 
     const content = (
         <Grid
@@ -166,19 +221,15 @@ const PrerequisitesPopup = ({ open, handleClose }) => {
                             name="module"
                             control={control}
                             render={({ field }) => (
-                                <CustomFormControl
+                                <CustomModuleFormControl
                                     label="Module"
-                                    name={field.name}
+                                    name="module"
                                     value={field.value}
                                     onChange={e => {
                                         field.onChange(e);
                                         // handleCoachChange(e); // Uncomment if you have a handleCoachChange function
                                     }}
-                                    options={[
-                                        { value: 'module1', label: 'Module 1' },
-                                        { value: 'module2', label: 'Module 2' },
-                                        { value: 'module3', label: 'Module 3' },
-                                    ]}
+                                    options={moduleOptions}
                                     errors={errors}
                                 />
                             )}
@@ -193,29 +244,16 @@ const PrerequisitesPopup = ({ open, handleClose }) => {
                             name="activity"
                             control={control}
                             render={({ field }) => (
-                                <CustomFormControl
+                                <CustomActivityFormControl
                                     label="Activity"
-                                    name={field.name}
+                                    name="activity"
                                     value={field.value}
                                     onChange={e => {
                                         field.onChange(e);
                                         // handleCoachChange(e); // Uncomment if you have a handleCoachChange function
                                     }}
                                     errors={errors}
-                                    options={[
-                                        {
-                                            value: 'activity1',
-                                            label: 'Activity 1',
-                                        },
-                                        {
-                                            value: 'activity2',
-                                            label: 'Activity 2',
-                                        },
-                                        {
-                                            value: 'activity3',
-                                            label: 'Activity 3',
-                                        },
-                                    ]}
+                                    options={activityOptions}
                                 />
                             )}
                         />
@@ -232,6 +270,9 @@ const PrerequisitesPopup = ({ open, handleClose }) => {
                 backgroundColor="#F56D3B"
                 borderColor="#F56D3B"
                 color="#FFFFFF"
+                style={{
+                    textTransform : 'none'
+                }}
             >
                 Submit
             </CustomButton>
@@ -241,7 +282,7 @@ const PrerequisitesPopup = ({ open, handleClose }) => {
     return (
         <ReusableDialog
             open={open}
-            handleClose={handleClose}
+            handleClose={handleClosePopup}
             title="Prerequisites"
             content={content}
             actions={actions}

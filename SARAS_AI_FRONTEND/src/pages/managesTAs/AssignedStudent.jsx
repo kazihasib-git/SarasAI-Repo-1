@@ -158,7 +158,7 @@ const DynamicTable = ({
                     */}
                     <p
                         style={{
-                            fontSize: '44px',
+                            fontSize: '40px',
                             // marginLeft: "16px",
                             fontFamily: 'ExtraLight',
                         }}
@@ -175,7 +175,7 @@ const DynamicTable = ({
                             location.pathname === `/active-students/${ta_id}`
                         }
                     >
-                        Assigned Student
+                        Assign Student
                     </CustomButton>
                     <CustomButton
                         onClick={() =>
@@ -185,7 +185,7 @@ const DynamicTable = ({
                             location.pathname === `/active-batches/${ta_id}`
                         }
                     >
-                        Assigned Batches
+                        Assign Batches
                     </CustomButton>
                 </div>
             </Box>

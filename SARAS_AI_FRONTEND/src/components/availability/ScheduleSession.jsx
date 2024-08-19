@@ -84,7 +84,6 @@ const ScheduleSession = ({ componentName }) => {
     const { platforms } = useSelector(state => state.util);
 
     useEffect(() => {
-        console.log('sessionData:');
         dispatch(getPlatforms());
     }, [dispatch]);
 
@@ -140,8 +139,6 @@ const ScheduleSession = ({ componentName }) => {
         [openPopupState]: open = false,
     } = selectState;
 
-    console.log('SESSION DATA :', sessionData);
-
     const handleEditStudents = () => {
         dispatch(openStudentsPopup({ id: sessionData.id }));
     };
@@ -149,8 +146,6 @@ const ScheduleSession = ({ componentName }) => {
     const handleEditBatches = () => {
         dispatch(openBatchesPopup({ id: sessionData.id }));
     };
-
-    console.log('sessionData', sessionData);
 
     const handleLinkCopy = () => {
         if (sessionData.platform_meet.host_meeting_url) {
@@ -202,10 +197,7 @@ const ScheduleSession = ({ componentName }) => {
         };
         window.open(sessionData.platform_meet.host_meeting_url, '_blank');
     };
-
-    console.log('secletected Platform', selectedPlatform);
-    // Check if platform data is present
-
+    
     const content = (
         <Box sx={{ textAlign: 'center' }}>
             <Typography variant="body1" sx={{ mb: 2 }}>
@@ -344,8 +336,6 @@ const ScheduleSession = ({ componentName }) => {
             </Grid>
         </Box>
     );
-    console.log('sessionData:', sessionData);
-    console.log('Platform Data:', sessionData.platform_tools.name);
 
     return (
         <ReusableDialog

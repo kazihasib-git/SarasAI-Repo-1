@@ -14,6 +14,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import ReusableDialog from '../../../CustomFields/ReusableDialog';
 import editImg from '../../../../assets/editIcon.png';
 import editImgWhite from '../../../../assets/editIcon_White.png';
+import { toast } from 'react-toastify';
 
 const CustomButton = ({
     onClick,
@@ -83,14 +84,28 @@ const SessionLink = ({ componentName }) => {
     const handleEditStudents = () => {};
 
     const copyToClipboard = () => {
-        const link = sessionEventData?.meetingLink;
-        if (link) {
+        if(sessionEventData.platform_meeting.host_meeting_url){
             navigator.clipboard
-                .writeText(link)
-                .then(() => alert('Meeting link copied!'))
-                .catch(err => console.error('Copy failed:', err));
+                .writeText(sessionEventData.platform_meeting.host_meeting_url)
+                toast.success('Copy to clipboard')
+        }else{
+            console.error('No meeting link .')
+            toast.error('No Meeting Link!')
         }
     };
+
+    const handleChangePlatform = sessionData => {
+
+    }
+
+    const handleChangeMode =  () => {
+
+    }
+
+    const handleJoinCall = data => {
+        console.log("Join call data", data)
+        window.open(data.platform_meeting.host_meeting_url, '_blank');
+    }
 
     const content = (
         <Box sx={{ textAlign: 'center' }}>
@@ -98,7 +113,7 @@ const SessionLink = ({ componentName }) => {
                 {formatDateTime(sessionEventData)}
             </Typography>
             <CustomButton
-                onClick={() => {}}
+                onClick={() => {handleJoinCall(sessionEventData)}}
                 backgroundColor="#FFFFFF"
                 borderColor="#F56D38"
                 color="#F56D38"
@@ -110,10 +125,10 @@ const SessionLink = ({ componentName }) => {
                     textTransform: 'none',
                 }}
             >
-                Join with Zoom
+                Join with {sessionEventData.platform_tools.name}
             </CustomButton>
             <CustomButton
-                onClick={() => {}}
+                onClick={handleChangeMode}
                 variant="text"
                 backgroundColor="#FFFFFF"
                 borderColor="transparent"
@@ -122,8 +137,8 @@ const SessionLink = ({ componentName }) => {
             >
                 Change Mode
             </CustomButton>
-            <Typography variant="body2" sx={{ mb: 2 }}>
-                {sessionEventData.meetingLink}
+            <Typography variant="body2" sx={{ mb: 2, overflow : 'hidden', textOverflow : 'ellipsis' }}>
+                {sessionEventData.platform_meeting.host_meeting_url}
                 <IconButton
                     size="small"
                     sx={{
