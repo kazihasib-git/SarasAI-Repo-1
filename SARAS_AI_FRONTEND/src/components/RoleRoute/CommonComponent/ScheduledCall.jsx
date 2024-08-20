@@ -458,7 +458,7 @@ const ScheduledCall = ({ role }) => {
                                         </a>
                                     ) : (
                                         <>
-                                            {/* 'No bookings yet' */}
+                                            No bookings yet
                                         </>
                                     )}
                                 </Typography>

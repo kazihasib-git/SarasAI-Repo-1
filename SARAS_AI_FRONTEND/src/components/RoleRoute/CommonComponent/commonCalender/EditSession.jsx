@@ -138,7 +138,7 @@ const EditSession = ({ componentName }) => {
         toDate: sessionData.to_date || '',
         fromTime: moment(sessionData.start_time, "HH:mm:ss"),
         toTime: moment(sessionData.end_time, "HH:mm:ss"),
-        timezone: sessionData.timezone_id,
+        timezone_id: sessionData.timezone_id,
     });
 
     let sliceName, updateSessionApi, getSessionApi;
@@ -169,6 +169,17 @@ const EditSession = ({ componentName }) => {
     }, [dispatch]);
 
     const [error, setError] = useState({});
+
+    const durationOptions = [
+        { label: '15 minutes', value: '00:15:00' },
+        { label: '30 minutes', value: '00:30:00' },
+        { label: '45 minutes', value: '00:45:00' },
+        { label: '1 Hour', value: '01:00:00' },
+        { label: '1 Hour 15 minutes', value: '01:15:00' },
+        { label: '1 Hour 30 minutes', value: '01:30:00' },
+        { label: '1 Hour 45 minutes', value: '01:45:00' },
+        { label: '2 Hours', value: '02:00:00' },
+    ];
 
     const handleChange = (field, value) => {
         if (field === 'timezone') {
@@ -437,7 +448,7 @@ const EditSession = ({ componentName }) => {
                                             },
                                         }}
                                     >
-                                        Select Students
+                                        Edit Students
                                     </Button>
                                     <Button
                                         variant="outlined"
@@ -459,7 +470,7 @@ const EditSession = ({ componentName }) => {
                                             },
                                         }}
                                     >
-                                        Select Batches
+                                        Edit Batches
                                     </Button>
                                 </Box>
                             </Grid>
