@@ -3,8 +3,9 @@
     display: flex;
     flex-direction: row;
     padding-top: 10px;
-    height: 100vh; /* Ensure full viewport height */
+    height: 80vh; /* Ensure full viewport height */
     /* overflow: hidden; */
+    font-family: "Regular";
 }
 
 h1 {
@@ -20,17 +21,18 @@ h1 {
 }
 
 .box1 {
-    width: 310px;
+    width: 20vw;
     left: 0;
     border-radius: 10px 0 0 10px;
-    height: 637px;
+    height: 80vh;
     overflow: hidden;
+    margin-right: 2px;
 }
 
 .box2 {
-    width: 804px;
-    left: 312px;
-    height: 637px;
+    width: 55vw;
+    left: 20vw;
+    height: 80vh;
     border-radius: 0;
     overflow: hidden;
     display: flex;
@@ -169,6 +171,7 @@ h1 {
     height: 40px;
     border-radius: 50%;
     margin-right: 10px;
+    margin-left: 10px;
 }
 
 .chat-info {
@@ -176,9 +179,6 @@ h1 {
     flex-direction: column;
 }
 
-.student-name {
-    font-weight: bold;
-}
 
 .last-message {
     color: #a6a6a6;
@@ -193,34 +193,13 @@ h1 {
     padding: 10px;
 }
 
-.chat-messages {
-    flex: 1;
-    padding: 10px;
-    overflow-y: auto;
-    background-color: #fff;
-    border-radius: 10px;
-    margin-bottom: 60px;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
 .last-seen {
     margin-left: 20px; /* Adjust this value to move it further to the right */
     /* or use padding if you prefer */
     padding-left: 20px; /* Adjust this value as needed */
 }
 
-.message {
-    padding: 10px;
-    border-radius: 10px;
-    max-width: 40%;
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-    word-break: break-word;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-}
+
 
 /* .status-container {
     display: flex;
@@ -235,21 +214,37 @@ h1 {
     margin-right: 0px;
 }
 
-.message.user {
+.chat-messages {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    background-color: #fff;
+    border-radius: 10px;
+    margin-bottom: 40px;
+    display: flex;
+    flex-direction: column;
+}
+.message-bubble {
+    padding: 10px;
+    border-radius: 15px;
+    display: inline-block;
+    word-break: break-word;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    font-family: "Regular";
+    font-size: 16px;
+}
+.message-bubble.user {
     background-color: #f1f1fb;
     color: #000;
-    margin-left: auto;
 }
-
-.message.me {
+.message-bubble.me {
     background-color: #4e18a5;
     color: #fff;
-    margin-left: auto;
 }
-
-.message.other {
+.message-bubble.other {
     background-color: #f1f1f1;
-    color: #000;
+    color: #5F6383;
 }
 
 .chat-input-container {
@@ -278,7 +273,7 @@ h1 {
 
 .chat-input-icons {
     position: absolute;
-    right: 30px;
+    right: 50px;
     display: flex;
     align-items: center;
     height: 100%;

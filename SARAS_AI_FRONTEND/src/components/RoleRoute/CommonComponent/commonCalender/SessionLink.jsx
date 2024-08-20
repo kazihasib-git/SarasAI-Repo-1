@@ -14,6 +14,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import ReusableDialog from '../../../CustomFields/ReusableDialog';
 import editImg from '../../../../assets/editIcon.png';
 import editImgWhite from '../../../../assets/editIcon_White.png';
+import { toast } from 'react-toastify';
 
 const CustomButton = ({
     onClick,
@@ -78,6 +79,7 @@ const SessionLink = ({ componentName, platformName, platformUrl }) => {
     }
 
     const handleEditBatches = () => {};
+    const handleChangeMode = () => {};
 
     const handleEditStudents = () => {};
 
@@ -117,7 +119,7 @@ const SessionLink = ({ componentName, platformName, platformUrl }) => {
                 Join with {platformName}
             </CustomButton>
             <CustomButton
-                onClick={() => {}}
+                onClick={handleChangeMode}
                 variant="text"
                 backgroundColor="#FFFFFF"
                 borderColor="transparent"

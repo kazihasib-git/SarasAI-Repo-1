@@ -222,7 +222,7 @@ const AdminDataTable = ({
                             `/active-Coach-students/${ta_id}`
                         }
                     >
-                        Assigned Student
+                        Assign Student
                     </CustomButton>
                     <CustomButton
                         onClick={() =>
@@ -233,7 +233,7 @@ const AdminDataTable = ({
                             `/active-Coach-batches/${ta_id}`
                         }
                     >
-                        Assigned Batches
+                        Assign Batches
                     </CustomButton>
                 </div>
             </Box>

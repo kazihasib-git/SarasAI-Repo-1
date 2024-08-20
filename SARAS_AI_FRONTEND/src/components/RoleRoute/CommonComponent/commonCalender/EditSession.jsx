@@ -31,6 +31,7 @@ import CustomDateField from '../../../CustomFields/CustomDateField';
 import CustomTimeField from '../../../CustomFields/CustomTimeField';
 import CustomTimeZoneForm from '../../../CustomFields/CustomTimeZoneForm';
 import { getPlatforms, getTimezone } from '../../../../redux/features/utils/utilSlice';
+import CustomPlatformForm from '../../../CustomFields/CustomPlatformForm';
 
 const CustomButton = ({
     onClick,
@@ -85,34 +86,35 @@ const actionButtons = [
     },
 ];
 
-const platformOptions = [
-    { label: 'Zoom', value: '1' },
-    { label: 'Team', value: '2' },
-    { label: 'BlueButton', value: '3' },
-];
+const timezoneId = Number(localStorage.getItem('timezone_id'));
 
 const EditSession = ({ componentName }) => {
     const dispatch = useDispatch();
     const { timezones, platforms } = useSelector(state => state.util);
+
     const { editSession, students, batches, sessionData } = useSelector(
         state => state.commonCalender
     );
 
-    console.log(sessionData);
+    console.log("sessionData :",sessionData);
+    const sessionDuration = sessionData.end_time && sessionData.start_time
+        ? (new Date(sessionData.end_time) - new Date(sessionData.start_time))
+        : null;
 
     const [formData, setFormData] = useState({
         sessionName: sessionData.meeting_name || '',
-        duration: sessionData.duration || null,
+        duration: sessionDuration ? `${sessionDuration / 1000 / 60} minutes` : null,
         message: sessionData.message || '',
         students: sessionData.students || [],
         batches: sessionData.batchId || [],
-        platforms: sessionData.platforms || null,
+        platform_id : sessionData.platform_id || null,
         fromDate: sessionData.date || null,
         toDate: sessionData.to_date || null,
         fromTime: sessionData.start_time || null,
         toTime: sessionData.end_time || null,
-        timezone: 'Asia/Kolkata',
+        timezone_id : timezoneId || null,
     });
+    const [error, setError] = useState({});
 
     let sliceName, updateSessionApi, getSessionApi;
 
@@ -140,8 +142,6 @@ const EditSession = ({ componentName }) => {
         dispatch(getTimezone());
         dispatch(getPlatforms());
     }, [dispatch]);
-
-    const [error, setError] = useState({});
 
     const durationOptions = [
         { label: '15 minutes', value: '00:15:00' },
@@ -205,13 +205,12 @@ const EditSession = ({ componentName }) => {
             start_time: formData.fromTime,
             end_time: endTime,
             message: formData.message,
-            platforms: formData.platforms,
-            meeting_url: 'http://example.com/meeting',
-            timezone: formData.timezone,
+            platform_id : formData.platform_id,
+            timezone_id : formData.timezone_id,
             event_status: 'scheduled',
             studentId: studentId,
             batchId: batchId,
-            weeks: weeksArray,
+            //weeks: weeksArray,
         };
 
         console.log(data);
@@ -288,17 +287,17 @@ const EditSession = ({ componentName }) => {
                                     display="flex"
                                     justifyContent="center"
                                 >
-                                    <CustomFormControl
+                                    <CustomPlatformForm
                                         label="Platform"
-                                        name="platform"
+                                        name="platform_id"
                                         value={formData.platforms}
                                         onChange={e =>
                                             handleChange(
-                                                'platforms',
+                                                'platform_id',
                                                 e.target.value
                                             )
                                         }
-                                        options={platformOptions}
+                                        options={platforms}
                                         errors={!!error.platforms}
                                         helperText={error.platforms}
                                         sx={{ width: '100%' }}
@@ -381,9 +380,9 @@ const EditSession = ({ componentName }) => {
                                 <CustomTimeZoneForm
                                     label="Timezone"
                                     name="timezone"
-                                    value={formData.timezone}
-                                    onChange={timezone =>
-                                        handleChange('timezone', timezone)
+                                    value={formData.timezone_id}
+                                    onChange={e =>
+                                        handleChange('timezone_id', e.target.value)
                                     }
                                     options={timezones}
                                     errors={!!error.timezone}
@@ -459,9 +458,13 @@ const EditSession = ({ componentName }) => {
     const actions = (
         <CustomButton
             onClick={handleSubmit}
-            backgroundColor="#F56D3B"
-            borderColor="#F56D3B"
-            color="#FFFFFF"
+            style={{
+                backgroundColor : "#F56D3B",
+                borderColor : "#F56D3B",
+                color : "#FFFFFF",
+                textTransform: 'none',
+                fontFamily: 'Bold',
+            }}
         >
             Submit
         </CustomButton>

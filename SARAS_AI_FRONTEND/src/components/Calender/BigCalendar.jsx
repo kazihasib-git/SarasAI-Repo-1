@@ -14,6 +14,7 @@ import { openSessionEvent } from '../../redux/features/adminModule/ta/taAvialabi
 import { openCoachSessionEvent } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import { openSessionPopup } from '../../redux/features/commonCalender/commonCalender';
 import CustomDateField from '../CustomFields/CustomDateField';
+import { BorderLeft } from '@mui/icons-material';
 moment.locale('en-GB');
 const localizer = momentLocalizer(moment);
 const allViews = Object.keys(Views).map(k => Views[k]);
@@ -138,7 +139,7 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
         console.log('EVENT : ', event);
         return {
             style: {
-                backgroundColor: '#28a745', // Match the green color in your design
+                backgroundColor: '#00C95C', // Match the green color in your design
                 color: 'white',
                 borderRadius: '5px',
                 border: '1px solid #caffd8',
@@ -170,7 +171,7 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
                     style: {
                         backgroundColor:
                             slot.leave && slot.leave.length > 0
-                                ? '#FF6347' // Light red color for leave slots
+                                ? '#FF00001F' // Light red color for leave slots
                                 : '#B0FC38', // Green color for regular slots
                         opacity: 0.5,
                         border: 'none',

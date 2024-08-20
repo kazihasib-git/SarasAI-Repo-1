@@ -159,27 +159,45 @@ const CoachMenuCalendar = () => {
                             processedEvents.push(
                                 {
                                     id: event.id,
-                                    title: event.meeting_name,
                                     start: startDateTime,
                                     end: new Date(
                                         `${localTime.start_date}T23:59:59`
                                     ),
+                                    meetingName: event.meeting_name,
+                                    meetingId : event.meeting_id,
+                                    platformId : event.platform_id,
+                                    platform_tools : event.platform_tool_details,
+                                    platform_meeting : event.platform_meeting_details,
+                                    students : event.students,
+                                    batches : event.batch
                                 },
                                 {
                                     id: event.id,
-                                    title: event.meeting_name,
                                     start: new Date(
                                         `${localTime.end_date}T00:00:00`
                                     ),
                                     end: endDateTime,
+                                    meetingName: event.meeting_name,
+                                    meetingId : event.meeting_id,
+                                    platformId : event.platform_id,
+                                    platform_tools : event.platform_tool_details,
+                                    platform_meeting : event.platform_meeting_details,
+                                    students : event.students,
+                                    batches : event.batch
                                 }
                             );
                         } else {
                             processedEvents.push({
                                 id: event.id,
-                                title: event.meeting_name,
                                 start: startDateTime,
                                 end: endDateTime,
+                                meetingName: event.meeting_name,
+                                meetingId : event.meeting_id,
+                                platformId : event.platform_id,
+                                platform_tools : event.platform_tool_details,
+                                platform_meeting : event.platform_meeting_details,
+                                students : event.students,
+                                batches : event.batch
                             });
                         }
                     })
