@@ -238,6 +238,7 @@ const ScheduledCall = ({ role }) => {
     };
 
     const handleClickJoinSession = call => {
+        //TODO : Add session Join url here 
         console.log(call);
         const transformedCall = {
             title: call.meeting_name,
@@ -456,7 +457,9 @@ const ScheduledCall = ({ role }) => {
                                             Participants
                                         </a>
                                     ) : (
-                                        'No bookings yet'
+                                        <>
+                                            {/* 'No bookings yet' */}
+                                        </>
                                     )}
                                 </Typography>
                                 <Typography gutterBottom>

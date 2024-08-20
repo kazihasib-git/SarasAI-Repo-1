@@ -83,14 +83,15 @@ const SessionLink = ({ componentName }) => {
 
     const handleEditStudents = () => {};
 
-    const copyToClipboard = () => {
+    const copyToClipboard =  async () => {
         if(sessionEventData.platform_meeting.host_meeting_url){
-            navigator.clipboard
-                .writeText(sessionEventData.platform_meeting.host_meeting_url)
-                toast.success('Copy to clipboard')
+            try{
+                await navigator.clipboard.writeText(sessionEventData.platform_meeting.host_meeting_url);
+            }catch(error){
+                console.error('Failed to copy:', error)
+            }
         }else{
-            console.error('No meeting link .')
-            toast.error('No Meeting Link!')
+            console.error('No meeting link .');
         }
     };
 
