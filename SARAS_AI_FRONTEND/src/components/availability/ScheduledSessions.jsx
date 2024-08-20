@@ -23,27 +23,25 @@ import {
     reasonForCoachLeave,
 } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import { useParams } from 'react-router-dom';
-import {
-    closeReasonForLeavePopup,
-    closeScheduledSessionForLeave,
-    openCancelSessionForLeave,
-    openReasonForLeavePopup,
-    openRescheduleSessionForLeave,
-    openScheduledSessionForLeave,
-} from '../../redux/features/coachModule/coachmenuprofileSilce';
 import CustomButton from '../CustomFields/CustomButton';
 import { timezoneIdToName } from '../../utils/timezoneIdToName';
 import { convertFromUTC } from '../../utils/dateAndtimeConversion';
 import { getTimezone } from '../../redux/features/utils/utilSlice';
+
 const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
+
 const ScheduledSessions = ({ componentName , timezoneID}) => {
+    
     const { timezones, platforms } = useSelector(state => state.util);
     const [sessionData , setSessionData] = useState([]) ; 
     const dispatch = useDispatch();
+    
     useEffect(() => {
         dispatch(getTimezone());
     }, [dispatch]);
+    
     const { id } = useParams();
+    
     let scheduleSessionOpenKey,
         scheduledSessionDataKey,
         schedulingStateKey,
@@ -113,8 +111,6 @@ const ScheduledSessions = ({ componentName , timezoneID}) => {
         'Students',
         'Actions',
     ];
-
-
     
     const formatTime = time => {
         const [hours, minutes] = time.split(':');

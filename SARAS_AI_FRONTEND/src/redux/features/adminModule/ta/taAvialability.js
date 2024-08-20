@@ -257,6 +257,7 @@ export const taAvailabilitySlice = createSlice({
         },
         closeReasonForLeave(state) {
             state.reasonForLeaveOpen = false;
+            state.markLeaveData = [];
         },
         openRescheduleSession(state, action) {
             console.log('Open Action sessionEventData : ', action.payload);

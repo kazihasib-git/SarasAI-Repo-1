@@ -51,7 +51,7 @@ export const rescheduleCoachSession = createAsyncThunk(
     'coachAvailability/rescheduleCoachSession',
     async ({ id, data }) => {
         const response = await axiosInstance.put(
-            `${baseUrl}/admin/taschedules/${id}`,
+            `${baseUrl}/admin/coachschedules/reschedule/${id}`,
             data
         );
         return response.data;
