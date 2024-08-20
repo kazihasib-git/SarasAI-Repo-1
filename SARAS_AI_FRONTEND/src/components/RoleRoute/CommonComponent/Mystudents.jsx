@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { useGetStudentsQuery } from '../../../redux/services/students/studentsApi'; // Import your API hook
+// import { useGetStudentsQuery } from '../../../redux/services/students/studentsApi'; // Import your API hook
 import { Box } from '@mui/material';
 import Pagination from '@mui/material/Pagination';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../Header/Header';
 import Sidebar from '../../Sidebar/Sidebar';
-import { studentDummyDatadata } from '../../../fakeData/studentData';
+import {useDispatch, useSelector} from 'react-redux';
 import DynamicTable from '../../CommonComponent/DynamicTable';
+import { getMyStudents } from '../../../redux/features/taModule/tamenuSlice';
 
 const Mystudents = ({ role }) => {
+    const dispatch = useDispatch();
     const [input, setInput] = useState('');
     const [students, setStudents] = useState([]);
 
@@ -16,41 +18,68 @@ const Mystudents = ({ role }) => {
         setInput(value);
     };
 
-    const useDummyData = false;
-
-    const { data: apiData, error, isLoading } = useGetStudentsQuery();
+    const { myStudentData }  = useSelector(state => state.taMenu);
 
     useEffect(() => {
-        const dataToUse = useDummyData ? studentDummyDatadata : apiData;
-        if (apiData) {
-            const transformedData = apiData.map(item => ({
-                id: item.student_id,
-                Name: item.student_name,
-                'Activities Sceduled': '',
-                'Activities Completed': '',
-                'Due Dates Missed': '',
-                'Acedemic Term': item.academic_term,
-                Batch: item.primary_phone,
-            }));
-            setStudents(transformedData);
+        dispatch(getMyStudents());
+    }, []);
+
+    useEffect(() => {
+        if(role=='TA'){
+            if (myStudentData) {
+                console.log('myStudentData', myStudentData);
+                const transformedData = Object.values(myStudentData).map(item => ({
+                    id: item.Student_Id,
+                    Name: item.Student_Name,
+                    Program: item.Program,
+                    Batch: item.Batch,
+                    'Live Sessions Scheduled': item.Live_Sessions_Scheduled,
+                    'Live Sessions Attended': item.Live_Sessions_Attended, 
+                }));
+                setStudents(transformedData);
+            }
+        }else{
+            if (myStudentData) {
+                console.log('myStudentData', myStudentData);
+                const transformedData = Object.values(myStudentData).map(item => ({
+                    id: item.Student_Id,
+                    Name: item.Student_Name,
+                    Program: item.Program,
+                    Batch: item.Batch,
+                    'Activities Scheduled': '',
+                    'Activities Completed': '',
+                    'Due Dates Missed': '',  
+                }));
+                setStudents(transformedData);
+            }
         }
-    }, [apiData, useDummyData]);
+        
+    }, [myStudentData]);
 
-    if (isLoading) {
-        return <div>Loading....</div>;
+    let headers = [];
+
+    if(role === 'TA') {
+        headers = [
+            'S.No',
+            'Student Name',
+            'Program',
+            'Batch',
+            'Live Sessions Scheduled',
+            'Live Sessions Attended',
+            'Status',
+        ];
+    }else{
+        headers = [
+            'S.No',
+            'Student Name',
+            'Program',
+            'Batch',
+            'Activities Scheduled',
+            'Activities Completed',
+            'Due Dates Missed',
+            'Status',
+        ];
     }
-
-    // const headers = ['S.No', 'Student Name', 'Acadamic Term', 'Batch', 'Live Sesions Scheduled', 'Live Sessions Attended', 'Status'];
-    const headers = [
-        'S.No',
-        'Student Name',
-        'Acadamic Term',
-        'Batch',
-        'Activities Scheduled',
-        'Activities Completed',
-        'Due Dates Missed',
-        'Status',
-    ];
 
     const actionButtons = [
         {
@@ -77,7 +106,7 @@ const Mystudents = ({ role }) => {
                 marginTop={3}
                 alignItems={'center'}
             >
-                <p style={{ fontSize: '44px', justifyContent: 'center' }}>
+                <p style={{fontFamily:'ExtraLight', fontSize:'40px', justifyContent: 'center' }}>
                     My Students
                 </p>
                 <div className="inputBtnContainer">

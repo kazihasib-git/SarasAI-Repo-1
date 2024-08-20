@@ -27,6 +27,18 @@ export const updateTaMenuProfile = createAsyncThunk(
     }
 );
 
+// get ta's my students api
+
+export const getMyStudents = createAsyncThunk(
+    'taMenu/getMyStudents',
+    async () => {
+        const response = await axiosInstance.get(`${baseUrl}/ta/my-student/get-all-student`);
+        console.log(response.data, 'response.data');
+        return response.data;
+    }
+);
+
+
 // Get Ta Slots
 export const getTaMenuSlots = createAsyncThunk('taMenu/getSlots', async () => {
     const response = await axiosInstance.get(`${baseUrl}/ta/calendar/slots`);
@@ -240,6 +252,7 @@ export const assignSessionNotes = createAsyncThunk(
 
 const initialState = {
     taProfileData: [], // TA Profile Data
+    myStudentData: [], // TA My Students
     taSlots: [], // TA Slots
     taSlotsByDate: [], // TA Slots by Date
     taSessions: [], // TA Sessions
@@ -335,6 +348,20 @@ export const taMenuSlice = createSlice({
         builder.addCase(updateTaMenuProfile.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+        });
+
+        // get ta's my students
+        builder.addCase(getMyStudents.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(getMyStudents.fulfilled, (state, action) => {
+            state.loading = false;
+            state.myStudentData = action.payload.data;
+        });
+        builder.addCase(getMyStudents.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+            state.myStudentData = [];
         });
 
         // Get Ta Slots

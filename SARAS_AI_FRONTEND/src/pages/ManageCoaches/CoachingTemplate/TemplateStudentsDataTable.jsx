@@ -1,28 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { Button, IconButton, Switch, Pagination, Box } from '@mui/material';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import { styled } from '@mui/material/styles';
-import './CommonComponent.css';
-import Header from '../../components/Header/Header';
-import Sidebar from '../../components/Sidebar/Sidebar';
-import { AssignedStudentData } from '../../fakeData/AssignedStudentData';
-import bin from '../../assets/bin.png';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import bin from '../../../assets/bin.png';
 import {
-    getAssignStudents,
-    toggleAssignStudentStatus,
-    deleteAssignedStudent,
-} from '../../redux/features/adminModule/ta/taSlice';
-import { useDispatch, useSelector } from 'react-redux';
+    deleteCoachAssignedBatch,
+    deleteCoachAssignedStudent,
+    getCoachAssignBatches,
+    getCoachAssignStudents,
+    toggleCoachAssignBatchStatus,
+    toggleCoachAssignStudentStatus,
+} from '../../../redux/features/adminModule/coach/coachSlice';
+import { openAssignBatchesToTemplate, openAssignStudentsToTemplate } from '../../../redux/features/adminModule/coach/coachTemplateSlice';
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
     borderRadius: '50px',
     border: '1px solid #F56D3B',
     color: active ? '#fff' : '#F56D3B',
     backgroundColor: active ? '#F56D3B' : '#FFF',
-    padding: '8px 16px', // Add padding for horizontal and vertical spacing
+    padding: '8px 16px',
     margin: '0 8px',
     textTransform: 'none',
     '&:hover': {
@@ -78,15 +76,16 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
     },
 }));
 
-const DynamicTable = ({
+const TemplateStudentsDataTable = ({
     headers,
     initialData,
     title,
     actionButtons,
     ta_id,
     dispatch,
+    componentName,
+    template_id
 }) => {
-    // console.log("INITAL DATA : ", initialData);
     const [data, setData] = useState(
         initialData.map(item => ({
             ...item,
@@ -116,50 +115,97 @@ const DynamicTable = ({
         setCurrentPage(pageNumber);
     };
 
-    const handleToggle = async id => {
-        console.log('id : ', id);
+    const handleToggle = id => {
+        // Log the initial state of the item being toggled
+        console.log('Toggling ID:', id);
+        console.log(
+            'Before Toggle:',
+            data.find(item => item.id === id)
+        );
+
         const updatedData = data.map(item =>
             item.id === id
                 ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
                 : item
         );
+
+        // Log the updated state of the item
+        console.log(
+            'After Toggle:',
+            updatedData.find(item => item.id === id)
+        );
+
         setData(updatedData);
 
         const toggledItem = updatedData.find(item => item.id === id);
         const requestData = { is_active: toggledItem.is_active };
-        dispatch(toggleAssignStudentStatus({ id, data: requestData })).then(
-            () => {
-                dispatch(getAssignStudents(ta_id));
-            }
-        );
+
+        switch (componentName) {
+            case 'ASSIGNCOACHSTUDENT':
+                dispatch(
+                    toggleCoachAssignStudentStatus({ id, data: requestData })
+                ).then(() => {
+                    dispatch(getCoachAssignStudents(ta_id));
+                });
+
+                break;
+            case 'ASSIGNCOACHBATCH':
+                dispatch(
+                    toggleCoachAssignBatchStatus({ id, data: requestData })
+                ).then(() => {
+                    dispatch(getCoachAssignBatches(ta_id));
+                });
+
+                break;
+            default:
+                console.warn(
+                    `No API call defined for component: ${componentName}`
+                );
+                break;
+        }
     };
 
-    const handleDelete = (id, ta_id) => {
-        // Implement delete functionality here
-        console.log('Deleting item with id:', id);
-        dispatch(deleteAssignedStudent({ id })).then(() => {
-            dispatch(getAssignStudents(ta_id));
-        });
+    const handleDelete = id => {
+        switch (componentName) {
+            case 'ASSIGNCOACHSTUDENT':
+                dispatch(deleteCoachAssignedStudent({ id })).then(() => {
+                    dispatch(getCoachAssignStudents(ta_id));
+                });
+                break;
+            case 'ASSIGNCOACHBATCH':
+                dispatch(deleteCoachAssignedBatch({ id })).then(() => {
+                    dispatch(getCoachAssignBatches(ta_id));
+                });
+                break;
+            default:
+                console.warn(
+                    `No delete action defined for component: ${componentName}`
+                );
+                break;
+        }
     };
 
-    const handleNavigate = path => {
-        navigate(path);
-    };
+
+    const handleAssignStudentClick = () =>{
+        dispatch(openAssignStudentsToTemplate(template_id));
+    }
+
+    const handleAssignBatchClick = () =>{
+        dispatch(openAssignBatchesToTemplate(template_id));
+    }
 
     return (
         <div className="table-container">
             <Box display={'flex'} justifyContent={'space-between'}>
                 <Box>
-                    {/*
-                    <ArrowBackIosIcon
-                        style={{ fontSize: '25px', marginBottom: '17px' }}
-                        onClick={() => navigate('/ta-mapping')}
-                    />
-                    */}
+                    {/* <ArrowBackIosIcon
+                        style={{ fontSize: "25px", marginBottom: "17px" }}
+                        onClick={() => navigate("/coach-template")}
+                    /> */}
+
                     <p
                         style={{
-                            fontSize: '40px',
-                            // marginLeft: "16px",
+                            fontSize: '44px',
                             fontFamily: 'ExtraLight',
                         }}
                     >
@@ -168,22 +214,16 @@ const DynamicTable = ({
                 </Box>
                 <div className="inputBtnContainer">
                     <CustomButton
-                        onClick={() =>
-                            handleNavigate(`/active-students/${ta_id}`)
-                        }
-                        active={
-                            location.pathname === `/active-students/${ta_id}`
-                        }
+                        onClick={()=>{
+                            handleAssignStudentClick();
+                        }}
                     >
                         Assign Student
                     </CustomButton>
                     <CustomButton
-                        onClick={() =>
-                            handleNavigate(`/active-batches/${ta_id}`)
-                        }
-                        active={
-                            location.pathname === `/active-batches/${ta_id}`
-                        }
+                        onClick={()=>{
+                            handleAssignBatchClick();
+                        }}
                     >
                         Assign Batches
                     </CustomButton>
@@ -195,7 +235,6 @@ const DynamicTable = ({
                         {headers.map((header, index) => (
                             <th key={index}>{header}</th>
                         ))}
-                        {/* <th>Actions</th> Add an extra header for actions */}
                     </tr>
                 </thead>
                 <tbody className="commonTableBody">
@@ -218,17 +257,14 @@ const DynamicTable = ({
                                         verticalAlign: 'middle',
                                     }}
                                 >
-                                    {actionButtons?.map((button, idx) => {
+                                    {actionButtons.map((button, idx) => {
                                         if (button.type === 'switch') {
                                             return (
                                                 <AntSwitch
                                                     key={idx}
                                                     checked={item.is_active}
                                                     onChange={() =>
-                                                        handleToggle(
-                                                            item.id,
-                                                            ta_id
-                                                        )
+                                                        handleToggle(item.id)
                                                     }
                                                     inputProps={{
                                                         'aria-label':
@@ -256,10 +292,7 @@ const DynamicTable = ({
                                                     key={idx}
                                                     color="primary"
                                                     onClick={() =>
-                                                        handleDelete(
-                                                            item.id,
-                                                            ta_id
-                                                        )
+                                                        handleDelete(item.id)
                                                     }
                                                 >
                                                     <img
@@ -323,76 +356,4 @@ const DynamicTable = ({
     );
 };
 
-const headers = ['Sr. No.', 'Student Name', 'Program', 'Batch', 'Actions'];
-
-const actionButtons = [
-    {
-        type: 'switch',
-    },
-    {
-        type: 'delete',
-        onClick: id => console.log(`Edit clicked for id ${id}`),
-    },
-];
-
-const AssignedStudent = () => {
-    const { id } = useParams();
-    const dispatch = useDispatch();
-    const { assignedStudents, loading } = useSelector(state => state.taModule);
-    const [taAssignStudentData, setTaAssignStudentData] = useState([]);
-
-    useEffect(() => {
-        if (id) {
-            dispatch(getAssignStudents(id));
-        }
-    }, [dispatch, id]);
-
-    useEffect(() => {
-        if (assignedStudents && assignedStudents.length > 0) {
-            const transformData = assignedStudents.map(item => {
-                const studentName = item.student
-                    ? item.student.name
-                    : 'Unknown Student';
-                const academicTerm = item.student
-                    ? item.student.packages.map(pack => pack.name).join(', ')
-                    : 'N/A';
-                const batchName =
-                    item.student.batches && item.student.batches.length > 0
-                        ? item.student.batches
-                              .map(batch => batch.batch_name)
-                              .join(', ')
-                        : 'N/A';
-                const isActive = item.is_active === 1;
-
-                return {
-                    id: item.id,
-                    student_name: studentName,
-                    Acedimic_term: academicTerm,
-                    Batch: batchName,
-                    is_active: isActive,
-                };
-            });
-
-            setTaAssignStudentData(transformData);
-        }
-    }, [assignedStudents]);
-
-    return (
-        <>
-            <Box m={'10px'}>
-                <Header />
-                <Sidebar />
-                <DynamicTable
-                    headers={headers}
-                    initialData={taAssignStudentData}
-                    title="Assigned Student"
-                    actionButtons={actionButtons}
-                    ta_id={id}
-                    dispatch={dispatch}
-                />
-            </Box>
-        </>
-    );
-};
-
-export default AssignedStudent;
+export default TemplateStudentsDataTable;

@@ -25,7 +25,7 @@ export const createCoachTemplate = createAsyncThunk(
 
 export const getAllCoachTemplateModules = createAsyncThunk(
     'coachTemplate/getAllCoachTemplateModules',
-    async () => {
+    async templateId => {
         const response = await axiosInstance.get(
             `${baseUrl}/admin/coaching-templates/modules/${templateId}`
         );
@@ -124,6 +124,60 @@ export const updateEditActivity = createAsyncThunk(
     }
 );
 
+// add prerequisites to the activity
+
+export const addPrerequisites = createAsyncThunk(
+    'coachTemplate/addPrerequisites',
+    async data => {
+        const response = await axiosInstance.post(
+            `${baseUrl}/admin/coaching-templates/activity-prerequisite`,
+            data
+        );
+        return response.data;
+    }
+);
+
+
+// assign students to template
+
+export const assignStudentsToTemplate = createAsyncThunk(
+    'coachTemplate/addPrerequisites',
+    async data => {
+        const response = await axiosInstance.post(
+            `${baseUrl}/admin/coaching-templates/template-assign`,
+            data
+        );
+        return response.data;
+    }
+);
+
+export const getStudentBatchMapping = createAsyncThunk(
+    'coachTemplate/getStudentBatchMapping',
+    async () => {
+        const response = await axiosInstance.get(
+            `${baseUrl}/admin/student-batch-mapping/getAllStudentWithBatches`
+        );
+        console.log('Response : ', response);
+        return response.data;
+    }
+);
+
+export const getBatchMapping = createAsyncThunk(
+    'coachTemplate/getBatchMapping',
+    async () => {
+        const response = await axiosInstance.get(`${baseUrl}/admin/batches`);
+        return response.data;
+    }
+);
+
+export const getStudentsWithBatch = createAsyncThunk(
+    'coachTemplate/getStudentsWithBatch',
+    async (id) => {
+        const response = await axiosInstance.get(`${baseUrl}/admin/student-batch-mapping/students/${id}`);
+        return response.data;
+    }
+)
+ 
 const initialState = {
     coachesTemplateList: [],
     coachTemplates: [],
@@ -150,6 +204,15 @@ const initialState = {
     createCoachModule: null,
     modulesData: [],
     newlyCreateTemplate: null,
+
+
+    assignStudentsToTemplate: false,
+    templateIdToAssignStudents: null,
+    studentBatchMapping: [],
+    batchMapping: [],
+
+    assignBatchesToTemplate: false,
+    templateIdToAssignBatches: null,
 };
 
 export const coachTemplateSlice = createSlice({
@@ -217,6 +280,27 @@ export const coachTemplateSlice = createSlice({
         closeEditActivityPopup(state) {
             state.openEditActivityPopUp = false;
         },
+
+
+        // open assignstudents to coach template
+        openAssignStudentsToTemplate(state, action){
+            state.assignStudentsToTemplate = true,
+            state.templateIdToAssignStudents = action.payload
+        },
+        closeAssignStudentsToTemplate(state){
+            state.assignStudentsToTemplate = false,
+            state.templateIdToAssignStudents = null
+        },
+
+        // open assignbatches to coach template
+        openAssignBatchesToTemplate(state, action){
+            state.assignBatchesToTemplate = true,
+            state.templateIdToAssignBatches= action.payload
+        },
+        closeAssignBatchesToTemplate(state){
+            state.assignBatchesToTemplate = false,
+            state.templateIdToAssignBatches = null
+        }
     },
     extraReducers: builder => {
         // getAllCoachTemplates
@@ -358,6 +442,47 @@ export const coachTemplateSlice = createSlice({
                 state.loading = false;
                 state.error = action.error.message;
             });
+        
+        // addPrerequisites
+        builder
+            .addCase(addPrerequisites.pending, state => {
+                state.loading = true;
+            })
+            .addCase(addPrerequisites.fulfilled, (state, action) => {
+                state.loading = false;
+                // state.coachTemplates.push(action.payload.data);
+            })
+            .addCase(addPrerequisites.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+            });
+
+        // Get Student-Batch Mapping
+        builder.addCase(getStudentBatchMapping.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(getStudentBatchMapping.fulfilled, (state, action) => {
+            state.loading = false;
+            // console.log("MAPPING PAYLOAD :", action.payload )
+            state.studentBatchMapping = action.payload;
+        });
+        builder.addCase(getStudentBatchMapping.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload || action.error.message;
+        });
+
+        // get batch mapping
+        builder.addCase(getBatchMapping.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(getBatchMapping.fulfilled, (state, action) => {
+            state.loading = false;
+            state.batchMapping = action.payload.batches;
+        });
+        builder.addCase(getBatchMapping.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload || action.error.message;
+        });
     },
 });
 
@@ -379,6 +504,10 @@ export const {
     closeEditModulePopup,
     openEditActivityPopup,
     closeEditActivityPopup,
+    openAssignStudentsToTemplate,
+    closeAssignStudentsToTemplate,
+    openAssignBatchesToTemplate,
+    closeAssignBatchesToTemplate,
 } = coachTemplateSlice.actions;
 
 export default coachTemplateSlice.reducer;

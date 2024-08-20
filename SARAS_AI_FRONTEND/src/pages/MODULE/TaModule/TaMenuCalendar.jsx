@@ -67,6 +67,9 @@ const TAMenuCalendar = () => {
     const dispatch = useDispatch();
     const [eventsList, setEventsList] = useState([]);
     const [slotViewData, setSlotViewData] = useState([]);
+    const [platformName, setPlatformName] = useState(null);
+    const [platformUrl, setplatformUrl] = useState(null);
+    const [selectedSession, setSelectedSession] = useState(null);
 
     const {
         createNewSlotPopup,
@@ -76,9 +79,11 @@ const TAMenuCalendar = () => {
         markLeave,
         createdSlots,
         openSession,
+        sessionEventData,
     } = useSelector(state => state.commonCalender);
 
     const { taSlots, taSessions } = useSelector(state => state.taMenu);
+    console.log('taSessions', taSessions);
 
     useEffect(() => {
         dispatch(getTaMenuSlots());
@@ -130,27 +135,45 @@ const TAMenuCalendar = () => {
                             processedEvents.push(
                                 {
                                     id: event.id,
-                                    title: event.meeting_name,
                                     start: startDateTime,
                                     end: new Date(
                                         `${localTime.start_date}T23:59:59`
                                     ),
+                                    meetingName: event.meeting_name,
+                                    meetingId : event.meeting_id,
+                                    platformId : event.platform_id,
+                                    platform_tools : event.platform_tool_details,
+                                    platform_meeting : event.platform_meeting_details,
+                                    students : event.students,
+                                    batches : event.batch
                                 },
                                 {
                                     id: event.id,
-                                    title: event.meeting_name,
                                     start: new Date(
                                         `${localTime.end_date}T00:00:00`
                                     ),
                                     end: endDateTime,
+                                    meetingName: event.meeting_name,
+                                    meetingId : event.meeting_id,
+                                    platformId : event.platform_id,
+                                    platform_tools : event.platform_tool_details,
+                                    platform_meeting : event.platform_meeting_details,
+                                    students : event.students,
+                                    batches : event.batch
                                 }
                             );
                         } else {
                             processedEvents.push({
                                 id: event.id,
-                                title: event.meeting_name,
                                 start: startDateTime,
                                 end: endDateTime,
+                                meetingName: event.meeting_name,
+                                meetingId : event.meeting_id,
+                                platformId : event.platform_id,
+                                platform_tools : event.platform_tool_details,
+                                platform_meeting : event.platform_meeting_details,
+                                students : event.students,
+                                batches : event.batch
                             });
                         }
                     })
@@ -233,6 +256,33 @@ const TAMenuCalendar = () => {
     const handleCreateNewSlot = () => {
         dispatch(openCreateNewSlot());
     };
+    const handleSessionSelect = taSessions => {
+        setSelectedSession(taSessions.id);
+    };
+
+    const targetSessionId = sessionEventData.id;
+    console.log(targetSessionId);
+
+    useEffect(() => {
+        const targetSession = taSessions.find(
+            session => session.id === targetSessionId
+        );
+
+        if (targetSession) {
+            const platformName = targetSession.platform_tool_details?.name;
+            const platformUrl =
+                targetSession.platform_meeting_details?.host_meeting_url;
+
+            setPlatformName(platformName);
+            setplatformUrl(platformUrl);
+        } else {
+            setPlatformName('');
+            setplatformUrl('');
+        }
+
+        console.log(`Platform Name: ${platformName}`);
+        console.log(`Platform Meeting URL: ${platformUrl}`);
+    }, [taSessions, targetSessionId]);
 
     return (
         <>
@@ -294,6 +344,7 @@ const TAMenuCalendar = () => {
                     eventsList={eventsList}
                     slotData={slotViewData}
                     componentName={'TAMENU'}
+                    onSelectEvent={handleSessionSelect}
                 />
                 {createNewSlotPopup && <CreateSlot componentName={'TAMENU'} />}
                 {scheduleNewSessionPopup && (
@@ -305,7 +356,14 @@ const TAMenuCalendar = () => {
                 {selectBatchPopup && <SelectBatches componentName={'TAMENU'} />}
                 {markLeave && <MarkLeaveDate componentName={'TAMENU'} />}
                 {createdSlots && <CreatedSlots componentName={'TAMENU'} />}
-                {openSession && <SessionLink componentName={'TAMENU'} />}
+                {openSession && (
+                    <SessionLink
+                        componentName={'TAMENU'}
+                        taSessions={taSessions}
+                        platformName={platformName}
+                        platformUrl={platformUrl}
+                    />
+                )}
             </Box>
         </>
     );

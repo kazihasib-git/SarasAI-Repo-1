@@ -140,20 +140,20 @@ const ScheduledCall = ({ role }) => {
         return `${hours12}:${formattedMinutes} ${suffix}`;
     }
 
-    const getCallStatus = (startTime, endTime) => {
-        const nowUtc = new Date();
-        const offset = 5.5 * 60 * 60 * 1000;
-        const nowIst = new Date(nowUtc.getTime() + offset);
-        const currentTime = nowIst.toISOString().split('T')[1].split('.')[0];
+    // const getCallStatus = (startTime, endTime) => {
+    //     const nowUtc = new Date();
+    //     const offset = 5.5 * 60 * 60 * 1000;
+    //     const nowIst = new Date(nowUtc.getTime() + offset);
+    //     const currentTime = nowIst.toISOString().split('T')[1].split('.')[0];
 
-        if (currentTime < startTime) {
-            return 'scheduled';
-        } else if (currentTime >= startTime && currentTime <= endTime) {
-            return 'inprogress';
-        } else {
-            return 'completed';
-        }
-    };
+    //     if (currentTime < startTime) {
+    //         return 'scheduled';
+    //     } else if (currentTime >= startTime && currentTime <= endTime) {
+    //         return 'inprogress';
+    //     } else {
+    //         return 'completed';
+    //     }
+    // };
 
     const processScheduledCalls = async requests => {
         const newRequests = requests.map(request => ({ ...request }));
@@ -189,8 +189,7 @@ const ScheduledCall = ({ role }) => {
 
         const processedCalls = transformedRequests.map(request => ({
             ...request,
-            time: `${convertTo12HourFormat(request.start_time)} - ${convertTo12HourFormat(request.end_time)}`,
-            callStatus: getCallStatus(request.start_time, request.end_time),
+            time: `${convertTo12HourFormat(request.start_time)} - ${convertTo12HourFormat(request.end_time)}`
         }));
         setScheduledCalls(processedCalls);
     };
@@ -239,6 +238,7 @@ const ScheduledCall = ({ role }) => {
     };
 
     const handleClickJoinSession = call => {
+        //TODO : Add session Join url here 
         console.log(call);
         const transformedCall = {
             title: call.meeting_name,
@@ -457,7 +457,9 @@ const ScheduledCall = ({ role }) => {
                                             Participants
                                         </a>
                                     ) : (
-                                        'No bookings yet'
+                                        <>
+                                            {/* 'No bookings yet' */}
+                                        </>
                                     )}
                                 </Typography>
                                 <Typography gutterBottom>
@@ -468,7 +470,7 @@ const ScheduledCall = ({ role }) => {
                                     justifyContent="flex-end"
                                     mt={2}
                                 >
-                                    {call.callStatus === 'inprogress' ? (
+                                    {call.event_status === "join meeting" ? (
                                         <CustomButton
                                             color="#FFFFFF"
                                             backgroundColor="#19B420"
@@ -480,7 +482,7 @@ const ScheduledCall = ({ role }) => {
                                         >
                                             Join Session
                                         </CustomButton>
-                                    ) : call.callStatus === 'scheduled' ? (
+                                    ) : call.event_status === 'call schedule' ? (
                                         <CustomButton
                                             color="#FFFFFF"
                                             backgroundColor="#F56D3B"

@@ -11,6 +11,10 @@ import CustomTextField from '../../../CustomFields/CustomTextField';
 import ReusableDialog from '../../../CustomFields/ReusableDialog';
 import PopUpTable from '../../../CommonComponent/PopUpTable';
 
+const name = String(localStorage.getItem('name') || 'Name');
+
+console.log("NAMEE :", name)
+
 const CustomButton = ({
     onClick,
     children,
@@ -246,13 +250,13 @@ const SelectStudents = ({ componentName }) => {
 
     return (
         <ReusableDialog
-            open={selectStudentPopup}
-            handleClose={() => dispatch(closeSelectStudents())}
-            title={`Assign Students`}
-            content={content}
-            actions={actions}
+          open={selectStudentPopup}
+          handleClose={() => dispatch(closeSelectStudents())}
+          title={`Assign Students to '${name}'`}
+          content={content}
+          actions={actions}
         />
-    );
+    )      
 };
 
 export default SelectStudents;

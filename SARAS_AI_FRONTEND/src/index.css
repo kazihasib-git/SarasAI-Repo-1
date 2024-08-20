@@ -1,31 +1,37 @@
 @font-face {
     font-family: 'Regular';
     src: url('./assets/fonts/Nohemi-Regular.ttf') format('truetype');
+    font-weight: 400;
 }
 
 @font-face {
     font-family: 'Medium';
     src: url('./assets/fonts/Nohemi-Medium.ttf') format('truetype');
+    font-weight: 500;
 }
 
 @font-face {
     font-family: 'Light';
     src: url('./assets/fonts/Nohemi-Light.ttf') format('truetype');
+    font-weight: 300;
 }
 
 @font-face {
     font-family: 'ExtraLight';
     src: url('./assets/fonts/Nohemi-ExtraLight.ttf') format('truetype');
+    font-weight: 200;
 }
 
 @font-face {
     font-family: 'Bold';
     src: url('./assets/fonts/Nohemi-Bold.ttf') format('truetype');
+    font-weight: 700;
 }
 
 @font-face {
     font-family: 'SemiBold';
     src: url('./assets/fonts/Nohemi-SemiBold.ttf') format('truetype');
+    font-weight: 600;
 }
 
 html,

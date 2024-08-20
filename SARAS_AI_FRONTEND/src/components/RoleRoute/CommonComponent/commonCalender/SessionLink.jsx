@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { closeSessionPopup } from '../../../../redux/features/commonCalender/commonCalender';
 import {
@@ -14,6 +14,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import ReusableDialog from '../../../CustomFields/ReusableDialog';
 import editImg from '../../../../assets/editIcon.png';
 import editImgWhite from '../../../../assets/editIcon_White.png';
+import { toast } from 'react-toastify';
 
 const CustomButton = ({
     onClick,
@@ -21,7 +22,6 @@ const CustomButton = ({
     color = '#FFFFFF',
     backgroundColor = '#4E18A5',
     borderColor = '#FFFFFF',
-
     sx,
     ...props
 }) => {
@@ -52,19 +52,19 @@ const CustomButton = ({
     );
 };
 
-const SessionLink = ({ componentName }) => {
+const SessionLink = ({ componentName, platformName, platformUrl }) => {
     const dispatch = useDispatch();
-
     const { sessionEventData, openSession } = useSelector(
         state => state.commonCalender
     );
+    const [copySuccess, setCopySuccess] = useState(false);
 
     let sliceName, sessionDataState;
 
     switch (componentName) {
         case 'TAMENU':
             sliceName = 'taMenu';
-            sessionDataState = 'sessionEventData';
+            sessionDataState = 'taSessionEventData';
             break;
 
         case 'COACHMENU':
@@ -79,17 +79,28 @@ const SessionLink = ({ componentName }) => {
     }
 
     const handleEditBatches = () => {};
+    const handleChangeMode = () => {};
 
     const handleEditStudents = () => {};
 
-    const copyToClipboard = () => {
-        const link = sessionEventData?.meetingLink;
-        if (link) {
+    const handleLinkCopy = () => {
+        if (platformUrl) {
             navigator.clipboard
-                .writeText(link)
-                .then(() => alert('Meeting link copied!'))
-                .catch(err => console.error('Copy failed:', err));
+                .writeText(platformUrl)
+                .then(() => {
+                    setCopySuccess(true);
+                    setTimeout(() => setCopySuccess(false), 2000);
+                })
+                .catch(err => {
+                    console.error('Failed to copy link: ', err);
+                });
+        } else {
+            console.error('No meeting link.');
         }
+    };
+
+    const handleJoinMeeting = () => {
+        window.open(platformUrl, '_blank');
     };
 
     const content = (
@@ -98,22 +109,17 @@ const SessionLink = ({ componentName }) => {
                 {formatDateTime(sessionEventData)}
             </Typography>
             <CustomButton
-                onClick={() => {}}
+                onClick={handleJoinMeeting}
                 backgroundColor="#FFFFFF"
                 borderColor="#F56D38"
                 color="#F56D38"
-                sx={{
-                    mb: 2,
-                    mr: 2,
-                }}
-                style={{
-                    textTransform: 'none',
-                }}
+                sx={{ mb: 2, mr: 2 }}
+                style={{ textTransform: 'none' }}
             >
-                Join with Zoom
+                Join with {platformName}
             </CustomButton>
             <CustomButton
-                onClick={() => {}}
+                onClick={handleChangeMode}
                 variant="text"
                 backgroundColor="#FFFFFF"
                 borderColor="transparent"
@@ -122,8 +128,11 @@ const SessionLink = ({ componentName }) => {
             >
                 Change Mode
             </CustomButton>
-            <Typography variant="body2" sx={{ mb: 2 }}>
-                {sessionEventData.meetingLink}
+            <Typography
+                variant="body2"
+                sx={{ mb: 2, overflow: 'hidden', textOverflow: 'ellipsis' }}
+            >
+                {platformUrl}
                 <IconButton
                     size="small"
                     sx={{
@@ -137,10 +146,15 @@ const SessionLink = ({ componentName }) => {
                         color: 'white',
                         ml: 1,
                     }}
-                    onClick={copyToClipboard}
+                    onClick={handleLinkCopy}
                 >
                     <ContentCopyIcon />
                 </IconButton>
+                {copySuccess && (
+                    <Typography variant="body2" sx={{ mt: 1, color: 'black' }}>
+                        Copied!
+                    </Typography>
+                )}
             </Typography>
         </Box>
     );
@@ -194,7 +208,7 @@ const SessionLink = ({ componentName }) => {
         <ReusableDialog
             open={openSession}
             handleClose={() => dispatch(closeSessionPopup())}
-            title={`${sessionEventData.meetingName || 'No Title'}`}
+            title={`Session Name -${sessionEventData.title || 'No Title'}`}
             content={content}
             actions={actions}
         />
