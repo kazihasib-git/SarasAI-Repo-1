@@ -421,7 +421,7 @@ const EditSession = ({ componentName }) => {
                                             },
                                         }}
                                     >
-                                        Edit Students
+                                        Select Students
                                     </Button>
                                     <Button
                                         variant="outlined"
@@ -443,7 +443,7 @@ const EditSession = ({ componentName }) => {
                                             },
                                         }}
                                     >
-                                        Edit Batches
+                                        Select Batches
                                     </Button>
                                 </Box>
                             </Grid>
@@ -466,7 +466,7 @@ const EditSession = ({ componentName }) => {
                 fontFamily: 'Bold',
             }}
         >
-            Submit
+            Update
         </CustomButton>
     );
 
