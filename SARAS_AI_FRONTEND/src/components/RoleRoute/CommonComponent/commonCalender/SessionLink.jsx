@@ -208,7 +208,7 @@ const SessionLink = ({ componentName, platformName, platformUrl }) => {
         <ReusableDialog
             open={openSession}
             handleClose={() => dispatch(closeSessionPopup())}
-            title={`Session Name -${sessionEventData.title || 'No Title'}`}
+            title={`Session Name -${sessionEventData.meetingName || 'No Title'}`}
             content={content}
             actions={actions}
         />

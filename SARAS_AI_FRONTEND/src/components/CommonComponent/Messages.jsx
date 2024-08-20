@@ -28,6 +28,7 @@ import {
     Box,
     IconButton,
     Divider,
+    Checkbox,
 } from '@mui/material';
 
 const initialChatData = [
@@ -51,6 +52,11 @@ const Messages = ({ role }) => {
     const [selectedUser, setselectedUser] = useState(null);
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
+    const [checkboxes, setCheckboxes] = useState({
+        email: false,
+        whatsapp: false,
+        text: false,
+    });
     const fileInputRef = useRef(null);
     const [assignedUsersData, setassignedUsersData] = useState([]);
     const [chatUserMapping, setchatUserMappingData] = useState([]);
@@ -303,6 +309,23 @@ const Messages = ({ role }) => {
     }, [assignedTaStudents, assignedCoachStudents, taCoachAllChatData]);
 
     const usersToDisplay = searchQuery === '' ? chatUserMapping : filteredUsers;
+
+    useEffect(() => {
+        if (selectedUser) {
+            setCheckboxes({
+                email: false,
+                whatsapp: false,
+                text: false,
+            });
+        }
+    }, [currentChatId]);
+
+    const handleCheckboxChange = event => {
+        setCheckboxes({
+            ...checkboxes,
+            [event.target.name]: event.target.checked,
+        });
+    };
 
     return (
         <div className="container">
@@ -567,15 +590,42 @@ const Messages = ({ role }) => {
 
                             <Box className="checkbox-container">
                                 <label>
-                                    <input type="checkbox" />
+                                    <Checkbox
+                                        name="email"
+                                        checked={checkboxes.email}
+                                        onChange={handleCheckboxChange}
+                                        sx={{
+                                            '& .MuiSvgIcon-root': {
+                                                fontSize: 18,
+                                            },
+                                        }}
+                                    />
                                     Email
                                 </label>
                                 <label>
-                                    <input type="checkbox" />
+                                    <Checkbox
+                                        name="whatsapp"
+                                        checked={checkboxes.whatsapp}
+                                        onChange={handleCheckboxChange}
+                                        sx={{
+                                            '& .MuiSvgIcon-root': {
+                                                fontSize: 18,
+                                            },
+                                        }}
+                                    />
                                     WhatsApp
                                 </label>
                                 <label>
-                                    <input type="checkbox" />
+                                    <Checkbox
+                                        name="text"
+                                        checked={checkboxes.text}
+                                        onChange={handleCheckboxChange}
+                                        sx={{
+                                            '& .MuiSvgIcon-root': {
+                                                fontSize: 18,
+                                            },
+                                        }}
+                                    />
                                     Text
                                 </label>
                             </Box>

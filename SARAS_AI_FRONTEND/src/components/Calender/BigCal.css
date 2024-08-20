@@ -114,10 +114,10 @@
     border: none;
 }
 
-.rbc-header:nth-child(4) {
+/* .rbc-header:nth-child(4) {
     background-color: #4e18a5;
     color: white;
-}
+} */
 
 /* .rbc-toolbar > .rbc-btn-group {
     display: none; 
@@ -129,4 +129,16 @@
 
 .rbc-day-slot .rbc-time-slot {
     border: 0px;
+}
+
+/* Style for the current day column */
+.rbc-today {
+    background-color: #E3F2FD !important; /* Light blue for the full column */
+    color: #1976D2 !important; /* Blue text color for the full column */
+}
+
+/* Style for the header cell of the current day */
+.rbc-header.rbc-today {
+    background-color:#4e18a5 !important; /* Light blue for the header */
+    color: #feffff !important; /* Blue text color for the header */
 }
