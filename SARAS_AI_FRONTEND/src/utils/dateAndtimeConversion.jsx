@@ -12,7 +12,7 @@ async function convertFromUTC({
         const fromDateTimeUTC = moment.utc(`${start_date} ${start_time}`, 'YYYY-MM-DD HH:mm:ss');
         const toDateTimeUTC = moment.utc(`${end_date} ${end_time}`, 'YYYY-MM-DD HH:mm:ss');
   
-        console.log('..............................>>>>>>>>>>>>>>>>>>', fromDateTimeUTC, toDateTimeUTC);
+        //console.log('..............................>>>>>>>>>>>>>>>>>>', fromDateTimeUTC, toDateTimeUTC);
 
 
         // Convert from UTC to the specified timezone

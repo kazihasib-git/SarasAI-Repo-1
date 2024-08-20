@@ -31,6 +31,8 @@ import ScheduleSession from '../../components/availability/ScheduleSession';
 import { timezoneIdToName } from '../../utils/timezoneIdToName';
 import { getTimezone } from '../../redux/features/utils/utilSlice';
 import { getTodayCoachAvailability } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
+import EditStudentsFromSession from '../../components/availability/EditStudentsFromSession';
+import EditBatchesFromSession from '../../components/availability/EditBatchesFromSession';
 
 const CustomButton = ({
     onClick,
@@ -154,7 +156,7 @@ console.log("selected sending to schedule time zone id", storedTimezoneId) ;
                             start_date: event.date.split(' ')[0],
                             start_time: event.start_time,
                             end_time: event.end_time,
-                            end_date: event.date.split(' ')[0],
+                            end_date: event.end_date? event.end_date : event.date.split(' ')[0],
                             timezonename,
                         });
                         console.log(

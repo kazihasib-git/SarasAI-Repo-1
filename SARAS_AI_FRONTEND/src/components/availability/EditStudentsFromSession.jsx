@@ -204,7 +204,6 @@ const EditStudentsFromSession = ({ componentName }) => {
     };
 
     const handleSubmit = () => {
-        console.log('MeetingId', meetingId);
         const Id = meetingId;
         const data = {
             admin_user_id: Number(id),

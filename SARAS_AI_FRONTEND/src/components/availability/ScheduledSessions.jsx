@@ -23,27 +23,25 @@ import {
     reasonForCoachLeave,
 } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import { useParams } from 'react-router-dom';
-import {
-    closeReasonForLeavePopup,
-    closeScheduledSessionForLeave,
-    openCancelSessionForLeave,
-    openReasonForLeavePopup,
-    openRescheduleSessionForLeave,
-    openScheduledSessionForLeave,
-} from '../../redux/features/coachModule/coachmenuprofileSilce';
 import CustomButton from '../CustomFields/CustomButton';
 import { timezoneIdToName } from '../../utils/timezoneIdToName';
 import { convertFromUTC } from '../../utils/dateAndtimeConversion';
 import { getTimezone } from '../../redux/features/utils/utilSlice';
+
 const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
+
 const ScheduledSessions = ({ componentName , timezoneID}) => {
+    
     const { timezones, platforms } = useSelector(state => state.util);
     const [sessionData , setSessionData] = useState([]) ; 
     const dispatch = useDispatch();
+    
     useEffect(() => {
         dispatch(getTimezone());
     }, [dispatch]);
+    
     const { id } = useParams();
+    
     let scheduleSessionOpenKey,
         scheduledSessionDataKey,
         schedulingStateKey,
@@ -113,8 +111,6 @@ const ScheduledSessions = ({ componentName , timezoneID}) => {
         'Students',
         'Actions',
     ];
-
-
     
     const formatTime = time => {
         const [hours, minutes] = time.split(':');
@@ -127,7 +123,6 @@ const ScheduledSessions = ({ componentName , timezoneID}) => {
     
 
     const convertSessions = async () => {
-        // console.log('Scheduled sessions data:', scheduledSessionData);
     
         if (scheduledSessionData && scheduledSessionData.length > 0 && timezones && storedTimezoneId) {
             const timezonename = timezoneIdToName(storedTimezoneId, timezones);
@@ -135,15 +130,14 @@ const ScheduledSessions = ({ componentName , timezoneID}) => {
             try {
                 const processedSessions = await Promise.all(
                     scheduledSessionData.map(async (session, index) => {
-                        console.log("Data to be convert" , session)
                         const localTime = await convertFromUTC({
                             start_date: session.date.split(' ')[0],
                             start_time: session.start_time,
                             end_time: session.end_time,
-                            end_date: session.date.split(' ')[0],  // Make sure this is correct if sessions can span multiple days
+                            end_date: session.date.split(' ')[0],
                             timezonename,
                         });
-                        console.log("Converted local time:", localTime);
+
                         const startDateTime = new Date(`${localTime.start_date}T${localTime.start_time}`);
                         const endDateTime = new Date(`${localTime.end_date}T${localTime.end_time}`);
                         return {
@@ -168,6 +162,7 @@ const ScheduledSessions = ({ componentName , timezoneID}) => {
             setSessionData([]);
         }
     };
+    
     useEffect(() => {
         convertSessions();
     }, [scheduledSessionData, timezones, storedTimezoneId]);
@@ -185,27 +180,19 @@ const ScheduledSessions = ({ componentName , timezoneID}) => {
 
 
     const handleViewClick = students => {
-        // Open a popup to view the students
-        // console.log('View clicked!', students);
     };
 
     const handleRescheduleClick = session => {
         dispatch(closeSessionAction());
-        // console.log('SESSION : ', session);
         dispatch(openRescheduleAction(session));
-        // console.log('Reschedule clicked!', session);
     };
 
     const handleCancelClick = session => {
-        // console.log('Handle Cancel Sessions');
-        // console.log('component Name :', componentName, session);
         dispatch(closeSessionAction());
         dispatch(openCancelAction(session));
-        // console.log('Cancel clicked!', session);
     };
 
     const handleSubmit = () => {
-        // console.log('*** ScheduledSessions', slotEventData);
         dispatch(openReasonAction(slotEventData));
         dispatch(closeSessionAction());
     };
