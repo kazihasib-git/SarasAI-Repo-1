@@ -20,6 +20,7 @@ const initialState = {
     userData: {},
     login: false,
     role: null,
+    name : '',
     accessToken: null,
     timezone_id: null,
     loading: false,
@@ -31,7 +32,7 @@ const authSlice = createSlice({
     initialState,
     reducers: {
         setLogin: (state, action) => {
-            console.log('action.payload :', action.payload);
+            // console.log('action.payload :', action.payload);
             state.login = action.payload.login;
             state.role = action.payload.role;
             state.accessToken = action.payload.accessToken;
@@ -46,10 +47,12 @@ const authSlice = createSlice({
             state.loading = false;
             state.userData = action.payload.admin_user; // Update to use the correct user object
             state.login = true;
+            state.name = action.payload.admin_user.name;
             state.role = action.payload.role;
             state.accessToken = action.payload.access_token;
             state.timezone_id = action.payload.admin_user.timezone_id;
 
+            localStorage.setItem('name', action.payload.admin_user.name)
             localStorage.setItem('login', true);
             localStorage.setItem('accessToken', action.payload.access_token);
             localStorage.setItem('role', action.payload.role);
@@ -79,6 +82,7 @@ const authSlice = createSlice({
             localStorage.setItem('accessToken', '');
             localStorage.setItem('role', '');
             localStorage.removeItem('timezone_id'); // Remove timezone_id from localStorage
+            localStorage.removeItem('name','')
         });
     },
 });

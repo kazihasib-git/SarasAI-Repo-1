@@ -48,6 +48,8 @@ const CustomButton = ({
 
 const headers = ['S. No.', 'Batch Name', 'Branch', 'Select'];
 
+const name = String(localStorage.getItem('name') || 'Name');
+
 const SelectBatches = ({ componentName }) => {
     const dispatch = useDispatch();
     const [selectedBatch, setSelectedBatch] = useState([]);
@@ -90,6 +92,7 @@ const SelectBatches = ({ componentName }) => {
 
     useEffect(() => {
         if (batchesData && batchesData.length > 0) {
+            console.log('batchesData', batchesData);
             const transformedData = batchesData.map((batch, index) => ({
                 'S. No.': index + 1,
                 'Batch Name': batch.batch.name,
@@ -164,7 +167,7 @@ const SelectBatches = ({ componentName }) => {
                         onChange={handleBranchChange}
                         onClear={() =>
                             handleBranchChange({ target: { value: '' } })
-                        } // Clear functionality
+                        }
                     >
                         <MenuItem value="">
                             <em>All</em>
@@ -222,7 +225,7 @@ const SelectBatches = ({ componentName }) => {
         <ReusableDialog
             open={selectBatchPopup}
             handleClose={() => dispatch(closeSelectBatches())}
-            title={`Assign Batches`}
+            title={`Assign Batches to '${name}'`}
             content={content}
             actions={actions}
         />

@@ -10,6 +10,7 @@ import {
     RadioGroup,
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
+import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     //updateTaMenuSession,
@@ -86,7 +87,17 @@ const actionButtons = [
     },
 ];
 
-const timezoneId = Number(localStorage.getItem('timezone_id'));
+
+const durationOptions = [
+    { label: '15 minutes', value: '00:15:00' },
+    { label: '30 minutes', value: '00:30:00' },
+    { label: '45 minutes', value: '00:45:00' },
+    { label: '1 Hour', value: '01:00:00' },
+    { label: '1 Hour 15 minutes', value: '01:15:00' },
+    { label: '1 Hour 30 minutes', value: '01:30:00' },
+    { label: '1 Hour 45 minutes', value: '01:45:00' },
+    { label: '2 Hours', value: '02:00:00' },
+];
 
 const EditSession = ({ componentName }) => {
     const dispatch = useDispatch();
@@ -96,25 +107,39 @@ const EditSession = ({ componentName }) => {
         state => state.commonCalender
     );
 
-    console.log("sessionData :",sessionData);
-    const sessionDuration = sessionData.end_time && sessionData.start_time
-        ? (new Date(sessionData.end_time) - new Date(sessionData.start_time))
-        : null;
+    console.log("session data", sessionData);
+    const startTime = moment(sessionData.start_time, "HH:mm:ss");
+    const endTime = moment(sessionData.end_time, "HH:mm:ss");
+    const timeDifference = moment.duration(endTime.diff(startTime));
+    const formattedDifference = [
+        String(Math.floor(timeDifference.asHours())).padStart(2, '0'),
+        String(timeDifference.minutes()).padStart(2, '0'),
+        String(timeDifference.seconds()).padStart(2, '0')
+    ].join(':');
+
+    const studentData = sessionData.students || [];
+    const studentIdArray = [];
+    if (studentData && studentData.length > 0) {
+        students.forEach(student => {
+            if (student && student.id) {
+                studentIdArray.push(student.id);
+            }
+        });
+    }
 
     const [formData, setFormData] = useState({
         sessionName: sessionData.meeting_name || '',
-        duration: sessionDuration ? `${sessionDuration / 1000 / 60} minutes` : null,
+        duration: formattedDifference,
         message: sessionData.message || '',
-        students: sessionData.students || [],
+        students: studentIdArray,
         batches: sessionData.batchId || [],
-        platform_id : sessionData.platform_id || null,
-        fromDate: sessionData.date || null,
-        toDate: sessionData.to_date || null,
-        fromTime: sessionData.start_time || null,
-        toTime: sessionData.end_time || null,
-        timezone_id : timezoneId || null,
+        platforms: sessionData.platform_id,
+        fromDate: sessionData.date || '',
+        toDate: sessionData.to_date || '',
+        fromTime: moment(sessionData.start_time, "HH:mm:ss"),
+        toTime: moment(sessionData.end_time, "HH:mm:ss"),
+        timezone_id: sessionData.timezone_id,
     });
-    const [error, setError] = useState({});
 
     let sliceName, updateSessionApi, getSessionApi;
 
@@ -142,6 +167,8 @@ const EditSession = ({ componentName }) => {
         dispatch(getTimezone());
         dispatch(getPlatforms());
     }, [dispatch]);
+
+    const [error, setError] = useState({});
 
     const durationOptions = [
         { label: '15 minutes', value: '00:15:00' },
@@ -466,7 +493,7 @@ const EditSession = ({ componentName }) => {
                 fontFamily: 'Bold',
             }}
         >
-            Submit
+            Update
         </CustomButton>
     );
 
