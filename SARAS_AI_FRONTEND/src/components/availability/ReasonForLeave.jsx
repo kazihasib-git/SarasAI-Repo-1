@@ -1,5 +1,5 @@
 import { Button, Grid } from '@mui/material';
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     closeReasonForLeave,
@@ -21,6 +21,7 @@ import CustomButton from '../CustomFields/CustomButton';
 const ReasonForLeave = ({ componentName }) => {
     const dispatch = useDispatch();
     const { id, name } = useParams();
+    const [reasonForLeave, setReasonForLeave] = useState('');
 
     let reasonForLeaveOpenKey,
         closeReasonForLeaveAction,
@@ -47,7 +48,7 @@ const ReasonForLeave = ({ componentName }) => {
             sliceName = 'coachAvailability';
             reasonForLeaveOpenKey = 'reasonForCoachLeaveOpen'; // Adjust based on your actual key
             closeReasonForLeaveAction = closeCoachReasonForLeave;
-            markLeaveKey = 'markLeaveData';
+            markLeaveKey = 'coachMarkLeaveData';
             slotEventKey = 'slotCoachEventData';
             reasonForLeaveAction = reasonForCoachLeave;
             getSlotsApi = fetchCoachSlots;
@@ -71,15 +72,12 @@ const ReasonForLeave = ({ componentName }) => {
         [markLeaveKey]: markLeaveData,
         [slotEventKey]: slotEventDetails,
     } = useSelector(
-        state => state[sliceName] // Adjust to access the correct state slice
+        state => state[sliceName] || {} 
     );
-
-    console.log('slots EVENT Details', slotEventDetails);
-    console.log('markLeaveData :', markLeaveData);
 
     const handleSubmit = () => {
         if (slotEventDetails && slotEventDetails.length > 0) {
-            const slots = slotEventDetails?.map(slotId => {
+            const slots = slotEventDetails.data.map(slotId => {
                 const slot = slotId?.data?.find(s => s.id === slotId);
                 return {
                     slot_id: slot.id,
@@ -94,7 +92,7 @@ const ReasonForLeave = ({ componentName }) => {
             const lastSlot = slots[slots.length - 1];
 
             const slotEventDetails = {
-                admin_user_id: id, // Assuming 'id' is the admin user ID
+                admin_user_id: id,
                 start_date: firstSlot.date,
                 end_date: lastSlot.date,
                 start_time: firstSlot.start_time,
@@ -112,7 +110,7 @@ const ReasonForLeave = ({ componentName }) => {
                 reason: null,
                 approve_status: null,
                 leave_type: null,
-                reason: null,
+                reason: reasonForLeavslotEventDetailse,
 
                 data: slots.map(slot => slot),
             };
@@ -140,6 +138,8 @@ const ReasonForLeave = ({ componentName }) => {
                 <CustomTextField
                     label="Reason for Leave"
                     fullWidth
+                    value={reasonForLeave}
+                    onChange={e => setReasonForLeave(e.target.value)}
                     placeholder="Enter reason for leave"
                     variant="outlined"
                     multiline

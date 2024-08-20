@@ -153,6 +153,8 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
     const slotPropGetter = date => {
         const dateString = moment(date).format('YYYY-MM-DD');
         const timeString = moment(date).format('YYYY-MM-DD HH:mm');
+    
+        // Iterate over slotData to find a matching slot
         for (let i = 0; i < slotData.length; i++) {
             const slot = slotData[i];
             const slotDate = moment(slot.startDate).format('YYYY-MM-DD');
@@ -160,19 +162,20 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
                 'YYYY-MM-DD HH:mm'
             );
             const slotEndTime = moment(slot.endDate).format('YYYY-MM-DD HH:mm');
-
+    
             const isOnLeave = slot.leave && slot.leave.length > 0;
+            
             if (
                 dateString === slotDate &&
                 timeString >= slotStartTime &&
                 timeString < slotEndTime
             ) {
+                // Return the style and className only for the first matching slot
                 return {
                     style: {
-                        backgroundColor:
-                            slot.leave && slot.leave.length > 0
-                                ? '#FF00001F' // Light red color for leave slots
-                                : '#B0FC38', // Green color for regular slots
+                        backgroundColor: isOnLeave
+                            ? '#FF00001F' // Light red color for leave slots
+                            : '#B0FC38', // Green color for regular slots
                         opacity: 0.5,
                         border: 'none',
                     },
@@ -180,9 +183,11 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
                 };
             }
         }
+    
+        // If no matching slot is found, return an empty object
         return {};
     };
-
+    
     return (
         <>
             {/* <Header />

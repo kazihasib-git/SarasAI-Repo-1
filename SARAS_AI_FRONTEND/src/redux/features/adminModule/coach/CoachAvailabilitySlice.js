@@ -183,6 +183,7 @@ const initialState = {
     coachId: [],
     coachName: [],
     coachSessionEventData: [],
+    coachMarkLeaveData : [],
     coachOpenEventData: false,
 
     coachEditScheduledStudents: false,
@@ -200,11 +201,13 @@ export const coachAvailabilitySlice = createSlice({
         closeCoachMarkLeave(state) {
             state.coachMarkLeaveOpen = false;
         },
-        openCoachScheduledSlots(state) {
+        openCoachScheduledSlots(state, action) {
             state.scheduledCoachSlotsOpen = true;
+            state.coachMarkLeaveData = action.payload
         },
         closeCoachScheduledSlots(state) {
             state.scheduledCoachSlotsOpen = false;
+            state.coachMarkLeaveData = []
         },
         openCoachScheduledSession(state, action) {
             console.log('Open Action slotCoachEventData : ', action.payload);
@@ -227,11 +230,13 @@ export const coachAvailabilitySlice = createSlice({
         closeCoachCancelSession(state) {
             state.cancelCoachSessionOpen = false;
         },
-        openCoachReasonForLeave(state) {
+        openCoachReasonForLeave(state, action) {
             state.reasonForCoachLeaveOpen = true;
+            state.coachMarkLeaveData = action.payload
         },
         closeCoachReasonForLeave(state) {
             state.reasonForCoachLeaveOpen = false;
+            state.coachMarkLeaveData = []
         },
         openCoachRescheduleSession(state, action) {
             console.log('Open Action sessionCoachEventData : ', action.payload);
@@ -351,7 +356,7 @@ export const coachAvailabilitySlice = createSlice({
         });
         builder.addCase(createCoachSlots.fulfilled, (state, action) => {
             state.loading = false;
-            state.slotCoachEventData = action.payload?.data;
+            // state.slotCoachEventData = action.payload?.data;
         });
         builder.addCase(createCoachSlots.rejected, (state, action) => {
             state.loading = false;
