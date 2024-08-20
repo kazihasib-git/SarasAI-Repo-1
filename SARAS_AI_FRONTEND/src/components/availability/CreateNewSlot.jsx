@@ -127,7 +127,7 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
     };
 
     const onSubmit = async formData => {
-        console.log('form data', formData);
+        // console.log('form data', formData);
 
         if (!validate()) {
             console.log('NOT VALID DATA');

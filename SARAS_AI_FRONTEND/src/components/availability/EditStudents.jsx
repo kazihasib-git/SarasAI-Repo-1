@@ -20,7 +20,7 @@ import { useParams } from 'react-router-dom';
 import CustomButton from '../CustomFields/CustomButton';
 
 const EditStudents = ({ componentname }) => {
-    console.log('Component Name :', componentname);
+
     const dispatch = useDispatch();
     const { id, name } = useParams();
 
@@ -202,21 +202,18 @@ const EditStudents = ({ componentname }) => {
             : [];
 
     useEffect(() => {
-        console.log('Selected Student inside use Effect : ', selectedStudent);
+
         if (selectedStudent) {
             setSelectedStudents(selectedStudent.map(student => student.id));
         }
     }, [selectedStudent]);
 
-    console.log('already selected students: ', selectedStudent);
 
     const handleSelectStudent = id => {
         setSelectedStudents(prev =>
             prev.includes(id) ? prev.filter(sid => sid !== id) : [...prev, id]
         );
     };
-
-    console.log('Selected Students', selectedStudents);
 
     const handleSubmit = () => {
         const id =
@@ -232,7 +229,6 @@ const EditStudents = ({ componentname }) => {
                 : [],
         };
 
-        console.log('SUBMIT DATA :', data);
         dispatch(
             openSchedulingPopup({
                 id,

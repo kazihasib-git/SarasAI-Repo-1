@@ -17,12 +17,14 @@ import {
     getCoachSlots,
 } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import CustomButton from '../CustomFields/CustomButton';
+import { timezoneIdToName } from '../../utils/timezoneIdToName';
 
-const MarkLeave = ({ componentName }) => {
+const MarkLeave = ({ componentName, timezoneID }) => {
     const { id: taId } = useParams(); // Ensure taId is correctly extracted
     const dispatch = useDispatch();
     const [fromDate, setFromDate] = useState(null);
     const [toDate, setToDate] = useState(null);
+    const { timezones } = useSelector((state) => state.util)
 
     let scheduleSessionOpenKey,
         schedulingStateKey,
@@ -69,17 +71,20 @@ const MarkLeave = ({ componentName }) => {
         if (!fromDate || !toDate) {
             toast.error('Please select dates');
             return false;
+        }else if(fromDate > toDate){
+            toast.error('Please select To Date after the From Date')
+            return false;
         }
         return true;
     };
-    const { timezones } = useSelector(state => state.util);
+
     const handleSubmit = () => {
         if (validateDates()) {
             const formattedFromDate = moment(fromDate).format('YYYY-MM-DD');
             const formattedToDate = moment(toDate).format('YYYY-MM-DD');
 
             const leaveData = {
-                admin_user_id: taId, // Ensure taId is correctly extracted
+                admin_user_id: taId,
                 start_date: formattedFromDate,
                 end_date:
                     formattedFromDate === formattedToDate
@@ -87,20 +92,14 @@ const MarkLeave = ({ componentName }) => {
                         : formattedToDate,
                 start_time: '00:00:00',
                 end_time: '23:59:59',
-                timezone_name: timezones[taId].time_zone,
+                timezone_name: timezoneIdToName(timezoneID, timezones),
             };
 
             dispatch(getSlotsAction(leaveData))
                 .unwrap()
                 .then(() => {
-                    if (sliceName === 'coachMenu') {
-                        console.log('ComponetName :', componentName);
-                        dispatch(openAvailableSlotsAction());
-                        dispatch(closeMarkLeaveAction());
-                    } else {
-                        dispatch(openAvailableSlotsAction(leaveData));
-                        dispatch(closeMarkLeaveAction());
-                    }
+                    dispatch(openAvailableSlotsAction(leaveData));
+                    dispatch(closeMarkLeaveAction());
                 })
                 .catch(error => {
                     console.error('Failed to fetch scheduled slots:', error);
@@ -141,9 +140,13 @@ const MarkLeave = ({ componentName }) => {
     const actions = (
         <CustomButton
             onClick={handleSubmit}
-            backgroundColor="#F56D3B"
-            borderColor="#F56D3B"
-            color="#FFFFFF"
+            style={{
+                backgroundColor : "#F56D3B",
+                borderColor : "#F56D3B",
+                color : "#FFFFFF",
+                textTransform : 'none'
+            }}
+            
         >
             Submit
         </CustomButton>

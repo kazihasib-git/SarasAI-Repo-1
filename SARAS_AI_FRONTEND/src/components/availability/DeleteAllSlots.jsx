@@ -77,8 +77,7 @@ const DeleteAllSlots = ({ componentName }) => {
 
     const handleSubmit = async () => {
         try {
-            console.log('TA ID : ', userId);
-            console.log('TA NAME : ', userName);
+
             //get today date in YYYY-MM-DD format
             // const today = new Date();
             // const dd = String(today.getDate()).padStart(2, '0');
@@ -93,7 +92,7 @@ const DeleteAllSlots = ({ componentName }) => {
 
             // dispatch actions
             dispatch(deleteFutureSlotsApi(userId)).then(() => {
-                console.log('FEtching data after deleting slots');
+                // console.log('FEtching data after deleting slots');
                 dispatch(closePopupAction());
                 dispatch(getSlotsApi(userId));
                 dispatch(getSessionsApi(userId));
