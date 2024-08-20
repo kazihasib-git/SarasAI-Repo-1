@@ -19,6 +19,7 @@ import ReusableDialog from '../../../../components/CustomFields/ReusableDialog';
 import {addPrerequisites, getAllCoachTemplateModules, getCoachTemplateModuleId, setSelectedModule} from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
 import CustomModuleFormControl from '../../../../components/CustomFields/CustomModuleFormControl';
 import CustomActivityFormControl from '../../../../components/CustomFields/CustomActivityFormControl';
+import { toast } from 'react-toastify';
 
 const CustomButton = ({
     onClick,
@@ -107,16 +108,43 @@ const PrerequisitesPopup = ({ open, prereqModuleData, prereqActivityData, handle
     }, [watch("module"), coachTemplatesId]);
 
 
+    const validate = (data) => {
+        if (activityDependence) {
+            if (!data.module) {
+                toast.error("Module is required.");
+                return false;
+            }
+            if (!data.activity || data.activity.length === 0) {
+                toast.error("At least one activity is required.");
+                return false;
+            }
+        }
+        
+        if (!data.lockUntil) {
+            toast.error("Lock Until Date is required.");
+            return false;
+        }
+        
+        if (!fromTime) {
+            toast.error("From Time is required.");
+            return false;
+        }
+
+        return true;
+    };
+
     const onSubmit = data => {
-        console.log("Form DATA :", data, fromTime)
-        // TODO: Add API call here
+        if (!validate(data)) {
+            return; // Prevent further execution if validation fails
+        }
+
         const prereqData = {
             module_id : prereqModuleData.id,
             activity_id: prereqActivityData.id,
             template_id: prereqModuleData.template_id,
             lock_until_date: data.lockUntil,
             time: fromTime,
-            data : data?.activity.map(act => ({
+            data : data && data.activity &&  data.activity.map(act => ({
                 prerequisite_activity_id: act,
                 prerequisite_module_id: data.module,
             }))

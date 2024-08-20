@@ -186,7 +186,7 @@ const CreateSession = ({ componentName , timezoneID}) => {
 
         // Calculate endDateTime by adding duration to fromDateTime
         const endDateTime = new Date(fromDateTime.getTime() + durationInMs);
-        console.log('endDateTime:', endDateTime);
+        // console.log('endDateTime:', endDateTime);
 
         // Extracting time from endDateTime in HH:MM:SS format
         const endTime = endDateTime.toTimeString().split(' ')[0];

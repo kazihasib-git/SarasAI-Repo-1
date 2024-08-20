@@ -33,6 +33,13 @@ const CustomActivityFormControl = ({
         });
     };
 
+    const getSelectedLabels = (selectedValues) => {
+        return options
+            .filter((option) => selectedValues.includes(option.value))
+            .map((option) => option.label)
+            .join(', ');
+    };
+
     return (
         <FormControl variant="outlined" disabled={disabled} fullWidth>
             <InputLabel
@@ -56,7 +63,7 @@ const CustomActivityFormControl = ({
                 onChange={handleChange} // Use the updated handleChange function
                 error={hasError}
                 multiple // Enable multiple selection
-                renderValue={(selected) => selected.join(', ')} // Display selected values as a comma-separated string
+                renderValue={(selected) => getSelectedLabels(selected)} // Display selected labels as a comma-separated string
                 MenuProps={{
                     PaperProps: {
                         style: {
@@ -101,3 +108,4 @@ const CustomActivityFormControl = ({
 };
 
 export default CustomActivityFormControl;
+    
