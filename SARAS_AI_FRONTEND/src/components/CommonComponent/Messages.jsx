@@ -1,4 +1,4 @@
-import React, { useEffect, useState,useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 //import CoachMenu from './CoachMenu';
 
@@ -69,10 +69,9 @@ const Messages = ({ role }) => {
         createdChatId,
     } = useSelector(state => state.coachMenu);
 
-    const { 
-        taProfileData,
-        assignedTaStudents 
-    } = useSelector(state => state.taMenu);
+    const { taProfileData, assignedTaStudents } = useSelector(
+        state => state.taMenu
+    );
 
     // Handle search input change
     const handleSearchChange = event => {
@@ -93,7 +92,12 @@ const Messages = ({ role }) => {
                 chatUserMapping.every(mappedUser => mappedUser.id !== user.id)
             ) {
                 let data = {
-                    chat_name: (role === 'ta' ? taProfileData.name : coachProfileData.name) + '-' + user.name,
+                    chat_name:
+                        (role === 'ta'
+                            ? taProfileData.name
+                            : coachProfileData.name) +
+                        '-' +
+                        user.name,
                 };
                 console.log(data);
                 await dispatch(
@@ -135,14 +139,13 @@ const Messages = ({ role }) => {
         }
     };
 
-    const handleFileChange = (event) => {
+    const handleFileChange = event => {
         const file = event.target.files[0];
         if (file) {
             // Handle the selected file here
             console.log('Selected file:', file);
         }
     };
-
 
     useEffect(() => {
         const setUserToChat = async () => {
@@ -255,11 +258,10 @@ const Messages = ({ role }) => {
                     status: 'Online',
                     lastSeen: getTimeAgo(lastMessageTimestamp), // Calculate last seen dynamically
                     chat_id: taCoachAllChatData[i].id,
-                    lastMessage:
-                        lastMessage 
-                        ? (lastMessage.length > 15
-                            ? lastMessage.slice(0, 14) + '...' 
-                            : lastMessage)
+                    lastMessage: lastMessage
+                        ? lastMessage.length > 15
+                            ? lastMessage.slice(0, 14) + '...'
+                            : lastMessage
                         : '',
                 };
                 reformedMappingData.push(Data);
@@ -311,7 +313,8 @@ const Messages = ({ role }) => {
                     </div>
                 </div>
                 <div className="chat-list">
-                    {(usersToDisplay !== undefined && usersToDisplay.length > 0) ? (
+                    {usersToDisplay !== undefined &&
+                    usersToDisplay.length > 0 ? (
                         usersToDisplay.map(user => (
                             <div
                                 key={user.id}
@@ -412,13 +415,16 @@ const Messages = ({ role }) => {
                         <Box className="chat-messages">
                             {messages.map((msg, index) => {
                                 const isFirstMessageFromSameSender =
-                                    index === 0 || messages[index - 1].sender !== msg.sender;
+                                    index === 0 ||
+                                    messages[index - 1].sender !== msg.sender;
                                 return (
                                     <Box
                                         key={index}
                                         display="flex"
                                         justifyContent={
-                                            msg.sender === 'me' ? 'flex-end' : 'flex-start'
+                                            msg.sender === 'me'
+                                                ? 'flex-end'
+                                                : 'flex-start'
                                         }
                                         mb={1}
                                         alignItems="center"
@@ -430,7 +436,10 @@ const Messages = ({ role }) => {
                                                 className="profile-pic"
                                                 style={{
                                                     marginRight: '8px',
-                                                    visibility: isFirstMessageFromSameSender ? 'visible' : 'hidden',
+                                                    visibility:
+                                                        isFirstMessageFromSameSender
+                                                            ? 'visible'
+                                                            : 'hidden',
                                                 }}
                                             />
                                         )}
@@ -455,7 +464,10 @@ const Messages = ({ role }) => {
                                                 className="profile-pic"
                                                 style={{
                                                     marginLeft: '8px',
-                                                    visibility: isFirstMessageFromSameSender ? 'visible' : 'hidden',
+                                                    visibility:
+                                                        isFirstMessageFromSameSender
+                                                            ? 'visible'
+                                                            : 'hidden',
                                                 }}
                                             />
                                         )}
@@ -464,7 +476,8 @@ const Messages = ({ role }) => {
                             })}
                         </Box>
 
-                        <Box className="chat-input-container"
+                        <Box
+                            className="chat-input-container"
                             sx={{
                                 borderRadius: '42px',
                             }}
@@ -495,11 +508,14 @@ const Messages = ({ role }) => {
                                 }}
                             />
                             <div className="chat-input-icons">
-                                <IconButton className="input-icon" onClick={HandleSentFile}>
+                                <IconButton
+                                    className="input-icon"
+                                    onClick={HandleSentFile}
+                                >
                                     <img src={PaperclipIcon} alt="Attach" />
                                 </IconButton>
                                 <IconButton className="input-icon">
-                                   <MicNoneIcon />
+                                    <MicNoneIcon />
                                 </IconButton>
                                 <IconButton
                                     className="input-icon"
@@ -508,6 +524,21 @@ const Messages = ({ role }) => {
                                     <img src={SendButtonIcon} alt="Send" />
                                 </IconButton>
                             </div>
+
+                            <Box className="checkbox-container">
+                                <label>
+                                    <input type="checkbox" />
+                                    Email
+                                </label>
+                                <label>
+                                    <input type="checkbox" />
+                                    WhatsApp
+                                </label>
+                                <label>
+                                    <input type="checkbox" />
+                                    Text
+                                </label>
+                            </Box>
                         </Box>
                     </>
                 )}

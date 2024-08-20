@@ -26,12 +26,12 @@ h1 {
     border-radius: 10px 0 0 10px;
     height: 80vh;
     overflow: hidden;
-    margin-right: 2px;
+    margin-right: 5px; /* Adjust this value for more or less margin */
 }
 
 .box2 {
     width: 55vw;
-    left: 20vw;
+    left: calc(20vw + 3px); /* Add margin to the left position */
     height: 80vh;
     border-radius: 0;
     overflow: hidden;
@@ -310,4 +310,23 @@ h1 {
         margin-right: 0;
         margin-bottom: 10px;
     }
+}
+
+.checkbox-container {
+    position: absolute;
+    bottom: -10px;
+    right: 30px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.checkbox-container label {
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+}
+
+.checkbox-container .MuiCheckbox-root {
+    margin-right: 5px;
 }
