@@ -167,6 +167,7 @@ const CreateSession = ({ componentName , timezoneID}) => {
 
     const handleSubmit = e => {
         e.preventDefault();
+        console.log(formData.fromTime);
 
         const studentId = students.map(student => student.id);
         const batchId = batches.map(batch => batch.id);
