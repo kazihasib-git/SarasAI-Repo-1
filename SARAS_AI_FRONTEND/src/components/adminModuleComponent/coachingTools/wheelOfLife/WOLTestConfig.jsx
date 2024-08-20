@@ -97,11 +97,12 @@ const WOLTestConfig = () => {
     }, [wolCategoryData]);
 
     // Generate options based on the wol_questions_count for each category
-    const WOLCategoriesOptions =
-        wolCategoryData.map(item => ({
-            value: item.id,
-            label: item.name,
-        })) || [];
+    const WOLCategoriesOptions = wolCategoryData.map(item => ({
+        value: item.id,
+        label: item.name,
+     })) || [];
+    
+  
 
     const getNumberOfQuestionsOptions = categoryId => {
         //const category = wolCategoryData.find(cat => cat.id === categoryId);
@@ -117,10 +118,10 @@ const WOLTestConfig = () => {
 
         if (edit) {
             setEdit(false);
-            setFormValues(prevValues => ({
-                numberOfWolCategories: '',
-                categories: [],
-            }));
+            // setFormValues(prevValues => ({
+            //     numberOfWolCategories: '',
+            //     categories: [],
+            // }));
             return;
         }
 
@@ -256,7 +257,8 @@ const WOLTestConfig = () => {
                                     fontFamily: 'Bold',
                                 }}
                             >
-                                {edit ? 'Update' : 'Submit'}
+                                
+                                {edit ? 'Update' : ('Submit' )}
                             </CustomButton>
                         </Grid>
                     </Grid>

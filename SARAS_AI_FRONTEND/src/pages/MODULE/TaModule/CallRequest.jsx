@@ -64,7 +64,7 @@ const CallRequest = () => {
 
         const processedRequests = requests.map(request => ({
             ...request,
-            title: `Meeting request by ${request.sender.name}`,
+            title: `Session request by ${request.sender.name}`,
             For: `${request.date} | ${request.start_time}`,
         }));
 

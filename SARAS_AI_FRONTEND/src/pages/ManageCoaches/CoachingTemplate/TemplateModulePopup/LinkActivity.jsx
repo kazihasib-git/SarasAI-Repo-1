@@ -119,7 +119,7 @@ const LinkActivityPopup = ({
             link: videoUrl || upload_pdf_url || data.link  , // Add other fields if needed
         };
         try {
-            if(payload.link || (activityType === 'test' && selectedAssessmentId) || (activityType ==='virtual meet')){
+            if(payload.link || (activityType === 'test' && selectedAssessmentId) || (activityType ==='virtual meet' && selectedSessionType)){
             if(activityType ==='virtual meet' && selectedSessionType=="group"){
                 const dataToGenrateLink = {
                     "admin_user_id": selectedCoachId,
@@ -146,6 +146,8 @@ const LinkActivityPopup = ({
                         await dispatch(linkActivity(payload)).unwrap();
 
                         dispatch(getCoachTemplateModuleId(templateId));
+                }else {
+                    throw new Error("Failed to create coach schedule"); 
                 }
             }else{ 
                 await dispatch(linkActivity(payload))
@@ -172,6 +174,7 @@ const LinkActivityPopup = ({
         setSelectedSlot(null);
         setCoachTimeZone(null);
         setSelectedPlatform(null);
+        setSelectedSessionType(null);
         handleClose();
     }
 

@@ -44,7 +44,7 @@ const CoachCallRequest = () => {
     const processCoachCallRequests = requests => {
         const processedRequests = requests.map(request => ({
             ...request,
-            title: `Meeting request by ${request.sender.name}`,
+            title: `Session request by ${request.sender.name}`,
             For: `${request.date} | ${convertTo12HourFormat(request.start_time)}`,
         }));
         setCallRequests(processedRequests);
