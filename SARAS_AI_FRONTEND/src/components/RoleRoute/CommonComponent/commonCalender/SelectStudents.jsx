@@ -98,7 +98,7 @@ const SelectStudents = ({ componentName }) => {
     console.log('Students Data : ', studentsData);
 
     useEffect(() => {
-        if (studentsData && studentDataState.length > 0) {
+        if (studentsData && studentsData.length > 0) {
             const transformedData = studentsData.map((stu, index) => ({
                 'S. No.': index + 1,
                 'Student Name': stu.student.name,

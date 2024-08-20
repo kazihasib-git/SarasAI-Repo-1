@@ -92,6 +92,7 @@ const SelectBatches = ({ componentName }) => {
 
     useEffect(() => {
         if (batchesData && batchesData.length > 0) {
+            console.log('batchesData', batchesData);
             const transformedData = batchesData.map((batch, index) => ({
                 'S. No.': index + 1,
                 'Batch Name': batch.batch.name,
