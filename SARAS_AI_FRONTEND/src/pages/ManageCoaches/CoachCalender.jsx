@@ -31,6 +31,8 @@ import ScheduleSession from '../../components/availability/ScheduleSession';
 import { timezoneIdToName } from '../../utils/timezoneIdToName';
 import { getTimezone } from '../../redux/features/utils/utilSlice';
 import { getTodayCoachAvailability } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
+import EditStudentsFromSession from '../../components/availability/EditStudentsFromSession';
+import EditBatchesFromSession from '../../components/availability/EditBatchesFromSession';
 
 const CustomButton = ({
     onClick,
