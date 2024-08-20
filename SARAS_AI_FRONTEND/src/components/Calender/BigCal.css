@@ -68,7 +68,6 @@
 .on-leave-slot {
     position: relative;
 }
-
 .on-leave-slot::before {
     content: 'On Leave';
     position: absolute;
@@ -79,6 +78,15 @@
     font-size: 10px;
     font-weight: 400;
     line-height: 13.02px;
+    white-space: nowrap;
+    z-index: 1;
+}
+
+/* Prevents text from overlapping in extended slots */
+.on-leave-slot {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .rbc-time-header-cell {
