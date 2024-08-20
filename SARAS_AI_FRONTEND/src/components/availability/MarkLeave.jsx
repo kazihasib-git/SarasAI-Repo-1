@@ -71,6 +71,9 @@ const MarkLeave = ({ componentName, timezoneID }) => {
         if (!fromDate || !toDate) {
             toast.error('Please select dates');
             return false;
+        }else if(fromDate > toDate){
+            toast.error('Please select To Date after the From Date')
+            return false;
         }
         return true;
     };
@@ -95,14 +98,8 @@ const MarkLeave = ({ componentName, timezoneID }) => {
             dispatch(getSlotsAction(leaveData))
                 .unwrap()
                 .then(() => {
-                    if (sliceName === 'coachMenu') {
-                        console.log('ComponetName :', componentName);
-                        dispatch(openAvailableSlotsAction());
-                        dispatch(closeMarkLeaveAction());
-                    } else {
-                        dispatch(openAvailableSlotsAction(leaveData));
-                        dispatch(closeMarkLeaveAction());
-                    }
+                    dispatch(openAvailableSlotsAction(leaveData));
+                    dispatch(closeMarkLeaveAction());
                 })
                 .catch(error => {
                     console.error('Failed to fetch scheduled slots:', error);
@@ -143,9 +140,13 @@ const MarkLeave = ({ componentName, timezoneID }) => {
     const actions = (
         <CustomButton
             onClick={handleSubmit}
-            backgroundColor="#F56D3B"
-            borderColor="#F56D3B"
-            color="#FFFFFF"
+            style={{
+                backgroundColor : "#F56D3B",
+                borderColor : "#F56D3B",
+                color : "#FFFFFF",
+                textTransform : 'none'
+            }}
+            
         >
             Submit
         </CustomButton>

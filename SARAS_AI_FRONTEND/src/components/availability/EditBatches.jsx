@@ -130,7 +130,7 @@ const EditBatches = ({ componentname }) => {
 
     useEffect(() => {
         if (assignedBatches) {
-            console.log('BRANCH NAME : ', assignedBatches);
+
             const transformedData = assignedBatches.map((batch, index) => ({
                 'S. No.': index + 1,
                 'Batch Name': batch.batch.name,
@@ -149,7 +149,7 @@ const EditBatches = ({ componentname }) => {
                     : true;
                 return matchesBranch && matchesQuery;
             });
-            console.log('filtered data', filtered);
+
             setFilteredBatches(filtered);
         }
     }, [assignedBatches, selectedBranch, searchQuery]);
@@ -159,7 +159,7 @@ const EditBatches = ({ componentname }) => {
         : [];
 
     useEffect(() => {
-        console.log('selected Batches', selectedBatches);
+
         if (selectedBatches) {
             setSelectedBatch(selectedBatches.map(batch => batch.id));
         }
@@ -198,7 +198,7 @@ const EditBatches = ({ componentname }) => {
             name: assignedName,
             batches: selectedBatch ? selectedBatch.map(id => ({ id })) : [],
         };
-        console.log('DATA: ', data);
+
         dispatch(
             openSchedulingPopup({
                 id,
@@ -210,8 +210,6 @@ const EditBatches = ({ componentname }) => {
     };
 
     const headers = ['S. No.', 'Batch Name', 'Branch', 'Select'];
-
-    console.log('selected batch', selectedBatch);
 
     const content = (
         <>

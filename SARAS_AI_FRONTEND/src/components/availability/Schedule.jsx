@@ -64,8 +64,6 @@ const actionButtons = [
 ];
 
 const Schedule = ({ componentName , timezoneID}) => {
-
-    console.log('timezoneID:',  timezoneID) ; 
     
     const [fromDate, setFromDate] = useState(null);
     const [toDate, setToDate] = useState(null);
@@ -160,8 +158,6 @@ const Schedule = ({ componentName , timezoneID}) => {
         formState: { errors },
     } = useForm();
 
-    console.log('available slots', availableSlots);
-
     useEffect(() => {
         if (dateSelected && (fromDate || !availableSlots.length > 0)) {
             dispatch(
@@ -177,7 +173,7 @@ const Schedule = ({ componentName , timezoneID}) => {
     }, [fromDate, dispatch, adminUserID, getAvailableSlotsAction]);
 
     const handleDateSubmit = () => {
-        console.log('timezone', timezoneIdToName(timezoneID, timezones));
+
         if (fromDate) {
             dispatch(
                 getAvailableSlotsAction({
@@ -200,8 +196,6 @@ const Schedule = ({ componentName , timezoneID}) => {
     }, [dispatch]);
 
     const convertSessions = async () => {
-        console.log('AVAILABLE KEY : ', availableKey);
-        console.log('Available slots : ', availableSlots);
         
         if (availableSlots && availableSlots.length > 0 && timezones && timezoneID) {
             const timezonename = timezoneIdToName(timezoneID, timezones);
@@ -274,16 +268,16 @@ const Schedule = ({ componentName , timezoneID}) => {
 
     const handleSelectOption = e => {
         const selectedOption = e.target.value;
-        console.log('selectedOption : ', selectedOption);
+
         const selectedSlot = slotData.filter(
             slot => slot.id === selectedOption
         );
-        console.log('selectedSlot : ', selectedSlot);
+
         setSelectedSlot(selectedSlot);
     };
 
     const handleAssignStudents = () => {
-        console.log('COMPONENT NAME  handleAssignStudents : ', componentName);
+
         if (componentName === 'TASCHEDULE') {
             dispatch(openEditStudent());
         } else if (componentName === 'COACHSCHEDULE') {
@@ -292,7 +286,7 @@ const Schedule = ({ componentName , timezoneID}) => {
     };
 
     const handleAssignBatches = () => {
-        console.log('COMPONENT NAME  handleAssignBatches : ', componentName);
+
         if (componentName === 'TASCHEDULE') {
             dispatch(openEditBatch());
         } else if (componentName === 'COACHSCHEDULE') {
@@ -342,15 +336,9 @@ const Schedule = ({ componentName , timezoneID}) => {
     };
 
     const onSubmit = formData => {
-        console.log('formData --> ', formData);
-
-        console.log('students :', students);
-        console.log('batches', batches);
 
         const studentId = students.map(student => student.id);
         const batchId = batches.map(batch => batch.id);
-
-        console.log('studentId : ', studentId, 'batchId : ', batchId);
 
         let weeksArray = Array(7).fill(0);
         if (repeat === 'recurring') {
@@ -363,8 +351,6 @@ const Schedule = ({ componentName , timezoneID}) => {
             weeksArray[index] = 1;
         }
 
-        console.log('FORM DATA : ', formData);
-
         formData.start_time = fromTime;
         formData.end_time = toTime;
         formData.schedule_date = fromDate;
@@ -376,7 +362,7 @@ const Schedule = ({ componentName , timezoneID}) => {
         formData.studentId = studentId;
         formData.batchId = batchId;
         formData.timezone_id = `${timezoneID}`
-        console.log('form Data :', formData);
+
         dispatch(createScheduleAction(formData))
             .then(() => {
                 dispatch(closeScheduleSessionAction());
@@ -386,8 +372,6 @@ const Schedule = ({ componentName , timezoneID}) => {
                 console.error('Error:', error);
             });
     };
-
-    console.log('AvailableSlotsOptions :', availableSlotsOptions);
 
     const content = (
         <Box
