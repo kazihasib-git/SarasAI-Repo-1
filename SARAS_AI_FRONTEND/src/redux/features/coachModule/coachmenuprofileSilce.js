@@ -336,6 +336,16 @@ export const sentMessage = createAsyncThunk(
     }
 );
 
+
+export const getCoachMyStudents = createAsyncThunk(
+    'coachMenu/getCoachMyStudents',
+    async () => {
+        const response = await axiosInstance.get(`${baseUrl}/coach/my-student`);
+        console.log(response.data, 'response.data');
+        return response.data;
+    }
+);
+
 const initialState = {
     coachProfileData: [], // Coach Profile Data
     updateProfileData: [],
@@ -346,7 +356,7 @@ const initialState = {
     assignedCoachBatches: [], // Assigned Students to Batch
     selectedCoachStudents: [], // Selected Students for creating Schedules
     selectedCoachBatches: [], // Selected Batches for creating Schedules
-
+    myStudentData: [], // Coach My Students
     coachSlotsForLeave: [], // Slots For Leave
     coachSessionsForLeave: [], // Sessions for Leave
     coachLeave: [],
@@ -859,6 +869,20 @@ export const coachMenuSlice = createSlice({
         builder.addCase(addUserToChat.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+        });
+
+         // get Coach my students
+         builder.addCase(getCoachMyStudents.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(getCoachMyStudents.fulfilled, (state, action) => {
+            state.loading = false;
+            state.myStudentData = action.payload.data;
+        });
+        builder.addCase(getCoachMyStudents.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+            state.myStudentData = [];
         });
     },
 });
