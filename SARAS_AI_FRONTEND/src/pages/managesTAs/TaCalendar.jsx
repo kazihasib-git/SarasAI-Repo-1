@@ -133,8 +133,6 @@ const TaCalender = () => {
 
     const storedTimezoneId = selectedTA ? selectedTA.timezone_id : Number(localStorage.getItem('timezone_id'));
  
-   console.log("//////////////////////////", storedTimezoneId) ;
-
     useEffect(() => {
         dispatch(fetchTaSlots(id));
         dispatch(fetchTAScheduleById(id));
@@ -161,10 +159,10 @@ const TaCalender = () => {
                             end_date: event.end_date? event.end_date : event.date.split(' ')[0],
                             timezonename,
                         });
-                        console.log(
-                            'Converted Local Schedule Time:',
-                            localTime
-                        );
+                        // console.log(
+                        //     'Converted Local Schedule Time:',
+                        //     localTime
+                        // );
                         const startDateTime = new Date(
                             `${localTime.start_date}T${localTime.start_time}`
                         );
@@ -201,7 +199,7 @@ const TaCalender = () => {
                                 platform_meet: event.platform_meeting_details,
                             };
 
-                            console.log('events created', event1, event2);
+                            // console.log('events created', event1, event2);
                             processedEvents.push(event1, event2);
                             return [event1, event2];
                         } else {
@@ -221,7 +219,7 @@ const TaCalender = () => {
                         }
                     })
                 );
-                console.log('transformed events', processedEvents);
+                // console.log('transformed events', processedEvents);
                 setEventsList(processedEvents);
             } catch (error) {
                 console.error('Error converting events:', error);
@@ -275,7 +273,7 @@ const TaCalender = () => {
                                 leave: slot?.leaves,
                             };
 
-                            console.log('slots created', slot1, slot2);
+                            // console.log('slots created', slot1, slot2);
 
                             processedSlots.push(slot1, slot2);
                             return [slot1, slot2];
@@ -294,9 +292,9 @@ const TaCalender = () => {
                         }
                     })
                 );
-                console.log('transformed slots', processedSlots);
+                // console.log('transformed slots', processedSlots);
                 setSlotViewData(processedSlots);
-                console.log('transformed slots', processedSlots);
+                // console.log('transformed slots', processedSlots);
                 setSlotViewData(processedSlots);
             } catch (error) {
                 console.error('Error converting slots:', error);
@@ -311,7 +309,7 @@ const TaCalender = () => {
         convertSlots();
     }, [slotData]);
 
-    console.log('transformedSlots :', slotViewData);
+    // console.log('transformedSlots :', slotViewData);
 
     const handleScheduleNewSession = () => {
         dispatch(openScheduleSession({ id, name }));
@@ -330,7 +328,7 @@ const TaCalender = () => {
         dispatch(openCreateNewSlots());
     };
 
-    console.log('SlotViewData', slotViewData);
+    // console.log('SlotViewData', slotViewData);
 
     return (
         <>

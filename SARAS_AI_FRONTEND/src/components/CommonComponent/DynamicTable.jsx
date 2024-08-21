@@ -61,7 +61,7 @@ const DynamicTable = ({
                 is_active: item.is_active !== undefined ? item.is_active : 0,
             }))
         );
-        //setCurrentPage(1); // Reset to first page whenever initialData changes
+        setCurrentPage(1); // Reset to first page whenever initialData changes
     }, [initialData]);
 
     const itemsPerPage = 10;
@@ -196,16 +196,18 @@ const DynamicTable = ({
 
         switch (componentName) {
             case 'MANAGETA':
-                // dispatch(updateTA({ id, data: requestData }));
+                dispatch(updateTA({ id, data: requestData }));
+                break;
 
-                break;
             case 'MANAGECOACH':
-                // dispatch(updateCoach({ id, data: requestData }));
+                dispatch(updateCoach({ id, data: requestData }));
                 break;
+
             case 'WOLCATEGORY':
                 console.log('WOL Categories : ', id, requestData);
                 dispatch(activeDeactiveWOLCategory(id));
                 break;
+
             default:
                 console.warn(
                     `No API call defined for component: ${componentName}`

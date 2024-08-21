@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { baseUrl } from '../../../../utils/baseURL';
 import axiosInstance from '../../../services/httpService';
+import { toast } from 'react-toastify';
 
 // Show TA Schedule
 export const showTASchedule = createAsyncThunk(
@@ -28,12 +29,24 @@ export const getTAScheduledSessions = createAsyncThunk(
 // Create TA Schedule
 export const createTASchedule = createAsyncThunk(
     'taScheduling/createTASchedule',
-    async data => {
-        const response = await axiosInstance.post(
-            `${baseUrl}/admin/taschedules`,
-            data
-        );
-        return response.data;
+    async (data, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.post(
+                `${baseUrl}/admin/taschedules`,
+                data
+            );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                // Return custom error message from response
+                return rejectWithValue(error.response.data.message);
+            } else {
+                // Return default error message
+                return rejectWithValue(
+                    'An error occurred while creating the schedule.'
+                );
+            }
+        }
     }
 );
 
@@ -101,7 +114,7 @@ const taScheduling = createSlice({
                 action.payload.id !== undefined
                     ? action.payload.id
                     : action.payload.ta_id;
-            //state.taID = action.payload.id;
+
             state.taName = action.payload.name;
             state.taTimezone = action.payload.timezone;
             if (action.payload.student) {
@@ -125,6 +138,7 @@ const taScheduling = createSlice({
         openEditBatch(state, action) {
             state.openEditBatch = true;
             if (action.payload) {
+                // state.batches = action.payload.batches
             }
         },
         closeEditBatch(state, action) {
@@ -133,13 +147,15 @@ const taScheduling = createSlice({
         openEditStudent(state, action) {
             state.openEditStudent = true;
             if (action.payload) {
-                state.students = action.payload.student;
+                // state.students = action.payload.student;
+                // state.batches = action.payload.batches
             }
         },
         closeEditStudent(state, action) {
             state.openEditStudent = false;
             if (action.payload) {
                 state.students = action.payload.student;
+                state.batches = action.payload.batches;
             }
         },
         clearAvailableSlots(state) {
@@ -159,6 +175,7 @@ const taScheduling = createSlice({
             state.loading = false;
             state.error = action.error.message;
         });
+
         // Get TA Scheduled Sessions
         builder.addCase(getTAScheduledSessions.pending, state => {
             state.loading = true;
@@ -172,17 +189,24 @@ const taScheduling = createSlice({
             state.error = action.error.message;
         });
 
-        // Create TA Schedule
+        // Handle TA Schedule actions in the slice
         builder.addCase(createTASchedule.pending, state => {
             state.loading = true;
         });
         builder.addCase(createTASchedule.fulfilled, (state, action) => {
             state.loading = false;
             state.taScheduledSessions = action.payload.data;
+            toast.success(
+                action.payload.message || 'TA Schedule created successfully!'
+            );
         });
         builder.addCase(createTASchedule.rejected, (state, action) => {
             state.loading = false;
-            state.error = action.error.message;
+            state.error = action.payload || action.error.message;
+            toast.error(
+                action.payload ||
+                    'Failed to create TA Schedule. Please try again.'
+            );
         });
 
         // Get TA Available Slots From Date
@@ -218,7 +242,7 @@ const taScheduling = createSlice({
             state.error = action.error.message;
         });
 
-        // Reschedule Session // TODO : Check this
+        // Reschedule Session
         builder.addCase(rescheduleSession.pending, state => {
             state.loading = true;
         });
