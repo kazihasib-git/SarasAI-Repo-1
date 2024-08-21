@@ -68,9 +68,12 @@ const CustomButton = ({
             {children}
         </Button>
     );
-};
+};  
+
+const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
 
 const ScheduledCall = ({ role }) => {
+
     const dispatch = useDispatch();
     const [newMeetingPopUpOpen, setNewMeetingPopUpOpen] = useState(false);
     const [date, setDate] = useState(moment());
@@ -350,9 +353,9 @@ const ScheduledCall = ({ role }) => {
 
             {scheduleNewSessionPopup &&
                 (role == 'Coach' ? (
-                    <CreateSession componentName={'COACHMENU'} />
+                    <CreateSession componentName={'COACHMENU'} timezoneID={storedTimezoneId}/>
                 ) : (
-                    <CreateSession componentName={'TAMENU'} />
+                    <CreateSession componentName={'TAMENU'} timezoneID={storedTimezoneId}/>
                 ))}
 
             {editSession &&

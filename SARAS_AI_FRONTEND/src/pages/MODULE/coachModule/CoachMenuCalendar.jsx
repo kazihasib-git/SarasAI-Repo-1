@@ -398,10 +398,10 @@ const CoachMenuCalendar = () => {
                     onSelectEvent={handleSessionSelect}
                 />
                 {createNewSlotPopup && (
-                    <CreateSlot componentName={'COACHMENU'} />
+                    <CreateSlot componentName={'COACHMENU'} timezoneID={storedTimezoneId} />
                 )}
                 {scheduleNewSessionPopup && (
-                    <CreateSession componentName={'COACHMENU'} />
+                    <CreateSession componentName={'COACHMENU'} timezoneID={storedTimezoneId}/>
                 )}
                 {selectStudentPopup && (
                     <SelectStudents componentName={'COACHMENU'} />
@@ -410,15 +410,15 @@ const CoachMenuCalendar = () => {
                     <SelectBatches componentName={'COACHMENU'} />
                 )}
 
-                {markLeave && <MarkLeaveDate componentName={'COACHMENU'} />}
+                {markLeave && <MarkLeaveDate componentName={'COACHMENU'} timezoneID={storedTimezoneId}/>}
 
-                {createdSlots && <CreatedSlots componentName={'COACHMENU'} />}
+                {createdSlots && <CreatedSlots componentName={'COACHMENU'} timezoneID={storedTimezoneId}/>}
 
                 {openCreatedSessions && (
-                    <CreatedSessions componentName={'COACHMENU'} />
+                    <CreatedSessions componentName={'COACHMENU'} timezoneID={storedTimezoneId}/>
                 )}
                 {openCancelSession && (
-                    <CancelSession componentName={'COACHMENU'} />
+                    <CancelSession componentName={'COACHMENU'} timezoneID={storedTimezoneId}/>
                 )}
                 {RescheduleSession && (
                     <RescheduleCreatedSession componentName={'COACHMENU'} />
