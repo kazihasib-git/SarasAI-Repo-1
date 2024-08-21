@@ -88,7 +88,8 @@ const actionButtons = [
 
 const CreateSession = ({ componentName , timezoneID}) => {
     const dispatch = useDispatch();
-    const [formData, setFormData] = useState({
+    
+    const initialFormData = {
         sessionName: '',
         duration: null,
         message: '',
@@ -100,7 +101,9 @@ const CreateSession = ({ componentName , timezoneID}) => {
         fromTime: null,
         toTime: null,
         timezone_id: timezone ? timezone : null,
-    });
+    };
+
+    const [formData, setFormData] = useState(initialFormData);
 
     let sliceName, createSessionApi, getSessionApi, getSlotApi;
 
@@ -204,13 +207,16 @@ const CreateSession = ({ componentName , timezoneID}) => {
             studentId: studentId,
             batchId: batchId,
         };
-        console.log('Form Data : ', formData);
-        console.log('DATA :', data);
+        // console.log('Form Data : ', formData);
+        // console.log('DATA :', data);
 
         dispatch(createSessionApi(data)).then(() => {
             dispatch(getSessionApi());
             dispatch(getSlotApi());
             dispatch(closeScheduleNewSession());
+            
+            // Reset the form after submission
+            setFormData(initialFormData);
         });
     };
 
@@ -470,7 +476,10 @@ const CreateSession = ({ componentName , timezoneID}) => {
     return (
         <ReusableDialog
             open={scheduleNewSessionPopup}
-            handleClose={() => dispatch(closeScheduleNewSession())}
+            handleClose={() => {
+                dispatch(closeScheduleNewSession())
+                setFormData(initialFormData);
+            }}
             title={`Create New Session`}
             content={content}
             actions={actions}

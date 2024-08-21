@@ -14,12 +14,15 @@ import {
 } from '../../redux/features/adminModule/coach/coachSchedule';
 
 const CoachSheduling = () => {
+
     const dispatch = useDispatch();
     const { assignCoachStudentOpen, assignCoachBatchOpen, loading } =
         useSelector(state => state.coachModule);
-    const { scheduleCoachSessionOpen } = useSelector(
+    
+        const { scheduleCoachSessionOpen } = useSelector(
         state => state.coachScheduling
     );
+    
     const { coachMapping } = useSelector(state => state.coachModule);
     const [coachScheduleData, setCoachScheduleData] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
@@ -28,27 +31,25 @@ const CoachSheduling = () => {
         dispatch(showCoachMapping());
     }, [dispatch]);
 
-    const { coachID } = useSelector(state => state.coachScheduling);
-    const { todaysAvailableCoach } = useSelector(state => state.coachAvailability);
-    const [selectedCoach, setSelectedCoach] = useState(null);
+    // const { coachID } = useSelector(state => state.coachScheduling);
+    // const { todaysAvailableCoach } = useSelector(state => state.coachAvailability);
+    // const [selectedCoach, setSelectedCoach] = useState(null);
     
 
-    const findTaTimeZone = (todaysAvailableCoach) => {
-        if (todaysAvailableCoach && Number(coachID)) {
-            const selectedCoach = todaysAvailableCoach.find(coach => coach.id === Number(coachID));
-            setSelectedCoach(selectedCoach || null);  // Set to null if not found
-        } else {
-            setSelectedCoach(null);  // Set to null if conditions are not met
-        }
-    }
-    useEffect(() => {
-        findTaTimeZone(todaysAvailableCoach);
-    }, [coachID, todaysAvailableCoach]);
+    // const findTaTimeZone = (todaysAvailableCoach) => {
+    //     if (todaysAvailableCoach && Number(coachID)) {
+    //         const selectedCoach = todaysAvailableCoach.find(coach => coach.id === Number(coachID));
+    //         setSelectedCoach(selectedCoach || null);  // Set to null if not found
+    //     } else {
+    //         setSelectedCoach(null);  // Set to null if conditions are not met
+    //     }
+    // }
+    // useEffect(() => {
+    //     findTaTimeZone(todaysAvailableCoach);
+    // }, [coachID, todaysAvailableCoach]);
 
 
-    const storedTimezoneId = selectedCoach ? selectedCoach.timezone_id : '';
     // const storedTimezoneId = selectedCoach ? selectedCoach.timezone_id : Number(localStorage.getItem('timezone_id'));
- console.log('scheduling timezone id ' , storedTimezoneId)
 
     useEffect(() => {
         if (coachMapping && coachMapping.length > 0) {
@@ -58,10 +59,12 @@ const CoachSheduling = () => {
                 Username: item.username,
                 Active_Students: item.Active_Students,
                 Active_Batches: item.Active_Batches,
-                timezone: item.time_zone,
+                timezone: item.timezone_id,
             }));
 
             setCoachScheduleData(transformData);
+        }else {
+            setCoachScheduleData([])
         }
     }, [coachMapping]);
 
@@ -135,17 +138,17 @@ const CoachSheduling = () => {
                 />
             </Box>
             {scheduleCoachSessionOpen && (
-                <Schedule componentName={'COACHSCHEDULE'} timezoneID={storedTimezoneId}/>
-            )}  
+                <Schedule componentName={'COACHSCHEDULE'} />
+            )}
             {/* {assignCoachStudentOpen && (
         <AssignStudents componentname={"ADDITCOACH"} />
       )}
       {assignCoachBatchOpen && <AssignBatches componentname={"ADDITCOACH"} />} */}
             {openCoachEditBatch && (
-                <EditBatches componentname={'COACHSCHEDULE'} timezoneID={storedTimezoneId}/>
+                <EditBatches componentname={'COACHSCHEDULE'} />
             )}
             {openCoachEditStudent && (
-                <EditStudents componentname={'COACHSCHEDULE'} timezoneID={storedTimezoneId}/>
+                <EditStudents componentname={'COACHSCHEDULE'} />
             )}
         </>
     );

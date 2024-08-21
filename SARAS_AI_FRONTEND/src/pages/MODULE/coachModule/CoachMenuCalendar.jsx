@@ -34,6 +34,7 @@ import CancelSession from '../../../components/RoleRoute/CommonComponent/commonC
 import { convertFromUTC } from '../../../utils/dateAndtimeConversion';
 import { timezoneIdToName } from '../../../utils/timezoneIdToName';
 import { getTimezone } from '../../../redux/features/utils/utilSlice';
+
 const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
 
 const CustomButton = ({
@@ -109,7 +110,6 @@ const CoachMenuCalendar = () => {
     useEffect(() => {
         dispatch(getCoachMenuSlots());
         dispatch(getCoachMenuSessions());
-        dispatch(getTimezone());
     }, [dispatch]);
 
     useEffect(() => {
@@ -119,6 +119,12 @@ const CoachMenuCalendar = () => {
     useEffect(() => {
         convertSlots();
     }, [coachSlots, timezones]);
+
+    useEffect(() => {
+        if(!timezones && timezones.leave === 0){
+            dispatch(getTimezone())
+        }
+    },[dispatch])
 
     // console.log('coach slots :', coachSlots);
     // console.log('coachSessions', coachSessions);
@@ -144,7 +150,7 @@ const CoachMenuCalendar = () => {
                             start_date: event.date.split(' ')[0],
                             start_time: event.start_time,
                             end_time: event.end_time,
-                            end_date: event.date.split(' ')[0],
+                            end_date: event.end_date ? event.end_date : event.date.split(' ')[0],
                             timezonename,
                         });
 

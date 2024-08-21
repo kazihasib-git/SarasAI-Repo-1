@@ -120,7 +120,7 @@ const TAMenuCalendar = () => {
                             start_date: event.date.split(' ')[0],
                             start_time: event.start_time,
                             end_time: event.end_time,
-                            end_date: event.date.split(' ')[0],
+                            end_date: event.end_date ? event.end_date : event.date.split(' ')[0],
                             timezonename,
                         });
 

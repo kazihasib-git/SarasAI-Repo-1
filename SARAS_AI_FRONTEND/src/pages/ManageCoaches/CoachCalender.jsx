@@ -92,10 +92,9 @@ const CoachCalender = () => {
         findTaTimeZone(todaysAvailableCoach);
     }, [id, todaysAvailableCoach]);
 
-    const storedTimezoneId = selectedCoach ? selectedCoach.timezone_id :'';
-    // const storedTimezoneId = selectedCoach ? selectedCoach.timezone_id : Number(localStorage.getItem('timezone_id'));
-    console.log('coachcalander timezone id' , storedTimezoneId)
-console.log("selected sending to schedule time zone id", storedTimezoneId) ;
+    const storedTimezoneId = selectedCoach ? selectedCoach.timezone_id : Number(localStorage.getItem('timezone_id'));
+ 
+    // console.log("selected sending to schedule time zone id", storedTimezoneId) ;
     const [eventsList, setEventsList] = useState([]);
     const [slotViewData, setSlotViewData] = useState([]);
 
@@ -145,7 +144,7 @@ console.log("selected sending to schedule time zone id", storedTimezoneId) ;
         ) {
             const timezonename = timezoneIdToName(storedTimezoneId, timezones);
             if (!timezonename) {
-                console.error('Invalid timezone name');
+                // console.error('Invalid timezone name');
                 setEventsList([]);
                 return;
             }
@@ -160,10 +159,10 @@ console.log("selected sending to schedule time zone id", storedTimezoneId) ;
                             end_date: event.end_date? event.end_date : event.date.split(' ')[0],
                             timezonename,
                         });
-                        console.log(
-                            'Converted Local Schedule Time:',
-                            localTime
-                        );
+                        // console.log(
+                        //     'Converted Local Schedule Time:',
+                        //     localTime
+                        // );
                         const startDateTime = new Date(
                             `${localTime.start_date}T${localTime.start_time}`
                         );
@@ -200,7 +199,7 @@ console.log("selected sending to schedule time zone id", storedTimezoneId) ;
                                 platform_meet: event.platform_meeting_details,
                             };
 
-                            console.log('events created', event1, event2);
+                            // console.log('events created', event1, event2);
                             processedEvents.push(event1, event2);
                             return [event1, event2];
                         } else {
@@ -220,7 +219,7 @@ console.log("selected sending to schedule time zone id", storedTimezoneId) ;
                         }
                     })
                 );
-                console.log('transformed events', processedEvents);
+                // console.log('transformed events', processedEvents);
                 setEventsList(processedEvents);
             } catch (error) {
                 console.error('Error converting events:', error);
@@ -279,7 +278,7 @@ console.log("selected sending to schedule time zone id", storedTimezoneId) ;
                                 leave: slot?.leaves,
                             };
 
-                            console.log('slots created', slot1, slot2);
+                            // console.log('slots created', slot1, slot2);
                             processedSlots.push(slot1, slot2);
                             return [slot1, slot2];
                         } else {
@@ -293,7 +292,7 @@ console.log("selected sending to schedule time zone id", storedTimezoneId) ;
                         }
                     })
                 );
-                console.log('transformed slots', processedSlots);
+                // console.log('transformed slots', processedSlots);
                 setSlotViewData(processedSlots);
             } catch (error) {
                 console.error('Error converting slots:', error);
@@ -325,8 +324,8 @@ console.log("selected sending to schedule time zone id", storedTimezoneId) ;
         dispatch(openCreateNewSlots());
     };
 
-    console.log('event Data', eventsList);
-    console.log('slots View', slotViewData);
+    // console.log('event Data', eventsList);
+    // console.log('slots View', slotViewData);
 
     return (
         <>

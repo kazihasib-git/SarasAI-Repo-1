@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import {
     getAssignStudents,
-    getStudentBatchMapping,
 } from '../../redux/features/adminModule/ta/taSlice';
 import {
     closeTaEditScheduledStudents,
