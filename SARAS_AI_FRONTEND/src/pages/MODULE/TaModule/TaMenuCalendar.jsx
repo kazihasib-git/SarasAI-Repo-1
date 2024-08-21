@@ -63,6 +63,7 @@ const CustomButton = ({
 const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
 
 const TAMenuCalendar = () => {
+    console.log('timezoneID' , storedTimezoneId) ; 
     const { timezones } = useSelector(state => state.util);
     const dispatch = useDispatch();
     const [eventsList, setEventsList] = useState([]);
@@ -346,16 +347,16 @@ const TAMenuCalendar = () => {
                     componentName={'TAMENU'}
                     onSelectEvent={handleSessionSelect}
                 />
-                {createNewSlotPopup && <CreateSlot componentName={'TAMENU'} />}
+                {createNewSlotPopup && <CreateSlot componentName={'TAMENU'} timezoneID={storedTimezoneId}/>}
                 {scheduleNewSessionPopup && (
-                    <CreateSession componentName={'TAMENU'} />
+                    <CreateSession componentName={'TAMENU'} timezoneID={storedTimezoneId} />
                 )}
                 {selectStudentPopup && (
                     <SelectStudents componentName={'TAMENU'} />
                 )}
                 {selectBatchPopup && <SelectBatches componentName={'TAMENU'} />}
-                {markLeave && <MarkLeaveDate componentName={'TAMENU'} />}
-                {createdSlots && <CreatedSlots componentName={'TAMENU'} />}
+                {markLeave && <MarkLeaveDate componentName={'TAMENU'} timezoneID={storedTimezoneId}/>}
+                {createdSlots && <CreatedSlots componentName={'TAMENU'} timezoneID={storedTimezoneId}/>}
                 {openSession && (
                     <SessionLink
                         componentName={'TAMENU'}
@@ -368,5 +369,4 @@ const TAMenuCalendar = () => {
         </>
     );
 };
-
 export default TAMenuCalendar;

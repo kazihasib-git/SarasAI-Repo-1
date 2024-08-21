@@ -33,7 +33,6 @@ import { getTimezone } from '../../redux/features/utils/utilSlice';
 import { getTodayCoachAvailability } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import EditStudentsFromSession from '../../components/availability/EditStudentsFromSession';
 import EditBatchesFromSession from '../../components/availability/EditBatchesFromSession';
-
 const CustomButton = ({
     onClick,
     children,
@@ -69,15 +68,17 @@ const CustomButton = ({
     );
 };
 const CoachCalender = () => {
-    const { todaysAvailableCoach } = useSelector(state => state.coachAvailability);
     const [selectedCoach, setSelectedCoach] = useState(null);
+    const { timezones } = useSelector(state => state.util);
 
     const dispatch = useDispatch();
-    const { id, name } = useParams();
-    
     useEffect(() => {
         dispatch(getTodayCoachAvailability());
     }, [dispatch]);
+    const { todaysAvailableCoach } = useSelector(state => state.coachAvailability);
+
+    const { id, name } = useParams();
+    
    
     const findTaTimeZone = (todaysAvailableCoach) => {
         if (todaysAvailableCoach && Number(id)) {
@@ -102,7 +103,6 @@ const CoachCalender = () => {
     const { openEditStudent, openEditBatch } = useSelector(
         state => state.taScheduling
     );
-    const { timezones } = useSelector(state => state.util);
 
     useEffect(() => {
         dispatch(getTimezone());

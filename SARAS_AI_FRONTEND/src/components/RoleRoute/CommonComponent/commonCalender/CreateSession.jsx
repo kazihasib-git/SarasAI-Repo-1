@@ -87,6 +87,9 @@ const actionButtons = [
 ];
 
 const CreateSession = ({ componentName , timezoneID}) => {
+
+console.log('session timezoneID',timezoneID)
+
     const dispatch = useDispatch();
     
     const initialFormData = {
@@ -382,14 +385,19 @@ const CreateSession = ({ componentName , timezoneID}) => {
                                 <CustomTimeZoneForm
                                     label="Timezone"
                                     name="timezone"
-                                    value={formData.timezone_id}
-                                    onChange={e =>
-                                        handleChange('timezone_id', e.target.value)
-                                    }
-                                    options={timezones}
+                                    
+                                    
+                                    
                                     errors={!!error.timezone}
                                     helperText={error.timezone}
                                     sx={{ width: '100%' }}
+
+                        
+                                    
+                                    value={timezoneID}
+                                    // onChange={field.onChange}
+                                    disabled={timezoneID!=null}
+                                    options={timezones}
                                 />
                             </Grid>
 

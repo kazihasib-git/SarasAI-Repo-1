@@ -52,7 +52,6 @@ const CoachSheduling = () => {
     // const storedTimezoneId = selectedCoach ? selectedCoach.timezone_id : Number(localStorage.getItem('timezone_id'));
 
     useEffect(() => {
-        console.log('COACHSCHEDULE : ', coachMapping);
         if (coachMapping && coachMapping.length > 0) {
             const transformData = coachMapping.map((item, index) => ({
                 id: item.id,
