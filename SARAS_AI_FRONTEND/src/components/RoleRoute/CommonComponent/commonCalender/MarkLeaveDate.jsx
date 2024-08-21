@@ -18,7 +18,8 @@ import CustomDateField from '../../../CustomFields/CustomDateField';
 import ReusableDialog from '../../../CustomFields/ReusableDialog';
 import CustomButton from '../../../CustomFields/CustomButton';
 
-const MarkLeaveDate = ({ componentName }) => {
+const MarkLeaveDate = ({ componentName , timezoneID}) => {
+    console.log('MarkLeave timezoneID' , timezoneID)  ;
     console.log('Comp Name :', componentName);
     const dispatch = useDispatch();
     const [formData, setFormData] = useState({

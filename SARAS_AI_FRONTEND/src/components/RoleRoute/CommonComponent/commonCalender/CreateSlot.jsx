@@ -39,7 +39,7 @@ const weekDays = [
 
 const timezone = Number(localStorage.getItem('timezone_id'));
 
-const CreateSlot = ({ componentName }) => {
+const CreateSlot = ({ componentName, timezoneID }) => {
     // console.log('component Name :', componentName);
     // console.log('timezone', timezone);
 
@@ -237,15 +237,14 @@ const CreateSlot = ({ componentName }) => {
                             justifyContent="center"
                         >
                             <CustomTimeZoneForm
-                                name="timezone_id"
+
                                 label="Time Zone"
-                                value={formData.timezone_id}
-                                onChange={e =>
-                                    handleChange('timezone_id', e.target.value)
-                                }
-                                errors={!!errors.timezone}
-                                helperText={errors.timezone}
+                                name="timezone_id"
+                                value={timezoneID}
+                                // onChange={field.onChange}
+                                disabled={timezoneID!=null}
                                 options={timezones}
+                                errors={errors}
                             />
                         </Grid>
                         <Grid
@@ -350,7 +349,7 @@ const CreateSlot = ({ componentName }) => {
     const actions = (
         <>
             <CustomButton
-                onClick={() =>  {
+                onClick={() => {
                     dispatch(closeCreateNewSlot())
                     setFormData(initialFormData)
                 }}
@@ -383,7 +382,7 @@ const CreateSlot = ({ componentName }) => {
     return (
         <ReusableDialog
             open={createNewSlotPopup}
-            handleClose={() =>  {
+            handleClose={() => {
                 dispatch(closeCreateNewSlot())
                 setFormData(initialFormData)
             }}
