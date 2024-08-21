@@ -62,6 +62,9 @@ const TaMenuProfile = () => {
     const [selectedImage, setSelectedImage] = useState(null);
     const [dateOfBirth, setDateOfBirth] = useState(null);
     const [phoneNumber, setPhoneNumber] = useState('');
+
+    //const [password, setPassword] = useState('');
+
     const [ipData, setIpData] = useState(null);
     const [error, setError] = useState(null);
     const nameValue = watch('name', '');
@@ -151,6 +154,7 @@ const TaMenuProfile = () => {
         Object.entries(formValues).forEach(([key, value]) =>
             setValue(key, value)
         );
+        //setPassword(data.password);
 
         // setPhoneNumber(data.phone);
     };
@@ -310,8 +314,7 @@ const TaMenuProfile = () => {
                                 />
                             </Grid>
 
-                            {/*
-                            <Grid item xs={12} sm={6} md={4}>
+                            {/* <Grid item xs={12} sm={6} md={4}>
                                 <CustomTextField
                                     label="Password"
                                     name="password"
@@ -337,11 +340,12 @@ const TaMenuProfile = () => {
                                         },
                                     }}
                                     errors={errors}
+                                    disabled={!isEditing}
+                                    defaultValue={password}
                                 />
-                            </Grid>
-                            */}
+                            </Grid> */}
 
-                            <Grid item xs={12} sm={6} md={4}>
+                            {/* <Grid item xs={12} sm={6} md={4}>
                                 <CustomTextField
                                     label="Email Address"
                                     name="email"
@@ -357,9 +361,9 @@ const TaMenuProfile = () => {
                                     errors={errors}
                                     disabled={!isEditing}
                                 />
-                            </Grid>
+                            </Grid> */}
 
-                            <Grid item xs={12} sm={6} md={4}>
+                            {/* <Grid item xs={12} sm={6} md={4}>
                                 <Controller
                                     name="phone"
                                     control={control}
@@ -415,7 +419,7 @@ const TaMenuProfile = () => {
                                         {errors.phone.message}
                                     </Typography>
                                 )}
-                            </Grid>
+                            </Grid> */}
 
                             <Grid item xs={12} sm={6} md={4}>
                                 <Controller
@@ -627,11 +631,12 @@ const TaMenuProfile = () => {
                                     padding: '15px 25px',
                                     marginTop: 20,
                                     backgroundColor: '#F56D3B',
-                                    height: '50px',
-                                    width: '110px',
+                                    height: '43px',
+                                    width: '100px',
                                     fontSize: '14px',
                                     fontWeight: '700',
                                     text: '#FFFFFF',
+                                    textTransform: 'none',
                                 }}
                             >
                                 Submit
