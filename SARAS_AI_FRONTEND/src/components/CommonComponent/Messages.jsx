@@ -12,6 +12,7 @@ import SearchIcon from '../../assets/messagesearchicon.svg';
 import FilterBackground from '../../assets/duedatebackground.svg';
 import userimg from '../../assets/userimg.png';
 import CancelIcon from '@mui/icons-material/Cancel';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'; // Import an appropriate icon
 
 import {
     getTaCoachAllChats,
@@ -160,7 +161,7 @@ const Messages = ({ role }) => {
             fileInputRef.current.value = '';
         }
     };
-     useEffect(() => {
+    useEffect(() => {
         const setUserToChat = async () => {
             if (role === 'coach' || role === 'ta') {
                 if (selectedUser !== null) {
@@ -433,14 +434,14 @@ const Messages = ({ role }) => {
                                     >
                                         {msg.sender === 'other' && (
                                             <img
-                                            src={selectedUser.profilePic}
-                                            alt="Profile Pic"
-                                            className="profile-pic"
-                                            style={{
-                                                marginRight: '8px',
-                                                visibility: isFirstMessageFromSameSender ? 'visible' : 'hidden',
-                                            }}
-                                        />
+                                                src={selectedUser.profilePic}
+                                                alt="Profile Pic"
+                                                className="profile-pic"
+                                                style={{
+                                                    marginRight: '8px',
+                                                    visibility: isFirstMessageFromSameSender ? 'visible' : 'hidden',
+                                                }}
+                                            />
                                         )}
                                         <Box
                                             p={1}
@@ -454,10 +455,25 @@ const Messages = ({ role }) => {
 
                                             {msg.file && (
                                                 <Box mt={1}>
-                                                    <Typography variant="caption">
-                                                        Attached file: {msg.file.name}
-                                                    </Typography>
-                                                </Box>
+                                                <Typography variant="caption">
+                                                    <a
+                                                        style={{
+                                                            display: 'flex', // Flexbox to align icon and text
+                                                            alignItems: 'center',
+                                                            border: '1px solid white',
+                                                            borderRadius: '8px',
+                                                            color: 'white',
+                                                            padding: '5px 10px', // Adjust padding for better spacing
+                                                            textDecoration: 'none',
+                                                            backgroundColor: '#333', // Dark background to resemble a file
+                                                        }}
+                                                        href={msg.file.url}
+                                                    >
+                                                        <InsertDriveFileIcon style={{ marginRight: '5px', color: 'white' }} /> {/* File icon */}
+                                                        {msg.file.name}
+                                                    </a>
+                                                </Typography>
+                                            </Box>
                                             )}
                                         </Box>
                                         {msg.sender === 'me' && (
