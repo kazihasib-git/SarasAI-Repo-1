@@ -556,7 +556,7 @@ const Messages = ({ role }) => {
                                 display: 'flex',
                                 alignItems: 'center',
                                 padding: '10px',
-                                backgroundColor: '#f6f6f8',
+                               
                             }}
                         >
                             <TextField
