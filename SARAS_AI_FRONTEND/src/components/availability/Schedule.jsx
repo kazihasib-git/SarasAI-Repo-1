@@ -77,6 +77,8 @@ const Schedule = ({ componentName , timezoneID}) => {
     const [dateSelected, setDateSelected] = useState(false);
 
     const dispatch = useDispatch();
+    const { timezones, platforms } = useSelector(state => state.util);
+
     let scheduleSessionOpenKey,
         schedulingStateKey,
         availableKey,
@@ -105,6 +107,7 @@ const Schedule = ({ componentName , timezoneID}) => {
             closeScheduleSessionAction = closeScheduleSession;
             createScheduleAction = createTASchedule;
             break;
+
         case 'COACHSCHEDULE':
             scheduleSessionOpenKey = 'scheduleCoachSessionOpen';
             schedulingStateKey = 'coachScheduling';
@@ -144,18 +147,24 @@ const Schedule = ({ componentName , timezoneID}) => {
         [scheduleSessionOpenKey]: scheduleSessionOpen,
         [idKey]: adminUserID,
         [nameKey]: adminUserName,
-        [timezoneKey]: adminUserTimezone,
+        [timezoneKey]: timezoneId,
         [availableKey]: availableSlots,
         [studentKey]: students,
         [batchKey]: batches,
     } = schedulingState;
 
-    const {
+     const {
         register,
         handleSubmit,
         control,
         formState: { errors },
-    } = useForm();
+    } = useForm({
+        defaultValues: {
+            timezone_id: timezoneId ? Number(timezoneId) : timezoneID,
+        },
+    });
+
+    
 
     useEffect(() => {
         if (dateSelected && (fromDate || !availableSlots.length > 0)) {
@@ -163,7 +172,7 @@ const Schedule = ({ componentName , timezoneID}) => {
                 getAvailableSlotsAction({
                     admin_user_id: adminUserID,
                     date: fromDate,
-                    timezone_name: timezoneIdToName(timezoneID, timezones),
+                    timezone_name: timezoneIdToName( timezoneId ? Number(timezoneId) : timezoneID, timezones),
                 })
             ).then(() => {
                 setSelectedSlot([]);
@@ -178,7 +187,7 @@ const Schedule = ({ componentName , timezoneID}) => {
                 getAvailableSlotsAction({
                     admin_user_id: adminUserID,
                     date: fromDate,
-                    timezone_name: timezoneIdToName(timezoneID, timezones),
+                    timezone_name: timezoneIdToName(timezoneId ? Number(timezoneId) :  timezoneID, timezones),
                 })
             ).then(() => {
                 setSelectedSlot([]);
@@ -187,8 +196,6 @@ const Schedule = ({ componentName , timezoneID}) => {
         }
     };
 
-    const { timezones, platforms } = useSelector(state => state.util);
-
     useEffect(() => {
         dispatch(getTimezone());
         dispatch(getPlatforms());
@@ -196,8 +203,8 @@ const Schedule = ({ componentName , timezoneID}) => {
 
     const convertSessions = async () => {
         
-        if (availableSlots && availableSlots.length > 0 && timezones && timezoneID) {
-            const timezonename = timezoneIdToName(timezoneID, timezones);
+        if (availableSlots && availableSlots.length > 0 && timezones && (timezoneId || timezoneID)) {
+            const timezonename = timezoneIdToName(timezoneId ? Number(timezoneId) :  timezoneID, timezones);
             try {
                 const processedSlots = await Promise.all(
                     availableSlots.map(async (slot, index) => {
@@ -253,7 +260,7 @@ const Schedule = ({ componentName , timezoneID}) => {
     
     useEffect(() => {
         convertSessions();
-    }, [availableSlots, timezones, timezoneID]);
+    }, [availableSlots, timezones, timezoneId, timezoneID]);
 
     const handleDayChange = day => {
         setSelectedDays(prev => {
@@ -360,7 +367,7 @@ const Schedule = ({ componentName , timezoneID}) => {
         formData.weeks = weeksArray;
         formData.studentId = studentId;
         formData.batchId = batchId;
-        formData.timezone_id = `${timezoneID}`
+        formData.timezone_id = timezoneId ? Number(timezoneId) : timezoneID, //`${timezoneID}`
 
         dispatch(createScheduleAction(formData))
             .then(() => {
@@ -515,7 +522,7 @@ const Schedule = ({ componentName , timezoneID}) => {
                                                             name="timezone_id"
                                                             control={control}
                                                             // rules={{ required: "Time Zone is required" }}
-                                                            defaultValue={timezoneID}
+                                                            //defaultValue={timezone_id ? Number(timezone_id) : timezoneID}
                                                             render={({
                                                                 field,
                                                             }) => (
@@ -523,7 +530,7 @@ const Schedule = ({ componentName , timezoneID}) => {
                                                                     label="Time Zone"
                                                                     name="timezone_id"
                                                                     value={
-                                                                        timezoneID
+                                                                        timezoneId ? Number(timezoneId) : timezoneID
                                                                     }
                                                                     onChange={
                                                                         field.onChange
