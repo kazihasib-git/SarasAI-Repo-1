@@ -123,16 +123,17 @@
 }
 
 .profile-container {
-    position: relative;
-    display: inline-block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .profile-image {
-    display: block;
-    /* width: 50px; Adjust based on your desired size */
-    height: 50px; /* Adjust based on your desired size */
+    width: 40px; /* Ensure width and height are equal */
+    height: 40px; /* Ensure width and height are equal */
+    object-fit: cover; /* Ensures the image covers the area without distortion */
+    border-radius: 50%; /* Makes the image round */
 }
-
 .online-dot {
     position: absolute;
     bottom: 0;
