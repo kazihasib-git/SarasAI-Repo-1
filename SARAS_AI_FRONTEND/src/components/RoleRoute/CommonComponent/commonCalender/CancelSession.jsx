@@ -17,32 +17,44 @@ import {
     cancelScheduledSessionForLeave,
     getCoachMenuSessionForLeave,
     getCoachMenuSessions,
+    getCoachMenuSlots,
 } from '../../../../redux/features/coachModule/coachmenuprofileSilce';
+import { cancelTaScheduledSessionForLeave, getTaMenuSessionForLeave, getTaMenuSessions, getTaMenuSlots } from '../../../../redux/features/taModule/tamenuSlice';
 
 const CancelSession = ({ componentName }) => {
     const dispatch = useDispatch();
 
-    let sliceName, cancelSessionApi, getSessionsApi, openCreatedSessionsPopup;
+    let sliceName, cancelSessionApi, getSessionsApi,
+        getAllSlotsAPi,
+        getAllSessionsApi;
     switch (componentName) {
         case 'TAMENU':
             sliceName = 'taMenu';
-            cancelSessionApi = '';
-            getSessionsApi = '';
+            cancelSessionApi = cancelTaScheduledSessionForLeave;
+            getSessionsApi = getTaMenuSessionForLeave;
+            getAllSlotsAPi = getTaMenuSlots;
+            getAllSessionsApi = getTaMenuSessions;
             break;
+
         case 'COACHMENU':
             sliceName = 'coachMenu';
             cancelSessionApi = cancelScheduledSessionForLeave;
             getSessionsApi = getCoachMenuSessionForLeave;
-            openCreatedSessionsPopup = openCreatedSessions;
+            getAllSlotsAPi = getCoachMenuSlots
+            getAllSessionsApi = getCoachMenuSessions
             break;
+
         default:
             sliceName = null;
             cancelSessionApi = null;
             getSessionsApi = null;
+            getAllSessionsApi = null;
+            getAllSessionsApi = null;
             break;
     }
 
     const selectState = useSelector(state => state[sliceName]);
+
     const { openCancelSession, sessionCancelData, slotsLeaveData } =
         useSelector(state => state.commonCalender);
 
@@ -52,7 +64,9 @@ const CancelSession = ({ componentName }) => {
         const sessionId = sessionCancelData.id;
         dispatch(cancelSessionApi(sessionId)).then(() => {
             dispatch(getSessionsApi(slotsLeaveData));
-            dispatch(openCreatedSessionsPopup());
+            dispatch(openCreatedSessions(slotsLeaveData));
+            dispatch(getAllSessionsApi());
+            dispatch(getAllSlotsAPi());
         });
 
         dispatch(closeCancelSessionPopup());

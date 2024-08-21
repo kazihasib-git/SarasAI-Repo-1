@@ -24,6 +24,10 @@ import SessionLink from '../../../components/RoleRoute/CommonComponent/commonCal
 import { convertFromUTC } from '../../../utils/dateAndtimeConversion';
 import { timezoneIdToName } from '../../../utils/timezoneIdToName';
 import { getTimezone } from '../../../redux/features/utils/utilSlice';
+import CancelSession from '../../../components/RoleRoute/CommonComponent/commonCalender/CancelSession';
+import RescheduleCreatedSession from '../../../components/RoleRoute/CommonComponent/commonCalender/RescheduleCreatedSession';
+import LeaveReason from '../../../components/RoleRoute/CommonComponent/commonCalender/LeaveReason';
+import CreatedSessions from '../../../components/RoleRoute/CommonComponent/commonCalender/CreatedSessions';
 
 const CustomButton = ({
     onClick,
@@ -81,6 +85,10 @@ const TAMenuCalendar = () => {
         createdSlots,
         openSession,
         sessionEventData,
+        openCreatedSessions,
+        openCancelSession,
+        openLeaveReason,
+        RescheduleSession,
     } = useSelector(state => state.commonCalender);
 
     const { taSlots, taSessions } = useSelector(state => state.taMenu);
@@ -217,21 +225,21 @@ const TAMenuCalendar = () => {
                                     endDate: new Date(
                                         `${localTime.start_date}T23:59:59`
                                     ),
-                                    leave: slot.leave,
+                                    leave: slot.leaves,
                                 },
                                 {
                                     startDate: new Date(
                                         `${localTime.end_date}T00:00:00`
                                     ),
                                     endDate: endDateTime,
-                                    leave: slot.leave,
+                                    leave: slot.leaves,
                                 }
                             );
                         } else {
                             processedSlots.push({
                                 startDate: startDateTime,
                                 endDate: endDateTime,
-                                leave: slot.leave,
+                                leave: slot.leaves,
                             });
                         }
                     })
@@ -357,6 +365,20 @@ const TAMenuCalendar = () => {
                 {selectBatchPopup && <SelectBatches componentName={'TAMENU'} />}
                 {markLeave && <MarkLeaveDate componentName={'TAMENU'} timezoneID={storedTimezoneId}/>}
                 {createdSlots && <CreatedSlots componentName={'TAMENU'} timezoneID={storedTimezoneId}/>}
+                
+                {openCreatedSessions && (
+                    <CreatedSessions componentName={'TAMENU'} />
+                )}
+                
+                {openCancelSession && (
+                    <CancelSession componentName={'TAMENU'} />
+                )}
+                {RescheduleSession && (
+                    <RescheduleCreatedSession componentName={'TAMENU'} />
+                )}
+                {openLeaveReason && (
+                    <LeaveReason componentName={'TAMENU'} />
+                )}
                 {openSession && (
                     <SessionLink
                         componentName={'TAMENU'}
