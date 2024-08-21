@@ -3,6 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
     students: [], // select students for scheduling session
     batches: [], // select batches for scheduling session
+    preSelectedStudents: [], //already Selected Students for edit session
+    preSelectedBatches: [], //already Selected Students for edit batches
     userId: '',
     userName: '',
     sessionEventData: [],
@@ -56,16 +58,20 @@ const commonCalender = createSlice({
         },
         openSelectStudents: (state, action) => {
             state.selectStudentPopup = true;
+            state.preSelectedStudents = action.payload? action.payload: [];
             // asign students
         },
         closeSelectStudents: (state, action) => {
             state.selectStudentPopup = false;
+            state.preSelectedStudents = [];
         },
         openSelectBatches: (state, action) => {
             state.selectBatchPopup = true;
+            state.preSelectedBatches = action.payload? action.payload: [];
         },
         closeSelectBatches: (state, action) => {
             state.selectBatchPopup = false;
+            state.preSelectedBatches = [];
         },
 
         // For Leave
