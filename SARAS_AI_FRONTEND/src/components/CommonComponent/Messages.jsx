@@ -12,6 +12,7 @@ import SearchIcon from '../../assets/messagesearchicon.svg';
 import FilterBackground from '../../assets/duedatebackground.svg';
 import userimg from '../../assets/userimg.png';
 import CancelIcon from '@mui/icons-material/Cancel';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'; // Import an appropriate icon
 
 import {
     getTaCoachAllChats,
@@ -183,7 +184,6 @@ const Messages = ({ role }) => {
             fileInputRef.current.value = '';
         }
     };
-
     useEffect(() => {
         const setUserToChat = async () => {
             if (role === 'coach' || role === 'ta') {
@@ -505,11 +505,25 @@ const Messages = ({ role }) => {
 
                                             {msg.file && (
                                                 <Box mt={1}>
-                                                    <Typography variant="caption">
-                                                        Attached file:{' '}
+                                                <Typography variant="caption">
+                                                    <a
+                                                        style={{
+                                                            display: 'flex', // Flexbox to align icon and text
+                                                            alignItems: 'center',
+                                                            border: '1px solid white',
+                                                            borderRadius: '8px',
+                                                            color: 'white',
+                                                            padding: '5px 10px', // Adjust padding for better spacing
+                                                            textDecoration: 'none',
+                                                            backgroundColor: '#333', // Dark background to resemble a file
+                                                        }}
+                                                        href={msg.file.url}
+                                                    >
+                                                        <InsertDriveFileIcon style={{ marginRight: '5px', color: 'white' }} /> {/* File icon */}
                                                         {msg.file.name}
-                                                    </Typography>
-                                                </Box>
+                                                    </a>
+                                                </Typography>
+                                            </Box>
                                             )}
                                         </Box>
                                         {msg.sender === 'me' && (

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Checkbox, Box, Pagination } from '@mui/material';
+import { Checkbox, Box, Pagination, Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCoursesWithCoaches, assignCourseToCoach } from '../../redux/features/adminModule/coach/coachSlice';
-
+import CustomButton from '../CustomFields/CustomButton';
 const CustomCheckbox = styled(Checkbox)(({ theme }) => ({
     color: '#F56D3B',
     '&.Mui-checked': {
@@ -16,6 +16,7 @@ const AdminCoursesTable = ({ coachId }) => {
     const [data, setData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
+    const [selectedCourses, setSelectedCourses] = useState([]);
 
     const totalPages = Math.ceil(data.length / itemsPerPage);
     const currentData = data.slice(
@@ -35,39 +36,48 @@ const AdminCoursesTable = ({ coachId }) => {
     useEffect(() => {
         setData(allCoursesWithCoaches);
     }, [allCoursesWithCoaches]);
-
+   
     const handlePageChange = (event, pageNumber) => {
         setCurrentPage(pageNumber);
     };
 
     const handleClick = (courseId) => {
-        const updatedData = data.map(item =>
-            item.id === courseId
-                ? {
-                    ...item,
-                    coaches: item.coaches.includes(coachId)
-                        ? item.coaches.filter(c => c !== coachId)
-                        : [...item.coaches, coachId],
-                }
-                : item
+        const updatedData = data.map((item) =>
+          item.id === courseId
+            ? {
+                ...item,
+                coaches: item.coaches.includes(coachId)
+                  ? item.coaches.filter((c) => c !== coachId)
+                  : [...item.coaches, coachId],
+              }
+            : item
         );
-    
+      
         setData(updatedData);
-    
-        const assignedCourses = updatedData
-            .filter(item => item.coaches.includes(coachId))
-            .map(item => ({ id: item.id }));
-    
+        setSelectedCourses((prev) =>
+          prev.includes(courseId)
+            ? prev.filter((id) => id !== courseId)
+            : [...prev, courseId]
+        );
+      };
+
+
+
+
+    const handleSubmit = () => {
+        const assignedCourses = selectedCourses.map(courseId => ({ id: courseId }));
+
         const requestData = {
             Coach_id: coachId,
             courses: assignedCourses,
         };
-    
+
         console.log(requestData);
-    
-        // Dispatch the API call to assign/unassign the coach to/from the course
-        //dispatch(assignCourseToCoach(requestData));
+
+        // Dispatch the API call to assign/unassign the coach to/from the courses
+        dispatch(assignCourseToCoach(requestData));
     };
+
 
     return (
         <div className="table-container">
@@ -80,6 +90,7 @@ const AdminCoursesTable = ({ coachId }) => {
                 >
                     Assigned Courses
                 </p>
+
             </Box>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead className="commonTableHead">
@@ -91,6 +102,7 @@ const AdminCoursesTable = ({ coachId }) => {
                 </thead>
                 <tbody className="commonTableBody">
                     {currentData.map((item, index) => (
+                        
                         <tr key={item.id} id="commonTableRow" style={{ textAlign: 'center' }}>
                             <td style={{ padding: '10px', borderBottom: '1px solid #ddd' }}>
                                 {(currentPage - 1) * itemsPerPage + index + 1}
@@ -104,10 +116,23 @@ const AdminCoursesTable = ({ coachId }) => {
                                 {new Date(item.end_date).toLocaleDateString()}
                             </td>
                             <td style={{ padding: '10px', borderBottom: '1px solid #ddd' }}>
-                                <CustomCheckbox
-                                    checked={item.coaches.includes(coachId)}
-                                    onChange={() => handleClick(item.id)}
-                                />
+
+                           
+
+{item.coaches.find(i => i.id==coachId)!=null ? (
+     <CustomCheckbox
+     checked={item.coaches.find(i => i.id==coachId)!=null}
+     onChange={() => handleClick(item.id)}
+ />
+  ) : (
+    <CustomCheckbox
+      checked={item.coaches.includes(coachId)}
+      onChange={() => handleClick(item.id)}
+    />
+  )}
+
+
+
                             </td>
                         </tr>
                     ))}
@@ -147,8 +172,22 @@ const AdminCoursesTable = ({ coachId }) => {
                     }}
                 />
             </div>
+            <div className='mb-1'>
+            <CustomButton
+                type="submit"
+                // form="createForm"
+                backgroundColor="#F56D3B"
+                color="white"
+                borderColor="#F56D3B"
+                onClick={handleSubmit}
+            >
+                Submit
+            </CustomButton>
+            </div>
         </div>
+
     );
 };
 
 export default AdminCoursesTable;
+
