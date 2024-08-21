@@ -31,7 +31,7 @@ h1 {
 
 .box2 {
     width: 55vw;
-    left: calc(20vw + 3px); /* Add margin to the left position */
+     left: calc(20vw + 3px); /*Add margin to the left position */
     height: 80vh;
     border-radius: 0;
     overflow: hidden;
@@ -291,14 +291,40 @@ h1 {
 @media (max-width: 768px) {
     .box1,
     .box2 {
-        flex: 1 1 100%;
-        max-width: none;
+       
+        width: 60vw; 
     }
 
     .search-bar {
         width: 100%;
     }
+   
 }
+
+@media (max-width: 1024px) {
+    .box1{
+        width: 20vw;
+    }
+    .box2 {
+        width: 70vw; 
+        
+    }
+    .search-bar {
+        width: 100%;
+    }
+    /* .last-seen {
+        display: none;
+    } */
+    /* .filter-button {
+        display: none;
+    }
+    .filter-background{
+        display: none;
+    } */
+    
+}
+
+
 
 @media (max-width: 480px) {
     .search-container {
@@ -311,6 +337,7 @@ h1 {
         margin-bottom: 10px;
     }
 }
+
 
 .checkbox-container {
     position: absolute;
