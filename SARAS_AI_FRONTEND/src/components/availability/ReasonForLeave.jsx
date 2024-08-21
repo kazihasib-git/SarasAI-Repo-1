@@ -17,11 +17,12 @@ import CustomTextField from '../CustomFields/CustomTextField';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import { useParams } from 'react-router-dom';
 import CustomButton from '../CustomFields/CustomButton';
+import { toast } from 'react-toastify';
 
 const ReasonForLeave = ({ componentName }) => {
     const dispatch = useDispatch();
     const { id, name } = useParams();
-    const [reasonForLeave, setReasonForLeave] = useState('');
+    const [leaveReason, setleaveReason] = useState('');
 
     let reasonForLeaveOpenKey,
         closeReasonForLeaveAction,
@@ -46,7 +47,7 @@ const ReasonForLeave = ({ componentName }) => {
 
         case 'COACHCALENDER':
             sliceName = 'coachAvailability';
-            reasonForLeaveOpenKey = 'reasonForCoachLeaveOpen'; // Adjust based on your actual key
+            reasonForLeaveOpenKey = 'reasonForCoachLeaveOpen';
             closeReasonForLeaveAction = closeCoachReasonForLeave;
             markLeaveKey = 'coachMarkLeaveData';
             slotEventKey = 'slotCoachEventData';
@@ -76,32 +77,12 @@ const ReasonForLeave = ({ componentName }) => {
     );
 
     const handleSubmit = () => {
-        if (slotEventDetails && slotEventDetails.length > 0) {
-            const slots = slotEventDetails.data.map(slotId => {
-                const slot = slotId?.data?.find(s => s.id === slotId);
-                return {
-                    slot_id: slot.id,
-                    date: slot.slot_date,
-                    start_time: slot.from_time,
-                    end_time: slot.to_time,
-                };
-            });
-
-            // Get the first and last slots
-            const firstSlot = slots[0];
-            const lastSlot = slots[slots.length - 1];
-
-            const slotEventDetails = {
-                admin_user_id: id,
-                start_date: firstSlot.date,
-                end_date: lastSlot.date,
-                start_time: firstSlot.start_time,
-                end_time: lastSlot.end_time,
-                approve_status: 1,
-                leave_type: 'full',
-                reason: '',
-                slot_id: slots.map(slot => slot.slot_id), // Collect all slot IDs into an array
-            };
+        if(!leaveReason){
+            toast.error('Enter Reason For Leave')
+            return;
+        }
+        if(markLeaveData && markLeaveData.data){
+            const slots = markLeaveData.data;
 
             const requestBody = {
                 admin_user_id: id,
@@ -110,25 +91,16 @@ const ReasonForLeave = ({ componentName }) => {
                 reason: null,
                 approve_status: null,
                 leave_type: null,
-                reason: reasonForLeavslotEventDetailse,
+                reason: leaveReason,
 
-                data: slots.map(slot => slot),
+                data: slots
             };
 
             dispatch(reasonForLeaveAction(requestBody)).then(() => {
                 dispatch(getSlotsApi(id));
                 dispatch(getSessionApi(id));
+                dispatch(closeReasonForLeaveAction());
             });
-            dispatch(closeReasonForLeaveAction());
-        } else {
-            console.log('No slots selected, opening reason for leave');
-            console.log('mark leave data', markLeaveData);
-
-            dispatch(reasonForLeaveAction(markLeaveData)).then(() => {
-                dispatch(getSlotsApi(id));
-                dispatch(getSessionApi(id));
-            });
-            dispatch(closeReasonForLeaveAction());
         }
     };
 
@@ -138,8 +110,8 @@ const ReasonForLeave = ({ componentName }) => {
                 <CustomTextField
                     label="Reason for Leave"
                     fullWidth
-                    value={reasonForLeave}
-                    onChange={e => setReasonForLeave(e.target.value)}
+                    value={leaveReason}
+                    onChange={e => setleaveReason(e.target.value)}
                     placeholder="Enter reason for leave"
                     variant="outlined"
                     multiline
@@ -152,9 +124,12 @@ const ReasonForLeave = ({ componentName }) => {
     const actions = (
         <CustomButton
             onClick={handleSubmit}
-            backgroundColor="#F56D3B"
-            borderColor="#F56D3B"
-            color="#FFFFFF"
+            style={{
+                backgroundColor : "#F56D3B",
+                borderColor : "#F56D3B",
+                color : "#FFFFFF",
+                textTrasform : 'none'
+            }}
         >
             Submit
         </CustomButton>

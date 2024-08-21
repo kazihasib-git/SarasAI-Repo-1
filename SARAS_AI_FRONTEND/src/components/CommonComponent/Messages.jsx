@@ -1,15 +1,8 @@
-import React, { useEffect, useState,useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-//import CoachMenu from './CoachMenu';
-
 import '../../pages/MODULE/coachModule/CoachMenuMessages.css';
 
 import filterIcon from '../../assets/filtericon1.svg';
-
-//import TuneOutlinedIcon from '@mui/icons-material/TuneOutlined';
-
-//import SearchIcon from '@mui/icons-material/Search';
-//import NotificationsIcon from '@mui/icons-material/Notifications';
 import PaperclipIcon from '../../assets/paperclip.svg';
 import VoiceIcon from '../../assets/voice1.svg';
 import MicNoneIcon from '@mui/icons-material/MicNone';
@@ -18,6 +11,8 @@ import NotificationIcon from '../../assets/NotificationIcon.svg';
 import SearchIcon from '../../assets/messagesearchicon.svg';
 import FilterBackground from '../../assets/duedatebackground.svg';
 import userimg from '../../assets/userimg.png';
+import CancelIcon from '@mui/icons-material/Cancel';
+
 import {
     getTaCoachAllChats,
     getChatRecordsByChatId,
@@ -41,7 +36,7 @@ const initialChatData = [
 
 const getTimeAgo = timestamp => {
     const now = new Date();
-    const diff = Math.floor((now - new Date(timestamp)) / 1000); // difference in seconds
+    const diff = Math.floor((now - new Date(timestamp)) / 1000);
 
     if (diff < 60) return `${diff} s`;
     if (diff < 3600) return `${Math.floor(diff / 60)} m`;
@@ -60,6 +55,7 @@ const Messages = ({ role }) => {
     const [assignedUsersData, setassignedUsersData] = useState([]);
     const [chatUserMapping, setchatUserMappingData] = useState([]);
     const [currentChatId, setcurrentChatId] = useState(0);
+    const [selectedFile, setSelectedFile] = useState(null);
 
     const {
         coachProfileData,
@@ -69,64 +65,35 @@ const Messages = ({ role }) => {
         createdChatId,
     } = useSelector(state => state.coachMenu);
 
-    const { 
+    const {
         taProfileData,
-        assignedTaStudents 
+        assignedTaStudents
     } = useSelector(state => state.taMenu);
 
-    // Handle search input change
     const handleSearchChange = event => {
         setSearchQuery(event.target.value);
     };
 
-    // Filter students based on search query
     const filteredUsers = assignedUsersData.filter(user =>
         user.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    // Handle student selection
     const handleUserClick = async user => {
         setselectedUser(user);
         if (role === 'coach' || role === 'ta') {
-            console.log('chat-mapping===>', chatUserMapping);
-            if (
-                chatUserMapping.every(mappedUser => mappedUser.id !== user.id)
-            ) {
+            if (chatUserMapping.every(mappedUser => mappedUser.id !== user.id)) {
                 let data = {
                     chat_name: (role === 'ta' ? taProfileData.name : coachProfileData.name) + '-' + user.name,
                 };
-                console.log(data);
-                await dispatch(
-                    createChatForTaCoach({ role: role, data: data })
-                );
-                console.log('new chat id===>>', currentChatId);
+                await dispatch(createChatForTaCoach({ role: role, data: data }));
             } else {
-                console.log('currect chat id==>', user.chat_id);
                 setcurrentChatId(user.chat_id);
             }
         }
     };
 
-    // Handle message input change
     const handleMessageChange = event => {
         setNewMessage(event.target.value);
-    };
-
-    // Handle sending message
-    const handleSendMessage = () => {
-        if (newMessage.trim()) {
-            setMessages([...messages, { sender: 'me', text: newMessage }]);
-            let data = null;
-            if (role === 'coach' || role === 'ta') {
-                data = {
-                    chat_id: currentChatId,
-                    message_text: newMessage,
-                    sender_type: 'AdminUsers',
-                };
-            }
-            dispatch(sentMessage({ role: role, data: data }));
-            setNewMessage('');
-        }
     };
 
     const HandleSentFile = () => {
@@ -135,16 +102,65 @@ const Messages = ({ role }) => {
         }
     };
 
-    const handleFileChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            // Handle the selected file here
-            console.log('Selected file:', file);
+    const handleSendMessageAndFile = async () => {
+        if (!newMessage.trim() && !selectedFile) {
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('chat_id', currentChatId);
+        formData.append('sender_type', 'AdminUsers');
+
+        if (newMessage.trim()) {
+            formData.append('message_text', newMessage);
+        }
+
+        if (selectedFile) {
+            formData.append('files', selectedFile);
+        }
+
+        try {
+            const response = await dispatch(sentMessage({ role: role, data: formData }));
+
+            // Update local state with both message and file info
+            setMessages(prevMessages => [...prevMessages, {
+                sender: 'me',
+                text: newMessage,
+                file: selectedFile ? {
+                    name: selectedFile.name,
+                    type: selectedFile.type
+                } : null
+            }]);
+
+            // Re-fetch messages
+            await dispatch(getChatRecordsByChatId({
+                role: role,
+                chatId: currentChatId,
+            }));
+
+            setNewMessage('');
+            setSelectedFile(null);
+            if (fileInputRef.current) {
+                fileInputRef.current.value = '';
+            }
+        } catch (error) {
+            console.error('Error sending message/file:', error);
         }
     };
 
-
-    useEffect(() => {
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            setSelectedFile(file);
+        }
+    };
+    const handleCancelFile = () => {
+        setSelectedFile(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    };
+     useEffect(() => {
         const setUserToChat = async () => {
             if (role === 'coach' || role === 'ta') {
                 if (selectedUser !== null) {
@@ -158,24 +174,18 @@ const Messages = ({ role }) => {
                             },
                         ],
                     };
-                    console.log(selectedUser['id']);
-                    console.log('data to add user to chat', data);
                     await dispatch(addUserToChat({ role: role, data: data }));
-                    console.log(
-                        'new chat id created and updated',
-                        createdChatId
-                    );
                 }
             }
         };
         setUserToChat();
         dispatch(getTaCoachAllChats(role));
+
     }, [createdChatId]);
 
     useEffect(() => {
         const fetchChatData = async () => {
             if (currentChatId) {
-                console.log('Current Chat ID updated:', currentChatId);
                 if (role === 'coach' || role === 'ta') {
                     await dispatch(
                         getChatRecordsByChatId({
@@ -192,19 +202,23 @@ const Messages = ({ role }) => {
     useEffect(() => {
         let reformedChatData = [];
         if (role === 'coach' || role === 'ta') {
-            console.log('chat records===>', chatRecordsbychatId);
             let chatmessagesData = chatRecordsbychatId['chat_messages'];
-            console.log(chatmessagesData);
 
             if (chatmessagesData !== undefined) {
                 for (let i = 0; i < chatmessagesData.length; i++) {
                     let chatData = {
                         sender:
                             chatmessagesData[i].sender_type ===
-                            'Modules\\Admin\\Models\\AdminUsers'
+                                'Modules\\Admin\\Models\\AdminUsers'
                                 ? 'me'
                                 : 'other',
                         text: chatmessagesData[i].message_text,
+                        file: chatmessagesData[i].chat_message_files && chatmessagesData[i].chat_message_files.length > 0
+                            ? {
+                                name: chatmessagesData[i].chat_message_files[0].original_name,
+                                url: chatmessagesData[i].chat_message_files[0].file_name
+                            }
+                            : null
                     };
                     reformedChatData.push(chatData);
                 }
@@ -213,6 +227,7 @@ const Messages = ({ role }) => {
             }
         }
         setMessages(reformedChatData);
+        console.log(reformedChatData);
     }, [chatRecordsbychatId]);
 
     useEffect(() => {
@@ -232,35 +247,34 @@ const Messages = ({ role }) => {
                 reformedStudentData.push(student);
             }
             setassignedUsersData(reformedStudentData);
-            // console.log('taCoachAllChatData', taCoachAllChatData);
             let reformedMappingData = [];
             for (let i = 0; i < taCoachAllChatData.length; i++) {
                 const lastMessage =
                     taCoachAllChatData[i]['chat_messages'].length > 0
                         ? taCoachAllChatData[i]['chat_messages'][
-                              taCoachAllChatData[i]['chat_messages'].length - 1
-                          ].message_text
+                            taCoachAllChatData[i]['chat_messages'].length - 1
+                        ].message_text
                         : 'No Message';
 
                 const lastMessageTimestamp =
                     taCoachAllChatData[i]['chat_messages'].length > 0
                         ? taCoachAllChatData[i]['chat_messages'][
-                              taCoachAllChatData[i]['chat_messages'].length - 1
-                          ].created_at
+                            taCoachAllChatData[i]['chat_messages'].length - 1
+                        ].created_at
                         : new Date();
                 let Data = {
                     id: taCoachAllChatData[i]['students'][0].id,
                     name: taCoachAllChatData[i]['students'][0].name,
                     profilePic: userimg,
                     status: 'Online',
-                    lastSeen: getTimeAgo(lastMessageTimestamp), // Calculate last seen dynamically
+                    lastSeen: getTimeAgo(lastMessageTimestamp),
                     chat_id: taCoachAllChatData[i].id,
                     lastMessage:
-                        lastMessage 
-                        ? (lastMessage.length > 15
-                            ? lastMessage.slice(0, 14) + '...' 
-                            : lastMessage)
-                        : '',
+                        lastMessage
+                            ? (lastMessage.length > 15
+                                ? lastMessage.slice(0, 14) + '...'
+                                : lastMessage)
+                            : '',
                 };
                 reformedMappingData.push(Data);
             }
@@ -268,13 +282,10 @@ const Messages = ({ role }) => {
         }
     }, [assignedTaStudents, assignedCoachStudents, taCoachAllChatData]);
 
-    // console.log('chatUserMapping', chatUserMapping);
-
     const usersToDisplay = searchQuery === '' ? chatUserMapping : filteredUsers;
 
     return (
         <div className="container">
-            {/* <CoachMenu /> */}
             <Box mt={0}>
                 <Typography
                     variant="h4"
@@ -363,11 +374,8 @@ const Messages = ({ role }) => {
                             height="80px"
                             p={2}
                             sx={{
-                                // backgroundColor: '#f6f6f8',
                                 backgroundColor: '#ffffff',
                                 borderRadius: '0 10px 10px 0',
-
-                                // borderLeft: '1px solid #C2C2E7', // Add this line
                             }}
                         >
                             <Box display="flex" alignItems="center" flex="1">
@@ -382,16 +390,15 @@ const Messages = ({ role }) => {
                                     </Typography>
                                     <Box display="flex" alignItems="center">
                                         <div
-                                            className={`status-indicator ${
-                                                selectedUser.status === 'Online'
-                                                    ? 'online'
-                                                    : ''
-                                            }`}
+                                            className={`status-indicator ${selectedUser.status === 'Online'
+                                                ? 'online'
+                                                : ''
+                                                }`}
                                         />
                                         <Typography
                                             variant="body2"
                                             color="textSecondary"
-                                            sx={{ ml: 1 }} // margin-left for spacing
+                                            sx={{ ml: 1 }}
                                         >
                                             {selectedUser.status}
                                         </Typography>
@@ -411,6 +418,7 @@ const Messages = ({ role }) => {
 
                         <Box className="chat-messages">
                             {messages.map((msg, index) => {
+                                console.log('====>', msg)
                                 const isFirstMessageFromSameSender =
                                     index === 0 || messages[index - 1].sender !== msg.sender;
                                 return (
@@ -425,14 +433,14 @@ const Messages = ({ role }) => {
                                     >
                                         {msg.sender === 'other' && (
                                             <img
-                                                src={selectedUser.profilePic}
-                                                alt="Profile Pic"
-                                                className="profile-pic"
-                                                style={{
-                                                    marginRight: '8px',
-                                                    visibility: isFirstMessageFromSameSender ? 'visible' : 'hidden',
-                                                }}
-                                            />
+                                            src={selectedUser.profilePic}
+                                            alt="Profile Pic"
+                                            className="profile-pic"
+                                            style={{
+                                                marginRight: '8px',
+                                                visibility: isFirstMessageFromSameSender ? 'visible' : 'hidden',
+                                            }}
+                                        />
                                         )}
                                         <Box
                                             p={1}
@@ -443,6 +451,14 @@ const Messages = ({ role }) => {
                                             }}
                                         >
                                             {msg.text}
+
+                                            {msg.file && (
+                                                <Box mt={1}>
+                                                    <Typography variant="caption">
+                                                        Attached file: {msg.file.name}
+                                                    </Typography>
+                                                </Box>
+                                            )}
                                         </Box>
                                         {msg.sender === 'me' && (
                                             <img
@@ -467,6 +483,10 @@ const Messages = ({ role }) => {
                         <Box className="chat-input-container"
                             sx={{
                                 borderRadius: '42px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                padding: '10px',
+                                backgroundColor: '#f6f6f8',
                             }}
                         >
                             <TextField
@@ -481,7 +501,7 @@ const Messages = ({ role }) => {
                                     flexGrow: 1,
                                     '& .MuiOutlinedInput-root': {
                                         borderRadius: '42px',
-                                        backgroundColor: '#f6f6f8',
+                                        backgroundColor: '#ffffff',
                                         '& fieldset': {
                                             borderColor: 'rgba(0, 0, 0, 0.23)',
                                         },
@@ -494,16 +514,38 @@ const Messages = ({ role }) => {
                                     },
                                 }}
                             />
-                            <div className="chat-input-icons">
+
+                            <div className="chat-input-icons" style={{ display: 'flex', alignItems: 'center' }}>
+                                {selectedFile && (
+                                    <div style={{ display: 'flex', alignItems: 'center', marginRight: '10px' }}>
+                                        <Typography variant="caption" sx={{
+                                            maxWidth: '100px',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                            whiteSpace: 'nowrap'
+                                        }}>
+                                            {selectedFile.name}
+                                        </Typography>
+                                        <IconButton size="small" onClick={handleCancelFile} sx={{ marginLeft: '5px' }}>
+                                            <CancelIcon fontSize="small" />
+                                        </IconButton>
+                                    </div>
+                                )}
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    style={{ display: 'none' }}
+                                    onChange={handleFileChange}
+                                />
                                 <IconButton className="input-icon" onClick={HandleSentFile}>
                                     <img src={PaperclipIcon} alt="Attach" />
                                 </IconButton>
                                 <IconButton className="input-icon">
-                                   <MicNoneIcon />
+                                    <MicNoneIcon />
                                 </IconButton>
                                 <IconButton
                                     className="input-icon"
-                                    onClick={handleSendMessage}
+                                    onClick={handleSendMessageAndFile}
                                 >
                                     <img src={SendButtonIcon} alt="Send" />
                                 </IconButton>

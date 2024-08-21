@@ -21,6 +21,7 @@ import { timezoneIdToName } from '../../utils/timezoneIdToName';
 import { convertFromUTC } from '../../utils/dateAndtimeConversion';
 import { getTimezone } from '../../redux/features/utils/utilSlice';
 import { addDataToFindScheduleInSlot } from '../../redux/features/commonCalender/commonCalender';
+import { toast } from 'react-toastify';
 
 const Slots = ({ componentName , timezoneID }) => {
     const { timezones, platforms } = useSelector(state => state.util);
@@ -91,8 +92,6 @@ const Slots = ({ componentName , timezoneID }) => {
     };
     
     const convertSlots = async () => {
-        console.log('Scheduled slots data:', scheduledSlotsData);
-        console.log('Selected slots:', selectedSlots);
     
         if (scheduledSlotsData && scheduledSlotsData.length > 0 && timezones && timezoneID) {
             const timezonename = timezoneIdToName(timezoneID, timezones);
@@ -162,12 +161,9 @@ const Slots = ({ componentName , timezoneID }) => {
                 timezone_id : timezoneID
             };
 
-            console.log('Submitting selected slots:', requestData);
-
             dispatch(addDataToFindScheduleInSlot(requestData));
             dispatch(getScheduleSessionAction(requestData))
-                .then(response => {
-                    console.log('API response:', response);
+                .then(() => {
                     dispatch(closeScheduleSessionAction());
                     dispatch(getAvailableSlotsAction(requestData));
                 })
@@ -175,9 +171,7 @@ const Slots = ({ componentName , timezoneID }) => {
                     console.error('API error:', error);
                 });
         } else {
-            console.log('No slots selected, opening reason for leave');
-            dispatch(closeScheduleSessionAction());
-            // dispatch(openMarkLeaveAction(markLeaveData));
+            toast.error('Please select Slot')
         }
     };
 
