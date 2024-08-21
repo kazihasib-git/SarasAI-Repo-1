@@ -28,6 +28,7 @@ import {
     Box,
     IconButton,
     Divider,
+    Checkbox,
 } from '@mui/material';
 
 const initialChatData = [
@@ -51,6 +52,11 @@ const Messages = ({ role }) => {
     const [selectedUser, setselectedUser] = useState(null);
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
+    const [checkboxes, setCheckboxes] = useState({
+        email: false,
+        whatsapp: false,
+        text: false,
+    });
     const fileInputRef = useRef(null);
     const [assignedUsersData, setassignedUsersData] = useState([]);
     const [chatUserMapping, setchatUserMappingData] = useState([]);
@@ -65,10 +71,9 @@ const Messages = ({ role }) => {
         createdChatId,
     } = useSelector(state => state.coachMenu);
 
-    const {
-        taProfileData,
-        assignedTaStudents
-    } = useSelector(state => state.taMenu);
+    const { taProfileData, assignedTaStudents } = useSelector(
+        state => state.taMenu
+    );
 
     const handleSearchChange = event => {
         setSearchQuery(event.target.value);
@@ -81,11 +86,20 @@ const Messages = ({ role }) => {
     const handleUserClick = async user => {
         setselectedUser(user);
         if (role === 'coach' || role === 'ta') {
-            if (chatUserMapping.every(mappedUser => mappedUser.id !== user.id)) {
+            if (
+                chatUserMapping.every(mappedUser => mappedUser.id !== user.id)
+            ) {
                 let data = {
-                    chat_name: (role === 'ta' ? taProfileData.name : coachProfileData.name) + '-' + user.name,
+                    chat_name:
+                        (role === 'ta'
+                            ? taProfileData.name
+                            : coachProfileData.name) +
+                        '-' +
+                        user.name,
                 };
-                await dispatch(createChatForTaCoach({ role: role, data: data }));
+                await dispatch(
+                    createChatForTaCoach({ role: role, data: data })
+                );
             } else {
                 setcurrentChatId(user.chat_id);
             }
@@ -120,23 +134,32 @@ const Messages = ({ role }) => {
         }
 
         try {
-            const response = await dispatch(sentMessage({ role: role, data: formData }));
+            const response = await dispatch(
+                sentMessage({ role: role, data: formData })
+            );
 
             // Update local state with both message and file info
-            setMessages(prevMessages => [...prevMessages, {
-                sender: 'me',
-                text: newMessage,
-                file: selectedFile ? {
-                    name: selectedFile.name,
-                    type: selectedFile.type
-                } : null
-            }]);
+            setMessages(prevMessages => [
+                ...prevMessages,
+                {
+                    sender: 'me',
+                    text: newMessage,
+                    file: selectedFile
+                        ? {
+                              name: selectedFile.name,
+                              type: selectedFile.type,
+                          }
+                        : null,
+                },
+            ]);
 
             // Re-fetch messages
-            await dispatch(getChatRecordsByChatId({
-                role: role,
-                chatId: currentChatId,
-            }));
+            await dispatch(
+                getChatRecordsByChatId({
+                    role: role,
+                    chatId: currentChatId,
+                })
+            );
 
             setNewMessage('');
             setSelectedFile(null);
@@ -148,7 +171,7 @@ const Messages = ({ role }) => {
         }
     };
 
-    const handleFileChange = (event) => {
+    const handleFileChange = event => {
         const file = event.target.files[0];
         if (file) {
             setSelectedFile(file);
@@ -160,7 +183,8 @@ const Messages = ({ role }) => {
             fileInputRef.current.value = '';
         }
     };
-     useEffect(() => {
+
+    useEffect(() => {
         const setUserToChat = async () => {
             if (role === 'coach' || role === 'ta') {
                 if (selectedUser !== null) {
@@ -180,7 +204,6 @@ const Messages = ({ role }) => {
         };
         setUserToChat();
         dispatch(getTaCoachAllChats(role));
-
     }, [createdChatId]);
 
     useEffect(() => {
@@ -209,16 +232,20 @@ const Messages = ({ role }) => {
                     let chatData = {
                         sender:
                             chatmessagesData[i].sender_type ===
-                                'Modules\\Admin\\Models\\AdminUsers'
+                            'Modules\\Admin\\Models\\AdminUsers'
                                 ? 'me'
                                 : 'other',
                         text: chatmessagesData[i].message_text,
-                        file: chatmessagesData[i].chat_message_files && chatmessagesData[i].chat_message_files.length > 0
-                            ? {
-                                name: chatmessagesData[i].chat_message_files[0].original_name,
-                                url: chatmessagesData[i].chat_message_files[0].file_name
-                            }
-                            : null
+                        file:
+                            chatmessagesData[i].chat_message_files &&
+                            chatmessagesData[i].chat_message_files.length > 0
+                                ? {
+                                      name: chatmessagesData[i]
+                                          .chat_message_files[0].original_name,
+                                      url: chatmessagesData[i]
+                                          .chat_message_files[0].file_name,
+                                  }
+                                : null,
                     };
                     reformedChatData.push(chatData);
                 }
@@ -252,15 +279,15 @@ const Messages = ({ role }) => {
                 const lastMessage =
                     taCoachAllChatData[i]['chat_messages'].length > 0
                         ? taCoachAllChatData[i]['chat_messages'][
-                            taCoachAllChatData[i]['chat_messages'].length - 1
-                        ].message_text
+                              taCoachAllChatData[i]['chat_messages'].length - 1
+                          ].message_text
                         : 'No Message';
 
                 const lastMessageTimestamp =
                     taCoachAllChatData[i]['chat_messages'].length > 0
                         ? taCoachAllChatData[i]['chat_messages'][
-                            taCoachAllChatData[i]['chat_messages'].length - 1
-                        ].created_at
+                              taCoachAllChatData[i]['chat_messages'].length - 1
+                          ].created_at
                         : new Date();
                 let Data = {
                     id: taCoachAllChatData[i]['students'][0].id,
@@ -269,12 +296,11 @@ const Messages = ({ role }) => {
                     status: 'Online',
                     lastSeen: getTimeAgo(lastMessageTimestamp),
                     chat_id: taCoachAllChatData[i].id,
-                    lastMessage:
-                        lastMessage
-                            ? (lastMessage.length > 15
-                                ? lastMessage.slice(0, 14) + '...'
-                                : lastMessage)
-                            : '',
+                    lastMessage: lastMessage
+                        ? lastMessage.length > 15
+                            ? lastMessage.slice(0, 14) + '...'
+                            : lastMessage
+                        : '',
                 };
                 reformedMappingData.push(Data);
             }
@@ -283,6 +309,23 @@ const Messages = ({ role }) => {
     }, [assignedTaStudents, assignedCoachStudents, taCoachAllChatData]);
 
     const usersToDisplay = searchQuery === '' ? chatUserMapping : filteredUsers;
+
+    useEffect(() => {
+        if (selectedUser) {
+            setCheckboxes({
+                email: false,
+                whatsapp: false,
+                text: false,
+            });
+        }
+    }, [currentChatId]);
+
+    const handleCheckboxChange = event => {
+        setCheckboxes({
+            ...checkboxes,
+            [event.target.name]: event.target.checked,
+        });
+    };
 
     return (
         <div className="container">
@@ -322,7 +365,8 @@ const Messages = ({ role }) => {
                     </div>
                 </div>
                 <div className="chat-list">
-                    {(usersToDisplay !== undefined && usersToDisplay.length > 0) ? (
+                    {usersToDisplay !== undefined &&
+                    usersToDisplay.length > 0 ? (
                         usersToDisplay.map(user => (
                             <div
                                 key={user.id}
@@ -390,10 +434,11 @@ const Messages = ({ role }) => {
                                     </Typography>
                                     <Box display="flex" alignItems="center">
                                         <div
-                                            className={`status-indicator ${selectedUser.status === 'Online'
-                                                ? 'online'
-                                                : ''
-                                                }`}
+                                            className={`status-indicator ${
+                                                selectedUser.status === 'Online'
+                                                    ? 'online'
+                                                    : ''
+                                            }`}
                                         />
                                         <Typography
                                             variant="body2"
@@ -418,29 +463,35 @@ const Messages = ({ role }) => {
 
                         <Box className="chat-messages">
                             {messages.map((msg, index) => {
-                                console.log('====>', msg)
+                                console.log('====>', msg);
                                 const isFirstMessageFromSameSender =
-                                    index === 0 || messages[index - 1].sender !== msg.sender;
+                                    index === 0 ||
+                                    messages[index - 1].sender !== msg.sender;
                                 return (
                                     <Box
                                         key={index}
                                         display="flex"
                                         justifyContent={
-                                            msg.sender === 'me' ? 'flex-end' : 'flex-start'
+                                            msg.sender === 'me'
+                                                ? 'flex-end'
+                                                : 'flex-start'
                                         }
                                         mb={1}
                                         alignItems="center"
                                     >
                                         {msg.sender === 'other' && (
                                             <img
-                                            src={selectedUser.profilePic}
-                                            alt="Profile Pic"
-                                            className="profile-pic"
-                                            style={{
-                                                marginRight: '8px',
-                                                visibility: isFirstMessageFromSameSender ? 'visible' : 'hidden',
-                                            }}
-                                        />
+                                                src={selectedUser.profilePic}
+                                                alt="Profile Pic"
+                                                className="profile-pic"
+                                                style={{
+                                                    marginRight: '8px',
+                                                    visibility:
+                                                        isFirstMessageFromSameSender
+                                                            ? 'visible'
+                                                            : 'hidden',
+                                                }}
+                                            />
                                         )}
                                         <Box
                                             p={1}
@@ -455,7 +506,8 @@ const Messages = ({ role }) => {
                                             {msg.file && (
                                                 <Box mt={1}>
                                                     <Typography variant="caption">
-                                                        Attached file: {msg.file.name}
+                                                        Attached file:{' '}
+                                                        {msg.file.name}
                                                     </Typography>
                                                 </Box>
                                             )}
@@ -471,7 +523,10 @@ const Messages = ({ role }) => {
                                                 className="profile-pic"
                                                 style={{
                                                     marginLeft: '8px',
-                                                    visibility: isFirstMessageFromSameSender ? 'visible' : 'hidden',
+                                                    visibility:
+                                                        isFirstMessageFromSameSender
+                                                            ? 'visible'
+                                                            : 'hidden',
                                                 }}
                                             />
                                         )}
@@ -480,7 +535,8 @@ const Messages = ({ role }) => {
                             })}
                         </Box>
 
-                        <Box className="chat-input-container"
+                        <Box
+                            className="chat-input-container"
                             sx={{
                                 borderRadius: '42px',
                                 display: 'flex',
@@ -514,30 +570,11 @@ const Messages = ({ role }) => {
                                     },
                                 }}
                             />
-
-                            <div className="chat-input-icons" style={{ display: 'flex', alignItems: 'center' }}>
-                                {selectedFile && (
-                                    <div style={{ display: 'flex', alignItems: 'center', marginRight: '10px' }}>
-                                        <Typography variant="caption" sx={{
-                                            maxWidth: '100px',
-                                            overflow: 'hidden',
-                                            textOverflow: 'ellipsis',
-                                            whiteSpace: 'nowrap'
-                                        }}>
-                                            {selectedFile.name}
-                                        </Typography>
-                                        <IconButton size="small" onClick={handleCancelFile} sx={{ marginLeft: '5px' }}>
-                                            <CancelIcon fontSize="small" />
-                                        </IconButton>
-                                    </div>
-                                )}
-                                <input
-                                    type="file"
-                                    ref={fileInputRef}
-                                    style={{ display: 'none' }}
-                                    onChange={handleFileChange}
-                                />
-                                <IconButton className="input-icon" onClick={HandleSentFile}>
+                            <div className="chat-input-icons">
+                                <IconButton
+                                    className="input-icon"
+                                    onClick={HandleSentFile}
+                                >
                                     <img src={PaperclipIcon} alt="Attach" />
                                 </IconButton>
                                 <IconButton className="input-icon">
@@ -550,6 +587,48 @@ const Messages = ({ role }) => {
                                     <img src={SendButtonIcon} alt="Send" />
                                 </IconButton>
                             </div>
+
+                            <Box className="checkbox-container">
+                                <label>
+                                    <Checkbox
+                                        name="email"
+                                        checked={checkboxes.email}
+                                        onChange={handleCheckboxChange}
+                                        sx={{
+                                            '& .MuiSvgIcon-root': {
+                                                fontSize: 18,
+                                            },
+                                        }}
+                                    />
+                                    Email
+                                </label>
+                                <label>
+                                    <Checkbox
+                                        name="whatsapp"
+                                        checked={checkboxes.whatsapp}
+                                        onChange={handleCheckboxChange}
+                                        sx={{
+                                            '& .MuiSvgIcon-root': {
+                                                fontSize: 18,
+                                            },
+                                        }}
+                                    />
+                                    WhatsApp
+                                </label>
+                                <label>
+                                    <Checkbox
+                                        name="text"
+                                        checked={checkboxes.text}
+                                        onChange={handleCheckboxChange}
+                                        sx={{
+                                            '& .MuiSvgIcon-root': {
+                                                fontSize: 18,
+                                            },
+                                        }}
+                                    />
+                                    Text
+                                </label>
+                            </Box>
                         </Box>
                     </>
                 )}
