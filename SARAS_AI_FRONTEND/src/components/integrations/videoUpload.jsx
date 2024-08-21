@@ -198,7 +198,15 @@ const VideoUploadDialog = ({ open, onClose, role, selectedId }) => {
                         setVideoUrl('');
                         setUploadProgress(0);
                     }}
-                    color="primary"
+                    sx={{
+                        backgroundColor: '#F56D3B',
+                        color: 'white',
+                        textTransform: 'none',
+                        borderRadius: '50px',
+                        '&:hover': {
+                            backgroundColor: '#F56D3B', // Ensure the hover color remains the same
+                        },
+                    }}
                 >
                     Close
                 </Button>

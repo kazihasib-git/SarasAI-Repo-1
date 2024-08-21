@@ -87,11 +87,11 @@ const CustomEvent = ({ event }) => {
 const CalendarComponent = ({ eventsList, slotData, componentName }) => {
     const dispatch = useDispatch();
 
-    console.log('Event List', eventsList);
+    // console.log('Event List', eventsList);
 
-    console.log('Slot Data : ', slotData);
+    // console.log('Slot Data : ', slotData);
 
-    console.log('comp name', componentName);
+    // console.log('comp name', componentName);
 
     let sliceName, openPopup;
 
@@ -136,7 +136,7 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
     };
 
     const eventStyleGetter = event => {
-        console.log('EVENT : ', event);
+        // console.log('EVENT : ', event);
         return {
             style: {
                 backgroundColor: '#00C95C', // Match the green color in your design
@@ -149,11 +149,24 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
             },
         };
     };
+    const dayPropGetter = date => {
+        const today = moment().startOf('day');
+
+        if (moment(date).isSame(today, 'day')) {
+            return {
+                style: {
+                    backgroundColor: '#4e18a5', // Light blue background for the current day header and cells
+                    //color: '#1976D2', // Blue text color for the current day header and cells
+                },
+            };
+        }
+        return {};
+    };
 
     const slotPropGetter = date => {
         const dateString = moment(date).format('YYYY-MM-DD');
         const timeString = moment(date).format('YYYY-MM-DD HH:mm');
-    
+
         // Iterate over slotData to find a matching slot
         for (let i = 0; i < slotData.length; i++) {
             const slot = slotData[i];
@@ -162,9 +175,9 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
                 'YYYY-MM-DD HH:mm'
             );
             const slotEndTime = moment(slot.endDate).format('YYYY-MM-DD HH:mm');
-    
+
             const isOnLeave = slot.leave && slot.leave.length > 0;
-            
+
             if (
                 dateString === slotDate &&
                 timeString >= slotStartTime &&
@@ -183,11 +196,11 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
                 };
             }
         }
-    
+
         // If no matching slot is found, return an empty object
         return {};
     };
-    
+
     return (
         <>
             {/* <Header />
@@ -200,6 +213,7 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
                     endAccessor="end"
                     events={eventsList}
                     eventPropGetter={eventStyleGetter}
+                    dayPropGetter={dayPropGetter}
                     slotPropGetter={slotPropGetter}
                     onSelectEvent={showSessionPopUp}
                     step={30}

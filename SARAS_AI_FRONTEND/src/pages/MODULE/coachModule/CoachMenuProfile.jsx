@@ -306,13 +306,14 @@ const CoachMenuProfile = () => {
                                     disabled={!isEditing}
                                 />
                             </Grid>
-                            {/*
-                            <Grid item xs={12} sm={6} md={4}>
+
+                            {/* <Grid item xs={12} sm={6} md={4}>
                                 <CustomTextField
                                     label="Password"
                                     name="password"
                                     type="password"
                                     placeholder="Enter Password"
+                                    autoComplete="current-password"
                                     register={register}
                                     validation={{
                                         required: 'Password is required',
@@ -333,9 +334,9 @@ const CoachMenuProfile = () => {
                                         },
                                     }}
                                     errors={errors}
+                                    disabled={!isEditing}
                                 />
-                            </Grid>
-                            */}
+                            </Grid> */}
 
                             <Grid item xs={12} sm={6} md={4}>
                                 <CustomTextField
@@ -598,8 +599,8 @@ const CoachMenuProfile = () => {
                                     padding: '15px 25px',
                                     marginTop: 20,
                                     backgroundColor: '#F56D3B',
-                                    height: '50px',
-                                    width: '110px',
+                                    height: '43px',
+                                    width: '100px',
                                     fontSize: '14px',
                                     fontWeight: '700',
                                     text: '#FFFFFF',
