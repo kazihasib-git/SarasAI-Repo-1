@@ -64,7 +64,7 @@ const actionButtons = [
 ];
 
 const Schedule = ({ componentName , timezoneID}) => {
-    
+    console.log('timezoneID=======>' , timezoneID )
     const [fromDate, setFromDate] = useState(null);
     const [toDate, setToDate] = useState(null);
     const [fromTime, setFromTime] = useState(null);

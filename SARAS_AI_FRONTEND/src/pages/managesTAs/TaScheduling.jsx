@@ -40,7 +40,9 @@ const TaScheduling = () => {
     }, [taId, todaysAvailableTa]);
 
 
-    const storedTimezoneId = selectedTA ? selectedTA.timezone_id : Number(localStorage.getItem('timezone_id'));
+    const storedTimezoneId = selectedTA ? selectedTA.timezone_id : '';
+ console.log('tascheduling timezone id ' , storedTimezoneId)
+
 
     const [taScheduleData, setTaScheduleData] = useState([]);
 
@@ -49,7 +51,6 @@ const TaScheduling = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        console.log('TASCHEDULE : ', taMapping);
         if (taMapping && taMapping.length > 0) {
             const transformData = taMapping.map((item, index) => ({
                 id: item.id,

@@ -46,10 +46,11 @@ const CoachSheduling = () => {
     }, [coachID, todaysAvailableCoach]);
 
 
-    const storedTimezoneId = selectedCoach ? selectedCoach.timezone_id : Number(localStorage.getItem('timezone_id'));
+    const storedTimezoneId = selectedCoach ? selectedCoach.timezone_id : '';
+    // const storedTimezoneId = selectedCoach ? selectedCoach.timezone_id : Number(localStorage.getItem('timezone_id'));
+ console.log('scheduling timezone id ' , storedTimezoneId)
 
     useEffect(() => {
-        console.log('COACHSCHEDULE : ', coachMapping);
         if (coachMapping && coachMapping.length > 0) {
             const transformData = coachMapping.map((item, index) => ({
                 id: item.id,
@@ -135,7 +136,7 @@ const CoachSheduling = () => {
             </Box>
             {scheduleCoachSessionOpen && (
                 <Schedule componentName={'COACHSCHEDULE'} timezoneID={storedTimezoneId}/>
-            )}
+            )}  
             {/* {assignCoachStudentOpen && (
         <AssignStudents componentname={"ADDITCOACH"} />
       )}
