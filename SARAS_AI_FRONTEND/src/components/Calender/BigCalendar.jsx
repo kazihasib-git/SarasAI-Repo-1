@@ -87,11 +87,11 @@ const CustomEvent = ({ event }) => {
 const CalendarComponent = ({ eventsList, slotData, componentName }) => {
     const dispatch = useDispatch();
 
-    console.log('Event List', eventsList);
+    // console.log('Event List', eventsList);
 
-    console.log('Slot Data : ', slotData);
+    // console.log('Slot Data : ', slotData);
 
-    console.log('comp name', componentName);
+    // console.log('comp name', componentName);
 
     let sliceName, openPopup;
 
@@ -136,7 +136,7 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
     };
 
     const eventStyleGetter = event => {
-        console.log('EVENT : ', event);
+        // console.log('EVENT : ', event);
         return {
             style: {
                 backgroundColor: '#00C95C', // Match the green color in your design

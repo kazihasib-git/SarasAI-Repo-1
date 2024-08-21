@@ -1,4 +1,4 @@
-import { Box } from '@mui/material';
+import { Box, CircularProgress } from '@mui/material';
 import Header from '../../components/Header/Header';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import { useEffect, useState } from 'react';
@@ -11,6 +11,7 @@ import {
     openEditTa,
     closeCreateTa,
     closeEditTa,
+    updateTA,
 } from '../../redux/features/adminModule/ta/taSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { getTimezone } from '../../redux/features/utils/utilSlice';
@@ -26,21 +27,22 @@ const headers = [
 ];
 
 const ManageTA = () => {
-    const { timezones } = useSelector(state => state.util);
-
+    
     const dispatch = useDispatch();
+    const { timezones } = useSelector(state => state.util);
     const { tas, loading, error, createTAOpen, editTAOpen } = useSelector(
         state => state.taModule
     );
+
     const [tasData, setTasData] = useState([]);
     const [editData, setEditData] = useState();
     const [searchQuery, setSearchQuery] = useState('');
-    const [actionButtonToggled, setActionButtonToggled] = useState(false); // Track toggle state
+    const [actionButtonToggled, setActionButtonToggled] = useState(false);
 
     useEffect(() => {
         dispatch(closeCreateTa());
         dispatch(closeEditTa());
-        dispatch(getTimezone()); // Fetch timezones when the component mounts
+        dispatch(getTimezone());
 
         dispatch(getTA());
     }, [dispatch]);
@@ -56,27 +58,41 @@ const ManageTA = () => {
                 is_active: item.is_active,
             }));
             setTasData(transformData);
+        }else {
+            setTasData([]);
         }
     }, [tas]);
+
     const actionButtons = [
         {
             type: 'switch',
-            onChange: event => {
+            onChange: (event, id) => {
                 if (event && event.preventDefault) {
-                    event.preventDefault(); // Prevent any default action
+                    event.preventDefault();
                 }
-                setActionButtonToggled(prev => !prev); // Toggle state
+
+                const taToUpdate = tasData.find((ta) => ta.id === id)
+                const updatedStatus = taToUpdate.is_active === 1 ? 0 : 1;
+
+                dispatch(updateTA({ id, data : { is_active : updatedStatus }}))
+                
+                setTasData((prevTasData) => 
+                    prevTasData.map((ta) => 
+                        ta.id === id ? {...ta, is_active : updatedStatus } : ta
+                    )
+                );
+                
+                setActionButtonToggled(prev => !prev);
             },
         },
         {
             type: 'edit',
             onClick: (id, event) => {
                 if (event && event.preventDefault) {
-                    event.preventDefault(); // Prevent any default action
+                    event.preventDefault();
                 }
                 handleEditTa(id);
             },
-            // disabled: actionButtonToggled, // Disable edit button based on toggle state
         },
     ];
 
@@ -102,6 +118,10 @@ const ManageTA = () => {
             ta.Location?.toLowerCase().includes(searchQuery.toLowerCase()) ||
             ta['Time Zone']?.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+    if(loading){
+        <CircularProgress />
+    }
 
     return (
         <>
