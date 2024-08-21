@@ -159,7 +159,7 @@ function AddEditCoach({ data }) {
                 const updateRes = await dispatch(
                     updateCoach({ id: data.id, data: updatedFormData })
                 ).unwrap();
-                dispatch(openCoachSuccessPopup());
+                
                 dispatch(accessCoachName(updateRes));
             } else {
                 const createRes = await dispatch(
