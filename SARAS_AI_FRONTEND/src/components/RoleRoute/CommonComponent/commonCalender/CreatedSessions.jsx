@@ -8,6 +8,8 @@ import { getCoachMenuSessionForLeave } from '../../../../redux/features/coachMod
 import {
     closeCreatedSessions,
     openCancelSessionPopup,
+    openReasonForLeavePopup,
+    openReschedulePopup,
 } from '../../../../redux/features/commonCalender/commonCalender';
 import { convertFromUTC } from '../../../../utils/dateAndtimeConversion';
 import { timezoneIdToName } from '../../../../utils/timezoneIdToName';
@@ -29,14 +31,16 @@ const CreatedSessions = ({ componentName }) => {
 
     const dispatch = useDispatch();
 
-    let sliceName, scheduledSessionState;
     useEffect(() => {
         dispatch(getTimezone());
     }, [dispatch]);
+
+    let sliceName, scheduledSessionState;
+
     switch (componentName) {
         case 'TAMENU':
             sliceName = 'taMenu';
-            scheduledSessionState = '';
+            scheduledSessionState = 'sessionBySlots';
             break;
 
         case 'COACHMENU':
@@ -56,6 +60,8 @@ const CreatedSessions = ({ componentName }) => {
     const { [scheduledSessionState]: sessionsData } = selectState;
     const [scheduledSessions, setScheduledSessions] = useState([]);
     const [students, setStudent] = useState([]);
+
+    const { slotsLeaveData } = useSelector((state) => state.commonCalender)
 
     useEffect(() => {
         const convertSessions = async () => {
@@ -125,7 +131,8 @@ const CreatedSessions = ({ componentName }) => {
     };
 
     const handleRescheduleClick = session => {
-       
+        dispatch(openReschedulePopup(session));
+        dispatch(closeCreatedSessions());
     };
 
     const handleCancelClick = session => {
@@ -134,7 +141,7 @@ const CreatedSessions = ({ componentName }) => {
     };
 
     const handleSubmit = () => {
-        //dispatch();
+        dispatch(openReasonForLeavePopup(slotsLeaveData));
         dispatch(closeCreatedSessions());
     };
 

@@ -147,6 +147,7 @@ export const getCoachMenuSessionForLeave = createAsyncThunk(
     }
 );
 
+
 export const cancelScheduledSessionForLeave = createAsyncThunk(
     'coachMenu/cancelScheduledSession',
     async id => {
