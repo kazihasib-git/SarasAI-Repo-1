@@ -152,10 +152,10 @@ const AddEditTA = ({ data }) => {
     };
 
     const onSubmit = async formData => {
-        console.log('formData :', formData);
+        // console.log('formData :', formData);
 
         if (selectedImage && selectedImage.startsWith('data:image/')) {
-            console.log('/////////////////////',selectedImage);
+
             const base64Data = selectedImage.replace(
                 /^data:image\/(png|jpeg|jpg);base64,/,
                 ''
@@ -524,7 +524,6 @@ const AddEditTA = ({ data }) => {
                                 errors={errors}
                             />
                         </Grid>
-                        {/* {console.log("DATA : ", data)} */}
 
                         <Grid item xs={12} sm={6} md={4}>
                             <Controller
@@ -599,7 +598,6 @@ const AddEditTA = ({ data }) => {
                                 }}
                                 render={({ field }) => (
                                     <>
-                                        {/* {console.log("DATA highest_qualification : ", field.value)} */}
                                         <CustomFormControl
                                             label="Highest Qualification"
                                             name="highest_qualification"

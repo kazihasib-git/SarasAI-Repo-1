@@ -43,7 +43,7 @@ const CallRequest = () => {
 
     const processTaCallRequests = async requests => {
         await Promise.all(
-            requests.map(async (request) => {
+            requests.map(async request => {
                 const localTime = await convertFromUTC({
                     start_date: request.date,
                     start_time: request.start_time,
@@ -51,7 +51,7 @@ const CallRequest = () => {
                     end_date: request.end_date,
                     timezonename,
                 });
-        
+
                 return {
                     ...request,
                     date: localTime.start_date,
@@ -76,7 +76,6 @@ const CallRequest = () => {
         }
     }, [taCallRequests]);
 
-   
     const [showFullMessages, setShowFullMessages] = useState({});
 
     const handleClickOpen = id => {
@@ -214,6 +213,9 @@ const CallRequest = () => {
                                             color: 'white',
                                             mt: 2,
                                             ml: 6,
+                                            textTransform: 'none',
+                                            fontFamily: 'Nohemi',
+                                            fontSize: 16,
                                             '&:hover': {
                                                 backgroundColor: '#19B420',
                                             },
@@ -233,6 +235,9 @@ const CallRequest = () => {
                                                 borderRadius: 40,
                                                 backgroundColor: '#F56D3B',
                                                 color: 'white',
+                                                textTransform: 'none',
+                                                fontFamily: 'Nohemi',
+                                                fontSize: 16,
                                                 '&:hover': {
                                                     backgroundColor: '#F56D3B',
                                                 },
@@ -251,6 +256,9 @@ const CallRequest = () => {
                                                 color: '#F56D3B', // Font color
                                                 border: '2px solid #F56D3B', // Border color
                                                 ml: 1,
+                                                textTransform: 'none',
+                                                fontFamily: 'Nohemi',
+                                                fontSize: 16,
                                                 '&:hover': {
                                                     backgroundColor: '#F56D3B',
                                                     color: 'white',
