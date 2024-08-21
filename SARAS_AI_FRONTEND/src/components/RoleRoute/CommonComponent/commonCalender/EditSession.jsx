@@ -198,7 +198,7 @@ const EditSession = ({ componentName }) => {
     };
 
     const handleAssignStudents = () => {
-        dispatch(openSelectStudents());
+        dispatch(openSelectStudents(sessionData.students));
     };
 
     const handleAssignBatches = () => {
