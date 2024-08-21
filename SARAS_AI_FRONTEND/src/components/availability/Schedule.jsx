@@ -69,7 +69,6 @@ const Schedule = ({ componentName , timezoneID}) => {
     const [toDate, setToDate] = useState(null);
     const [fromTime, setFromTime] = useState(null);
     const [toTime, setToTime] = useState(null);
-    const [timezone, setTimezone] = useState('');
     const [repeat, setRepeat] = useState('onetime');
     const [selectedDays, setSelectedDays] = useState([]);
     const [slotData, setSlotData] = useState([{}]);
