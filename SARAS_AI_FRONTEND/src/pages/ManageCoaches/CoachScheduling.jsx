@@ -135,10 +135,10 @@ const CoachSheduling = () => {
                 />
             </Box>
             {scheduleCoachSessionOpen && (
-                <Schedule
-                    componentName={'COACHSCHEDULE'}
-                    timezoneID={storedTimezoneId}
-                />
+                // <Schedule
+                //     componentName={'COACHSCHEDULE'}
+                //     timezoneID={storedTimezoneId}
+                // />
                 <Schedule componentName={'COACHSCHEDULE'} />
             )}
             {/* {assignCoachStudentOpen && (

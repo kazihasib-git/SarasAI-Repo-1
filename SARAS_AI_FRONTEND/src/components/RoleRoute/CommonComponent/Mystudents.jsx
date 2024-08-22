@@ -39,32 +39,11 @@ const Mystudents = ({ role }) => {
                         'Live Sessions Attended': item.Live_Sessions_Attended,
                     })
                 );
-                const transformedData = Object.values(myStudentData).map(
-                    item => ({
-                        id: item.Student_Id,
-                        Name: item.Student_Name,
-                        Program: item.Program,
-                        Batch: item.Batch,
-                        'Live Sessions Scheduled': item.Live_Sessions_Scheduled,
-                        'Live Sessions Attended': item.Live_Sessions_Attended,
-                    })
-                );
                 setStudents(transformedData);
             }
-        }else{
+        } else if (role === 'Coach') {
             if (myStudentData) {
                 console.log('myStudentData', myStudentData);
-                const transformedData = Object.values(myStudentData).map(
-                    item => ({
-                        id: item.Student_Id,
-                        Name: item.Student_Name,
-                        Program: item.Program,
-                        Batch: item.Batch,
-                        'Activities Scheduled': '',
-                        'Activities Completed': '',
-                        'Due Dates Missed': '',
-                    })
-                );
                 const transformedData = myStudentData.map(student => {
                     // Extract package names
                     const packageNames = student.packages
@@ -78,14 +57,29 @@ const Mystudents = ({ role }) => {
 
                     // Count the number of activities
                     // Assuming you have multiple modules within a template
-                    const activitiesScheduled = student.coachingtemplate.reduce((count, template) => {
-                        return count + template.modules.reduce((moduleCount, module) => {
-                            console.log(`Module ${module.module_name} has ${module.activities.length} activities.`);
-                            return moduleCount + module.activities.length;
-                        }, 0);
-                    }, 0);
-                    console.log(`Total activities scheduled: ${activitiesScheduled}`);
-                    
+                    const activitiesScheduled = student.coachingtemplate.reduce(
+                        (count, template) => {
+                            return (
+                                count +
+                                template.modules.reduce(
+                                    (moduleCount, module) => {
+                                        console.log(
+                                            `Module ${module.module_name} has ${module.activities.length} activities.`
+                                        );
+                                        return (
+                                            moduleCount +
+                                            module.activities.length
+                                        );
+                                    },
+                                    0
+                                )
+                            );
+                        },
+                        0
+                    );
+                    console.log(
+                        `Total activities scheduled: ${activitiesScheduled}`
+                    );
 
                     // Set default values for Activities Completed and Due Dates Missed
                     const activitiesCompleted = 0;
@@ -109,7 +103,6 @@ const Mystudents = ({ role }) => {
     let headers = [];
 
     if (role === 'TA') {
-    if (role === 'TA') {
         headers = [
             'S.No',
             'Student Name',
@@ -119,7 +112,6 @@ const Mystudents = ({ role }) => {
             'Live Sessions Attended',
             'Status',
         ];
-    } else {
     } else {
         headers = [
             'S.No',
@@ -158,13 +150,6 @@ const Mystudents = ({ role }) => {
                 marginTop={3}
                 alignItems={'center'}
             >
-                <p
-                    style={{
-                        fontFamily: 'ExtraLight',
-                        fontSize: '40px',
-                        justifyContent: 'center',
-                    }}
-                >
                 <p
                     style={{
                         fontFamily: 'ExtraLight',
