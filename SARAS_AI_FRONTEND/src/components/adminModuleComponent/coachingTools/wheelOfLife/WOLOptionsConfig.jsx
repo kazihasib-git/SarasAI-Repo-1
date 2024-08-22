@@ -115,12 +115,12 @@ const WOLOptionsConfig = () => {
                 details: get_config_details.map(detail => ({
                     point: detail.point,
                     text: detail.text,
-                    icon: detail.icon ? `data:image/png;base64,${detail.icon}` : null,
+                    icon: detail.icon ? `${detail.icon}` : null,
                 })),
             });
             setEdit(true);
         }
-    }, [optionsConfigData]);
+    }, [optionsConfigData, optionsConfigData.data]);
 
     const handleChange = e => {
         const { name, value } = e.target;

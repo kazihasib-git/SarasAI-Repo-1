@@ -242,11 +242,18 @@ const ScheduledCall = ({ role }) => {
 
     const handleClickJoinSession = call => {
         //TODO : Add session Join url here 
-        console.log(call);
+        console.log( "Call DATA :",call);
         const transformedCall = {
-            title: call.meeting_name,
+            // title: call.meeting_name,
             start: new Date(call.date.split(' ')[0] + 'T' + call.start_time),
             end: new Date(call.date.split(' ')[0] + 'T' + call.end_time),
+            meetingName: call.meeting_name,
+            meetingId : call.meeting_id,
+            platformId : call.platform_id,
+            platform_tools : call.platform_tool_details,
+            platform_meeting : call.platform_meeting_details,
+            students : call.students,
+            batches : call.batch,
         };
         dispatch(openSessionPopup(transformedCall));
     };
@@ -381,7 +388,7 @@ const ScheduledCall = ({ role }) => {
 
             {openSession &&
                 (role == 'Coach' ? (
-                    <SessionLink componentName={'COACHMENU'} />
+                    <SessionLink componentName={'COACHMENU'}  />
                 ) : (
                     <SessionLink componentName={'TAMENU'} />
                 ))}
