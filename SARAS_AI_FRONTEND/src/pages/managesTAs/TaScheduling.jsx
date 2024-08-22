@@ -23,24 +23,26 @@ const TaScheduling = () => {
     );
 
     const { taId } = useSelector(state => state.taScheduling);
-    const { todaysAvailableTa  } = useSelector(state => state.taAvialability);
+    const { todaysAvailableTa } = useSelector(state => state.taAvialability);
     const [selectedTA, setSelectedTA] = useState(null);
-    
 
-    const findTaTimeZone = (todaysAvailableTa) => {
+    const findTaTimeZone = todaysAvailableTa => {
         if (todaysAvailableTa && Number(taId)) {
-            const selectedTa = todaysAvailableTa.find(ta => ta.id === Number(taId));
-            setSelectedTA(selectedTa || null);  // Set to null if not found
+            const selectedTa = todaysAvailableTa.find(
+                ta => ta.id === Number(taId)
+            );
+            setSelectedTA(selectedTa || null); // Set to null if not found
         } else {
-            setSelectedTA(null);  // Set to null if conditions are not met
+            setSelectedTA(null); // Set to null if conditions are not met
         }
-    }
+    };
     useEffect(() => {
         findTaTimeZone(todaysAvailableTa);
     }, [taId, todaysAvailableTa]);
 
-
-    const storedTimezoneId = selectedTA ? selectedTA.timezone_id : Number(localStorage.getItem('timezone_id'));
+    const storedTimezoneId = selectedTA
+        ? selectedTA.timezone_id
+        : Number(localStorage.getItem('timezone_id'));
 
     const [taScheduleData, setTaScheduleData] = useState([]);
 
@@ -104,9 +106,24 @@ const TaScheduling = () => {
                     componentName={'TAMAPPING'}
                 />
             </Box>
-            {scheduleSessionOpen && <Schedule componentName={'TASCHEDULE'} timezoneID={storedTimezoneId}/>}
-            {openEditBatch && <EditBatches componentname={'TASCHEDULE'} timezoneID={storedTimezoneId}/>}
-            {openEditStudent && <EditStudents componentname={'TASCHEDULE'} timezoneID={storedTimezoneId}/>}
+            {scheduleSessionOpen && (
+                <Schedule
+                    componentName={'TASCHEDULE'}
+                    timezoneID={storedTimezoneId}
+                />
+            )}
+            {openEditBatch && (
+                <EditBatches
+                    componentname={'TASCHEDULE'}
+                    timezoneID={storedTimezoneId}
+                />
+            )}
+            {openEditStudent && (
+                <EditStudents
+                    componentname={'TASCHEDULE'}
+                    timezoneID={storedTimezoneId}
+                />
+            )}
         </>
     );
 };

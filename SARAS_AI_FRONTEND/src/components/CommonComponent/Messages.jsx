@@ -12,6 +12,7 @@ import SearchIcon from '../../assets/messagesearchicon.svg';
 import FilterBackground from '../../assets/duedatebackground.svg';
 import userimg from '../../assets/userimg.png';
 import CancelIcon from '@mui/icons-material/Cancel';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'; // Import an appropriate icon
 
 import {
     getTaCoachAllChats,
@@ -183,7 +184,6 @@ const Messages = ({ role }) => {
             fileInputRef.current.value = '';
         }
     };
-
     useEffect(() => {
         const setUserToChat = async () => {
             if (role === 'coach' || role === 'ta') {
@@ -506,8 +506,34 @@ const Messages = ({ role }) => {
                                             {msg.file && (
                                                 <Box mt={1}>
                                                     <Typography variant="caption">
-                                                        Attached file:{' '}
-                                                        {msg.file.name}
+                                                        <a
+                                                            style={{
+                                                                display: 'flex', // Flexbox to align icon and text
+                                                                alignItems:
+                                                                    'center',
+                                                                border: '1px solid white',
+                                                                borderRadius:
+                                                                    '8px',
+                                                                color: 'white',
+                                                                padding:
+                                                                    '5px 10px', // Adjust padding for better spacing
+                                                                textDecoration:
+                                                                    'none',
+                                                                backgroundColor:
+                                                                    '#333', // Dark background to resemble a file
+                                                            }}
+                                                            href={msg.file.url}
+                                                        >
+                                                            <InsertDriveFileIcon
+                                                                style={{
+                                                                    marginRight:
+                                                                        '5px',
+                                                                    color: 'white',
+                                                                }}
+                                                            />{' '}
+                                                            {/* File icon */}
+                                                            {msg.file.name}
+                                                        </a>
                                                     </Typography>
                                                 </Box>
                                             )}
@@ -542,7 +568,6 @@ const Messages = ({ role }) => {
                                 display: 'flex',
                                 alignItems: 'center',
                                 padding: '10px',
-                                backgroundColor: '#f6f6f8',
                             }}
                         >
                             <TextField
@@ -570,7 +595,47 @@ const Messages = ({ role }) => {
                                     },
                                 }}
                             />
-                            <div className="chat-input-icons">
+                            <div
+                                className="chat-input-icons"
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                }}
+                            >
+                                {selectedFile && (
+                                    <div
+                                        style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            marginRight: '10px',
+                                        }}
+                                    >
+                                        <Typography
+                                            variant="caption"
+                                            sx={{
+                                                maxWidth: '100px',
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis',
+                                                whiteSpace: 'nowrap',
+                                            }}
+                                        >
+                                            {selectedFile.name}
+                                        </Typography>
+                                        <IconButton
+                                            size="small"
+                                            onClick={handleCancelFile}
+                                            sx={{ marginLeft: '5px' }}
+                                        >
+                                            <CancelIcon fontSize="small" />
+                                        </IconButton>
+                                    </div>
+                                )}
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    style={{ display: 'none' }}
+                                    onChange={handleFileChange}
+                                />
                                 <IconButton
                                     className="input-icon"
                                     onClick={HandleSentFile}

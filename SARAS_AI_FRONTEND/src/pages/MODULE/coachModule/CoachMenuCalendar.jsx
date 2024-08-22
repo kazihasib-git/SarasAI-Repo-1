@@ -164,12 +164,13 @@ const CoachMenuCalendar = () => {
                                         `${localTime.start_date}T23:59:59`
                                     ),
                                     meetingName: event.meeting_name,
-                                    meetingId : event.meeting_id,
-                                    platformId : event.platform_id,
-                                    platform_tools : event.platform_tool_details,
-                                    platform_meeting : event.platform_meeting_details,
-                                    students : event.students,
-                                    batches : event.batch
+                                    meetingId: event.meeting_id,
+                                    platformId: event.platform_id,
+                                    platform_tools: event.platform_tool_details,
+                                    platform_meeting:
+                                        event.platform_meeting_details,
+                                    students: event.students,
+                                    batches: event.batch,
                                 },
                                 {
                                     id: event.id,
@@ -178,12 +179,13 @@ const CoachMenuCalendar = () => {
                                     ),
                                     end: endDateTime,
                                     meetingName: event.meeting_name,
-                                    meetingId : event.meeting_id,
-                                    platformId : event.platform_id,
-                                    platform_tools : event.platform_tool_details,
-                                    platform_meeting : event.platform_meeting_details,
-                                    students : event.students,
-                                    batches : event.batch
+                                    meetingId: event.meeting_id,
+                                    platformId: event.platform_id,
+                                    platform_tools: event.platform_tool_details,
+                                    platform_meeting:
+                                        event.platform_meeting_details,
+                                    students: event.students,
+                                    batches: event.batch,
                                 }
                             );
                         } else {
@@ -192,12 +194,13 @@ const CoachMenuCalendar = () => {
                                 start: startDateTime,
                                 end: endDateTime,
                                 meetingName: event.meeting_name,
-                                meetingId : event.meeting_id,
-                                platformId : event.platform_id,
-                                platform_tools : event.platform_tool_details,
-                                platform_meeting : event.platform_meeting_details,
-                                students : event.students,
-                                batches : event.batch
+                                meetingId: event.meeting_id,
+                                platformId: event.platform_id,
+                                platform_tools: event.platform_tool_details,
+                                platform_meeting:
+                                    event.platform_meeting_details,
+                                students: event.students,
+                                batches: event.batch,
                             });
                         }
                     })

@@ -101,7 +101,7 @@ export const getAllCoursesWithCoaches = createAsyncThunk(
 
 export const assignCourseToCoach = createAsyncThunk(
     'coachModule/assignCourseToCoach',
-    async (data) => {
+    async data => {
         const response = await axiosInstance.post(
             `${baseUrl}/admin/coach-course`,
             data
@@ -109,9 +109,6 @@ export const assignCourseToCoach = createAsyncThunk(
         return response.data;
     }
 );
-
-
-
 
 export const getCoachAssignStudents = createAsyncThunk(
     'coachModule/getCoachAssignStudents',
@@ -465,8 +462,6 @@ export const coachSlice = createSlice({
             state.loading = false;
             state.error = action.payload || action.error.message;
         });
-
-
 
         // get all students
         builder.addCase(getCoachStudentBatchMapping.pending, state => {

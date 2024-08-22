@@ -277,7 +277,10 @@ const PopUpTable = ({
                                                             </CustomButton>
                                                         </>
                                                     ) : header === 'S. No.' ? (
-                                                        (currentPage - 1) * itemsPerPage + index + 1
+                                                        (currentPage - 1) *
+                                                            itemsPerPage +
+                                                        index +
+                                                        1
                                                     ) : typeof item[header] ===
                                                       'object' ? (
                                                         JSON.stringify(

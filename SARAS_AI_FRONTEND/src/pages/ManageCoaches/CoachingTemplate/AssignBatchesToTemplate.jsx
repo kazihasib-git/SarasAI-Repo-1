@@ -6,7 +6,7 @@ import {
     assignStudentsToTemplate,
     getBatchMapping,
     getAllCoachTemplates,
-    getStudentsWithBatch
+    getStudentsWithBatch,
 } from '../../../redux/features/adminModule/coach/coachTemplateSlice';
 
 import CustomTextField from '../../../components/CustomFields/CustomTextField';
@@ -61,15 +61,13 @@ const AssignBatchesToTemplate = ({ componentname, assignedStudents }) => {
     const stateSelector = useSelector(state =>
         stateModuleKey ? state[stateModuleKey] : {}
     );
-    const { [idKeyScheduling]: assignedId } =
-        schedulingState || {};
+    const { [idKeyScheduling]: assignedId } = schedulingState || {};
 
     const {
         [assignBatchOpenKey]: assignBatchOpen,
         [batchMappingKey]: batchMapping,
         loading,
     } = stateSelector || {};
-
 
     useEffect(() => {
         if (stateModuleKey && assignBatchOpen) {
@@ -79,12 +77,12 @@ const AssignBatchesToTemplate = ({ componentname, assignedStudents }) => {
 
     useEffect(() => {
         if (assignBatchOpen) {
-                    const previouslyAssignedStudents = assignedStudents.map(
-                        student => student.id
-                    );
+            const previouslyAssignedStudents = assignedStudents.map(
+                student => student.id
+            );
 
-                    //setSelectedBatch(previouslyAssignedStudents);
-            }
+            //setSelectedBatch(previouslyAssignedStudents);
+        }
     }, [assignedStudents]);
 
     useEffect(() => {
@@ -143,9 +141,8 @@ const AssignBatchesToTemplate = ({ componentname, assignedStudents }) => {
     };
 
     const handleSubmit = async () => {
-
         const selectedStudentIds = await Promise.all(
-            selectedBatch.map(async (batch) => {
+            selectedBatch.map(async batch => {
                 const response = await dispatch(getStudentsWithBatch(batch));
                 const res = response.payload;
                 return res.map(student => student.student_id);
@@ -156,15 +153,15 @@ const AssignBatchesToTemplate = ({ componentname, assignedStudents }) => {
 
         const data = {
             template_id: assignedId,
-            users: allStudentIds.map(id => ({ 
-                   assignable_id: id.toString(),
-                   assignable_type: "Student"
+            users: allStudentIds.map(id => ({
+                assignable_id: id.toString(),
+                assignable_type: 'Student',
             })),
         };
         dispatch(postAssignAction(data)).then(() => {
             dispatch(getAllCoachTemplates());
             dispatch(closeDialogAction());
-        }); 
+        });
     };
 
     const headers = ['S. No.', 'Batch Name', 'Branch', 'Select'];

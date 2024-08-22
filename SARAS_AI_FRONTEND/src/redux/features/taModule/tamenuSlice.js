@@ -32,12 +32,13 @@ export const updateTaMenuProfile = createAsyncThunk(
 export const getMyStudents = createAsyncThunk(
     'taMenu/getMyStudents',
     async () => {
-        const response = await axiosInstance.get(`${baseUrl}/ta/my-student/get-all-student`);
+        const response = await axiosInstance.get(
+            `${baseUrl}/ta/my-student/get-all-student`
+        );
         console.log(response.data, 'response.data');
         return response.data;
     }
 );
-
 
 // Get Ta Slots
 export const getTaMenuSlots = createAsyncThunk('taMenu/getSlots', async () => {
@@ -123,7 +124,7 @@ export const approveCallRequest = createAsyncThunk(
     'taMenu/approveCallRequest',
     async id => {
         const response = await axiosInstance.get(
-            `${baseUrl}/ta/call-request/approve-call-request/${id}`,
+            `${baseUrl}/ta/call-request/approve-call-request/${id}`
         );
         console.log(response.data, 'response.data');
         return response.data;
@@ -138,7 +139,7 @@ export const denyCallRequest = createAsyncThunk(
             `${baseUrl}/ta/call-request/denie-call-request/${id}`,
             {
                 'reject-reason': reason,
-            },
+            }
         );
         console.log(response.data, 'response.data');
         return response.data;

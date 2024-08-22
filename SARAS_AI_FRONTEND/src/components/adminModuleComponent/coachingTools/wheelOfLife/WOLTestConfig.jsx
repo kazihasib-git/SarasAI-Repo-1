@@ -97,12 +97,11 @@ const WOLTestConfig = () => {
     }, [wolCategoryData]);
 
     // Generate options based on the wol_questions_count for each category
-    const WOLCategoriesOptions = wolCategoryData.map(item => ({
-        value: item.id,
-        label: item.name,
-     })) || [];
-    
-  
+    const WOLCategoriesOptions =
+        wolCategoryData.map(item => ({
+            value: item.id,
+            label: item.name,
+        })) || [];
 
     const getNumberOfQuestionsOptions = categoryId => {
         //const category = wolCategoryData.find(cat => cat.id === categoryId);
@@ -179,8 +178,8 @@ const WOLTestConfig = () => {
             categories: categories,
         };
 
-        dispatch(addWOLTestConfig(data)).then(()=>{
-             navigate('/WOLTestConfigSelectQuestions');
+        dispatch(addWOLTestConfig(data)).then(() => {
+            navigate('/WOLTestConfigSelectQuestions');
         });
     };
 
@@ -257,8 +256,7 @@ const WOLTestConfig = () => {
                                     fontFamily: 'Bold',
                                 }}
                             >
-                                
-                                {edit ? 'Update' : ('Submit' )}
+                                {edit ? 'Update' : 'Submit'}
                             </CustomButton>
                         </Grid>
                     </Grid>
@@ -315,30 +313,45 @@ const WOLTestConfig = () => {
                                                     label="Category Name"
                                                     name={`category_name_${index}`}
                                                     value={
-                                                        formValues.categories[index]?.category_name || ''
+                                                        formValues.categories[
+                                                            index
+                                                        ]?.category_name || ''
                                                     }
                                                     onChange={e => {
-                                                        const selectedCategory = e.target.value;
+                                                        const selectedCategory =
+                                                            e.target.value;
 
-                                                        const newCategories = [...formValues.categories];
+                                                        const newCategories = [
+                                                            ...formValues.categories,
+                                                        ];
                                                         newCategories[index] = {
-                                                            ...newCategories[index],
-                                                            category_name: selectedCategory,
+                                                            ...newCategories[
+                                                                index
+                                                            ],
+                                                            category_name:
+                                                                selectedCategory,
                                                         };
 
                                                         setFormValues({
                                                             ...formValues,
-                                                            categories: newCategories,
+                                                            categories:
+                                                                newCategories,
                                                         });
                                                     }}
                                                     errors={errors}
-                                                    options={
-                                                        WOLCategoriesOptions.filter(option => 
+                                                    options={WOLCategoriesOptions.filter(
+                                                        option =>
                                                             !formValues.categories.some(
-                                                                category => category.category_name === option.value
-                                                            ) || option.value === formValues.categories[index]?.category_name
-                                                        )
-                                                    }
+                                                                category =>
+                                                                    category.category_name ===
+                                                                    option.value
+                                                            ) ||
+                                                            option.value ===
+                                                                formValues
+                                                                    .categories[
+                                                                    index
+                                                                ]?.category_name
+                                                    )}
                                                 />
 
                                                 {errors[

@@ -57,7 +57,7 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
     }, [dispatch]);
 
     let sliceName, createSlotApi, getSlotsApi;
-    const timezoneName = timezoneIdToName(timezoneID , timezones) ; 
+    const timezoneName = timezoneIdToName(timezoneID, timezones);
     switch (componentName) {
         case 'TACALENDER':
             sliceName = 'taAvialability';
@@ -77,7 +77,7 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
             getSlotsApi = null;
             break;
     }
-     
+
     const schedulingState = useSelector(state => state[sliceName]);
     const { createNewSlotOpen } = useSelector(state => state.taAvialability);
 
@@ -88,8 +88,8 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
         formState: { errors },
     } = useForm({
         defaultValues: {
-            timezone_id: timezoneID
-        }
+            timezone_id: timezoneID,
+        },
     });
 
     const handleDayChange = day => {
@@ -151,7 +151,7 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
         formData.end_date = repeat === 'recurring' ? toDate : fromDate;
         formData.weeks = weeksArray;
         formData.admin_user_id = taId.id;
-        formData.timezone_id = `${timezoneID}`
+        formData.timezone_id = `${timezoneID}`;
         dispatch(createSlotApi(formData)).then(() => {
             dispatch(closeCreateNewSlots());
             dispatch(getSlotsApi(taId.id));
@@ -257,10 +257,10 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
                                         name="timezone_id"
                                         value={timezoneID}
                                         onChange={field.onChange}
-                                        disabled={timezoneID!=null}
+                                        disabled={timezoneID != null}
                                         options={timezones}
                                         errors={errors}
-                                    />      
+                                    />
                                 )}
                             />
                         </Grid>

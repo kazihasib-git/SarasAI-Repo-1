@@ -102,30 +102,39 @@ const ScheduledCall = ({ role }) => {
 
     useEffect(() => {
         if (role == 'Coach' && coachProfileData && timezones) {
-            
-            const coachTimeZone = timezones.find(timezone => timezone.id === coachProfileData.timezone_id);
+            const coachTimeZone = timezones.find(
+                timezone => timezone.id === coachProfileData.timezone_id
+            );
 
             const data = {
-                "date": formatDate(date),
-                "timezone_name": coachTimeZone.time_zone
-            }
+                date: formatDate(date),
+                timezone_name: coachTimeZone.time_zone,
+            };
 
             dispatch(getCoachScheduledCalls(data));
         } else if (role == 'TA' && taProfileData && timezones) {
-           
-            const taTimeZone = timezones.find(timezone => timezone.id === taProfileData.timezone_id);
-
+            const taTimeZone = timezones.find(
+                timezone => timezone.id === taProfileData.timezone_id
+            );
 
             const data = {
-                "date": formatDate(date),
-                "timezone_name": taTimeZone.time_zone
-            }
-            
+                date: formatDate(date),
+                timezone_name: taTimeZone.time_zone,
+            };
+
             dispatch(getTaScheduledCalls(data))
                 .then(response => console.log(response))
                 .catch(error => console.error(error));
         }
-    }, [dispatch, date, role, scheduleNewSessionPopup, taProfileData, coachProfileData, timezones]);
+    }, [
+        dispatch,
+        date,
+        role,
+        scheduleNewSessionPopup,
+        taProfileData,
+        coachProfileData,
+        timezones,
+    ]);
 
     function convertTo12HourFormat(time24) {
         // Split the time into hours, minutes, and seconds
@@ -162,9 +171,11 @@ const ScheduledCall = ({ role }) => {
             return a.start_time.localeCompare(b.start_time);
         });
 
-        const transformedRequests= await Promise.all(
+        const transformedRequests = await Promise.all(
             sortedRequests.map(async request => {
-                const selectedTimeZone = timezones.find(timezone => timezone.id === request.timezone_id);
+                const selectedTimeZone = timezones.find(
+                    timezone => timezone.id === request.timezone_id
+                );
                 const timezonename = selectedTimeZone.time_zone;
 
                 const localTime = await convertFromUTC({
@@ -174,22 +185,22 @@ const ScheduledCall = ({ role }) => {
                     end_date: request.end_date,
                     timezonename,
                 });
-                
+
                 const newRequest = {
                     ...request,
                     date: localTime.start_date,
                     end_date: localTime.end_date,
                     start_time: localTime.start_time,
-                    end_time: localTime.end_time
-                }
+                    end_time: localTime.end_time,
+                };
 
-                return newRequest; 
-                }
-        ))
+                return newRequest;
+            })
+        );
 
         const processedCalls = transformedRequests.map(request => ({
             ...request,
-            time: `${convertTo12HourFormat(request.start_time)} - ${convertTo12HourFormat(request.end_time)}`
+            time: `${convertTo12HourFormat(request.start_time)} - ${convertTo12HourFormat(request.end_time)}`,
         }));
         setScheduledCalls(processedCalls);
     };
@@ -238,7 +249,7 @@ const ScheduledCall = ({ role }) => {
     };
 
     const handleClickJoinSession = call => {
-        //TODO : Add session Join url here 
+        //TODO : Add session Join url here
         console.log(call);
         const transformedCall = {
             title: call.meeting_name,
@@ -457,9 +468,7 @@ const ScheduledCall = ({ role }) => {
                                             Participants
                                         </a>
                                     ) : (
-                                        <>
-                                            No bookings yet
-                                        </>
+                                        <>No bookings yet</>
                                     )}
                                 </Typography>
                                 <Typography gutterBottom>
@@ -470,7 +479,7 @@ const ScheduledCall = ({ role }) => {
                                     justifyContent="flex-end"
                                     mt={2}
                                 >
-                                    {call.event_status === "join meeting" ? (
+                                    {call.event_status === 'join meeting' ? (
                                         <CustomButton
                                             color="#FFFFFF"
                                             backgroundColor="#19B420"
@@ -482,7 +491,8 @@ const ScheduledCall = ({ role }) => {
                                         >
                                             Join Session
                                         </CustomButton>
-                                    ) : call.event_status === 'call schedule' ? (
+                                    ) : call.event_status ===
+                                      'call schedule' ? (
                                         <CustomButton
                                             color="#FFFFFF"
                                             backgroundColor="#F56D3B"

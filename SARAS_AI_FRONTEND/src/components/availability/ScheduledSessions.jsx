@@ -1,4 +1,4 @@
-import React, { useState , useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import { Box, Button, DialogContent, Typography } from '@mui/material';
 import DynamicTable from '../CommonComponent/DynamicTable';
@@ -30,18 +30,17 @@ import { getTimezone } from '../../redux/features/utils/utilSlice';
 
 const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
 
-const ScheduledSessions = ({ componentName , timezoneID}) => {
-    
+const ScheduledSessions = ({ componentName, timezoneID }) => {
     const { timezones, platforms } = useSelector(state => state.util);
-    const [sessionData , setSessionData] = useState([]) ; 
+    const [sessionData, setSessionData] = useState([]);
     const dispatch = useDispatch();
-    
+
     useEffect(() => {
         dispatch(getTimezone());
     }, [dispatch]);
-    
+
     const { id } = useParams();
-    
+
     let scheduleSessionOpenKey,
         scheduledSessionDataKey,
         schedulingStateKey,
@@ -111,7 +110,7 @@ const ScheduledSessions = ({ componentName , timezoneID}) => {
         'Students',
         'Actions',
     ];
-    
+
     const formatTime = time => {
         const [hours, minutes] = time.split(':');
         const hour = parseInt(hours, 10);
@@ -120,13 +119,16 @@ const ScheduledSessions = ({ componentName , timezoneID}) => {
         const formattedHour = hour % 12 || 12;
         return `${formattedHour}:${minute < 10 ? '0' : ''}${minute} ${ampm}`;
     };
-    
 
     const convertSessions = async () => {
-    
-        if (scheduledSessionData && scheduledSessionData.length > 0 && timezones && storedTimezoneId) {
+        if (
+            scheduledSessionData &&
+            scheduledSessionData.length > 0 &&
+            timezones &&
+            storedTimezoneId
+        ) {
             const timezonename = timezoneIdToName(storedTimezoneId, timezones);
-    
+
             try {
                 const processedSessions = await Promise.all(
                     scheduledSessionData.map(async (session, index) => {
@@ -138,8 +140,12 @@ const ScheduledSessions = ({ componentName , timezoneID}) => {
                             timezonename,
                         });
 
-                        const startDateTime = new Date(`${localTime.start_date}T${localTime.start_time}`);
-                        const endDateTime = new Date(`${localTime.end_date}T${localTime.end_time}`);
+                        const startDateTime = new Date(
+                            `${localTime.start_date}T${localTime.start_time}`
+                        );
+                        const endDateTime = new Date(
+                            `${localTime.end_date}T${localTime.end_time}`
+                        );
                         return {
                             'S. No.': index + 1,
                             'Session Name': session.meeting_name,
@@ -162,11 +168,10 @@ const ScheduledSessions = ({ componentName , timezoneID}) => {
             setSessionData([]);
         }
     };
-    
+
     useEffect(() => {
         convertSessions();
     }, [scheduledSessionData, timezones, storedTimezoneId]);
-
 
     // const formattedData = scheduledSessionData.map((session, index) => ({
     //     'S. No.': index + 1,
@@ -178,9 +183,7 @@ const ScheduledSessions = ({ componentName , timezoneID}) => {
     //     id: session.id,
     // }));
 
-
-    const handleViewClick = students => {
-    };
+    const handleViewClick = students => {};
 
     const handleRescheduleClick = session => {
         dispatch(closeSessionAction());
@@ -198,7 +201,7 @@ const ScheduledSessions = ({ componentName , timezoneID}) => {
     };
 
     const content =
-    sessionData.length === 0 ? (
+        sessionData.length === 0 ? (
             <DialogContent
                 style={{ justifyContent: 'center', display: 'flex' }}
             >

@@ -69,7 +69,14 @@ const Students = () => {
                 marginTop={3}
                 alignItems={'center'}
             >
-                <p style={{ fontFamily:'ExtraLight', fontSize: '40px', justifyContent: 'center', lineHeight:'40.18px' }}>
+                <p
+                    style={{
+                        fontFamily: 'ExtraLight',
+                        fontSize: '40px',
+                        justifyContent: 'center',
+                        lineHeight: '40.18px',
+                    }}
+                >
                     Students
                 </p>
                 <div className="inputBtnContainer">

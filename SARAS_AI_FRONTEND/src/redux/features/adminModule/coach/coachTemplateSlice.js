@@ -137,7 +137,6 @@ export const addPrerequisites = createAsyncThunk(
     }
 );
 
-
 // assign students to template
 
 export const assignStudentsToTemplate = createAsyncThunk(
@@ -172,12 +171,14 @@ export const getBatchMapping = createAsyncThunk(
 
 export const getStudentsWithBatch = createAsyncThunk(
     'coachTemplate/getStudentsWithBatch',
-    async (id) => {
-        const response = await axiosInstance.get(`${baseUrl}/admin/student-batch-mapping/students/${id}`);
+    async id => {
+        const response = await axiosInstance.get(
+            `${baseUrl}/admin/student-batch-mapping/students/${id}`
+        );
         return response.data;
     }
-)
- 
+);
+
 const initialState = {
     coachesTemplateList: [],
     coachTemplates: [],
@@ -204,7 +205,6 @@ const initialState = {
     createCoachModule: null,
     modulesData: [],
     newlyCreateTemplate: null,
-
 
     assignStudentsToTemplate: false,
     templateIdToAssignStudents: null,
@@ -281,26 +281,25 @@ export const coachTemplateSlice = createSlice({
             state.openEditActivityPopUp = false;
         },
 
-
         // open assignstudents to coach template
-        openAssignStudentsToTemplate(state, action){
-            state.assignStudentsToTemplate = true,
-            state.templateIdToAssignStudents = action.payload
+        openAssignStudentsToTemplate(state, action) {
+            (state.assignStudentsToTemplate = true),
+                (state.templateIdToAssignStudents = action.payload);
         },
-        closeAssignStudentsToTemplate(state){
-            state.assignStudentsToTemplate = false,
-            state.templateIdToAssignStudents = null
+        closeAssignStudentsToTemplate(state) {
+            (state.assignStudentsToTemplate = false),
+                (state.templateIdToAssignStudents = null);
         },
 
         // open assignbatches to coach template
-        openAssignBatchesToTemplate(state, action){
-            state.assignBatchesToTemplate = true,
-            state.templateIdToAssignBatches= action.payload
+        openAssignBatchesToTemplate(state, action) {
+            (state.assignBatchesToTemplate = true),
+                (state.templateIdToAssignBatches = action.payload);
         },
-        closeAssignBatchesToTemplate(state){
-            state.assignBatchesToTemplate = false,
-            state.templateIdToAssignBatches = null
-        }
+        closeAssignBatchesToTemplate(state) {
+            (state.assignBatchesToTemplate = false),
+                (state.templateIdToAssignBatches = null);
+        },
     },
     extraReducers: builder => {
         // getAllCoachTemplates
@@ -442,7 +441,7 @@ export const coachTemplateSlice = createSlice({
                 state.loading = false;
                 state.error = action.error.message;
             });
-        
+
         // addPrerequisites
         builder
             .addCase(addPrerequisites.pending, state => {

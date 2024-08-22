@@ -24,7 +24,7 @@ const MarkLeave = ({ componentName, timezoneID }) => {
     const dispatch = useDispatch();
     const [fromDate, setFromDate] = useState(null);
     const [toDate, setToDate] = useState(null);
-    const { timezones } = useSelector((state) => state.util)
+    const { timezones } = useSelector(state => state.util);
 
     let scheduleSessionOpenKey,
         schedulingStateKey,
@@ -71,8 +71,8 @@ const MarkLeave = ({ componentName, timezoneID }) => {
         if (!fromDate || !toDate) {
             toast.error('Please select dates');
             return false;
-        }else if(fromDate > toDate){
-            toast.error('Please select To Date after the From Date')
+        } else if (fromDate > toDate) {
+            toast.error('Please select To Date after the From Date');
             return false;
         }
         return true;
@@ -141,12 +141,11 @@ const MarkLeave = ({ componentName, timezoneID }) => {
         <CustomButton
             onClick={handleSubmit}
             style={{
-                backgroundColor : "#F56D3B",
-                borderColor : "#F56D3B",
-                color : "#FFFFFF",
-                textTransform : 'none'
+                backgroundColor: '#F56D3B',
+                borderColor: '#F56D3B',
+                color: '#FFFFFF',
+                textTransform: 'none',
             }}
-            
         >
             Submit
         </CustomButton>

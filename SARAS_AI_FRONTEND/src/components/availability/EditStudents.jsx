@@ -20,7 +20,6 @@ import { useParams } from 'react-router-dom';
 import CustomButton from '../CustomFields/CustomButton';
 
 const EditStudents = ({ componentname }) => {
-
     const dispatch = useDispatch();
     const { id, name } = useParams();
 
@@ -202,12 +201,10 @@ const EditStudents = ({ componentname }) => {
             : [];
 
     useEffect(() => {
-
         if (selectedStudent) {
             setSelectedStudents(selectedStudent.map(student => student.id));
         }
     }, [selectedStudent]);
-
 
     const handleSelectStudent = id => {
         setSelectedStudents(prev =>

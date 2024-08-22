@@ -63,8 +63,7 @@ const actionButtons = [
     },
 ];
 
-const Schedule = ({ componentName , timezoneID}) => {
-    
+const Schedule = ({ componentName, timezoneID }) => {
     const [fromDate, setFromDate] = useState(null);
     const [toDate, setToDate] = useState(null);
     const [fromTime, setFromTime] = useState(null);
@@ -173,7 +172,6 @@ const Schedule = ({ componentName , timezoneID}) => {
     }, [fromDate, dispatch, adminUserID, getAvailableSlotsAction]);
 
     const handleDateSubmit = () => {
-
         if (fromDate) {
             dispatch(
                 getAvailableSlotsAction({
@@ -196,8 +194,12 @@ const Schedule = ({ componentName , timezoneID}) => {
     }, [dispatch]);
 
     const convertSessions = async () => {
-        
-        if (availableSlots && availableSlots.length > 0 && timezones && timezoneID) {
+        if (
+            availableSlots &&
+            availableSlots.length > 0 &&
+            timezones &&
+            timezoneID
+        ) {
             const timezonename = timezoneIdToName(timezoneID, timezones);
             try {
                 const processedSlots = await Promise.all(
@@ -209,10 +211,14 @@ const Schedule = ({ componentName , timezoneID}) => {
                             end_date: slot.slot_date, // Assuming end_date is the same as slot_date
                             timezonename,
                         });
-    
-                        const startDateTime = new Date(`${localTime.start_date}T${localTime.start_time}`);
-                        const endDateTime = new Date(`${localTime.end_date}T${localTime.end_time}`);
-    
+
+                        const startDateTime = new Date(
+                            `${localTime.start_date}T${localTime.start_time}`
+                        );
+                        const endDateTime = new Date(
+                            `${localTime.end_date}T${localTime.end_time}`
+                        );
+
                         return {
                             'S. No.': index + 1,
                             'Slot Date': localTime.start_date,
@@ -233,12 +239,12 @@ const Schedule = ({ componentName , timezoneID}) => {
                     const formattedHour = hour % 12 || 12;
                     return `${formattedHour}:${minute < 10 ? '0' : ''}${minute} ${ampm}`;
                 };
-    
+
                 const options = processedSlots.map(item => ({
                     label: `${formatTime(item['From Time'])} - ${formatTime(item['To Time'])}`,
                     value: item.id,
                 }));
-    
+
                 setAvailableSlotsOptions(options);
                 setSlotData(processedSlots);
             } catch (error) {
@@ -251,7 +257,7 @@ const Schedule = ({ componentName , timezoneID}) => {
             setSlotData([{}]);
         }
     };
-    
+
     useEffect(() => {
         convertSessions();
     }, [availableSlots, timezones, timezoneID]);
@@ -277,7 +283,6 @@ const Schedule = ({ componentName , timezoneID}) => {
     };
 
     const handleAssignStudents = () => {
-
         if (componentName === 'TASCHEDULE') {
             dispatch(openEditStudent());
         } else if (componentName === 'COACHSCHEDULE') {
@@ -286,7 +291,6 @@ const Schedule = ({ componentName , timezoneID}) => {
     };
 
     const handleAssignBatches = () => {
-
         if (componentName === 'TASCHEDULE') {
             dispatch(openEditBatch());
         } else if (componentName === 'COACHSCHEDULE') {
@@ -336,7 +340,6 @@ const Schedule = ({ componentName , timezoneID}) => {
     };
 
     const onSubmit = formData => {
-
         const studentId = students.map(student => student.id);
         const batchId = batches.map(batch => batch.id);
 
@@ -361,7 +364,7 @@ const Schedule = ({ componentName , timezoneID}) => {
         formData.weeks = weeksArray;
         formData.studentId = studentId;
         formData.batchId = batchId;
-        formData.timezone_id = `${timezoneID}`
+        formData.timezone_id = `${timezoneID}`;
 
         dispatch(createScheduleAction(formData))
             .then(() => {
@@ -516,7 +519,9 @@ const Schedule = ({ componentName , timezoneID}) => {
                                                             name="timezone_id"
                                                             control={control}
                                                             // rules={{ required: "Time Zone is required" }}
-                                                            defaultValue={timezoneID}
+                                                            defaultValue={
+                                                                timezoneID
+                                                            }
                                                             render={({
                                                                 field,
                                                             }) => (
@@ -529,8 +534,10 @@ const Schedule = ({ componentName , timezoneID}) => {
                                                                     onChange={
                                                                         field.onChange
                                                                     }
-                                                                    disabled={timezoneID!=null}
-
+                                                                    disabled={
+                                                                        timezoneID !=
+                                                                        null
+                                                                    }
                                                                     options={
                                                                         timezones
                                                                     }

@@ -6,7 +6,10 @@ import { useState, useEffect } from 'react';
 import { OnOffSwitch } from '../../components/Switch';
 import editIcon from '../../assets/editIcon.png';
 import DynamicTable from '../../components/CommonComponent/DynamicTable';
-import { showCoachCourseMapping, showCoachMapping } from '../../redux/features/adminModule/coach/coachSlice';
+import {
+    showCoachCourseMapping,
+    showCoachMapping,
+} from '../../redux/features/adminModule/coach/coachSlice';
 import { useDispatch, useSelector } from 'react-redux';
 
 const headers = [
@@ -28,7 +31,9 @@ const actionButtons = [
 
 const CoachCourseMapping = () => {
     const dispatch = useDispatch();
-    const { coachCourseMappingData, loading } = useSelector(state => state.coachModule);
+    const { coachCourseMappingData, loading } = useSelector(
+        state => state.coachModule
+    );
     const [caMappingData, setcaMappingData] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     // console.log("camapping" , coachMapping);
@@ -37,7 +42,7 @@ const CoachCourseMapping = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        console.log('...................',coachCourseMappingData);
+        console.log('...................', coachCourseMappingData);
         if (coachCourseMappingData && coachCourseMappingData.length > 0) {
             const transformData = coachCourseMappingData.map((item, index) => ({
                 id: item.id,
@@ -45,7 +50,6 @@ const CoachCourseMapping = () => {
                 Active_Courses: item.courses.length,
             }));
 
-        
             setcaMappingData(transformData);
             console.log('transform data', transformData);
         }

@@ -16,7 +16,12 @@ import CustomDateField from '../../../../components/CustomFields/CustomDateField
 import { Controller, useForm } from 'react-hook-form';
 import CustomFormControl from '../../../../components/CustomFields/CustomFromControl';
 import ReusableDialog from '../../../../components/CustomFields/ReusableDialog';
-import {addPrerequisites, getAllCoachTemplateModules, getCoachTemplateModuleId, setSelectedModule} from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
+import {
+    addPrerequisites,
+    getAllCoachTemplateModules,
+    getCoachTemplateModuleId,
+    setSelectedModule,
+} from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
 import CustomModuleFormControl from '../../../../components/CustomFields/CustomModuleFormControl';
 import CustomActivityFormControl from '../../../../components/CustomFields/CustomActivityFormControl';
 import { toast } from 'react-toastify';
@@ -56,77 +61,97 @@ const CustomButton = ({
     );
 };
 
-const PrerequisitesPopup = ({ open, prereqModuleData, prereqActivityData, handleClose }) => {
-
-
-    console.log("Pre Req Data :", prereqModuleData, prereqActivityData)
+const PrerequisitesPopup = ({
+    open,
+    prereqModuleData,
+    prereqActivityData,
+    handleClose,
+}) => {
+    console.log('Pre Req Data :', prereqModuleData, prereqActivityData);
 
     const dispatch = useDispatch();
-    const { control, handleSubmit, watch, register, reset, formState: { errors } } = useForm();
+    const {
+        control,
+        handleSubmit,
+        watch,
+        register,
+        reset,
+        formState: { errors },
+    } = useForm();
 
     const [activityDependence, setActivityDependence] = useState(false);
     // const [moduleData, setModuleData] = useState([]);
-    const [moduleOptions, setModuleOptions] = useState([])
-    const [activityOptions, setActivityOptions] = useState([])
+    const [moduleOptions, setModuleOptions] = useState([]);
+    const [activityOptions, setActivityOptions] = useState([]);
     const [fromTime, setFromTime] = useState();
 
-    const { coachTemplatesId } = useSelector((state) => state.coachTemplate)
-    
-    useEffect(() => {   
-        if(prereqModuleData && prereqModuleData.id){
-            dispatch(getCoachTemplateModuleId(prereqModuleData.id));
-        }
-    },[dispatch, prereqModuleData])
-
+    const { coachTemplatesId } = useSelector(state => state.coachTemplate);
 
     useEffect(() => {
-        console.log("COACH TEMPLATE DATTA :", coachTemplatesId)
-        if(coachTemplatesId && coachTemplatesId.modules && coachTemplatesId.modules.length > 0){
-            console.log("MODULE DATA :", coachTemplatesId)
-            const options = coachTemplatesId.modules.map((module) => ({
+        if (prereqModuleData && prereqModuleData.id) {
+            dispatch(getCoachTemplateModuleId(prereqModuleData.id));
+        }
+    }, [dispatch, prereqModuleData]);
+
+    useEffect(() => {
+        console.log('COACH TEMPLATE DATTA :', coachTemplatesId);
+        if (
+            coachTemplatesId &&
+            coachTemplatesId.modules &&
+            coachTemplatesId.modules.length > 0
+        ) {
+            console.log('MODULE DATA :', coachTemplatesId);
+            const options = coachTemplatesId.modules.map(module => ({
                 value: module.id,
                 label: module.module_name,
             }));
             setModuleOptions(options);
         }
-    },[coachTemplatesId])
+    }, [coachTemplatesId]);
 
     useEffect(() => {
-        const selectedModuleId = watch("module");
-        console.log("Selected Module Id :", selectedModuleId)
-        if (selectedModuleId && coachTemplatesId && coachTemplatesId.modules && coachTemplatesId.modules.length > 0) {
-            const selectedModule = coachTemplatesId.modules.find((mod) => mod.id === selectedModuleId);
-            console.log("Selected Module :", selectedModule)
+        const selectedModuleId = watch('module');
+        console.log('Selected Module Id :', selectedModuleId);
+        if (
+            selectedModuleId &&
+            coachTemplatesId &&
+            coachTemplatesId.modules &&
+            coachTemplatesId.modules.length > 0
+        ) {
+            const selectedModule = coachTemplatesId.modules.find(
+                mod => mod.id === selectedModuleId
+            );
+            console.log('Selected Module :', selectedModule);
             if (selectedModule) {
-                const options = selectedModule.activities?.map((activity) => ({
-                    value: activity.id,
-                    label: activity.activity_name,
-                })) || [];
+                const options =
+                    selectedModule.activities?.map(activity => ({
+                        value: activity.id,
+                        label: activity.activity_name,
+                    })) || [];
                 setActivityOptions(options);
             }
         }
-    }, [watch("module"), coachTemplatesId]);
+    }, [watch('module'), coachTemplatesId]);
 
-
-    const validate = (data) => {
+    const validate = data => {
         if (activityDependence) {
             if (!data.module) {
-                toast.error("Module is required.");
+                toast.error('Module is required.');
                 return false;
             }
             if (!data.activity || data.activity.length === 0) {
-                toast.error("At least one activity is required.");
+                toast.error('At least one activity is required.');
                 return false;
             }
         }
-        
+
         if (!data.lockUntil) {
-            toast.error("Lock Until Date is required.");
+            toast.error('Lock Until Date is required.');
             return false;
         }
-        
+
         if (!fromTime) {
-            toast.error("From Time is required.");
+            toast.error('From Time is required.');
             return false;
         }
 
@@ -139,21 +164,23 @@ const PrerequisitesPopup = ({ open, prereqModuleData, prereqActivityData, handle
         }
 
         const prereqData = {
-            module_id : prereqModuleData.id,
+            module_id: prereqModuleData.id,
             activity_id: prereqActivityData.id,
             template_id: prereqModuleData.template_id,
             lock_until_date: data.lockUntil,
             time: fromTime,
-            data : data && data.activity &&  data.activity.map(act => ({
-                prerequisite_activity_id: act,
-                prerequisite_module_id: data.module,
-            }))
-        }
-        dispatch(addPrerequisites(prereqData))
-        .then(() => {
-            dispatch(getCoachTemplateModuleId(prereqModuleData.id))
+            data:
+                data &&
+                data.activity &&
+                data.activity.map(act => ({
+                    prerequisite_activity_id: act,
+                    prerequisite_module_id: data.module,
+                })),
+        };
+        dispatch(addPrerequisites(prereqData)).then(() => {
+            dispatch(getCoachTemplateModuleId(prereqModuleData.id));
         });
-        console.log("prereq formdata: -->",prereqData);
+        console.log('prereq formdata: -->', prereqData);
         handleClosePopup();
     };
 
@@ -169,7 +196,6 @@ const PrerequisitesPopup = ({ open, prereqModuleData, prereqActivityData, handle
         setActivityOptions([]); // Clear activity options
         handleClose(); // Close the popup
     };
-    
 
     const content = (
         <Grid
@@ -299,7 +325,7 @@ const PrerequisitesPopup = ({ open, prereqModuleData, prereqActivityData, handle
                 borderColor="#F56D3B"
                 color="#FFFFFF"
                 style={{
-                    textTransform : 'none'
+                    textTransform: 'none',
                 }}
             >
                 Submit

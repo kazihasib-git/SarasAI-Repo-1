@@ -158,7 +158,7 @@ const DynamicTable = ({
                 if (type === 'courses') {
                     console.log(id);
                     navigate(`/active-Coach-courses/${id}`); // Append id as a parameter
-                } 
+                }
             }
         }
     };
@@ -345,7 +345,7 @@ const DynamicTable = ({
                                                 </CustomButton>
                                             </td>
                                         );
-                                    }else if (
+                                    } else if (
                                         key !== 'id' &&
                                         key !== 'is_active' &&
                                         key !== 'timezone'

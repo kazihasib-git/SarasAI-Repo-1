@@ -76,8 +76,6 @@ const CustomButton = ({
 
 const headers = ['S. No.', 'Slot Date', 'From Time', 'To Time', 'Select'];
 
-
-
 const timezone = Number(localStorage.getItem('timezone_id'));
 
 const actionButtons = [
@@ -86,7 +84,7 @@ const actionButtons = [
     },
 ];
 
-const CreateSession = ({ componentName , timezoneID}) => {
+const CreateSession = ({ componentName, timezoneID }) => {
     const dispatch = useDispatch();
     const [formData, setFormData] = useState({
         sessionName: '',
@@ -155,7 +153,6 @@ const CreateSession = ({ componentName , timezoneID}) => {
         setFormData(prev => ({ ...prev, [field]: value }));
     };
 
-
     const handleAssignStudents = () => {
         dispatch(openSelectStudents());
     };
@@ -163,7 +160,6 @@ const CreateSession = ({ componentName , timezoneID}) => {
     const handleAssignBatches = () => {
         dispatch(openSelectBatches());
     };
-
 
     const handleSubmit = e => {
         e.preventDefault();
@@ -378,7 +374,10 @@ const CreateSession = ({ componentName , timezoneID}) => {
                                     name="timezone"
                                     value={formData.timezone_id}
                                     onChange={e =>
-                                        handleChange('timezone_id', e.target.value)
+                                        handleChange(
+                                            'timezone_id',
+                                            e.target.value
+                                        )
                                     }
                                     options={timezones}
                                     errors={!!error.timezone}
@@ -444,7 +443,6 @@ const CreateSession = ({ componentName , timezoneID}) => {
                                     </Button>
                                 </Box>
                             </Grid>
-
                         </Grid>
                     </Box>
                 </form>

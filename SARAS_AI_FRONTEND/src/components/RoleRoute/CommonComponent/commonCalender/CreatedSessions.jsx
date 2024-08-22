@@ -124,9 +124,7 @@ const CreatedSessions = ({ componentName }) => {
         console.log('View clicked!', students);
     };
 
-    const handleRescheduleClick = session => {
-       
-    };
+    const handleRescheduleClick = session => {};
 
     const handleCancelClick = session => {
         dispatch(openCancelSessionPopup(session));

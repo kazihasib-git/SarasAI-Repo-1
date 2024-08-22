@@ -72,16 +72,14 @@ const ReasonForLeave = ({ componentName }) => {
         [reasonForLeaveOpenKey]: reasonForLeaveOpen,
         [markLeaveKey]: markLeaveData,
         [slotEventKey]: slotEventDetails,
-    } = useSelector(
-        state => state[sliceName] || {} 
-    );
+    } = useSelector(state => state[sliceName] || {});
 
     const handleSubmit = () => {
-        if(!leaveReason){
-            toast.error('Enter Reason For Leave')
+        if (!leaveReason) {
+            toast.error('Enter Reason For Leave');
             return;
         }
-        if(markLeaveData && markLeaveData.data){
+        if (markLeaveData && markLeaveData.data) {
             const slots = markLeaveData.data;
 
             const requestBody = {
@@ -93,7 +91,7 @@ const ReasonForLeave = ({ componentName }) => {
                 leave_type: null,
                 reason: leaveReason,
 
-                data: slots
+                data: slots,
             };
 
             dispatch(reasonForLeaveAction(requestBody)).then(() => {
@@ -125,10 +123,10 @@ const ReasonForLeave = ({ componentName }) => {
         <CustomButton
             onClick={handleSubmit}
             style={{
-                backgroundColor : "#F56D3B",
-                borderColor : "#F56D3B",
-                color : "#FFFFFF",
-                textTrasform : 'none'
+                backgroundColor: '#F56D3B',
+                borderColor: '#F56D3B',
+                color: '#FFFFFF',
+                textTrasform: 'none',
             }}
         >
             Submit

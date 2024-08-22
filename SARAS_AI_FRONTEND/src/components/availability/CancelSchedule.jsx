@@ -31,7 +31,7 @@ import { useParams } from 'react-router-dom';
 
 const CancelSchedule = ({ componentName }) => {
     const dispatch = useDispatch();
-    const {id , name } = useParams()
+    const { id, name } = useParams();
 
     let closeSessionAction,
         cancelSessionAction,
@@ -46,15 +46,15 @@ const CancelSchedule = ({ componentName }) => {
 
     switch (componentName) {
         case 'TACALENDER':
-            sliceName = 'taAvialability',
-            closeSessionAction = closeCancelSession;
+            (sliceName = 'taAvialability'),
+                (closeSessionAction = closeCancelSession);
             cancelSessionAction = cancelScheduledSession;
             getSessionAction = getScheduleSession;
             eventSlotData = 'slotEventData';
             cancelScheduledData = 'schduldeCancelData';
             openSessionAction = openScheduledSession;
             cancelSessionState = 'cancelSessionOpen';
-            fetchSlotsApi = fetchTaSlots
+            fetchSlotsApi = fetchTaSlots;
             fetchSessionsApi = fetchTAScheduleById;
             break;
 
@@ -106,8 +106,8 @@ const CancelSchedule = ({ componentName }) => {
         dispatch(cancelSessionAction(sessionNo))
             .unwrap()
             .then(() => {
-                dispatch(fetchSlotsApi(id))
-                dispatch(fetchSessionsApi(id))
+                dispatch(fetchSlotsApi(id));
+                dispatch(fetchSessionsApi(id));
                 dispatch(getSessionAction(slotEventData));
                 dispatch(openSessionAction(slotEventData));
             })

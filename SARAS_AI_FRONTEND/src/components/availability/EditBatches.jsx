@@ -130,7 +130,6 @@ const EditBatches = ({ componentname }) => {
 
     useEffect(() => {
         if (assignedBatches) {
-
             const transformedData = assignedBatches.map((batch, index) => ({
                 'S. No.': index + 1,
                 'Batch Name': batch.batch.name,
@@ -159,7 +158,6 @@ const EditBatches = ({ componentname }) => {
         : [];
 
     useEffect(() => {
-
         if (selectedBatches) {
             setSelectedBatch(selectedBatches.map(batch => batch.id));
         }

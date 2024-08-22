@@ -5,7 +5,7 @@
     padding-top: 10px;
     height: 80vh; /* Ensure full viewport height */
     /* overflow: hidden; */
-    font-family: "Regular";
+    font-family: 'Regular';
 }
 
 h1 {
@@ -31,7 +31,7 @@ h1 {
 
 .box2 {
     width: 55vw;
-     left: calc(20vw + 3px); /*Add margin to the left position */
+    left: calc(20vw + 3px); /*Add margin to the left position */
     height: 80vh;
     border-radius: 0;
     overflow: hidden;
@@ -90,12 +90,14 @@ h1 {
     display: inline-block;
     width: 40px;
     height: 40px;
+    left: auto;
 }
 
 .filter-button {
     position: absolute;
-    top: 7%;
-    left: 46%;
+    top: 10%;
+    left: 48%;
+
     transform: translate(-50%, -50%);
     background: transparent;
     border: none;
@@ -143,12 +145,13 @@ h1 {
     gap: 10px;
     display: flex;
     align-items: center;
+
     padding: 10px;
     cursor: pointer;
 }
 .last-seen {
     position: absolute;
-    right: 25px; /* Adjust the distance from the right edge as needed */
+    right: 25px;
 
     transform: translateY(-50%); /* Center vertically */
     font-size: 16px; /* Adjust font size if necessary */
@@ -179,7 +182,6 @@ h1 {
     flex-direction: column;
 }
 
-
 .last-message {
     color: #a6a6a6;
 }
@@ -198,8 +200,6 @@ h1 {
     /* or use padding if you prefer */
     padding-left: 20px; /* Adjust this value as needed */
 }
-
-
 
 /* .status-container {
     display: flex;
@@ -231,7 +231,7 @@ h1 {
     word-break: break-word;
     word-wrap: break-word;
     overflow-wrap: break-word;
-    font-family: "Regular";
+    font-family: 'Regular';
     font-size: 16px;
 }
 .message-bubble.user {
@@ -244,7 +244,7 @@ h1 {
 }
 .message-bubble.other {
     background-color: #f1f1f1;
-    color: #5F6383;
+    color: #5f6383;
 }
 
 .chat-input-container {
@@ -291,40 +291,25 @@ h1 {
 @media (max-width: 768px) {
     .box1,
     .box2 {
-       
-        width: 60vw; 
+        width: 60vw;
     }
 
     .search-bar {
         width: 100%;
     }
-   
 }
 
 @media (max-width: 1024px) {
-    .box1{
+    .box1 {
         width: 20vw;
     }
     .box2 {
-        width: 70vw; 
-        
+        width: 70vw;
     }
     .search-bar {
         width: 100%;
     }
-    /* .last-seen {
-        display: none;
-    } */
-    /* .filter-button {
-        display: none;
-    }
-    .filter-background{
-        display: none;
-    } */
-    
 }
-
-
 
 @media (max-width: 480px) {
     .search-container {
@@ -337,7 +322,6 @@ h1 {
         margin-bottom: 10px;
     }
 }
-
 
 .checkbox-container {
     position: absolute;
@@ -356,4 +340,20 @@ h1 {
 
 .checkbox-container .MuiCheckbox-root {
     margin-right: 5px;
+}
+
+.box2 .chat-input-container .MuiOutlinedInput-root {
+    border-radius: 42px;
+    background-color: #f6f6fb;
+}
+
+.box2
+    .chat-input-container
+    .MuiOutlinedInput-root:hover
+    .MuiOutlinedInput-notchedOutline,
+.box2
+    .chat-input-container
+    .MuiOutlinedInput-root.Mui-focused
+    .MuiOutlinedInput-notchedOutline {
+    border-color: #e2e8f0;
 }

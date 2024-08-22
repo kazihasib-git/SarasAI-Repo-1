@@ -37,16 +37,16 @@ const headers = ['S. No.', 'Slots Available', 'Select'];
 
 const ReschedulingSession = ({ componentName, timezoneID }) => {
     const { timezones, platforms } = useSelector(state => state.util);
-    
+
     const taId = useParams();
     const { id, name } = useParams();
 
     const dispatch = useDispatch();
-    
+
     useEffect(() => {
         dispatch(getTimezone());
     }, [dispatch]);
-    
+
     const [selectDate, setSelectDate] = useState(null);
     const [selectedSlots, setSelectedSlots] = useState([]);
     const [fromTime, setFromTime] = useState(null);
@@ -85,8 +85,8 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
             fetchSlotsApi = fetchTaSlots;
             fetchSessionsApi = fetchTAScheduleById;
             break;
-    
-            case 'COACHCALENDER':
+
+        case 'COACHCALENDER':
             sliceName = 'coachAvailability';
             rescheduleSessionOpenKey = 'resheduleCoachSessionOpen';
             closeRescheduleSessionAction = closeCoachRescheduleSession;
@@ -97,7 +97,7 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
             sessionEventAction = 'sessionCoachEventData';
             slotEventAction = 'slotCoachEventData';
             reschduleSessionAction = rescheduleCoachSession;
-            fetchSlotsApi = fetchCoachSlots
+            fetchSlotsApi = fetchCoachSlots;
             fetchSessionsApi = fetchCoachScheduleById;
             break;
 
@@ -112,7 +112,7 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
             sessionEventAction = null;
             slotEventAction = null;
             reschduleSessionAction = null;
-            fetchSlotsApi= null;
+            fetchSlotsApi = null;
             fetchSessionsApi = null;
             break;
     }
@@ -145,7 +145,6 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
     };
 
     const convertavailableSlotData = async () => {
-
         if (
             availableSlotsData &&
             availableSlotsData.length > 0 &&
@@ -207,7 +206,7 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
 
     const handleSubmit = () => {
         const errors = [];
-    
+
         if (!selectDate) {
             errors.push('Please Select The Date');
         }
@@ -220,14 +219,14 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
         if (!end_time) {
             errors.push('Please Select the End Time');
         }
-    
+
         if (errors.length) {
             errors.forEach(error => toast.error(error));
             return;
         }
-    
+
         const sessionId = sessionEventData?.id || '';
-    
+
         const rescheduleData = {
             id: sessionId,
             data: {
@@ -240,7 +239,7 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
                 event_status: 'rescheduled',
             },
         };
-    
+
         dispatch(reschduleSessionAction(rescheduleData))
             .unwrap()
             .then(() => {
@@ -254,7 +253,6 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
                 console.error('Error rescheduling session:', error);
             });
     };
-    
 
     const headers = ['S. No.', 'Slots Available', 'Select'];
 
@@ -334,12 +332,11 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
         <CustomButton
             onClick={handleSubmit}
             style={{
-                backgroundColor : "#F56D3B",
-                borderColor : "#F56D3B",
-                color : "#FFFFFF",
-                textTrasnform : 'none',
+                backgroundColor: '#F56D3B',
+                borderColor: '#F56D3B',
+                color: '#FFFFFF',
+                textTrasnform: 'none',
             }}
-            
         >
             Submit
         </CustomButton>

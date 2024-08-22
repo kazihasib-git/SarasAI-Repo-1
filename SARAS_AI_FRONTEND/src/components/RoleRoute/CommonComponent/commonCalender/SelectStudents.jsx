@@ -13,7 +13,7 @@ import PopUpTable from '../../../CommonComponent/PopUpTable';
 
 const name = String(localStorage.getItem('name') || 'Name');
 
-console.log("NAMEE :", name)
+console.log('NAMEE :', name);
 
 const CustomButton = ({
     onClick,
@@ -250,13 +250,13 @@ const SelectStudents = ({ componentName }) => {
 
     return (
         <ReusableDialog
-          open={selectStudentPopup}
-          handleClose={() => dispatch(closeSelectStudents())}
-          title={`Assign Students to '${name}'`}
-          content={content}
-          actions={actions}
+            open={selectStudentPopup}
+            handleClose={() => dispatch(closeSelectStudents())}
+            title={`Assign Students to '${name}'`}
+            content={content}
+            actions={actions}
         />
-    )      
+    );
 };
 
 export default SelectStudents;
