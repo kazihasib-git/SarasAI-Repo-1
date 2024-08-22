@@ -367,14 +367,14 @@ const TAMenuCalendar = () => {
                 {createdSlots && <CreatedSlots componentName={'TAMENU'} timezoneID={storedTimezoneId}/>}
                 
                 {openCreatedSessions && (
-                    <CreatedSessions componentName={'TAMENU'} />
+                    <CreatedSessions componentName={'TAMENU'} timezoneID={storedTimezoneId} />
                 )}
                 
                 {openCancelSession && (
                     <CancelSession componentName={'TAMENU'} />
                 )}
                 {RescheduleSession && (
-                    <RescheduleCreatedSession componentName={'TAMENU'} />
+                    <RescheduleCreatedSession componentName={'TAMENU'} timezoneID={storedTimezoneId}/>
                 )}
                 {openLeaveReason && (
                     <LeaveReason componentName={'TAMENU'} />
