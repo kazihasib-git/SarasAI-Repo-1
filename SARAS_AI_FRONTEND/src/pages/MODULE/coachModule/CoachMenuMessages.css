@@ -31,7 +31,7 @@ h1 {
 
 .box2 {
     width: 55vw;
-    left: calc(20vw + 3px); /*Add margin to the left position */
+    left: calc(20vw + 3px); /* Add margin to the left position */
     height: 80vh;
     border-radius: 0;
     overflow: hidden;
@@ -294,18 +294,6 @@ h1 {
         width: 60vw;
     }
 
-    .search-bar {
-        width: 100%;
-    }
-}
-
-@media (max-width: 1024px) {
-    .box1 {
-        width: 20vw;
-    }
-    .box2 {
-        width: 70vw;
-    }
     .search-bar {
         width: 100%;
     }
