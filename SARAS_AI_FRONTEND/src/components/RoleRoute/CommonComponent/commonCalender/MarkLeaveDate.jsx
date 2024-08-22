@@ -79,12 +79,19 @@ const MarkLeaveDate = ({ componentName, timezoneID }) => {
             timezone_name:timezoneName
         };
 
-        dispatch(getSlotsByDateApi(data)).then(() => {
+        dispatch(getSlotsByDateApi(data))
+        .unwrap()
+        .then(() => {
+
             dispatch(closeMarkLeaveDate());
             dispatch(openCreatedSlots());
+        })
+        .catch((error) => {
+           
+            console.error("API Error:", error);
         });
     };
-
+ 
     const content = (
         <Grid
             container
