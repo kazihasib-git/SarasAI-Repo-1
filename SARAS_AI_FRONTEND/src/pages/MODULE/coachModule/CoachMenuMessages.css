@@ -4,7 +4,6 @@
     flex-direction: row;
     padding-top: 10px;
     height: 80vh; /* Ensure full viewport height */
-    /* overflow: hidden; */
     font-family: "Regular";
 }
 
@@ -31,7 +30,7 @@ h1 {
 
 .box2 {
     width: 55vw;
-     left: calc(20vw + 3px); /*Add margin to the left position */
+    left: calc(20vw + 3px); /*Add margin to the left position */
     height: 80vh;
     border-radius: 0;
     overflow: hidden;
@@ -127,6 +126,7 @@ h1 {
     cursor: default;
 }
 
+/* Chat List and Items */
 .chat-list {
     width: 96%;
     display: flex;
@@ -138,34 +138,24 @@ h1 {
     background-color: #fff;
 }
 
-.chat-item {
+/* General chat-item styling */
+.chat-item,
+.chat-item-active {
     width: 96%;
     gap: 10px;
     display: flex;
     align-items: center;
     padding: 10px;
     cursor: pointer;
-}
-.last-seen {
-    position: absolute;
-    right: 25px; /* Adjust the distance from the right edge as needed */
-
-    transform: translateY(-50%); /* Center vertically */
-    font-size: 16px; /* Adjust font size if necessary */
-    color: #888; /* Change color if needed */
+    border-radius: 12px;
 }
 
+/* Active chat item styling */
 .chat-item-active {
     background-color: #615ef00f;
-    gap: 8px;
-    width: 96%;
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    border-radius: 12px;
-    cursor: pointer;
 }
 
+/* Profile picture styling */
 .profile-pic {
     width: 40px;
     height: 40px;
@@ -174,44 +164,105 @@ h1 {
     margin-left: 10px;
 }
 
+/* Chat information container */
 .chat-info {
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    margin-right: 10px;
+    max-width: 70%;
 }
 
-
+/* Last message text */
 .last-message {
     color: #a6a6a6;
 }
 
-.last-seen-container {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    width: calc(100% - 40px); /* Adjust width as needed */
-    text-align: right;
-    padding: 10px;
-}
-
+/* Last seen time */
 .last-seen {
-    margin-left: 20px; /* Adjust this value to move it further to the right */
-    /* or use padding if you prefer */
-    padding-left: 20px; /* Adjust this value as needed */
+    position: absolute;
+    right: 25px;
+    font-size: 16px;
+    color: #888;
 }
 
+/* Media query for screens up to 1024px */
+@media (max-width: 1024px) {
+    .chat-item,
+    .chat-item-active {
+        gap: 8px;
+        padding: 8px;
+    }
 
+    .profile-pic {
+        width: 35px;
+        height: 35px;
+    }
 
-/* .status-container {
-    display: flex;
-    align-items: center;
-} */
+    .chat-info {
+        max-width: 65%;
+        margin-right: 8px;
+    }
 
-.status-indicator {
-    width: 8px; /* Adjust width as needed */
-    height: 8px; /* Adjust height as needed */
-    border-radius: 50%;
-    background-color: #68d391;
-    margin-right: 0px;
+    .last-seen {
+        font-size: 14px;
+        right: 15px;
+    }
+}
+
+/* Media query for screens up to 768px */
+@media (max-width: 768px) {
+    .chat-item,
+    .chat-item-active {
+        gap: 6px;
+        padding: 6px;
+    }
+
+    .profile-pic {
+        width: 30px;
+        height: 30px;
+    }
+
+    .chat-info {
+        max-width: 60%;
+        margin-right: 5px;
+    }
+
+    .last-seen {
+        font-size: 12px;
+        right: 10px;
+    }
+}
+
+/* Media query for screens up to 480px */
+@media (max-width: 480px) {
+    .chat-item,
+    .chat-item-active {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 8px;
+        gap: 5px;
+    }
+
+    .profile-pic {
+        width: 35px;
+        height: 35px;
+        margin-right: 0;
+    }
+
+    .chat-info {
+        max-width: 100%;
+        margin-right: 0;
+    }
+
+    .last-seen {
+        position: static;
+        font-size: 12px;
+        text-align: left;
+        margin-left: 0;
+        padding-left: 0;
+        margin-top: 5px;
+    }
 }
 
 .chat-messages {
@@ -224,6 +275,7 @@ h1 {
     display: flex;
     flex-direction: column;
 }
+
 .message-bubble {
     padding: 10px;
     border-radius: 15px;
@@ -234,14 +286,17 @@ h1 {
     font-family: "Regular";
     font-size: 16px;
 }
+
 .message-bubble.user {
     background-color: #f1f1fb;
     color: #000;
 }
+
 .message-bubble.me {
     background-color: #4e18a5;
     color: #fff;
 }
+
 .message-bubble.other {
     background-color: #f1f1f1;
     color: #5F6383;
@@ -288,57 +343,6 @@ h1 {
     height: 20px;
 }
 
-@media (max-width: 768px) {
-    .box1,
-    .box2 {
-       
-        width: 60vw; 
-    }
-
-    .search-bar {
-        width: 100%;
-    }
-   
-}
-
-@media (max-width: 1024px) {
-    .box1{
-        width: 20vw;
-    }
-    .box2 {
-        width: 70vw; 
-        
-    }
-    .search-bar {
-        width: 100%;
-    }
-    /* .last-seen {
-        display: none;
-    } */
-    /* .filter-button {
-        display: none;
-    }
-    .filter-background{
-        display: none;
-    } */
-    
-}
-
-
-
-@media (max-width: 480px) {
-    .search-container {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .search-bar {
-        margin-right: 0;
-        margin-bottom: 10px;
-    }
-}
-
-
 .checkbox-container {
     position: absolute;
     bottom: -20px;
@@ -358,13 +362,79 @@ h1 {
     margin-right: 5px;
 }
 
-.box2 .chat-input-container .MuiOutlinedInput-root {
-    border-radius: 42px;
-    background-color: #f6f6fb;
-   
+/* Responsive Box adjustments */
+@media (max-width: 768px) {
+    .box1,
+    .box2 {
+        width: 60vw;
+    }
+
+    .search-bar {
+        width: 100%;
+    }
 }
- 
-.box2 .chat-input-container .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline,
-.box2 .chat-input-container .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
-    border-color: #E2E8F0;
+
+@media (max-width: 1024px) {
+    .box1 {
+        width: 20vw;
+    }
+
+    .box2 {
+        width: 70vw;
+    }
+
+    .search-bar {
+        width: 100%;
+    }
 }
+
+@media (max-width: 480px) {
+    .search-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-bar {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+}
+
+/* Responsive Box adjustments */
+@media (max-width: 768px) {
+    .box1,
+    .box2 {
+        width: 60vw;
+    }
+
+    .search-bar {
+        width: 100%;
+    }
+}
+
+@media (max-width: 1024px) {
+    .box1 {
+        width: 20vw;
+    }
+
+    .box2 {
+        width: 70vw;
+    }
+
+    .search-bar {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .search-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-bar {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+}
+
