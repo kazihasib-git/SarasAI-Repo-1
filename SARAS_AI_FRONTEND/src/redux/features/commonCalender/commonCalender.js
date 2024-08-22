@@ -11,6 +11,7 @@ const initialState = {
     slotsLeaveData: [],
     sessionData: null, // select session data to edit
     sessionCancelData: [],
+    sessionDataForReschdeule : [],
 
     createNewSlotPopup: false, // for new slot popup
     scheduleNewSessionPopup: false, //  for new session Popup
@@ -20,6 +21,7 @@ const initialState = {
     createdSlots: false,
     openCreatedSessions: false,
     openCancelSession: false,
+    RescheduleSession : false,
 
     openSession: false,
     editSession: false,
@@ -58,7 +60,7 @@ const commonCalender = createSlice({
         },
         openSelectStudents: (state, action) => {
             state.selectStudentPopup = true;
-            state.preSelectedStudents = action.payload? action.payload: [];
+            state.preSelectedStudents = action.payload ? action.payload: [];
             // asign students
         },
         closeSelectStudents: (state, action) => {
@@ -67,7 +69,7 @@ const commonCalender = createSlice({
         },
         openSelectBatches: (state, action) => {
             state.selectBatchPopup = true;
-            state.preSelectedBatches = action.payload? action.payload: [];
+            state.preSelectedBatches = action.payload ? action.payload: [];
         },
         closeSelectBatches: (state, action) => {
             state.selectBatchPopup = false;
@@ -102,7 +104,21 @@ const commonCalender = createSlice({
         closeCancelSessionPopup: (state, action) => {
             state.openCancelSession = false;
         },
-
+        openReasonForLeavePopup : (state, action) => {
+            state.openLeaveReason = true;
+            state.slotsLeaveData = action.payload;
+        },
+        closeReasonForLeavePopup : (state, action) => {
+            state.openLeaveReason = false;
+            state.slotsLeaveData = [];
+        },
+        openReschedulePopup : (state, action) => {
+            state.RescheduleSession = true;
+            state.sessionDataForReschdeule = action.payload;
+        },
+        closeReschedulePopup : (state, action) => {
+            state.RescheduleSession = false;
+        },
         openSessionPopup(state, action) {
             state.sessionEventData = action.payload;
             state.openSession = true;
@@ -147,6 +163,10 @@ export const {
     closeCreatedSessions,
     openCancelSessionPopup,
     closeCancelSessionPopup,
+    openReasonForLeavePopup,
+    closeReasonForLeavePopup,
+    openReschedulePopup,
+    closeReschedulePopup,
 
     openSessionPopup,
     closeSessionPopup,

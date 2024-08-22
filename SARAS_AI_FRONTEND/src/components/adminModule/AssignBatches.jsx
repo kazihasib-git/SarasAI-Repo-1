@@ -13,7 +13,6 @@ import {
 import {
     closeCoachAssignBatches,
     openCoachSuccessPopup,
-    getCoachStudentBatchMapping,
     postCoachAssignBatches,
     getCoachBatchMapping,
     getCoachAssignBatches,

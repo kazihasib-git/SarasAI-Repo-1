@@ -556,7 +556,7 @@ const Messages = ({ role }) => {
                                 display: 'flex',
                                 alignItems: 'center',
                                 padding: '10px',
-                                backgroundColor: '#f6f6f8',
+                               
                             }}
                         >
                             <TextField
@@ -584,11 +584,29 @@ const Messages = ({ role }) => {
                                     },
                                 }}
                             />
-                            <div className="chat-input-icons">
-                                <IconButton
-                                    className="input-icon"
-                                    onClick={HandleSentFile}
-                                >
+                                                        <div className="chat-input-icons" style={{ display: 'flex', alignItems: 'center' }}>
+                                {selectedFile && (
+                                    <div style={{ display: 'flex', alignItems: 'center', marginRight: '10px' }}>
+                                        <Typography variant="caption" sx={{
+                                            maxWidth: '100px',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                            whiteSpace: 'nowrap'
+                                        }}>
+                                            {selectedFile.name}
+                                        </Typography>
+                                        <IconButton size="small" onClick={handleCancelFile} sx={{ marginLeft: '5px' }}>
+                                            <CancelIcon fontSize="small" />
+                                        </IconButton>
+                                    </div>
+                                )}
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    style={{ display: 'none' }}
+                                    onChange={handleFileChange}
+                                />
+                                <IconButton className="input-icon" onClick={HandleSentFile}>
                                     <img src={PaperclipIcon} alt="Attach" />
                                 </IconButton>
                                 <IconButton className="input-icon">

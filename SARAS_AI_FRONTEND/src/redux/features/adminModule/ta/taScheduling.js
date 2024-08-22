@@ -6,23 +6,39 @@ import { toast } from 'react-toastify';
 // Show TA Schedule
 export const showTASchedule = createAsyncThunk(
     'taScheduling/showTaSchedule',
-    async () => {
-        const response = await axiosInstance.get(
-            `${baseUrl}/admin/taschedules`
-        );
-        return response.data;
+    async rejectWithValue => {
+        try{
+            const response = await axiosInstance.get(
+                `${baseUrl}/admin/taschedules`
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message);
+            }else {
+                return rejectWithValue('An Error Occurred While Feching TA Schedule')
+            }
+        }
     }
 );
 
 // Get TA Scheduled Sessions
 export const getTAScheduledSessions = createAsyncThunk(
     'taScheduling/getTAScheduledSessions',
-    async ({ id, data }) => {
-        const response = await axiosInstance.post(
-            `${baseUrl}/admin/taschedules/${id}`,
-            data
-        );
-        return response.data;
+    async ({ id, data },{ rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.post(
+                `${baseUrl}/admin/taschedules/${id}`,
+                data
+            );
+            return response.data;
+        }catch(error){
+            if(error.response  && error.response.data){
+                return rejectWithValue(error.response.data.message);
+            }else{
+                return rejectWithValue('An Error Occurred While Fetching TA Scheduled Sessions');
+            }
+        }
     }
 );
 
@@ -38,13 +54,9 @@ export const createTASchedule = createAsyncThunk(
             return response.data;
         } catch (error) {
             if (error.response && error.response.data) {
-                // Return custom error message from response
                 return rejectWithValue(error.response.data.message);
             } else {
-                // Return default error message
-                return rejectWithValue(
-                    'An error occurred while creating the schedule.'
-                );
+                return rejectWithValue('An Error Occurred While Creating the Schedule');
             }
         }
     }
@@ -53,37 +65,63 @@ export const createTASchedule = createAsyncThunk(
 // Get TA Available Slots From Date
 export const getTaAvailableSlotsFromDate = createAsyncThunk(
     'taScheduling/getTaAvailableSlotsFromDate',
-    async data => {
-        const response = await axiosInstance.post(
-            `${baseUrl}/admin/coach-slots/getTACoachSlotForADate`,
-            data
-        );
-        return response.data;
+    async (data , { rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.post(
+                `${baseUrl}/admin/coach-slots/getTACoachSlotForADate`,
+                data
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data)
+            {
+                return rejectWithValue(error.response.data.message);
+            }else{
+                return rejectWithValue('An Error Occurred While Fetching TA Available From Date')
+            }        
+        }
     }
 );
 
 // Reschedule Session
 export const rescheduleSession = createAsyncThunk(
     'taScheduling/rescheduleSession',
-    async ({ id, data }) => {
-        const response = await axiosInstance.put(
-            `${baseUrl}/admin/taschedules/reschedule/${id}`,
-            data
-        );
-        return response.data;
+    async ({ id, data }, { rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.put(
+                `${baseUrl}/admin/taschedules/reschedule/${id}`,
+                data
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message);
+            }else{
+                return rejectWithValue('An Error Occurred While Rescheduling Session')
+            }
+        }
     }
 );
 
 // Cancel Scheduled Sessions
 export const cancelScheduledSession = createAsyncThunk(
     'taScheduling/cancelScheduledSession',
-    async id => {
-        const response = await axiosInstance.put(
-            `${baseUrl}/admin/taschedules/cancel/${id}`
-        );
-        return response.data;
+    async (id, { rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.put(
+                `${baseUrl}/admin/taschedules/cancel/${id}`
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message);
+            }else{
+                return rejectWithValue('An Error Occurred While Cancel Scheduled Sessions')
+            }
+        }
     }
 );
+
 const initialState = {
     taAvailableSlots: [], // TA Available Slots
     taScheduledSessions: [], // TA Scheduled Sessions

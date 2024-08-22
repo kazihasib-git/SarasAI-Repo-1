@@ -399,3 +399,42 @@ h1 {
         margin-bottom: 10px;
     }
 }
+
+/* Responsive Box adjustments */
+@media (max-width: 768px) {
+    .box1,
+    .box2 {
+        width: 60vw;
+    }
+
+    .search-bar {
+        width: 100%;
+    }
+}
+
+@media (max-width: 1024px) {
+    .box1 {
+        width: 20vw;
+    }
+
+    .box2 {
+        width: 70vw;
+    }
+
+    .search-bar {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .search-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-bar {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+}
+

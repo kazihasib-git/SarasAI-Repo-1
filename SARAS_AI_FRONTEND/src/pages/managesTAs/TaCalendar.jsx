@@ -25,7 +25,7 @@ import ReschedulingSession from '../../components/availability/ReschedulingSessi
 import { useParams } from 'react-router-dom';
 import {
     getTAScheduledSessions,
-    openScheduleSession,
+    openScheduleSession,    
 } from '../../redux/features/adminModule/ta/taScheduling';
 import Schedule from '../../components/availability/Schedule';
 import EditBatches from '../../components/availability/EditBatches';
@@ -131,13 +131,24 @@ const TaCalender = () => {
         findTaTimeZone(todaysAvailableTa);
     }, [id, todaysAvailableTa]);
 
-    const storedTimezoneId = selectedTA ? selectedTA.timezone_id : Number(localStorage.getItem('timezone_id'));
- 
+    // const storedTimezoneId = selectedTA ? selectedTA.timezone_id : Number(localStorage.getItem('timezone_id'));
+    const storedTimezoneId = selectedTA ? selectedTA.timezone_id : '';
+ console.log('tacalander timezone id ' , storedTimezoneId)
     useEffect(() => {
         dispatch(fetchTaSlots(id));
         dispatch(fetchTAScheduleById(id));
         dispatch(getTimezone());
     }, [dispatch ,id , resheduleSessionOpen]);
+
+
+    const formatTime = time => {
+        const [hours, minutes] = time.split(':');
+        const hour = parseInt(hours, 10);
+        const minute = parseInt(minutes, 10);
+        const ampm = hour >= 12 ? 'pm' : 'am';
+        const formattedHour = hour % 12 || 12;
+        return `${formattedHour}:${minute < 10 ? '0' : ''}${minute} ${ampm}`;
+    };
 
     const convertEvents = async () => {
         if (scheduleData && scheduleData.length > 0 && storedTimezoneId &&
@@ -164,10 +175,10 @@ const TaCalender = () => {
                         //     localTime
                         // );
                         const startDateTime = new Date(
-                            `${localTime.start_date}T${localTime.start_time}`
+                            `${localTime.start_date}T${(localTime.start_time)}`
                         );
                         const endDateTime = new Date(
-                            `${localTime.end_date}T${localTime.end_time}`
+                            `${localTime.end_date}T${(localTime.end_time)}`
                         );
 
                         if (localTime.start_date !== localTime.end_date) {
