@@ -493,6 +493,7 @@ export const taMenuSlice = createSlice({
         builder.addCase(getTaMenuSessionForLeave.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            state.sessionBySlots = []
         });
 
 
