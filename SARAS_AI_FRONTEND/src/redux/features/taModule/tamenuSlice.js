@@ -41,10 +41,12 @@ export const getMyStudents = createAsyncThunk(
 );
 
 // Get Ta Slots
-export const getTaMenuSlots = createAsyncThunk('taMenu/getSlots', async () => {
-    const response = await axiosInstance.get(`${baseUrl}/ta/calendar/slots`);
-    console.log(response.data, 'response.data');
-    return response.data;
+export const getTaMenuSlots = createAsyncThunk(
+    'taMenu/getSlots', 
+    async () => {
+        const response = await axiosInstance.get(`${baseUrl}/ta/calendar/slots`);
+        console.log(response.data, 'response.data');
+        return response.data;
 });
 
 // Create TA Slots
@@ -106,6 +108,41 @@ export const getTaMenuSessionForLeave = createAsyncThunk(
         return response.data;
     }
 );
+
+// Cancel TA Session For Leave
+export const cancelTaScheduledSessionForLeave = createAsyncThunk(
+    'taMenu/cancelScheduledSession',
+    async id => {
+        const response = await axiosInstance.put(
+            `${baseUrl}/ta/calendar/cancel-schedule/${id}`
+        );
+        return response.data;
+    }
+)
+
+// TA Reason For Leave
+export const reasonForTaMenuLeave = createAsyncThunk(
+    'taMenu/reasonForLeave',
+    async data => {
+        const response = await axiosInstance.post(
+            `${baseUrl}/ta/calendar/create-leave`,
+            data
+        )
+        return response.data;
+    }
+)
+
+// Reschedule Session for TA Leave
+export const rescheduleSessionForTaLeave = createAsyncThunk(
+    'taMenu/rescheduleSession',
+    async ({ id, data }) => {
+        const response = await axiosInstance.post(
+            `${baseUrl}/ta/calendar/reschedule/${id}`,
+            data
+        )
+        return response.data;
+    }
+)
 
 // ta menu call request
 export const getTaCallRequests = createAsyncThunk(
@@ -263,6 +300,8 @@ const initialState = {
     selectedTaBatches: [],
     assignedTaStudents: [],
     assignedTaBatches: [],
+    taLeave : [],
+    taRescheduleSessions : [],
     taCallRecords: [], //call recording
 
     sessionRecordingUrl: null,
@@ -455,7 +494,55 @@ export const taMenuSlice = createSlice({
         builder.addCase(getTaMenuSessionForLeave.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            state.sessionBySlots = []
         });
+
+
+        // Cancel TA Scheduled Sessions
+        builder.addCase(cancelTaScheduledSessionForLeave.pending, state => {
+            state.loading = true;
+        })
+        builder.addCase(cancelTaScheduledSessionForLeave.fulfilled, (state, action) => {
+            state.loading = false;
+            // state.  = action.payload;
+        })
+        builder.addCase(cancelTaScheduledSessionForLeave.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+        })
+
+
+        // TA Reason For Leave
+        builder.addCase(reasonForTaMenuLeave.pending, (state) => {
+            state.loading = true;
+        })
+        builder.addCase(reasonForTaMenuLeave.fulfilled, (state, action) => {
+            state.loading = false;
+            state.taLeave = action.payload;
+        })
+        builder.addCase(reasonForTaMenuLeave.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+        })
+
+
+        // TA Reschedule For Leave 
+        builder.addCase(rescheduleSessionForTaLeave.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(
+            rescheduleSessionForTaLeave.fulfilled, (state, action) => {
+                state.loading = false;
+                state.taRescheduleSessions = action.payload.data;
+            }
+        );
+        builder.addCase(
+            rescheduleSessionForTaLeave.rejected,
+            (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+            }
+        )
 
         //get tamenu call requests
         builder.addCase(getTaCallRequests.pending, state => {

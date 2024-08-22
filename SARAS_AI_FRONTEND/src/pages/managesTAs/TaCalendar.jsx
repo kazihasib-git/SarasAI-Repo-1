@@ -129,17 +129,23 @@ const TaCalender = () => {
         findTaTimeZone(todaysAvailableTa);
     }, [id, todaysAvailableTa]);
 
-    const storedTimezoneId = selectedTA
-        ? selectedTA.timezone_id
-        : Number(localStorage.getItem('timezone_id'));
-
-    console.log('//////////////////////////', storedTimezoneId);
-
+    // const storedTimezoneId = selectedTA ? selectedTA.timezone_id : Number(localStorage.getItem('timezone_id'));
+    const storedTimezoneId = selectedTA ? selectedTA.timezone_id : '';
+    console.log('tacalander timezone id ', storedTimezoneId);
     useEffect(() => {
         dispatch(fetchTaSlots(id));
         dispatch(fetchTAScheduleById(id));
         dispatch(getTimezone());
     }, [dispatch, id, resheduleSessionOpen]);
+
+    const formatTime = time => {
+        const [hours, minutes] = time.split(':');
+        const hour = parseInt(hours, 10);
+        const minute = parseInt(minutes, 10);
+        const ampm = hour >= 12 ? 'pm' : 'am';
+        const formattedHour = hour % 12 || 12;
+        return `${formattedHour}:${minute < 10 ? '0' : ''}${minute} ${ampm}`;
+    };
 
     const convertEvents = async () => {
         if (
@@ -167,10 +173,10 @@ const TaCalender = () => {
                                 : event.date.split(' ')[0],
                             timezonename,
                         });
-                        console.log(
-                            'Converted Local Schedule Time:',
-                            localTime
-                        );
+                        // console.log(
+                        //     'Converted Local Schedule Time:',
+                        //     localTime
+                        // );
                         const startDateTime = new Date(
                             `${localTime.start_date}T${localTime.start_time}`
                         );
@@ -207,7 +213,7 @@ const TaCalender = () => {
                                 platform_meet: event.platform_meeting_details,
                             };
 
-                            console.log('events created', event1, event2);
+                            // console.log('events created', event1, event2);
                             processedEvents.push(event1, event2);
                             return [event1, event2];
                         } else {
@@ -227,7 +233,7 @@ const TaCalender = () => {
                         }
                     })
                 );
-                console.log('transformed events', processedEvents);
+                // console.log('transformed events', processedEvents);
                 setEventsList(processedEvents);
             } catch (error) {
                 console.error('Error converting events:', error);
@@ -281,7 +287,7 @@ const TaCalender = () => {
                                 leave: slot?.leaves,
                             };
 
-                            console.log('slots created', slot1, slot2);
+                            // console.log('slots created', slot1, slot2);
 
                             processedSlots.push(slot1, slot2);
                             return [slot1, slot2];
@@ -300,9 +306,9 @@ const TaCalender = () => {
                         }
                     })
                 );
-                console.log('transformed slots', processedSlots);
+                // console.log('transformed slots', processedSlots);
                 setSlotViewData(processedSlots);
-                console.log('transformed slots', processedSlots);
+                // console.log('transformed slots', processedSlots);
                 setSlotViewData(processedSlots);
             } catch (error) {
                 console.error('Error converting slots:', error);
@@ -317,7 +323,7 @@ const TaCalender = () => {
         convertSlots();
     }, [slotData]);
 
-    console.log('transformedSlots :', slotViewData);
+    // console.log('transformedSlots :', slotViewData);
 
     const handleScheduleNewSession = () => {
         dispatch(openScheduleSession({ id, name }));
@@ -336,7 +342,7 @@ const TaCalender = () => {
         dispatch(openCreateNewSlots());
     };
 
-    console.log('SlotViewData', slotViewData);
+    // console.log('SlotViewData', slotViewData);
 
     return (
         <>

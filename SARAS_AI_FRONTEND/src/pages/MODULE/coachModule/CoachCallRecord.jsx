@@ -73,6 +73,9 @@ const CoachCallRecord = () => {
     const calls = useSelector(state => state.coachMenu.coachCallRecords);
     const dispatch = useDispatch();
 
+    const { userData } = useSelector(state => state.auth);
+    console.log("userData",userData)
+
     useEffect(() => {
         dispatch(getCoachCallRecords(date.format('YYYY-MM-DD')));
     }, [date, dispatch]);
@@ -207,8 +210,16 @@ const CoachCallRecord = () => {
                                     display="flex"
                                     justifyContent="space-between"
                                 >
-                                    <Typography variant="h6">
-                                        {call.meeting_name}
+                                    <Typography
+                                        variant="h6"
+                                        sx={{
+                                            textTransform: 'none',
+                                            fontFamily: 'Regular',
+                                            textAlign: 'left',
+                                        }}
+                                    >
+                                        {userData.name}`session
+                                        {/* {call.meeting_name} */}
                                     </Typography>
                                 </Box>
                                 <Typography variant="h7" component="span">
@@ -257,7 +268,11 @@ const CoachCallRecord = () => {
                                         color="#F56D3B"
                                         backgroundColor="#FFFFFF"
                                         borderColor="#F56D3B"
-                                        style={{ textTransform: 'none' }}
+                                        style={{
+                                            textTransform: 'none',
+                                            fontFamily: 'Medium',
+                                            textAlign: 'left',
+                                        }}
                                     >
                                         Session Notes
                                     </CustomButton>
@@ -271,7 +286,11 @@ const CoachCallRecord = () => {
                                             color="#F56D3B"
                                             backgroundColor="#FFFFFF"
                                             borderColor="#F56D3B"
-                                            style={{ textTransform: 'none' }}
+                                            style={{
+                                                textTransform: 'none',
+                                                fontFamily: 'Medium',
+                                                textAlign: 'left',
+                                            }}
                                             // disabled={!call.session_recording_url}
                                         >
                                             Call Recordings
@@ -281,7 +300,11 @@ const CoachCallRecord = () => {
                                             color="#F56D3B"
                                             backgroundColor="#FFFFFF"
                                             borderColor="#F56D3B"
-                                            style={{ textTransform: 'none' }}
+                                            style={{
+                                                textTransform: 'none',
+                                                fontFamily: 'Medium',
+                                                textAlign: 'left',
+                                            }}
                                             open={uploadDialogOpen}
                                             onClick={() =>
                                                 handleOpenUploadDialog(call)

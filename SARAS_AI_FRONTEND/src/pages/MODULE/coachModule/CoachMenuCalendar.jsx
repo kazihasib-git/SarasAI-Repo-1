@@ -34,6 +34,9 @@ import CancelSession from '../../../components/RoleRoute/CommonComponent/commonC
 import { convertFromUTC } from '../../../utils/dateAndtimeConversion';
 import { timezoneIdToName } from '../../../utils/timezoneIdToName';
 import { getTimezone } from '../../../redux/features/utils/utilSlice';
+import LeaveReason from '../../../components/RoleRoute/CommonComponent/commonCalender/LeaveReason';
+import RescheduleCreatedSession from '../../../components/RoleRoute/CommonComponent/commonCalender/RescheduleCreatedSession';
+
 const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
 
 const CustomButton = ({
@@ -93,23 +96,18 @@ const CoachMenuCalendar = () => {
         openCancelSession,
         openSession,
         sessionEventData,
+        openLeaveReason,
+        RescheduleSession,
     } = useSelector(state => state.commonCalender);
 
     const {
         coachSlots,
         coachSessions,
-        createCoachLeavePopup,
-        LeaveSlotsPopup,
-        cancelSessionOnLeave,
-        leaveScheduledSessionPopup,
-        leaveRescheduleSessionPopup,
-        reasonForLeavePopup,
     } = useSelector(state => state.coachMenu);
 
     useEffect(() => {
         dispatch(getCoachMenuSlots());
         dispatch(getCoachMenuSessions());
-        dispatch(getTimezone());
     }, [dispatch]);
 
     useEffect(() => {
@@ -119,6 +117,12 @@ const CoachMenuCalendar = () => {
     useEffect(() => {
         convertSlots();
     }, [coachSlots, timezones]);
+
+    useEffect(() => {
+        if(!timezones && timezones.leave === 0){
+            dispatch(getTimezone())
+        }
+    },[dispatch])
 
     // console.log('coach slots :', coachSlots);
     // console.log('coachSessions', coachSessions);
@@ -144,7 +148,7 @@ const CoachMenuCalendar = () => {
                             start_date: event.date.split(' ')[0],
                             start_time: event.start_time,
                             end_time: event.end_time,
-                            end_date: event.date.split(' ')[0],
+                            end_date: event.end_date ? event.end_date : event.date.split(' ')[0],
                             timezonename,
                         });
 
@@ -248,21 +252,21 @@ const CoachMenuCalendar = () => {
                                     endDate: new Date(
                                         `${localTime.start_date}T23:59:59`
                                     ),
-                                    leave: slot.leave,
+                                    leave: slot.leaves,
                                 },
                                 {
                                     startDate: new Date(
                                         `${localTime.end_date}T00:00:00`
                                     ),
                                     endDate: endDateTime,
-                                    leave: slot.leave,
+                                    leave: slot.leaves,
                                 }
                             );
                         } else {
                             processedSlots.push({
                                 startDate: startDateTime,
                                 endDate: endDateTime,
-                                leave: slot.leave,
+                                leave: slot.leaves,
                             });
                         }
                     })
@@ -397,10 +401,10 @@ const CoachMenuCalendar = () => {
                     onSelectEvent={handleSessionSelect}
                 />
                 {createNewSlotPopup && (
-                    <CreateSlot componentName={'COACHMENU'} />
+                    <CreateSlot componentName={'COACHMENU'} timezoneID={storedTimezoneId} />
                 )}
                 {scheduleNewSessionPopup && (
-                    <CreateSession componentName={'COACHMENU'} />
+                    <CreateSession componentName={'COACHMENU'} timezoneID={storedTimezoneId}/>
                 )}
                 {selectStudentPopup && (
                     <SelectStudents componentName={'COACHMENU'} />
@@ -409,21 +413,21 @@ const CoachMenuCalendar = () => {
                     <SelectBatches componentName={'COACHMENU'} />
                 )}
 
-                {markLeave && <MarkLeaveDate componentName={'COACHMENU'} />}
+                {markLeave && <MarkLeaveDate componentName={'COACHMENU'} timezoneID={storedTimezoneId}/>}
 
-                {createdSlots && <CreatedSlots componentName={'COACHMENU'} />}
+                {createdSlots && <CreatedSlots componentName={'COACHMENU'} timezoneID={storedTimezoneId}/>}
 
                 {openCreatedSessions && (
-                    <CreatedSessions componentName={'COACHMENU'} />
+                    <CreatedSessions componentName={'COACHMENU'} timezoneID={storedTimezoneId}/>
                 )}
                 {openCancelSession && (
-                    <CancelSession componentName={'COACHMENU'} />
+                    <CancelSession componentName={'COACHMENU'} timezoneID={storedTimezoneId}/>
                 )}
-                {leaveRescheduleSessionPopup && (
-                    <ReschedulingSession componentName={'COACHMENU_CALENDER'} />
+                {RescheduleSession && (
+                    <RescheduleCreatedSession componentName={'COACHMENU'} timezoneID={storedTimezoneId}/>
                 )}
-                {reasonForLeavePopup && (
-                    <ReasonForLeave componentName={'COACHMENU_CALENDER'} />
+                {openLeaveReason && (
+                    <LeaveReason componentName={'COACHMENU'} timezoneID={storedTimezoneId}/>
                 )}
                 {openSession && (
                     <SessionLink

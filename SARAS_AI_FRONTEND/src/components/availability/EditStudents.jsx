@@ -38,7 +38,8 @@ const EditStudents = ({ componentname }) => {
         getAssignStudentAction,
         editStudentKey,
         selectedStudentKey,
-        openSchedulingPopup;
+        openSchedulingPopup,
+        selectedBatches;
 
     let schedulingState, nameKeyScheduling, idKeyScheduling;
 
@@ -56,6 +57,7 @@ const EditStudents = ({ componentname }) => {
             nameKeyScheduling = 'coachName';
             idKeyScheduling = 'coachID';
             openSchedulingPopup = openCoachScheduleSession;
+            selectedBatches = 'batches';
             break;
 
         case 'TASCHEDULE':
@@ -71,6 +73,7 @@ const EditStudents = ({ componentname }) => {
             nameKeyScheduling = 'taName';
             idKeyScheduling = 'taID';
             openSchedulingPopup = openScheduleSession;
+            selectedBatches = 'batches';
             break;
 
         default:
@@ -86,6 +89,7 @@ const EditStudents = ({ componentname }) => {
             nameKeyScheduling = null;
             idKeyScheduling = null;
             openSchedulingPopup = null;
+            selectedBatches = null;
             break;
     }
 
@@ -96,6 +100,7 @@ const EditStudents = ({ componentname }) => {
         [idKeyScheduling]: assignedId,
         [assignStudentOpenKey]: assignStudentOpen,
         [selectedStudentKey]: selectedStudent,
+        [selectedBatches]: batches,
     } = schedulingState || {};
 
     const {
@@ -201,10 +206,54 @@ const EditStudents = ({ componentname }) => {
             : [];
 
     useEffect(() => {
-        if (selectedStudent) {
-            setSelectedStudents(selectedStudent.map(student => student.id));
+        console.log('BATCHES SSS:', batches);
+        console.log('assignedStudents SS:', assignedStudents);
+
+        let updatedSelectedStudents = [];
+
+        if (selectedStudent && selectedStudent.length > 0) {
+            // Set selectedStudents based on selectedStudent first
+            updatedSelectedStudents = selectedStudent.map(
+                student => student.id
+            );
         }
-    }, [selectedStudent]);
+
+        if (
+            batches &&
+            batches.length > 0 &&
+            assignedStudents &&
+            assignedStudents.length > 0
+        ) {
+            const assignedBatchIds = assignedStudents.flatMap(stu =>
+                stu.student.batches.map(batch => batch.batch_id)
+            );
+
+            console.log('Assigned Batch IDs:', assignedBatchIds);
+
+            const matchingBatchIds = batches
+                .filter(batch => assignedBatchIds.includes(batch.id))
+                .map(batch => batch.id);
+
+            console.log('Matched Batch Ids:', matchingBatchIds);
+
+            const matchingStudentIds = assignedStudents
+                .filter(stu =>
+                    stu.student.batches.some(batch =>
+                        matchingBatchIds.includes(batch.batch_id)
+                    )
+                )
+                .map(stu => stu.student.id);
+
+            console.log('Matching Student IDs:', matchingStudentIds);
+
+            // Merge or override based on specific logic (here we combine both lists)
+            updatedSelectedStudents = [
+                ...new Set([...updatedSelectedStudents, ...matchingStudentIds]),
+            ];
+        }
+
+        setSelectedStudents(updatedSelectedStudents);
+    }, [selectedStudent, batches, assignedStudents]);
 
     const handleSelectStudent = id => {
         setSelectedStudents(prev =>

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Checkbox, Box, Pagination } from '@mui/material';
+import { Checkbox, Box, Pagination, Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     getAllCoursesWithCoaches,
     assignCourseToCoach,
 } from '../../redux/features/adminModule/coach/coachSlice';
-
+import CustomButton from '../CustomFields/CustomButton';
 const CustomCheckbox = styled(Checkbox)(({ theme }) => ({
     color: '#F56D3B',
     '&.Mui-checked': {
@@ -26,6 +26,7 @@ const AdminCoursesTable = ({ coachId }) => {
     const [data, setData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
+    const [selectedCourses, setSelectedCourses] = useState([]);
 
     const totalPages = Math.ceil(data.length / itemsPerPage);
     const currentData = data.slice(
@@ -207,6 +208,18 @@ const AdminCoursesTable = ({ coachId }) => {
                         },
                     }}
                 />
+            </div>
+            <div className="mb-1">
+                <CustomButton
+                    type="submit"
+                    // form="createForm"
+                    backgroundColor="#F56D3B"
+                    color="white"
+                    borderColor="#F56D3B"
+                    onClick={handleSubmit}
+                >
+                    Submit
+                </CustomButton>
             </div>
         </div>
     );

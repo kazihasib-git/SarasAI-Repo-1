@@ -213,10 +213,10 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
         if (!selectedSlots[0]) {
             errors.push('Please Select the Slot');
         }
-        if (!start_time) {
+        if (!fromTime) {
             errors.push('Please Select the Start Time');
         }
-        if (!end_time) {
+        if (!toTime) {
             errors.push('Please Select the End Time');
         }
 

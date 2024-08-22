@@ -61,6 +61,7 @@ const SelectStudents = ({ componentName }) => {
     const [searchName, setSearchName] = useState('');
     const [selectedStudents, setSelectedStudents] = useState([]);
     const [filteredStudents, setFilteredStudents] = useState([]);
+    const { preSelectedStudents } = useSelector((state)=>state.commonCalender);
 
     let sliceName, getStudentsApi, studentDataState;
 
@@ -96,6 +97,15 @@ const SelectStudents = ({ componentName }) => {
     }, [dispatch]);
 
     console.log('Students Data : ', studentsData);
+
+    useEffect(()=>{
+        
+        const transformedPreSelectedStudents = preSelectedStudents.map(student => student.id);
+        setSelectedStudents(transformedPreSelectedStudents);
+    },[preSelectedStudents]);
+
+
+
 
     useEffect(() => {
         if (studentsData && studentsData.length > 0) {

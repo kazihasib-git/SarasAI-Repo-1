@@ -6,23 +6,17 @@ import { useState, useEffect } from 'react';
 import { OnOffSwitch } from '../../components/Switch';
 import editIcon from '../../assets/editIcon.png';
 import DynamicTable from '../../components/CommonComponent/DynamicTable';
-import {
-    showCoachCourseMapping,
-    showCoachMapping,
-} from '../../redux/features/adminModule/coach/coachSlice';
+import { showCoachCourseMapping } from '../../redux/features/adminModule/coach/coachSlice';
 import { useDispatch, useSelector } from 'react-redux';
 
 const headers = [
     'S. No.',
-    'COACH Name',
+    'Coach Name',
     'Active Courses',
-    //'Action',
+    // 'Action',
 ];
 
 const actionButtons = [
-    // {
-    //   type: "switch",
-    // },
     {
         type: 'delete',
         onClick: id => console.log(`Delete clicked for id ${id}`),
@@ -35,14 +29,15 @@ const CoachCourseMapping = () => {
         state => state.coachModule
     );
     const [caMappingData, setcaMappingData] = useState([]);
+    const [filteredData, setFilteredData] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
-    // console.log("camapping" , coachMapping);
+    const [currentPage, setCurrentPage] = useState(1);
+
     useEffect(() => {
         dispatch(showCoachCourseMapping());
     }, [dispatch]);
 
     useEffect(() => {
-        console.log('...................', coachCourseMappingData);
         if (coachCourseMappingData && coachCourseMappingData.length > 0) {
             const transformData = coachCourseMappingData.map((item, index) => ({
                 id: item.id,
@@ -51,17 +46,20 @@ const CoachCourseMapping = () => {
             }));
 
             setcaMappingData(transformData);
-            console.log('transform data', transformData);
+            setFilteredData(transformData);
         }
     }, [coachCourseMappingData]);
 
     const handleSearch = event => {
-        setSearchQuery(event.target.value);
-    };
+        const query = event.target.value.toLowerCase();
+        setSearchQuery(query);
+        setCurrentPage(1); // Reset the current page to 1 when the search query changes
 
-    const filteredData = caMappingData?.filter(item =>
-        item.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+        const filtered = caMappingData.filter(item =>
+            item.name.toLowerCase().includes(query)
+        );
+        setFilteredData(filtered);
+    };
 
     return (
         <>
@@ -102,11 +100,11 @@ const CoachCourseMapping = () => {
                         </Box>
                     </Box>
                 </Box>
-
                 <DynamicTable
                     headers={headers}
                     initialData={filteredData}
-                    //actionButtons={actionButtons}
+                    currentPage={currentPage} // Pass the current page state to DynamicTable
+                    onPageChange={page => setCurrentPage(page)} // Update the current page state when the page changes
                     componentName={'COACHCOURSEMAPPING'}
                 />
             </Box>

@@ -53,6 +53,7 @@ const AssignStudents = ({ componentname }) => {
             nameKeyScheduling = 'coachName';
             idKeyScheduling = 'coachID';
             break;
+
         case 'ADDEDITTA':
             stateModuleKey = 'taModule';
             nameKey = 'ta_name';
@@ -66,6 +67,7 @@ const AssignStudents = ({ componentname }) => {
             nameKeyScheduling = 'taName';
             idKeyScheduling = 'taID';
             break;
+
         default:
             stateModuleKey = null;
             nameKey = null;
@@ -201,10 +203,12 @@ const AssignStudents = ({ componentname }) => {
             componentname === 'ADDITCOACH'
                 ? coachID || assignedId
                 : taID || assignedId;
+                
         const data = {
             admin_user_id: id,
             students: selectedStudents.map(id => ({ id: id.toString() })),
         };
+
         dispatch(postAssignAction({ id, data })).then(() => {
             if (assignedId) {
                 dispatch(

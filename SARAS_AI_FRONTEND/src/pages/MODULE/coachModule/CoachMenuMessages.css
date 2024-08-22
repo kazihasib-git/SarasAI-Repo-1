@@ -341,19 +341,3 @@ h1 {
 .checkbox-container .MuiCheckbox-root {
     margin-right: 5px;
 }
-
-.box2 .chat-input-container .MuiOutlinedInput-root {
-    border-radius: 42px;
-    background-color: #f6f6fb;
-}
-
-.box2
-    .chat-input-container
-    .MuiOutlinedInput-root:hover
-    .MuiOutlinedInput-notchedOutline,
-.box2
-    .chat-input-container
-    .MuiOutlinedInput-root.Mui-focused
-    .MuiOutlinedInput-notchedOutline {
-    border-color: #e2e8f0;
-}

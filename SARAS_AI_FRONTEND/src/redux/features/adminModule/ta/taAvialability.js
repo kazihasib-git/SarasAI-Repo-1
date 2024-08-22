@@ -174,8 +174,8 @@ const initialState = {
     markLeaveData: [],
     slotData: [],
     scheduleData: [],
-    scheduledSlotsData: [], // Ensure this is correctly named and initialized
-    scheduledSessionData: [], // Ensure this is correctly named and initialized
+    scheduledSlotsData: [],
+    scheduledSessionData: [],
     availableSlotsData: [],
     reasonForLeaveData: [],
     platformData: [],
@@ -194,8 +194,8 @@ const initialState = {
     customResheduleSessionOpen: false,
     reasonForLeaveOpen: false,
 
-    slotEventData: null, // To Cancel Session
-    sessionEventData: null, // To Reschedule Session
+    slotEventData: null,
+    sessionEventData: null,
 
     loading: false,
     error: null,

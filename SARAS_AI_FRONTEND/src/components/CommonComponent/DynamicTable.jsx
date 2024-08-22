@@ -19,7 +19,7 @@ import editIcon from '../../assets/editIcon.png';
 import bin from '../../assets/bin.png';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { useDispatch } from 'react-redux';
-import { activeDeactiveWOLCategory } from '../../redux/features/adminModule/coachingTools/wol/wolSlice';
+import { activeDeactiveWOLCategory, updateWOLQuestion } from '../../redux/features/adminModule/coachingTools/wol/wolSlice';
 import { openScheduleSession } from '../../redux/features/adminModule/ta/taScheduling';
 
 import { updateTA } from '../../redux/features/adminModule/ta/taSlice';
@@ -61,7 +61,7 @@ const DynamicTable = ({
                 is_active: item.is_active !== undefined ? item.is_active : 0,
             }))
         );
-        //setCurrentPage(1); // Reset to first page whenever initialData changes
+        setCurrentPage(1); // Reset to first page whenever initialData changes
     }, [initialData]);
 
     const itemsPerPage = 10;
@@ -196,16 +196,23 @@ const DynamicTable = ({
 
         switch (componentName) {
             case 'MANAGETA':
-                // dispatch(updateTA({ id, data: requestData }));
+                dispatch(updateTA({ id, data: requestData }));
+                break;
 
-                break;
             case 'MANAGECOACH':
-                // dispatch(updateCoach({ id, data: requestData }));
+                dispatch(updateCoach({ id, data: requestData }));
                 break;
+
             case 'WOLCATEGORY':
                 console.log('WOL Categories : ', id, requestData);
                 dispatch(activeDeactiveWOLCategory(id));
                 break;
+            
+            case 'WOLQUESTION' :
+                console.log('WOL WOLQUESTION : ', id);
+                dispatch(updateWOLQuestion(id))
+                break;
+
             default:
                 console.warn(
                     `No API call defined for component: ${componentName}`

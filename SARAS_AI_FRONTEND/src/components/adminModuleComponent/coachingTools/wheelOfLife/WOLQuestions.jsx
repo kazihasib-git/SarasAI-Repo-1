@@ -132,6 +132,7 @@ const WOLQuestions = () => {
                     <h3>No Data Found</h3>
                 ) : (
                     <DynamicTable
+                        componentName="WOLQUESTION"
                         headers={headers}
                         initialData={WOLQuestions}
                         actionButtons={actionButtons}

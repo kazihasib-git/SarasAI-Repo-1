@@ -64,11 +64,11 @@ const actionButtons = [
 ];
 
 const Schedule = ({ componentName, timezoneID }) => {
+    console.log('timezoneID=======>', timezoneID);
     const [fromDate, setFromDate] = useState(null);
     const [toDate, setToDate] = useState(null);
     const [fromTime, setFromTime] = useState(null);
     const [toTime, setToTime] = useState(null);
-    const [timezone, setTimezone] = useState('');
     const [repeat, setRepeat] = useState('onetime');
     const [selectedDays, setSelectedDays] = useState([]);
     const [slotData, setSlotData] = useState([{}]);
@@ -77,6 +77,8 @@ const Schedule = ({ componentName, timezoneID }) => {
     const [dateSelected, setDateSelected] = useState(false);
 
     const dispatch = useDispatch();
+    const { timezones, platforms } = useSelector(state => state.util);
+
     let scheduleSessionOpenKey,
         schedulingStateKey,
         availableKey,
@@ -105,6 +107,7 @@ const Schedule = ({ componentName, timezoneID }) => {
             closeScheduleSessionAction = closeScheduleSession;
             createScheduleAction = createTASchedule;
             break;
+
         case 'COACHSCHEDULE':
             scheduleSessionOpenKey = 'scheduleCoachSessionOpen';
             schedulingStateKey = 'coachScheduling';
@@ -144,7 +147,7 @@ const Schedule = ({ componentName, timezoneID }) => {
         [scheduleSessionOpenKey]: scheduleSessionOpen,
         [idKey]: adminUserID,
         [nameKey]: adminUserName,
-        [timezoneKey]: adminUserTimezone,
+        [timezoneKey]: timezoneId,
         [availableKey]: availableSlots,
         [studentKey]: students,
         [batchKey]: batches,
@@ -155,7 +158,11 @@ const Schedule = ({ componentName, timezoneID }) => {
         handleSubmit,
         control,
         formState: { errors },
-    } = useForm();
+    } = useForm({
+        defaultValues: {
+            timezone_id: timezoneId ? Number(timezoneId) : timezoneID,
+        },
+    });
 
     useEffect(() => {
         if (dateSelected && (fromDate || !availableSlots.length > 0)) {
@@ -163,7 +170,10 @@ const Schedule = ({ componentName, timezoneID }) => {
                 getAvailableSlotsAction({
                     admin_user_id: adminUserID,
                     date: fromDate,
-                    timezone_name: timezoneIdToName(timezoneID, timezones),
+                    timezone_name: timezoneIdToName(
+                        timezoneId ? Number(timezoneId) : timezoneID,
+                        timezones
+                    ),
                 })
             ).then(() => {
                 setSelectedSlot([]);
@@ -177,7 +187,10 @@ const Schedule = ({ componentName, timezoneID }) => {
                 getAvailableSlotsAction({
                     admin_user_id: adminUserID,
                     date: fromDate,
-                    timezone_name: timezoneIdToName(timezoneID, timezones),
+                    timezone_name: timezoneIdToName(
+                        timezoneId ? Number(timezoneId) : timezoneID,
+                        timezones
+                    ),
                 })
             ).then(() => {
                 setSelectedSlot([]);
@@ -185,8 +198,6 @@ const Schedule = ({ componentName, timezoneID }) => {
             });
         }
     };
-
-    const { timezones, platforms } = useSelector(state => state.util);
 
     useEffect(() => {
         dispatch(getTimezone());
@@ -260,7 +271,7 @@ const Schedule = ({ componentName, timezoneID }) => {
 
     useEffect(() => {
         convertSessions();
-    }, [availableSlots, timezones, timezoneID]);
+    }, [availableSlots, timezones, timezoneId, timezoneID]);
 
     const handleDayChange = day => {
         setSelectedDays(prev => {
@@ -365,15 +376,15 @@ const Schedule = ({ componentName, timezoneID }) => {
         formData.studentId = studentId;
         formData.batchId = batchId;
         formData.timezone_id = `${timezoneID}`;
-
-        dispatch(createScheduleAction(formData))
-            .then(() => {
-                dispatch(closeScheduleSessionAction());
-                return dispatch(getScheduledSessionApi(adminUserID));
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
+        (formData.timezone_id = timezoneId ? Number(timezoneId) : timezoneID), //`${timezoneID}`
+            dispatch(createScheduleAction(formData))
+                .then(() => {
+                    dispatch(closeScheduleSessionAction());
+                    return dispatch(getScheduledSessionApi(adminUserID));
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
     };
 
     const content = (
@@ -522,6 +533,7 @@ const Schedule = ({ componentName, timezoneID }) => {
                                                             defaultValue={
                                                                 timezoneID
                                                             }
+                                                            //defaultValue={timezone_id ? Number(timezone_id) : timezoneID}
                                                             render={({
                                                                 field,
                                                             }) => (
@@ -529,7 +541,11 @@ const Schedule = ({ componentName, timezoneID }) => {
                                                                     label="Time Zone"
                                                                     name="timezone_id"
                                                                     value={
-                                                                        timezoneID
+                                                                        timezoneId
+                                                                            ? Number(
+                                                                                  timezoneId
+                                                                              )
+                                                                            : timezoneID
                                                                     }
                                                                     onChange={
                                                                         field.onChange
