@@ -111,9 +111,10 @@ export const createWOLQuestion = createAsyncThunk(
 // Update WOL Question
 export const updateWOLQuestion = createAsyncThunk(
     'wol/updateWOLQuestion',
-    async id => {
-        const response = await axiosInstance.get(
+    async ({ id , data }) => {
+        const response = await axiosInstance.put(
             `${baseUrl}/admin/wol/wol-question/${id}`,
+            data
         );
 
         return response.data;
