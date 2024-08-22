@@ -542,8 +542,15 @@ const DynamicTable = ({
                                                         onClick={() =>
                                                             handleView(
                                                                 'view report',
-                                                                item.id
+                                                                item.id   
                                                             )
+                                                        }
+                                                        disabled={
+                                                            actionButtons.find(
+                                                                button =>
+                                                                    button.type ===
+                                                                    'view'
+                                                            ).disabled
                                                         }
                                                     >
                                                         View
@@ -774,6 +781,10 @@ const CustomButton = styled(Button)(({ theme }) => ({
     '&.active': {
         backgroundColor: '#F56D3B',
         color: '#fff',
+    },
+    '&.Mui-disabled': {
+        color: '#ccc', // Gray out the text color for disabled state
+        borderColor: '#ccc', // Change the border color for disabled state
     },
 }));
 

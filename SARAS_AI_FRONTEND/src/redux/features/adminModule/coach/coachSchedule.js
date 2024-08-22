@@ -1,26 +1,45 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
 import { baseUrl } from '../../../../utils/baseURL';
 import axiosInstance from '../../../services/httpService';
 
 export const showTASchedule = createAsyncThunk(
     'coachScheduling/showTaSchedule',
-    async () => {
-        const response = await axiosInstance.get(
-            `${baseUrl}/admin/taschedules`
-        );
-        return response.data;
+    async rejectWithValue => {
+        try{
+            const response = await axiosInstance.get(
+                `${baseUrl}/admin/taschedules`
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message);
+            }else{
+                return rejectWithValue('An Error Occurred While Fetching Coach Schedule')
+            }
+        }
     }
 );
 
 export const getTAScheduledSessions = createAsyncThunk(
     'coachScheduling/getTAScheduledSessions',
-    async ({ id, data }) => {
-        const response = await axiosInstance.post(
-            `${baseUrl}/admin/taschedules/${id}`,
-            data
-        );
-        return response.data;
+    async ({ id, data }, { rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.post(
+                `${baseUrl}/admin/taschedules/${id}`,
+                data
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message);
+            }else {
+                if(error.response && error.response.data){
+                    return rejectWithValue(error.response.data.message);
+                }else{
+                    return rejectWithValue('An Error Occurred While Fetching Coach Schedules')
+                }
+            }
+        }
     }
 );
 

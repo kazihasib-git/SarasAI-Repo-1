@@ -14,7 +14,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import CustomTimeField from '../../../../components/CustomFields/CustomTimeField';
 import CustomDateField from '../../../../components/CustomFields/CustomDateField';
 import { Controller, useForm } from 'react-hook-form';
-import CustomFormControl from '../../../../components/CustomFields/CustomFromControl';
 import ReusableDialog from '../../../../components/CustomFields/ReusableDialog';
 import {
     addPrerequisites,
@@ -90,6 +89,11 @@ const PrerequisitesPopup = ({
     useEffect(() => {
         if (prereqModuleData && prereqModuleData.id) {
             dispatch(getCoachTemplateModuleId(prereqModuleData.id));
+    const { coachTemplatesId } = useSelector((state) => state.coachTemplate)
+    
+    useEffect(() => {   
+        if(prereqModuleData && prereqModuleData.template_id){
+            dispatch(getCoachTemplateModuleId(prereqModuleData.template_id));
         }
     }, [dispatch, prereqModuleData]);
 

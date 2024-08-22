@@ -72,30 +72,41 @@ const CustomButton = ({
 
 const studentHeader = ['S. No.', 'Student Name', 'Program', 'Batch'];
 
-const PopUpTable = ({
+const PopTableSlot = ({
     headers,
     initialData,
     onRowClick,
-    selectedBox = [],
+    selectedBox: initialSelectedBox = [],
     onViewClick,
     onRescheduleClick,
     onCancelClick,
     itemsPerPage = 10,
 }) => {
-    console.log("POP UP TABLE !")
+    console.log('CHECK pop table slot');
     const [data, setData] = useState(initialData ?? []);
     const [openPopup, setOpenPopup] = useState(false);
     const [currentStudentNames, setCurrentStudentNames] = useState([]);
     const [showStudentDetails, setShowStudentDetails] = useState(false);
     const [studentDetailsData, setStudentDetailsData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
+    const [selectedBox, setSelectedBox] = useState(initialSelectedBox);
 
     useEffect(() => {
         setData(initialData ?? []);
     }, [initialData]);
 
-    const handleCheckboxChange = id => {
-        onRowClick(id);
+    const handleCheckboxChange = uniqueKey => {
+        const id = uniqueKey.split('-')[0];
+
+        if (selectedBox.includes(uniqueKey)) {
+            // Remove from selectedBox if already selected
+            setSelectedBox(selectedBox.filter(key => key !== uniqueKey));
+        } else {
+            // Add to selectedBox if not selected
+            setSelectedBox([...selectedBox, uniqueKey]);
+        }
+
+        onRowClick(id); // Trigger the row click handler
     };
 
     const totalPages = Math.ceil(data.length / itemsPerPage);
@@ -103,6 +114,7 @@ const PopUpTable = ({
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );
+    console.log('DATA : ', data);
 
     const handleViewClick = studentList => {
         setCurrentStudentNames(studentList);
@@ -142,7 +154,7 @@ const PopUpTable = ({
                 <Typography>No scheduled sessions.</Typography>
             </DialogContent>
         ) : (
-            <PopUpTable
+            <PopTableSlot
                 headers={studentHeader}
                 initialData={studentDetailsData}
                 onRowClick={() => {}}
@@ -174,7 +186,7 @@ const PopUpTable = ({
                                 {currentData && currentData.length > 0 ? (
                                     currentData.map((item, index) => (
                                         <tr
-                                            key={item.id ?? index}
+                                            key={`${item.id}-${index}`}
                                             id="popUpRow"
                                         >
                                             {headers.map((header, idx) => (
@@ -182,11 +194,11 @@ const PopUpTable = ({
                                                     {header === 'Select' ? (
                                                         <Checkbox
                                                             checked={selectedBox.includes(
-                                                                item.id
+                                                                `${item.id}-${index}`
                                                             )}
                                                             onChange={() =>
                                                                 handleCheckboxChange(
-                                                                    item.id
+                                                                    `${item.id}-${index}`
                                                                 )
                                                             }
                                                             sx={{
@@ -255,7 +267,6 @@ const PopUpTable = ({
                                                                 borderColor="#F56D38"
                                                                 color="#F56D38"
                                                                 padding="4px 16px"
-                                                                // endIcon={<CallMadeOutlinedIcon />}
                                                                 onClick={() =>
                                                                     handleStudentDetailsClick(
                                                                         item
@@ -352,4 +363,4 @@ const PopUpTable = ({
     );
 };
 
-export default PopUpTable;
+export default PopTableSlot;

@@ -149,24 +149,36 @@ const Slots = ({ componentName, timezoneID }) => {
         );
     };
 
+
     const handleSubmit = () => {
         if (selectedSlots.length > 0) {
-            const data = selectedSlots.map(slotId => {
-                const slot = scheduledSlotsData.find(s => s.id === slotId);
-                return {
-                    slot_id: slot.id,
-                    date: slot.slot_date,
-                    start_time: slot.from_time,
-                    end_time: slot.to_time,
-                };
-            });
+            const data = await Promise.all(
+                selectedSlots.map(async slotId => {
+                    const slot = scheduledSlotsData.find(s => s.id === slotId);
 
+                    const localTime = await convertFromUTC({
+                        start_date: slot.slot_date,
+                        start_time: slot.from_time,
+                        end_time: slot.to_time,
+                        end_date: slot.slot_date,
+                        timezonename,
+                    });
+
+                    return {
+                        slot_id: slot.id,
+                        date: slot.slot_date,
+                        start_time: localTime.start_time,
+                        end_time: localTime.end_time,
+                    };
+                })
+            );
             const requestData = {
                 admin_user_id: id,
                 data,
                 timezone_id: timezoneID,
             };
 
+            console.log('REQUEST DATA :', requestData);
             dispatch(addDataToFindScheduleInSlot(requestData));
             dispatch(getScheduleSessionAction(requestData))
                 .then(() => {
