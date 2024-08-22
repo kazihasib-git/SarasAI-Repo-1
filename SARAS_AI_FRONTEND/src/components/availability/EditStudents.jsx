@@ -41,7 +41,7 @@ const EditStudents = ({ componentname }) => {
         openSchedulingPopup,
         selectedBatches;
 
-    let schedulingState, nameKeyScheduling, idKeyScheduling;
+    let schedulingState, nameKeyScheduling, idKeyScheduling,timezoneId;
 
     switch (componentname) {
         case 'COACHSCHEDULE':
@@ -54,6 +54,7 @@ const EditStudents = ({ componentname }) => {
             closeDialogAction = closeCoachEditStudent;
             getAssignStudentAction = getCoachAssignStudents;
             schedulingState = useSelector(state => state.coachScheduling);
+            timezoneId = useSelector(state => state.coachScheduling.coachTimezone);
             nameKeyScheduling = 'coachName';
             idKeyScheduling = 'coachID';
             openSchedulingPopup = openCoachScheduleSession;
@@ -70,6 +71,7 @@ const EditStudents = ({ componentname }) => {
             closeDialogAction = closeEditStudent;
             getAssignStudentAction = getAssignStudents;
             schedulingState = useSelector(state => state.taScheduling);
+            timezoneId = useSelector(state => state.taScheduling.taTimezone);
             nameKeyScheduling = 'taName';
             idKeyScheduling = 'taID';
             openSchedulingPopup = openScheduleSession;
@@ -86,6 +88,7 @@ const EditStudents = ({ componentname }) => {
             closeDialogAction = null;
             getAssignStudentAction = null;
             schedulingState = null;
+            timezoneId = null;
             nameKeyScheduling = null;
             idKeyScheduling = null;
             openSchedulingPopup = null;
@@ -280,6 +283,7 @@ const EditStudents = ({ componentname }) => {
                 id,
                 name: assignedName,
                 student: selectedStudents.map(id => ({ id })),
+                timezone: timezoneId,
             })
         );
 
