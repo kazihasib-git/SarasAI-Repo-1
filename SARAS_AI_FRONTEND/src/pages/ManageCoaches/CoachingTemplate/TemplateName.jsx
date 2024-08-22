@@ -25,6 +25,7 @@ import AddEditActivity from './TemplateModulePopup/EditActivity';
 import ViewActivityPopup from './TemplateModulePopup/ViewActivity';
 
 const TemplateName = () => {
+
     console.log('abc');
     const {
         openModulePopUp,
@@ -104,8 +105,10 @@ const TemplateName = () => {
         'After Due Date',
         'Actions',
     ];
+
     // console.log('coachtemplateid', coachTemplatesId);
     // console.log('Tempete name is>>>>>>>>>>>>>>>>>>', coachTemplatesId[0]?.name);
+    
     const actionButtons = [
         {
             type: 'switch',
