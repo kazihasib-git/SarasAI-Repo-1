@@ -413,14 +413,13 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                     >
                                                         {activity.dependent
                                                             .length > 0 ? (
-                                                            activity.prerequisites
+                                                            activity.dependent
                                                                 .map(
                                                                     prereq =>
-                                                                        prereq.dependency_activity_id
+                                                                        prereq
+                                                                            .dependency_activity
+                                                                            ?.activity_name
                                                                 )
-                                                            activity.dependent.map(
-                                                                prereq =>
-                                                                    prereq.dependency_activity?.activity_name)
                                                                 .join(', ')
                                                         ) : (
                                                             <CustomButton

@@ -87,12 +87,7 @@ const PrerequisitesPopup = ({
     const { coachTemplatesId } = useSelector(state => state.coachTemplate);
 
     useEffect(() => {
-        if (prereqModuleData && prereqModuleData.id) {
-            dispatch(getCoachTemplateModuleId(prereqModuleData.id));
-    const { coachTemplatesId } = useSelector((state) => state.coachTemplate)
-    
-    useEffect(() => {   
-        if(prereqModuleData && prereqModuleData.template_id){
+        if (prereqModuleData && prereqModuleData.template_id) {
             dispatch(getCoachTemplateModuleId(prereqModuleData.template_id));
         }
     }, [dispatch, prereqModuleData]);
@@ -182,7 +177,7 @@ const PrerequisitesPopup = ({
                 })),
         };
         dispatch(addPrerequisites(prereqData)).then(() => {
-            dispatch(getCoachTemplateModuleId(prereqModuleData.id));
+            dispatch(getCoachTemplateModuleId(prereqModuleData.template_id));
         });
         console.log('prereq formdata: -->', prereqData);
         handleClosePopup();

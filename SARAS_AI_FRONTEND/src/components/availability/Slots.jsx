@@ -149,8 +149,8 @@ const Slots = ({ componentName, timezoneID }) => {
         );
     };
 
-
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
+        const timezonename = timezoneIdToName(timezoneID, timezones);
         if (selectedSlots.length > 0) {
             const data = await Promise.all(
                 selectedSlots.map(async slotId => {
