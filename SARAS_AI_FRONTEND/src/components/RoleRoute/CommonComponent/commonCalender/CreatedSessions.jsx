@@ -63,66 +63,67 @@ const CreatedSessions = ({ componentName }) => {
 
     const { slotsLeaveData } = useSelector((state) => state.commonCalender)
 
-    useEffect(() => {
-        const convertSessions = async () => {
-            if (
-                sessionsData &&
-                sessionsData.length > 0 &&
-                storedTimezoneId &&
+
+    const convertSessions = async () => {
+        if (
+            sessionsData &&
+            sessionsData.length > 0 &&
+            storedTimezoneId &&
+            timezones
+        ) {
+            const timezonename = timezoneIdToName(
+                storedTimezoneId,
                 timezones
-            ) {
-                const timezonename = timezoneIdToName(
-                    storedTimezoneId,
-                    timezones
+            );
+            if (!timezonename) {
+                console.error('Invalid timezone name');
+                setScheduledSessions([]);
+                return;
+            }
+
+            try {
+                const formattedData = await Promise.all(
+                    sessionsData.map(async (session, index) => {
+                        const localTime = await convertFromUTC({
+                            start_date: session.date.split(' ')[0],
+                            start_time: session.start_time,
+                            end_time: session.end_time,
+                            end_date: session.date.split(' ')[0], // Assuming the end date is the same as the start date
+                            timezonename,
+                        });
+
+                        const startDateTime = new Date(
+                            `${localTime.start_date}T${localTime.start_time}`
+                        );
+                        const endDateTime = new Date(
+                            `${localTime.end_date}T${localTime.end_time}`
+                        );
+
+                        return {
+                            'S. No.': index + 1,
+                            'Session Name': session.meeting_name,
+                            Date: localTime.start_date,
+                            Time: `${localTime.start_time} - ${localTime.end_time}`,
+                            Students: session.Students.length,
+                            StudentList: session.Students,
+                            id: session.id,
+                            startDateTime,
+                            endDateTime,
+                        };
+                    })
                 );
-                if (!timezonename) {
-                    console.error('Invalid timezone name');
-                    setScheduledSessions([]);
-                    return;
-                }
 
-                try {
-                    const formattedData = await Promise.all(
-                        sessionsData.map(async (session, index) => {
-                            const localTime = await convertFromUTC({
-                                start_date: session.date.split(' ')[0],
-                                start_time: session.start_time,
-                                end_time: session.end_time,
-                                end_date: session.date.split(' ')[0], // Assuming the end date is the same as the start date
-                                timezonename,
-                            });
-
-                            const startDateTime = new Date(
-                                `${localTime.start_date}T${localTime.start_time}`
-                            );
-                            const endDateTime = new Date(
-                                `${localTime.end_date}T${localTime.end_time}`
-                            );
-
-                            return {
-                                'S. No.': index + 1,
-                                'Session Name': session.meeting_name,
-                                Date: localTime.start_date,
-                                Time: `${localTime.start_time} - ${localTime.end_time}`,
-                                Students: session.Students.length,
-                                StudentList: session.Students,
-                                id: session.id,
-                                startDateTime,
-                                endDateTime,
-                            };
-                        })
-                    );
-
-                    setScheduledSessions(formattedData);
-                } catch (error) {
-                    console.error('Error converting sessions:', error);
-                    setScheduledSessions([]);
-                }
-            } else {
+                setScheduledSessions(formattedData);
+            } catch (error) {
+                console.error('Error converting sessions:', error);
                 setScheduledSessions([]);
             }
-        };
+        } else {
+            setScheduledSessions([]);
+        }
+    };
 
+    useEffect(() => {
         convertSessions();
     }, [sessionsData, storedTimezoneId, timezones]);
 
@@ -146,7 +147,7 @@ const CreatedSessions = ({ componentName }) => {
     };
 
     const content =
-        scheduledSessions.length === 0 ? (
+        (!scheduledSessions && scheduledSessions.length === 0) ? (
             <DialogContent
                 style={{ justifyContent: 'center', display: 'flex' }}
             >

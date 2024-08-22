@@ -24,9 +24,12 @@ import { cancelTaScheduledSessionForLeave, getTaMenuSessionForLeave, getTaMenuSe
 const CancelSession = ({ componentName }) => {
     const dispatch = useDispatch();
 
-    let sliceName, cancelSessionApi, getSessionsApi,
+    let sliceName, 
+        cancelSessionApi, 
+        getSessionsApi,
         getAllSlotsAPi,
         getAllSessionsApi;
+
     switch (componentName) {
         case 'TAMENU':
             sliceName = 'taMenu';
@@ -63,8 +66,8 @@ const CancelSession = ({ componentName }) => {
     const handleCancel = () => {
         const sessionId = sessionCancelData.id;
         dispatch(cancelSessionApi(sessionId)).then(() => {
-            dispatch(getSessionsApi(slotsLeaveData));
-            dispatch(openCreatedSessions(slotsLeaveData));
+            dispatch(getSessionsApi(slotsLeaveData))
+            dispatch(openCreatedSessions(slotsLeaveData))
             dispatch(getAllSessionsApi());
             dispatch(getAllSlotsAPi());
         });
@@ -85,8 +88,8 @@ const CancelSession = ({ componentName }) => {
             </CustomButton>
             <CustomButton
                 onClick={() => {
-                    dispatch(closeCancelSessionPopup());
-                    dispatch(openCreatedSessions());
+                    dispatch(closeCancelSessionPopup())
+                    dispatch(openCreatedSessions())
                 }}
                 backgroundColor="#F56D38"
                 borderColor="#F56D38"
