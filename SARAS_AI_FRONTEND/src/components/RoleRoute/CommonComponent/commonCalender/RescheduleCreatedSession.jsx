@@ -11,7 +11,9 @@ import { timezoneIdToName } from '../../../../utils/timezoneIdToName';
 import { getTimezone } from '../../../../redux/features/utils/utilSlice';
 import { getCoachMenuSessionForLeave, getCoachMenuSessions, getCoachMenuSlots, getCoachMenuSlotsByData, rescheduleSessionForCoachLeave } from '../../../../redux/features/coachModule/coachmenuprofileSilce';
 import { getTaMenuSessionForLeave, getTaMenuSessions, getTaMenuSlots, getTaMenuSlotsByDate, rescheduleSessionForTaLeave } from '../../../../redux/features/taModule/tamenuSlice';
-
+import { convertFromUTC } from '../../../../utils/dateAndtimeConversion';
+import { toast } from 'react-toastify';
+ 
 const CustomButton = ({
     onClick,
     children,
@@ -49,10 +51,9 @@ const CustomButton = ({
 
 const headers = ['S. No.', 'Slots Available', 'Select'];
 
-const timezoneId = Number(localStorage.getItem('timezone_id'))
 
-const RescheduleCreatedSession = ({ componentName }) => {
-
+const RescheduleCreatedSession = ({ componentName , timezoneID}) => {
+console.log('reschedule session timezoneID' , timezoneID) ;
     const dispatch = useDispatch();
     const { RescheduleSession, slotsLeaveData, sessionDataForReschdeule, dataToFindScheduleInSlot } = useSelector((state) => state.commonCalender)
 
@@ -118,25 +119,70 @@ const RescheduleCreatedSession = ({ componentName }) => {
         if (selectDate) {
             const data = {
                 date: selectDate,
-                timezone_name : timezoneIdToName(timezoneId, timezones)
+                timezone_name : timezoneIdToName(timezoneID, timezones)
             };
             dispatch(fetchAvailableSlotsApi(data));
         }
     }, [selectDate, dispatch, fetchAvailableSlotsApi]);
 
-    useEffect(() => {
-        console.log('Available Slots Data:', availableSlotsData);
-        if (availableSlotsData && availableSlotsData.length > 0) {
-            const transformedData = availableSlotsData.map((slot, index) => ({
-                'S. No.': index + 1,
-                'Slots Available': `${slot.from_time} - ${slot.to_time}`,
-                id: slot.id,
-            }));
-            setTransformedSlotsData(transformedData);
+    const formatTime = time => {
+        const [hours, minutes] = time.split(':');
+        const hour = parseInt(hours, 10);
+        const minute = parseInt(minutes, 10);
+        const ampm = hour >= 12 ? 'pm' : 'am';
+        const formattedHour = hour % 12 || 12;
+        return `${formattedHour}:${minute < 10 ? '0' : ''}${minute} ${ampm}`;
+    };
+
+    const convertavailableSlotData = async () => {
+
+        if (
+            availableSlotsData &&
+            availableSlotsData.length > 0 &&
+            timezones &&
+            timezoneID
+        ) {
+            const timezonename = timezoneIdToName(timezoneID, timezones);
+
+            try {
+                const transformedData = await Promise.all(
+                    availableSlotsData.map(async (slot, index) => {
+                        const localTime = await convertFromUTC({
+                            start_date: slot.slot_date,
+                            start_time: slot.from_time,
+                            end_time: slot.to_time,
+                            end_date: slot.slot_date,
+                            timezonename,
+                        });
+                        const startDateTime = new Date(
+                            `${localTime.start_date}T${localTime.start_time}`
+                        );
+                        const endDateTime = new Date(
+                            `${localTime.end_date}T${localTime.end_time}`
+                        );
+                        return {
+                            'S. No.': index + 1,
+                            'Slots Available': `${formatTime(localTime.start_time)} - ${formatTime(localTime.end_time)}`,
+                            id: slot.id,
+                            Date: localTime.start_date,
+                            startDate: startDateTime,
+                            endDate: endDateTime,
+                        };
+                    })
+                );
+                setTransformedSlotsData(transformedData);
+            } catch (error) {
+                console.error('Error converting available slots:', error);
+                setTransformedSlotsData([]);
+            }
         } else {
             setTransformedSlotsData([]);
         }
-    }, [availableSlotsData]);
+    };
+
+    useEffect(() => {
+        convertavailableSlotData();
+    }, [availableSlotsData, timezones, timezoneID]);
 
     const handleDateChange = date => {
         setSelectDate(date);
@@ -180,7 +226,7 @@ const RescheduleCreatedSession = ({ componentName }) => {
                 slot_id : selectedSlots[0],
                 start_time : fromTime,
                 end_time : toTime,
-                timezone_id : timezoneId,
+                timezone_id : timezoneID,
                 event_status : "rescheduled",
             }
         }

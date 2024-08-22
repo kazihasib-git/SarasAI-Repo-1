@@ -28,7 +28,6 @@ import { timezoneIdToName } from '../../utils/timezoneIdToName';
 import { convertFromUTC } from '../../utils/dateAndtimeConversion';
 import { getTimezone } from '../../redux/features/utils/utilSlice';
 
-const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
 
 const ScheduledSessions = ({ componentName , timezoneID}) => {
     
@@ -124,8 +123,8 @@ const ScheduledSessions = ({ componentName , timezoneID}) => {
 
     const convertSessions = async () => {
     
-        if (scheduledSessionData && scheduledSessionData.length > 0 && timezones && storedTimezoneId) {
-            const timezonename = timezoneIdToName(storedTimezoneId, timezones);
+        if (scheduledSessionData && scheduledSessionData.length > 0 && timezones && timezoneID) {
+            const timezonename = timezoneIdToName(timezoneID, timezones);
     
             try {
                 const processedSessions = await Promise.all(
@@ -165,7 +164,7 @@ const ScheduledSessions = ({ componentName , timezoneID}) => {
     
     useEffect(() => {
         convertSessions();
-    }, [scheduledSessionData, timezones, storedTimezoneId]);
+    }, [scheduledSessionData, timezones, timezoneID]);
 
 
     // const formattedData = scheduledSessionData.map((session, index) => ({

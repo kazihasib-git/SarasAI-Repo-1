@@ -421,10 +421,10 @@ const CoachMenuCalendar = () => {
                     <CancelSession componentName={'COACHMENU'} timezoneID={storedTimezoneId}/>
                 )}
                 {RescheduleSession && (
-                    <RescheduleCreatedSession componentName={'COACHMENU'} />
+                    <RescheduleCreatedSession componentName={'COACHMENU'} timezoneID={storedTimezoneId}/>
                 )}
                 {openLeaveReason && (
-                    <LeaveReason componentName={'COACHMENU'} />
+                    <LeaveReason componentName={'COACHMENU'} timezoneID={storedTimezoneId}/>
                 )}
                 {openSession && (
                     <SessionLink
