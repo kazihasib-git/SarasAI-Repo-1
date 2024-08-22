@@ -49,7 +49,7 @@ const EditBatches = ({ componentname }) => {
         selectedBatchKey,
         openSchedulingPopup;
 
-    let schedulingState, nameKeyScheduling, idKeyScheduling;
+    let schedulingState, nameKeyScheduling, idKeyScheduling,timezoneId;
 
     switch (componentname) {
         case 'COACHSCHEDULE':
@@ -61,6 +61,7 @@ const EditBatches = ({ componentname }) => {
             closeDialogAction = closeCoachEditBatch;
             getAssignBatchesAction = getCoachAssignBatches;
             schedulingState = useSelector(state => state.coachScheduling);
+            timezoneId = useSelector(state => state.coachScheduling.coachTimezone);
             nameKeyScheduling = 'coachName';
             idKeyScheduling = 'coachID';
             openSchedulingPopup = openCoachScheduleSession;
@@ -76,6 +77,7 @@ const EditBatches = ({ componentname }) => {
             closeDialogAction = closeEditBatch;
             getAssignBatchesAction = getAssignBatches;
             schedulingState = useSelector(state => state.taScheduling);
+            timezoneId = useSelector(state => state.taScheduling.taTimezone);
             nameKeyScheduling = 'taName';
             idKeyScheduling = 'taID';
             openSchedulingPopup = openScheduleSession;
@@ -90,6 +92,7 @@ const EditBatches = ({ componentname }) => {
             closeDialogAction = null;
             getAssignBatchesAction = null;
             schedulingState = null;
+            timezoneId = null;
             nameKeyScheduling = null;
             idKeyScheduling = null;
             openSchedulingPopup = null;
@@ -204,6 +207,7 @@ const EditBatches = ({ componentname }) => {
                 id,
                 name: assignedName,
                 batches: selectedBatch.map(id => ({ id })),
+                timezone: timezoneId,
             })
         );
         dispatch(closeDialogAction());
