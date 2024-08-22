@@ -72,7 +72,7 @@ const Schedule = ({ componentName , timezoneID}) => {
     const [repeat, setRepeat] = useState('onetime');
     const [selectedDays, setSelectedDays] = useState([]);
     const [slotData, setSlotData] = useState([{}]);
-    const [selectedSlot, setSelectedSlot] = useState([]);
+    const [selectedSlot, setSelectedSlot] = useState(null);
     const [availableSlotsOptions, setAvailableSlotsOptions] = useState([]);
     const [dateSelected, setDateSelected] = useState(false);
 
@@ -175,7 +175,7 @@ const Schedule = ({ componentName , timezoneID}) => {
                     timezone_name: timezoneIdToName( timezoneId ? Number(timezoneId) : timezoneID, timezones),
                 })
             ).then(() => {
-                setSelectedSlot([]);
+                setSelectedSlot(null);
             });
         }
     }, [fromDate, dispatch, adminUserID, getAvailableSlotsAction]);
@@ -190,7 +190,7 @@ const Schedule = ({ componentName , timezoneID}) => {
                     timezone_name: timezoneIdToName(timezoneId ? Number(timezoneId) :  timezoneID, timezones),
                 })
             ).then(() => {
-                setSelectedSlot([]);
+                setSelectedSlot(null);
                 setDateSelected(true);
             });
         }
@@ -240,11 +240,15 @@ const Schedule = ({ componentName , timezoneID}) => {
                     return `${formattedHour}:${minute < 10 ? '0' : ''}${minute} ${ampm}`;
                 };
     
-                const options = processedSlots.map(item => ({
+                const options = processedSlots.map((item, index) => ({
                     label: `${formatTime(item['From Time'])} - ${formatTime(item['To Time'])}`,
-                    value: item.id,
+                    value: `${item.id}-${index}`, // Create a unique value by combining item.id and index
                 }));
+                
     
+                console.log("OPTIONS : ", options)
+                // console.log("PROCESSED SLOT : ", processedSlots)
+                
                 setAvailableSlotsOptions(options);
                 setSlotData(processedSlots);
             } catch (error) {
@@ -273,14 +277,21 @@ const Schedule = ({ componentName , timezoneID}) => {
     };
 
     const handleSelectOption = e => {
-        const selectedOption = e.target.value;
-
-        const selectedSlot = slotData.filter(
-            slot => slot.id === selectedOption
-        );
-
-        setSelectedSlot(selectedSlot);
+        const selectedValue = e.target.value;
+        const [selectedId, selectedIndex] = selectedValue.split('-'); // Extract the id and index
+        console.log("SELECTED ID : ", selectedId);
+    
+        const selectedSlots = slotData.filter(slot => slot.id == selectedId); // Find all slots by id
+        console.log("SELECTED SLOTS: ", selectedSlots);
+    
+        // Optionally, if you want only the specific slot by index:
+        const selectedSlot = selectedSlots[selectedIndex];
+        console.log("SELECTED SLOT: ", typeof selectedSlot);
+    
+        setSelectedSlot(selectedSlot); // Set the specific slot
     };
+    
+    
 
     const handleAssignStudents = () => {
 
@@ -362,7 +373,7 @@ const Schedule = ({ componentName , timezoneID}) => {
         formData.schedule_date = fromDate;
         formData.end_date = repeat === 'recurring' ? toDate : fromDate;
         formData.admin_user_id = adminUserID;
-        formData.slot_id = selectedSlot[0].id; // Assuming single slot selection
+        formData.slot_id = selectedSlot.id; // Assuming single slot selection
         formData.event_status = 'scheduled';
         formData.weeks = weeksArray;
         formData.studentId = studentId;
@@ -452,7 +463,8 @@ const Schedule = ({ componentName , timezoneID}) => {
                                                     errors={errors}
                                                 />
                                             </Grid>
-                                            {selectedSlot.length > 0 && (
+                                            {console.log("SELECT SLOTS DATA ", selectedSlot)}
+                                            {selectedSlot && (
                                                 <>
                                                     <Grid
                                                         item
