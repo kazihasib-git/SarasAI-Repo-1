@@ -208,15 +208,22 @@ const CreateSession = ({ componentName, timezoneID }) => {
         // console.log('Form Data : ', formData);
         // console.log('DATA :', data);
 
-        dispatch(createSessionApi(data)).then(() => {
+        dispatch(createSessionApi(data))
+        .unwrap()
+        .then(() => {
             dispatch(getSessionApi());
             dispatch(getSlotApi());
             dispatch(closeScheduleNewSession());
 
             // Reset the form after submission
             setFormData(initialFormData);
+        }) .catch((error) => {
+       
+            console.error("API Error:", error);
         });
     };
+   
+
 
     const content = (
         <Box

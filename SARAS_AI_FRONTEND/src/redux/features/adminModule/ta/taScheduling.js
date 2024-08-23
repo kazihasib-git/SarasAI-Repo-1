@@ -16,7 +16,7 @@ export const showTASchedule = createAsyncThunk(
             if(error.response && error.response.data){
                 return rejectWithValue(error.response.data.message);
             }else {
-                return rejectWithValue('An Error Occurred While Feching TA Schedule')
+                return rejectWithValue('An Error Occurred While Fetching TA Schedule')
             }
         }
     }
@@ -291,12 +291,12 @@ const taScheduling = createSlice({
         builder.addCase(rescheduleSession.fulfilled, (state, action) => {
             state.loading = false;
             state.taScheduledSessions = action.payload.data;
-            state.toast(action.payload.message || 'Session Rescheduled Successfully')
+            toast.success(action.payload.message || 'Session Rescheduled Successfully')
         });
         builder.addCase(rescheduleSession.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
-            state.error(action.payload || 'Failed To Rescheduled Session')
+            toast.error(action.payload || 'Failed To Rescheduled Session')
         });
     },
 });

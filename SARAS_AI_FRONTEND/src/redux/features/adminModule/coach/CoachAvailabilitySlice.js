@@ -1,153 +1,260 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { baseUrl } from '../../../../utils/baseURL';
 import axiosInstance from '../../../services/httpService';
+import { toast } from 'react-toastify';
 
 // Get Today Available Ta
 export const getTodayCoachAvailability = createAsyncThunk(
     'coachAvailability/getTodayCoachAvailability',
-    async () => {
-        const response = await axiosInstance.get(
-            `${baseUrl}/admin/Coach-availability/get-today-available-coach`
-        );
-        return response.data;
+    async rejectWithValue => {
+        try{
+            const response = await axiosInstance.get(
+                `${baseUrl}/admin/Coach-availability/get-today-available-coach`
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message)
+            }else {
+                return rejectWithValue('An Error Occurred While Fetching Coach Availability')
+            }
+        }   
     }
 );
 
 //get slots for Coach from date to end date
 export const getCoachSlots = createAsyncThunk(
     'coachAvailability/getCoachSlots',
-    async data => {
-        const response = await axiosInstance.post(
-            `${baseUrl}/admin/coach-slots/records`,
-            data
-        );
-        return response.data;
+    async (data , { rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.post(
+                `${baseUrl}/admin/coach-slots/records`,
+                data
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message)
+            }else {
+                return rejectWithValue('An Error Occurred While Fetching Slots')
+            }
+        } 
     }
 );
 
 //for fetching sessions of Coach for calendar
 export const fetchCoachScheduleById = createAsyncThunk(
     'coachAvailability/fetchCoachScheduleById',
-    async id => {
-        const response = await axiosInstance.get(
-            `${baseUrl}/admin/coachschedules/${id}`
-        );
-        return response.data;
+    async ( id, { rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.get(
+                `${baseUrl}/admin/coachschedules/${id}`
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message)
+            }else {
+                return rejectWithValue('An Error Occurred While Fetching Schedule For Coach')
+            }
+        }  
     }
 );
 
 //for fetching slots of Coach for calendar
 export const fetchCoachSlots = createAsyncThunk(
     'coachAvailability/fetchCoachSlots',
-    async id => {
-        const response = await axiosInstance.get(
-            `${baseUrl}/admin/coach-slots/${id}`
-        );
-        return response.data;
+    async (id, { rejectWithValue })=> {
+        try{
+            const response = await axiosInstance.get(
+                `${baseUrl}/admin/coach-slots/${id}`
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message);
+            }else {
+                return rejectWithValue('An Error Occurred While Fetching Coach Slots')
+            }
+        }
     }
 );
 
 // Create Slots for Coach
 export const createCoachSlots = createAsyncThunk(
     'coachAvailability/createCoachSlots',
-    async data => {
-        console.log('Data being sent:', data);
-        const response = await axiosInstance.post(
-            `${baseUrl}/admin/coach-slots`,
-            data
-        );
-        return response.data;
+    async (data , { rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.post(
+                `${baseUrl}/admin/coach-slots`,
+                data
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message)
+            }else {
+                return rejectWithValue('An Error Occurred While Creating Slots')
+            }
+        }
     }
 );
 
 // Get Schedule Session for Coach
 export const getCoachScheduleSession = createAsyncThunk(
     'coachAvailability/getScheduleSession',
-    async data => {
-        const response = await axiosInstance.post(
-            `${baseUrl}/admin/coachschedules/get-schedules-records`,
-            data
-        );
-        return response.data;
-    }
-);
-export const fetchCoachAvailableSlots = createAsyncThunk(
-    'coachAvailability/fetchCoachAvailableSlots',
-    async data => {
-        // console.log("ID : ", id);
-        const response = await axiosInstance.post(
-            `${baseUrl}/admin/coach-slots/getTACoachSlotForADate`,
-            data
-        );
-        return response.data;
+    async (data , { rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.post(
+                `${baseUrl}/admin/coachschedules/get-schedules-records`,
+                data
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message)
+            }else {
+                return rejectWithValue('An Error Occurred While Fetching Sessions')
+            }
+        }
     }
 );
 
+
+// Fetching Available Slots
+export const fetchCoachAvailableSlots = createAsyncThunk(
+    'coachAvailability/fetchCoachAvailableSlots',
+    async (data , { rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.post(
+                `${baseUrl}/admin/coach-slots/getTACoachSlotForADate`,
+                data
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message)
+            }else {
+                return rejectWithValue('An Error Occurred While Fetching Available SLots')
+            }
+        }
+    }
+);
+
+// Deleting Future Slots
 export const deleteCoachFutureSlots = createAsyncThunk(
     'coachAvailability/deleteCoachFutureSlots',
-    async id => {
-        const response = await axiosInstance.delete(
-            `${baseUrl}/admin/coach-slots/${id}`
-        );
-        return response.data;
+    async ( id, { rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.delete(
+                `${baseUrl}/admin/coach-slots/${id}`
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message)
+            }else {
+                return rejectWithValue('An Error Occurred While Deleting Future Slots')
+            }
+        }
     }
 );
 
 // Reason for Coach Leave
 export const reasonForCoachLeave = createAsyncThunk(
     'taAvialability/reasonForCoachLeave',
-    async data => {
-        const response = await axiosInstance.post(
-            `${baseUrl}/admin/leave`,
-            data
-        );
-        return response.data;
+    async (data  , { rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.post(
+                `${baseUrl}/admin/leave`,
+                data
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message)
+            }else {
+                return rejectWithValue('An Error Occurred While Providing Reason For Leave')
+            }
+        }
     }
 );
 
 // Get Coach Schdeuled Students
 export const getCoachScheduledStudents = createAsyncThunk(
     'coachAvailability/getScheduledStudents',
-    async id => {
-        const response = await axiosInstance.get(
-            `${baseUrl}/admin/coachschedules/students/${id}`
-        );
-        return response.data;
+    async (id, { rejectWithValue })=> {
+        try{
+            const response = await axiosInstance.get(
+                `${baseUrl}/admin/coachschedules/students/${id}`
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message)
+            }else {
+                return rejectWithValue('An Error Occurred While Fetching Students Of Session')
+            }
+        }
     }
 );
 
 // Edit Coach Scheduled Students
 export const editCoachScheduledStudents = createAsyncThunk(
     'coachAvailability/editScheduledStudents',
-    async ({ Id, data }) => {
-        const response = await axiosInstance.patch(
-            `${baseUrl}/admin/coachschedules/update-students/${Id}`,
-            data
-        );
-        return response.data;
+    async ({ Id, data }, { rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.patch(
+                `${baseUrl}/admin/coachschedules/update-students/${Id}`,
+                data
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message)
+            }else {
+                return rejectWithValue('An Error Occurred While Editing Students')
+            }
+        }
     }
 );
 
 // Get Coach Schdeuled Batches
 export const getCoachScheduledBatches = createAsyncThunk(
     'coachAvailability/getScheduledBatches',
-    async id => {
-        const response = await axiosInstance.get(
-            `${baseUrl}/admin/coachschedules/batches/${id}`
-        );
-        return response.data;
+    async (id, { rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.get(
+                `${baseUrl}/admin/coachschedules/batches/${id}`
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message)
+            }else {
+                return rejectWithValue('An Error Occurred While Fetching Session Batches')
+            }
+        }
     }
 );
 
 // Edit Coach Scheduled Batches
 export const editCoachScheduledBatches = createAsyncThunk(
     'coachAvailability/editScheduledBatches',
-    async ({ Id, data }) => {
-        const response = await axiosInstance.patch(
-            `${baseUrl}/admin/coachschedules/update-batches/${Id}`,
-            data
-        );
-        return response.data;
+    async ({ Id, data }, { rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.patch(
+                `${baseUrl}/admin/coachschedules/update-batches/${Id}`,
+                data
+            );
+            return response.data;
+        }catch(error){
+            if(error,response && error.response.data){
+                return rejectWithValue(error.response.data.message)
+            }else{
+                return rejectWithValue('An Error Occurred While Editing Session Batches')
+            }
+        }
     }
 );
 
@@ -304,6 +411,7 @@ export const coachAvailabilitySlice = createSlice({
         builder.addCase(fetchCoachScheduleById.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            state.scheduleCoachData = [];
         });
 
         //for slots of Coach for calendar
@@ -334,6 +442,7 @@ export const coachAvailabilitySlice = createSlice({
         builder.addCase(getTodayCoachAvailability.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            state.todaysAvailableCoach = []
         });
 
         // Get Slots
@@ -347,6 +456,7 @@ export const coachAvailabilitySlice = createSlice({
         builder.addCase(getCoachSlots.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            state.scheduledCoachSlotsData = []
         });
 
         // Create Coach Slots
@@ -356,10 +466,13 @@ export const coachAvailabilitySlice = createSlice({
         builder.addCase(createCoachSlots.fulfilled, (state, action) => {
             state.loading = false;
             // state.slotCoachEventData = action.payload?.data;
+            toast.success(action.payload.message || 'Slot Created Successfully')
+
         });
         builder.addCase(createCoachSlots.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            toast.error(action.payload || 'Failed To Create Slot')
         });
 
         builder.addCase(getCoachScheduleSession.pending, state => {
@@ -380,7 +493,6 @@ export const coachAvailabilitySlice = createSlice({
         });
         builder.addCase(fetchCoachAvailableSlots.fulfilled, (state, action) => {
             state.loading = false;
-            console.log('availableCoachSlotsData : ', action.payload?.data);
             state.availableCoachSlotsData = action.payload?.data;
         });
         builder.addCase(fetchCoachAvailableSlots.rejected, (state, action) => {
@@ -394,10 +506,12 @@ export const coachAvailabilitySlice = createSlice({
         });
         builder.addCase(deleteCoachFutureSlots.fulfilled, (state, action) => {
             state.loading = false;
+            toast.success(action.payload.message || 'All Future Slots Deleted Successfully')
         });
         builder.addCase(deleteCoachFutureSlots.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            toast.error(action.payload || 'Failed To Delete All Future Slots')
         });
 
         // Reason for Leave
@@ -407,10 +521,12 @@ export const coachAvailabilitySlice = createSlice({
         builder.addCase(reasonForCoachLeave.fulfilled, (state, action) => {
             state.loading = false;
             state.reasonForCoachLeaveData = action.payload.data;
+            toast.success(action.payload.message || 'Marked Leave Successfully')
         });
         builder.addCase(reasonForCoachLeave.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            toast.error(action.payload || 'Failed To Mark Leave')
         });
 
         // Get Coach Scheduled Students
@@ -438,7 +554,7 @@ export const coachAvailabilitySlice = createSlice({
             editCoachScheduledStudents.fulfilled,
             (state, action) => {
                 state.loading = false;
-                // TODO :
+                toast.success(action.payload.message || 'Student Updated Successfully')
             }
         );
         builder.addCase(
@@ -446,6 +562,7 @@ export const coachAvailabilitySlice = createSlice({
             (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
+                toast.error(action.payload || 'Failed To Update Students')
             }
         );
 
@@ -471,12 +588,13 @@ export const coachAvailabilitySlice = createSlice({
             editCoachScheduledBatches.fulfilled,
             (state, action) => {
                 state.loading = false;
-                // TODO :
+                toast.success(action.payload.message || 'Batches Updated Successfully')
             }
         );
         builder.addCase(editCoachScheduledBatches.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            toast.error(action.payload || 'Failed To Update Batches')
         });
     },
 });
