@@ -14,20 +14,20 @@ function NavAvator() {
         setrole1(role);
     }, [role]);
 
-
-    console.log("rol>>>>>>>>>",role);
     const handleLogout = () => {
         // Clear the route and other relevant data from localStorage
-        localStorage.removeItem('lastRoute');
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('role');
+        // localStorage.removeItem('lastRoute');
+        // localStorage.removeItem('accessToken');
+        // localStorage.removeItem('role');
 
         // Dispatch logout action to clear Redux state
-        dispatch(logout());
-
-        // Redirect to the login page
-        navigate('/login');
+        dispatch(logout())
+        .then(() => {
+            // Redirect to the login page
+            navigate('/login');
+        })    
     };
+
     const getRoleText = () => {
         if (role1 === '2001') return 'TA Teacher';
         if (role1 === '1984') return 'Coach Teacher';
