@@ -146,12 +146,19 @@ const CreateSlot = ({ componentName, timezoneID }) => {
             weeks: weeksArray,
         };
 
-        dispatch(createSlotApi(data)).then(() => {
+        dispatch(createSlotApi(data))
+        .unwrap()
+        .then(() => {
+           
             dispatch(getSlotsApi());
             dispatch(closeCreateNewSlot());
-
-            setFormData(initialFormData)
+            setFormData(initialFormData);
+        })
+        .catch((error) => {
+           
+            console.error("API Error:", error);
         });
+    
     };
 
     console.log('formData', formData.timezone_id);
