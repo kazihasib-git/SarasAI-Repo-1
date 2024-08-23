@@ -73,7 +73,7 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
 
     switch (componentName) {
         case 'TACALENDER':
-            sliceName = 'taAvailability';
+            sliceName = 'taAvialability';
             rescheduleSessionOpenKey = 'resheduleSessionOpen';
             closeRescheduleSessionAction = closeRescheduleSession;
             fetchAvailableSlotsAction = fetchAvailableSlots;
