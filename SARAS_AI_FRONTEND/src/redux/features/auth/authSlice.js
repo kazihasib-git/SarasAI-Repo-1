@@ -1,20 +1,50 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import axios from 'axios';
 import { baseUrl } from '../../../utils/baseURL';
 import { toast } from 'react-toastify';
 
 import axiosInstance from '../../services/httpService';
 
 // login api
-export const login = createAsyncThunk('login', async data => {
-    const response = await axiosInstance.post(`${baseUrl}/login`, data);
-    return response.data;
-});
+export const login = createAsyncThunk(
+    'login', 
+    async (data , { rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.post(
+                `${baseUrl}/login`, data
+            );
+            return response.data
+        }catch(error){
+            if(error){
+                if(error.response && error.response.data){
+                    return rejectWithValue(error.response.data.message);
+                }else {
+                    return rejectWithValue('An Error Occurred While Login')
+                }
+            }
+        }
+    }
+);
 
-export const logout = createAsyncThunk('logout', async () => {
-    const response = await axiosInstance.post(`${baseUrl}/logout`);
-    return response.data;
-});
+// Logout api
+export const logout = createAsyncThunk(
+    'logout', 
+    async rejectWithValue => {
+        try{
+            const response = await axiosInstance.post(
+                `${baseUrl}/logout`
+            );
+            return response.data;
+        }catch(error){
+            if(error){
+                if(error.response && error.response.data){
+                    return rejectWithValue(error.response.data.message);
+                }else {
+                    return rejectWithValue('An Error Occurred While Login')
+                }
+            }
+        }
+    }
+);
 
 const initialState = {
     userData: {},
@@ -44,6 +74,7 @@ const authSlice = createSlice({
             state.loading = true;
         });
         builder.addCase(login.fulfilled, (state, action) => {
+            toast.success(action.payload.message || 'Login Successfully')
             state.loading = false;
             state.userData = action.payload.admin_user; // Update to use the correct user object
             state.login = true;
@@ -62,6 +93,7 @@ const authSlice = createSlice({
             ); // Store timezone_id
         });
         builder.addCase(login.rejected, (state, action) => {
+            toast.error(action.payload || 'Failed To Login')
             state.loading = false;
             state.error = action.error.message;
             state.userData = [];
@@ -73,6 +105,7 @@ const authSlice = createSlice({
             state.loading = true;
         });
         builder.addCase(logout.fulfilled, (state, action) => {
+            toast.success(action.payload.message || 'Logout Successfully')
             state.loading = false;
             state.login = false;
             state.userData = [];
@@ -84,6 +117,10 @@ const authSlice = createSlice({
             localStorage.removeItem('timezone_id'); // Remove timezone_id from localStorage
             localStorage.removeItem('name', '');
         });
+        builder.addCase(logout.rejected, (state, action) => {
+            toast.error(action.payload || 'Failed To Logout')
+            state.loading = false;
+        })
     },
 });
 

@@ -73,8 +73,7 @@ export const getTaAvailableSlotsFromDate = createAsyncThunk(
             );
             return response.data;
         }catch(error){
-            if(error.response && error.response.data)
-            {
+            if(error.response && error.response.data){
                 return rejectWithValue(error.response.data.message);
             }else{
                 return rejectWithValue('An Error Occurred While Fetching TA Available From Date')
@@ -201,6 +200,7 @@ const taScheduling = createSlice({
         },
     },
     extraReducers: builder => {
+        
         // Show TA Schedule
         builder.addCase(showTASchedule.pending, state => {
             state.loading = true;
@@ -212,6 +212,7 @@ const taScheduling = createSlice({
         builder.addCase(showTASchedule.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            state.taSchedule = [];
         });
 
         // Get TA Scheduled Sessions
@@ -225,6 +226,7 @@ const taScheduling = createSlice({
         builder.addCase(getTAScheduledSessions.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            state.taScheduledSessions = [];
         });
 
         // Handle TA Schedule actions in the slice
@@ -233,9 +235,9 @@ const taScheduling = createSlice({
         });
         builder.addCase(createTASchedule.fulfilled, (state, action) => {
             state.loading = false;
-            state.taScheduledSessions = action.payload.data;
+            // state.taScheduledSessions = action.payload.data;
             toast.success(
-                action.payload.message || 'TA Schedule created successfully!'
+                action.payload.message || 'TA Session Created Successfully'
             );
         });
         builder.addCase(createTASchedule.rejected, (state, action) => {
@@ -243,7 +245,7 @@ const taScheduling = createSlice({
             state.error = action.payload || action.error.message;
             toast.error(
                 action.payload ||
-                    'Failed to create TA Schedule. Please try again.'
+                    'Failed to create TA Session. Please Try Again.'
             );
         });
 
@@ -273,11 +275,13 @@ const taScheduling = createSlice({
         });
         builder.addCase(cancelScheduledSession.fulfilled, (state, action) => {
             state.loading = false;
-            state.taScheduledSessions = action.payload.data;
+            // state.taScheduledSessions = action.payload.data;
+            toast.success(action.payload.message || 'Session Cancelled Successfully')
         });
         builder.addCase(cancelScheduledSession.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            toast.error(action.payload || 'Failed To Cancel Session');
         });
 
         // Reschedule Session
@@ -287,10 +291,12 @@ const taScheduling = createSlice({
         builder.addCase(rescheduleSession.fulfilled, (state, action) => {
             state.loading = false;
             state.taScheduledSessions = action.payload.data;
+            state.toast(action.payload.message || 'Session Rescheduled Successfully')
         });
         builder.addCase(rescheduleSession.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            state.error(action.payload || 'Failed To Rescheduled Session')
         });
     },
 });
