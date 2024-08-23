@@ -13,7 +13,7 @@ import FilterBackground from '../../assets/duedatebackground.svg';
 import userimg from '../../assets/userimg.png';
 import CancelIcon from '@mui/icons-material/Cancel';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'; // Import an appropriate icon
-
+import RefreshIcon from '@mui/icons-material/Refresh';
 import {
     getTaCoachAllChats,
     getChatRecordsByChatId,
@@ -31,6 +31,7 @@ import {
     Divider,
     Checkbox,
 } from '@mui/material';
+
 
 const initialChatData = [
     { sender: 'me', text: 'Loading...', timestamp: new Date() },
@@ -83,6 +84,13 @@ const Messages = ({ role }) => {
     const filteredUsers = assignedUsersData.filter(user =>
         user.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+    // Function to refresh
+    const handleRefresh = () => {
+        if (role === 'coach' || role === 'ta') {
+            dispatch(getTaCoachAllChats(role));
+        }
+    };
 
     const handleUserClick = async user => {
         setselectedUser(user);
@@ -345,6 +353,9 @@ const Messages = ({ role }) => {
 
             <div className="box box1">
                 <div className="search-container">
+                    <IconButton onClick={handleRefresh}>
+                        <RefreshIcon/>
+                    </IconButton>
                     <TextField
                         variant="outlined"
                         placeholder="Search Student"
@@ -505,25 +516,37 @@ const Messages = ({ role }) => {
 
                                             {msg.file && (
                                                 <Box mt={1}>
-                                                <Typography variant="caption">
-                                                    <a
-                                                        style={{
-                                                            display: 'flex', // Flexbox to align icon and text
-                                                            alignItems: 'center',
-                                                            border: '1px solid white',
-                                                            borderRadius: '8px',
-                                                            color: 'white',
-                                                            padding: '5px 10px', // Adjust padding for better spacing
-                                                            textDecoration: 'none',
-                                                            backgroundColor: '#333', // Dark background to resemble a file
-                                                        }}
-                                                        href={msg.file.url}
-                                                    >
-                                                        <InsertDriveFileIcon style={{ marginRight: '5px', color: 'white' }} /> {/* File icon */}
-                                                        {msg.file.name}
-                                                    </a>
-                                                </Typography>
-                                            </Box>
+                                                    <Typography variant="caption">
+                                                        <a
+                                                            style={{
+                                                                display: 'flex', // Flexbox to align icon and text
+                                                                alignItems:
+                                                                    'center',
+                                                                border: '1px solid white',
+                                                                borderRadius:
+                                                                    '8px',
+                                                                color: 'white',
+                                                                padding:
+                                                                    '5px 10px', // Adjust padding for better spacing
+                                                                textDecoration:
+                                                                    'none',
+                                                                backgroundColor:
+                                                                    '#333', // Dark background to resemble a file
+                                                            }}
+                                                            href={msg.file.url}
+                                                        >
+                                                            <InsertDriveFileIcon
+                                                                style={{
+                                                                    marginRight:
+                                                                        '5px',
+                                                                    color: 'white',
+                                                                }}
+                                                            />{' '}
+                                                            {/* File icon */}
+                                                            {msg.file.name}
+                                                        </a>
+                                                    </Typography>
+                                                </Box>
                                             )}
                                         </Box>
                                         {msg.sender === 'me' && (
@@ -556,7 +579,6 @@ const Messages = ({ role }) => {
                                 display: 'flex',
                                 alignItems: 'center',
                                 padding: '10px',
-                               
                             }}
                         >
                             <TextField
@@ -584,18 +606,37 @@ const Messages = ({ role }) => {
                                     },
                                 }}
                             />
-                                                        <div className="chat-input-icons" style={{ display: 'flex', alignItems: 'center' }}>
+                            <div
+                                className="chat-input-icons"
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                }}
+                            >
                                 {selectedFile && (
-                                    <div style={{ display: 'flex', alignItems: 'center', marginRight: '10px' }}>
-                                        <Typography variant="caption" sx={{
-                                            maxWidth: '100px',
-                                            overflow: 'hidden',
-                                            textOverflow: 'ellipsis',
-                                            whiteSpace: 'nowrap'
-                                        }}>
+                                    <div
+                                        style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            marginRight: '10px',
+                                        }}
+                                    >
+                                        <Typography
+                                            variant="caption"
+                                            sx={{
+                                                maxWidth: '100px',
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis',
+                                                whiteSpace: 'nowrap',
+                                            }}
+                                        >
                                             {selectedFile.name}
                                         </Typography>
-                                        <IconButton size="small" onClick={handleCancelFile} sx={{ marginLeft: '5px' }}>
+                                        <IconButton
+                                            size="small"
+                                            onClick={handleCancelFile}
+                                            sx={{ marginLeft: '5px' }}
+                                        >
                                             <CancelIcon fontSize="small" />
                                         </IconButton>
                                     </div>
@@ -606,7 +647,10 @@ const Messages = ({ role }) => {
                                     style={{ display: 'none' }}
                                     onChange={handleFileChange}
                                 />
-                                <IconButton className="input-icon" onClick={HandleSentFile}>
+                                <IconButton
+                                    className="input-icon"
+                                    onClick={HandleSentFile}
+                                >
                                     <img src={PaperclipIcon} alt="Attach" />
                                 </IconButton>
                                 <IconButton className="input-icon">
