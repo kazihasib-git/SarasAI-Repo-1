@@ -16,7 +16,7 @@ export const showTASchedule = createAsyncThunk(
             if(error.response && error.response.data){
                 return rejectWithValue(error.response.data.message);
             }else {
-                return rejectWithValue('An Error Occurred While Feching TA Schedule')
+                return rejectWithValue('An Error Occurred While Fetching TA Schedule')
             }
         }
     }
