@@ -18,11 +18,9 @@ const AdminCoursesTable = ({ taId }) => {
     const itemsPerPage = 10;
     const [selectedCourses, setSelectedCourses] = useState([]);
 
-    const totalPages = Math.ceil(data.length / itemsPerPage);
-    const currentData = data.slice(
-        (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage
-    );
+    console.log( 'data length ::',data.length)
+
+    
     const dispatch = useDispatch();
 
     const { allCoursesWithTas } = useSelector(
@@ -37,6 +35,12 @@ const AdminCoursesTable = ({ taId }) => {
         setData(allCoursesWithTas);
     }, [allCoursesWithTas]);
    
+    const totalPages = Math.ceil(data.length / itemsPerPage);
+    const currentData = data.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+    
     const handlePageChange = (event, pageNumber) => {
         setCurrentPage(pageNumber);
     };
