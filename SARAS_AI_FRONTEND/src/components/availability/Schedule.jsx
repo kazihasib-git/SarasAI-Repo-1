@@ -17,6 +17,8 @@ import CustomTimeField from '../CustomFields/CustomTimeField';
 import CustomDateField from '../CustomFields/CustomDateField';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import CustomFormControl from '../CustomFields/CustomFromControl';
+import CustomHostNameForm from '../CustomFields/CustomHostNameField';
+import CustomMeetingTypeForm from '../CustomFields/CustomMeetingTypeField';
 import { useForm, Controller } from 'react-hook-form';
 import { timezoneIdToName } from '../../utils/timezoneIdToName';
 import { convertFromUTC } from '../../utils/dateAndtimeConversion';
@@ -419,7 +421,7 @@ const Schedule = ({ componentName , timezoneID}) => {
                                             justifyContent="center"
                                         >
                                             <DialogContent
-                                                sx={{
+                                                  sx={{
                                                     color: 'red',
                                                     textAlign: 'center',
                                                 }}
@@ -578,6 +580,68 @@ const Schedule = ({ componentName , timezoneID}) => {
                                                             )}
                                                         />
                                                     </Grid>
+                                                    {/* <Grid
+                                                        item
+                                                        xs={12}
+                                                        display="flex"
+                                                        justifyContent="center"
+                                                    >
+                                                        <Controller
+                                                            name="platform_id"
+                                                            control={control}
+                                                            render={({
+                                                                field,
+                                                            }) => (
+                                                                <CustomHostNameForm
+                                                                    label="Host Name"
+                                                                    name="platform_id"
+                                                                    value={
+                                                                        field.value
+                                                                    }
+                                                                    onChange={
+                                                                        field.onChange
+                                                                    }
+                                                                    errors={
+                                                                        errors
+                                                                    }
+                                                                    options={
+                                                                        platforms
+                                                                    }
+                                                                />
+                                                            )}
+                                                        />
+                                                    </Grid>
+                                                    <Grid
+                                                        item
+                                                        xs={12}
+                                                        display="flex"
+                                                        justifyContent="center"
+                                                    >
+                                                        <Controller
+                                                            name="platform_id"
+                                                            control={control}
+                                                            render={({
+                                                                field,
+                                                            }) => (
+                                                                <CustomMeetingTypeForm
+                                                                    label="Meeting Type"
+                                                                    name="platform_id"
+                                                                    value={
+                                                                        field.value
+                                                                    }
+                                                                    onChange={
+                                                                        field.onChange
+                                                                    }
+                                                                    errors={
+                                                                        errors
+                                                                    }
+                                                                    options={
+                                                                        platforms
+                                                                    }
+                                                                />
+                                                            )}
+                                                        />
+                                                    </Grid> */}
                                                     <Grid
                                                         item
                                                         xs={12}

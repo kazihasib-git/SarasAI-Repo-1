@@ -26,6 +26,9 @@ import {
 import VideoPopup from '../../../components/integrations/videoPlayerPopUp';
 import VideoUploadDialog from '../../../components/integrations/videoUpload';
 import SessionNotes from '../coachModule/SessionNotes';
+import { convertFromUTC } from '../../../utils/dateAndtimeConversion';
+import { timezoneIdToName } from '../../../utils/timezoneIdToName';
+import { getTimezone } from '../../../redux/features/utils/utilSlice';
 
 const CustomButton = ({
     onClick,
@@ -66,18 +69,57 @@ const CustomButton = ({
 const CallRecords = () => {
     const [open, setOpen] = useState(false);
     const [selectedCall, setSelectedCall] = useState(null);
-    const [date, setDate] = useState(moment()); // Initialize with current date
+    const [date, setDate] = useState(moment());
     const [videoDialogOpen, setVideoDialogOpen] = useState(false);
     const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
     const [videoUrl, setVideoUrl] = useState('');
-    const [idVideo, setIdVideo] = useState(null); // Initialize with null
+    const [idVideo, setIdVideo] = useState(null);
+    const [processedCalls, setProcessedCalls] = useState([]);
 
     const dispatch = useDispatch();
     const calls = useSelector(state => state.taMenu.taCallRecords);
+    const { timezones } = useSelector(state => state.util);
+    const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
 
     useEffect(() => {
         dispatch(getTaCallRecords(date.format('YYYY-MM-DD')));
+        dispatch(getTimezone());
     }, [date, dispatch]);
+
+    useEffect(() => {
+        if (calls && calls.length > 0 && timezones && storedTimezoneId) {
+            processCalls();
+        }
+    }, [calls, timezones, storedTimezoneId]);
+
+    const processCalls = async () => {
+        const timezonename = timezoneIdToName(storedTimezoneId, timezones);
+
+        try {
+            const processed = await Promise.all(
+                calls.map(async (call) => {
+                    const localTime = await convertFromUTC({
+                        start_date: call.date,
+                        start_time: call.start_time,
+                        end_time: call.end_time,
+                        end_date: call.date,
+                        timezonename,
+                    });
+
+                    return {
+                        ...call,
+                        date: localTime.start_date,
+                        start_time: localTime.start_time,
+                        end_time: localTime.end_time,
+                    };
+                })
+            );
+            setProcessedCalls(processed);
+        } catch (error) {
+            console.error('Error processing calls:', error);
+            setProcessedCalls([]);
+        }
+    };
 
     const handleClickOpen = call => {
         setSelectedCall(call);
@@ -107,6 +149,14 @@ const CallRecords = () => {
             setDate(nextDate);
         }
     };
+
+    function convertTo12HourFormat(time24) {
+        const [hours, minutes, seconds] = time24.split(':').map(Number);
+        const suffix = hours >= 12 ? 'PM' : 'AM';
+        const hours12 = hours % 12 || 12;
+        const formattedMinutes = minutes.toString().padStart(2, '0');
+        return `${hours12}:${formattedMinutes} ${suffix}`;
+    }
 
     const handleDecrement = () => {
         const newDate = moment(date).subtract(1, 'days');
@@ -183,7 +233,7 @@ const CallRecords = () => {
                     gap="20px"
                     justifyContent="space-between"
                 >
-                    {calls.map(call => (
+                    {processedCalls.map(call => (
                         <Card
                             key={call.id}
                             sx={{
@@ -215,8 +265,8 @@ const CallRecords = () => {
                                 >
                                     {moment(call.date).format('MMMM D, YYYY') ||
                                         'No Date'}{' '}
-                                    | {call.start_time || 'No Start Time'} -{' '}
-                                    {call.end_time || 'No End Time'}
+                                    | {convertTo12HourFormat(call.start_time) || 'No Start Time'} -{' '}
+                                    {convertTo12HourFormat(call.end_time) || 'No End Time'}
                                 </Typography>
 
                                 <Typography
@@ -298,7 +348,6 @@ const CallRecords = () => {
             <VideoUploadDialog
                 open={uploadDialogOpen}
                 onClose={handleCloseUploadDialog}
-                // onClose={() => setUploadDialogOpen(false)}
                 role="TA"
                 selectedId={idVideo}
             />

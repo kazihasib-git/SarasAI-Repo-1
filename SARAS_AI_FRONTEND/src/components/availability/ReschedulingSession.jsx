@@ -3,12 +3,14 @@ import ReusableDialog from '../CustomFields/ReusableDialog';
 import CustomDateField from '../CustomFields/CustomDateField';
 import { Button, DialogContent, Grid } from '@mui/material';
 import CustomTimeField from '../CustomFields/CustomTimeField';
+import CustomHostNameForm from '../CustomFields/CustomHostNameField';
+import CustomMeetingTypeForm from '../CustomFields/CustomMeetingTypeField';
 import { useDispatch, useSelector } from 'react-redux';
 import PopUpTable from '../CommonComponent/PopUpTable';
 import { useParams } from 'react-router-dom';
 import { rescheduleSession } from '../../redux/features/adminModule/ta/taScheduling';
 import { rescheduleCoachSession } from '../../redux/features/adminModule/coach/coachSchedule';
-
+import { Controller, useForm } from 'react-hook-form';
 import {
     closeRescheduleSession,
     fetchAvailableSlots,
@@ -37,21 +39,30 @@ const headers = ['S. No.', 'Slots Available', 'Select'];
 
 const ReschedulingSession = ({ componentName, timezoneID }) => {
     const { timezones, platforms } = useSelector(state => state.util);
-    
+
     const taId = useParams();
     const { id, name } = useParams();
 
     const dispatch = useDispatch();
-    
+
     useEffect(() => {
         dispatch(getTimezone());
     }, [dispatch]);
-    
+
     const [selectDate, setSelectDate] = useState(null);
     const [selectedSlots, setSelectedSlots] = useState([]);
     const [fromTime, setFromTime] = useState(null);
     const [toTime, setToTime] = useState(null);
     const [transformedSlotsData, setTransformedSlotsData] = useState([]);
+
+    const {
+        control,
+        formState: { errors },
+    } = useForm({
+        defaultValues: {
+
+        },
+    });
 
     const { dataToFindScheduleInSlot } = useSelector(
         state => state.commonCalender
@@ -85,8 +96,8 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
             fetchSlotsApi = fetchTaSlots;
             fetchSessionsApi = fetchTAScheduleById;
             break;
-    
-            case 'COACHCALENDER':
+
+        case 'COACHCALENDER':
             sliceName = 'coachAvailability';
             rescheduleSessionOpenKey = 'resheduleCoachSessionOpen';
             closeRescheduleSessionAction = closeCoachRescheduleSession;
@@ -112,7 +123,7 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
             sessionEventAction = null;
             slotEventAction = null;
             reschduleSessionAction = null;
-            fetchSlotsApi= null;
+            fetchSlotsApi = null;
             fetchSessionsApi = null;
             break;
     }
@@ -207,7 +218,7 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
 
     const handleSubmit = () => {
         const errors = [];
-    
+
         if (!selectDate) {
             errors.push('Please Select The Date');
         }
@@ -220,14 +231,14 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
         if (!toTime) {
             errors.push('Please Select the End Time');
         }
-    
+
         if (errors.length) {
             errors.forEach(error => toast.error(error));
             return;
         }
-    
+
         const sessionId = sessionEventData?.id || '';
-    
+
         const rescheduleData = {
             id: sessionId,
             data: {
@@ -240,7 +251,7 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
                 event_status: 'rescheduled',
             },
         };
-    
+
         dispatch(reschduleSessionAction(rescheduleData))
             .unwrap()
             .then(() => {
@@ -254,7 +265,7 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
                 console.error('Error rescheduling session:', error);
             });
     };
-    
+
 
     const headers = ['S. No.', 'Slots Available', 'Select'];
 
@@ -307,7 +318,7 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
                                 textAlign: 'center',
                             }}
                         >
-                            <Grid container spacing={4}>
+                            <Grid container spacing={4} mb={2}>
                                 <Grid item xs={12} sm={6}>
                                     <CustomTimeField
                                         label="Start Time"
@@ -315,7 +326,7 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
                                         onChange={time => setFromTime(time)}
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={6}>
+                                <Grid item xs={12} sm={6}> 
                                     <CustomTimeField
                                         label="End Time"
                                         value={toTime}
@@ -323,6 +334,69 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
                                     />
                                 </Grid>
                             </Grid>
+                            {/* <Grid
+                                item
+                                xs={12}
+                                mb={2}
+                                display="flex"
+                                justifyContent="center"
+                            >
+                                <Controller
+                                    name="platform_id"
+                                    control={control}
+                                    render={({
+                                        field,
+                                    }) => (
+                                        <CustomHostNameForm
+                                            label="Host Name"
+                                            name="platform_id"
+                                            value={
+                                                field.value
+                                            }
+                                            onChange={
+                                                field.onChange
+                                            }
+                                            errors={
+                                                errors
+                                            }
+                                            options={
+                                                platforms
+                                            }
+                                        />
+                                    )}
+                                />
+                            </Grid>
+                            <Grid
+                                item
+                                xs={12}
+                                display="flex"
+                                justifyContent="center"
+                            >
+                                <Controller
+                                    name="platform_id"
+                                    control={control}
+                                    render={({
+                                        field,
+                                    }) => (
+                                        <CustomMeetingTypeForm
+                                            label="Meeting Type"
+                                            name="platform_id"
+                                            value={
+                                                field.value
+                                            }
+                                            onChange={
+                                                field.onChange
+                                            }
+                                            errors={
+                                                errors
+                                            }
+                                            options={
+                                                platforms
+                                            }
+                                        />
+                                    )}
+                                />
+                            </Grid> */}
                         </Grid>
                     </>
                 )
@@ -334,12 +408,12 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
         <CustomButton
             onClick={handleSubmit}
             style={{
-                backgroundColor : "#F56D3B",
-                borderColor : "#F56D3B",
-                color : "#FFFFFF",
-                textTrasnform : 'none',
+                backgroundColor: "#F56D3B",
+                borderColor: "#F56D3B",
+                color: "#FFFFFF",
+                textTrasnform: 'none',
             }}
-            
+
         >
             Submit
         </CustomButton>
