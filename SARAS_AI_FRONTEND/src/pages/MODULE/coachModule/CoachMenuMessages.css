@@ -371,6 +371,19 @@ h1 {
     margin-right: 5px;
 }
 
+.status-indicator {
+    width: 8px; /* Adjust size as needed */
+    height: 8px; /* Adjust size as needed */
+    border-radius: 50%;
+    background-color: #ffffff; /* Default color */
+    margin-right: 2px; /* Space between indicator and status text */
+    margin-top: 2px;
+}
+
+.status-indicator.online {
+    background-color:#68D391; /* Color when online */
+}
+
 /* Responsive Box adjustments */
 @media (max-width: 768px) {
     .box1,
