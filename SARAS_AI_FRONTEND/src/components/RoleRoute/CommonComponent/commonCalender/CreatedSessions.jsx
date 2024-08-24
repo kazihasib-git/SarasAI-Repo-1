@@ -153,7 +153,7 @@ const CreatedSessions = ({ componentName , timezoneID}) => {
     };
 
     const content =
-        scheduledSessions.length === 0 ? (
+        (!scheduledSessions && scheduledSessions.length === 0) ? (
             <DialogContent
                 style={{ justifyContent: 'center', display: 'flex' }}
             >

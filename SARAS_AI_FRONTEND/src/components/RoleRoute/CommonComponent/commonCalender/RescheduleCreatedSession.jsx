@@ -13,6 +13,7 @@ import { getCoachMenuSessionForLeave, getCoachMenuSessions, getCoachMenuSlots, g
 import { getTaMenuSessionForLeave, getTaMenuSessions, getTaMenuSlots, getTaMenuSlotsByDate, rescheduleSessionForTaLeave } from '../../../../redux/features/taModule/tamenuSlice';
 import { convertFromUTC } from '../../../../utils/dateAndtimeConversion';
 import { toast } from 'react-toastify';
+import PopTableSlot from '../../../CommonComponent/PopTableSlot';
  
 const CustomButton = ({
     onClick,
@@ -273,7 +274,7 @@ console.log('reschedule session timezoneID' , timezoneID) ;
             ) : (
                 selectDate && (
                     <>
-                        <PopUpTable
+                        <PopTableSlot
                             headers={headers}
                             initialData={transformedSlotsData}
                             onRowClick={handleSelectSlot}

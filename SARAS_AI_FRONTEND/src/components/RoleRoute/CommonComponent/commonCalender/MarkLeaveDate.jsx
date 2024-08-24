@@ -17,16 +17,20 @@ import {
 import CustomDateField from '../../../CustomFields/CustomDateField';
 import ReusableDialog from '../../../CustomFields/ReusableDialog';
 import CustomButton from '../../../CustomFields/CustomButton';
+import { timezoneIdToName } from '../../../../utils/timezoneIdToName';
 
-const MarkLeaveDate = ({ componentName , timezoneID}) => {
-    console.log('MarkLeave timezoneID' , timezoneID)  ;
+const MarkLeaveDate = ({ componentName, timezoneID }) => {
+    console.log('MarkLeave timezoneID', timezoneID);
     console.log('Comp Name :', componentName);
+    const { timezones } = useSelector(state => state.util);
+
     const dispatch = useDispatch();
     const [formData, setFormData] = useState({
         fromDate: null,
         toDate: null,
     });
-
+    const timezoneName = timezoneIdToName(timezoneID, timezones);
+    // console.log("TIME ZONE NAME : ", timezoneName)
     let sliceName, getSlotsByDateApi;
 
     switch (componentName) {
@@ -72,14 +76,22 @@ const MarkLeaveDate = ({ componentName , timezoneID}) => {
             end_date: formData.toDate,
             start_time: '00:00:00',
             end_time: '23:59:59',
+            timezone_name:timezoneName
         };
 
-        dispatch(getSlotsByDateApi(data)).then(() => {
+        dispatch(getSlotsByDateApi(data))
+        .unwrap()
+        .then(() => {
+
             dispatch(closeMarkLeaveDate());
             dispatch(openCreatedSlots());
+        })
+        .catch((error) => {
+           
+            console.error("API Error:", error);
         });
     };
-
+ 
     const content = (
         <Grid
             container

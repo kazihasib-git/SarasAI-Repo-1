@@ -3,6 +3,7 @@ import { baseUrl } from '../../../utils/baseURL';
 import axios from 'axios';
 import axiosInstance from '../../services/httpService';
 import { actions } from 'react-table';
+import { toast } from 'react-toastify';
 const accessToken = localStorage.getItem('accessToken');
 
 // Get Ta Profile
@@ -32,31 +33,41 @@ export const updateTaMenuProfile = createAsyncThunk(
 export const getMyStudents = createAsyncThunk(
     'taMenu/getMyStudents',
     async () => {
-        const response = await axiosInstance.get(`${baseUrl}/ta/my-student/get-all-student`);
+        const response = await axiosInstance.get(
+            `${baseUrl}/ta/my-student/get-all-student`
+        );
         console.log(response.data, 'response.data');
         return response.data;
     }
 );
 
-
 // Get Ta Slots
-export const getTaMenuSlots = createAsyncThunk(
-    'taMenu/getSlots', 
-    async () => {
-        const response = await axiosInstance.get(`${baseUrl}/ta/calendar/slots`);
-        console.log(response.data, 'response.data');
-        return response.data;
+export const getTaMenuSlots = createAsyncThunk('taMenu/getSlots', async () => {
+    const response = await axiosInstance.get(`${baseUrl}/ta/calendar/slots`);
+    console.log(response.data, 'response.data');
+    return response.data;
 });
 
 // Create TA Slots
 export const createTaMenuSlots = createAsyncThunk(
     'taMenu/createTaSlot',
-    async data => {
-        const response = await axiosInstance.post(
-            `${baseUrl}/ta/calendar/create-slots`,
-            data
-        );
-        return response.data;
+    async (data, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.post(
+                `${baseUrl}/ta/calendar/create-slots`,
+                data
+            );
+
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Creating TA slots'
+                );
+            }
+        }
     }
 );
 
@@ -87,24 +98,44 @@ export const getTaMenuSessions = createAsyncThunk(
 // TA SLots Between Dates
 export const getTaMenuSlotsForLeave = createAsyncThunk(
     'taMenu/slotsForLeave',
-    async data => {
-        const response = await axiosInstance.post(
-            `${baseUrl}/ta/calendar/slot-between-dates`,
-            data
-        );
-        return response.data;
+    async (data, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.post(
+                `${baseUrl}/ta/calendar/slot-between-dates`,
+                data
+            );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.error);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Creating Mark leave'
+                );
+            }
+        }
     }
 );
 
 // Get TA Sessions for Leave by Slots
 export const getTaMenuSessionForLeave = createAsyncThunk(
     'taMenu/getSessionForLeave',
-    async data => {
-        const response = await axiosInstance.post(
-            `${baseUrl}/ta/calendar/schedule-by-slots`,
-            data
-        );
-        return response.data;
+    async (data, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.post(
+                `${baseUrl}/ta/calendar/schedule-by-slots`,
+                data
+            );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Geting TA Sessions for Leave by Slots'
+                );
+            }
+        }
     }
 );
 
@@ -117,19 +148,29 @@ export const cancelTaScheduledSessionForLeave = createAsyncThunk(
         );
         return response.data;
     }
-)
+);
 
 // TA Reason For Leave
 export const reasonForTaMenuLeave = createAsyncThunk(
     'taMenu/reasonForLeave',
-    async data => {
-        const response = await axiosInstance.post(
-            `${baseUrl}/ta/calendar/create-leave`,
-            data
-        )
-        return response.data;
+    async (data, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.post(
+                `${baseUrl}/ta/calendar/create-leave`,
+                data
+            );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.error);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Creating TA slots'
+                );
+            }
+        }
     }
-)
+);
 
 // Reschedule Session for TA Leave
 export const rescheduleSessionForTaLeave = createAsyncThunk(
@@ -138,10 +179,10 @@ export const rescheduleSessionForTaLeave = createAsyncThunk(
         const response = await axiosInstance.post(
             `${baseUrl}/ta/calendar/reschedule/${id}`,
             data
-        )
+        );
         return response.data;
     }
-)
+);
 
 // ta menu call request
 export const getTaCallRequests = createAsyncThunk(
@@ -160,7 +201,7 @@ export const approveCallRequest = createAsyncThunk(
     'taMenu/approveCallRequest',
     async id => {
         const response = await axiosInstance.get(
-            `${baseUrl}/ta/call-request/approve-call-request/${id}`,
+            `${baseUrl}/ta/call-request/approve-call-request/${id}`
         );
         console.log(response.data, 'response.data');
         return response.data;
@@ -175,7 +216,7 @@ export const denyCallRequest = createAsyncThunk(
             `${baseUrl}/ta/call-request/denie-call-request/${id}`,
             {
                 'reject-reason': reason,
-            },
+            }
         );
         console.log(response.data, 'response.data');
         return response.data;
@@ -213,12 +254,22 @@ export const getTaCallRecords = createAsyncThunk(
 // Create TA Sessions
 export const createTaMenuSessions = createAsyncThunk(
     'taMenu/createTaMenuSessions',
-    async data => {
-        const response = await axiosInstance.post(
-            `${baseUrl}/ta/schedule-call/schedule-calls`,
-            data
-        );
-        return response.data;
+    async (data, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.post(
+                `${baseUrl}/ta/schedule-call/schedule-calls`,
+                data
+            );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Geting TA Sessions for Leave by Slots'
+                );
+            }
+        }
     }
 );
 
@@ -299,8 +350,8 @@ const initialState = {
     selectedTaBatches: [],
     assignedTaStudents: [],
     assignedTaBatches: [],
-    taLeave : [],
-    taRescheduleSessions : [],
+    taLeave: [],
+    taRescheduleSessions: [],
     taCallRecords: [], //call recording
 
     sessionRecordingUrl: null,
@@ -437,10 +488,16 @@ export const taMenuSlice = createSlice({
         builder.addCase(createTaMenuSlots.fulfilled, (state, action) => {
             state.loading = false;
             state.taSlots = action.payload.data;
+            toast.success(
+                action.payload.message || 'TA Slots Created Successfully'
+            );
         });
         builder.addCase(createTaMenuSlots.rejected, (state, action) => {
             state.loading = false;
-            state.error = action.error.message;
+            state.error = action.payload || action.error.message;
+            toast.error(
+                action.payload || 'Failed To Update TA. Please Try Again'
+            );
         });
 
         // Get Ta Sessions
@@ -463,10 +520,16 @@ export const taMenuSlice = createSlice({
         builder.addCase(createTaMenuSessions.fulfilled, (state, action) => {
             state.loading = false;
             state.taSessions = action.payload.data;
+            toast.success(
+                action.payload.message || 'Session have been successfully created'
+            );
         });
         builder.addCase(createTaMenuSessions.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            toast.error(
+                action.payload || 'Failed to Create TA Sessions'
+            );
         });
 
         // Get Slots Between Dates
@@ -476,10 +539,12 @@ export const taMenuSlice = createSlice({
         builder.addCase(getTaMenuSlotsForLeave.fulfilled, (state, action) => {
             state.loading = false;
             state.slotsBetweenDates = action.payload.data;
+            // toast.success(action.payload.message || 'Successfully created');
         });
         builder.addCase(getTaMenuSlotsForLeave.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            toast.error(action.payload || 'Failed To Mark Leave');
         });
 
         // Get Session By Slots for Leave
@@ -489,47 +554,59 @@ export const taMenuSlice = createSlice({
         builder.addCase(getTaMenuSessionForLeave.fulfilled, (state, action) => {
             state.loading = false;
             state.sessionBySlots = action.payload.data;
+            toast.success(action.payload.message || 'Successfully created');
         });
         builder.addCase(getTaMenuSessionForLeave.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            state.sessionBySlots = [];
+            toast.error(action.payload || 'Failed To Mark Leave');
         });
-
 
         // Cancel TA Scheduled Sessions
         builder.addCase(cancelTaScheduledSessionForLeave.pending, state => {
             state.loading = true;
-        })
-        builder.addCase(cancelTaScheduledSessionForLeave.fulfilled, (state, action) => {
-            state.loading = false;
-            // state.  = action.payload;
-        })
-        builder.addCase(cancelTaScheduledSessionForLeave.rejected, (state, action) => {
-            state.loading = false;
-            state.error = action.error.message;
-        })
-
+        });
+        builder.addCase(
+            cancelTaScheduledSessionForLeave.fulfilled,
+            (state, action) => {
+                state.loading = false;
+                // state.  = action.payload;
+            }
+        );
+        builder.addCase(
+            cancelTaScheduledSessionForLeave.rejected,
+            (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+            }
+        );
 
         // TA Reason For Leave
-        builder.addCase(reasonForTaMenuLeave.pending, (state) => {
+        builder.addCase(reasonForTaMenuLeave.pending, state => {
             state.loading = true;
-        })
+        });
         builder.addCase(reasonForTaMenuLeave.fulfilled, (state, action) => {
             state.loading = false;
             state.taLeave = action.payload;
-        })
+            toast.success(
+                action.payload.message ||
+                    'Leave request has been successfully created.'
+            );
+        });
         builder.addCase(reasonForTaMenuLeave.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
-        })
+            toast.error(action.payload || 'Failed To Mark Leave');
+        });
 
-
-        // TA Reschedule For Leave 
+        // TA Reschedule For Leave
         builder.addCase(rescheduleSessionForTaLeave.pending, state => {
             state.loading = true;
         });
         builder.addCase(
-            rescheduleSessionForTaLeave.fulfilled, (state, action) => {
+            rescheduleSessionForTaLeave.fulfilled,
+            (state, action) => {
                 state.loading = false;
                 state.taRescheduleSessions = action.payload.data;
             }
@@ -540,7 +617,7 @@ export const taMenuSlice = createSlice({
                 state.loading = false;
                 state.error = action.error.message;
             }
-        )
+        );
 
         //get tamenu call requests
         builder.addCase(getTaCallRequests.pending, state => {

@@ -125,7 +125,7 @@ const CallRecords = () => {
         setSelectedCall(call);
         setOpen(true);
     };
-
+    const { userData } = useSelector(state => state.auth);
     const handleClose = () => setOpen(false);
 
     const handleSaveNotes = notes => {
@@ -251,7 +251,8 @@ const CallRecords = () => {
                                     justifyContent="space-between"
                                 >
                                     <Typography variant="h6">
-                                        {call.meeting_name}
+                                    {userData.name}`session
+                                        {/* {call.meeting_name} */}
                                     </Typography>
                                 </Box>
                                 <Typography variant="h7" component="span">
@@ -294,12 +295,16 @@ const CallRecords = () => {
                                     justifyContent="space-between"
                                     sx={{ mt: 2 }}
                                 >
-                                    <CustomButton
+                                   <CustomButton
                                         onClick={() => handleClickOpen(call)}
                                         color="#F56D3B"
                                         backgroundColor="#FFFFFF"
                                         borderColor="#F56D3B"
-                                        style={{ textTransform: 'none' }}
+                                        style={{
+                                            textTransform: 'none',
+                                            fontFamily: 'Medium',
+                                            textAlign: 'left',
+                                        }}
                                     >
                                         Session Notes
                                     </CustomButton>
@@ -313,7 +318,11 @@ const CallRecords = () => {
                                             color="#F56D3B"
                                             backgroundColor="#FFFFFF"
                                             borderColor="#F56D3B"
-                                            style={{ textTransform: 'none' }}
+                                            style={{
+                                                textTransform: 'none',
+                                                fontFamily: 'Medium',
+                                                textAlign: 'left',
+                                            }}
                                         >
                                             Call Recordings
                                         </CustomButton>
@@ -322,7 +331,11 @@ const CallRecords = () => {
                                             color="#F56D3B"
                                             backgroundColor="#FFFFFF"
                                             borderColor="#F56D3B"
-                                            style={{ textTransform: 'none' }}
+                                            style={{
+                                                textTransform: 'none',
+                                                fontFamily: 'Medium',
+                                                textAlign: 'left',
+                                            }}
                                             onClick={() =>
                                                 handleOpenUploadDialog(call)
                                             }

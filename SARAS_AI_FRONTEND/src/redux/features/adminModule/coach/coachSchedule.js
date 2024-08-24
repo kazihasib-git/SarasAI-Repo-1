@@ -1,71 +1,119 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
 import { baseUrl } from '../../../../utils/baseURL';
 import axiosInstance from '../../../services/httpService';
+import { toast } from 'react-toastify';
 
 export const showTASchedule = createAsyncThunk(
     'coachScheduling/showTaSchedule',
-    async () => {
-        const response = await axiosInstance.get(
-            `${baseUrl}/admin/taschedules`
-        );
-        return response.data;
+    async rejectWithValue => {
+        try{
+            const response = await axiosInstance.get(
+                `${baseUrl}/admin/taschedules`
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message);
+            }else{
+                return rejectWithValue('An Error Occurred While Fetching Coach Schedule')
+            }
+        }
     }
 );
 
 export const getTAScheduledSessions = createAsyncThunk(
     'coachScheduling/getTAScheduledSessions',
-    async ({ id, data }) => {
-        const response = await axiosInstance.post(
-            `${baseUrl}/admin/taschedules/${id}`,
-            data
-        );
-        return response.data;
+    async ({ id, data }, { rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.post(
+                `${baseUrl}/admin/taschedules/${id}`,
+                data
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message);
+            }else {
+                return rejectWithValue('An Error Occurred While Fetching Coach Schedules')
+            }
+        }
     }
 );
 
 export const createCoachSchedule = createAsyncThunk(
     'coachScheduling/createCoachSchedule',
-    async data => {
-        const response = await axiosInstance.post(
-            `${baseUrl}/admin/coachschedules`,
-            data
-        );
-        return response.data;
+    async (data , { rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.post(
+                `${baseUrl}/admin/coachschedules`,
+                data
+            );
+            return response.data;
+        }catch(error){
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue('An Error Occurred While Creating the Schedule');
+            }
+        }
     }
 );
 
 export const getCoachAvailableSlotsFromDate = createAsyncThunk(
     'coachScheduling/getCoachAvailableSlotsFromDate',
-    async data => {
-        const response = await axiosInstance.post(
-            `${baseUrl}/admin/coach-slots/getTACoachSlotForADate`,
-            data
-        );
-        return response.data;
+    async (data, { rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.post(
+                `${baseUrl}/admin/coach-slots/getTACoachSlotForADate`,
+                data
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message);
+            }else{
+                return rejectWithValue('An Error Occurred While Fetching Coach Available From Date')
+            }    
+        } 
     }
 );
 
 // Reschedule Session
 export const rescheduleCoachSession = createAsyncThunk(
     'coachAvailability/rescheduleCoachSession',
-    async ({ id, data }) => {
-        const response = await axiosInstance.put(
-            `${baseUrl}/admin/coachschedules/reschedule/${id}`,
-            data
-        );
-        return response.data;
+    async ({ id, data }, { rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.put(
+                `${baseUrl}/admin/coachschedules/reschedule/${id}`,
+                data
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message);
+            }else{
+                return rejectWithValue('An Error Occurred While Rescheduling Session')
+            }
+        }
     }
 );
 
 // Cancel Scheduled Sessions
 export const cancelCoachScheduledSession = createAsyncThunk(
     'coachAvailability/cancelCoachScheduledSession',
-    async id => {
-        const response = await axiosInstance.put(
-            `${baseUrl}/admin/taschedules/cancel/${id}`
-        );
-        return response.data;
+    async (id , { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.put(
+                `${baseUrl}/admin/taschedules/cancel/${id}`
+            );
+            return response.data;
+        }catch (error) {
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message);
+            }else{
+                return rejectWithValue('An Error Occurred While Cancel Scheduled Sessions')
+            }
+        }
     }
 );
 
@@ -131,6 +179,7 @@ const coachScheduling = createSlice({
         },
     },
     extraReducers: builder => {
+
         // Get TA Scheduled Sessions
         builder.addCase(getTAScheduledSessions.pending, state => {
             state.loading = true;
@@ -142,6 +191,7 @@ const coachScheduling = createSlice({
         builder.addCase(getTAScheduledSessions.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            state.coachAvailableSlots = []
         });
 
         // Create TA Schedule
@@ -150,11 +200,16 @@ const coachScheduling = createSlice({
         });
         builder.addCase(createCoachSchedule.fulfilled, (state, action) => {
             state.loading = false;
-            state.coachScheduledSessions = action.payload.data;
+            // state.coachScheduledSessions = action.payload.data;
+            toast.success(action.payload.message || 'Coach Session Created Successfully')
         });
         builder.addCase(createCoachSchedule.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            toast.error(
+                action.payload || 'Failed to create Coach Session. Please Try Again'
+            )
+
         });
 
         // Get TA Available Slots From Date
@@ -164,7 +219,6 @@ const coachScheduling = createSlice({
         builder.addCase(
             getCoachAvailableSlotsFromDate.fulfilled,
             (state, action) => {
-                console.log('action', action.payload.data);
                 state.loading = false;
                 state.coachAvailableSlots = action.payload.data;
             }
@@ -186,7 +240,8 @@ const coachScheduling = createSlice({
             cancelCoachScheduledSession.fulfilled,
             (state, action) => {
                 state.loading = false;
-                state.coachScheduledSessions = action.payload.data;
+                // state.coachScheduledSessions = action.payload.data;
+                toast.success(action.payload.message || 'Session Cancelled Successfully')
             }
         );
         builder.addCase(
@@ -194,20 +249,23 @@ const coachScheduling = createSlice({
             (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
+                toast.error(action.payload || 'Failed To Cancel Session')
             }
         );
 
-        // Reschedule Session // TODO : Check this
+        // Reschedule Session
         builder.addCase(rescheduleCoachSession.pending, state => {
             state.loading = true;
         });
         builder.addCase(rescheduleCoachSession.fulfilled, (state, action) => {
             state.loading = false;
             state.coachScheduledSessions = action.payload.data;
+            toast.success(action.payload.message || 'Session Rescheduled Successsfully')
         });
         builder.addCase(rescheduleCoachSession.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            toast.error(action.payload || 'Failed To Rescheduled Session')
         });
     },
 });

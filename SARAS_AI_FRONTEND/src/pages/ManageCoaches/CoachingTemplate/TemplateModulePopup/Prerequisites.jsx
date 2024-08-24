@@ -14,7 +14,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import CustomTimeField from '../../../../components/CustomFields/CustomTimeField';
 import CustomDateField from '../../../../components/CustomFields/CustomDateField';
 import { Controller, useForm } from 'react-hook-form';
-import CustomFormControl from '../../../../components/CustomFields/CustomFromControl';
 import ReusableDialog from '../../../../components/CustomFields/ReusableDialog';
 import {addPrerequisites, getAllCoachTemplateModules, getCoachTemplateModuleId, setSelectedModule} from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
 import CustomModuleFormControl from '../../../../components/CustomFields/CustomModuleFormControl';
@@ -73,8 +72,8 @@ const PrerequisitesPopup = ({ open, prereqModuleData, prereqActivityData, handle
     const { coachTemplatesId } = useSelector((state) => state.coachTemplate)
     
     useEffect(() => {   
-        if(prereqModuleData && prereqModuleData.id){
-            dispatch(getCoachTemplateModuleId(prereqModuleData.id));
+        if(prereqModuleData && prereqModuleData.template_id){
+            dispatch(getCoachTemplateModuleId(prereqModuleData.template_id));
         }
     },[dispatch, prereqModuleData])
 
@@ -151,7 +150,7 @@ const PrerequisitesPopup = ({ open, prereqModuleData, prereqActivityData, handle
         }
         dispatch(addPrerequisites(prereqData))
         .then(() => {
-            dispatch(getCoachTemplateModuleId(prereqModuleData.id))
+            dispatch(getCoachTemplateModuleId(prereqModuleData.template_id))
         });
         console.log("prereq formdata: -->",prereqData);
         handleClosePopup();

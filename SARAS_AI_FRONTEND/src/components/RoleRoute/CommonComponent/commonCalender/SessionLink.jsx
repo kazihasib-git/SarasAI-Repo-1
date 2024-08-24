@@ -84,9 +84,9 @@ const SessionLink = ({ componentName, platformName, platformUrl }) => {
     const handleEditStudents = () => {};
 
     const handleLinkCopy = () => {
-        if (platformUrl) {
+        if (sessionEventData) {
             navigator.clipboard
-                .writeText(platformUrl)
+                .writeText(sessionEventData.platform_meeting.host_meeting_url)
                 .then(() => {
                     setCopySuccess(true);
                     setTimeout(() => setCopySuccess(false), 2000);
@@ -99,9 +99,11 @@ const SessionLink = ({ componentName, platformName, platformUrl }) => {
         }
     };
 
-    const handleJoinMeeting = () => {
-        window.open(platformUrl, '_blank');
+    const handleJoinMeeting = (data) => {
+        window.open(data.platform_meeting.host_meeting_url, '_blank');
     };
+
+    console.log("   ",sessionEventData)
 
     const content = (
         <Box sx={{ textAlign: 'center' }}>
@@ -109,14 +111,14 @@ const SessionLink = ({ componentName, platformName, platformUrl }) => {
                 {formatDateTime(sessionEventData)}
             </Typography>
             <CustomButton
-                onClick={handleJoinMeeting}
+                onClick={() => handleJoinMeeting(sessionEventData)}
                 backgroundColor="#FFFFFF"
                 borderColor="#F56D38"
                 color="#F56D38"
                 sx={{ mb: 2, mr: 2 }}
                 style={{ textTransform: 'none' }}
             >
-                Join with {platformName}
+                Join with {sessionEventData.platform_tools.name}
             </CustomButton>
             <CustomButton
                 onClick={handleChangeMode}
@@ -132,7 +134,7 @@ const SessionLink = ({ componentName, platformName, platformUrl }) => {
                 variant="body2"
                 sx={{ mb: 2, overflow: 'hidden', textOverflow: 'ellipsis' }}
             >
-                {platformUrl}
+                {sessionEventData.platform_meeting.host_meeting_url}
                 <IconButton
                     size="small"
                     sx={{

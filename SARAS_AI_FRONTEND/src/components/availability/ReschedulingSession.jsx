@@ -35,6 +35,7 @@ import { timezoneIdToName } from '../../utils/timezoneIdToName';
 import { convertFromUTC } from '../../utils/dateAndtimeConversion';
 import { getTimezone } from '../../redux/features/utils/utilSlice';
 import { toast } from 'react-toastify';
+import PopTableSlot from '../CommonComponent/PopTableSlot';
 const headers = ['S. No.', 'Slots Available', 'Select'];
 
 const ReschedulingSession = ({ componentName, timezoneID }) => {
@@ -83,7 +84,7 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
 
     switch (componentName) {
         case 'TACALENDER':
-            sliceName = 'taAvailability';
+            sliceName = 'taAvialability';
             rescheduleSessionOpenKey = 'resheduleSessionOpen';
             closeRescheduleSessionAction = closeRescheduleSession;
             fetchAvailableSlotsAction = fetchAvailableSlots;
@@ -301,7 +302,7 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
             ) : (
                 selectDate && (
                     <>
-                        <PopUpTable
+                        <PopTableSlot
                             headers={headers}
                             initialData={transformedSlotsData}
                             onRowClick={handleSelectSlot}
