@@ -159,7 +159,12 @@ const DynamicTable = ({
                     console.log(id);
                     navigate(`/active-Coach-courses/${id}`); // Append id as a parameter
                 } 
-            }
+            } else if (componentName === 'TACOURSEMAPPING') {
+                if (type === 'courses') {
+                    console.log(id);
+                    navigate(`/active-Ta-courses/${id}`); // Append id as a parameter
+                } 
+            } 
         }
     };
 

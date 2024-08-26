@@ -138,6 +138,23 @@ const Sidebar = () => {
                                 </span>
                             </Link>
                         </li>
+                        <li>
+                            <Link
+                                to={'/ta-course-mapping'}
+                                className={
+                                    activeLink === '/ta-course-mapping'
+                                        ? 'active-link'
+                                        : ''
+                                }
+                                onClick={() =>
+                                    handleLinkClick('/ta-course-mapping')
+                                }
+                            >
+                                <span className="SideSubHeading">
+                                    TA Course Mapping
+                                </span>
+                            </Link>
+                        </li>
                     </ul>
                 </li>
                 <Divider
@@ -257,23 +274,6 @@ const Sidebar = () => {
                             >
                                 <span className="SideSubHeading">
                                     Coach Scheduling
-                                </span>
-                            </Link>
-                        </li>
-                        <li>
-                            <Link
-                                to={'/coach-course-mapping'}
-                                className={
-                                    activeLink === '/coach-course-mapping'
-                                        ? 'active-link'
-                                        : ''
-                                }
-                                onClick={() =>
-                                    handleLinkClick('/coach-course-mapping')
-                                }
-                            >
-                                <span className="SideSubHeading">
-                                    Coach Course Mapping
                                 </span>
                             </Link>
                         </li>

@@ -273,6 +273,61 @@ export const deleteTaMapping = createAsyncThunk(
     }
 );
 
+export const showTaCourseMapping = createAsyncThunk(
+    'taModule/showTaCourseMapping',
+    async rejectWithValue => {
+        try{
+            const response = await axiosInstance.get(
+                `${baseUrl}/admin/ta-course/getAllTasWithCourses`
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message)
+            }else{
+                return rejectWithValue('An Error Occurred While Fetching Courses')
+            }
+        }
+    }
+);
+
+export const getAllCoursesWithTas = createAsyncThunk(
+    'taModule/getAllCoursesWithTas',
+    async rejectWithValue => {
+        try{
+            const response = await axiosInstance.get(
+                `${baseUrl}/admin/ta-course/getAllCoursesWithTas`
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message)
+            }else{
+                return rejectWithValue('An Error Occurred While Fetching Ta Courses')
+            }
+        }
+    }
+);
+
+export const assignCourseToTa = createAsyncThunk(
+    'taModule/assignCourseToTa',
+    async (data , { rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.post(
+                `${baseUrl}/admin/ta-course`,
+                data    
+            );
+            return response.data;   
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message)
+            }else {
+                return rejectWithValue('An Error Occurred While Assigning Course')
+            }
+        }
+    }
+);
+
 const initialState = {
     tas: [],
     studentBatchMapping: [],
@@ -290,6 +345,7 @@ const initialState = {
     assignBatchOpen: false,
     ta_name: null,
     taID: null,
+    taCourseMappingData: [],
 };
 
 export const taSlice = createSlice({
@@ -598,6 +654,50 @@ export const taSlice = createSlice({
             state.error = action.payload || action.error.message;
             toast.error(action.payload || 'Failed To Delete Assigned Batch')
         });
+        builder.addCase(showTaCourseMapping.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(showTaCourseMapping.fulfilled, (state, action) => {
+            console.log('Ta mapping action ', action.payload);
+            state.loading = false;
+            state.taCourseMappingData = action.payload.tas;
+        });
+        builder.addCase(showTaCourseMapping.rejected, (state, action) => {
+            state.loading = false;
+            state.taCourseMappingData = [];
+            state.error = action.payload || action.error.message;
+        });
+
+        builder.addCase(getAllCoursesWithTas.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(getAllCoursesWithTas.fulfilled, (state, action) => {
+            console.log('Ta mapping action ', action.payload);
+            state.loading = false;
+            state.allCoursesWithTas = action.payload.courses;
+        });
+        builder.addCase(getAllCoursesWithTas.rejected, (state, action) => {
+            state.loading = false;
+            state.allCoursesWithTas = [];
+            state.error = action.payload || action.error.message;
+        });
+        
+
+        builder.addCase(assignCourseToTa.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(assignCourseToTa.fulfilled, (state, action) => {
+            console.log('Ta mapping action ', action.payload);
+            state.loading = false;
+            toast.success(action.payload.message || 'Courses Assigned To Ta Successfully')
+        });
+        builder.addCase(assignCourseToTa.rejected, (state, action) => {
+            state.loading = false;
+            console.error('Error assigning course to TA:', action.error);
+            state.error = action.payload || action.error.message;
+            toast.error(action.payload || 'Failed To Assign Courses To Ta. Server Error.');
+        });
+
     },
 });
 

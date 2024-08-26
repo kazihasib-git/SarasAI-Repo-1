@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Checkbox, Box, Pagination, Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAllCoursesWithCoaches, assignCourseToCoach } from '../../redux/features/adminModule/coach/coachSlice';
+import { getAllCoursesWithTas, assignCourseToTa } from '../../redux/features/adminModule/ta/taSlice';
 import CustomButton from '../CustomFields/CustomButton';
 const CustomCheckbox = styled(Checkbox)(({ theme }) => ({
     color: '#F56D3B',
@@ -11,32 +11,36 @@ const CustomCheckbox = styled(Checkbox)(({ theme }) => ({
     },
 }));
 
-const AdminCoursesTable = ({ coachId }) => {
+const AdminCoursesTable = ({ taId }) => {
     const headers = ['Sr. No.', 'Course Name', 'Description', 'Start Date', 'End Date', 'Assigned'];
     const [data, setData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
     const [selectedCourses, setSelectedCourses] = useState([]);
 
+    console.log( 'data length ::',data.length)
+
+    
+    const dispatch = useDispatch();
+
+    const { allCoursesWithTas } = useSelector(
+        state => state.taModule
+    );
+
+    useEffect(() => {
+        dispatch(getAllCoursesWithTas());
+    }, [dispatch]);
+
+    useEffect(() => {
+        setData(allCoursesWithTas);
+    }, [allCoursesWithTas]);
+   
     const totalPages = Math.ceil(data.length / itemsPerPage);
     const currentData = data.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );
-    const dispatch = useDispatch();
-
-    const { allCoursesWithCoaches } = useSelector(
-        state => state.coachModule
-    );
-
-    useEffect(() => {
-        dispatch(getAllCoursesWithCoaches());
-    }, [dispatch]);
-
-    useEffect(() => {
-        setData(allCoursesWithCoaches);
-    }, [allCoursesWithCoaches]);
-   
+    
     const handlePageChange = (event, pageNumber) => {
         setCurrentPage(pageNumber);
     };
@@ -46,9 +50,9 @@ const AdminCoursesTable = ({ coachId }) => {
           item.id === courseId
             ? {
                 ...item,
-                coaches: item.coaches.includes(coachId)
-                  ? item.coaches.filter((c) => c !== coachId)
-                  : [...item.coaches, coachId],
+                tas: item.tas.includes(taId)
+                  ? item.tas.filter((c) => c !== taId)
+                  : [...item.tas, taId],
               }
             : item
         );
@@ -68,14 +72,14 @@ const AdminCoursesTable = ({ coachId }) => {
         const assignedCourses = selectedCourses.map(courseId => ({ id: courseId }));
 
         const requestData = {
-            Coach_id: coachId,
+            ta_id: taId,
             courses: assignedCourses,
         };
 
         console.log(requestData);
 
-        // Dispatch the API call to assign/unassign the coach to/from the courses
-        dispatch(assignCourseToCoach(requestData));
+        // Dispatch the API call to assign/unassign the ta to/from the courses
+        dispatch(assignCourseToTa(requestData));
     };
 
 
@@ -119,14 +123,14 @@ const AdminCoursesTable = ({ coachId }) => {
 
                            
 
-{item.coaches.find(i => i.id==coachId)!=null ? (
+{item.tas.find(i => i.id==taId)!=null ? (
      <CustomCheckbox
-     checked={item.coaches.find(i => i.id==coachId)!=null}
+     checked={item.tas.find(i => i.id==taId)!=null}
      onChange={() => handleClick(item.id)}
  />
   ) : (
     <CustomCheckbox
-      checked={item.coaches.includes(coachId)}
+      checked={item.tas.includes(taId)}
       onChange={() => handleClick(item.id)}
     />
   )}
@@ -190,4 +194,3 @@ const AdminCoursesTable = ({ coachId }) => {
 };
 
 export default AdminCoursesTable;
-
