@@ -1,5 +1,5 @@
 import moment from 'moment-timezone';
- 
+
 async function convertFromUTC({
     start_date,
     start_time,
@@ -9,17 +9,22 @@ async function convertFromUTC({
 }) {
     try {
         // Combine date and time for the start and end times
-        const fromDateTimeUTC = moment.utc(`${start_date} ${start_time}`, 'YYYY-MM-DD HH:mm:ss');
-        const toDateTimeUTC = moment.utc(`${end_date} ${end_time}`, 'YYYY-MM-DD HH:mm:ss');
-  
-        //console.log('..............................>>>>>>>>>>>>>>>>>>', fromDateTimeUTC, toDateTimeUTC);
+        const fromDateTimeUTC = moment.utc(
+            `${start_date} ${start_time}`,
+            'YYYY-MM-DD HH:mm:ss'
+        );
+        const toDateTimeUTC = moment.utc(
+            `${end_date} ${end_time}`,
+            'YYYY-MM-DD HH:mm:ss'
+        );
 
+        //console.log('..............................>>>>>>>>>>>>>>>>>>', fromDateTimeUTC, toDateTimeUTC);
 
         // Convert from UTC to the specified timezone
         const fromDateTimeLocal = fromDateTimeUTC.tz(timezonename);
         const toDateTimeLocal = toDateTimeUTC.tz(timezonename);
 
-       // console.log('..............................>>>>>>>>>>>>>>>>>>', fromDateTimeLocal, toDateTimeLocal);
+        // console.log('..............................>>>>>>>>>>>>>>>>>>', fromDateTimeLocal, toDateTimeLocal);
 
         const obj = {
             start_date: fromDateTimeLocal.format('YYYY-MM-DD'),
@@ -27,12 +32,12 @@ async function convertFromUTC({
             end_time: toDateTimeLocal.format('HH:mm:ss'),
             end_date: toDateTimeLocal.format('YYYY-MM-DD'),
         };
- 
+
         return obj;
     } catch (error) {
         console.error('Error in convertFromUTC:', error);
         throw error;
     }
 }
- 
+
 export { convertFromUTC };

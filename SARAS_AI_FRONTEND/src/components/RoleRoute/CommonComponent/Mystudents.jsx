@@ -57,14 +57,29 @@ const Mystudents = ({ role }) => {
 
                     // Count the number of activities
                     // Assuming you have multiple modules within a template
-                    const activitiesScheduled = student.coachingtemplate.reduce((count, template) => {
-                        return count + template.modules.reduce((moduleCount, module) => {
-                            console.log(`Module ${module.module_name} has ${module.activities.length} activities.`);
-                            return moduleCount + module.activities.length;
-                        }, 0);
-                    }, 0);
-                    console.log(`Total activities scheduled: ${activitiesScheduled}`);
-                    
+                    const activitiesScheduled = student.coachingtemplate.reduce(
+                        (count, template) => {
+                            return (
+                                count +
+                                template.modules.reduce(
+                                    (moduleCount, module) => {
+                                        console.log(
+                                            `Module ${module.module_name} has ${module.activities.length} activities.`
+                                        );
+                                        return (
+                                            moduleCount +
+                                            module.activities.length
+                                        );
+                                    },
+                                    0
+                                )
+                            );
+                        },
+                        0
+                    );
+                    console.log(
+                        `Total activities scheduled: ${activitiesScheduled}`
+                    );
 
                     // Set default values for Activities Completed and Due Dates Missed
                     const activitiesCompleted = 0;

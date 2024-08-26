@@ -22,7 +22,10 @@ import {
     createCoachSchedule,
 } from '../../../../../redux/features/adminModule/coach/coachSchedule';
 import { getTaAvailableSlotsFromDate } from '../../../../../redux/features/adminModule/ta/taScheduling';
-import { getPlatforms, getTimezone } from '../../../../../redux/features/utils/utilSlice';
+import {
+    getPlatforms,
+    getTimezone,
+} from '../../../../../redux/features/utils/utilSlice';
 import { timezoneIdToName } from '../../../../../utils/timezoneIdToName';
 import { convertFromUTC } from '../../../../../utils/dateAndtimeConversion';
 import CustomPlatformForm from '../../../../../components/CustomFields/CustomPlatformForm';
@@ -41,11 +44,11 @@ const VirtualGroupSession = () => {
     const [selectedPlatform, setSelectedPlatform] = useState(null);
     const { coaches } = useSelector(state => state.coachModule);
     const { timezones, platforms } = useSelector(state => state.util);
-    const [selectedSlot, setSelectedSlot] = useState(''); 
+    const [selectedSlot, setSelectedSlot] = useState('');
 
-    const handleSlotChange = (event) => {
+    const handleSlotChange = event => {
         console.log(event.target.value);
-        setSelectedSlot(event.target.value); 
+        setSelectedSlot(event.target.value);
     };
 
     let weeksArray = Array(7).fill(0);
@@ -68,11 +71,8 @@ const VirtualGroupSession = () => {
 
     const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
 
-    const tranformSlots = async (coachAvailableSlots) =>{
-        const timezonename = timezoneIdToName(
-            storedTimezoneId,
-            timezones
-        );
+    const tranformSlots = async coachAvailableSlots => {
+        const timezonename = timezoneIdToName(storedTimezoneId, timezones);
         const transformedSlots = await Promise.all(
             coachAvailableSlots.map(async slot => {
                 console.log(slot);
@@ -83,29 +83,27 @@ const VirtualGroupSession = () => {
                     end_date: slot.slot_end_date.split(' ')[0],
                     timezonename,
                 });
-                console.log(
-                    'Converted Local Schedule Time:',
-                    localTime);
+                console.log('Converted Local Schedule Time:', localTime);
                 const newSlot = {
                     from_time: localTime.start_time,
                     to_time: localTime.end_time,
-                    id: slot.id
-                }
-                return newSlot; 
-            }
-        ))
-        console.log('transformed slots',transformedSlots);
+                    id: slot.id,
+                };
+                return newSlot;
+            })
+        );
+        console.log('transformed slots', transformedSlots);
         setCoachSlots(transformedSlots);
-    }
+    };
 
-    useEffect(()=>{
+    useEffect(() => {
         tranformSlots(coachAvailableSlots);
-    },[coachAvailableSlots]);
+    }, [coachAvailableSlots]);
 
-    useEffect(()=>{
+    useEffect(() => {
         dispatch(getTimezone());
         dispatch(getPlatforms());
-    },[dispatch]);
+    }, [dispatch]);
 
     const coachOptions = coaches.map(coach => ({
         value: coach.name,
@@ -124,30 +122,34 @@ const VirtualGroupSession = () => {
     };
 
     useEffect(() => {
-        const selectedCoachTimeZone = timezones.find(timezone => timezone.id===coachTimeZone);
+        const selectedCoachTimeZone = timezones.find(
+            timezone => timezone.id === coachTimeZone
+        );
 
-        if(selectedCoachTimeZone){
-        const data = {
-            admin_user_id: selectedCoachId,
-            date: fromDate,
-            timezone_name: selectedCoachTimeZone.time_zone,
-        };
-        console.log('data', data);
-        if (fromDate && selectedCoachId) {
-            dispatch(getTaAvailableSlotsFromDate(data));
-            dispatch(getCoachAvailableSlotsFromDate(data));
-        }
+        if (selectedCoachTimeZone) {
+            const data = {
+                admin_user_id: selectedCoachId,
+                date: fromDate,
+                timezone_name: selectedCoachTimeZone.time_zone,
+            };
+            console.log('data', data);
+            if (fromDate && selectedCoachId) {
+                dispatch(getTaAvailableSlotsFromDate(data));
+                dispatch(getCoachAvailableSlotsFromDate(data));
+            }
         }
     }, [fromDate, dispatch]);
 
-    useEffect(()=>{
-       const selectedCoach = coaches.find(coach => coach.id===selectedCoachId);
-       if(selectedCoach) setCoachTimeZone(selectedCoach.timezone_id);
-    },[selectedCoachId]);
+    useEffect(() => {
+        const selectedCoach = coaches.find(
+            coach => coach.id === selectedCoachId
+        );
+        if (selectedCoach) setCoachTimeZone(selectedCoach.timezone_id);
+    }, [selectedCoachId]);
 
-    const handlePlatformChange = event =>{
+    const handlePlatformChange = event => {
         setSelectedPlatform(event.target.value);
-    }
+    };
 
     return (
         <>
@@ -178,97 +180,8 @@ const VirtualGroupSession = () => {
                 />
             </Grid>
 
-           {selectedCoachId && ( 
-            <>
-                <Grid
-                    item
-                    xs={12}
-                    sm={6}
-                    md={6}
-                    style={{ margin: '5px 0px', width: '80%' }}
-                >
-                    <Controller
-                        name="date"
-                        control={control}
-                        defaultValue={null}
-                        render={({ field }) => (
-                            <CustomDateField
-                                label="Select Date"
-                                name="date"
-                                value={fromDate}
-                                onChange={setFromDate}
-                                fullWidth
-                            />
-                        )}
-                    />
-                </Grid>
-
-                {fromDate && (
-                    <>
-                    <Grid item xs={12} style={{ margin: '5px 0px', width: '80%' }}>
-                        <Typography variant="h6">Available Slots</Typography>
-                        {coachSlots && coachSlots.length > 0 ? (
-                            <RadioGroup value={selectedSlot} onChange={handleSlotChange}>
-                                {coachSlots.map((slot, index) => (
-                                    <FormControlLabel 
-                                        key={index}
-                                        control={<Radio />}
-                                        label={`${formatTime(slot.from_time)} - ${formatTime(slot.to_time)}`}
-                                        value={slot.id}
-                                    />
-                                ))}
-                            </RadioGroup>
-                        ) : (
-                            <Typography>No slots available</Typography>
-                        )}
-
-                    <CustomPlatformForm
-                        label="Platform"
-                        name="platform"
-                        placeholder="Select Platform"
-                        value={
-                            selectedPlatform
-                        }
-                        onChange={handlePlatformChange}
-                        errors={''}
-                        options={platforms}
-                        sx={{ width: '100px' }} // Adjust the width as needed
-                    />
-                    </Grid>
-                    <Grid
-                        container
-                        spacing={1}
-                        style={{ margin: '5px 0px', width: '80%' }}
-                    >
-                        <Grid item xs={6}>
-                            <Controller
-                                name="fromTime"
-                                control={control}
-                                defaultValue=""
-                                render={({ field }) => (
-                                    <CustomTimeField
-                                        {...field}
-                                        label="From Time"
-                                        fullWidth
-                                    />
-                                )}
-                            />
-                        </Grid>
-                        <Grid item xs={6}>
-                            <Controller
-                                name="toTime"
-                                control={control}
-                                defaultValue=""
-                                render={({ field }) => (
-                                    <CustomTimeField
-                                        {...field}
-                                        label="To Time"
-                                        fullWidth
-                                    />
-                                )}
-                            />
-                        </Grid>
-                    </Grid>
+            {selectedCoachId && (
+                <>
                     <Grid
                         item
                         xs={12}
@@ -277,27 +190,123 @@ const VirtualGroupSession = () => {
                         style={{ margin: '5px 0px', width: '80%' }}
                     >
                         <Controller
-                            name="timezone"
+                            name="date"
                             control={control}
-                            defaultValue="IST"
+                            defaultValue={null}
                             render={({ field }) => (
-                                <CustomFormControl
-                                    label="Time Zone"
-                                    name="timezone"
-                                    value={coachTimeZone}
-                                    disabled={true}
-                                    errors={errors}
-                                    options={timezones.map(zone => ({
-                                        value: zone.id,
-                                        label: zone.time_zone,
-                                    }))}
+                                <CustomDateField
+                                    label="Select Date"
+                                    name="date"
+                                    value={fromDate}
+                                    onChange={setFromDate}
+                                    fullWidth
                                 />
                             )}
                         />
                     </Grid>
-                    </>
-                )}
-            </>
+
+                    {fromDate && (
+                        <>
+                            <Grid
+                                item
+                                xs={12}
+                                style={{ margin: '5px 0px', width: '80%' }}
+                            >
+                                <Typography variant="h6">
+                                    Available Slots
+                                </Typography>
+                                {coachSlots && coachSlots.length > 0 ? (
+                                    <RadioGroup
+                                        value={selectedSlot}
+                                        onChange={handleSlotChange}
+                                    >
+                                        {coachSlots.map((slot, index) => (
+                                            <FormControlLabel
+                                                key={index}
+                                                control={<Radio />}
+                                                label={`${formatTime(slot.from_time)} - ${formatTime(slot.to_time)}`}
+                                                value={slot.id}
+                                            />
+                                        ))}
+                                    </RadioGroup>
+                                ) : (
+                                    <Typography>No slots available</Typography>
+                                )}
+
+                                <CustomPlatformForm
+                                    label="Platform"
+                                    name="platform"
+                                    placeholder="Select Platform"
+                                    value={selectedPlatform}
+                                    onChange={handlePlatformChange}
+                                    errors={''}
+                                    options={platforms}
+                                    sx={{ width: '100px' }} // Adjust the width as needed
+                                />
+                            </Grid>
+                            <Grid
+                                container
+                                spacing={1}
+                                style={{ margin: '5px 0px', width: '80%' }}
+                            >
+                                <Grid item xs={6}>
+                                    <Controller
+                                        name="fromTime"
+                                        control={control}
+                                        defaultValue=""
+                                        render={({ field }) => (
+                                            <CustomTimeField
+                                                {...field}
+                                                label="From Time"
+                                                fullWidth
+                                            />
+                                        )}
+                                    />
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <Controller
+                                        name="toTime"
+                                        control={control}
+                                        defaultValue=""
+                                        render={({ field }) => (
+                                            <CustomTimeField
+                                                {...field}
+                                                label="To Time"
+                                                fullWidth
+                                            />
+                                        )}
+                                    />
+                                </Grid>
+                            </Grid>
+                            <Grid
+                                item
+                                xs={12}
+                                sm={6}
+                                md={6}
+                                style={{ margin: '5px 0px', width: '80%' }}
+                            >
+                                <Controller
+                                    name="timezone"
+                                    control={control}
+                                    defaultValue="IST"
+                                    render={({ field }) => (
+                                        <CustomFormControl
+                                            label="Time Zone"
+                                            name="timezone"
+                                            value={coachTimeZone}
+                                            disabled={true}
+                                            errors={errors}
+                                            options={timezones.map(zone => ({
+                                                value: zone.id,
+                                                label: zone.time_zone,
+                                            }))}
+                                        />
+                                    )}
+                                />
+                            </Grid>
+                        </>
+                    )}
+                </>
             )}
         </>
     );

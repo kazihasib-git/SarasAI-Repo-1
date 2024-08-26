@@ -13,7 +13,7 @@ const CoachTemplateTable = ({
     headers,
     initialData,
     actionButtons,
-    onAssignedToClick, 
+    onAssignedToClick,
     componentName,
 }) => {
     const [data, setData] = useState(
@@ -98,7 +98,7 @@ const CoachTemplateTable = ({
     //         return "#000000";
     //     }
     //   };
-    
+
     return (
         <div className="tableContainer">
             <table>
@@ -133,27 +133,30 @@ const CoachTemplateTable = ({
                                 </td>
                                 {Object.keys(item).map((key, idx) => {
                                     // {console.log("KEY : ", key)}
-                                      if (key === "Assigned To") {
+                                    if (key === 'Assigned To') {
                                         return (
                                             <td
                                                 key={idx}
-                                                onClick={() => onAssignedToClick(item.id)}
+                                                onClick={() =>
+                                                    onAssignedToClick(item.id)
+                                                }
                                                 style={{
-                                                    cursor: 'pointer',  
-                                                    color: '#000',     
+                                                    cursor: 'pointer',
+                                                    color: '#000',
                                                 }}
-                                                onMouseOver={(e) => {
-                                                    e.target.style.color = '#F56D3B';  
+                                                onMouseOver={e => {
+                                                    e.target.style.color =
+                                                        '#F56D3B';
                                                 }}
-                                                onMouseOut={(e) => {
-                                                    e.target.style.color = '#000'; 
+                                                onMouseOut={e => {
+                                                    e.target.style.color =
+                                                        '#000';
                                                 }}
                                             >
                                                 {item[key]}
                                             </td>
                                         );
-                                      }  
-                                      else if (
+                                    } else if (
                                         key !== 'id' &&
                                         key !== 'is_active' &&
                                         key !== 'timezone'

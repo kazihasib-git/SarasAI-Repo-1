@@ -294,7 +294,9 @@ function App() {
                         />
                         <Route
                             path="coach-template/template-students/:id"
-                            element={<AssignedTemplateStudents page="Assigned Template Students"/>}
+                            element={
+                                <AssignedTemplateStudents page="Assigned Template Students" />
+                            }
                         />
                         <Route
                             path="coach-availability"
@@ -308,8 +310,12 @@ function App() {
                                 <CoachScheduling page="Coach Scheduling" />
                             }
                         />
-                        
-                        
+                        <Route
+                            path="coach-course-mapping"
+                            element={
+                                <CoachCourseMapping page="Coach Course Mapping" />
+                            }
+                        />
 
                         <Route path="students" element={<StudentPage />} />
                         <Route path="batches" element={<BatchPage />} />

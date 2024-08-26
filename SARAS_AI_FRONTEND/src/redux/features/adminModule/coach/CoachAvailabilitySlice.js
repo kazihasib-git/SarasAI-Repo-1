@@ -289,7 +289,7 @@ const initialState = {
     coachId: [],
     coachName: [],
     coachSessionEventData: [],
-    coachMarkLeaveData : [],
+    coachMarkLeaveData: [],
     coachOpenEventData: false,
 
     coachEditScheduledStudents: false,
@@ -309,11 +309,11 @@ export const coachAvailabilitySlice = createSlice({
         },
         openCoachScheduledSlots(state, action) {
             state.scheduledCoachSlotsOpen = true;
-            state.coachMarkLeaveData = action.payload
+            state.coachMarkLeaveData = action.payload;
         },
         closeCoachScheduledSlots(state) {
             state.scheduledCoachSlotsOpen = false;
-            state.coachMarkLeaveData = []
+            state.coachMarkLeaveData = [];
         },
         openCoachScheduledSession(state, action) {
             console.log('Open Action slotCoachEventData : ', action.payload);
@@ -338,11 +338,11 @@ export const coachAvailabilitySlice = createSlice({
         },
         openCoachReasonForLeave(state, action) {
             state.reasonForCoachLeaveOpen = true;
-            state.coachMarkLeaveData = action.payload
+            state.coachMarkLeaveData = action.payload;
         },
         closeCoachReasonForLeave(state) {
             state.reasonForCoachLeaveOpen = false;
-            state.coachMarkLeaveData = []
+            state.coachMarkLeaveData = [];
         },
         openCoachRescheduleSession(state, action) {
             console.log('Open Action sessionCoachEventData : ', action.payload);

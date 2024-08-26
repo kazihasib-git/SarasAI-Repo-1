@@ -31,7 +31,10 @@ import CustomFormControl from '../../../CustomFields/CustomFromControl';
 import CustomDateField from '../../../CustomFields/CustomDateField';
 import CustomTimeField from '../../../CustomFields/CustomTimeField';
 import CustomTimeZoneForm from '../../../CustomFields/CustomTimeZoneForm';
-import { getPlatforms, getTimezone } from '../../../../redux/features/utils/utilSlice';
+import {
+    getPlatforms,
+    getTimezone,
+} from '../../../../redux/features/utils/utilSlice';
 import CustomPlatformForm from '../../../CustomFields/CustomPlatformForm';
 
 const CustomButton = ({
@@ -87,7 +90,6 @@ const actionButtons = [
     },
 ];
 
-
 const durationOptions = [
     { label: '15 minutes', value: '00:15:00' },
     { label: '30 minutes', value: '00:30:00' },
@@ -107,14 +109,14 @@ const EditSession = ({ componentName }) => {
         state => state.commonCalender
     );
 
-    console.log("session data", sessionData);
-    const startTime = moment(sessionData.start_time, "HH:mm:ss");
-    const endTime = moment(sessionData.end_time, "HH:mm:ss");
+    console.log('session data', sessionData);
+    const startTime = moment(sessionData.start_time, 'HH:mm:ss');
+    const endTime = moment(sessionData.end_time, 'HH:mm:ss');
     const timeDifference = moment.duration(endTime.diff(startTime));
     const formattedDifference = [
         String(Math.floor(timeDifference.asHours())).padStart(2, '0'),
         String(timeDifference.minutes()).padStart(2, '0'),
-        String(timeDifference.seconds()).padStart(2, '0')
+        String(timeDifference.seconds()).padStart(2, '0'),
     ].join(':');
 
     const studentData = sessionData.students || [];
@@ -136,8 +138,8 @@ const EditSession = ({ componentName }) => {
         platforms: sessionData.platform_id,
         fromDate: sessionData.date || '',
         toDate: sessionData.to_date || '',
-        fromTime: moment(sessionData.start_time, "HH:mm:ss"),
-        toTime: moment(sessionData.end_time, "HH:mm:ss"),
+        fromTime: moment(sessionData.start_time, 'HH:mm:ss'),
+        toTime: moment(sessionData.end_time, 'HH:mm:ss'),
         timezone_id: sessionData.timezone_id,
     });
 
@@ -232,8 +234,8 @@ const EditSession = ({ componentName }) => {
             start_time: formData.fromTime,
             end_time: endTime,
             message: formData.message,
-            platform_id : formData.platform_id,
-            timezone_id : formData.timezone_id,
+            platform_id: formData.platform_id,
+            timezone_id: formData.timezone_id,
             event_status: 'scheduled',
             studentId: studentId,
             batchId: batchId,
@@ -409,7 +411,10 @@ const EditSession = ({ componentName }) => {
                                     name="timezone"
                                     value={formData.timezone_id}
                                     onChange={e =>
-                                        handleChange('timezone_id', e.target.value)
+                                        handleChange(
+                                            'timezone_id',
+                                            e.target.value
+                                        )
                                     }
                                     options={timezones}
                                     errors={!!error.timezone}
@@ -474,7 +479,6 @@ const EditSession = ({ componentName }) => {
                                     </Button>
                                 </Box>
                             </Grid>
-
                         </Grid>
                     </Box>
                 </form>
@@ -486,9 +490,9 @@ const EditSession = ({ componentName }) => {
         <CustomButton
             onClick={handleSubmit}
             style={{
-                backgroundColor : "#F56D3B",
-                borderColor : "#F56D3B",
-                color : "#FFFFFF",
+                backgroundColor: '#F56D3B',
+                borderColor: '#F56D3B',
+                color: '#FFFFFF',
                 textTransform: 'none',
                 fontFamily: 'Bold',
             }}

@@ -17,6 +17,7 @@ h1 {
     top: 85px;
     height: 600px;
     background-color: #fff;
+    
 }
 
 .box1 {
@@ -24,8 +25,9 @@ h1 {
     left: 0;
     border-radius: 10px 0 0 10px;
     height: 80vh;
-    overflow: hidden;
+    overflow: hidden; 
     margin-right: 5px; /* Adjust this value for more or less margin */
+    
 }
 
 .box2 {
@@ -137,6 +139,8 @@ h1 {
     box-sizing: border-box;
     overflow-y: auto;
     background-color: #fff;
+   
+    padding-bottom: 22px;
 }
 
 /* General chat-item styling */
@@ -149,6 +153,8 @@ h1 {
     padding: 10px;
     cursor: pointer;
     border-radius: 12px;
+    position: relative; 
+    
 }
 
 /* Active chat item styling */
@@ -172,18 +178,20 @@ h1 {
     justify-content: center;
     margin-right: 10px;
     max-width: 70%;
+    
 }
+
 
 /* Last message text */
 .last-message {
     color: #a6a6a6;
 }
 
-/* Last seen time */
+
 .last-seen {
     position: absolute;
-    right: 25px;
-    font-size: 16px;
+    font-size: 15px;
+    right: 25px; 
     color: #888;
 }
 
@@ -362,6 +370,19 @@ h1 {
 .checkbox-container .MuiCheckbox-root {
     margin-right: 5px;
 }
+.status-indicator {
+    width: 8px; /* Adjust size as needed */
+    height: 8px; /* Adjust size as needed */
+    border-radius: 50%;
+    background-color: #ffffff; /* Default color */
+    margin-right: 2px; /* Space between indicator and status text */
+    margin-top: 2px;
+}
+
+.status-indicator.online {
+    background-color:#68D391; /* Color when online */
+}
+
 
 /* Responsive Box adjustments */
 @media (max-width: 768px) {
@@ -438,4 +459,3 @@ h1 {
         margin-bottom: 10px;
     }
 }
-

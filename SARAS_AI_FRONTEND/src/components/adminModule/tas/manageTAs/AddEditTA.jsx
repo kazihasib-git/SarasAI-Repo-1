@@ -152,7 +152,6 @@ const AddEditTA = ({ data }) => {
         // console.log('formData :', formData);
 
         if (selectedImage && selectedImage.startsWith('data:image/')) {
-
             const base64Data = selectedImage.replace(
                 /^data:image\/(png|jpeg|jpg);base64,/,
                 ''
