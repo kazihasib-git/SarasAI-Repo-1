@@ -341,16 +341,9 @@ const Messages = ({ role }) => {
                             ? lastMessage.slice(0, 14) + '...'
                             : lastMessage
                         : '',
-                    lastMessageTimestamp: new Date(lastMessageTimestamp), // Store timestamp for sorting
                 };
                 reformedMappingData.push(Data);
             }
-
-            // Sort the data by lastMessageTimestamp in descending order
-            reformedMappingData.sort(
-                (a, b) => b.lastMessageTimestamp - a.lastMessageTimestamp
-            );
-
             setchatUserMappingData(reformedMappingData);
         }
     }, [assignedTaStudents, assignedCoachStudents, taCoachAllChatData]);
@@ -650,12 +643,6 @@ const Messages = ({ role }) => {
                                 placeholder="Type a message..."
                                 value={newMessage}
                                 onChange={handleMessageChange}
-                                onKeyDown={e => {
-                                    if (e.key === 'Enter') {
-                                        e.preventDefault(); // Prevents the default action of the Enter key
-                                        handleSendMessageAndFile();
-                                    }
-                                }}
                                 fullWidth
                                 sx={{
                                     borderRadius: '42px',
