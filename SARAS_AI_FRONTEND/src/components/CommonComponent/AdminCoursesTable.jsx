@@ -3,9 +3,9 @@ import { Checkbox, Box, Pagination, Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-    getAllCoursesWithCoaches,
-    assignCourseToCoach,
-} from '../../redux/features/adminModule/coach/coachSlice';
+    getAllCoursesWithTas,
+    assignCourseToTa,
+} from '../../redux/features/adminModule/ta/taSlice';
 import CustomButton from '../CustomFields/CustomButton';
 const CustomCheckbox = styled(Checkbox)(({ theme }) => ({
     color: '#F56D3B',
@@ -27,6 +27,20 @@ const AdminCoursesTable = ({ coachId }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
     const [selectedCourses, setSelectedCourses] = useState([]);
+
+    console.log('data length ::', data.length);
+
+    const dispatch = useDispatch();
+
+    const { allCoursesWithTas } = useSelector(state => state.taModule);
+
+    useEffect(() => {
+        dispatch(getAllCoursesWithTas());
+    }, [dispatch]);
+
+    useEffect(() => {
+        setData(allCoursesWithTas);
+    }, [allCoursesWithTas]);
 
     const totalPages = Math.ceil(data.length / itemsPerPage);
     const currentData = data.slice(
@@ -68,14 +82,14 @@ const AdminCoursesTable = ({ coachId }) => {
             .map(item => ({ id: item.id }));
 
         const requestData = {
-            Coach_id: coachId,
+            ta_id: taId,
             courses: assignedCourses,
         };
 
         console.log(requestData);
 
-        // Dispatch the API call to assign/unassign the coach to/from the course
-        //dispatch(assignCourseToCoach(requestData));
+        // Dispatch the API call to assign/unassign the ta to/from the courses
+        dispatch(assignCourseToTa(requestData));
     };
 
     return (
@@ -159,10 +173,22 @@ const AdminCoursesTable = ({ coachId }) => {
                                     borderBottom: '1px solid #ddd',
                                 }}
                             >
-                                <CustomCheckbox
-                                    checked={item.coaches.includes(coachId)}
-                                    onChange={() => handleClick(item.id)}
-                                />
+                                {item.coaches.find(i => i.id == coachId) !=
+                                null ? (
+                                    <CustomCheckbox
+                                        checked={
+                                            item.coaches.find(
+                                                i => i.id == coachId
+                                            ) != null
+                                        }
+                                        onChange={() => handleClick(item.id)}
+                                    />
+                                ) : (
+                                    <CustomCheckbox
+                                        checked={item.coaches.includes(coachId)}
+                                        onChange={() => handleClick(item.id)}
+                                    />
+                                )}
                             </td>
                         </tr>
                     ))}
