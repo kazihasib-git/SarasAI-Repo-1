@@ -2,10 +2,8 @@ import React from 'react';
 import moment from 'moment';
 import { Calendar, momentLocalizer, Views } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-
 import 'moment/locale/en-gb';
 import './BigCal.css';
-
 import { useDispatch } from 'react-redux';
 import { openSessionEvent } from '../../redux/features/adminModule/ta/taAvialability';
 import { openCoachSessionEvent } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
@@ -175,6 +173,19 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
         return {};
     };
 
+    const getScrollToTime = () => {
+        const currentTime = moment();
+      
+        if (currentTime.hour() >= 4) {
+          return currentTime.subtract(4, 'hours').toDate();
+        } else if(currentTime.hour() >= 2){
+          return currentTime.subtract(2, 'hours').toDate();
+        }else {
+            return currentTime.toDate()
+        }
+      };
+      
+
     return (
         <div style={{ height: 700 }}>
             <Calendar
@@ -187,6 +198,7 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
                 dayPropGetter={dayPropGetter}
                 slotPropGetter={slotPropGetter}
                 onSelectEvent={showSessionPopUp}
+                scrollToTime={getScrollToTime()}
                 step={30}
                 selectable
                 views={{ week: true }}
