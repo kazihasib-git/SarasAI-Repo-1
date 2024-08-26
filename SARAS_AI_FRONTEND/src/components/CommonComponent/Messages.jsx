@@ -188,6 +188,7 @@ const Messages = ({ role }) => {
                         ? {
                               name: selectedFile.name,
                               type: selectedFile.type,
+                              url: URL.createObjectURL(selectedFile), // Temporary URL for local preview
                           }
                         : null,
                 },
@@ -341,9 +342,16 @@ const Messages = ({ role }) => {
                             ? lastMessage.slice(0, 14) + '...'
                             : lastMessage
                         : '',
+                    lastMessageTimestamp: new Date(lastMessageTimestamp), // Store timestamp for sorting
                 };
                 reformedMappingData.push(Data);
             }
+
+            // Sort the data by lastMessageTimestamp in descending order
+            reformedMappingData.sort(
+                (a, b) => b.lastMessageTimestamp - a.lastMessageTimestamp
+            );
+
             setchatUserMappingData(reformedMappingData);
         }
     }, [assignedTaStudents, assignedCoachStudents, taCoachAllChatData]);
@@ -365,6 +373,13 @@ const Messages = ({ role }) => {
             ...checkboxes,
             [event.target.name]: event.target.checked,
         });
+    };
+
+    const handleKeyPress = event => {
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Prevents the default behavior
+            handleSendMessageAndFile(); // Calls the function to send the message and file
+        }
     };
 
     return (
@@ -572,6 +587,8 @@ const Messages = ({ role }) => {
                                                                 href={
                                                                     msg.file.url
                                                                 }
+                                                                target="_blank" // Opens in a new tab
+                                                                rel="noopener noreferrer" // Security measure
                                                             >
                                                                 <InsertDriveFileIcon
                                                                     style={{
@@ -643,6 +660,7 @@ const Messages = ({ role }) => {
                                 placeholder="Type a message..."
                                 value={newMessage}
                                 onChange={handleMessageChange}
+                                onKeyPress={handleKeyPress}
                                 fullWidth
                                 sx={{
                                     borderRadius: '42px',

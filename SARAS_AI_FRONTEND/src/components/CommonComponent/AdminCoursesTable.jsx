@@ -47,7 +47,7 @@ const AdminCoursesTable = ({ coachId }) => {
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );
-    const dispatch = useDispatch();
+    // const dispatch = useDispatch();
 
     const { allCoursesWithCoaches } = useSelector(state => state.coachModule);
 
