@@ -100,6 +100,7 @@ const durationOptions = [
 ];
 
 const EditSession = ({ componentName }) => {
+
     const dispatch = useDispatch();
     const { timezones, platforms } = useSelector(state => state.util);
 
@@ -107,7 +108,6 @@ const EditSession = ({ componentName }) => {
         state => state.commonCalender
     );
 
-    console.log("session data", sessionData);
     const startTime = moment(sessionData.start_time, "HH:mm:ss");
     const endTime = moment(sessionData.end_time, "HH:mm:ss");
     const timeDifference = moment.duration(endTime.diff(startTime));
@@ -117,7 +117,9 @@ const EditSession = ({ componentName }) => {
         String(timeDifference.seconds()).padStart(2, '0')
     ].join(':');
 
+    const [error, setError] = useState({});
     const studentData = sessionData.students || [];
+    
     const studentIdArray = [];
     if (studentData && studentData.length > 0) {
         students.forEach(student => {
@@ -130,15 +132,15 @@ const EditSession = ({ componentName }) => {
     const [formData, setFormData] = useState({
         sessionName: sessionData.meeting_name || '',
         duration: formattedDifference,
-        message: sessionData.message || '',
-        students: studentIdArray,
-        batches: sessionData.batchId || [],
-        platforms: sessionData.platform_id,
+        message: sessionData.message || '', 
+        students: studentIdArray || [], // sessionData.students || [];
+        batches: sessionData.batch || [],
+        platform_id : sessionData.platform_id || null,
         fromDate: sessionData.date || '',
         toDate: sessionData.to_date || '',
         fromTime: moment(sessionData.start_time, "HH:mm:ss"),
         toTime: moment(sessionData.end_time, "HH:mm:ss"),
-        timezone_id: sessionData.timezone_id,
+        timezone_id: sessionData.timezone_id || null,
     });
 
     let sliceName, updateSessionApi, getSessionApi;
@@ -167,8 +169,6 @@ const EditSession = ({ componentName }) => {
         dispatch(getTimezone());
         dispatch(getPlatforms());
     }, [dispatch]);
-
-    const [error, setError] = useState({});
 
     const durationOptions = [
         { label: '15 minutes', value: '00:15:00' },
@@ -202,10 +202,12 @@ const EditSession = ({ componentName }) => {
     };
 
     const handleAssignBatches = () => {
-        dispatch(openSelectBatches());
+        dispatch(openSelectBatches(sessionData.batch));
     };
 
-    const validate = () => {};
+    const validate = () => {
+        
+    };
 
     const handleSubmit = e => {
         e.preventDefault();

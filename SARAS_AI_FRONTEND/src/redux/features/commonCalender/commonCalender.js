@@ -26,6 +26,10 @@ const initialState = {
     openSession: false,
     editSession: false,
 
+    editStudents : [],
+    editBatches : [],
+    openEditStudentsPopup : false,
+    openEditBatchesPopup : false,
 
     dataToFindScheduleInSlot:null,
 };
@@ -60,7 +64,7 @@ const commonCalender = createSlice({
         },
         openSelectStudents: (state, action) => {
             state.selectStudentPopup = true;
-            state.preSelectedStudents = action.payload ? action.payload: [];
+            state.preSelectedStudents = action.payload || [];
             // asign students
         },
         closeSelectStudents: (state, action) => {
@@ -69,7 +73,7 @@ const commonCalender = createSlice({
         },
         openSelectBatches: (state, action) => {
             state.selectBatchPopup = true;
-            state.preSelectedBatches = action.payload ? action.payload: [];
+            state.preSelectedBatches = action.payload || [];
         },
         closeSelectBatches: (state, action) => {
             state.selectBatchPopup = false;
@@ -137,6 +141,20 @@ const commonCalender = createSlice({
             state.sessionData = null;
         },
 
+        openEditStudents(state, action){
+            state.openEditStudentsPopup = true;
+            state.editStudents = action.payload
+        },
+        closeEditStudents(state, action){
+            state.openEditStudentsPopup = false
+        },
+        openEditBatches(state, action){
+            state.openEditBatchesPopup = true;
+            state.editBatches = action.payload
+        },
+        closeEditBatches(state, action){
+            state.openEditBatchesPopup = false
+        },
 
         //add data from slot in reschedule to find sessions again after rescheduling
         addDataToFindScheduleInSlot(state, action){
@@ -172,6 +190,10 @@ export const {
     closeSessionPopup,
     openEditSession,
     closeEditSession,
+    openEditStudents,
+    closeEditStudents,
+    openEditBatches,
+    closeEditBatches,
     addDataToFindScheduleInSlot
 } = commonCalender.actions;
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
     Button,
     IconButton,
@@ -41,38 +41,41 @@ const DynamicTable = ({
     actionButtons,
     componentName,
 }) => {
-    const [data, setData] = useState(
-        initialData.map(item => ({
-            ...item,
-            is_active: item.is_active !== undefined ? item.is_active : 0,
-        }))
-    );
-
+    const [data, setData] = useState([])
     const [currentPage, setCurrentPage] = useState(1);
-    const [assessmentModalOpen, setassessmentModalOpen] = useState(false);
+    const [itemsPerPage] = useState(10);
+
     const [modalOpen, setModalOpen] = useState(false);
     const [modalData, setModalData] = useState(null);
     const [assessmentData, setAssessmentData] = useState([]);
+    const [assessmentModalOpen, setassessmentModalOpen] = useState(false);
 
-    useEffect(() => {
-        setData(
-            initialData.map(item => ({
-                ...item,
-                is_active: item.is_active !== undefined ? item.is_active : 0,
-            }))
-        );
-        setCurrentPage(1); // Reset to first page whenever initialData changes
-    }, [initialData]);
-
-    const itemsPerPage = 10;
+    // const itemsPerPage = 10;
     const totalPages = Math.ceil(data.length / itemsPerPage);
     const currentData = data.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );
+
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
+    useEffect(() => {
+        setData(initialData || [])
+        setCurrentPage(1);
+    },[initialData])
+
+    // useEffect(() => {
+    //     setData(initialData || [])
+    //     //     initialData.map(item => ({
+    //     //         ...item,
+    //     //         is_active: item.is_active !== undefined ? item.is_active : 0,
+    //     //     }))
+    //     // );
+    //     setCurrentPage(1); // Reset to first page whenever initialData changes
+    // }, [initialData]);
+
+   
     const handlePageChange = (event, pageNumber) => {
         setCurrentPage(pageNumber);
     };
@@ -80,11 +83,13 @@ const DynamicTable = ({
     const handleDelete = id => {
         console.log('COMPONENTNAME : ', componentName);
         if (componentName === 'TAMAPPING') {
-            dispatch(deleteTaMapping(id)).then(() => {
+            dispatch(deleteTaMapping(id))
+            .then(() => {
                 dispatch(showTAMapping());
             });
         } else if (componentName === 'COACHMAPPING') {
-            dispatch(deleteCoachMapping(id)).then(() => {
+            dispatch(deleteCoachMapping(id))
+            .then(() => {
                 dispatch(showCoachMapping());
             });
         }
@@ -183,12 +188,12 @@ const DynamicTable = ({
             event.preventDefault();
             event.stopPropagation();
         }
+
         const updatedData = data.map(item =>
-            item.id === id
-                ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
-                : item
+            item.id === id ? { ...item, is_active: item.is_active === 1 ? 0 : 1 } : item
         );
         setData(updatedData);
+
         // const toggleButton = actionButtons.find(
         //     action => action.type === 'switch'
         // );

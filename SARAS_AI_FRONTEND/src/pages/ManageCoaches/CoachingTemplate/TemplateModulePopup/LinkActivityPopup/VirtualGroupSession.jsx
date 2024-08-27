@@ -28,17 +28,16 @@ import { convertFromUTC } from '../../../../../utils/dateAndtimeConversion';
 import CustomPlatformForm from '../../../../../components/CustomFields/CustomPlatformForm';
 
 const VirtualGroupSession = () => {
-    const dispatch = useDispatch();
-    const {
-        handleSubmit,
-        control,
-        formState: { errors },
-    } = useForm();
+
+    const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
+    const { handleSubmit, control, formState: { errors }, } = useForm();
     const [fromDate, setFromDate] = useState(null);
     const [selectedCoachId, setSelectedCoachId] = useState(null);
     const [coachTimeZone, setCoachTimeZone] = useState(null);
     const [coachSlots, setCoachSlots] = useState(null);
     const [selectedPlatform, setSelectedPlatform] = useState(null);
+    
+    const dispatch = useDispatch();
     const { coaches } = useSelector(state => state.coachModule);
     const { timezones, platforms } = useSelector(state => state.util);
     const [selectedSlot, setSelectedSlot] = useState(''); 
@@ -54,19 +53,15 @@ const VirtualGroupSession = () => {
     weeksArray[index] = 1;
 
     const { coachAvailableSlots } = useSelector(state => state.coachScheduling);
-    console.log('coaches', coaches);
-    console.log('coachesslot', coachAvailableSlots);
 
     const formatTime = time => {
         const [hours, minutes] = time.split(':');
         const hour = parseInt(hours, 10);
         const minute = parseInt(minutes, 10);
-        const ampm = hour >= 12 ? 'pm' : 'am';
+        const ampm = hour >= 12 ? 'AM' : 'PM';
         const formattedHour = hour % 12 || 12;
         return `${formattedHour}:${minute < 10 ? '0' : ''}${minute} ${ampm}`;
     };
-
-    const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
 
     const tranformSlots = async (coachAvailableSlots) =>{
         const timezonename = timezoneIdToName(

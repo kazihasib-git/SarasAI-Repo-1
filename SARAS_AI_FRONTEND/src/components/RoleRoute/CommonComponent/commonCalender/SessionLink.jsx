@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { closeSessionPopup } from '../../../../redux/features/commonCalender/commonCalender';
+import { closeSessionPopup, openEditBatches, openEditStudents } from '../../../../redux/features/commonCalender/commonCalender';
 import {
     Avatar,
     Box,
@@ -14,7 +14,6 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import ReusableDialog from '../../../CustomFields/ReusableDialog';
 import editImg from '../../../../assets/editIcon.png';
 import editImgWhite from '../../../../assets/editIcon_White.png';
-import { toast } from 'react-toastify';
 
 const CustomButton = ({
     onClick,
@@ -78,10 +77,14 @@ const SessionLink = ({ componentName, platformName, platformUrl }) => {
             break;
     }
 
-    const handleEditBatches = () => {};
+    const handleEditBatches = () => {
+        dispatch(openEditStudents(sessionEventData.students))
+    };
     const handleChangeMode = () => {};
 
-    const handleEditStudents = () => {};
+    const handleEditStudents = () => {
+        dispatch(openEditBatches(sessionEventData.batches))
+    };
 
     const handleLinkCopy = () => {
         if (sessionEventData) {

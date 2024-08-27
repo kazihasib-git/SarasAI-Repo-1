@@ -241,7 +241,6 @@ const ScheduledCall = ({ role }) => {
     };
 
     const handleClickJoinSession = call => {
-        //TODO : Add session Join url here 
         console.log( "Call DATA :",call);
         const transformedCall = {
             // title: call.meeting_name,
@@ -263,6 +262,7 @@ const ScheduledCall = ({ role }) => {
     };
 
     const handleEditClick = data => {
+        console.log("EdiT DATA :", data)
         dispatch(openEditSession(data));
     };
 
@@ -356,42 +356,7 @@ const ScheduledCall = ({ role }) => {
                         <DateCalendar date={date} onChange={handleDateChange} />
                     </Popover>
                 </Box>
-            </LocalizationProvider>
-
-            {scheduleNewSessionPopup &&
-                (role == 'Coach' ? (
-                    <CreateSession componentName={'COACHMENU'} timezoneID={storedTimezoneId}/>
-                ) : (
-                    <CreateSession componentName={'TAMENU'} timezoneID={storedTimezoneId}/>
-                ))}
-
-            {editSession &&
-                (role == 'Coach' ? (
-                    <EditSession componentName={'COACHMENU'} />
-                ) : (
-                    <EditSession componentName={'TAMENU'} />
-                ))}
-
-            {selectStudentPopup &&
-                (role == 'Coach' ? (
-                    <SelectStudents componentName={'COACHMENU'} />
-                ) : (
-                    <SelectStudents componentName={'TAMENU'} />
-                ))}
-
-            {selectBatchPopup &&
-                (role == 'Coach' ? (
-                    <SelectBatches componentName={'COACHMENU'} />
-                ) : (
-                    <SelectBatches componentName={'TAMENU'} />
-                ))}
-
-            {openSession &&
-                (role == 'Coach' ? (
-                    <SessionLink componentName={'COACHMENU'}  />
-                ) : (
-                    <SessionLink componentName={'TAMENU'} />
-                ))}
+            </LocalizationProvider> 
 
             <Grid container spacing={2}>
                 {scheduledCalls.map(call => (
@@ -518,6 +483,40 @@ const ScheduledCall = ({ role }) => {
                     </Grid>
                 ))}
             </Grid>
+            {scheduleNewSessionPopup &&
+                (role == 'Coach' ? (
+                    <CreateSession componentName={'COACHMENU'} timezoneID={storedTimezoneId}/>
+                ) : (
+                    <CreateSession componentName={'TAMENU'} timezoneID={storedTimezoneId}/>
+                ))}
+
+            {editSession &&
+                (role == 'Coach' ? (
+                    <EditSession componentName={'COACHMENU'} />
+                ) : (
+                    <EditSession componentName={'TAMENU'} />
+                ))}
+
+            {selectStudentPopup &&
+                (role == 'Coach' ? (
+                    <SelectStudents componentName={'COACHMENU'} />
+                ) : (
+                    <SelectStudents componentName={'TAMENU'} />
+                ))}
+
+            {selectBatchPopup &&
+                (role == 'Coach' ? (
+                    <SelectBatches componentName={'COACHMENU'} />
+                ) : (
+                    <SelectBatches componentName={'TAMENU'} />
+                ))}
+
+            {openSession &&
+                (role == 'Coach' ? (
+                    <SessionLink componentName={'COACHMENU'}  />
+                ) : (
+                    <SessionLink componentName={'TAMENU'} />
+                ))}
         </div>
     );
 };

@@ -122,6 +122,7 @@ const LinkActivityPopup = ({
             if(payload.link || (activityType === 'test' && selectedAssessmentId) || (activityType ==='virtual meet' && selectedSessionType)){
             if(activityType ==='virtual meet' && selectedSessionType=="group"){
                 const dataToGenrateLink = {
+                    "activity_id" : activityId,
                     "admin_user_id": selectedCoachId,
                     "meeting_name": data.meeting_name,
                     "schedule_date": fromDate,
@@ -237,6 +238,7 @@ const LinkActivityPopup = ({
     console.log('coachesslot', coachAvailableSlots);
 
     const formatTime = time => {
+        console.log("FORMAT TIME", time)
         const [hours, minutes] = time.split(':');
         const hour = parseInt(hours, 10);
         const minute = parseInt(minutes, 10);

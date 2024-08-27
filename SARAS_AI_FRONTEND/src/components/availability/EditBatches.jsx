@@ -29,6 +29,7 @@ import {
 } from '../../redux/features/taModule/tamenuSlice';
 import { useParams } from 'react-router-dom';
 import CustomButton from '../CustomFields/CustomButton';
+import { toast } from 'react-toastify';
 
 const EditBatches = ({ componentname }) => {
     const { id, name } = useParams();
@@ -191,7 +192,16 @@ const EditBatches = ({ componentname }) => {
         }
     };
 
+    const validate = () => {
+        if(selectedBatch.length === 0){
+            toast.error('Please Select at Least One Batch')
+            return false;
+        }
+        return true;
+    }
+
     const handleSubmit = () => {
+        if (!validate()) return;
         const id =
             componentname === 'COACHSCHEDULE'
                 ? coachID || assignedId
