@@ -18,13 +18,24 @@ export const getCoachMenuProfile = createAsyncThunk(
 // Update coach profile
 export const updateCoachmenuprofile = createAsyncThunk(
     'coachMenu/updateprofile',
-    async data => {
+    async (data, { rejectWithValue }) => {
+        try{
         const response = await axiosInstance.put(
             `${baseUrl}/coach/coach-profile`,
             data
         );
         console.log(response.data, 'response.data');
         return response.data;
+    }
+    catch (error) {
+        if (error.response && error.response.data) {
+            return rejectWithValue(error.response.data.message);
+        } else {
+            return rejectWithValue(
+                'An Error Occurred While Geting TA Sessions for Leave by Slots'
+            );
+        }
+    }
     }
 );
 
@@ -562,11 +573,17 @@ export const coachMenuSlice = createSlice({
         builder.addCase(updateCoachmenuprofile.fulfilled, (state, action) => {
             state.loading = false;
             state.updateProfileData = action.payload.data;
+            toast.success(
+                action.payload.message || 'Session have been successfully created'
+            );
         });
         builder.addCase(updateCoachmenuprofile.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
             state.updateProfileData = [];
+            toast.error(
+                action.payload || 'Failed to Create TA Sessions'
+            );
         });
 
         // Get Coach Slots

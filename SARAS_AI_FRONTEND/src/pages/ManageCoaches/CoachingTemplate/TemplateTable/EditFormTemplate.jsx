@@ -146,6 +146,7 @@ function EditFormTemplate({ open, handleClose, handleSubmitForm }) {
                             type="submit"
                             variant="contained"
                             color="primary"
+                            style={{ textTransform: 'none' }} 
                         >
                             Submit
                         </Button>

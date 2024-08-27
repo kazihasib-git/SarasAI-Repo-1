@@ -252,6 +252,9 @@ const CreateSession = ({ componentName, timezoneID }) => {
                                         label="Session Name"
                                         name="sessionName"
                                         value={formData.sessionName}
+                                        validation={{
+                                            required: 'About Me is required',
+                                        }}
                                         onChange={e =>
                                             handleChange(
                                                 'sessionName',
@@ -325,6 +328,7 @@ const CreateSession = ({ componentName, timezoneID }) => {
                                     <CustomDateField
                                         label="From Date"
                                         name="fromDate"
+                                        
                                         value={formData.fromDate}
                                         onChange={date =>
                                             handleChange('fromDate', date)

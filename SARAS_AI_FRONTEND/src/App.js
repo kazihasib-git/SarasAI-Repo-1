@@ -88,6 +88,7 @@ import TaCourseMapping from './pages/managesTAs/TaCourseMapping.jsx';
 import AssignCoachCourses from './pages/ManageCoaches/AssignedCoachCourses.jsx';
 import AssignTaCourses from './pages/managesTAs/AssignedTaCourses.jsx';
 import AssignedTemplateStudents from './pages/ManageCoaches/CoachingTemplate/AssignedTemplateStudents.jsx';
+
 import ForgetPassword from './components/AUTH/ForgetPassword.jsx';
 
 const ROLES = {
@@ -125,27 +126,27 @@ function App() {
         }
     }, [access_token]);
 
-    // useEffect(() => {
-    //     if (login) {
-    //         console.log('inside user Effect in app.js', role);
-    //         //const lastRoute = localStorage.getItem('lastRoute');
+    useEffect(() => {
+        if (login) {
+            console.log('inside user Effect in app.js', role);
+            //const lastRoute = localStorage.getItem('lastRoute');
 
-    //         if (role.includes(1984)) {
-    //             // Coach role
-    //             navigate('/coachmenu_profile', { replace: true });
-    //         } else if (role.includes(2001)) {
-    //             // Teaching role
-    //             navigate('/tamenu_profile', { replace: true });
-    //         } else if (role.includes(5150)) {
-    //             // Admin role
-    //             navigate('/', { replace: true });
-    //         } else {
-    //             navigate(from, { replace: true });
-    //         }
-    //     } else {
-    //         navigate('/login', { replace: true });
-    //     }
-    // }, [login, role, accessToken]);
+            if (role.includes(1984)) {
+                // Coach role
+                navigate('/coachmenu_profile', { replace: true });
+            } else if (role.includes(2001)) {
+                // Teaching role
+                navigate('/tamenu_profile', { replace: true });
+            } else if (role.includes(5150)) {
+                // Admin role
+                navigate('/', { replace: true });
+            } else {
+                navigate(from, { replace: true });
+            }
+        } else {
+            navigate('/login', { replace: true });
+        }
+    }, [login, role, accessToken]);
 
     // useEffect(() => {
     //     if (login) {

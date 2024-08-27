@@ -233,6 +233,7 @@ const WOLInstructions = () => {
                                     style={{
                                         fontSize: '14px',
                                         fontFamily: 'Bold',
+                                        textTransform: 'none' 
                                     }}
                                 >
                                     Update
