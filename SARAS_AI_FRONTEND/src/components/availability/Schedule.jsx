@@ -66,7 +66,7 @@ const actionButtons = [
 ];
 
 const Schedule = ({ componentName, timezoneID }) => {
-    console.log('timezoneID=======>', timezoneID);
+    
     const [fromDate, setFromDate] = useState(null);
     const [toDate, setToDate] = useState(null);
     const [fromTime, setFromTime] = useState(null);
@@ -206,14 +206,19 @@ const Schedule = ({ componentName, timezoneID }) => {
         dispatch(getPlatforms());
     }, [dispatch]);
 
+    // console.log('timezoneID=======>', timezoneID, timezoneId);
+
     const convertSessions = async () => {
+
         if (
             availableSlots &&
             availableSlots.length > 0 &&
             timezones &&
-            timezoneID
+            (timezoneID || timezoneId)
         ) {
-            const timezonename = timezoneIdToName(timezoneID, timezones);
+           
+            const timezonename = timezoneIdToName(timezoneId ? Number(timezoneId) : timezoneID, timezones);
+            // console.log("Inside conversion........", timezonename)
             try {
                 const processedSlots = await Promise.all(
                     availableSlots.map(async (slot, index) => {
