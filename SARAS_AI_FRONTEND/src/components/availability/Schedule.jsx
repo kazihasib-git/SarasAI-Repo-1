@@ -331,26 +331,26 @@ const Schedule = ({ componentName, timezoneID }) => {
             return;
         }
 
-        if (toTime) {
-            if (toTime < fromTime) {
-                toast.error('To time should be greater than from time!');
-            }
-        }
+        // if (toTime) {
+        //     if (toTime < fromTime) {
+        //         toast.error('To time should be greater than from time!');
+        //     }
+        // }
 
         if (!fromDate || !fromTime || !toTime) {
             toast.error('Please fill in all fields');
             return;
         }
 
-        if (toDate < fromDate) {
-            toast.error('To Date should be greater than From Date!');
-            return;
-        }
+        // if (toDate < fromDate) {
+        //     toast.error('To Date should be greater than From Date!');
+        //     return;
+        // }
 
-        if (toTime < fromTime) {
-            toast.error('To Time should be greater than From Time!');
-            return;
-        }
+        // if (toTime < fromTime) {
+        //     toast.error('To Time should be greater than From Time!');
+        //     return;
+        // }
     };
 
     const onSubmit = formData => {
