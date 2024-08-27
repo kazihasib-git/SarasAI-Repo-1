@@ -58,8 +58,7 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
     const [meetingType, setMeetingType] = useState(''); 
     const [toTime, setToTime] = useState(null);
     const [transformedSlotsData, setTransformedSlotsData] = useState([]);
-    const [meetingTypes, setMeetingtypes] = useState(['a', 'b' ,'c' , 'd']) ;
-
+    const [meetingTypes, setMeetingtypes] = useState(['Webinar' , 'Meeting']) ;
     const {
         control,
         formState: { errors },

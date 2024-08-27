@@ -80,6 +80,7 @@ const Schedule = ({ componentName, timezoneID }) => {
     const [dateSelected, setDateSelected] = useState(false);
     const dispatch = useDispatch();
     const { timezones, platforms, hosts } = useSelector(state => state.util);
+    const [meetingTypes, setMeetingtypes] = useState(['Webinar' , 'Meeting']) ;
 
     let scheduleSessionOpenKey,
         schedulingStateKey,
