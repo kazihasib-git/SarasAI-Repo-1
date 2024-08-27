@@ -24,7 +24,8 @@ import { convertFromUTC } from '../../../utils/dateAndtimeConversion';
 import { getTimezone } from '../../../redux/features/utils/utilSlice';
 
 const CallRequest = () => {
-    const [openCreateMeetingDialog, setOpenCreateMeetingDialog] = useState(false);
+    const [openCreateMeetingDialog, setOpenCreateMeetingDialog] =
+        useState(false);
     const [open, setOpen] = useState(false);
     const { taCallRequests } = useSelector(state => state.taMenu);
     const [callRequests, setCallRequests] = useState([]);
@@ -39,13 +40,13 @@ const CallRequest = () => {
         dispatch(getTimezone());
     }, [dispatch]);
 
-    const processTaCallRequests = async (requests) => {
+    const processTaCallRequests = async requests => {
         if (requests && requests.length > 0 && timezones && storedTimezoneId) {
             const timezonename = timezoneIdToName(storedTimezoneId, timezones);
 
             try {
                 const processedRequests = await Promise.all(
-                    requests.map(async (request) => {
+                    requests.map(async request => {
                         const localTime = await convertFromUTC({
                             start_date: request.date,
                             start_time: request.start_time,
@@ -215,9 +216,6 @@ const CallRequest = () => {
                                             color: 'white',
                                             mt: 2,
                                             ml: 6,
-                                            textTransform: 'none',
-                                            fontFamily: 'Nohemi',
-                                            fontSize: 16,
                                             '&:hover': {
                                                 backgroundColor: '#19B420',
                                             },
@@ -237,9 +235,6 @@ const CallRequest = () => {
                                                 borderRadius: 40,
                                                 backgroundColor: '#F56D3B',
                                                 color: 'white',
-                                                textTransform: 'none',
-                                                fontFamily: 'Nohemi',
-                                                fontSize: 16,
                                                 '&:hover': {
                                                     backgroundColor: '#F56D3B',
                                                 },
@@ -258,9 +253,6 @@ const CallRequest = () => {
                                                 color: '#F56D3B',
                                                 border: '2px solid #F56D3B',
                                                 ml: 1,
-                                                textTransform: 'none',
-                                                fontFamily: 'Nohemi',
-                                                fontSize: 16,
                                                 '&:hover': {
                                                     backgroundColor: '#F56D3B',
                                                     color: 'white',

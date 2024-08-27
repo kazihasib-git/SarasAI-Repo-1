@@ -75,25 +75,30 @@ const CoachCalender = () => {
     useEffect(() => {
         dispatch(getTodayCoachAvailability());
     }, [dispatch]);
-    const { todaysAvailableCoach } = useSelector(state => state.coachAvailability);
+    const { todaysAvailableCoach } = useSelector(
+        state => state.coachAvailability
+    );
 
     const { id, name } = useParams();
-    
-   
-    const findTaTimeZone = (todaysAvailableCoach) => {
+
+    const findTaTimeZone = todaysAvailableCoach => {
         if (todaysAvailableCoach && Number(id)) {
-            const selectedcoach = todaysAvailableCoach.find(ta => ta.id === Number(id));
-            setSelectedCoach(selectedcoach || null);  // Set to null if not found
+            const selectedcoach = todaysAvailableCoach.find(
+                ta => ta.id === Number(id)
+            );
+            setSelectedCoach(selectedcoach || null); // Set to null if not found
         } else {
-            setSelectedCoach(null);  // Set to null if conditions are not met
+            setSelectedCoach(null); // Set to null if conditions are not met
         }
-    }
+    };
     useEffect(() => {
         findTaTimeZone(todaysAvailableCoach);
     }, [id, todaysAvailableCoach]);
 
-    const storedTimezoneId = selectedCoach ? selectedCoach.timezone_id : Number(localStorage.getItem('timezone_id'));
- 
+    const storedTimezoneId = selectedCoach
+        ? selectedCoach.timezone_id
+        : Number(localStorage.getItem('timezone_id'));
+
     // console.log("selected sending to schedule time zone id", storedTimezoneId) ;
     const [eventsList, setEventsList] = useState([]);
     const [slotViewData, setSlotViewData] = useState([]);
@@ -140,7 +145,7 @@ const CoachCalender = () => {
             scheduleCoachData &&
             scheduleCoachData.length > 0 &&
             storedTimezoneId &&
-            selectedCoach  // Add this check
+            selectedCoach // Add this check
         ) {
             const timezonename = timezoneIdToName(storedTimezoneId, timezones);
             if (!timezonename) {
@@ -156,7 +161,9 @@ const CoachCalender = () => {
                             start_date: event.date.split(' ')[0],
                             start_time: event.start_time,
                             end_time: event.end_time,
-                            end_date: event.end_date? event.end_date : event.date.split(' ')[0],
+                            end_date: event.end_date
+                                ? event.end_date
+                                : event.date.split(' ')[0],
                             timezonename,
                         });
                         // console.log(
@@ -408,13 +415,22 @@ const CoachCalender = () => {
                     )} */}
 
                     {scheduleCoachSessionOpen && (
-                        <Schedule componentName={'COACHSCHEDULE'} timezoneID={storedTimezoneId}/>
+                        <Schedule
+                            componentName={'COACHSCHEDULE'}
+                            timezoneID={storedTimezoneId}
+                        />
                     )}
                     {openCoachEditBatch && (
-                        <EditBatches componentname={'COACHSCHEDULE'} timezoneID={storedTimezoneId}/>
+                        <EditBatches
+                            componentname={'COACHSCHEDULE'}
+                            timezoneID={storedTimezoneId}
+                        />
                     )}
                     {openCoachEditStudent && (
-                        <EditStudents componentname={'COACHSCHEDULE'} timezoneID={storedTimezoneId}/>
+                        <EditStudents
+                            componentname={'COACHSCHEDULE'}
+                            timezoneID={storedTimezoneId}
+                        />
                     )}
                     {coachMarkLeaveOpen && (
                         <MarkLeave
@@ -422,7 +438,6 @@ const CoachCalender = () => {
                             name={name}
                             componentName={'COACHCALENDER'}
                             timezoneID={storedTimezoneId}
-
                         />
                     )}
 
@@ -430,7 +445,8 @@ const CoachCalender = () => {
                         <Slots
                             id={id}
                             name={name}
-                            componentName={'COACHCALENDER'} timezoneID={storedTimezoneId}
+                            componentName={'COACHCALENDER'}
+                            timezoneID={storedTimezoneId}
                         />
                     )}
 
@@ -440,7 +456,6 @@ const CoachCalender = () => {
                             name={name}
                             componentName={'COACHCALENDER'}
                             timezoneID={storedTimezoneId}
-
                         />
                     )}
 
@@ -448,7 +463,8 @@ const CoachCalender = () => {
                         <CancelSchedule
                             id={id}
                             name={name}
-                            componentName={'COACHCALENDER'} timezoneID={storedTimezoneId}
+                            componentName={'COACHCALENDER'}
+                            timezoneID={storedTimezoneId}
                         />
                     )}
 
@@ -456,7 +472,8 @@ const CoachCalender = () => {
                         <ReasonForLeave
                             id={id}
                             name={name}
-                            componentName={'COACHCALENDER'} timezoneID={storedTimezoneId}
+                            componentName={'COACHCALENDER'}
+                            timezoneID={storedTimezoneId}
                         />
                     )}
 
@@ -464,12 +481,16 @@ const CoachCalender = () => {
                         <ReschedulingSession
                             id={id}
                             name={name}
-                            componentName={'COACHCALENDER'} timezoneID={storedTimezoneId}
+                            componentName={'COACHCALENDER'}
+                            timezoneID={storedTimezoneId}
                         />
                     )}
 
                     {deletingCoachFutureSlots && (
-                        <DeleteAllSlots componentName={'COACHCALENDER'} timezoneID={storedTimezoneId} />
+                        <DeleteAllSlots
+                            componentName={'COACHCALENDER'}
+                            timezoneID={storedTimezoneId}
+                        />
                     )}
 
                     {createNewSlotOpen && (
@@ -477,20 +498,24 @@ const CoachCalender = () => {
                             // addEvent={addEvent}
                             componentName={'COACHCALENDER'}
                             timezoneID={storedTimezoneId}
-
                         />
                     )}
                     {coachOpenEventData && (
-                        <ScheduleSession componentName={'COACHCALENDER'} timezoneID={storedTimezoneId}/>
+                        <ScheduleSession
+                            componentName={'COACHCALENDER'}
+                            timezoneID={storedTimezoneId}
+                        />
                     )}
                     {coachEditScheduledBatches && (
                         <EditBatchesFromSession
-                            componentName={'COACHCALENDER'} timezoneID={storedTimezoneId}
+                            componentName={'COACHCALENDER'}
+                            timezoneID={storedTimezoneId}
                         />
                     )}
                     {coachEditScheduledStudents && (
                         <EditStudentsFromSession
-                            componentName={'COACHCALENDER'} timezoneID={storedTimezoneId}
+                            componentName={'COACHCALENDER'}
+                            timezoneID={storedTimezoneId}
                         />
                     )}
                 </Box>

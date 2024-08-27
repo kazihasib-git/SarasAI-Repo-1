@@ -60,9 +60,7 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
         control,
         formState: { errors },
     } = useForm({
-        defaultValues: {
-
-        },
+        defaultValues: {},
     });
 
     const { dataToFindScheduleInSlot } = useSelector(
@@ -109,7 +107,7 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
             sessionEventAction = 'sessionCoachEventData';
             slotEventAction = 'slotCoachEventData';
             reschduleSessionAction = rescheduleCoachSession;
-            fetchSlotsApi = fetchCoachSlots
+            fetchSlotsApi = fetchCoachSlots;
             fetchSessionsApi = fetchCoachScheduleById;
             break;
 
@@ -157,7 +155,6 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
     };
 
     const convertavailableSlotData = async () => {
-
         if (
             availableSlotsData &&
             availableSlotsData.length > 0 &&
@@ -267,7 +264,6 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
             });
     };
 
-
     const headers = ['S. No.', 'Slots Available', 'Select'];
 
     const content = (
@@ -327,7 +323,7 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
                                         onChange={time => setFromTime(time)}
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={6}> 
+                                <Grid item xs={12} sm={6}>
                                     <CustomTimeField
                                         label="End Time"
                                         value={toTime}
@@ -409,12 +405,11 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
         <CustomButton
             onClick={handleSubmit}
             style={{
-                backgroundColor: "#F56D3B",
-                borderColor: "#F56D3B",
-                color: "#FFFFFF",
+                backgroundColor: '#F56D3B',
+                borderColor: '#F56D3B',
+                color: '#FFFFFF',
                 textTrasnform: 'none',
             }}
-
         >
             Submit
         </CustomButton>

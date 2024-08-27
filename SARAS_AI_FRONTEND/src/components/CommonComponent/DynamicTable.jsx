@@ -19,7 +19,11 @@ import editIcon from '../../assets/editIcon.png';
 import bin from '../../assets/bin.png';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { useDispatch } from 'react-redux';
-import { activeDeactiveWOLCategory, toggleWOLQuestionStatus, updateWOLQuestion } from '../../redux/features/adminModule/coachingTools/wol/wolSlice';
+import {
+    activeDeactiveWOLCategory,
+    toggleWOLQuestionStatus,
+    updateWOLQuestion,
+} from '../../redux/features/adminModule/coachingTools/wol/wolSlice';
 import { openScheduleSession } from '../../redux/features/adminModule/ta/taScheduling';
 
 import { updateTA } from '../../redux/features/adminModule/ta/taSlice';
@@ -163,13 +167,13 @@ const DynamicTable = ({
                 if (type === 'courses') {
                     console.log(id);
                     navigate(`/active-Coach-courses/${id}`); // Append id as a parameter
-                } 
+                }
             } else if (componentName === 'TACOURSEMAPPING') {
                 if (type === 'courses') {
                     console.log(id);
                     navigate(`/active-Ta-courses/${id}`); // Append id as a parameter
-                } 
-            } 
+                }
+            }
         }
     };
 
@@ -217,10 +221,10 @@ const DynamicTable = ({
                 console.log('WOL Categories : ', id, requestData);
                 dispatch(activeDeactiveWOLCategory(id));
                 break;
-            
-            case 'WOLQUESTION' :
+
+            case 'WOLQUESTION':
                 console.log('WOL WOLQUESTION : ', id);
-                dispatch(toggleWOLQuestionStatus(id))
+                dispatch(toggleWOLQuestionStatus(id));
                 break;
 
             default:
@@ -362,7 +366,7 @@ const DynamicTable = ({
                                                 </CustomButton>
                                             </td>
                                         );
-                                    }else if (
+                                    } else if (
                                         key !== 'id' &&
                                         key !== 'is_active' &&
                                         key !== 'timezone'
@@ -552,7 +556,7 @@ const DynamicTable = ({
                                                         onClick={() =>
                                                             handleView(
                                                                 'view report',
-                                                                item.id   
+                                                                item.id
                                                             )
                                                         }
                                                         disabled={

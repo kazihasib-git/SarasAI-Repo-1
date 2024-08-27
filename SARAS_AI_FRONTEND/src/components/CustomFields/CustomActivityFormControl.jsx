@@ -20,7 +20,7 @@ const CustomActivityFormControl = ({
 }) => {
     const hasError = !!errors[name];
 
-    const handleChange = (event) => {
+    const handleChange = event => {
         const {
             target: { value: selectedValue },
         } = event;
@@ -28,15 +28,18 @@ const CustomActivityFormControl = ({
         onChange({
             target: {
                 name,
-                value: typeof selectedValue === 'string' ? selectedValue.split(',') : selectedValue,
+                value:
+                    typeof selectedValue === 'string'
+                        ? selectedValue.split(',')
+                        : selectedValue,
             },
         });
     };
 
-    const getSelectedLabels = (selectedValues) => {
+    const getSelectedLabels = selectedValues => {
         return options
-            .filter((option) => selectedValues.includes(option.value))
-            .map((option) => option.label)
+            .filter(option => selectedValues.includes(option.value))
+            .map(option => option.label)
             .join(', ');
     };
 
@@ -63,7 +66,7 @@ const CustomActivityFormControl = ({
                 onChange={handleChange} // Use the updated handleChange function
                 error={hasError}
                 multiple // Enable multiple selection
-                renderValue={(selected) => getSelectedLabels(selected)} // Display selected labels as a comma-separated string
+                renderValue={selected => getSelectedLabels(selected)} // Display selected labels as a comma-separated string
                 MenuProps={{
                     PaperProps: {
                         style: {
@@ -87,7 +90,7 @@ const CustomActivityFormControl = ({
                     },
                 }}
             >
-                {options.map((option) => (
+                {options.map(option => (
                     <MenuItem key={option.value} value={option.value}>
                         <Checkbox checked={value.indexOf(option.value) > -1} />
                         <ListItemText primary={option.label} />
@@ -108,4 +111,3 @@ const CustomActivityFormControl = ({
 };
 
 export default CustomActivityFormControl;
-    

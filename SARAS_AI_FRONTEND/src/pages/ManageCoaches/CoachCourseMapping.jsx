@@ -25,7 +25,9 @@ const actionButtons = [
 
 const CoachCourseMapping = () => {
     const dispatch = useDispatch();
-    const { coachCourseMappingData, loading } = useSelector(state => state.coachModule);
+    const { coachCourseMappingData, loading } = useSelector(
+        state => state.coachModule
+    );
     const [caMappingData, setcaMappingData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');

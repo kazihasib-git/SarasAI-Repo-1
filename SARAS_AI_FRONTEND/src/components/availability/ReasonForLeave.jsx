@@ -73,9 +73,7 @@ const ReasonForLeave = ({ componentName }) => {
         [reasonForLeaveOpenKey]: reasonForLeaveOpen,
         [markLeaveKey]: markLeaveData,
         [slotEventKey]: slotEventDetails,
-    } = useSelector(
-        state => state[sliceName] || {} 
-    );
+    } = useSelector(state => state[sliceName] || {});
 
     const onSumbit = (data) => {
 
@@ -135,10 +133,10 @@ const ReasonForLeave = ({ componentName }) => {
         <CustomButton
             onClick={handleSubmit(onSumbit)}
             style={{
-                backgroundColor : "#F56D3B",
-                borderColor : "#F56D3B",
-                color : "#FFFFFF",
-                textTrasform : 'none'
+                backgroundColor: '#F56D3B',
+                borderColor: '#F56D3B',
+                color: '#FFFFFF',
+                textTrasform: 'none',
             }}
         >
             Submit

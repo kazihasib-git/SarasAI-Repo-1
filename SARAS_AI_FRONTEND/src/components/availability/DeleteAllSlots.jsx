@@ -84,7 +84,6 @@ const DeleteAllSlots = ({ componentName }) => {
 
     const onSubmit = async () => {
         try {
-
             //get today date in YYYY-MM-DD format
             // const today = new Date();
             // const dd = String(today.getDate()).padStart(2, '0');

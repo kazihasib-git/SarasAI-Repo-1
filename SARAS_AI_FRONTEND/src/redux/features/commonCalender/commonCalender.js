@@ -157,10 +157,9 @@ const commonCalender = createSlice({
         },
 
         //add data from slot in reschedule to find sessions again after rescheduling
-        addDataToFindScheduleInSlot(state, action){
+        addDataToFindScheduleInSlot(state, action) {
             state.dataToFindScheduleInSlot = action.payload;
-        }
-        
+        },
     },
 });
 

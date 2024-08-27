@@ -63,7 +63,15 @@ const modules = {
     ],
 };
 
-const formats = ['bold', 'italic', 'underline', 'align', 'link'];
+const formats = [
+    'bold',
+    'italic',
+    'underline',
+    'list',
+    'align',
+    'link',
+    'clean',
+];
 
 const SessionNotes = ({ open, onClose, onSave, selectedId }) => {
     const [editorContent, setEditorContent] = useState('');

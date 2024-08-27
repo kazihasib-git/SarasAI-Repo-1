@@ -13,7 +13,10 @@ import {
     toggleCoachAssignBatchStatus,
     toggleCoachAssignStudentStatus,
 } from '../../../redux/features/adminModule/coach/coachSlice';
-import { openAssignBatchesToTemplate, openAssignStudentsToTemplate } from '../../../redux/features/adminModule/coach/coachTemplateSlice';
+import {
+    openAssignBatchesToTemplate,
+    openAssignStudentsToTemplate,
+} from '../../../redux/features/adminModule/coach/coachTemplateSlice';
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
     borderRadius: '50px',
@@ -84,7 +87,7 @@ const TemplateStudentsDataTable = ({
     ta_id,
     dispatch,
     componentName,
-    template_id
+    template_id,
 }) => {
     const [data, setData] = useState(
         initialData.map(item => ({
@@ -185,14 +188,13 @@ const TemplateStudentsDataTable = ({
         }
     };
 
-
-    const handleAssignStudentClick = () =>{
+    const handleAssignStudentClick = () => {
         dispatch(openAssignStudentsToTemplate(template_id));
-    }
+    };
 
-    const handleAssignBatchClick = () =>{
+    const handleAssignBatchClick = () => {
         dispatch(openAssignBatchesToTemplate(template_id));
-    }
+    };
 
     return (
         <div className="table-container">
@@ -214,14 +216,14 @@ const TemplateStudentsDataTable = ({
                 </Box>
                 <div className="inputBtnContainer">
                     <CustomButton
-                        onClick={()=>{
+                        onClick={() => {
                             handleAssignStudentClick();
                         }}
                     >
                         Assign Student
                     </CustomButton>
                     <CustomButton
-                        onClick={()=>{
+                        onClick={() => {
                             handleAssignBatchClick();
                         }}
                     >
