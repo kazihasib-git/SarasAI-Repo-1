@@ -32,11 +32,15 @@ const AdminCoursesTable = ({ taId }) => {
     }, [dispatch]);
 
     useEffect(() => {
-        setData(allCoursesWithTas);
-    }, [allCoursesWithTas]);
+        if(allCoursesWithTas && allCoursesWithTas.length>0){
+            setData(allCoursesWithTas);
+        }else{
+            setData([]) ; 
+        }
+    }, [allCoursesWithTas ]);
    
-    const totalPages = Math.ceil(data.length / itemsPerPage);
-    const currentData = data.slice(
+    const totalPages = Math.ceil(data?.length / itemsPerPage);
+    const currentData = data?.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );
@@ -46,7 +50,7 @@ const AdminCoursesTable = ({ taId }) => {
     };
 
     const handleClick = (courseId) => {
-        const updatedData = data.map((item) =>
+        const updatedData = data?.map((item) =>
           item.id === courseId
             ? {
                 ...item,
