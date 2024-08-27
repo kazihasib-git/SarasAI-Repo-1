@@ -23,9 +23,9 @@ import { getTimezone } from '../../redux/features/utils/utilSlice';
 import { addDataToFindScheduleInSlot } from '../../redux/features/commonCalender/commonCalender';
 import { toast } from 'react-toastify';
 
-const Slots = ({ componentName , timezoneID }) => {
+const Slots = ({ componentName, timezoneID }) => {
     const { timezones, platforms } = useSelector(state => state.util);
-   
+
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(getTimezone());
@@ -90,12 +90,16 @@ const Slots = ({ componentName , timezoneID }) => {
         const formattedHour = hour % 12 || 12;
         return `${formattedHour}:${minute < 10 ? '0' : ''}${minute} ${ampm}`;
     };
-    
+
     const convertSlots = async () => {
-    
-        if (scheduledSlotsData && scheduledSlotsData.length > 0 && timezones && timezoneID) {
+        if (
+            scheduledSlotsData &&
+            scheduledSlotsData.length > 0 &&
+            timezones &&
+            timezoneID
+        ) {
             const timezonename = timezoneIdToName(timezoneID, timezones);
-    
+
             try {
                 const processedSlots = await Promise.all(
                     scheduledSlotsData.map(async (slot, index) => {
@@ -106,8 +110,12 @@ const Slots = ({ componentName , timezoneID }) => {
                             end_date: slot.slot_date,
                             timezonename,
                         });
-                        const startDateTime = new Date(`${localTime.start_date}T${localTime.start_time}`);
-                        const endDateTime = new Date(`${localTime.end_date}T${localTime.end_time}`);
+                        const startDateTime = new Date(
+                            `${localTime.start_date}T${localTime.start_time}`
+                        );
+                        const endDateTime = new Date(
+                            `${localTime.end_date}T${localTime.end_time}`
+                        );
                         return {
                             'S. No.': index + 1,
                             Date: localTime.start_date,
@@ -115,7 +123,6 @@ const Slots = ({ componentName , timezoneID }) => {
                             Select: selectedSlots.includes(slot.id),
                             id: slot.id,
                             startDate: startDateTime,
-                            
                         };
                     })
                 );
@@ -129,7 +136,7 @@ const Slots = ({ componentName , timezoneID }) => {
             setSelectedSlots([]);
         }
     };
-    
+
     useEffect(() => {
         convertSlots();
     }, [scheduledSlotsData, timezones, timezoneID]);
@@ -142,14 +149,13 @@ const Slots = ({ componentName , timezoneID }) => {
         );
     };
 
-
     const handleSubmit = async () => {
         const timezonename = timezoneIdToName(timezoneID, timezones);
         if (selectedSlots.length > 0) {
             const data = await Promise.all(
                 selectedSlots.map(async slotId => {
                     const slot = scheduledSlotsData.find(s => s.id === slotId);
-    
+
                     const localTime = await convertFromUTC({
                         start_date: slot.slot_date,
                         start_time: slot.from_time,
@@ -157,7 +163,7 @@ const Slots = ({ componentName , timezoneID }) => {
                         end_date: slot.slot_date,
                         timezonename,
                     });
-    
+
                     return {
                         slot_id: slot.id,
                         date: slot.slot_date,
@@ -169,10 +175,10 @@ const Slots = ({ componentName , timezoneID }) => {
             const requestData = {
                 admin_user_id: id,
                 data,
-                timezone_id : timezoneID
+                timezone_id: timezoneID,
             };
-            
-            console.log("REQUEST DATA :", requestData)
+
+            console.log('REQUEST DATA :', requestData);
             dispatch(addDataToFindScheduleInSlot(requestData));
             dispatch(getScheduleSessionAction(requestData))
                 .then(() => {
@@ -183,7 +189,7 @@ const Slots = ({ componentName , timezoneID }) => {
                     console.error('API error:', error);
                 });
         } else {
-            toast.error('Please select Slot')
+            toast.error('Please select Slot');
         }
     };
 

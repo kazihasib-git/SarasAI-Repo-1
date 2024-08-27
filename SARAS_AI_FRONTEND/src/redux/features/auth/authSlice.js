@@ -50,7 +50,7 @@ const initialState = {
     userData: {},
     login: false,
     role: null,
-    name : '',
+    name: '',
     accessToken: null,
     timezone_id: null,
     loading: false,
@@ -83,7 +83,7 @@ const authSlice = createSlice({
             state.accessToken = action.payload.access_token;
             state.timezone_id = action.payload.admin_user.timezone_id;
 
-            localStorage.setItem('name', action.payload.admin_user.name)
+            localStorage.setItem('name', action.payload.admin_user.name);
             localStorage.setItem('login', true);
             localStorage.setItem('accessToken', action.payload.access_token);
             localStorage.setItem('role', action.payload.role);
@@ -115,7 +115,7 @@ const authSlice = createSlice({
             localStorage.setItem('accessToken', '');
             localStorage.setItem('role', '');
             localStorage.removeItem('timezone_id'); // Remove timezone_id from localStorage
-            localStorage.removeItem('name','')
+            localStorage.removeItem('name', '');
         });
         builder.addCase(logout.rejected, (state, action) => {
             toast.error(action.payload || 'Failed To Logout')

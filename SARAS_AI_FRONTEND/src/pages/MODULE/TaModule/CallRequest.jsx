@@ -9,8 +9,8 @@ import {
 } from '@mui/material';
 import Header from '../../../components/Header/Header';
 import TaMenuSidebar from './TeachingAssistantSidebar';
-import DenyDialog from './DenyDialog'; // Import the DenyDialog component
-import CreateMeetingDialog from '../coachModule/CreateMeetingDialog'; // Import the CreateMeetingDialog component
+import DenyDialog from './DenyDialog';
+import CreateMeetingDialog from '../coachModule/CreateMeetingDialog';
 
 import {
     getTaCallRequests,
@@ -21,60 +21,66 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { timezoneIdToName } from '../../../utils/timezoneIdToName';
 import { convertFromUTC } from '../../../utils/dateAndtimeConversion';
+import { getTimezone } from '../../../redux/features/utils/utilSlice';
 
 const CallRequest = () => {
-    //const [openDenyDialog, setOpenDenyDialog] = useState(false);
     const [openCreateMeetingDialog, setOpenCreateMeetingDialog] =
         useState(false);
-
     const [open, setOpen] = useState(false);
     const { taCallRequests } = useSelector(state => state.taMenu);
     const [callRequests, setCallRequests] = useState([]);
     const [denyRequestId, setDenyRequestId] = useState(null);
     const dispatch = useDispatch();
 
-    useEffect(() => {
-        dispatch(getTaCallRequests());
-    }, [dispatch]);
-
     const { timezones } = useSelector(state => state.util);
     const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
-    const timezonename = timezoneIdToName(storedTimezoneId, timezones);
+
+    useEffect(() => {
+        dispatch(getTaCallRequests());
+        dispatch(getTimezone());
+    }, [dispatch]);
 
     const processTaCallRequests = async requests => {
-        await Promise.all(
-            requests.map(async request => {
-                const localTime = await convertFromUTC({
-                    start_date: request.date,
-                    start_time: request.start_time,
-                    end_time: request.end_time,
-                    end_date: request.end_date,
-                    timezonename,
-                });
+        if (requests && requests.length > 0 && timezones && storedTimezoneId) {
+            const timezonename = timezoneIdToName(storedTimezoneId, timezones);
 
-                return {
-                    ...request,
-                    date: localTime.start_date,
-                    start_time: localTime.start_time,
-                    end_time: localTime.end_time,
-                    end_date: localTime.end_date,
-                };
-            })
-        );
+            try {
+                const processedRequests = await Promise.all(
+                    requests.map(async request => {
+                        const localTime = await convertFromUTC({
+                            start_date: request.date,
+                            start_time: request.start_time,
+                            end_time: request.end_time,
+                            end_date: request.date,
+                            timezonename,
+                        });
 
-        const processedRequests = requests.map(request => ({
-            ...request,
-            title: `Session request by ${request.sender.name}`,
-            For: `${request.date} | ${request.start_time}`,
-        }));
+                        return {
+                            ...request,
+                            date: localTime.start_date,
+                            start_time: localTime.start_time,
+                            end_time: localTime.end_time,
+                            title: `Session request by ${request.sender.name}`,
+                            For: `${localTime.start_date} | ${convertTo12HourFormat(localTime.start_time)}`,
+                        };
+                    })
+                );
 
-        setCallRequests(processedRequests);
+                setCallRequests(processedRequests);
+            } catch (error) {
+                console.error('Error converting call requests:', error);
+                setCallRequests([]);
+            }
+        } else {
+            setCallRequests([]);
+        }
     };
+
     useEffect(() => {
-        if (taCallRequests) {
+        if (taCallRequests && timezones && storedTimezoneId) {
             processTaCallRequests(taCallRequests);
         }
-    }, [taCallRequests]);
+    }, [taCallRequests, timezones, storedTimezoneId]);
 
     const [showFullMessages, setShowFullMessages] = useState({});
 
@@ -82,6 +88,7 @@ const CallRequest = () => {
         setDenyRequestId(id);
         setOpen(true);
     };
+
     const handleClose = () => {
         setOpen(false);
     };
@@ -120,6 +127,14 @@ const CallRequest = () => {
         setOpenCreateMeetingDialog(false);
     };
 
+    function convertTo12HourFormat(time24) {
+        const [hours, minutes] = time24.split(':').map(Number);
+        const suffix = hours >= 12 ? 'PM' : 'AM';
+        const hours12 = hours % 12 || 12;
+        const formattedMinutes = minutes.toString().padStart(2, '0');
+        return `${hours12}:${formattedMinutes} ${suffix}`;
+    }
+
     return (
         <div>
             <Header />
@@ -137,18 +152,6 @@ const CallRequest = () => {
                 >
                     Call Request
                 </Typography>
-
-                {/* <div className="inputBtnContainer">
-                    <button
-                        className="buttonContainer"
-                        variant="contained"
-                        color="warning"
-                        onClick={handleCreateMeetingOpen}
-                    >
-                        <i className="bi bi-plus-circle"></i>
-                        <span>Create New Meeting</span>
-                    </button>
-                </div> */}
             </Box>
             <Grid container spacing={2}>
                 {callRequests.map(callRequest => (
@@ -213,9 +216,6 @@ const CallRequest = () => {
                                             color: 'white',
                                             mt: 2,
                                             ml: 6,
-                                            textTransform: 'none',
-                                            fontFamily: 'Nohemi',
-                                            fontSize: 16,
                                             '&:hover': {
                                                 backgroundColor: '#19B420',
                                             },
@@ -235,9 +235,6 @@ const CallRequest = () => {
                                                 borderRadius: 40,
                                                 backgroundColor: '#F56D3B',
                                                 color: 'white',
-                                                textTransform: 'none',
-                                                fontFamily: 'Nohemi',
-                                                fontSize: 16,
                                                 '&:hover': {
                                                     backgroundColor: '#F56D3B',
                                                 },
@@ -248,17 +245,14 @@ const CallRequest = () => {
                                         <Button
                                             onClick={() =>
                                                 handleClickOpen(callRequest.id)
-                                            } // Open the Deny dialog
+                                            }
                                             sx={{
                                                 height: 43,
                                                 width: 112,
                                                 borderRadius: 40,
-                                                color: '#F56D3B', // Font color
-                                                border: '2px solid #F56D3B', // Border color
+                                                color: '#F56D3B',
+                                                border: '2px solid #F56D3B',
                                                 ml: 1,
-                                                textTransform: 'none',
-                                                fontFamily: 'Nohemi',
-                                                fontSize: 16,
                                                 '&:hover': {
                                                     backgroundColor: '#F56D3B',
                                                     color: 'white',
@@ -280,11 +274,6 @@ const CallRequest = () => {
                 handleDenySubmit={handleDenySubmit}
                 denyRequestId={denyRequestId}
             />
-            {/* <CreateMeetingDialog
-                open={openCreateMeetingDialog}
-                onClose={handleCreateMeetingClose}
-                onSubmit={handleCreateMeetingSubmit}
-            /> */}
         </div>
     );
 };

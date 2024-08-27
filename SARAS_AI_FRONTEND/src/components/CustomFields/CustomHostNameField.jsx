@@ -5,43 +5,18 @@ import {
     Select,
     MenuItem,
     Typography,
-    Checkbox,
-    ListItemText,
 } from '@mui/material';
 
-const CustomActivityFormControl = ({
+const CustomHostNameForm = ({
     label,
     name,
-    value = [], // Ensure value is initialized as an array
+    value,
     onChange,
     errors,
     options,
     disabled,
 }) => {
     const hasError = !!errors[name];
-
-    const handleChange = event => {
-        const {
-            target: { value: selectedValue },
-        } = event;
-        // On selecting multiple values, MUI returns an array of the selected items
-        onChange({
-            target: {
-                name,
-                value:
-                    typeof selectedValue === 'string'
-                        ? selectedValue.split(',')
-                        : selectedValue,
-            },
-        });
-    };
-
-    const getSelectedLabels = selectedValues => {
-        return options
-            .filter(option => selectedValues.includes(option.value))
-            .map(option => option.label)
-            .join(', ');
-    };
 
     return (
         <FormControl variant="outlined" disabled={disabled} fullWidth>
@@ -50,10 +25,10 @@ const CustomActivityFormControl = ({
                 sx={{
                     color: hasError ? 'red' : '#1A1E3D',
                     '&.Mui-focused': {
-                        color: '#1A1E3D',
+                        color: '#1A1E3D', // Change label color on focus regardless of error
                     },
                     '&.MuiFormLabel-filled': {
-                        color: hasError ? 'red' : '#1A1E3D',
+                        color: hasError ? 'red' : '#1A1E3D', // Change label color when the field is filled
                     },
                 }}
             >
@@ -62,11 +37,10 @@ const CustomActivityFormControl = ({
             <Select
                 label={label}
                 name={name}
-                value={value} // Ensure value is an array
-                onChange={handleChange} // Use the updated handleChange function
-                error={hasError}
-                multiple // Enable multiple selection
-                renderValue={selected => getSelectedLabels(selected)} // Display selected labels as a comma-separated string
+                value={value}
+                onChange={onChange}
+                error={!!errors[name]}
+                disabled={disabled}
                 MenuProps={{
                     PaperProps: {
                         style: {
@@ -85,15 +59,14 @@ const CustomActivityFormControl = ({
                         borderColor: '#D0D0EC',
                     },
                     '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: hasError ? 'red' : 'rgb(245, 109, 59)',
+                        borderColor: hasError ? 'red' : 'rgb(245, 109, 59)', // Change border color on focus based on error
                         color: '#1A1E3D',
                     },
                 }}
             >
                 {options.map(option => (
-                    <MenuItem key={option.value} value={option.value}>
-                        <Checkbox checked={value.indexOf(option.value) > -1} />
-                        <ListItemText primary={option.label} />
+                    <MenuItem key={option.id} value={option.id}>
+                        {option.name}
                     </MenuItem>
                 ))}
             </Select>
@@ -110,4 +83,4 @@ const CustomActivityFormControl = ({
     );
 };
 
-export default CustomActivityFormControl;
+export default CustomHostNameForm;

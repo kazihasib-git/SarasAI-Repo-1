@@ -7,7 +7,7 @@ import CustomFormControl from '../../../../components/CustomFields/CustomFromCon
 import CustomDateField from '../../../../components/CustomFields/CustomDateField';
 import { Button } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
-import  { useState } from 'react';
+import { useState } from 'react';
 import { linkActivity } from '../../../../redux/features/adminModule/coach/LinkActivitySlice';
 import PDFUploadComponent from './Components/PDFUploadComponent';
 import LinkActivityPopup from './LinkActivity';
@@ -53,46 +53,54 @@ const CustomButton = ({
 };
 
 // Component for Video/PDF/Link Activity
-const VideoPdfActivity = ({ handleClose, name, fileName ,activity_id, activity_type_id, activity_url, template_id }) => {
-  const dispatch = useDispatch();
-  const [videoUrl, setVideoUrl]=useState(null);
-  const { upload_pdf_url } = useSelector(state => state.linkActivity  );
+const VideoPdfActivity = ({
+    handleClose,
+    name,
+    fileName,
+    activity_id,
+    activity_type_id,
+    activity_url,
+    template_id,
+}) => {
+    const dispatch = useDispatch();
+    const [videoUrl, setVideoUrl] = useState(null);
+    const { upload_pdf_url } = useSelector(state => state.linkActivity);
 
-  const handleVideoUploadComplete = url =>{
+    const handleVideoUploadComplete = url => {
         setVideoUrl(url);
-  }
-
-  const {
-    handleSubmit,
-    control,
-    reset,
-    formState: { errors },
-  } = useForm();
-
-  const onSubmit = async data => {
-    const payload = {
-        activity_id: activity_id, // Ensure this value is correctly set
-        activity_type_id: activity_type_id,
-        link: videoUrl || upload_pdf_url || data.link, // Add other fields if needed
     };
-    try {
-      if(payload.link){
-        await dispatch(linkActivity(payload))
-            .unwrap()
-            .then(() => {
-                // Refetch the data to update the table
-                setVideoUrl(null);
-                data.link=null;
-                dispatch(getCoachTemplateModuleId(template_id));
-            });
-        handleClose();
-      }
-    } catch (error) {
-        console.error('Failed to link activity:', error);
-    }
-  };
 
-  const [showFileName, setShowFileName] = useState(true);
+    const {
+        handleSubmit,
+        control,
+        reset,
+        formState: { errors },
+    } = useForm();
+
+    const onSubmit = async data => {
+        const payload = {
+            activity_id: activity_id, // Ensure this value is correctly set
+            activity_type_id: activity_type_id,
+            link: videoUrl || upload_pdf_url || data.link, // Add other fields if needed
+        };
+        try {
+            if (payload.link) {
+                await dispatch(linkActivity(payload))
+                    .unwrap()
+                    .then(() => {
+                        // Refetch the data to update the table
+                        setVideoUrl(null);
+                        data.link = null;
+                        dispatch(getCoachTemplateModuleId(template_id));
+                    });
+                handleClose();
+            }
+        } catch (error) {
+            console.error('Failed to link activity:', error);
+        }
+    };
+
+    const [showFileName, setShowFileName] = useState(true);
 
     const handleRemoveFileName = () => {
         setShowFileName(false);
@@ -116,99 +124,93 @@ const VideoPdfActivity = ({ handleClose, name, fileName ,activity_id, activity_t
                 />
             </Grid>
 
-      {showFileName ? (
-        <Grid
-          item
-          xs={12}
-          style={{
-            margin: '10px 0',
-            width: '80%',
-            display: 'flex',
-            alignItems: 'center',
-          }}
-        >
-          <button
-            onClick={handleRemoveFileName}
-            style={{
-              background: '#F56D3B',
-              width: '24px',
-              height: '24px',
-              borderRadius: '50%',
-              border: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginRight: '8px',
-              cursor: 'pointer',
-            }}
-          >
-            <span
-              style={{
-                color: 'white',
-                fontSize: '16px',
-                lineHeight: '16px',
-              }}
-            >
-              &times;
-            </span>
-          </button>
-          <p style={{ margin: 0 }}>{fileName.activity_url}</p>
-        </Grid>
-      ) : (
-       
-      
-        <Grid 
-        item 
-        xs={12} 
-        style={{ 
-          marginTop: '20px', // Add margin for spacing from the previous item
-          display: 'flex', 
-          justifyContent: 'center' // Center horizontally
-        }}
-      >
-         {activity_type_id === 1 && (
-                <VideoUploadComponent
-                    onUploadComplete={handleVideoUploadComplete}
-                />
-            )}
-
-            {activity_type_id === 2 && <PDFUploadComponent />}
-
-            {activity_type_id === 3 && (
+            {showFileName ? (
                 <Grid
                     item
                     xs={12}
-                    sm={6}
-                    md={6}
-                    style={{ margin: '5px 0px', width: '80%' }}
+                    style={{
+                        margin: '10px 0',
+                        width: '80%',
+                        display: 'flex',
+                        alignItems: 'center',
+                    }}
                 >
-                    <Controller
-                        name="link"
-                        control={control}
-                        defaultValue=""
-                        render={({ field }) => (
-                            <CustomTextField
-                                label="Link"
-                                name="virtualMeetLink"
-                                variant="outlined"
-                                value={field.value}
-                                onChange={e => {
-                                    field.onChange(e);
-                                }}
-                                placeholder="Enter Link"
-                                fullWidth
+                    <button
+                        onClick={handleRemoveFileName}
+                        style={{
+                            background: '#F56D3B',
+                            width: '24px',
+                            height: '24px',
+                            borderRadius: '50%',
+                            border: 'none',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            marginRight: '8px',
+                            cursor: 'pointer',
+                        }}
+                    >
+                        <span
+                            style={{
+                                color: 'white',
+                                fontSize: '16px',
+                                lineHeight: '16px',
+                            }}
+                        >
+                            &times;
+                        </span>
+                    </button>
+                    <p style={{ margin: 0 }}>{fileName.activity_url}</p>
+                </Grid>
+            ) : (
+                <Grid
+                    item
+                    xs={12}
+                    style={{
+                        marginTop: '20px', // Add margin for spacing from the previous item
+                        display: 'flex',
+                        justifyContent: 'center', // Center horizontally
+                    }}
+                >
+                    {activity_type_id === 1 && (
+                        <VideoUploadComponent
+                            onUploadComplete={handleVideoUploadComplete}
+                        />
+                    )}
+
+                    {activity_type_id === 2 && <PDFUploadComponent />}
+
+                    {activity_type_id === 3 && (
+                        <Grid
+                            item
+                            xs={12}
+                            sm={6}
+                            md={6}
+                            style={{ margin: '5px 0px', width: '80%' }}
+                        >
+                            <Controller
+                                name="link"
+                                control={control}
+                                defaultValue=""
+                                render={({ field }) => (
+                                    <CustomTextField
+                                        label="Link"
+                                        name="virtualMeetLink"
+                                        variant="outlined"
+                                        value={field.value}
+                                        onChange={e => {
+                                            field.onChange(e);
+                                        }}
+                                        placeholder="Enter Link"
+                                        fullWidth
+                                    />
+                                )}
                             />
-                        )}
-                    />
+                        </Grid>
+                    )}
                 </Grid>
             )}
-
-       
-      </Grid>
-      
-   
-      )}
-       <CustomButton
+            <CustomButton
                 onClick={handleSubmit(onSubmit)}
                 backgroundColor="#F56D3B"
                 borderColor="#F56D3B"
@@ -342,20 +344,20 @@ const SessionActivity = ({ activity, name }) => {
 // };
 
 const TestActivity = ({ handleClose, activity, name, template_id }) => {
-  const {
-    handleSubmit,
-    control,
-    reset,
-    formState: { errors },
-  } = useForm();
+    const {
+        handleSubmit,
+        control,
+        reset,
+        formState: { errors },
+    } = useForm();
 
-  const [selectedAssessment, setSelectedAssessment] = useState(name);
-  const [selectedAssessmentId, setSelectedAssessmentId] = useState(null);
-  const [showEditButton, setShowEditButton] = useState(false);
-  const { typeList } = useSelector(state => state.activityType);
-  const dispatch = useDispatch();
+    const [selectedAssessment, setSelectedAssessment] = useState(name);
+    const [selectedAssessmentId, setSelectedAssessmentId] = useState(null);
+    const [showEditButton, setShowEditButton] = useState(false);
+    const { typeList } = useSelector(state => state.activityType);
+    const dispatch = useDispatch();
 
-  const assessmentOptions = typeList
+    const assessmentOptions = typeList
         .filter((_, index) => index >= 5)
         .map(type => ({
             value: type.type_name,
@@ -363,108 +365,105 @@ const TestActivity = ({ handleClose, activity, name, template_id }) => {
                 type.type_name.charAt(0).toUpperCase() +
                 type.type_name.slice(1), // Capitalize the first letter of each type_name
             id: type.id,
-    }));
+        }));
 
-    const handleAssessmentChange = (e) => {
-      const selectedValue = e.target.value;
-      setSelectedAssessment(selectedValue);
-      const selectedOption = assessmentOptions.find(
-        option => option.value === selectedValue
-      );
-      setSelectedAssessmentId(
-          selectedOption ? selectedOption.id : ''
-      );
-      setShowEditButton(true);
+    const handleAssessmentChange = e => {
+        const selectedValue = e.target.value;
+        setSelectedAssessment(selectedValue);
+        const selectedOption = assessmentOptions.find(
+            option => option.value === selectedValue
+        );
+        setSelectedAssessmentId(selectedOption ? selectedOption.id : '');
+        setShowEditButton(true);
     };
 
-  
     const onSubmit = async data => {
-      const payload = {
-          activity_id: activity.id, 
-          activity_type_id: selectedAssessmentId,
-      };
-      try {
-          await dispatch(linkActivity(payload))
-              .unwrap()
-              .then(() => {
-                  dispatch(getCoachTemplateModuleId(template_id));
-              });
-          handleClose();
-      } catch (error) {
-          console.error('Failed to link activity:', error);
-      }
+        const payload = {
+            activity_id: activity.id,
+            activity_type_id: selectedAssessmentId,
+        };
+        try {
+            await dispatch(linkActivity(payload))
+                .unwrap()
+                .then(() => {
+                    dispatch(getCoachTemplateModuleId(template_id));
+                });
+            handleClose();
+        } catch (error) {
+            console.error('Failed to link activity:', error);
+        }
     };
 
-  return (
-    <>
-      <Grid
-        container
-        spacing={1}
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          textAlign: 'center',
-          width: '100%',
-        }}
-      >
-        <Grid
-          item
-          xs={12}
-          sm={6}
-          md={6}
-          style={{ margin: '10px 0', width: '80%' }}
-        >
-          <CustomFormControl
-            label="Activity Type"
-            name="activityType"
-            value="test"
-            options={[{ value: 'test', label: 'test' }]}
-            errors={errors}
-            control={control}
-          />
-        </Grid>
-
-        <Grid
-          item
-          xs={12}
-          sm={6}
-          md={6}
-          style={{ margin: '10px 0', width: '80%' }}
-        >
-          <CustomFormControl
-            label="Assessment"
-            name="assessment"
-            value={selectedAssessment}
-            options={assessmentOptions}
-            onChange={handleAssessmentChange}
-            errors={errors}
-            control={control}
-          />
-        </Grid>
-
-        {showEditButton && (
-          <Grid
-            item
-            xs={12}
-            sm={6}
-            md={6}
-            style={{ margin: '10px 0', width: '80%' }}
-          >
-            <CustomButton
-              onClick={handleSubmit(onSubmit)}
-              backgroundColor="#F56D3B"
-              borderColor="#F56D3B"
-              color="#FFFFFF"
-              style={{ textTransform: 'none' }}
+    return (
+        <>
+            <Grid
+                container
+                spacing={1}
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    textAlign: 'center',
+                    width: '100%',
+                }}
             >
-              Edit
-            </CustomButton>
-          </Grid>
-        )}
-      </Grid>
-    </>
-  );
+                <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    md={6}
+                    style={{ margin: '10px 0', width: '80%' }}
+                >
+                    <CustomFormControl
+                        label="Activity Type"
+                        name="activityType"
+                        value="test"
+                        options={[{ value: 'test', label: 'test' }]}
+                        errors={errors}
+                        control={control}
+                    />
+                </Grid>
+
+                <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    md={6}
+                    style={{ margin: '10px 0', width: '80%' }}
+                >
+                    <CustomFormControl
+                        label="Assessment"
+                        name="assessment"
+                        value={selectedAssessment}
+                        options={assessmentOptions}
+                        onChange={handleAssessmentChange}
+                        errors={errors}
+                        control={control}
+                    />
+                </Grid>
+
+                {showEditButton && (
+                    <Grid
+                        item
+                        xs={12}
+                        sm={6}
+                        md={6}
+                        style={{ margin: '10px 0', width: '80%' }}
+                    >
+                        <CustomButton
+                            onClick={handleSubmit(onSubmit)}
+                            backgroundColor="#F56D3B"
+                            borderColor="#F56D3B"
+                            color="#FFFFFF"
+                            style={{ textTransform: 'none' }}
+                        >
+                            Edit
+                        </CustomButton>
+                    </Grid>
+                )}
+            </Grid>
+        </>
+    );
 };
 
 // Main Popup Component
@@ -492,7 +491,7 @@ const ViewActivityPopup = ({ open, onClose, activity, templateId }) => {
                     />
                 );
             case 4:
-              return (
+                return (
                     <SessionActivity
                         details={activity}
                         name={activity.activity_type?.type_name}
@@ -502,15 +501,14 @@ const ViewActivityPopup = ({ open, onClose, activity, templateId }) => {
             case 6:
             case 7:
             case 8:
-              return(
+                return (
                     <TestActivity
-                       handleClose={onClose}
-                       activity={activity}
-                       name={activity.activity_type?.type_name}
-                       template_id={templateId}
+                        handleClose={onClose}
+                        activity={activity}
+                        name={activity.activity_type?.type_name}
+                        template_id={templateId}
                     />
-
-              )
+                );
             default:
                 return null;
         }

@@ -1,65 +1,91 @@
-import { Box, InputBase, Button, Modal, Typography } from '@mui/material';
-
+import { Box, InputBase } from '@mui/material';
 import Header from '../../components/Header/Header';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import { useState, useEffect } from 'react';
-import { OnOffSwitch } from '../../components/Switch';
-import editIcon from '../../assets/editIcon.png';
 import DynamicTable from '../../components/CommonComponent/DynamicTable';
-import { showCoachCourseMapping } from '../../redux/features/adminModule/coach/coachSlice';
+import { showTaCourseMapping } from '../../redux/features/adminModule/ta/taSlice';
 import { useDispatch, useSelector } from 'react-redux';
 
 const headers = [
     'S. No.',
-    'Coach Name',
+    'Ta Name',
     'Active Courses',
-    // 'Action',
 ];
 
-const actionButtons = [
-    {
-        type: 'delete',
-        onClick: id => console.log(`Delete clicked for id ${id}`),
-    },
-];
-
-const CoachCourseMapping = () => {
+const TaCourseMapping = () => {
     const dispatch = useDispatch();
-    const { coachCourseMappingData, loading } = useSelector(
-        state => state.coachModule
-    );
-    const [caMappingData, setcaMappingData] = useState([]);
+    const { taCourseMappingData, loading, error } = useSelector(state => state.taModule);
+    const [taMappingData, settaMappingData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
-        dispatch(showCoachCourseMapping());
+        dispatch(showTaCourseMapping());
     }, [dispatch]);
 
+    // useEffect(() => {
+    //     console.log("taCourseMappingData:", taCourseMappingData); // Log the data for debugging
+
+    //     if (Array.isArray(taCourseMappingData) && taCourseMappingData.length > 0) {
+    //         try {
+    //             const transformData = taCourseMappingData.map((item, index) => {
+    //                 if (!item || typeof item !== 'object') {
+    //                     console.error(`Invalid item at index ${index}:`, item);
+    //                     return null;
+    //                 }
+    //                 return {
+    //                     id: item.id,
+    //                     name: item.name,
+    //                     Active_Courses: Array.isArray(item.courses) ? item.courses.length : 0,
+    //                 };
+    //             }).filter(Boolean);
+
+    //             settaMappingData(transformData);
+    //             setFilteredData(transformData);
+    //         } catch (error) {
+    //             console.error("Error transforming taCourseMappingData:", error);
+    //         }
+    //     } else {
+    //         settaMappingData([]);
+    //         setFilteredData([]);
+    //     }
+    // }, [taCourseMappingData]);
+   console.log("tacoursemappingdata:::" , taCourseMappingData) ; 
+
     useEffect(() => {
-        if (coachCourseMappingData && coachCourseMappingData.length > 0) {
-            const transformData = coachCourseMappingData.map((item, index) => ({
+        if (taCourseMappingData && taCourseMappingData.length > 0) {
+            const transformData = taCourseMappingData.map((item) => ({
                 id: item.id,
                 name: item.name,
-                Active_Courses: item.courses.length,
+                Active_Courses: item.courses_for_ta.length,
+                
             }));
-
-            setcaMappingData(transformData);
+            console.log('length of active courses :' ,  transformData.Active_Courses) ; 
+            settaMappingData(transformData);
             setFilteredData(transformData);
         }
-    }, [coachCourseMappingData]);
+    }, [taCourseMappingData]);
+
 
     const handleSearch = event => {
         const query = event.target.value.toLowerCase();
         setSearchQuery(query);
         setCurrentPage(1); // Reset the current page to 1 when the search query changes
 
-        const filtered = caMappingData.filter(item =>
+        const filtered = taMappingData.filter(item =>
             item.name.toLowerCase().includes(query)
         );
         setFilteredData(filtered);
     };
+
+    // if (loading) {
+    //     return <div>Loading...</div>;
+    // }
+
+    // if (error) {
+    //     return <div>Error: {error}</div>;
+    // }
 
     return (
         <>
@@ -79,7 +105,7 @@ const CoachCourseMapping = () => {
                             fontFamily: 'ExtraLight',
                         }}
                     >
-                        Coach Course Mapping
+                        Ta Course Mapping   
                     </p>
                     <Box display={'flex'}>
                         <Box
@@ -103,13 +129,13 @@ const CoachCourseMapping = () => {
                 <DynamicTable
                     headers={headers}
                     initialData={filteredData}
-                    currentPage={currentPage} // Pass the current page state to DynamicTable
-                    onPageChange={page => setCurrentPage(page)} // Update the current page state when the page changes
-                    componentName={'COACHCOURSEMAPPING'}
+                    currentPage={currentPage}
+                    onPageChange={page => setCurrentPage(page)}
+                    componentName={'TACOURSEMAPPING'}
                 />
             </Box>
         </>
     );
 };
 
-export default CoachCourseMapping;
+export default TaCourseMapping;

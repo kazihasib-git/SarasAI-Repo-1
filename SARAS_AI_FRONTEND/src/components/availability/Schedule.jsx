@@ -17,6 +17,8 @@ import CustomTimeField from '../CustomFields/CustomTimeField';
 import CustomDateField from '../CustomFields/CustomDateField';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import CustomFormControl from '../CustomFields/CustomFromControl';
+import CustomHostNameForm from '../CustomFields/CustomHostNameField';
+import CustomMeetingTypeForm from '../CustomFields/CustomMeetingTypeField';
 import { useForm, Controller } from 'react-hook-form';
 import { timezoneIdToName } from '../../utils/timezoneIdToName';
 import { convertFromUTC } from '../../utils/dateAndtimeConversion';
@@ -63,8 +65,8 @@ const actionButtons = [
     },
 ];
 
-const Schedule = ({ componentName , timezoneID}) => {
-    console.log('timezoneID=======>' , timezoneID )
+const Schedule = ({ componentName, timezoneID }) => {
+    console.log('timezoneID=======>', timezoneID);
     const [fromDate, setFromDate] = useState(null);
     const [toDate, setToDate] = useState(null);
     const [fromTime, setFromTime] = useState(null);
@@ -153,7 +155,7 @@ const Schedule = ({ componentName , timezoneID}) => {
         [batchKey]: batches,
     } = schedulingState;
 
-     const {
+    const {
         register,
         handleSubmit,
         control,
@@ -164,15 +166,16 @@ const Schedule = ({ componentName , timezoneID}) => {
         },
     });
 
-    
-
     useEffect(() => {
         if (dateSelected && (fromDate || !availableSlots.length > 0)) {
             dispatch(
                 getAvailableSlotsAction({
                     admin_user_id: adminUserID,
                     date: fromDate,
-                    timezone_name: timezoneIdToName( timezoneId ? Number(timezoneId) : timezoneID, timezones),
+                    timezone_name: timezoneIdToName(
+                        timezoneId ? Number(timezoneId) : timezoneID,
+                        timezones
+                    ),
                 })
             ).then(() => {
                 setSelectedSlot(null);
@@ -181,13 +184,15 @@ const Schedule = ({ componentName , timezoneID}) => {
     }, [fromDate, dispatch, adminUserID, getAvailableSlotsAction]);
 
     const handleDateSubmit = () => {
-
         if (fromDate) {
             dispatch(
                 getAvailableSlotsAction({
                     admin_user_id: adminUserID,
                     date: fromDate,
-                    timezone_name: timezoneIdToName(timezoneId ? Number(timezoneId) :  timezoneID, timezones),
+                    timezone_name: timezoneIdToName(
+                        timezoneId ? Number(timezoneId) : timezoneID,
+                        timezones
+                    ),
                 })
             ).then(() => {
                 setSelectedSlot(null);
@@ -202,9 +207,13 @@ const Schedule = ({ componentName , timezoneID}) => {
     }, [dispatch]);
 
     const convertSessions = async () => {
-        
-        if (availableSlots && availableSlots.length > 0 && timezones && (timezoneId || timezoneID)) {
-            const timezonename = timezoneIdToName(timezoneId ? Number(timezoneId) :  timezoneID, timezones);
+        if (
+            availableSlots &&
+            availableSlots.length > 0 &&
+            timezones &&
+            timezoneID
+        ) {
+            const timezonename = timezoneIdToName(timezoneID, timezones);
             try {
                 const processedSlots = await Promise.all(
                     availableSlots.map(async (slot, index) => {
@@ -215,10 +224,14 @@ const Schedule = ({ componentName , timezoneID}) => {
                             end_date: slot.slot_date, // Assuming end_date is the same as slot_date
                             timezonename,
                         });
-    
-                        const startDateTime = new Date(`${localTime.start_date}T${localTime.start_time}`);
-                        const endDateTime = new Date(`${localTime.end_date}T${localTime.end_time}`);
-    
+
+                        const startDateTime = new Date(
+                            `${localTime.start_date}T${localTime.start_time}`
+                        );
+                        const endDateTime = new Date(
+                            `${localTime.end_date}T${localTime.end_time}`
+                        );
+
                         return {
                             'S. No.': index + 1,
                             'Slot Date': localTime.start_date,
@@ -239,16 +252,12 @@ const Schedule = ({ componentName , timezoneID}) => {
                     const formattedHour = hour % 12 || 12;
                     return `${formattedHour}:${minute < 10 ? '0' : ''}${minute} ${ampm}`;
                 };
-    
+
                 const options = processedSlots.map((item, index) => ({
                     label: `${formatTime(item['From Time'])} - ${formatTime(item['To Time'])}`,
                     value: `${item.id}-${index}`, // Create a unique value by combining item.id and index
                 }));
-                
-    
-                console.log("OPTIONS : ", options)
-                // console.log("PROCESSED SLOT : ", processedSlots)
-                
+
                 setAvailableSlotsOptions(options);
                 setSlotData(processedSlots);
             } catch (error) {
@@ -261,7 +270,7 @@ const Schedule = ({ componentName , timezoneID}) => {
             setSlotData([{}]);
         }
     };
-    
+
     useEffect(() => {
         convertSessions();
     }, [availableSlots, timezones, timezoneId, timezoneID]);
@@ -279,22 +288,19 @@ const Schedule = ({ componentName , timezoneID}) => {
     const handleSelectOption = e => {
         const selectedValue = e.target.value;
         const [selectedId, selectedIndex] = selectedValue.split('-'); // Extract the id and index
-        console.log("SELECTED ID : ", selectedId);
-    
+        console.log('SELECTED ID : ', selectedId);
+
         const selectedSlots = slotData.filter(slot => slot.id == selectedId); // Find all slots by id
-        console.log("SELECTED SLOTS: ", selectedSlots);
-    
+        console.log('SELECTED SLOTS: ', selectedSlots);
+
         // Optionally, if you want only the specific slot by index:
         const selectedSlot = selectedSlots[selectedIndex];
-        console.log("SELECTED SLOT: ", typeof selectedSlot);
-    
+        console.log('SELECTED SLOT: ', typeof selectedSlot);
+
         setSelectedSlot(selectedSlot); // Set the specific slot
     };
-    
-    
 
     const handleAssignStudents = () => {
-
         if (componentName === 'TASCHEDULE') {
             dispatch(openEditStudent());
         } else if (componentName === 'COACHSCHEDULE') {
@@ -303,7 +309,6 @@ const Schedule = ({ componentName , timezoneID}) => {
     };
 
     const handleAssignBatches = () => {
-
         if (componentName === 'TASCHEDULE') {
             dispatch(openEditBatch());
         } else if (componentName === 'COACHSCHEDULE') {
@@ -353,7 +358,6 @@ const Schedule = ({ componentName , timezoneID}) => {
     };
 
     const onSubmit = formData => {
-
         const studentId = students.map(student => student.id);
         const batchId = batches.map(batch => batch.id);
 
@@ -378,16 +382,16 @@ const Schedule = ({ componentName , timezoneID}) => {
         formData.weeks = weeksArray;
         formData.studentId = studentId;
         formData.batchId = batchId;
-        formData.timezone_id = timezoneId ? Number(timezoneId) : timezoneID, //`${timezoneID}`
-
-        dispatch(createScheduleAction(formData))
-            .then(() => {
-                dispatch(closeScheduleSessionAction());
-                return dispatch(getScheduledSessionApi(adminUserID));
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
+        formData.timezone_id = `${timezoneID}`;
+        (formData.timezone_id = timezoneId ? Number(timezoneId) : timezoneID), //`${timezoneID}`
+            dispatch(createScheduleAction(formData))
+                .then(() => {
+                    dispatch(closeScheduleSessionAction());
+                    return dispatch(getScheduledSessionApi(adminUserID));
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
     };
 
     const content = (
@@ -430,7 +434,7 @@ const Schedule = ({ componentName , timezoneID}) => {
                                             justifyContent="center"
                                         >
                                             <DialogContent
-                                                sx={{
+                                                  sx={{
                                                     color: 'red',
                                                     textAlign: 'center',
                                                 }}
@@ -463,7 +467,10 @@ const Schedule = ({ componentName , timezoneID}) => {
                                                     errors={errors}
                                                 />
                                             </Grid>
-                                            {console.log("SELECT SLOTS DATA ", selectedSlot)}
+                                            {console.log(
+                                                'SELECT SLOTS DATA ',
+                                                selectedSlot
+                                            )}
                                             {selectedSlot && (
                                                 <>
                                                     <Grid
@@ -534,6 +541,9 @@ const Schedule = ({ componentName , timezoneID}) => {
                                                             name="timezone_id"
                                                             control={control}
                                                             // rules={{ required: "Time Zone is required" }}
+                                                            defaultValue={
+                                                                timezoneID
+                                                            }
                                                             //defaultValue={timezone_id ? Number(timezone_id) : timezoneID}
                                                             render={({
                                                                 field,
@@ -542,13 +552,19 @@ const Schedule = ({ componentName , timezoneID}) => {
                                                                     label="Time Zone"
                                                                     name="timezone_id"
                                                                     value={
-                                                                        timezoneId ? Number(timezoneId) : timezoneID
+                                                                        timezoneId
+                                                                            ? Number(
+                                                                                  timezoneId
+                                                                              )
+                                                                            : timezoneID
                                                                     }
                                                                     onChange={
                                                                         field.onChange
                                                                     }
-                                                                    disabled={timezoneID!=null}
-
+                                                                    disabled={
+                                                                        timezoneID !=
+                                                                        null
+                                                                    }
                                                                     options={
                                                                         timezones
                                                                     }
@@ -590,6 +606,68 @@ const Schedule = ({ componentName , timezoneID}) => {
                                                             )}
                                                         />
                                                     </Grid>
+                                                    {/* <Grid
+                                                        item
+                                                        xs={12}
+                                                        display="flex"
+                                                        justifyContent="center"
+                                                    >
+                                                        <Controller
+                                                            name="platform_id"
+                                                            control={control}
+                                                            render={({
+                                                                field,
+                                                            }) => (
+                                                                <CustomHostNameForm
+                                                                    label="Host Name"
+                                                                    name="platform_id"
+                                                                    value={
+                                                                        field.value
+                                                                    }
+                                                                    onChange={
+                                                                        field.onChange
+                                                                    }
+                                                                    errors={
+                                                                        errors
+                                                                    }
+                                                                    options={
+                                                                        platforms
+                                                                    }
+                                                                />
+                                                            )}
+                                                        />
+                                                    </Grid>
+                                                    <Grid
+                                                        item
+                                                        xs={12}
+                                                        display="flex"
+                                                        justifyContent="center"
+                                                    >
+                                                        <Controller
+                                                            name="platform_id"
+                                                            control={control}
+                                                            render={({
+                                                                field,
+                                                            }) => (
+                                                                <CustomMeetingTypeForm
+                                                                    label="Meeting Type"
+                                                                    name="platform_id"
+                                                                    value={
+                                                                        field.value
+                                                                    }
+                                                                    onChange={
+                                                                        field.onChange
+                                                                    }
+                                                                    errors={
+                                                                        errors
+                                                                    }
+                                                                    options={
+                                                                        platforms
+                                                                    }
+                                                                />
+                                                            )}
+                                                        />
+                                                    </Grid> */}
                                                     <Grid
                                                         item
                                                         xs={12}

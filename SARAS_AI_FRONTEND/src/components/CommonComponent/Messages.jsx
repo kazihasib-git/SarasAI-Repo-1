@@ -14,6 +14,8 @@ import userimg from '../../assets/userimg.png';
 import CancelIcon from '@mui/icons-material/Cancel';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'; // Import an appropriate icon
 import RefreshIcon from '@mui/icons-material/Refresh';
+import moment from 'moment';
+
 import {
     getTaCoachAllChats,
     getChatRecordsByChatId,
@@ -32,7 +34,6 @@ import {
     Checkbox,
 } from '@mui/material';
 
-
 const initialChatData = [
     { sender: 'me', text: 'Loading...', timestamp: new Date() },
 ];
@@ -46,6 +47,36 @@ const getTimeAgo = timestamp => {
     if (diff < 86400) return `${Math.floor(diff / 3600)} h`;
     if (diff < 604800) return `${Math.floor(diff / 86400)} d`;
     return `${Math.floor(diff / 604800)} w`;
+};
+
+const formatTimestamp = timestamp => {
+    const date = new Date(timestamp);
+    const monthNames = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
+    ];
+    const day = date.getDate();
+    const month = monthNames[date.getMonth()];
+    const year = date.getFullYear();
+
+    // Format time
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const formattedHours = hours % 12 || 12;
+    const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+
+    return `${day} ${month} ${year}, ${formattedHours}:${formattedMinutes} ${ampm}`;
 };
 
 const Messages = ({ role }) => {
@@ -157,6 +188,7 @@ const Messages = ({ role }) => {
                         ? {
                               name: selectedFile.name,
                               type: selectedFile.type,
+                              url: URL.createObjectURL(selectedFile), // Temporary URL for local preview
                           }
                         : null,
                 },
@@ -244,6 +276,7 @@ const Messages = ({ role }) => {
                                 ? 'me'
                                 : 'other',
                         text: chatmessagesData[i].message_text,
+                        timestamp: chatmessagesData[i].created_at,
                         file:
                             chatmessagesData[i].chat_message_files &&
                             chatmessagesData[i].chat_message_files.length > 0
@@ -309,9 +342,16 @@ const Messages = ({ role }) => {
                             ? lastMessage.slice(0, 14) + '...'
                             : lastMessage
                         : '',
+                    lastMessageTimestamp: new Date(lastMessageTimestamp), // Store timestamp for sorting
                 };
                 reformedMappingData.push(Data);
             }
+
+            // Sort the data by lastMessageTimestamp in descending order
+            reformedMappingData.sort(
+                (a, b) => b.lastMessageTimestamp - a.lastMessageTimestamp
+            );
+
             setchatUserMappingData(reformedMappingData);
         }
     }, [assignedTaStudents, assignedCoachStudents, taCoachAllChatData]);
@@ -335,6 +375,13 @@ const Messages = ({ role }) => {
         });
     };
 
+    const handleKeyPress = event => {
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Prevents the default behavior
+            handleSendMessageAndFile(); // Calls the function to send the message and file
+        }
+    };
+
     return (
         <div className="container">
             <Box mt={0}>
@@ -354,7 +401,7 @@ const Messages = ({ role }) => {
             <div className="box box1">
                 <div className="search-container">
                     <IconButton onClick={handleRefresh}>
-                        <RefreshIcon/>
+                        <RefreshIcon />
                     </IconButton>
                     <TextField
                         variant="outlined"
@@ -482,91 +529,118 @@ const Messages = ({ role }) => {
                                     <Box
                                         key={index}
                                         display="flex"
-                                        justifyContent={
+                                        flexDirection="column"
+                                        alignItems={
                                             msg.sender === 'me'
                                                 ? 'flex-end'
                                                 : 'flex-start'
                                         }
                                         mb={1}
-                                        alignItems="center"
                                     >
-                                        {msg.sender === 'other' && (
-                                            <img
-                                                src={selectedUser.profilePic}
-                                                alt="Profile Pic"
-                                                className="profile-pic"
+                                        <Box display="flex" alignItems="center">
+                                            {msg.sender === 'other' && (
+                                                <img
+                                                    src={
+                                                        selectedUser.profilePic
+                                                    }
+                                                    alt="Profile Pic"
+                                                    className="profile-pic"
+                                                    style={{
+                                                        marginRight: '8px',
+                                                        visibility:
+                                                            isFirstMessageFromSameSender
+                                                                ? 'visible'
+                                                                : 'hidden',
+                                                    }}
+                                                />
+                                            )}
+                                            <Box
+                                                p={1}
+                                                className={`message-bubble ${msg.sender}`}
                                                 style={{
-                                                    marginRight: '8px',
-                                                    visibility:
-                                                        isFirstMessageFromSameSender
-                                                            ? 'visible'
-                                                            : 'hidden',
+                                                    maxWidth: '60%',
+                                                    borderRadius: '15px',
                                                 }}
-                                            />
-                                        )}
-                                        <Box
-                                            p={1}
-                                            className={`message-bubble ${msg.sender}`}
-                                            style={{
-                                                maxWidth: '60%',
-                                                borderRadius: '15px',
-                                            }}
-                                        >
-                                            {msg.text}
+                                            >
+                                                {msg.text}
 
-                                            {msg.file && (
-                                                <Box mt={1}>
-                                                    <Typography variant="caption">
-                                                        <a
-                                                            style={{
-                                                                display: 'flex', // Flexbox to align icon and text
-                                                                alignItems:
-                                                                    'center',
-                                                                border: '1px solid white',
-                                                                borderRadius:
-                                                                    '8px',
-                                                                color: 'white',
-                                                                padding:
-                                                                    '5px 10px', // Adjust padding for better spacing
-                                                                textDecoration:
-                                                                    'none',
-                                                                backgroundColor:
-                                                                    '#333', // Dark background to resemble a file
-                                                            }}
-                                                            href={msg.file.url}
-                                                        >
-                                                            <InsertDriveFileIcon
+                                                {msg.file && (
+                                                    <Box mt={1}>
+                                                        <Typography variant="caption">
+                                                            <a
                                                                 style={{
-                                                                    marginRight:
-                                                                        '5px',
+                                                                    display:
+                                                                        'flex',
+                                                                    alignItems:
+                                                                        'center',
+                                                                    border: '1px solid white',
+                                                                    borderRadius:
+                                                                        '8px',
                                                                     color: 'white',
+                                                                    padding:
+                                                                        '5px 10px',
+                                                                    textDecoration:
+                                                                        'none',
+                                                                    backgroundColor:
+                                                                        '#333',
                                                                 }}
-                                                            />{' '}
-                                                            {/* File icon */}
-                                                            {msg.file.name}
-                                                        </a>
-                                                    </Typography>
-                                                </Box>
+                                                                href={
+                                                                    msg.file.url
+                                                                }
+                                                                target="_blank" // Opens in a new tab
+                                                                rel="noopener noreferrer" // Security measure
+                                                            >
+                                                                <InsertDriveFileIcon
+                                                                    style={{
+                                                                        marginRight:
+                                                                            '5px',
+                                                                        color: 'white',
+                                                                    }}
+                                                                />
+                                                                {msg.file.name}
+                                                            </a>
+                                                        </Typography>
+                                                    </Box>
+                                                )}
+                                            </Box>
+
+                                            {msg.sender === 'me' && (
+                                                <img
+                                                    src={
+                                                        role === 'coach'
+                                                            ? coachProfileData.profile_picture
+                                                            : taProfileData.profile_picture
+                                                    }
+                                                    alt="Profile Pic"
+                                                    className="profile-pic"
+                                                    style={{
+                                                        marginLeft: '8px',
+                                                        visibility:
+                                                            isFirstMessageFromSameSender
+                                                                ? 'visible'
+                                                                : 'hidden',
+                                                    }}
+                                                />
                                             )}
                                         </Box>
-                                        {msg.sender === 'me' && (
-                                            <img
-                                                src={
-                                                    role === 'coach'
-                                                        ? coachProfileData.profile_picture
-                                                        : taProfileData.profile_picture
-                                                }
-                                                alt="Profile Pic"
-                                                className="profile-pic"
-                                                style={{
-                                                    marginLeft: '8px',
-                                                    visibility:
-                                                        isFirstMessageFromSameSender
-                                                            ? 'visible'
-                                                            : 'hidden',
-                                                }}
-                                            />
-                                        )}
+
+                                        {/* Timestamp moved below the message bubble */}
+                                        <Typography
+                                            variant="caption"
+                                            color="textSecondary"
+                                            display="block"
+                                            style={{
+                                                textAlign:
+                                                    msg.sender === 'me'
+                                                        ? 'right'
+                                                        : 'left',
+                                                marginTop: '4px',
+                                                marginLeft: '55px', // Adjust the margin as needed
+                                                marginRight: '55px',
+                                            }}
+                                        >
+                                            {formatTimestamp(msg.timestamp)}
+                                        </Typography>
                                     </Box>
                                 );
                             })}
@@ -586,6 +660,7 @@ const Messages = ({ role }) => {
                                 placeholder="Type a message..."
                                 value={newMessage}
                                 onChange={handleMessageChange}
+                                onKeyPress={handleKeyPress}
                                 fullWidth
                                 sx={{
                                     borderRadius: '42px',

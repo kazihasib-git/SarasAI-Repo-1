@@ -181,7 +181,7 @@ const TemplateModuleTable = ({ modulesData }) => {
     ];
 
     const { typeList } = useSelector(state => state.activityType);
-    
+
     const activityOptions = typeList.map(type => ({
         value: type.type_name,
         label: type.type_name.charAt(0).toUpperCase() + type.type_name.slice(1), // Capitalize the first letter of each type_name
@@ -413,9 +413,13 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                     >
                                                         {activity.dependent
                                                             .length > 0 ? (
-                                                            activity.dependent.map(
-                                                                prereq =>
-                                                                    prereq.dependency_activity?.activity_name)
+                                                            activity.dependent
+                                                                .map(
+                                                                    prereq =>
+                                                                        prereq
+                                                                            .dependency_activity
+                                                                            ?.activity_name
+                                                                )
                                                                 .join(', ')
                                                         ) : (
                                                             <CustomButton

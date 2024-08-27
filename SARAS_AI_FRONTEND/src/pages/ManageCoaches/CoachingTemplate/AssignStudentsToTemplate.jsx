@@ -5,7 +5,7 @@ import {
     closeAssignStudentsToTemplate,
     assignStudentsToTemplate,
     getStudentBatchMapping,
-    getAllCoachTemplates
+    getAllCoachTemplates,
 } from '../../../redux/features/adminModule/coach/coachTemplateSlice';
 import CustomTextField from '../../../components/CustomFields/CustomTextField';
 import ReusableDialog from '../../../components/CustomFields/ReusableDialog';
@@ -32,16 +32,16 @@ const AssignStudentsToTemplate = ({ componentname, assignedStudents }) => {
 
     switch (componentname) {
         case 'CoachTemplate':
-                stateModuleKey = 'coachTemplate';
-                assignStudentOpenKey = 'assignStudentsToTemplate';
-                assignMappingKey = 'studentBatchMapping';
-                closeDialogAction = closeAssignStudentsToTemplate;
-                // openSuccessAction = openSuccessPopup;
-                getBatchMappingAction = getStudentBatchMapping;
-                postAssignAction = assignStudentsToTemplate;
-                schedulingState = useSelector(state => state.coachTemplate);
-                idKeyScheduling = 'templateIdToAssignStudents';
-                break;
+            stateModuleKey = 'coachTemplate';
+            assignStudentOpenKey = 'assignStudentsToTemplate';
+            assignMappingKey = 'studentBatchMapping';
+            closeDialogAction = closeAssignStudentsToTemplate;
+            // openSuccessAction = openSuccessPopup;
+            getBatchMappingAction = getStudentBatchMapping;
+            postAssignAction = assignStudentsToTemplate;
+            schedulingState = useSelector(state => state.coachTemplate);
+            idKeyScheduling = 'templateIdToAssignStudents';
+            break;
         default:
             stateModuleKey = null;
             nameKey = null;
@@ -60,8 +60,7 @@ const AssignStudentsToTemplate = ({ componentname, assignedStudents }) => {
     const stateSelector = useSelector(state =>
         stateModuleKey ? state[stateModuleKey] : {}
     );
-    const { [idKeyScheduling]: assignedId } =
-        schedulingState || {};
+    const { [idKeyScheduling]: assignedId } = schedulingState || {};
 
     const {
         [assignStudentOpenKey]: assignStudentOpen,
@@ -76,11 +75,11 @@ const AssignStudentsToTemplate = ({ componentname, assignedStudents }) => {
 
     useEffect(() => {
         if (assignStudentOpen) {
-                const previouslyAssignedStudents = assignedStudents.map(
-                    student => student.id
-                );
-                setSelectedStudents(previouslyAssignedStudents);
-            }
+            const previouslyAssignedStudents = assignedStudents.map(
+                student => student.id
+            );
+            setSelectedStudents(previouslyAssignedStudents);
+        }
     }, [assignedStudents]);
 
     useEffect(() => {
@@ -159,15 +158,15 @@ const AssignStudentsToTemplate = ({ componentname, assignedStudents }) => {
     const handleSubmit = () => {
         const data = {
             template_id: assignedId,
-            users: selectedStudents.map(id => ({ 
-                   assignable_id: id.toString(),
-                   assignable_type: "Student"
+            users: selectedStudents.map(id => ({
+                assignable_id: id.toString(),
+                assignable_type: 'Student',
             })),
         };
         dispatch(postAssignAction(data)).then(() => {
             dispatch(getAllCoachTemplates());
             dispatch(closeDialogAction());
-        }); 
+        });
     };
 
     const headers = ['S. No.', 'Student Name', 'Program', 'Batch', 'Select'];

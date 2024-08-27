@@ -4,16 +4,18 @@ import Sidebar from '../../components/Sidebar/Sidebar';
 import { useParams } from 'react-router-dom';
 import AdminCoursesTable from '../../components/CommonComponent/AdminCoursesTable';
 
-const AssignCoachCourses = () => {
+const AssignTaCourses = () => {
     const { id } = useParams();
 
     return (
         <>
             <Header />
             <Sidebar />
-            <AdminCoursesTable coachId={id} />
+            <AdminCoursesTable
+                taId={id}
+            />
         </>
     );
 };
 
-export default AssignCoachCourses;
+export default AssignTaCourses;

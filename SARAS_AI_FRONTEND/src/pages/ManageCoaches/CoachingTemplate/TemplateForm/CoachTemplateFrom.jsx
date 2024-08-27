@@ -4,7 +4,10 @@ import CustomTextField from '../../../../components/CustomFields/CustomTextField
 import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { createCoachTemplate, getCoachTemplateModuleId } from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
+import {
+    createCoachTemplate,
+    getCoachTemplateModuleId,
+} from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
 
 const durations = [
     { value: 1, label: '1 Month' },
@@ -20,7 +23,6 @@ const durations = [
     { value: 11, label: '11 Months' },
     { value: 12, label: '12 Months' },
 ];
-
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
     borderRadius: '50px',
@@ -60,7 +62,7 @@ const CoachTemplateForm = () => {
         return newErrors;
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async e => {
         e.preventDefault();
         const formErrors = validateForm();
         if (Object.keys(formErrors).length > 0) {
@@ -74,15 +76,14 @@ const CoachTemplateForm = () => {
         };
 
         const response = await dispatch(createCoachTemplate(newTemplateData));
-        
-        if(response.payload?.data?.id){
-            await dispatch(getCoachTemplateModuleId(response.payload.data.id)).then(()=>{
-                navigation('/template-name', { state: { newTemplateData } });
-            });   
-        }
-       
 
-        
+        if (response.payload?.data?.id) {
+            await dispatch(
+                getCoachTemplateModuleId(response.payload.data.id)
+            ).then(() => {
+                navigation('/template-name', { state: { newTemplateData } });
+            });
+        }
     };
 
     const handleTemplateNameChange = e => {

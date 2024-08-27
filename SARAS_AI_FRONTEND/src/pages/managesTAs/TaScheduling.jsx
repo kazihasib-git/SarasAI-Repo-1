@@ -23,9 +23,8 @@ const TaScheduling = () => {
     );
 
     const { taId } = useSelector(state => state.taScheduling);
-    const { todaysAvailableTa  } = useSelector(state => state.taAvialability);
+    const { todaysAvailableTa } = useSelector(state => state.taAvialability);
     const [selectedTA, setSelectedTA] = useState(null);
-    
 
     // const findTaTimeZone = (todaysAvailableTa) => {
     //     if (todaysAvailableTa && Number(taId)) {
@@ -38,7 +37,6 @@ const TaScheduling = () => {
     // useEffect(() => {
     //     findTaTimeZone(todaysAvailableTa);
     // }, [taId, todaysAvailableTa]);
-
 
     //const storedTimezoneId = selectedTA ? selectedTA.timezone_id : Number(localStorage.getItem('timezone_id'));
 
@@ -57,7 +55,7 @@ const TaScheduling = () => {
                 Username: item.username,
                 Active_Students: item.Active_Students,
                 Active_Batches: item.Active_Batches,
-                timezone : item.timezone_id,
+                timezone: item.timezone_id,
             }));
 
             setTaScheduleData(transformData);
@@ -104,9 +102,9 @@ const TaScheduling = () => {
                     componentName={'TAMAPPING'}
                 />
             </Box>
-            {scheduleSessionOpen && <Schedule componentName={'TASCHEDULE'}  /> }
-            {openEditBatch && <EditBatches componentname={'TASCHEDULE'}  /> }
-            {openEditStudent && <EditStudents componentname={'TASCHEDULE'} /> }
+            {scheduleSessionOpen && <Schedule componentName={'TASCHEDULE'} />}
+            {openEditBatch && <EditBatches componentname={'TASCHEDULE'} />}
+            {openEditStudent && <EditStudents componentname={'TASCHEDULE'} />}
         </>
     );
 };

@@ -84,9 +84,12 @@ import { setLogin } from './redux/features/auth/authSlice';
 import StudentDetails from './components/CommonComponent/studentDetails';
 import CoursePage from './pages/adminModulePages/users/courses/CoursePage.jsx';
 import CoachCourseMapping from './pages/ManageCoaches/CoachCourseMapping.jsx';
+import TaCourseMapping from './pages/managesTAs/TaCourseMapping.jsx';
 import AssignCoachCourses from './pages/ManageCoaches/AssignedCoachCourses.jsx';
+import AssignTaCourses from './pages/managesTAs/AssignedTaCourses.jsx';
 import AssignedTemplateStudents from './pages/ManageCoaches/CoachingTemplate/AssignedTemplateStudents.jsx';
 import ForgetPassword from './components/AUTH/ForgetPassword.jsx';
+
 const ROLES = {
     Teaching: 2001,
     Coaches: 1984,
@@ -226,9 +229,9 @@ function App() {
                             }
                         />
                         <Route
-                            path="/active-Coach-courses/:id"
+                            path="/active-Ta-courses/:id"
                             element={
-                                <AssignCoachCourses page="Assigned Coach Courses" />
+                                <AssignTaCourses page="Assigned Coach Courses" />
                             }
                         />
                         <Route
@@ -248,6 +251,18 @@ function App() {
                         <Route
                             path="ta-calendar/:name/:id"
                             element={<TaCalender page="Calendar" />}
+                        />
+                        <Route
+                            path="ta-course-mapping"
+                            element={
+                                <TaCourseMapping page="ta Course Mapping" />
+                            }
+                        />
+                        <Route
+                            path="/active-Coach-courses/:id"
+                            element={
+                                <AssignCoachCourses page="Assigned Coach Courses" />
+                            }
                         />
                         {/* <Route path='calendar' element={<Calendar page="Calendar" />} /> */}
                         <Route
@@ -281,7 +296,9 @@ function App() {
                         />
                         <Route
                             path="coach-template/template-students/:id"
-                            element={<AssignedTemplateStudents page="Assigned Template Students"/>}
+                            element={
+                                <AssignedTemplateStudents page="Assigned Template Students" />
+                            }
                         />
                         <Route
                             path="coach-availability"
@@ -301,7 +318,6 @@ function App() {
                                 <CoachCourseMapping page="Coach Course Mapping" />
                             }
                         />
-                        
 
                         <Route path="students" element={<StudentPage />} />
                         <Route path="batches" element={<BatchPage />} />

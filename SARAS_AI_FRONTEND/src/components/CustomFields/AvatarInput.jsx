@@ -28,18 +28,17 @@ const AvatarInput = ({ selectedImage, setSelectedImage, disabled }) => {
                 disabled={disabled}
             />
             {!disabled && (
-            <label
-                htmlFor="profilePicture"
-                style={{ position: 'absolute', bottom: 4, right: -12 }}
-            >
-                <IconButton
-                    component="span"
-                    style={{ backgroundColor: '#F56D3B', color: 'white' }}
-                   
+                <label
+                    htmlFor="profilePicture"
+                    style={{ position: 'absolute', bottom: 4, right: -12 }}
                 >
-                    <PhotoCamera />
-                </IconButton>
-            </label>
+                    <IconButton
+                        component="span"
+                        style={{ backgroundColor: '#F56D3B', color: 'white' }}
+                    >
+                        <PhotoCamera />
+                    </IconButton>
+                </label>
             )}
         </Box>
     );
