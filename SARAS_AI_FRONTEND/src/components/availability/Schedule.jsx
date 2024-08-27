@@ -39,6 +39,7 @@ import {
 import {
     getPlatforms,
     getTimezone,
+    getAllHosts
 } from '../../redux/features/utils/utilSlice';
 import CustomTimeZoneForm from '../CustomFields/CustomTimeZoneForm';
 import { fetchTAScheduleById } from '../../redux/features/adminModule/ta/taAvialability';
@@ -65,8 +66,8 @@ const actionButtons = [
     },
 ];
 
-const Schedule = ({ componentName , timezoneID}) => {
-    console.log('timezoneID=======>' , timezoneID )
+const Schedule = ({ componentName, timezoneID }) => {
+    console.log('timezoneID=======>', timezoneID)
     const [fromDate, setFromDate] = useState(null);
     const [toDate, setToDate] = useState(null);
     const [fromTime, setFromTime] = useState(null);
@@ -79,7 +80,7 @@ const Schedule = ({ componentName , timezoneID}) => {
     const [dateSelected, setDateSelected] = useState(false);
 
     const dispatch = useDispatch();
-    const { timezones, platforms } = useSelector(state => state.util);
+    const { timezones, platforms, hosts } = useSelector(state => state.util);
 
     let scheduleSessionOpenKey,
         schedulingStateKey,
@@ -155,7 +156,7 @@ const Schedule = ({ componentName , timezoneID}) => {
         [batchKey]: batches,
     } = schedulingState;
 
-     const {
+    const {
         register,
         handleSubmit,
         control,
@@ -166,7 +167,7 @@ const Schedule = ({ componentName , timezoneID}) => {
         },
     });
 
-    
+
 
     useEffect(() => {
         if (dateSelected && (fromDate || !availableSlots.length > 0)) {
@@ -174,7 +175,7 @@ const Schedule = ({ componentName , timezoneID}) => {
                 getAvailableSlotsAction({
                     admin_user_id: adminUserID,
                     date: fromDate,
-                    timezone_name: timezoneIdToName( timezoneId ? Number(timezoneId) : timezoneID, timezones),
+                    timezone_name: timezoneIdToName(timezoneId ? Number(timezoneId) : timezoneID, timezones),
                 })
             ).then(() => {
                 setSelectedSlot(null);
@@ -189,7 +190,7 @@ const Schedule = ({ componentName , timezoneID}) => {
                 getAvailableSlotsAction({
                     admin_user_id: adminUserID,
                     date: fromDate,
-                    timezone_name: timezoneIdToName(timezoneId ? Number(timezoneId) :  timezoneID, timezones),
+                    timezone_name: timezoneIdToName(timezoneId ? Number(timezoneId) : timezoneID, timezones),
                 })
             ).then(() => {
                 setSelectedSlot(null);
@@ -201,12 +202,13 @@ const Schedule = ({ componentName , timezoneID}) => {
     useEffect(() => {
         dispatch(getTimezone());
         dispatch(getPlatforms());
+        dispatch(getAllHosts());
     }, [dispatch]);
 
     const convertSessions = async () => {
-        
+
         if (availableSlots && availableSlots.length > 0 && timezones && (timezoneId || timezoneID)) {
-            const timezonename = timezoneIdToName(timezoneId ? Number(timezoneId) :  timezoneID, timezones);
+            const timezonename = timezoneIdToName(timezoneId ? Number(timezoneId) : timezoneID, timezones);
             try {
                 const processedSlots = await Promise.all(
                     availableSlots.map(async (slot, index) => {
@@ -217,10 +219,10 @@ const Schedule = ({ componentName , timezoneID}) => {
                             end_date: slot.slot_date, // Assuming end_date is the same as slot_date
                             timezonename,
                         });
-    
+
                         const startDateTime = new Date(`${localTime.start_date}T${localTime.start_time}`);
                         const endDateTime = new Date(`${localTime.end_date}T${localTime.end_time}`);
-    
+
                         return {
                             'S. No.': index + 1,
                             'Slot Date': localTime.start_date,
@@ -241,16 +243,16 @@ const Schedule = ({ componentName , timezoneID}) => {
                     const formattedHour = hour % 12 || 12;
                     return `${formattedHour}:${minute < 10 ? '0' : ''}${minute} ${ampm}`;
                 };
-    
+
                 const options = processedSlots.map((item, index) => ({
                     label: `${formatTime(item['From Time'])} - ${formatTime(item['To Time'])}`,
                     value: `${item.id}-${index}`, // Create a unique value by combining item.id and index
                 }));
-                
-    
+
+
                 console.log("OPTIONS : ", options)
                 // console.log("PROCESSED SLOT : ", processedSlots)
-                
+
                 setAvailableSlotsOptions(options);
                 setSlotData(processedSlots);
             } catch (error) {
@@ -263,7 +265,7 @@ const Schedule = ({ componentName , timezoneID}) => {
             setSlotData([{}]);
         }
     };
-    
+
     useEffect(() => {
         convertSessions();
     }, [availableSlots, timezones, timezoneId, timezoneID]);
@@ -282,18 +284,18 @@ const Schedule = ({ componentName , timezoneID}) => {
         const selectedValue = e.target.value;
         const [selectedId, selectedIndex] = selectedValue.split('-'); // Extract the id and index
         console.log("SELECTED ID : ", selectedId);
-    
+
         const selectedSlots = slotData.filter(slot => slot.id == selectedId); // Find all slots by id
         console.log("SELECTED SLOTS: ", selectedSlots);
-    
+
         // Optionally, if you want only the specific slot by index:
         const selectedSlot = selectedSlots[selectedIndex];
         console.log("SELECTED SLOT: ", typeof selectedSlot);
-    
+
         setSelectedSlot(selectedSlot); // Set the specific slot
     };
-    
-    
+
+
 
     const handleAssignStudents = () => {
 
@@ -382,14 +384,14 @@ const Schedule = ({ componentName , timezoneID}) => {
         formData.batchId = batchId;
         formData.timezone_id = timezoneId ? Number(timezoneId) : timezoneID, //`${timezoneID}`
 
-        dispatch(createScheduleAction(formData))
-            .then(() => {
-                dispatch(closeScheduleSessionAction());
-                return dispatch(getScheduledSessionApi(adminUserID));
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
+            dispatch(createScheduleAction(formData))
+                .then(() => {
+                    dispatch(closeScheduleSessionAction());
+                    return dispatch(getScheduledSessionApi(adminUserID));
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
     };
 
     const content = (
@@ -432,7 +434,7 @@ const Schedule = ({ componentName , timezoneID}) => {
                                             justifyContent="center"
                                         >
                                             <DialogContent
-                                                  sx={{
+                                                sx={{
                                                     color: 'red',
                                                     textAlign: 'center',
                                                 }}
@@ -549,7 +551,7 @@ const Schedule = ({ componentName , timezoneID}) => {
                                                                     onChange={
                                                                         field.onChange
                                                                     }
-                                                                    disabled={timezoneID!=null}
+                                                                    disabled={timezoneID != null}
 
                                                                     options={
                                                                         timezones
@@ -592,38 +594,36 @@ const Schedule = ({ componentName , timezoneID}) => {
                                                             )}
                                                         />
                                                     </Grid>
-                                                    {/* <Grid
+                                                    <Grid
                                                         item
                                                         xs={12}
                                                         display="flex"
                                                         justifyContent="center"
                                                     >
                                                         <Controller
-                                                            name="platform_id"
+                                                            name="host_name"
                                                             control={control}
-                                                            render={({
-                                                                field,
-                                                            }) => (
+                                                            render={({ field }) => (
                                                                 <CustomHostNameForm
-                                                                    label="Host Name"
-                                                                    name="platform_id"
-                                                                    value={
-                                                                        field.value
-                                                                    }
-                                                                    onChange={
-                                                                        field.onChange
-                                                                    }
-                                                                    errors={
-                                                                        errors
-                                                                    }
-                                                                    options={
-                                                                        platforms
-                                                                    }
+                                                                label="Host Name"
+                                                                name="Host_Name"
+                                                                value={
+                                                                    field.value
+                                                                }
+                                                                onChange={
+                                                                    field.onChange
+                                                                }
+                                                                errors={
+                                                                    errors
+                                                                }
+                                                                options={
+                                                                    hosts.users
+                                                                }
                                                                 />
                                                             )}
                                                         />
                                                     </Grid>
-                                                    <Grid
+                                                    {/* <Grid
                                                         item
                                                         xs={12}
                                                         display="flex"

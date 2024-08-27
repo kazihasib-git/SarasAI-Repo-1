@@ -7,18 +7,32 @@ export const getPlatforms = createAsyncThunk('util/getPlatforms', async () => {
         const response = await axiosInstance.get(`${baseUrl}/platform-tools`);
         return response.data;
     } catch (error) {
-        error.response ? error.response.data : 'An Error occurred';
+        throw error.response ? error.response.data : 'An Error occurred';
     }
 });
 
 export const getTimezone = createAsyncThunk('util/getTimezone', async () => {
-    const response = await axiosInstance.get(`${baseUrl}/timezones`);
-    return response.data;
+    try {
+        const response = await axiosInstance.get(`${baseUrl}/timezones`);
+        return response.data;
+    } catch (error) {
+        throw error.response ? error.response.data : 'An Error occurred';
+    }
+});
+
+export const getAllHosts = createAsyncThunk('util/getAllHosts', async () => {
+    try {
+        const response = await axiosInstance.get(`${baseUrl}/admin/zoom`);
+        return response.data;
+    } catch (error) {
+        throw error.response ? error.response.data : 'An error occurred';
+    }
 });
 
 const initialState = {
     platforms: [],
     timezones: [],
+    hosts: [],
     loading: false,
     error: null,
 };
@@ -54,6 +68,20 @@ const utilSlice = createSlice({
             .addCase(getTimezone.rejected, (state, action) => {
                 state.loading = false;
                 state.timezones = [];
+                state.error = action.error.message;
+            })
+
+            // Get All Hosts
+            .addCase(getAllHosts.pending, state => {
+                state.loading = true;
+            })
+            .addCase(getAllHosts.fulfilled, (state, action) => {
+                state.loading = false;
+                state.hosts = action.payload;
+            })
+            .addCase(getAllHosts.rejected, (state, action) => {
+                state.loading = false;
+                state.hosts = [];
                 state.error = action.error.message;
             });
     },

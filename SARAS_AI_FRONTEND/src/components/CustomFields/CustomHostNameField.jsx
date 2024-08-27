@@ -66,7 +66,7 @@ const CustomHostNameForm = ({
             >
                 {options.map(option => (
                     <MenuItem key={option.id} value={option.id}>
-                        {option.name}
+                        {`${option.first_name} ${option.last_name}`}                        
                     </MenuItem>
                 ))}
             </Select>
