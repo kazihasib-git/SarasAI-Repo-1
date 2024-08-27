@@ -9,7 +9,7 @@ import {
     Grid,
     Radio,
     RadioGroup,
-} from '@mui/material';
+} from '@mui/material'; 
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomTextField from '../CustomFields/CustomTextField';
@@ -66,8 +66,8 @@ const actionButtons = [
     },
 ];
 
+
 const Schedule = ({ componentName, timezoneID }) => {
-    console.log('timezoneID=======>', timezoneID);
     const [fromDate, setFromDate] = useState(null);
     const [toDate, setToDate] = useState(null);
     const [fromTime, setFromTime] = useState(null);
@@ -78,7 +78,6 @@ const Schedule = ({ componentName, timezoneID }) => {
     const [selectedSlot, setSelectedSlot] = useState(null);
     const [availableSlotsOptions, setAvailableSlotsOptions] = useState([]);
     const [dateSelected, setDateSelected] = useState(false);
-
     const dispatch = useDispatch();
     const { timezones, platforms, hosts } = useSelector(state => state.util);
 
@@ -154,8 +153,8 @@ const Schedule = ({ componentName, timezoneID }) => {
         [availableKey]: availableSlots,
         [studentKey]: students,
         [batchKey]: batches,
-    } = schedulingState;
-
+    } = schedulingState;    
+// console.log('timezoneID:::::', timezoneId) ; 
     const {
         register,
         handleSubmit,
@@ -207,15 +206,14 @@ const Schedule = ({ componentName, timezoneID }) => {
         dispatch(getPlatforms());
         dispatch(getAllHosts());
     }, [dispatch]);
-
     const convertSessions = async () => {
         if (
             availableSlots &&
             availableSlots.length > 0 &&
             timezones &&
-            timezoneID
+            timezoneId ? Number(timezoneId) : timezoneID 
         ) {
-            const timezonename = timezoneIdToName(timezoneID, timezones);
+            const timezonename = timezoneIdToName(timezoneId ? Number(timezoneId) : timezoneID, timezones);
             try {
                 const processedSlots = await Promise.all(
                     availableSlots.map(async (slot, index) => {
@@ -277,7 +275,7 @@ const Schedule = ({ componentName, timezoneID }) => {
 
     useEffect(() => {
         convertSessions();
-    }, [availableSlots, timezones, timezoneId, timezoneID]);
+    }, [availableSlots, timezones, timezoneId, timezoneId ? Number(timezoneId) : timezoneID]);
 
     const handleDayChange = day => {
         setSelectedDays(prev => {
@@ -359,6 +357,14 @@ const Schedule = ({ componentName, timezoneID }) => {
             toast.error('To Time should be greater than From Time!');
             return;
         }
+       if (!formData.host_email_id) {
+    toast.error('Please provide a valid email.');
+    return;
+}
+       if (!formData.meeting_type) {
+    toast.error('Please provide Meeting Type.');
+    return;
+}
     };
 
     const onSubmit = formData => {
@@ -386,8 +392,7 @@ const Schedule = ({ componentName, timezoneID }) => {
         formData.weeks = weeksArray;
         formData.studentId = studentId;
         formData.batchId = batchId;
-        formData.timezone_id = `${timezoneID}`;
-        (formData.timezone_id = timezoneId ? Number(timezoneId) : timezoneID), //`${timezoneID}`
+        formData.timezone_id = `${timezoneId ? Number(timezoneId) : timezoneID}`;
             dispatch(createScheduleAction(formData))
                 .then(() => {
                     dispatch(closeScheduleSessionAction());
@@ -546,7 +551,7 @@ const Schedule = ({ componentName, timezoneID }) => {
                                                             control={control}
                                                             // rules={{ required: "Time Zone is required" }}
                                                             defaultValue={
-                                                                timezoneID
+                                                                timezoneId ? Number(timezoneId) : timezoneID
                                                             }
                                                             //defaultValue={timezone_id ? Number(timezone_id) : timezoneID}
                                                             render={({
@@ -566,7 +571,7 @@ const Schedule = ({ componentName, timezoneID }) => {
                                                                         field.onChange
                                                                     }
                                                                     disabled={
-                                                                        timezoneID !=
+                                                                        timezoneId ? Number(timezoneId) : timezoneID !=
                                                                         null
                                                                     }
                                                                     options={
@@ -617,12 +622,12 @@ const Schedule = ({ componentName, timezoneID }) => {
                                                         justifyContent="center"
                                                     >
                                                         <Controller
-                                                            name="host_name"
+                                                            name="host_email_id"
                                                             control={control}
                                                             render={({ field }) => (
                                                                 <CustomHostNameForm
                                                                 label="Host Name"
-                                                                name="Host_Name"
+                                                                name="host_email_id"
                                                                 value={
                                                                     field.value
                                                                 }
@@ -639,21 +644,21 @@ const Schedule = ({ componentName, timezoneID }) => {
                                                             )}
                                                         />
                                                     </Grid>
-                                                    {/* <Grid
+                                                    <Grid
                                                         item
                                                         xs={12}
                                                         display="flex"
                                                         justifyContent="center"
                                                     >
                                                         <Controller
-                                                            name="platform_id"
+                                                            name="meeting_type"
                                                             control={control}
                                                             render={({
                                                                 field,
                                                             }) => (
                                                                 <CustomMeetingTypeForm
                                                                     label="Meeting Type"
-                                                                    name="platform_id"
+                                                                    name="meeting_type"
                                                                     value={
                                                                         field.value
                                                                     }
@@ -664,12 +669,12 @@ const Schedule = ({ componentName, timezoneID }) => {
                                                                         errors
                                                                     }
                                                                     options={
-                                                                        platforms
+                                                                        meetingTypes
                                                                     }
                                                                 />
                                                             )}
                                                         />
-                                                    </Grid> */}
+                                                    </Grid>
                                                     <Grid
                                                         item
                                                         xs={12}
@@ -931,8 +936,7 @@ const Schedule = ({ componentName, timezoneID }) => {
                                             }}
                                             onClick={handleDateSubmit}
                                         >
-                                            Submit
-                                        </Button>
+                                            Submit                                     </Button>
                                     </Grid>
                                 </>
                             )}

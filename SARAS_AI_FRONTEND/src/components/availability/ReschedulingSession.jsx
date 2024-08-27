@@ -53,9 +53,12 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
 
     const [selectDate, setSelectDate] = useState(null);
     const [selectedSlots, setSelectedSlots] = useState([]);
-    const [fromTime, setFromTime] = useState(null);
+    const [fromTime, setFromTime] = useState(null); 
+    const [email, setEmail] = useState(''); 
+    const [meetingType, setMeetingType] = useState(''); 
     const [toTime, setToTime] = useState(null);
     const [transformedSlotsData, setTransformedSlotsData] = useState([]);
+    const [meetingTypes, setMeetingtypes] = useState(['a', 'b' ,'c' , 'd']) ;
 
     const {
         control,
@@ -230,11 +233,18 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
         if (!toTime) {
             errors.push('Please Select the End Time');
         }
+        if (!email) {
+            errors.push('Please provide a valid email');
+          }
+        if (!meetingType) {
+            errors.push('Please select the Meeting Type');
+        }
 
         if (errors.length) {
             errors.forEach(error => toast.error(error));
             return;
         }
+        
 
         const sessionId = sessionEventData?.id || '';
 
@@ -248,6 +258,8 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
                 end_time: toTime,
                 timezone_id: timezoneID,
                 event_status: 'rescheduled',
+                host_email_id: email,  // Use the email state
+                meeting_type: meetingType  // Use the meetingType state
             },
         };
 
@@ -337,20 +349,17 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
                                 xs={12}
                                 display="flex"
                                 justifyContent="center"
+                                mb={2}
                             >
                                 <Controller
-                                    name="host_name"
+                                    name="host_email_id"
                                     control={control}
                                     render={({ field }) => (
                                         <CustomHostNameForm
                                             label="Host Name"
-                                            name="Host_Name"
-                                            value={
-                                                field.value
-                                            }
-                                            onChange={
-                                                field.onChange
-                                            }
+                                            name="host_email_id"
+                                            value={email}
+                                            onChange={event => setEmail(event.target.value)}                                            
                                             errors={
                                                 errors
                                             }
@@ -361,37 +370,33 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
                                     )}
                                 />
                             </Grid>
-                            {/* <Grid
+                            <Grid
                                 item
                                 xs={12}
                                 display="flex"
                                 justifyContent="center"
                             >
                                 <Controller
-                                    name="platform_id"
+                                    name="meeting_type"
                                     control={control}
                                     render={({
                                         field,
                                     }) => (
                                         <CustomMeetingTypeForm
                                             label="Meeting Type"
-                                            name="platform_id"
-                                            value={
-                                                field.value
-                                            }
-                                            onChange={
-                                                field.onChange
-                                            }
+                                            name="meeting_type"
+                                            value={meetingType}
+                                            onChange={event => setMeetingType(event.target.value)}
                                             errors={
                                                 errors
                                             }
                                             options={
-                                                platforms
+                                                meetingTypes
                                             }
                                         />
                                     )}
                                 />
-                            </Grid> */}
+                            </Grid>
                         </Grid>
                     </>
                 )

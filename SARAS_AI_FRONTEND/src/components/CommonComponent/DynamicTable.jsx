@@ -45,6 +45,8 @@ const DynamicTable = ({
     actionButtons,
     componentName,
 }) => {
+    const itemsPerPage = 10;
+
     const [data, setData] = useState(
         initialData.map(item => ({
             ...item,
@@ -65,10 +67,16 @@ const DynamicTable = ({
                 is_active: item.is_active !== undefined ? item.is_active : 0,
             }))
         );
-        setCurrentPage(1); // Reset to first page whenever initialData changes
-    }, [initialData]);
+        
+        // Calculate new total pages
+        const newTotalPages = Math.ceil(initialData.length / itemsPerPage);
+        
+        // Adjust current page if it's now out of bounds
+        if (currentPage > newTotalPages) {
+            setCurrentPage(Math.max(1, newTotalPages));
+        }
+    }, [initialData, currentPage]);
 
-    const itemsPerPage = 10;
     const totalPages = Math.ceil(data.length / itemsPerPage);
     const currentData = data.slice(
         (currentPage - 1) * itemsPerPage,
@@ -78,7 +86,8 @@ const DynamicTable = ({
     const dispatch = useDispatch();
 
     const handlePageChange = (event, pageNumber) => {
-        setCurrentPage(pageNumber);
+        const maxPage = Math.ceil(data.length / itemsPerPage);
+        setCurrentPage(Math.min(Math.max(1, pageNumber), maxPage));
     };
 
     const handleDelete = id => {
@@ -92,7 +101,6 @@ const DynamicTable = ({
                 dispatch(showCoachMapping());
             });
         }
-
         console.log('Deleting item with id:', id);
     };
 
@@ -173,6 +181,7 @@ const DynamicTable = ({
     };
 
     const handlePopup = (id, name, timezone) => {
+        console.log('schedulingnn timezoneid' , id) ; 
         const data = { id, name, timezone };
         if (componentName === 'TAMAPPING') {
             dispatch(openScheduleSession(data));
@@ -427,8 +436,7 @@ const DynamicTable = ({
                                                             color: '#F56D3B',
                                                             backgroundColor:
                                                                 '#FEEBE3',
-                                                            gap: '4px',
-                                                            height: '30px',
+                                                            gap: '4px',height: '30px',
                                                             width: '70px',
                                                             borderRadius:
                                                                 '15px',
@@ -477,11 +485,6 @@ const DynamicTable = ({
                                                                 item.id
                                                             )
                                                         }
-                                                        // onClick={() =>
-                                                        //     button.onClick(
-                                                        //         item.id
-                                                        //     )
-                                                        // }
                                                     >
                                                         <img
                                                             src={bin}
@@ -518,7 +521,6 @@ const DynamicTable = ({
                                             if (button.type === 'calender') {
                                                 return (
                                                     <td key={idx}>
-                                                        {/* {item[key]}{" "} */}
                                                         <CustomButton
                                                             variant="outlined"
                                                             color="secondary"
@@ -859,4 +861,5 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
         boxSizing: 'border-box',
     },
 }));
+
 export default DynamicTable;
