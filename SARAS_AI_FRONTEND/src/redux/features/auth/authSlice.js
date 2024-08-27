@@ -111,11 +111,7 @@ const authSlice = createSlice({
             state.userData = [];
             state.timezone_id = null; // Clear timezone_id in state
 
-            localStorage.setItem('login', false);
-            localStorage.setItem('accessToken', '');
-            localStorage.setItem('role', '');
-            localStorage.removeItem('timezone_id'); // Remove timezone_id from localStorage
-            localStorage.removeItem('name', '');
+            localStorage.clear()
         });
         builder.addCase(logout.rejected, (state, action) => {
             toast.error(action.payload || 'Failed To Logout')

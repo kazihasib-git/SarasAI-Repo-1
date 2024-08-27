@@ -18,6 +18,7 @@ import {
     getCoachScheduledBatches,
 } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import { getCoachAssignBatches } from '../../redux/features/adminModule/coach/coachSlice';
+import { toast } from 'react-toastify';
 
 const headers = ['S. No.', 'Batch Name', 'Branch', 'Select'];
 
@@ -163,7 +164,18 @@ const EditBatchesFromSession = ({ componentName }) => {
         }
     };
 
+    const validate = () => {
+        if(selectedBatch.length === 0){
+            toast.error('Please Select at Least One Batch')
+            return false;
+        }
+        return true;
+    }
+
     const handleSubmit = () => {
+
+        if (!validate()) return;
+
         const Id = meetingId;
         const data = {
             admin_user_id: Number(id),

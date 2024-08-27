@@ -208,6 +208,7 @@ const Schedule = ({ componentName, timezoneID }) => {
         dispatch(getAllHosts());
     }, [dispatch]);
     const convertSessions = async () => {
+
         if (
             availableSlots &&
             availableSlots.length > 0 &&
@@ -291,15 +292,11 @@ const Schedule = ({ componentName, timezoneID }) => {
     const handleSelectOption = e => {
         const selectedValue = e.target.value;
         const [selectedId, selectedIndex] = selectedValue.split('-'); // Extract the id and index
-        console.log('SELECTED ID : ', selectedId);
-
+    
         const selectedSlots = slotData.filter(slot => slot.id == selectedId); // Find all slots by id
-        console.log('SELECTED SLOTS: ', selectedSlots);
-
+    
         // Optionally, if you want only the specific slot by index:
         const selectedSlot = selectedSlots[selectedIndex];
-        console.log('SELECTED SLOT: ', typeof selectedSlot);
-
         setSelectedSlot(selectedSlot); // Set the specific slot
     };
 
@@ -338,21 +335,21 @@ const Schedule = ({ componentName, timezoneID }) => {
             return;
         }
 
-        if (toTime) {
-            if (toTime < fromTime) {
-                toast.error('To time should be greater than from time!');
-            }
-        }
+        // if (toTime) {
+        //     if (toTime < fromTime) {
+        //         toast.error('To time should be greater than from time!');
+        //     }
+        // }
 
         if (!fromDate || !fromTime || !toTime) {
             toast.error('Please fill in all fields');
             return;
         }
 
-        if (toDate < fromDate) {
-            toast.error('To Date should be greater than From Date!');
-            return;
-        }
+        // if (toDate < fromDate) {
+        //     toast.error('To Date should be greater than From Date!');
+        //     return;
+        // }
 
         if (toTime < fromTime) {
             toast.error('To Time should be greater than From Time!');
@@ -421,17 +418,19 @@ const Schedule = ({ componentName, timezoneID }) => {
                                 sm={6}
                                 display="flex"
                                 justifyContent="center"
-                            >
+                            >   
+                            {/* //TODO : NEED TO SHOW ERROR MESSAGE ERROR HERE WHEN FIELD IS NOT FILLED  */}
                                 <CustomDateField
                                     label="Date"
+                                    name="schedule_date"
+                                    placeholder="From Date"
                                     value={fromDate}
                                     onChange={setFromDate}
-                                    name="schedule_date"
                                     register={register}
                                     validation={{
-                                        required: 'Date is required',
+                                        required: 'From Date is required',
                                     }}
-                                    sx={{ width: '100%' }}
+                                    errors={errors}
                                 />
                             </Grid>
                             {fromDate && dateSelected && (

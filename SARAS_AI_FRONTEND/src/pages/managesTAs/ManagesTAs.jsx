@@ -38,6 +38,7 @@ const ManageTA = () => {
     const [editData, setEditData] = useState();
     const [searchQuery, setSearchQuery] = useState('');
     const [actionButtonToggled, setActionButtonToggled] = useState(false);
+    const [filteredData, setFilteredData] = useState([])
 
     useEffect(() => {
         dispatch(closeCreateTa());
@@ -49,6 +50,7 @@ const ManageTA = () => {
 
     useEffect(() => {
         if (tas && tas.length > 0) {
+            // Transform data
             const transformData = tas.map(item => ({
                 id: item.id,
                 'TA Name': item.name,
@@ -57,11 +59,27 @@ const ManageTA = () => {
                 'Time Zone': timezoneIdToName(item.timezone_id, timezones),
                 is_active: item.is_active,
             }));
+    
+            // Filter data based on the search query
+            const filteredTasData = transformData.filter(data => {
+                const matchName = data['TA Name']?.toLowerCase().includes(searchQuery.toLowerCase());
+                const matchUsername = data.Username?.toLowerCase().includes(searchQuery.toLowerCase());
+                const matchLocation = data.Location?.toLowerCase().includes(searchQuery.toLowerCase());
+                const matchTimezone = data['Time Zone']?.toLowerCase().includes(searchQuery.toLowerCase());
+    
+                return matchName || matchUsername || matchLocation || matchTimezone;
+            });
+    
+            // Set state with transformed and filtered data
             setTasData(transformData);
-        }else {
+            setFilteredData(filteredTasData);
+        } else {
             setTasData([]);
+            setFilteredData([]);
         }
-    }, [tas]);
+    }, [tas, searchQuery, timezones]);
+
+    console.log("FILTERED DATA :", filteredData)
 
     const actionButtons = [
         {
@@ -111,17 +129,13 @@ const ManageTA = () => {
     };
 
     // Filter tasData based on the search query
-    const filteredTasData = tasData?.filter(
-        ta =>
-            ta['TA Name']?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            ta.Username?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            ta.Location?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            ta['Time Zone']?.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
-    if(loading){
-        <CircularProgress />
-    }
+    // const filteredTasData = tasData?.filter(
+    //     ta =>
+    //         ta['TA Name']?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    //         ta.Username?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    //         ta.Location?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    //         ta['Time Zone']?.toLowerCase().includes(searchQuery.toLowerCase())
+    // );
 
     return (
         <>
@@ -165,14 +179,14 @@ const ManageTA = () => {
                                 </button>
                             </div>
                         </Box>
-                        {!filteredTasData || filteredTasData.length === 0 ? (
+                        {!filteredData || filteredData.length === 0 ? (
                             <div>
                                 <p>No Data Available</p>
                             </div>
                         ) : (
                             <DynamicTable
                                 headers={headers}
-                                initialData={filteredTasData}
+                                initialData={filteredData}
                                 actionButtons={actionButtons}
                                 componentName={'MANAGETA'}
                             />

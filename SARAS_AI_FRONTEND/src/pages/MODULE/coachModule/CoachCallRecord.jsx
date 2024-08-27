@@ -24,6 +24,9 @@ import {
 import calender from '../../../assets/calender.svg';
 import VideoUploadDialog from '../../../components/integrations/videoUpload';
 import VideoPopup from '../../../components/integrations/videoPlayerPopUp';
+import { getTimezone } from '../../../redux/features/utils/utilSlice';
+import { timezoneIdToName } from '../../../utils/timezoneIdToName';
+import { convertFromUTC } from '../../../utils/dateAndtimeConversion';
 
 const CustomButton = ({
     onClick,
@@ -62,25 +65,76 @@ const CustomButton = ({
     );
 };
 
+const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
+
 const CoachCallRecord = () => {
-    const [date, setDate] = useState(moment());
+    const [open, setOpen] = useState(false);
     const [selectedCall, setSelectedCall] = useState(null);
+    const [date, setDate] = useState(moment());
     const [videoDialogOpen, setVideoDialogOpen] = useState(false);
     const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
     const [videoUrl, setVideoUrl] = useState('');
     const [idVideo, setIdVideo] = useState(null);
+    const [processedCalls, setProcessedCalls] = useState([]);
 
-    const calls = useSelector(state => state.coachMenu.coachCallRecords);
     const dispatch = useDispatch();
-
+    const calls = useSelector(state => state.coachMenu.coachCallRecords);
+    const { timezones } =  useSelector((state) => state.util)
     const { userData } = useSelector(state => state.auth);
-    console.log("userData",userData)
 
     useEffect(() => {
         dispatch(getCoachCallRecords(date.format('YYYY-MM-DD')));
+        dispatch(getTimezone())
     }, [date, dispatch]);
 
-    const [open, setOpen] = useState(false);
+
+    useEffect(() => {
+        if(calls && calls.length > 0 && timezones && storedTimezoneId){
+            console.log("BEFORE PROCESSING DATA")
+            processCalls();
+            console.log("AFTERR PROCESSING DATA")
+        }
+    },[calls, timezones, storedTimezoneId])
+
+    
+    const processCalls = async () => {
+        const timezonename = timezoneIdToName(storedTimezoneId, timezones);
+        console.log("TIMEZONE NAME :", timezonename, calls)
+        try {
+            const processed = await Promise.all(
+                calls.map(async (call) => {
+                    const localTime = await convertFromUTC({
+                        start_date: call.date,
+                        start_time: call.start_time,
+                        end_time: call.end_time,
+                        end_date: call.date,
+                        timezonename,
+                    });
+
+                    return {
+                        ...call,
+                        date: localTime.start_date,
+                        start_time: localTime.start_time,
+                        end_time: localTime.end_time,
+                    };
+                })
+            );
+            setProcessedCalls(processed);
+        } catch (error) {
+            console.error('Error processing calls:', error);
+            setProcessedCalls([]);
+        }
+    };
+
+
+    function convertTo12HourFormat(time24) {
+        const [hours, minutes, seconds] = time24.split(':').map(Number);
+        const suffix = hours >= 12 ? 'PM' : 'AM';
+        const hours12 = hours % 12 || 12;
+        const formattedMinutes = minutes.toString().padStart(2, '0');
+        return `${hours12}:${formattedMinutes} ${suffix}`;
+    }
+
 
     const handleClickOpen = call => {
         setSelectedCall(call);
@@ -168,10 +222,7 @@ const CoachCallRecord = () => {
                         />
                         {date.format('D MMMM, YYYY')}
                     </Typography>
-                    <IconButton
-                        // style={{ height: '9.24px', width: '23.28' }}
-                        onClick={handleDecrement}
-                    >
+                    <IconButton onClick={handleDecrement}>
                         <ArrowBackIosIcon />
                     </IconButton>
                     <IconButton
@@ -188,7 +239,7 @@ const CoachCallRecord = () => {
                     gap="20px"
                     justifyContent="space-between"
                 >
-                    {calls.map(call => (
+                    {processedCalls.map(call => (
                         <Card
                             key={call.id}
                             sx={{
@@ -198,11 +249,6 @@ const CoachCallRecord = () => {
                                 flexDirection: 'column',
                                 justifyContent: 'space-between',
                                 minWidth: '250px',
-
-                                // width: '300px',
-                                // height: '350px',
-
-                                // margin: '10px',
                             }}
                         >
                             <CardContent>
@@ -210,16 +256,9 @@ const CoachCallRecord = () => {
                                     display="flex"
                                     justifyContent="space-between"
                                 >
-                                    <Typography
-                                        variant="h6"
-                                        sx={{
-                                            textTransform: 'none',
-                                            fontFamily: 'Regular',
-                                            textAlign: 'left',
-                                        }}
-                                    >
-                                        {userData.name}`session
-                                        {/* {call.meeting_name} */}
+                                    <Typography variant="h6">
+                                    {/* {userData.name}`session */}
+                                        {call.meeting_name}
                                     </Typography>
                                 </Box>
                                 <Typography variant="h7" component="span">
@@ -233,8 +272,8 @@ const CoachCallRecord = () => {
                                 >
                                     {moment(call.date).format('MMMM D, YYYY') ||
                                         'No Date'}{' '}
-                                    | {call.start_time || 'No Start Time'} -{' '}
-                                    {call.end_time || 'No End Time'}
+                                    | {convertTo12HourFormat(call.start_time) || 'No Start Time'} -{' '}
+                                    {convertTo12HourFormat(call.end_time) || 'No End Time'}
                                 </Typography>
 
                                 <Typography
@@ -251,7 +290,6 @@ const CoachCallRecord = () => {
                                 <Typography
                                     variant="body2"
                                     color="textSecondary"
-                                    component="span"
                                     sx={{ mt: 2, mb: 2, ml: 1 }}
                                 >
                                     {call.students
@@ -263,7 +301,7 @@ const CoachCallRecord = () => {
                                     justifyContent="space-between"
                                     sx={{ mt: 2 }}
                                 >
-                                    <CustomButton
+                                   <CustomButton
                                         onClick={() => handleClickOpen(call)}
                                         color="#F56D3B"
                                         backgroundColor="#FFFFFF"
@@ -291,7 +329,6 @@ const CoachCallRecord = () => {
                                                 fontFamily: 'Medium',
                                                 textAlign: 'left',
                                             }}
-                                            // disabled={!call.session_recording_url}
                                         >
                                             Call Recordings
                                         </CustomButton>
@@ -305,7 +342,6 @@ const CoachCallRecord = () => {
                                                 fontFamily: 'Medium',
                                                 textAlign: 'left',
                                             }}
-                                            open={uploadDialogOpen}
                                             onClick={() =>
                                                 handleOpenUploadDialog(call)
                                             }
@@ -319,18 +355,19 @@ const CoachCallRecord = () => {
                     ))}
                 </Box>
             </Box>
+
             <SessionNotes
                 open={open}
                 onClose={handleClose}
                 onSave={handleSaveNotes}
+                role="TA"
                 selectedId={selectedCall}
-                role="COACH"
             />
+
             <VideoUploadDialog
                 open={uploadDialogOpen}
                 onClose={handleCloseUploadDialog}
-                //onClose={() => setUploadDialogOpen(false)}
-                role="COACH"
+                role="TA"
                 selectedId={idVideo}
             />
 

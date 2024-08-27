@@ -66,6 +66,8 @@ const CustomButton = ({
     );
 };
 
+const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
+
 const CallRecords = () => {
     const [open, setOpen] = useState(false);
     const [selectedCall, setSelectedCall] = useState(null);
@@ -79,7 +81,8 @@ const CallRecords = () => {
     const dispatch = useDispatch();
     const calls = useSelector(state => state.taMenu.taCallRecords);
     const { timezones } = useSelector(state => state.util);
-    const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
+    const { userData } = useSelector(state => state.auth);
+    
 
     useEffect(() => {
         dispatch(getTaCallRecords(date.format('YYYY-MM-DD')));
@@ -125,7 +128,7 @@ const CallRecords = () => {
         setSelectedCall(call);
         setOpen(true);
     };
-    const { userData } = useSelector(state => state.auth);
+    
     const handleClose = () => setOpen(false);
 
     const handleSaveNotes = notes => {
@@ -251,8 +254,8 @@ const CallRecords = () => {
                                     justifyContent="space-between"
                                 >
                                     <Typography variant="h6">
-                                    {userData.name}`session
-                                        {/* {call.meeting_name} */}
+                                    {/* {userData.name}`session */}
+                                        {call.meeting_name}
                                     </Typography>
                                 </Box>
                                 <Typography variant="h7" component="span">

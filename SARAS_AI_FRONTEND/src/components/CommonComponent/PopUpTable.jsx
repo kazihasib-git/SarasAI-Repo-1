@@ -139,7 +139,7 @@ const PopUpTable = ({
             <DialogContent
                 style={{ justifyContent: 'center', display: 'flex' }}
             >
-                <Typography>No scheduled sessions.</Typography>
+                <Typography>No Assigned Students</Typography>
             </DialogContent>
         ) : (
             <PopUpTable

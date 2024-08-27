@@ -20,6 +20,7 @@ import {
     getCoachAssignStudents,
 } from '../../redux/features/adminModule/coach/coachSlice';
 import CustomButton from '../CustomFields/CustomButton';
+import { toast } from 'react-toastify';
 
 const AssignStudents = ({ componentname }) => {
     const dispatch = useDispatch();
@@ -198,7 +199,18 @@ const AssignStudents = ({ componentname }) => {
         );
     };
 
+    const validate = () => {
+        if (selectedStudents.length === 0) {
+            toast.error('Please Select At Least One Student');
+            return false; // Return false if validation fails
+        }
+        return true; // Return true if validation passes
+    };
+
     const handleSubmit = () => {
+
+        if (!validate()) return;
+
         const id =
             componentname === 'ADDITCOACH'
                 ? coachID || assignedId
