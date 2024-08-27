@@ -94,7 +94,7 @@ const CoachSheduling = () => {
                 <Header />
                 <Sidebar />
                 <Box
-                    display="flex"
+                    display="flex"                
                     justifyContent="space-between"
                     alignItems="center"
                     mb={2}
@@ -148,13 +148,11 @@ const CoachSheduling = () => {
             {openCoachEditBatch && (
                 <EditBatches
                     componentname={'COACHSCHEDULE'}
-                    timezoneID={storedTimezoneId}
                 />
             )}
             {openCoachEditStudent && (
                 <EditStudents
                     componentname={'COACHSCHEDULE'}
-                    timezoneID={storedTimezoneId}
                 />
             )}
         </>
