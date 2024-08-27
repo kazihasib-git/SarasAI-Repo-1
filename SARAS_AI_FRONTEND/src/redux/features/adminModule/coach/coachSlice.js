@@ -5,36 +5,40 @@ import { toast } from 'react-toastify';
 
 export const createCoach = createAsyncThunk(
     'coachModule/createCoach',
-    async (data , {rejectWithValue}) => {
-        try{
+    async (data, { rejectWithValue }) => {
+        try {
             const response = await axiosInstance.post(
                 `${baseUrl}/admin/manage_coaches`,
                 data
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
+        } catch (error) {
+            if (error.response && error.response.data) {
                 return rejectWithValue(error.response.data.message);
-            }else {
-                return rejectWithValue('An Error Occurred While Creating Coach')
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Creating Coach'
+                );
             }
-        }  
+        }
     }
 );
 
 export const getCoach = createAsyncThunk(
-    'coachModule/getCoach', 
+    'coachModule/getCoach',
     async rejectWithValue => {
-        try{
+        try {
             const response = await axiosInstance.get(
                 `${baseUrl}/admin/manage_coaches`
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else{
-                return rejectWithValue('An Error Occurred While Fetching Coaches')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Fetching Coaches'
+                );
             }
         }
     }
@@ -50,10 +54,12 @@ export const updateCoach = createAsyncThunk(
             );
             return response.data;
         } catch (error) {
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else{
-                return rejectWithValue('An Error Occurred While Updating Coach')
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Updating Coach'
+                );
             }
         }
     }
@@ -61,15 +67,17 @@ export const updateCoach = createAsyncThunk(
 
 export const deleteCoach = createAsyncThunk(
     'coachModule/deleteCoach',
-    async (id , {rejectWithValue }) => {
-        try{
+    async (id, { rejectWithValue }) => {
+        try {
             await axiosInstance.delete(`${baseUrl}/admin/manage_coaches/${id}`);
             return id;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else{
-                return rejectWithValue('An Error Occurred While Deleting Coach')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Deleting Coach'
+                );
             }
         }
     }
@@ -78,16 +86,18 @@ export const deleteCoach = createAsyncThunk(
 export const getCoachStudentBatchMapping = createAsyncThunk(
     'coachModule/getCoachStudentBatchMapping',
     async rejectWithValue => {
-        try{
+        try {
             const response = await axiosInstance.get(
                 `${baseUrl}/admin/student-batch-mapping/getAllStudentWithBatches`
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else{
-                return rejectWithValue('An Error Occurred While Fetching Students')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Fetching Students'
+                );
             }
         }
     }
@@ -96,14 +106,18 @@ export const getCoachStudentBatchMapping = createAsyncThunk(
 export const getCoachBatchMapping = createAsyncThunk(
     'coachModule/getCoachBatchMapping',
     async rejectWithValue => {
-        try{
-            const response = await axiosInstance.get(`${baseUrl}/admin/batches`);
+        try {
+            const response = await axiosInstance.get(
+                `${baseUrl}/admin/batches`
+            );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else{
-                return rejectWithValue('An Error Occurred While Fetching Batches')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Fetching Batches'
+                );
             }
         }
     }
@@ -112,16 +126,18 @@ export const getCoachBatchMapping = createAsyncThunk(
 export const showCoachMapping = createAsyncThunk(
     'coachModule/showCoachMapping',
     async rejectWithValue => {
-        try{
+        try {
             const response = await axiosInstance.get(
                 `${baseUrl}/admin/CoachMapping/CoachswithActiveStudentnBatches`
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else{
-                return rejectWithValue('An Error Occurred While Fetching Batches')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Fetching Batches'
+                );
             }
         }
     }
@@ -130,16 +146,18 @@ export const showCoachMapping = createAsyncThunk(
 export const showCoachCourseMapping = createAsyncThunk(
     'coachModule/showCoachCourseMapping',
     async rejectWithValue => {
-        try{
+        try {
             const response = await axiosInstance.get(
                 `${baseUrl}/admin/coach-course/getAllCoachesWithCourses`
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else{
-                return rejectWithValue('An Error Occurred While Fetching Courses')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Fetching Courses'
+                );
             }
         }
     }
@@ -148,16 +166,18 @@ export const showCoachCourseMapping = createAsyncThunk(
 export const getAllCoursesWithCoaches = createAsyncThunk(
     'coachModule/getAllCoursesWithCoaches',
     async rejectWithValue => {
-        try{
+        try {
             const response = await axiosInstance.get(
                 `${baseUrl}/admin/coach-course/getAllCoursesWithCoaches`
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else{
-                return rejectWithValue('An Error Occurred While Fetching Coach Courses')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Fetching Coach Courses'
+                );
             }
         }
     }
@@ -165,18 +185,20 @@ export const getAllCoursesWithCoaches = createAsyncThunk(
 
 export const assignCourseToCoach = createAsyncThunk(
     'coachModule/assignCourseToCoach',
-    async (data , { rejectWithValue }) => {
-        try{
+    async (data, { rejectWithValue }) => {
+        try {
             const response = await axiosInstance.post(
                 `${baseUrl}/admin/coach-course`,
                 data
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else {
-                return rejectWithValue('An Error Occurred While Assigning Course')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Assigning Course'
+                );
             }
         }
     }
@@ -185,16 +207,18 @@ export const assignCourseToCoach = createAsyncThunk(
 export const getCoachAssignStudents = createAsyncThunk(
     'coachModule/getCoachAssignStudents',
     async (id, { rejectWithValue }) => {
-        try{
+        try {
             const response = await axiosInstance.get(
                 `${baseUrl}/admin/CoachMapping/${id}/AssignStudents`
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else{
-                return rejectWithValue('An Error Occurred While Fetching Assigned Students To TA')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Fetching Assigned Students To TA'
+                );
             }
         }
     }
@@ -202,17 +226,19 @@ export const getCoachAssignStudents = createAsyncThunk(
 
 export const getCoachAssignBatches = createAsyncThunk(
     'coachModule/getCoachAssignBatches',
-    async (id , { rejectWithValue }) => {
-        try{
+    async (id, { rejectWithValue }) => {
+        try {
             const response = await axiosInstance.get(
                 `${baseUrl}/admin/CoachMapping/${id}/AssignBatches`
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else {
-                return rejectWithValue('An Error Occurred While Fetching Assigned Batches')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Fetching Assigned Batches'
+                );
             }
         }
     }
@@ -221,17 +247,19 @@ export const getCoachAssignBatches = createAsyncThunk(
 export const postCoachAssignStudents = createAsyncThunk(
     'coachModule/postCoachAssignStudents',
     async ({ id, data }, { rejectWithValue }) => {
-        try{
+        try {
             const response = await axiosInstance.post(
                 `${baseUrl}/admin/CoachMapping/AssignStudents`,
                 data
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else{
-                return rejectWithValue('An Error Occurred While Fetching Assigning Students')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Fetching Assigning Students'
+                );
             }
         }
     }
@@ -246,11 +274,13 @@ export const postCoachAssignBatches = createAsyncThunk(
                 data
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else{
-                return rejectWithValue('An Error Occurred While Fetching Assigned Batches')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Fetching Assigned Batches'
+                );
             }
         }
     }
@@ -259,17 +289,19 @@ export const postCoachAssignBatches = createAsyncThunk(
 export const toggleCoachAssignStudentStatus = createAsyncThunk(
     'coachModule/toggleCoachAssignStudentStatus',
     async ({ id, studentId }, { rejectWithValue }) => {
-        try{
+        try {
             const response = await axiosInstance.put(
                 `${baseUrl}/admin/CoachMapping/${id}/ActiveDeactiveAssignStudent`,
                 { student_id: studentId }
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else{
-                return rejectWithValue('An Error Occurred While Updating Assigned Student')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Updating Assigned Student'
+                );
             }
         }
     }
@@ -278,17 +310,19 @@ export const toggleCoachAssignStudentStatus = createAsyncThunk(
 export const toggleCoachAssignBatchStatus = createAsyncThunk(
     'coachModule/toggleCoachAssignBatchStatus',
     async ({ id, batchId }, { rejectWithValue }) => {
-        try{
+        try {
             const response = await axiosInstance.put(
                 `${baseUrl}/admin/CoachMapping/${id}/ActiveDeactiveAssignBatch`,
                 { batch_id: batchId }
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
+        } catch (error) {
+            if (error.response && error.response.data) {
                 return rejectWithValue(error.response.data.message);
-            }else{
-                return rejectWithValue('An Error Occurred While Changing the Status of Batch')
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Changing the Status of Batch'
+                );
             }
         }
     }
@@ -297,16 +331,18 @@ export const toggleCoachAssignBatchStatus = createAsyncThunk(
 export const deleteCoachAssignedStudent = createAsyncThunk(
     'coachModule/deleteCoachAssignedStudent',
     async (id, { rejectWithValue }) => {
-        try{
+        try {
             const response = await axiosInstance.delete(
                 `${baseUrl}/admin/CoachMapping/${id.id}/deleteStudent`
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
+        } catch (error) {
+            if (error.response && error.response.data) {
                 return rejectWithValue(error.response.data.message);
-            }else {
-                return rejectWithValue('An Error Occurred While Deleting Assigned Student')
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Deleting Assigned Student'
+                );
             }
         }
     }
@@ -314,17 +350,19 @@ export const deleteCoachAssignedStudent = createAsyncThunk(
 
 export const deleteCoachAssignedBatch = createAsyncThunk(
     'coachModule/deleteCoachAssignedBatch',
-    async ( id , { rejectWithValue }) => {
-        try{
+    async (id, { rejectWithValue }) => {
+        try {
             const response = await axiosInstance.delete(
                 `${baseUrl}/admin/CoachMapping/${id.id}/deleteBatch`
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else {
-                return rejectWithValue('An Error Occurred While Deleting Assigned Batch To Coach')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Deleting Assigned Batch To Coach'
+                );
             }
         }
     }
@@ -333,18 +371,20 @@ export const deleteCoachAssignedBatch = createAsyncThunk(
 export const deleteCoachMapping = createAsyncThunk(
     'coachModule/deleteCoachMapping',
     async (id, { rejectWithValue }) => {
-        try{
+        try {
             const response = await axiosInstance.delete(
                 `${baseUrl}/admin/CoachMapping/${id}/deleteMapping`
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else{
-                return rejectWithValue('An Error Occurred While Deleting Coach Mapping')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Deleting Coach Mapping'
+                );
             }
-        }        
+        }
     }
 );
 
@@ -423,12 +463,16 @@ export const coachSlice = createSlice({
         });
         builder.addCase(createCoach.fulfilled, (state, action) => {
             state.loading = false;
-            toast.success(action.payload.nessage || 'Coach Created Successfully');
+            toast.success(
+                action.payload.nessage || 'Coach Created Successfully'
+            );
             state.coaches = [...state.coaches, action.payload];
         });
         builder.addCase(createCoach.rejected, (state, action) => {
             state.loading = false;
-            toast.error(action.payload || 'Failed To Create Coach. Please Try Again')
+            toast.error(
+                action.payload || 'Failed To Create Coach. Please Try Again'
+            );
             state.error = action.payload || action.error.message;
         });
 
@@ -457,13 +501,16 @@ export const coachSlice = createSlice({
             if (index !== -1) {
                 state.coaches[index] = action.payload;
             }
-            toast.success(action.payload.message || 'Coach Updated Successfully');
-
+            toast.success(
+                action.payload.message || 'Coach Updated Successfully'
+            );
         });
         builder.addCase(updateCoach.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload || action.error.message;
-            toast.error(action.payload || 'Failed To Update Coach. Please Try Again')
+            toast.error(
+                action.payload || 'Failed To Update Coach. Please Try Again'
+            );
         });
 
         // Delete Coach
@@ -475,12 +522,14 @@ export const coachSlice = createSlice({
             state.coaches = state.coaches.filter(
                 coach => coach.id !== action.payload
             );
-            toast.success(action.payload.message || 'Coach Deleted Successfully')
+            toast.success(
+                action.payload.message || 'Coach Deleted Successfully'
+            );
         });
         builder.addCase(deleteCoach.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload || action.error.message;
-            toast.error(action.payload || 'Failed To Delete Coach')
+            toast.error(action.payload || 'Failed To Delete Coach');
         });
 
         // Get Assigned Students
@@ -520,16 +569,20 @@ export const coachSlice = createSlice({
             (state, action) => {
                 state.loading = false;
                 // state.assignedStudents = action.payload;
-                toast.success(action.payload.message || 'Deleted Assigned Student Successfully')
+                toast.success(
+                    action.payload.message ||
+                        'Deleted Assigned Student Successfully'
+                );
             }
-
         );
         builder.addCase(
             deleteCoachAssignedStudent.rejected,
             (state, action) => {
                 state.loading = false;
                 state.error = action.payload || action.error.message;
-                toast.error(action.payload || 'Failed To Delete Assigned Student')
+                toast.error(
+                    action.payload || 'Failed To Delete Assigned Student'
+                );
             }
         );
 
@@ -539,12 +592,14 @@ export const coachSlice = createSlice({
         });
         builder.addCase(deleteCoachMapping.fulfilled, (state, action) => {
             state.loading = false;
-            toast.success(action.payload.message || 'Mapping Deleted Successully')
+            toast.success(
+                action.payload.message || 'Mapping Deleted Successully'
+            );
         });
         builder.addCase(deleteCoachMapping.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload || action.error.message;
-            toast.error(action.payload || 'Failed To Delete Mapping')
+            toast.error(action.payload || 'Failed To Delete Mapping');
         });
 
         // delete assigned Batches
@@ -553,13 +608,15 @@ export const coachSlice = createSlice({
         });
         builder.addCase(deleteCoachAssignedBatch.fulfilled, (state, action) => {
             state.loading = false;
-            toast.success(action.payload.nessage || 'Assigned Batch Deleted Successfully')
+            toast.success(
+                action.payload.nessage || 'Assigned Batch Deleted Successfully'
+            );
             // state.assignedStudents = action.payload;
         });
         builder.addCase(deleteCoachAssignedBatch.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload || action.error.message;
-            toast.error(action.payload || 'Failed To Delete Assigned Batch')
+            toast.error(action.payload || 'Failed To Delete Assigned Batch');
         });
 
         // Show CA Mapping
@@ -614,12 +671,15 @@ export const coachSlice = createSlice({
         builder.addCase(assignCourseToCoach.fulfilled, (state, action) => {
             console.log('Coach mapping action ', action.payload);
             state.loading = false;
-            toast.success(action.payload.message || 'Courses Assigned To Coach Successfully')
+            toast.success(
+                action.payload.message ||
+                    'Courses Assigned To Coach Successfully'
+            );
         });
         builder.addCase(assignCourseToCoach.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload || action.error.message;
-            toast.error(action.payload || 'Failed To Assign Courses To Coach')
+            toast.error(action.payload || 'Failed To Assign Courses To Coach');
         });
 
         // get all students
@@ -664,12 +724,15 @@ export const coachSlice = createSlice({
         builder.addCase(postCoachAssignStudents.fulfilled, (state, action) => {
             state.loading = false;
             state.assignedStudents = action.payload;
-            toast.success(action.payload.message || 'Students Assigned To Coach Successfully')
+            toast.success(
+                action.payload.message ||
+                    'Students Assigned To Coach Successfully'
+            );
         });
         builder.addCase(postCoachAssignStudents.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload || action.error.message;
-            toast.error(action.payload || 'Failed To Assign Students To Coach')
+            toast.error(action.payload || 'Failed To Assign Students To Coach');
         });
 
         // Post Assign Batches
@@ -679,12 +742,15 @@ export const coachSlice = createSlice({
         builder.addCase(postCoachAssignBatches.fulfilled, (state, action) => {
             state.loading = false;
             state.assignedBatches = action.payload;
-            toast.success(action.payload.message || 'Batches Assigned To Coach Successfully')
+            toast.success(
+                action.payload.message ||
+                    'Batches Assigned To Coach Successfully'
+            );
         });
         builder.addCase(postCoachAssignBatches.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload || action.error.message;
-            toast.error(action.payload || 'Failed To Assign Batches To Coach')
+            toast.error(action.payload || 'Failed To Assign Batches To Coach');
         });
 
         // Toggle Assign Student Status
@@ -701,7 +767,9 @@ export const coachSlice = createSlice({
                         : student
                 );
                 state.assignedStudents = updatedStudents;
-                toast.success(action.payload.message || 'Status Updated Successfully')
+                toast.success(
+                    action.payload.message || 'Status Updated Successfully'
+                );
             }
         );
         builder.addCase(
@@ -709,7 +777,7 @@ export const coachSlice = createSlice({
             (state, action) => {
                 state.loading = false;
                 state.error = action.payload || action.error.message;
-                toast.error(action.payload || 'Failed To Update Status')
+                toast.error(action.payload || 'Failed To Update Status');
             }
         );
 
@@ -727,7 +795,10 @@ export const coachSlice = createSlice({
                         : batch
                 );
                 state.assignedBatches = updatedBatches;
-                toast.success(action.payload.message || 'Updated Active Status Successfully')
+                toast.success(
+                    action.payload.message ||
+                        'Updated Active Status Successfully'
+                );
             }
         );
         builder.addCase(
@@ -735,7 +806,9 @@ export const coachSlice = createSlice({
             (state, action) => {
                 state.loading = false;
                 state.error = action.payload || action.error.message;
-                toast.success(action.payload || 'Failed To Update Active Status')
+                toast.success(
+                    action.payload || 'Failed To Update Active Status'
+                );
             }
         );
     },

@@ -11,9 +11,7 @@ const AssignCoachCourses = () => {
         <>
             <Header />
             <Sidebar />
-            <AdminCoursesTable
-                coachId={id}
-            />
+            <AdminCoursesTable coachId={id} />
         </>
     );
 };

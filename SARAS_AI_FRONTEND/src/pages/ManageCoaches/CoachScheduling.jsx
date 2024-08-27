@@ -14,15 +14,14 @@ import {
 } from '../../redux/features/adminModule/coach/coachSchedule';
 
 const CoachSheduling = () => {
-
     const dispatch = useDispatch();
     const { assignCoachStudentOpen, assignCoachBatchOpen, loading } =
         useSelector(state => state.coachModule);
-    
-        const { scheduleCoachSessionOpen } = useSelector(
+
+    const { scheduleCoachSessionOpen } = useSelector(
         state => state.coachScheduling
     );
-    
+
     const { coachMapping } = useSelector(state => state.coachModule);
     const [coachScheduleData, setCoachScheduleData] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
@@ -34,7 +33,6 @@ const CoachSheduling = () => {
     // const { coachID } = useSelector(state => state.coachScheduling);
     // const { todaysAvailableCoach } = useSelector(state => state.coachAvailability);
     // const [selectedCoach, setSelectedCoach] = useState(null);
-    
 
     // const findTaTimeZone = (todaysAvailableCoach) => {
     //     if (todaysAvailableCoach && Number(coachID)) {
@@ -47,7 +45,6 @@ const CoachSheduling = () => {
     // useEffect(() => {
     //     findTaTimeZone(todaysAvailableCoach);
     // }, [coachID, todaysAvailableCoach]);
-
 
     // const storedTimezoneId = selectedCoach ? selectedCoach.timezone_id : Number(localStorage.getItem('timezone_id'));
 
@@ -63,8 +60,8 @@ const CoachSheduling = () => {
             }));
 
             setCoachScheduleData(transformData);
-        }else {
-            setCoachScheduleData([])
+        } else {
+            setCoachScheduleData([]);
         }
     }, [coachMapping]);
 
@@ -138,6 +135,10 @@ const CoachSheduling = () => {
                 />
             </Box>
             {scheduleCoachSessionOpen && (
+                // <Schedule
+                //     componentName={'COACHSCHEDULE'}
+                //     timezoneID={storedTimezoneId}
+                // />
                 <Schedule componentName={'COACHSCHEDULE'} />
             )}
             {/* {assignCoachStudentOpen && (
@@ -145,10 +146,16 @@ const CoachSheduling = () => {
       )}
       {assignCoachBatchOpen && <AssignBatches componentname={"ADDITCOACH"} />} */}
             {openCoachEditBatch && (
-                <EditBatches componentname={'COACHSCHEDULE'} />
+                <EditBatches
+                    componentname={'COACHSCHEDULE'}
+                    timezoneID={storedTimezoneId}
+                />
             )}
             {openCoachEditStudent && (
-                <EditStudents componentname={'COACHSCHEDULE'} />
+                <EditStudents
+                    componentname={'COACHSCHEDULE'}
+                    timezoneID={storedTimezoneId}
+                />
             )}
         </>
     );

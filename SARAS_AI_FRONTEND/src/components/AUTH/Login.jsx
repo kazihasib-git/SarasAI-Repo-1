@@ -8,6 +8,7 @@ const LOGIN_URL = 'http://34.100.233.67:8080/api/login';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { login } from '../../redux/features/auth/authSlice';
+import EmailPopup from './EmailPopup';
 
 const Login = () => {
     const { setAuth } = useAuth();
@@ -23,6 +24,7 @@ const Login = () => {
     const [user, setUser] = useState('');
     const [pwd, setPwd] = useState('');
     const [errMsg, setErrMsg] = useState('');
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
 
     useEffect(() => {
         userRef.current.focus();
@@ -110,6 +112,9 @@ const Login = () => {
         }
     };
 
+    const handlePopupOpen = () => setIsPopupOpen(true); // Open popup
+    const handlePopupClose = () => setIsPopupOpen(false); // Close popup
+
     return (
         <div id="loginPage" className="login_Container">
             <section>
@@ -170,12 +175,13 @@ const Login = () => {
                     Forget Password ?<br />
                     <span className="line">
                         {/*put router link here*/}
-                        <a id="clickbutton" href="#">
+                        <a id="clickbutton" href="#" onClick={handlePopupOpen}>
                             Click Here
                         </a>
                     </span>
                 </p>
             </section>
+            {isPopupOpen && <EmailPopup handleClose={handlePopupClose} />}
         </div>
     );
 };

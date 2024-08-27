@@ -79,7 +79,6 @@
     font-size: 10px;
     font-weight: 400;
     line-height: 13.02px;
-    
 }
 
 .rbc-time-header-cell {
@@ -133,12 +132,12 @@
 
 /* Style for the current day column */
 .rbc-today {
-    background-color: #E3F2FD !important; /* Light blue for the full column */
-    color: #1976D2 !important; /* Blue text color for the full column */
+    background-color: #e3f2fd !important; /* Light blue for the full column */
+    color: #1976d2 !important; /* Blue text color for the full column */
 }
 
 /* Style for the header cell of the current day */
 .rbc-header.rbc-today {
-    background-color:#4e18a5 !important; /* Light blue for the header */
+    background-color: #4e18a5 !important; /* Light blue for the header */
     color: #feffff !important; /* Blue text color for the header */
 }

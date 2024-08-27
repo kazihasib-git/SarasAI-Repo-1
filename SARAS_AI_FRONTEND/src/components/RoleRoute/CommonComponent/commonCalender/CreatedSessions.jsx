@@ -23,11 +23,10 @@ const headers = [
     'Actions',
 ];
 
-
 const studentHeader = ['S.No.', 'Student Name', 'Program', 'Batch'];
 
-const CreatedSessions = ({ componentName , timezoneID}) => {
-    console.log('created sessions timezoneID' , timezoneID) ;
+const CreatedSessions = ({ componentName, timezoneID }) => {
+    console.log('created sessions timezoneID', timezoneID);
     const { timezones } = useSelector(state => state.util);
 
     const dispatch = useDispatch();
@@ -62,7 +61,7 @@ const CreatedSessions = ({ componentName , timezoneID}) => {
     const [scheduledSessions, setScheduledSessions] = useState([]);
     const [students, setStudent] = useState([]);
 
-    const { slotsLeaveData } = useSelector((state) => state.commonCalender)
+    const { slotsLeaveData } = useSelector(state => state.commonCalender);
 
     const formatTime = time => {
         const [hours, minutes] = time.split(':');
@@ -80,10 +79,7 @@ const CreatedSessions = ({ componentName , timezoneID}) => {
             timezoneID &&
             timezones
         ) {
-            const timezonename = timezoneIdToName(
-                timezoneID,
-                timezones
-            );
+            const timezonename = timezoneIdToName(timezoneID, timezones);
             if (!timezonename) {
                 console.error('Invalid timezone name');
                 setScheduledSessions([]);
@@ -128,7 +124,6 @@ const CreatedSessions = ({ componentName , timezoneID}) => {
         }
     };
 
-
     useEffect(() => {
         convertMenuSessions();
     }, [sessionsData, timezoneID, timezones]);
@@ -153,7 +148,7 @@ const CreatedSessions = ({ componentName , timezoneID}) => {
     };
 
     const content =
-        (!scheduledSessions && scheduledSessions.length === 0) ? (
+        !scheduledSessions && scheduledSessions.length === 0 ? (
             <DialogContent
                 style={{ justifyContent: 'center', display: 'flex' }}
             >

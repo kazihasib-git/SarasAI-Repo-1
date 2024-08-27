@@ -15,7 +15,6 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
-
 const CoachTemplate = () => {
     const navigation = useNavigate();
     const dispatch = useDispatch();
@@ -34,7 +33,8 @@ const CoachTemplate = () => {
             const transformData = coachTemplates.map(item => ({
                 id: item.id,
                 'Template Name': item.name,
-                Duration: item.duration == 1 ? "1 Month" : `${item.duration} Months`,
+                Duration:
+                    item.duration == 1 ? '1 Month' : `${item.duration} Months`,
                 Activities: item?.modules
                     ?.map(module => module?.module_name)
                     .join(', '),
@@ -124,10 +124,10 @@ const CoachTemplate = () => {
         navigation('/create-template');
     };
 
-    const handleAssignedToClick = (id) =>{
+    const handleAssignedToClick = id => {
         navigation(`template-students/${id}`);
-    }
-    
+    };
+
     return (
         <>
             <Box m="20px">

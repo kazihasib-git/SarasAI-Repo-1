@@ -76,8 +76,6 @@ const CustomButton = ({
 
 const headers = ['S. No.', 'Slot Date', 'From Time', 'To Time', 'Select'];
 
-
-
 const timezone = Number(localStorage.getItem('timezone_id'));
 
 const actionButtons = [
@@ -86,12 +84,11 @@ const actionButtons = [
     },
 ];
 
-const CreateSession = ({ componentName , timezoneID}) => {
-
-console.log('session timezoneID',timezoneID)
+const CreateSession = ({ componentName, timezoneID }) => {
+    console.log('session timezoneID', timezoneID);
 
     const dispatch = useDispatch();
-    
+
     const initialFormData = {
         sessionName: '',
         duration: null,
@@ -161,7 +158,6 @@ console.log('session timezoneID',timezoneID)
         setFormData(prev => ({ ...prev, [field]: value }));
     };
 
-
     const handleAssignStudents = () => {
         dispatch(openSelectStudents());
     };
@@ -169,7 +165,6 @@ console.log('session timezoneID',timezoneID)
     const handleAssignBatches = () => {
         dispatch(openSelectBatches());
     };
-
 
     const handleSubmit = e => {
         e.preventDefault();
@@ -219,7 +214,7 @@ console.log('session timezoneID',timezoneID)
             dispatch(getSessionApi());
             dispatch(getSlotApi());
             dispatch(closeScheduleNewSession());
-            
+
             // Reset the form after submission
             setFormData(initialFormData);
         }) .catch((error) => {
@@ -392,18 +387,12 @@ console.log('session timezoneID',timezoneID)
                                 <CustomTimeZoneForm
                                     label="Timezone"
                                     name="timezone"
-                                    
-                                    
-                                    
                                     errors={!!error.timezone}
                                     helperText={error.timezone}
                                     sx={{ width: '100%' }}
-
-                        
-                                    
                                     value={timezoneID}
                                     // onChange={field.onChange}
-                                    disabled={timezoneID!=null}
+                                    disabled={timezoneID != null}
                                     options={timezones}
                                 />
                             </Grid>
@@ -465,7 +454,6 @@ console.log('session timezoneID',timezoneID)
                                     </Button>
                                 </Box>
                             </Grid>
-
                         </Grid>
                     </Box>
                 </form>
@@ -492,7 +480,7 @@ console.log('session timezoneID',timezoneID)
         <ReusableDialog
             open={scheduleNewSessionPopup}
             handleClose={() => {
-                dispatch(closeScheduleNewSession())
+                dispatch(closeScheduleNewSession());
                 setFormData(initialFormData);
             }}
             title={`Create New Session`}

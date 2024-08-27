@@ -197,7 +197,7 @@ const ScheduleSession = ({ componentName }) => {
         };
         window.open(sessionData.platform_meet.host_meeting_url, '_blank');
     };
-    
+
     const content = (
         <Box sx={{ textAlign: 'center' }}>
             <Typography variant="body1" sx={{ mb: 2 }}>

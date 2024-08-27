@@ -6,52 +6,48 @@ import { toast } from 'react-toastify';
 
 export const linkActivity = createAsyncThunk(
     'linkActivity/link',
-        async (activityData, { rejectWithValue }) => {
-            try{
-        const response = await axiosInstance.post(
-            `${baseUrl}/admin/coaching-templates/link-activity`,
-            activityData
-        );
-        const { activity_id, activity_type_id, link } = response.data;
-        return { activity_id, activity_type_id, link };
-    }
-    catch (error) {
-        if (error.response && error.response.data) {
-            return rejectWithValue(error.response.data.message);
-        } else {
-            return rejectWithValue(
-                'An Error Occurred While Linking activity'
+    async (activityData, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.post(
+                `${baseUrl}/admin/coaching-templates/link-activity`,
+                activityData
             );
+            const { activity_id, activity_type_id, link } = response.data;
+            return { activity_id, activity_type_id, link };
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Linking activity'
+                );
+            }
         }
     }
-}
 );
 export const uploadpdf = createAsyncThunk(
     'linkActivity/uploadpdf',
     async (activityData, { rejectWithValue }) => {
-        try{
-        console.log('actictyData', activityData);
-        const response = await axiosInstance.post(
-            `${baseUrl}/admin/upload-pdf`,
-            activityData,
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            }
-        );
-        return response.data;
-    }
-    catch (error) {
-        if (error.response && error.response.data) {
-            return rejectWithValue(error.response.data.message);
-        } else {
-            return rejectWithValue(
-                'An Error Occurred While Uploading PDF'
+        try {
+            console.log('actictyData', activityData);
+            const response = await axiosInstance.post(
+                `${baseUrl}/admin/upload-pdf`,
+                activityData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                }
             );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue('An Error Occurred While Uploading PDF');
+            }
         }
     }
-}
 );
 
 const linkActivitySlice = createSlice({
@@ -74,7 +70,7 @@ const linkActivitySlice = createSlice({
                 state.loading = false;
                 state.success = true;
                 state.data = action.payload; // Store the response data
-                state.upload_pdf_url=null;
+                state.upload_pdf_url = null;
                 toast.success(
                     action.payload.message ||
                         'link Activity has been successfully created.'

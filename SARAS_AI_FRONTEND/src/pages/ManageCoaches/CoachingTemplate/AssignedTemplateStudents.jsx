@@ -23,21 +23,23 @@ const AssignedTemplateStudents = () => {
     const dispatch = useDispatch();
     const [templateAssignedStudentData, setTemplateAssignedData] = useState([]);
 
-    const { coachTemplates, assignStudentsToTemplate, assignBatchesToTemplate  } = useSelector(state => state.coachTemplate);
+    const {
+        coachTemplates,
+        assignStudentsToTemplate,
+        assignBatchesToTemplate,
+    } = useSelector(state => state.coachTemplate);
 
     useEffect(() => {
-        const selectedTemplate = coachTemplates.find(item => item.id === Number(id));
+        const selectedTemplate = coachTemplates.find(
+            item => item.id === Number(id)
+        );
 
         const assignedStudents = selectedTemplate.student;
 
         if (assignedStudents && assignedStudents.length > 0) {
             const transformData = assignedStudents.map(item => {
-                const studentName = item
-                    ? item.name
-                    : 'Unknown Student';
-                const enrollmentId = item
-                    ? item.enrollment_id
-                    : 'Unknown Id';
+                const studentName = item ? item.name : 'Unknown Student';
+                const enrollmentId = item ? item.enrollment_id : 'Unknown Id';
                 const isActive = item.is_active === 1;
 
                 return {
@@ -50,7 +52,6 @@ const AssignedTemplateStudents = () => {
             setTemplateAssignedData(transformData);
         }
     }, [coachTemplates]);
-
 
     return (
         <>
@@ -66,10 +67,19 @@ const AssignedTemplateStudents = () => {
                 componentName={'ASSIGNEDTEMPLATESTUDENT'}
                 template_id={id}
             />
-            {assignStudentsToTemplate && <AssignStudentsToTemplate componentname={'CoachTemplate'} assignedStudents={templateAssignedStudentData}/>}
-            {assignBatchesToTemplate && <AssignBatchesToTemplate componentname={'CoachTemplate'} assignedStudents={templateAssignedStudentData}/>}
+            {assignStudentsToTemplate && (
+                <AssignStudentsToTemplate
+                    componentname={'CoachTemplate'}
+                    assignedStudents={templateAssignedStudentData}
+                />
+            )}
+            {assignBatchesToTemplate && (
+                <AssignBatchesToTemplate
+                    componentname={'CoachTemplate'}
+                    assignedStudents={templateAssignedStudentData}
+                />
+            )}
         </>
-       
     );
 };
 
