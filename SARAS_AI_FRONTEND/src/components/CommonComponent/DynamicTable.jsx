@@ -55,12 +55,12 @@ const DynamicTable = ({
     );
 
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage] = useState(10);
 
     const [modalOpen, setModalOpen] = useState(false);
     const [modalData, setModalData] = useState(null);
     const [assessmentData, setAssessmentData] = useState([]);
-
+    const [assessmentModalOpen, setassessmentModalOpen] = useState(false)
+    
     useEffect(() => {
         setData(
             initialData.map(item => ({
