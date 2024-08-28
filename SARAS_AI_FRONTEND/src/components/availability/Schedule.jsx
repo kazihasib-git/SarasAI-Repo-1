@@ -953,6 +953,7 @@ const Schedule = ({ componentName, timezoneID }) => {
             backgroundColor="#F56D3B"
             borderColor="#F56D3B"
             color="#FFFFFF"
+            textTransform= "none"
         >
             Submit
         </CustomButton>

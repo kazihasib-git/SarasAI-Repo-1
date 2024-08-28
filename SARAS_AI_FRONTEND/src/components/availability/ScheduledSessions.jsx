@@ -222,6 +222,7 @@ const ScheduledSessions = ({ componentName, timezoneID }) => {
                 backgroundColor="#F56D3B"
                 borderColor="#F56D3B"
                 color="#FFFFFF"
+                style={{ textTransform: 'none' }}
             >
                 Submit
             </CustomButton>

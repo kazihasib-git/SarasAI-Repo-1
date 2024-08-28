@@ -474,6 +474,7 @@ const CreateSession = ({ componentName, timezoneID }) => {
                 color: '#FFFFFF',
                 textTransform: 'none',
                 fontFamily: 'Bold',
+                textTransform: 'none' 
             }}
         >
             Submit

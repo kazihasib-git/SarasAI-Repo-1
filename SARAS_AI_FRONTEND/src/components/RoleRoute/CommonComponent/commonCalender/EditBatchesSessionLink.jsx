@@ -184,6 +184,7 @@ const academicTermOptions =
                 color: '#FFFFFF',
                 textTransform: 'none',
                 fontFamily: 'Bold',
+               textTransform: 'none' 
             }}
         >
             Submit
