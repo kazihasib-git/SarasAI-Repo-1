@@ -19,13 +19,17 @@ import CustomTextField from '../../../../components/CustomFields/CustomTextField
 import CustomDateField from '../../../../components/CustomFields/CustomDateField';
 import CustomTimeField from '../../../../components/CustomFields/CustomTimeField';
 import { getActivityType } from '../../../../redux/features/adminModule/coach/activityTypeSlice';
-import { getCoach, getCoachById } from '../../../../redux/features/adminModule/coach/coachSlice';
+import {
+    getCoach,
+    getCoachById,
+} from '../../../../redux/features/adminModule/coach/coachSlice';
 import {
     linkActivity,
     uploadpdf,
 } from '../../../../redux/features/adminModule/coach/LinkActivitySlice';
 import VirtualGroupSession from './LinkActivityPopup/VirtualGroupSession';
 import {
+    getAllHosts,
     getPlatforms,
     getTimezone,
 } from '../../../../redux/features/utils/utilSlice';
@@ -43,6 +47,8 @@ import OneOnOneSessionComponent from './Components/OneonOneSessionComponent';
 import PDFUploadComponent from './Components/PDFUploadComponent';
 import { getCoachTemplateModuleId } from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
 import { getAllCoachingTools } from '../../../../redux/features/adminModule/coachingTools/coachingTools';
+import CustomHostNameForm from '../../../../components/CustomFields/CustomHostNameField';
+import CustomMeetingTypeField from '../../../../components/CustomFields/CustomMeetingTypeField';
 // import { uploadpdf } from '../../../../redux/features/adminModule/coach/LinkActivitySlice';
 const CustomButton = ({
     onClick,
@@ -108,63 +114,77 @@ const LinkActivityPopup = ({
     const [coachTimeZone, setCoachTimeZone] = useState(null);
     const [coachSlots, setCoachSlots] = useState(null);
     const [selectedPlatform, setSelectedPlatform] = useState(null);
+    const [selectHostName, setSelectHostName] = useState(null);
+    const [selectMeetingType, setSelectMeetingType] = useState(null);
 
-    const { timezones, platforms } = useSelector(state => state.util);
-    const { coachData } = useSelector((state) => state.coachModule);
+    const { timezones, platforms, hosts } = useSelector(state => state.util);
+    const { coachData } = useSelector(state => state.coachModule);
     const [selectedSlot, setSelectedSlot] = useState(null);
-
+    const meetingTypes = ['webinars', 'meetings'];
+    const { typeList } = useSelector(state => state.activityType);
+    const { coachingTools } = useSelector(state => state.coachingTools);
+    const { coaches } = useSelector(state => state.coachModule);
+    const { coachAvailableSlots } = useSelector(state => state.coachScheduling);
 
     useEffect(() => {
-        if(selectedCoachId){
-            dispatch(getCoachById(selectedCoachId))
+        if (selectedCoachId) {
+            dispatch(getCoachById(selectedCoachId));
         }
-    },[selectedCoachId])
+    }, [selectedCoachId]);
 
     useEffect(() => {
-        if(coachData){
+        if (coachData) {
             // console.log("COACH DATA :::", coachData)
-            setCoachTimeZone(coachData.timezone_id)
+            setCoachTimeZone(coachData.timezone_id);
         }
-    }, [coachData])
+    }, [coachData]);
 
     const onSubmit = async data => {
-        
         //console.log("---------------->", data , "activityId", activityId, "activityType", activityType, "selectedAssessmentId", selectedAssessmentId, "selectedSessionType", selectedSessionType);
-        setSelectedAssessmentId(data.assessment)
+        setSelectedAssessmentId(data.assessment);
         const payload = {
             activity_id: activityId, // Ensure this value is correctly set
             activity_type_id: selectedActivityId,
-                // activityType === 'test'
-                //     ? selectedAssessmentId
-                //    : selectedActivityId, // Ensure this value is correctly set        
+            // activityType === 'test'
+            //     ? selectedAssessmentId
+            //    : selectedActivityId, // Ensure this value is correctly set
             link: videoUrl || upload_pdf_url || data.link, // Add other fields if needed
-            virtual_meeting_type : selectedSessionType,
-            test_type : selectedAssessmentId,
+            virtual_meeting_type: selectedSessionType,
+            test_type: selectedAssessmentId,
         };
         try {
-            if(payload.link || (activityType === 'test' && selectedAssessmentId) || (activityType ==='virtual meet' && selectedSessionType)){
-                if(activityType ==='virtual meet' && selectedSessionType=="group"){
-                const dataToGenrateLink = {
-                    "activity_id" : activityId,
-                    "admin_user_id": selectedCoachId,
-                    "meeting_name": data.meeting_name,
-                    "schedule_date": fromDate,
-                    "end_date": fromDate,
-                    "start_time": data.fromTime,
-                    "end_time": data.toTime,
-                    "slot_id": Number(selectedSlot),
-                    "timezone_id": coachTimeZone,
-                    "platform_id" : selectedPlatform,
-                    "event_status": "scheduled",
-                    "session_type" : "Live",
-                    "studentId": [],
-                    "batchId": [],
-                    "weeks": weeksArray,
-                    "host_email_id": "tech@sarasai.org",
-                    "meeting_type": "meetings",
-                }
+            if (
+                payload.link ||
+                (activityType === 'test' && selectedAssessmentId) ||
+                (activityType === 'virtual meet' && selectedSessionType)
+            ) {
+                if (
+                    activityType === 'virtual meet' &&
+                    selectedSessionType == 'group'
+                ) {
+                    const dataToGenrateLink = {
+                        activity_id: activityId,
+                        admin_user_id: selectedCoachId,
+                        meeting_name: data.meeting_name,
+                        schedule_date: fromDate,
+                        end_date: fromDate,
+                        start_time: data.fromTime,
+                        end_time: data.toTime,
+                        slot_id: Number(selectedSlot),
+                        timezone_id: coachTimeZone,
+                        platform_id: selectedPlatform,
+                        event_status: 'scheduled',
+                        session_type: 'Live',
+                        studentId: [],
+                        batchId: [],
+                        weeks: weeksArray,
+                        host_email_id: selectHostName,
+                        meeting_type: selectMeetingType,
+                    };
 
-                const response = await dispatch(createCoachSchedule(dataToGenrateLink));
+                    const response = await dispatch(
+                        createCoachSchedule(dataToGenrateLink)
+                    );
 
                     if (response.payload) {
                         payload.link = response.payload.data[0].id;
@@ -172,7 +192,6 @@ const LinkActivityPopup = ({
                         await dispatch(linkActivity(payload)).unwrap();
 
                         dispatch(getCoachTemplateModuleId(templateId));
-                    
                     } else {
                         throw new Error('Failed to create coach schedule');
                     }
@@ -185,7 +204,6 @@ const LinkActivityPopup = ({
                         });
                 }
                 handlePopUpClose();
-                reset();
             }
         } catch (error) {
             console.error('Failed to link activity:', error);
@@ -203,13 +221,15 @@ const LinkActivityPopup = ({
         setCoachTimeZone(null);
         setSelectedPlatform(null);
         setSelectedSessionType(null);
+        setSelectHostName(null)
+        setSelectMeetingType(null)
         handleClose();
     };
 
     useEffect(() => {
         dispatch(getActivityType());
         dispatch(getCoach());
-        dispatch(getAllCoachingTools())
+        dispatch(getAllCoachingTools());
         // dispatch(getSlotsCoachTemplateModule());
     }, [dispatch]);
 
@@ -217,11 +237,6 @@ const LinkActivityPopup = ({
         setVideoUrl(url);
         // You can handle the video URL here, such as updating state or making an API call
     };
-
-    const { typeList } = useSelector(state => state.activityType);
-    const { coachingTools } = useSelector((state) => state.coachingTools)
-    const { coaches } = useSelector(state => state.coachModule);
-    const { coachAvailableSlots } = useSelector(state => state.coachScheduling);
 
     const activityOptions = typeList
         .filter((_, index) => index < 5)
@@ -237,7 +252,7 @@ const LinkActivityPopup = ({
         // .filter((_, index) => index >= 5)
         .map(type => ({
             value: type.id,
-            label: type.name
+            label: type.name,
             //     type.type_name.charAt(0).toUpperCase() +
             //     type.type_name.slice(1), // Capitalize the first letter of each type_name
             // id: type.id,
@@ -299,6 +314,7 @@ const LinkActivityPopup = ({
     useEffect(() => {
         dispatch(getTimezone());
         dispatch(getPlatforms());
+        dispatch(getAllHosts());
     }, [dispatch]);
 
     const coachOptions = coaches.map(coach => ({
@@ -330,7 +346,7 @@ const LinkActivityPopup = ({
                     date: fromDate,
                     timezone_name: selectedCoachTimeZone.time_zone,
                 };
-    
+
                 if (fromDate && selectedCoachId) {
                     dispatch(getTaAvailableSlotsFromDate(data));
                     dispatch(getCoachAvailableSlotsFromDate(data));
@@ -347,8 +363,15 @@ const LinkActivityPopup = ({
     }, [selectedCoachId]);
 
     const handlePlatformChange = event => {
-        console.log('platform...................', event.target.value);
         setSelectedPlatform(event.target.value);
+    };
+
+    const handleHostNameChange = event => {
+        setSelectHostName(event.target.value);
+    };
+
+    const handleChangeMeetingName = event => {
+        setSelectMeetingType(event.target.value);
     };
 
     const contentComponent = (
@@ -609,16 +632,83 @@ const LinkActivityPopup = ({
                                                 />
                                             </Grid>
 
-                                            <CustomPlatformForm
-                                                label="Platform"
-                                                name="platform"
-                                                placeholder="Select Platform"
-                                                value={selectedPlatform}
-                                                onChange={handlePlatformChange}
-                                                errors={''}
-                                                options={platforms}
-                                                sx={{ width: '100px' }} // Adjust the width as needed
-                                            />
+                                            <Grid
+                                                item
+                                                xs={12}
+                                                display="flex"
+                                                justifyContent="center"
+                                                style={{ margin: '15px 0px' }}
+                                            >
+                                                <CustomPlatformForm
+                                                    label="Platform"
+                                                    name="platform_id"
+                                                    placeholder="Select Platform"
+                                                    value={selectedPlatform}
+                                                    onChange={
+                                                        handlePlatformChange
+                                                    }
+                                                    errors={errors}
+                                                    options={platforms}
+                                                    sx={{ width: '100px' }} // Adjust the width as needed
+                                                />
+                                            </Grid>
+
+                                            {selectedPlatform === 1 && (
+                                                <>
+                                                    <Grid
+                                                        item
+                                                        xs={12}
+                                                        display="flex"
+                                                        justifyContent="center"
+                                                        style={{
+                                                            margin: '15px 0px',
+                                                        }}
+                                                    >
+                                                        <CustomHostNameForm
+                                                            label="Host Name"
+                                                            name="host_email_id"
+                                                            value={
+                                                                selectHostName
+                                                            }
+                                                            onChange={
+                                                                handleHostNameChange
+                                                            }
+                                                            errors={errors}
+                                                            options={
+                                                                hosts.users
+                                                            }
+                                                        />
+                                                    </Grid>
+                                                    <Grid
+                                                        item
+                                                        xs={12}
+                                                        display="flex"
+                                                        justifyContent="center"
+                                                        style={{
+                                                            margin: '15px 0px',
+                                                        }}
+                                                    >
+                                                        <CustomMeetingTypeField
+                                                            label="Meeting Type"
+                                                            name="meeting_type"
+                                                            value={
+                                                                selectMeetingType
+                                                            }
+                                                            onChange={
+                                                                handleChangeMeetingName
+                                                            }
+                                                            // value={field.value}
+                                                            // onChange={
+                                                            //     field.onChange
+                                                            // }
+                                                            errors={errors}
+                                                            options={
+                                                                meetingTypes
+                                                            }
+                                                        />
+                                                    </Grid>
+                                                </>
+                                            )}
                                         </Grid>
 
                                         <Grid
@@ -671,7 +761,7 @@ const LinkActivityPopup = ({
                                             <Controller
                                                 name="timezone"
                                                 control={control}
-                                                defaultValue="IST"
+                                                defaultValue=""
                                                 render={({ field }) => (
                                                     <CustomFormControl
                                                         label="Time Zone"

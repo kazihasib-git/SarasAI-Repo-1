@@ -107,7 +107,7 @@ export const getTaMenuSlotsForLeave = createAsyncThunk(
             return response.data;
         } catch (error) {
             if (error.response && error.response.data) {
-                return rejectWithValue(error.response.data.error);
+                return rejectWithValue(error.response.data.message);
             } else {
                 return rejectWithValue(
                     'An Error Occurred While Creating Mark leave'
@@ -162,7 +162,7 @@ export const reasonForTaMenuLeave = createAsyncThunk(
             return response.data;
         } catch (error) {
             if (error.response && error.response.data) {
-                return rejectWithValue(error.response.data.error);
+                return rejectWithValue(error.response.data.message);
             } else {
                 return rejectWithValue(
                     'An Error Occurred While Creating TA slots'
