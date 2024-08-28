@@ -14,7 +14,7 @@ export const createCoach = createAsyncThunk(
             return response.data;
         } catch (error) {
             if (error.response && error.response.data) {
-                return rejectWithValue(error.response.data.error);
+                return rejectWithValue(error.response.data.message);
             } else {
                 return rejectWithValue(
                     'An Error Occurred While Creating Coach'
