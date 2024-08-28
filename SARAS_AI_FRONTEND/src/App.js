@@ -106,10 +106,10 @@ function App() {
     const userRole = localStorage.getItem('role');
 
     useEffect(() => {
-        if (location.pathname !== '/login') {
-            localStorage.setItem('lastRoute', location.pathname);
+        if (window.location.pathname !== '/login') {
+            localStorage.setItem('lastRoute', window.location.pathname);
         }
-    }, [location]);
+    }, [window.location.pathname]);
 
     useEffect(() => {
         if (access_token) {
@@ -125,20 +125,20 @@ function App() {
 
     useEffect(() => {
         if (login) {
-            console.log('inside user Effect in app.js', role);
-            //const lastRoute = localStorage.getItem('lastRoute');
-
+            console.log('inside useEffect in app.js', role);
+            const lastRoute = localStorage.getItem('lastRoute');
+    
             if (role.includes(1984)) {
                 // Coach role
-                navigate('/coachmenu_profile', { replace: true });
+                navigate(lastRoute || '/coachmenu_profile', { replace: true });
             } else if (role.includes(2001)) {
                 // Teaching role
-                navigate('/tamenu_profile', { replace: true });
+                navigate(lastRoute || '/tamenu_profile', { replace: true });
             } else if (role.includes(5150)) {
                 // Admin role
-                navigate('/', { replace: true });
+                navigate(lastRoute || '/', { replace: true });
             } else {
-                navigate(from, { replace: true });
+                navigate(lastRoute || from, { replace: true });
             }
         } else {
             navigate('/login', { replace: true });

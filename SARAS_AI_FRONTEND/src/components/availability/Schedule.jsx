@@ -580,14 +580,14 @@ const Schedule = ({ componentName, timezoneID }) => {
                                                                     onChange={
                                                                         field.onChange
                                                                     }
-                                                                    disabled={
-                                                                        timezoneId
-                                                                            ? Number(
-                                                                                  timezoneId
-                                                                              )
-                                                                            : timezoneID !=
-                                                                              null
-                                                                    }
+                                                                    // disabled={
+                                                                    //     timezoneId
+                                                                    //         ? Number(
+                                                                    //               timezoneId
+                                                                    //           )
+                                                                    //         : timezoneID !=
+                                                                    //           null
+                                                                    // }
                                                                     options={
                                                                         timezones
                                                                     }
@@ -936,7 +936,7 @@ const Schedule = ({ componentName, timezoneID }) => {
                                         justifyContent="center"
                                     >
                                         <Button
-                                            onSubmit={handleSubmit(handleDateSubmit)}
+                                            //onSubmit={handleSubmit(handleDateSubmit)}
                                             type="button"
                                             variant="contained"
                                             style={{
@@ -951,7 +951,7 @@ const Schedule = ({ componentName, timezoneID }) => {
                                                 text: '#FFFFFF',
                                                 textTransform: 'none',
                                             }}
-                                            // onClick={handleDateSubmit}
+                                            onClick={handleDateSubmit}
                                         >
                                             Submit{' '}
                                         </Button>
