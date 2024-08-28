@@ -304,7 +304,7 @@ const Schedule = ({ componentName, timezoneID }) => {
         const selectedSlots = slotData.filter(slot => slot.id == selectedId); // Find all slots by id
 
         // Get the specific slot by index
-        const selectedSlot = selectedSlots[selectedIndex];
+        const selectedSlot = selectedSlots[0];
 
         if (selectedSlot) {
             const slotStartTime = selectedSlot.startTime;
