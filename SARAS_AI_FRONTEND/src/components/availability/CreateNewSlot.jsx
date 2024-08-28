@@ -377,6 +377,7 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
                 backgroundColor="#F56D3B"
                 color="white"
                 borderColor="#F56D3B"
+                textTransform= "none"
             >
                 Submit
             </CustomButton>

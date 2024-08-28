@@ -88,6 +88,9 @@ import TaCourseMapping from './pages/managesTAs/TaCourseMapping.jsx';
 import AssignCoachCourses from './pages/ManageCoaches/AssignedCoachCourses.jsx';
 import AssignTaCourses from './pages/managesTAs/AssignedTaCourses.jsx';
 import AssignedTemplateStudents from './pages/ManageCoaches/CoachingTemplate/AssignedTemplateStudents.jsx';
+
+import ForgetPassword from './components/AUTH/ForgetPassword.jsx';
+
 const ROLES = {
     Teaching: 2001,
     Coaches: 1984,
@@ -178,10 +181,10 @@ function App() {
                 <Route path="login" element={<Login />} />
                 <Route path="linkpage" element={<LinkPage />} />
                 <Route path="unauthorized" element={<Unauthorized />} />
-
+               
                 {!login}
                 {<Route path="login" element={<Login />} />}
-
+                <Route path="Resetpassword" element={<ForgetPassword/>} />
                 {/* Protected Routes */}
                 {login && role == 5150 && (
                     <Route path="/" element={<Main page="Dashboard" />}>

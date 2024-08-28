@@ -188,7 +188,7 @@ const CoachMenuProfile = () => {
 
         // console.log('updatedFormData', updatedFormData);
         // dispatch(updateCoachmenuprofile(updatedFormData));
-        dispatch(updateCoachmenuprofile(updatedFormData));
+        // dispatch(updateCoachmenuprofile(updatedFormData));
         console.log('data', updatedFormData);
     };
 

@@ -348,6 +348,7 @@ const AddEditTeachingAssistant = () => {
                             fontSize: '14px',
                             fontWeight: '700',
                             text: '#FFFFFF',
+                            textTransform: 'none',
                         }}
                     >
                         Submit
