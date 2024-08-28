@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 const headers = [
     'S. No.',
-    'COACH Name',
+    'Coach Name',
     'Username',
     'Active Students',
     'Active Batches',

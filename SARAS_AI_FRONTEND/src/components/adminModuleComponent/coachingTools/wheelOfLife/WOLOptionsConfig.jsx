@@ -201,11 +201,11 @@ const WOLOptionsConfig = () => {
             dispatch(addWOLOptionConfig(payload))
                 .then(() => {
                     setSubmissionStatus('success');
-                    toast.success('Options configuration saved successfully!');
+                    
                 })
                 .catch(error => {
                     setSubmissionStatus('error');
-                    toast.error('Error saving options configuration. Please try again.');
+                   
                     console.error('Error saving options configuration:', error);
                 });
         }
@@ -502,7 +502,7 @@ const WOLOptionsConfig = () => {
 
             {submissionStatus === 'success' && (
                 <Typography variant="body1" align="center" mt={2} color="success">
-                    Options configuration saved successfully!
+                   
                 </Typography>
             )}
 

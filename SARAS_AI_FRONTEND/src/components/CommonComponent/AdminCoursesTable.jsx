@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Checkbox, Box, Pagination, Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { getAllCoursesWithTas, assignCourseToTa } from '../../redux/features/adminModule/ta/taSlice';
 import CustomButton from '../CustomFields/CustomButton';
 const CustomCheckbox = styled(Checkbox)(({ theme }) => ({
@@ -20,7 +21,7 @@ const AdminCoursesTable = ({ taId }) => {
 
    
 
-    
+    const navigate = useNavigate();
     const dispatch = useDispatch();
 
     const { allCoursesWithTas } = useSelector(
@@ -83,7 +84,9 @@ const AdminCoursesTable = ({ taId }) => {
         console.log(requestData);
 
         // Dispatch the API call to assign/unassign the ta to/from the courses
-        dispatch(assignCourseToTa(requestData));
+         dispatch(assignCourseToTa(requestData)).unwrap();
+        navigate('/ta-course-mapping'); // Navigate to the desired page
+
     };
 
 
@@ -188,6 +191,7 @@ const AdminCoursesTable = ({ taId }) => {
                 color="white"
                 borderColor="#F56D3B"
                 onClick={handleSubmit}
+                style={{ textTransform: 'none' }}
             >
                 Submit
             </CustomButton>

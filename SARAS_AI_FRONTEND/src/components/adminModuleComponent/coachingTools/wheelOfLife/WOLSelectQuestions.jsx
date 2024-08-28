@@ -304,6 +304,7 @@ const WOLSelectQuestions = () => {
                             margin: '0 8px',
                             textTransform: 'none',
                             fontFamily: 'Bold',
+                            textTransform: 'none',
                         }}
                         onClick={handleSubmit}
                     >

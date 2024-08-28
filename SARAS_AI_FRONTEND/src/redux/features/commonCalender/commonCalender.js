@@ -64,7 +64,8 @@ const commonCalender = createSlice({
         },
         openSelectStudents: (state, action) => {
             state.selectStudentPopup = true;
-            state.preSelectedStudents = action.payload || [];
+            console.log("OPENSELECTSTUDENTS:", action.payload)
+            state.preSelectedStudents = action.payload ? action.payload: [];
             // asign students
         },
         closeSelectStudents: (state, action) => {

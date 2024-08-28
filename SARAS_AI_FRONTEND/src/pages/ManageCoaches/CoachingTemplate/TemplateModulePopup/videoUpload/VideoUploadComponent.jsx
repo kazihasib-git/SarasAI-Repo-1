@@ -164,7 +164,7 @@ import React, { useState, useEffect } from 'react';
 import { Grid, Button, Typography, Box, LinearProgress } from '@mui/material';
 import * as tus from 'tus-js-client';
 import { styled } from '@mui/material/styles';
-
+import { toast } from 'react-toastify';
 const VIMEO_ACCESS_TOKEN = process.env.REACT_APP_VIMEO_ACCESS_TOKEN;
 
 const UploadBox = styled(Box)(({ theme }) => ({
@@ -210,7 +210,13 @@ const VideoUploadComponent = ({ onUploadComplete }) => {
                 },
                 body: JSON.stringify(requestData),
             });
-
+            if (response.ok) {
+                toast.success('Video uploaded successfully!');
+               
+            } else {
+                toast.error('Failed to upload video.');
+            }
+  
             if (!response.ok) {
                 throw new Error('Failed to upload video.');
             }
@@ -301,6 +307,7 @@ const VideoUploadComponent = ({ onUploadComplete }) => {
                         onClick={uploadVideoToVimeo}
                         variant="contained"
                         color="primary"
+                        sx={{ textTransform: 'none' }} // Add this line
                     >
                         Upload
                     </Button>

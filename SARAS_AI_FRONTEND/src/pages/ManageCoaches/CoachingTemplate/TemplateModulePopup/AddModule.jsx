@@ -47,6 +47,17 @@ const CustomButton = ({
 const AddModule = () => {
     const dispatch = useDispatch();
     const [moduleName, setModuleName] = useState('');
+   
+    const [moduleNameError, setModuleNameError] = useState(false);
+
+    const handleModuleNameChange = (e) => {
+        setModuleName(e.target.value);
+        if (e.target.value.trim() === '') {
+            setModuleNameError(true);
+        } else {
+            setModuleNameError(false);
+        }
+    };
     const { openModulePopUp, selectedCoachTemplate } = useSelector(
         state => state.coachTemplate
     );
@@ -62,36 +73,44 @@ const AddModule = () => {
                 textAlign: 'center',
             }}
         >
-            <Grid item xs={12} sm={6}>
-                <CustomTextField
-                    label="Module Name"
-                    variant="outlined"
-                    value={moduleName}
-                    onChange={e => setModuleName(e.target.value)}
-                    placeholder="Enter Module Name"
-                    name="moduleName"
-                />
-            </Grid>
+           <Grid item xs={12} sm={6}>
+            <CustomTextField
+                label="Module Name"
+                variant="outlined"
+                value={moduleName}
+                onChange={handleModuleNameChange}
+                placeholder="Enter Module Name"
+                name="moduleName"
+                error={moduleNameError}
+                helperText={moduleNameError ? 'Module Name is required' : ''}
+            />
+        </Grid>
         </Grid>
     );
 
     const handleSubmit = () => {
-        if (moduleName) {
-            const data = {
-                template_id: selectedCoachTemplate,
-                module_name: moduleName,
-                is_active: true,
-                created_by: 1,
-                updated_by: 1,
-            };
-            dispatch(createCoachTemplateModule(data))
-                .unwrap()
-                .then(() => {
-                    dispatch(getCoachTemplateModuleId(selectedCoachTemplate));
-                });
-            dispatch(closeTemplateModulePopup());
-            setModuleName(''); // Reset the input field
+        if (!moduleName.trim()) {
+            setModuleNameError(true);
+            return; 
         }
+    
+        const data = {
+            template_id: selectedCoachTemplate,
+            module_name: moduleName,
+            is_active: true,
+            created_by: 1,
+            updated_by: 1,
+        };
+    
+        dispatch(createCoachTemplateModule(data))
+            .unwrap()
+            .then(() => {
+                dispatch(getCoachTemplateModuleId(selectedCoachTemplate));
+            });
+    
+        dispatch(closeTemplateModulePopup());
+        setModuleName(''); // Reset the input field
+        setModuleNameError(false); // Reset error state after successful submission
     };
 
     const actions = (
@@ -100,6 +119,7 @@ const AddModule = () => {
             backgroundColor="#F56D3B"
             borderColor="#F56D3B"
             color="#FFFFFF"
+            style={{ textTransform: 'none' }}
         >
             Submit
         </CustomButton>
