@@ -103,10 +103,20 @@ const Login = () => {
                 password: pwd,
             };
 
-            dispatch(login(requestBody));
+            const resultAction = dispatch(login(requestBody));
 
-            setUser('');
-            setPwd('');
+            if (login.fulfilled.match(resultAction)) {
+                const role = resultAction.payload.role;
+                setUser('');
+                setPwd('');
+                if (role === 1984) {
+                    navigate('/coachmenu_profile', { replace: true });
+                } else if (role === 2001) {
+                    navigate('/tamenu_profile', { replace: true });
+                } else {
+                    navigate(from, { replace: true });
+                }
+            }
         } catch (error) {
             console.log(error);
         }
