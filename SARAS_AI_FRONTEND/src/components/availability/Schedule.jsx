@@ -66,8 +66,8 @@ const actionButtons = [
     },
 ];
 
-
 const Schedule = ({ componentName, timezoneID }) => {
+    console.log('timezoneID=======>', timezoneID);
     const [fromDate, setFromDate] = useState(null);
     const [toDate, setToDate] = useState(null);
     const [fromTime, setFromTime] = useState(null);
@@ -80,7 +80,7 @@ const Schedule = ({ componentName, timezoneID }) => {
     const [dateSelected, setDateSelected] = useState(false);
     const dispatch = useDispatch();
     const { timezones, platforms, hosts } = useSelector(state => state.util);
-    const [meetingTypes, setMeetingtypes] = useState(['Webinar' , 'Meeting']) ;
+    const [meetingTypes, setMeetingtypes] = useState(['webinars' , 'meetings']) ;
 
     let scheduleSessionOpenKey,
         schedulingStateKey,
@@ -255,11 +255,13 @@ const Schedule = ({ componentName, timezoneID }) => {
                     return `${formattedHour}:${minute < 10 ? '0' : ''}${minute} ${ampm}`;
                 };
 
-
                 const options = processedSlots.map((item, index) => ({
                     label: `${formatTime(item['From Time'])} - ${formatTime(item['To Time'])}`,
                     value: `${item.id}-${index}`, // Create a unique value by combining item.id and index
                 }));
+
+                console.log('OPTIONS : ', options);
+                // console.log("PROCESSED SLOT : ", processedSlots)
 
                 setAvailableSlotsOptions(options);
                 setSlotData(processedSlots);
@@ -273,7 +275,6 @@ const Schedule = ({ componentName, timezoneID }) => {
             setSlotData([{}]);
         }
     };
-
 
     useEffect(() => {
         convertSessions();
@@ -292,12 +293,26 @@ const Schedule = ({ componentName, timezoneID }) => {
     const handleSelectOption = e => {
         const selectedValue = e.target.value;
         const [selectedId, selectedIndex] = selectedValue.split('-'); // Extract the id and index
-    
+        console.log('SELECTED ID : ', selectedId);
+
         const selectedSlots = slotData.filter(slot => slot.id == selectedId); // Find all slots by id
-    
-        // Optionally, if you want only the specific slot by index:
+        console.log('SELECTED SLOTS: ', selectedSlots);
+
+        // Get the specific slot by index
         const selectedSlot = selectedSlots[selectedIndex];
-        setSelectedSlot(selectedSlot); // Set the specific slot
+        console.log('SELECTED SLOT: ', selectedSlot);
+
+        if (selectedSlot) {
+            const slotStartTime = selectedSlot.startTime;
+            const slotEndTime = selectedSlot.endTime;
+
+            console.log('SLOT START TIME: ', slotStartTime);
+            console.log('SLOT END TIME: ', slotEndTime);
+
+            setSelectedSlot(selectedSlot); // Set the specific slot
+        } else {
+            console.error('Selected slot is not found.');
+        }
     };
 
     const handleAssignStudents = () => {
@@ -364,8 +379,58 @@ const Schedule = ({ componentName, timezoneID }) => {
     return;
 }
     };
+    
+    const formatTime = time => {
+        const [hours, minutes] = time.split(':');
+        const hour = parseInt(hours, 10);
+        const minute = parseInt(minutes, 10);
+        const ampm = hour >= 12 ? 'pm' : 'am';
+        const formattedHour = hour % 12 || 12;
+        return `${formattedHour}:${minute < 10 ? '0' : ''}${minute} ${ampm}`;
+    };
 
     const onSubmit = formData => {
+        // Ensure "From Time" and "To Time" are selected
+        if (!fromTime) {
+            toast.error('Please select a From Time');
+            return;
+        }
+
+        if (!toTime) {
+            toast.error('Please select a To Time');
+            return;
+        }
+        console.log("fromTime:", fromTime)
+        console.log("toTime: ", toTime)
+        console.log(" selectedSlot.startTime:", selectedSlot['From Time'])
+        console.log("selectedSlot.endTime: ",selectedSlot['To Time'])
+
+        // Convert times to minutes for easier comparison
+        const fromTimeInMinutes = convertTimeToMinutes(fromTime);
+        const toTimeInMinutes = convertTimeToMinutes(toTime);
+        const slotStartTimeInMinutes = convertTimeToMinutes(
+            selectedSlot['From Time']
+        );
+        const slotEndTimeInMinutes = convertTimeToMinutes(selectedSlot['To Time']);
+
+        // Validate that selected times are within the slot's time range
+        if (
+            fromTimeInMinutes < slotStartTimeInMinutes ||
+            toTimeInMinutes > slotEndTimeInMinutes
+        ) {
+            toast.error(
+                `Time must be between ${formatTime(selectedSlot['From Time'])} and ${formatTime(selectedSlot['To Time'])}`
+            );
+            return;
+        }
+
+        // Validate that "To Time" is greater than "From Time"
+        if (toTimeInMinutes <= fromTimeInMinutes) {
+            toast.error('To Time must be later than From Time');
+            return;
+        }
+
+        // Continue with the submission if all validations pass
         const studentId = students.map(student => student.id);
         const batchId = batches.map(batch => batch.id);
 
@@ -385,20 +450,27 @@ const Schedule = ({ componentName, timezoneID }) => {
         formData.schedule_date = fromDate;
         formData.end_date = repeat === 'recurring' ? toDate : fromDate;
         formData.admin_user_id = adminUserID;
-        formData.slot_id = selectedSlot.id; // Assuming single slot selection
+        formData.slot_id = selectedSlot.id;
         formData.event_status = 'scheduled';
         formData.weeks = weeksArray;
         formData.studentId = studentId;
         formData.batchId = batchId;
-        formData.timezone_id = `${timezoneId ? Number(timezoneId) : timezoneID}`;
-            dispatch(createScheduleAction(formData))
-                .then(() => {
-                    dispatch(closeScheduleSessionAction());
-                    return dispatch(getScheduledSessionApi(adminUserID));
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
+        formData.timezone_id = timezoneId ? Number(timezoneId) : timezoneID;
+
+        dispatch(createScheduleAction(formData))
+            .then(() => {
+                dispatch(closeScheduleSessionAction());
+                return dispatch(getScheduledSessionApi(adminUserID));
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    };
+
+    // Helper function to convert time string to minutes since midnight
+    const convertTimeToMinutes = time => {
+        const [hours, minutes] = time.split(':').map(Number);
+        return hours * 60 + minutes;
     };
 
     const content = (
