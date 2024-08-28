@@ -19,7 +19,7 @@ import CustomTextField from '../../../../components/CustomFields/CustomTextField
 import CustomDateField from '../../../../components/CustomFields/CustomDateField';
 import CustomTimeField from '../../../../components/CustomFields/CustomTimeField';
 import { getActivityType } from '../../../../redux/features/adminModule/coach/activityTypeSlice';
-import { getCoach } from '../../../../redux/features/adminModule/coach/coachSlice';
+import { getCoach, getCoachById } from '../../../../redux/features/adminModule/coach/coachSlice';
 import {
     linkActivity,
     uploadpdf,
@@ -42,6 +42,7 @@ import TestActivityComponent from './Components/TestActivityComponent';
 import OneOnOneSessionComponent from './Components/OneonOneSessionComponent';
 import PDFUploadComponent from './Components/PDFUploadComponent';
 import { getCoachTemplateModuleId } from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
+import { getAllCoachingTools } from '../../../../redux/features/adminModule/coachingTools/coachingTools';
 // import { uploadpdf } from '../../../../redux/features/adminModule/coach/LinkActivitySlice';
 const CustomButton = ({
     onClick,
@@ -109,21 +110,40 @@ const LinkActivityPopup = ({
     const [selectedPlatform, setSelectedPlatform] = useState(null);
 
     const { timezones, platforms } = useSelector(state => state.util);
+    const { coachData } = useSelector((state) => state.coachModule);
     const [selectedSlot, setSelectedSlot] = useState(null);
 
+
+    useEffect(() => {
+        if(selectedCoachId){
+            dispatch(getCoachById(selectedCoachId))
+        }
+    },[selectedCoachId])
+
+    useEffect(() => {
+        if(coachData){
+            // console.log("COACH DATA :::", coachData)
+            setCoachTimeZone(coachData.timezone_id)
+        }
+    }, [coachData])
+
     const onSubmit = async data => {
-        console.log('////////////////////////', data);
+        
+        //console.log("---------------->", data , "activityId", activityId, "activityType", activityType, "selectedAssessmentId", selectedAssessmentId, "selectedSessionType", selectedSessionType);
+        setSelectedAssessmentId(data.assessment)
         const payload = {
             activity_id: activityId, // Ensure this value is correctly set
-            activity_type_id:
-                activityType === 'test'
-                    ? selectedAssessmentId
-                    : selectedActivityId, // Ensure this value is correctly set
+            activity_type_id: selectedActivityId,
+                // activityType === 'test'
+                //     ? selectedAssessmentId
+                //    : selectedActivityId, // Ensure this value is correctly set        
             link: videoUrl || upload_pdf_url || data.link, // Add other fields if needed
+            virtual_meeting_type : selectedSessionType,
+            test_type : selectedAssessmentId,
         };
         try {
             if(payload.link || (activityType === 'test' && selectedAssessmentId) || (activityType ==='virtual meet' && selectedSessionType)){
-            if(activityType ==='virtual meet' && selectedSessionType=="group"){
+                if(activityType ==='virtual meet' && selectedSessionType=="group"){
                 const dataToGenrateLink = {
                     "activity_id" : activityId,
                     "admin_user_id": selectedCoachId,
@@ -139,17 +159,20 @@ const LinkActivityPopup = ({
                     "session_type" : "Live",
                     "studentId": [],
                     "batchId": [],
-                    "weeks": weeksArray
+                    "weeks": weeksArray,
+                    "host_email_id": "tech@sarasai.org",
+                    "meeting_type": "meetings",
                 }
+
                 const response = await dispatch(createCoachSchedule(dataToGenrateLink));
-                console.log('..............................................', response);
 
                     if (response.payload) {
-                        payload.link = response.payload.data[0].meeting_id;
+                        payload.link = response.payload.data[0].id;
 
                         await dispatch(linkActivity(payload)).unwrap();
 
                         dispatch(getCoachTemplateModuleId(templateId));
+                    
                     } else {
                         throw new Error('Failed to create coach schedule');
                     }
@@ -162,6 +185,7 @@ const LinkActivityPopup = ({
                         });
                 }
                 handlePopUpClose();
+                reset();
             }
         } catch (error) {
             console.error('Failed to link activity:', error);
@@ -185,6 +209,7 @@ const LinkActivityPopup = ({
     useEffect(() => {
         dispatch(getActivityType());
         dispatch(getCoach());
+        dispatch(getAllCoachingTools())
         // dispatch(getSlotsCoachTemplateModule());
     }, [dispatch]);
 
@@ -194,10 +219,9 @@ const LinkActivityPopup = ({
     };
 
     const { typeList } = useSelector(state => state.activityType);
+    const { coachingTools } = useSelector((state) => state.coachingTools)
     const { coaches } = useSelector(state => state.coachModule);
     const { coachAvailableSlots } = useSelector(state => state.coachScheduling);
-    console.log('coaches', coaches);
-    console.log('coachesslot', coachAvailableSlots);
 
     const activityOptions = typeList
         .filter((_, index) => index < 5)
@@ -209,14 +233,14 @@ const LinkActivityPopup = ({
             id: type.id,
         }));
 
-    const assessmentOptions = typeList
-        .filter((_, index) => index >= 5)
+    const assessmentOptions = coachingTools
+        // .filter((_, index) => index >= 5)
         .map(type => ({
-            value: type.type_name,
-            label:
-                type.type_name.charAt(0).toUpperCase() +
-                type.type_name.slice(1), // Capitalize the first letter of each type_name
-            id: type.id,
+            value: type.id,
+            label: type.name
+            //     type.type_name.charAt(0).toUpperCase() +
+            //     type.type_name.slice(1), // Capitalize the first letter of each type_name
+            // id: type.id,
         }));
 
     useEffect(() => {
@@ -235,11 +259,7 @@ const LinkActivityPopup = ({
     const index = new Date(fromDate).getDay();
     weeksArray[index] = 1;
 
-    console.log('coaches', coaches);
-    console.log('coachesslot', coachAvailableSlots);
-
     const formatTime = time => {
-        console.log("FORMAT TIME", time)
         const [hours, minutes] = time.split(':');
         const hour = parseInt(hours, 10);
         const minute = parseInt(minutes, 10);
@@ -248,13 +268,12 @@ const LinkActivityPopup = ({
         return `${formattedHour}:${minute < 10 ? '0' : ''}${minute} ${ampm}`;
     };
 
-    const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
+    // const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
 
     const tranformSlots = async coachAvailableSlots => {
-        const timezonename = timezoneIdToName(storedTimezoneId, timezones);
+        const timezonename = timezoneIdToName(coachTimeZone, timezones);
         const transformedSlots = await Promise.all(
             coachAvailableSlots.map(async slot => {
-                console.log(slot);
                 const localTime = await convertFromUTC({
                     start_date: slot.slot_date.split(' ')[0],
                     start_time: slot.from_time,
@@ -262,7 +281,6 @@ const LinkActivityPopup = ({
                     end_date: slot.slot_end_date.split(' ')[0],
                     timezonename,
                 });
-                console.log('Converted Local Schedule Time:', localTime);
                 const newSlot = {
                     from_time: localTime.start_time,
                     to_time: localTime.end_time,
@@ -271,7 +289,6 @@ const LinkActivityPopup = ({
                 return newSlot;
             })
         );
-        console.log('transformed slots', transformedSlots);
         setCoachSlots(transformedSlots);
     };
 
@@ -289,6 +306,7 @@ const LinkActivityPopup = ({
         label: coach.name,
         id: coach.id,
     }));
+
     const handleCoachChange = e => {
         const selected = coachOptions.find(
             option => option.value === e.target.value
@@ -296,7 +314,7 @@ const LinkActivityPopup = ({
 
         if (selected) {
             setSelectedCoachId(selected.id);
-            console.log('Selected Coach ID:', selected.id); // Log the selected coach ID
+            // console.log('Selected Coach ID:', selected.id); // Log the selected coach ID
         }
     };
 
@@ -312,7 +330,7 @@ const LinkActivityPopup = ({
                     date: fromDate,
                     timezone_name: selectedCoachTimeZone.time_zone,
                 };
-                console.log('data', data);
+    
                 if (fromDate && selectedCoachId) {
                     dispatch(getTaAvailableSlotsFromDate(data));
                     dispatch(getCoachAvailableSlotsFromDate(data));
@@ -325,7 +343,7 @@ const LinkActivityPopup = ({
         const selectedCoach = coaches.find(
             coach => coach.id === selectedCoachId
         );
-        if (selectedCoach) setCoachTimeZone(selectedCoach.timezone_id);
+        // if (selectedCoach) setCoachTimeZone(selectedCoach.timezone_id);
     }, [selectedCoachId]);
 
     const handlePlatformChange = event => {

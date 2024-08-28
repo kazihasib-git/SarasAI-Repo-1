@@ -156,15 +156,17 @@ const SubmitPopup = ({ componentname }) => {
             >
                 Assign Batches
             </CustomButton>
-            <Typography
+            {/* <Typography
                 onClick={handleCloseButton}
                 color="#1A1E3D"
                 sx={{ marginTop: '10px', cursor: 'pointer' }}
             >
                 Do it Later
-            </Typography>
+            </Typography> */}
         </>
     );
+
+    // const title = `${displayName}` Successfully Created.` || `${displayName} AssignedStudents Successfully` || `{displayName} AssignedBatches Successfully`
 
     return (
         <ReusableDialog

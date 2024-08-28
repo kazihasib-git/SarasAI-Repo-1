@@ -257,7 +257,7 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
                                         name="timezone_id"
                                         value={timezoneID}
                                         onChange={field.onChange}
-                                        disabled={timezoneID != null}
+                                        // disabled={timezoneID != null}
                                         options={timezones}
                                         errors={errors}
                                     />

@@ -2,6 +2,7 @@ import React from 'react';
 import { Controller } from 'react-hook-form';
 import { Grid } from '@mui/material';
 import CustomFormControl from '../../../../../components/CustomFields/CustomFromControl';
+import CustomModuleFormControl from '../../../../../components/CustomFields/CustomModuleFormControl';
 
 const TestActivityComponent = ({
     control,
@@ -22,19 +23,19 @@ const TestActivityComponent = ({
                 control={control}
                 defaultValue=""
                 render={({ field }) => (
-                    <CustomFormControl
+                    <CustomModuleFormControl
                         label="Assessment"
                         name="assessment"
                         value={field.value}
                         onChange={e => {
-                            const selectedValue = e.target.value;
+                            // const selectedValue = e.target.value;
                             field.onChange(e);
-                            const selectedOption = assessmentOptions.find(
-                                option => option.value === selectedValue
-                            );
-                            setSelectedAssessmentId(
-                                selectedOption ? selectedOption.id : ''
-                            );
+                            // const selectedOption = assessmentOptions.find(
+                            //     option => option.value === selectedValue
+                            // );
+                            // setSelectedAssessmentId(
+                            //     selectedOption ? selectedOption.id : ''
+                            // );
                         }}
                         errors={errors}
                         options={assessmentOptions}
