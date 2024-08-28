@@ -122,38 +122,27 @@ const LinkActivityPopup = ({
             link: videoUrl || upload_pdf_url || data.link, // Add other fields if needed
         };
         try {
-            if (
-                payload.link ||
-                (activityType === 'test' && selectedAssessmentId) ||
-                (activityType === 'virtual meet' && selectedSessionType)
-            ) {
-                if (
-                    activityType === 'virtual meet' &&
-                    selectedSessionType == 'group'
-                ) {
-                    const dataToGenrateLink = {
-                        admin_user_id: selectedCoachId,
-                        meeting_name: data.meeting_name,
-                        schedule_date: fromDate,
-                        end_date: fromDate,
-                        start_time: data.fromTime,
-                        end_time: data.toTime,
-                        slot_id: Number(selectedSlot),
-                        timezone_id: coachTimeZone,
-                        platform_id: selectedPlatform,
-                        event_status: 'scheduled',
-                        session_type: 'Live',
-                        studentId: [],
-                        batchId: [],
-                        weeks: weeksArray,
-                    };
-                    const response = await dispatch(
-                        createCoachSchedule(dataToGenrateLink)
-                    );
-                    console.log(
-                        '..............................................',
-                        response
-                    );
+            if(payload.link || (activityType === 'test' && selectedAssessmentId) || (activityType ==='virtual meet' && selectedSessionType)){
+            if(activityType ==='virtual meet' && selectedSessionType=="group"){
+                const dataToGenrateLink = {
+                    "activity_id" : activityId,
+                    "admin_user_id": selectedCoachId,
+                    "meeting_name": data.meeting_name,
+                    "schedule_date": fromDate,
+                    "end_date": fromDate,
+                    "start_time": data.fromTime,
+                    "end_time": data.toTime,
+                    "slot_id": Number(selectedSlot),
+                    "timezone_id": coachTimeZone,
+                    "platform_id" : selectedPlatform,
+                    "event_status": "scheduled",
+                    "session_type" : "Live",
+                    "studentId": [],
+                    "batchId": [],
+                    "weeks": weeksArray
+                }
+                const response = await dispatch(createCoachSchedule(dataToGenrateLink));
+                console.log('..............................................', response);
 
                     if (response.payload) {
                         payload.link = response.payload.data[0].meeting_id;
@@ -250,6 +239,7 @@ const LinkActivityPopup = ({
     console.log('coachesslot', coachAvailableSlots);
 
     const formatTime = time => {
+        console.log("FORMAT TIME", time)
         const [hours, minutes] = time.split(':');
         const hour = parseInt(hours, 10);
         const minute = parseInt(minutes, 10);

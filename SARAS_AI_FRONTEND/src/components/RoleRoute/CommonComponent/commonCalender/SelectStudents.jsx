@@ -13,8 +13,6 @@ import PopUpTable from '../../../CommonComponent/PopUpTable';
 
 const name = String(localStorage.getItem('name') || 'Name');
 
-console.log('NAMEE :', name);
-
 const CustomButton = ({
     onClick,
     children,
@@ -53,7 +51,6 @@ const CustomButton = ({
 const headers = ['S. No.', 'Student Name', 'Program', 'Batch', 'Select'];
 
 const SelectStudents = ({ componentName }) => {
-    console.log('componentName ', componentName);
 
     const dispatch = useDispatch();
     const [selectedTerm, setSelectedTerm] = useState([]);
@@ -61,7 +58,6 @@ const SelectStudents = ({ componentName }) => {
     const [searchName, setSearchName] = useState('');
     const [selectedStudents, setSelectedStudents] = useState([]);
     const [filteredStudents, setFilteredStudents] = useState([]);
-    const { preSelectedStudents } = useSelector((state)=>state.commonCalender);
 
     let sliceName, getStudentsApi, studentDataState;
 
@@ -86,9 +82,14 @@ const SelectStudents = ({ componentName }) => {
     }
 
     const stateSelector = useSelector(state => state[sliceName]);
-    const { students, selectStudentPopup } = useSelector(
-        state => state.commonCalender
-    );
+
+    const {
+        students,
+        batches,
+        selectStudentPopup,
+        preSelectedStudents,
+        preSelectedBatches,
+    } = useSelector(state => state.commonCalender);
 
     const { [studentDataState]: studentsData } = stateSelector || {};
 
@@ -97,15 +98,6 @@ const SelectStudents = ({ componentName }) => {
     }, [dispatch]);
 
     console.log('Students Data : ', studentsData);
-
-    useEffect(()=>{
-        
-        const transformedPreSelectedStudents = preSelectedStudents.map(student => student.id);
-        setSelectedStudents(transformedPreSelectedStudents);
-    },[preSelectedStudents]);
-
-
-
 
     useEffect(() => {
         if (studentsData && studentsData.length > 0) {
@@ -124,22 +116,45 @@ const SelectStudents = ({ componentName }) => {
                 id: stu.student.id,
             }));
 
-            // TODO : ADD FILTER
+            const filtered = transformedData.filter(student => {
+                const matchesTerm = selectedTerm
+                    ? student.Program.includes(selectedTerm)
+                    : true;
 
-            setFilteredStudents(transformedData);
+                const matchesBatch = selectedBatch
+                    ? student.Batch.includes(selectedBatch)
+                    : true;
+
+                const matchesName = searchName
+                    ? student['Student Name']
+                          .toLowerCase()
+                          .includes(searchName.toLowerCase())
+                    : true;
+
+                return matchesTerm && matchesBatch && matchesName;
+            });
+
+            setFilteredStudents(filtered);
         }
     }, [studentsData, selectedTerm, selectedBatch, searchName]);
+
+    useEffect(() => {
+        const transformedPreSelectedStudents = preSelectedStudents.map(
+            student => student.id
+        );
+        setSelectedStudents(transformedPreSelectedStudents);
+    }, [preSelectedStudents]);
 
     const batchOptions =
         studentsData && Array.isArray(studentsData)
             ? [
                   ...new Set(
                       studentsData
-                          .filter(
-                              student =>
-                                  !selectedTerm ||
-                                  student.student.academic_term === selectedTerm
-                          )
+                          //   .filter(
+                          //       student =>
+                          //           !selectedTerm ||
+                          //           student.student.academic_term === selectedTerm
+                          //   )
                           .flatMap(student =>
                               student.student.batches.map(
                                   batch => batch.batch_name
@@ -153,9 +168,18 @@ const SelectStudents = ({ componentName }) => {
         studentsData && Array.isArray(studentsData)
             ? [
                   ...new Set(
-                      studentsData.flatMap(student =>
-                          student.student.packages.map(pack => pack.name)
-                      )
+                      studentsData
+                          .filter(
+                              student =>
+                                  !selectedBatch ||
+                                  student.student.batches.some(
+                                      batch =>
+                                          batch.batch_name === selectedBatch
+                                  )
+                          )
+                          .flatMap(student =>
+                              student.student.packages.map(pack => pack.name)
+                          )
                   ),
               ]
             : [];
@@ -163,9 +187,34 @@ const SelectStudents = ({ componentName }) => {
     console.log('Students : ', students, 'selectedStudents', selectedStudents);
 
     useEffect(() => {
-        if (students) {
-            setSelectedStudents(students.map(student => student.id));
+        let updatedSelectedStudents = [];
+
+        if (students && students.length > 0) {
+            updatedSelectedStudents = students.map(student => student.id);
         }
+
+        if (batches && batches.length > 0) {
+            const assignedBatchIds = studentsData.flatMap(stu =>
+                stu.student.batches.map(batch => batch.batch_id)
+            );
+
+            const matchingBatchIds = batches
+                .filter(batch => assignedBatchIds.includes(batch.id))
+                .map(batch => batch.id);
+
+            const matchingStudentIds = studentsData
+                .filter(stu =>
+                    stu.student.batches.some(batch =>
+                        matchingBatchIds.includes(batch.batch_id)
+                    )
+                )
+                .map(stu => stu.student.id);
+
+            updatedSelectedStudents = [
+                ...new Set([...updatedSelectedStudents, ...matchingStudentIds]),
+            ];
+        }
+        setSelectedStudents(updatedSelectedStudents);
     }, [students]);
 
     const handleSelectStudents = id => {

@@ -22,6 +22,8 @@ const TaScheduling = () => {
         state => state.taScheduling
     );
 
+    const [searchQuery, setSearchQuery] = useState('');
+
     const { taId } = useSelector(state => state.taScheduling);
     const { todaysAvailableTa } = useSelector(state => state.taAvialability);
     const [selectedTA, setSelectedTA] = useState(null);
@@ -59,8 +61,18 @@ const TaScheduling = () => {
             }));
 
             setTaScheduleData(transformData);
+        }else {
+            setTaScheduleData([])
         }
     }, [taMapping]);
+
+    const handleSearch = event => {
+        setSearchQuery(event.target.value);
+    };
+
+    const filteredData = taScheduleData.filter(item =>
+        item.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     const headers = [
         'S. No.',
@@ -84,20 +96,40 @@ const TaScheduling = () => {
                 <Header />
                 <Sidebar />
                 <Box
-                    style={{
-                        fontSize: '44px',
-                        justifyContent: 'center',
-                        marginBottom: '20px',
-                        fontFamily: 'ExtraLight',
-                    }}
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    mb={2}
                 >
-                    <p style={{ fontSize: '44px', justifyContent: 'center' }}>
-                        TA Scheduling{' '}
+                    <p style={{
+                            fontSize: '44px',
+                            justifyContent: 'center',
+                            fontFamily: 'ExtraLight',
+                        }}>
+                        TA Scheduling
                     </p>
+                    <Box display={'flex'}>
+                        <Box
+                            display={'flex'}
+                            backgroundColor="#FFF"
+                            borderRadius={'30px'}
+                            width={'20vw'}
+                            height={'5vh'}
+                            marginBottom={'15px'}
+                            marginRight={'10px'}
+                        >
+                            <InputBase
+                                sx={{ ml: 2, flex: 1 }}
+                                placeholder="Search here ..."
+                                value={searchQuery}
+                                onChange={handleSearch}
+                            />
+                        </Box>
+                    </Box>
                 </Box>
                 <DynamicTable
                     headers={headers}
-                    initialData={taScheduleData}
+                    initialData={filteredData}
                     actionButtons={actionButtons}
                     componentName={'TAMAPPING'}
                 />

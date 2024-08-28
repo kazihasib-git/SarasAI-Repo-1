@@ -238,7 +238,7 @@ const TemplateModuleTable = ({ modulesData }) => {
                                 onClick={() =>
                                     handleActivity(
                                         module.id,
-                                        module?.template[0]?.id
+                                        module.template_id
                                     )
                                 }
                             >

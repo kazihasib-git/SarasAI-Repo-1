@@ -25,7 +25,7 @@ import CoachMapping from './pages/ManageCoaches/CoachMapping';
 import CoachTemplate from './pages/ManageCoaches/CoachingTemplate/CoachTemplate';
 import CoachAvialability from './pages/ManageCoaches/CoachAvialability';
 import CoachScheduling from './pages/ManageCoaches/CoachScheduling';
-import ScheduledCalls from './pages/Coach/ScheduleCalls';
+// import ScheduledCalls from './pages/Coach/ScheduleCalls';
 
 import AllRoutes from './components/AllRoutes/AllRoutes';
 import TaMapping from './pages/managesTAs/TaMapping';
@@ -354,10 +354,10 @@ function App() {
                             path="WolselectQuestions"
                             element={<WOLSelectQuestions />}
                         />
-                        <Route
+                        {/* <Route
                             path="schedule-calls"
                             element={<ScheduledCalls page="Schedule Calls" />}
-                        />
+                        /> */}
                     </Route>
                 )}
 

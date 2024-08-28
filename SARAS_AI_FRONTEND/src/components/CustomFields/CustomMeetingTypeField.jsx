@@ -7,7 +7,7 @@ import {
     Typography,
 } from '@mui/material';
 
-const CustomMeetingTypeForm = ({
+const CustomMeetingTypeField = ({
     label,
     name,
     value,
@@ -65,8 +65,9 @@ const CustomMeetingTypeForm = ({
                 }}
             >
                 {options.map(option => (
-                    <MenuItem key={option.id} value={option.id}>
-                        {option.name}
+                    
+                    <MenuItem key={option.id} value={option}>
+                        {`${option}`}                        
                     </MenuItem>
                 ))}
             </Select>
@@ -83,4 +84,4 @@ const CustomMeetingTypeForm = ({
     );
 };
 
-export default CustomMeetingTypeForm;
+export default CustomMeetingTypeField;

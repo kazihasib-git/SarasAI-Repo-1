@@ -14,6 +14,7 @@ import {
 } from '../../redux/features/adminModule/coach/coachSchedule';
 
 const CoachSheduling = () => {
+
     const dispatch = useDispatch();
     const { assignCoachStudentOpen, assignCoachBatchOpen, loading } =
         useSelector(state => state.coachModule);
@@ -30,10 +31,7 @@ const CoachSheduling = () => {
         dispatch(showCoachMapping());
     }, [dispatch]);
 
-    // const { coachID } = useSelector(state => state.coachScheduling);
-    // const { todaysAvailableCoach } = useSelector(state => state.coachAvailability);
-    // const [selectedCoach, setSelectedCoach] = useState(null);
-
+    // const { coachID } = useSelector(state => state.coachScheduling);handleDateSubmit
     // const findTaTimeZone = (todaysAvailableCoach) => {
     //     if (todaysAvailableCoach && Number(coachID)) {
     //         const selectedCoach = todaysAvailableCoach.find(coach => coach.id === Number(coachID));
@@ -94,7 +92,7 @@ const CoachSheduling = () => {
                 <Header />
                 <Sidebar />
                 <Box
-                    display="flex"
+                    display="flex"                
                     justifyContent="space-between"
                     alignItems="center"
                     mb={2}
@@ -135,26 +133,16 @@ const CoachSheduling = () => {
                 />
             </Box>
             {scheduleCoachSessionOpen && (
-                // <Schedule
-                //     componentName={'COACHSCHEDULE'}
-                //     timezoneID={storedTimezoneId}
-                // />
                 <Schedule componentName={'COACHSCHEDULE'} />
             )}
-            {/* {assignCoachStudentOpen && (
-        <AssignStudents componentname={"ADDITCOACH"} />
-      )}
-      {assignCoachBatchOpen && <AssignBatches componentname={"ADDITCOACH"} />} */}
             {openCoachEditBatch && (
                 <EditBatches
                     componentname={'COACHSCHEDULE'}
-                    timezoneID={storedTimezoneId}
                 />
             )}
             {openCoachEditStudent && (
                 <EditStudents
                     componentname={'COACHSCHEDULE'}
-                    timezoneID={storedTimezoneId}
                 />
             )}
         </>

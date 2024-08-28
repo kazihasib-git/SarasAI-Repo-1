@@ -18,11 +18,12 @@ import ReusableDialog from '../CustomFields/ReusableDialog';
 import { useParams } from 'react-router-dom';
 import CustomButton from '../CustomFields/CustomButton';
 import { toast } from 'react-toastify';
+import { Controller, useForm } from 'react-hook-form';
 
 const ReasonForLeave = ({ componentName }) => {
     const dispatch = useDispatch();
     const { id, name } = useParams();
-    const [leaveReason, setleaveReason] = useState('');
+    const { control, handleSubmit, formState: { errors } } = useForm();
 
     let reasonForLeaveOpenKey,
         closeReasonForLeaveAction,
@@ -74,24 +75,24 @@ const ReasonForLeave = ({ componentName }) => {
         [slotEventKey]: slotEventDetails,
     } = useSelector(state => state[sliceName] || {});
 
-    const handleSubmit = () => {
-        if (!leaveReason) {
-            toast.error('Enter Reason For Leave');
+    const onSumbit = (data) => {
+
+        if(!data.reason){
+            toast.error('Enter Reason For Leave')
             return;
         }
-        if (markLeaveData && markLeaveData.data) {
+
+        if(markLeaveData && markLeaveData.data){
             const slots = markLeaveData.data;
 
             const requestBody = {
                 admin_user_id: id,
                 approve_status: null,
                 leave_type: null,
-                reason: null,
                 approve_status: null,
                 leave_type: null,
-                reason: leaveReason,
-
-                data: slots,
+                reason: data.reason,
+                data: slots
             };
 
             dispatch(reasonForLeaveAction(requestBody)).then(() => {
@@ -104,16 +105,25 @@ const ReasonForLeave = ({ componentName }) => {
 
     const content = (
         <Grid container spacing={2} justifyContent="center" sx={{ mt: 0 }}>
-            <Grid item xs={120}>
-                <CustomTextField
-                    label="Reason for Leave"
-                    fullWidth
-                    value={leaveReason}
-                    onChange={e => setleaveReason(e.target.value)}
-                    placeholder="Enter reason for leave"
-                    variant="outlined"
-                    multiline
-                    rows={4}
+            <Grid item xs={12}>
+                <Controller
+                    name="reason"
+                    control={control}
+                    defaultValue=""
+                    rules={{ required: 'Reason For Leave is required' }}
+                    render={({ field }) => (
+                        <CustomTextField
+                            label="Reason for Leave"
+                            placeholder="Enter reason for leave"
+                            {...field}
+                            fullWidth
+                            variant="outlined"
+                            multiline
+                            rows={4}
+                            error={Boolean(errors.reason)}
+                            helperText={errors.reason?.message}
+                        />
+                    )}
                 />
             </Grid>
         </Grid>
@@ -121,7 +131,7 @@ const ReasonForLeave = ({ componentName }) => {
 
     const actions = (
         <CustomButton
-            onClick={handleSubmit}
+            onClick={handleSubmit(onSumbit)}
             style={{
                 backgroundColor: '#F56D3B',
                 borderColor: '#F56D3B',
