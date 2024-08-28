@@ -662,7 +662,10 @@ const Messages = ({ role }) => {
                                 onChange={handleMessageChange}
                                 onKeyPress={handleKeyPress}
                                 fullWidth
+                                multiline
+                                maxRows={5} // Allows the textbox to expand up to 5 rows if needed
                                 sx={{
+                                    width: '50%', 
                                     borderRadius: '42px',
                                     marginRight: '10px',
                                     flexGrow: 1,
@@ -679,8 +682,15 @@ const Messages = ({ role }) => {
                                             borderColor: 'rgba(0, 0, 0, 0.23)',
                                         },
                                     },
+                                    '& .MuiInputBase-input': {
+                                        padding: '12px 14px', 
+                                        // Adjust the padding to control the height
+                                          paddingRight: '120px',
+                                        height: 'auto', // Ensures height adjusts with content
+                                    },
                                 }}
                             />
+
                             <div
                                 className="chat-input-icons"
                                 style={{
