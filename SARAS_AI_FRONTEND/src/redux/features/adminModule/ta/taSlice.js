@@ -40,6 +40,26 @@ export const getTA = createAsyncThunk(
     }
 );
 
+export const getTaById = createAsyncThunk(
+    'taModule/getTaById',
+    async (id, { rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.get(
+                `${baseUrl}/admin/manage_tas/${id}`
+            );
+            return response.data;
+        }catch (error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message);
+            }else {
+                return rejectWithValue(
+                    'An Error Occurred While Fetching Ta By Id'
+                )
+            }
+        }
+    }
+)
+
 export const updateTA = createAsyncThunk(
     'taModule/updateTA',
     async ({ id, data }, { rejectWithValue }) => {
@@ -330,6 +350,7 @@ export const assignCourseToTa = createAsyncThunk(
 
 const initialState = {
     tas: [],
+    taData : [],
     studentBatchMapping: [],
     batchMapping: [],
     taMapping: null,
@@ -431,6 +452,19 @@ export const taSlice = createSlice({
             state.loading = false;
             state.error = action.payload || action.error.message;
         });
+
+        builder.addCase(getTaById.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(getTaById.fulfilled, (state, action) => {
+            state.loading = false;
+            state.taData = action.payload;
+        })
+        builder.addCase(getTaById.rejected, (state, action) => {
+            state.loading = false;
+            state.taData = [];
+            state.error = action.payload || action.error.message;
+        })
 
         // Update TA
         builder.addCase(updateTA.pending, state => {

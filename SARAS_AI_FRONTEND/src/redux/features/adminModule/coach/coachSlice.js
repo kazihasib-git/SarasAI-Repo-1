@@ -44,6 +44,26 @@ export const getCoach = createAsyncThunk(
     }
 );
 
+export const getCoachById = createAsyncThunk(
+    'coachModule/getCoachById',
+    async (id, { rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.get(
+                `${baseUrl}/admin/manage_coaches/${id}`
+            );
+            return response.data;
+        }catch (error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message);
+            }else {
+                return rejectWithValue(
+                    'An Error Occurred While Fetching Coaches By Id'
+                )
+            }
+        }
+    }
+)
+
 export const updateCoach = createAsyncThunk(
     'coachModule/updateCoach',
     async ({ id, data }, { rejectWithValue }) => {
@@ -390,6 +410,7 @@ export const deleteCoachMapping = createAsyncThunk(
 
 const initialState = {
     coaches: [],
+    coachData : [],
     coachStudentBatchMapping: [],
     coachBatchMapping: null,
     coachMapping: null,
@@ -486,8 +507,22 @@ export const coachSlice = createSlice({
         });
         builder.addCase(getCoach.rejected, (state, action) => {
             state.loading = false;
+            state.coaches =  [];
             state.error = action.payload || action.error.message;
         });
+
+        builder.addCase(getCoachById.pending, (state) => {
+            state.loading = true;
+        })
+        builder.addCase(getCoachById.fulfilled, (state, action) => {
+            state.loading = false;
+            state.coachData = action.payload;
+        })
+        builder.addCase(getCoachById.rejected, (state, action) => {
+            state.loading = false;
+            state.coachData = [];
+            state.error = action.payload || action.error.message
+        })
 
         // Update Coach
         builder.addCase(updateCoach.pending, state => {

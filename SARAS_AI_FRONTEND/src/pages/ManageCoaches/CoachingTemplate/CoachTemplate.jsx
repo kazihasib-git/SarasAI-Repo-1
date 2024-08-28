@@ -29,7 +29,7 @@ const CoachTemplate = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        if (coachTemplates.length > 0) {
+        if (coachTemplates && coachTemplates.length > 0) {
             const transformData = coachTemplates.map(item => ({
                 id: item.id,
                 'Template Name': item.name,
@@ -38,7 +38,7 @@ const CoachTemplate = () => {
                 Activities: item?.modules
                     ?.map(module => module?.module_name)
                     .join(', '),
-                'Assigned To': item.student.length + ' students',
+                'Assigned To': item.student?.length + ' students',
                 is_active: item.is_active,
             }));
             setCoachTemplatesData(transformData);
@@ -52,55 +52,6 @@ const CoachTemplate = () => {
         'Activities',
         'Assigned To',
         'Action',
-    ];
-
-    const dummyData = [
-        {
-            id: 1,
-            'Template Name': 'Template 1',
-            Duration: '30 mins',
-            Activities: 'Activity A, Activity B',
-            'Assigned To': 'John Doe',
-        },
-        {
-            id: 2,
-            'Template Name': 'Template 2',
-            Duration: '45 mins',
-            Activities: 'Activity C, Activity D',
-            'Assigned To': 'Jane Smith',
-        },
-        {
-            id: 3,
-            'Template Name': 'Template 3',
-            Duration: '60 mins',
-            Activities: 'Activity E, Activity F',
-            'Assigned To': 'Michael Brown',
-        },
-    ];
-    const data123 = [
-        {
-            id: 1,
-            template_id: 1,
-            module_name: 'Sandeep-Module-1',
-            is_active: 1,
-            created_by: null,
-            updated_by: null,
-            deleted_at: null,
-            created_at: '2024-07-18T12:35:13.000000Z',
-            updated_at: '2024-07-19T11:53:01.000000Z',
-            template: {
-                id: 1,
-                name: 'test-sandeep 5',
-                duration: 7,
-                is_active: 1,
-                created_by: null,
-                updated_by: null,
-                deleted_at: null,
-                created_at: '2024-07-18T12:27:19.000000Z',
-                updated_at: '2024-07-18T12:27:19.000000Z',
-            },
-            activities: [],
-        },
     ];
 
     const actionButtons = [

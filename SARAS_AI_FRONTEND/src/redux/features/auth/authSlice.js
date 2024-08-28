@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { baseUrl } from '../../../utils/baseURL';
 import { toast } from 'react-toastify';
-
 import axiosInstance from '../../services/httpService';
 
 // login api
@@ -80,6 +79,7 @@ const authSlice = createSlice({
             state.login = true;
             state.name = action.payload.admin_user.name;
             state.role = action.payload.role;
+
             state.accessToken = action.payload.access_token;
             state.timezone_id = action.payload.admin_user.timezone_id;
 

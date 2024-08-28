@@ -34,10 +34,14 @@ import CustomDateField from '../../../CustomFields/CustomDateField';
 import CustomTimeField from '../../../CustomFields/CustomTimeField';
 import CustomTimeZoneForm from '../../../CustomFields/CustomTimeZoneForm';
 import {
+    getAllHosts,
     getPlatforms,
     getTimezone,
 } from '../../../../redux/features/utils/utilSlice';
 import CustomPlatformForm from '../../../CustomFields/CustomPlatformForm';
+import { Controller } from 'react-hook-form';
+import CustomHostNameForm from '../../../CustomFields/CustomHostNameField';
+import CustomMeetingTypeField from '../../../CustomFields/CustomMeetingTypeField';
 
 const CustomButton = ({
     onClick,
@@ -130,7 +134,7 @@ const CreateSession = ({ componentName, timezoneID }) => {
             break;
     }
 
-    const { timezones, platforms } = useSelector(state => state.util);
+    const { timezones, platforms, hosts } = useSelector(state => state.util);
     const { scheduleNewSessionPopup, students, batches } = useSelector(
         state => state.commonCalender
     );
@@ -138,9 +142,11 @@ const CreateSession = ({ componentName, timezoneID }) => {
     useEffect(() => {
         dispatch(getTimezone());
         dispatch(getPlatforms());
+        dispatch(getAllHosts());
     }, [dispatch]);
 
     const [error, setError] = useState({});
+    const meetingTypes = ['webinars', 'meetings'];
 
     const durationOptions = [
         { label: '15 minutes', value: '00:15:00' },
@@ -204,9 +210,9 @@ const CreateSession = ({ componentName, timezoneID }) => {
             event_status: 'scheduled',
             studentId: studentId,
             batchId: batchId,
+            host_email_id : formData.host_email_id,
+            meeting_type : formData.meeting_type,
         };
-        // console.log('Form Data : ', formData);
-        // console.log('DATA :', data);
 
         dispatch(createSessionApi(data))
         .unwrap()
@@ -310,6 +316,42 @@ const CreateSession = ({ componentName, timezoneID }) => {
                                         sx={{ width: '100%' }}
                                     />
                                 </Grid>
+                                {formData.platform_id === 1 && (
+                                    <>
+                                        <Grid
+                                            item
+                                            xs={12}
+                                            display="flex"
+                                            justifyContent="center"
+                                        >
+                                            <CustomHostNameForm 
+                                                label="Host Name"
+                                                name="host_email_id"
+                                                value={formData.value}
+                                                onChange={e => handleChange('host_email_id', e.target.value)}                                                
+                                                options={hosts.users}
+                                                errors={!!error.host_email_id}
+                                            />
+
+                                        </Grid>
+                                        <Grid
+                                            item
+                                            xs={12}
+                                            display="flex"
+                                            justifyContent="center"
+                                        >
+                                            <CustomMeetingTypeField
+                                                label="Meeting Type"
+                                                name="meeting_type"
+                                                value={formData.value}
+                                                onChange={e => handleChange('meeting_type', e.target.value)}
+                                                options={meetingTypes}
+                                                errors={!!error.meeting_name}
+                                            />
+
+                                        </Grid>
+                                    </>
+                                )}
                             </Grid>
 
                             <Grid
