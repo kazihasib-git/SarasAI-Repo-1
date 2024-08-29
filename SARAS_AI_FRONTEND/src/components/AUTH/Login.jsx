@@ -1,10 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 
 import './Login.css';
-// import axios from '../API/axios';
 import useAuth from '../Hooks/useAuth';
-//const LOGIN_URL = '/auth';
-const LOGIN_URL = 'http://34.100.233.67:8080/api/login';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { login } from '../../redux/features/auth/authSlice';
@@ -103,20 +100,8 @@ const Login = () => {
                 password: pwd,
             };
 
-            const resultAction = dispatch(login(requestBody));
-
-            if (login.fulfilled.match(resultAction)) {
-                const role = resultAction.payload.role;
-                setUser('');
-                setPwd('');
-                if (role === 1984) {
-                    navigate('/coachmenu_profile', { replace: true });
-                } else if (role === 2001) {
-                    navigate('/tamenu_profile', { replace: true });
-                } else {
-                    navigate(from, { replace: true });
-                }
-            }
+            dispatch(login(requestBody));
+        
         } catch (error) {
             console.log(error);
         }

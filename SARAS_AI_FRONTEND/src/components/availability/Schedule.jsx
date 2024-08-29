@@ -199,6 +199,9 @@ const Schedule = ({ componentName, timezoneID }) => {
                 setSelectedSlot(null);
                 setDateSelected(true);
             });
+        }else{
+            toast.error("Please Provide From Date")
+            return;
         }
     };
 
@@ -401,6 +404,15 @@ const Schedule = ({ componentName, timezoneID }) => {
             toast.error('Please select a To Time');
             return;
         }
+        // console.log("FORMDATA")
+        if (!formData.host_email_id) {
+            toast.error("Please Select Host Name")
+            return;
+        }
+        if(!formData.meeting_type){
+            toast.error("Please select Meeting Type")
+            return;
+        }
 
         // Convert times to minutes for easier comparison
         const fromTimeInMinutes = convertTimeToMinutes(fromTime);
@@ -484,9 +496,10 @@ const Schedule = ({ componentName, timezoneID }) => {
             display="flex"
             justifyContent="center"
             alignItems="center"
+            
             sx={{ height: '100%', width: '100%' }}
         >
-            <Grid container spacing={3} justifyContent="center">
+            <Grid container spacing={3} justifyContent="center" mt={0}>
                 <form onSubmit={handleSubmit(onSubmit)} noValidate>
                     <Box display="flex" justifyContent="center" m={4}>
                         <Grid container spacing={3} justifyContent="center">
@@ -496,6 +509,7 @@ const Schedule = ({ componentName, timezoneID }) => {
                                 sm={6}
                                 display="flex"
                                 justifyContent="center"
+                                mt={0}
                             >
                                 {/* //TODO : NEED TO SHOW ERROR MESSAGE ERROR HERE WHEN FIELD IS NOT FILLED  */}
                                 <CustomDateField
@@ -1012,26 +1026,15 @@ const Schedule = ({ componentName, timezoneID }) => {
                                         display="flex"
                                         justifyContent="center"
                                     >
-                                        <Button
-                                            //onSubmit={handleSubmit(handleDateSubmit)}
-                                            type="button"
-                                            variant="contained"
-                                            style={{
-                                                borderRadius: '50px',
-                                                padding: '18px 30px',
-                                                marginTop: 30,
-                                                backgroundColor: '#F56D3B',
-                                                height: '60px',
-                                                width: '121px',
-                                                fontSize: '16px',
-                                                fontWeight: '700px',
-                                                text: '#FFFFFF',
-                                                textTransform: 'none',
-                                            }}
+                                        <CustomButton
                                             onClick={handleDateSubmit}
+                                            backgroundColor="#F56D3B"
+                                            borderColor="#F56D3B"
+                                            color="#FFFFFF"
+                                            textTransform="none"
                                         >
-                                            Submit{' '}
-                                        </Button>
+                                            Submit
+                                        </CustomButton>
                                     </Grid>
                                 </>
                             )}
