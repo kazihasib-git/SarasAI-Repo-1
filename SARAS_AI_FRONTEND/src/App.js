@@ -126,53 +126,53 @@ function App() {
         }
     }, [access_token]);
 
-    useEffect(() => {
-        if (login) {
-            console.log('inside useEffect in app.js', role);
-            const lastRoute = localStorage.getItem('lastRoute');
-    
-            if (role.includes(1984)) {
-                // Coach role
-                navigate(lastRoute || '/coachmenu_profile', { replace: true });
-            } else if (role.includes(2001)) {
-                // Teaching role
-                navigate(lastRoute || '/tamenu_profile', { replace: true });
-            } else if (role.includes(5150)) {
-                // Admin role
-                navigate(lastRoute || '/', { replace: true });
-            } else {
-                navigate(lastRoute || from, { replace: true });
-            }
-        } else {
-            navigate('/login', { replace: true });
-        }
-    }, [login, role, accessToken]);
-
     // useEffect(() => {
     //     if (login) {
-    //         console.log('inside user Effect in app.js', role);
+    //         console.log('inside useEffect in app.js', role);
     //         const lastRoute = localStorage.getItem('lastRoute');
-
-    //         if (lastRoute && lastRoute !== '/login') {
-    //             navigate(lastRoute, { replace: true });
+    
+    //         if (role.includes(1984)) {
+    //             // Coach role
+    //             navigate(lastRoute || '/coachmenu_profile', { replace: true });
+    //         } else if (role.includes(2001)) {
+    //             // Teaching role
+    //             navigate(lastRoute || '/tamenu_profile', { replace: true });
+    //         } else if (role.includes(5150)) {
+    //             // Admin role
+    //             navigate(lastRoute || '/', { replace: true });
     //         } else {
-    //             if (role.includes(1984)) {
-    //                 // Coach role
-    //                 navigate('/coachmenu_profile', { replace: true });
-    //             } else if (role.includes(2001)) {
-    //                 // Teaching role
-    //                 navigate('/tamenu_profile', { replace: true });
-    //             } else if (role.includes(5150)) {
-    //                 // Admin role
-    //                 navigate('/', { replace: true });
-    //             } else {
-    //                 navigate('/login', { replace: true });
-    //             }
+    //             navigate(lastRoute || from, { replace: true });
     //         }
     //     } else {
     //         navigate('/login', { replace: true });
     //     }
     // }, [login, role, accessToken]);
+
+    useEffect(() => {
+        if (login) {
+            console.log('inside user Effect in app.js', role);
+            const lastRoute = localStorage.getItem('lastRoute');
+
+            if (lastRoute && lastRoute !== '/login') {
+                navigate(lastRoute, { replace: true });
+            } else {
+                if (role.includes(1984)) {
+                    // Coach role
+                    navigate('/coachmenu_profile', { replace: true });
+                } else if (role.includes(2001)) {
+                    // Teaching role
+                    navigate('/tamenu_profile', { replace: true });
+                } else if (role.includes(5150)) {
+                    // Admin role
+                    navigate('/', { replace: true });
+                } else {
+                    navigate('/login', { replace: true });
+                }
+            }
+        } else {
+            navigate('/login', { replace: true });
+        }
+    }, [login, role, accessToken]);
 
     return (
         <Routes>
