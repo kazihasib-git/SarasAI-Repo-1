@@ -101,8 +101,8 @@ const CreateSlot = ({ componentName, timezoneID }) => {
 
     const validate = () => {
         let validationErrors = {};
-        if (!formData.fromDate)
-            validationErrors.fromDate = 'Please select From Date';
+        // if (!formData.fromDate)
+        //     validationErrors.fromDate = 'Please select From Date';
         if (!formData.fromTime)
             validationErrors.fromTime = 'Please select From Time';
         if (!formData.toTime) validationErrors.toTime = 'Please select To Time';
@@ -121,7 +121,11 @@ const CreateSlot = ({ componentName, timezoneID }) => {
     const handleSubmit = e => {
         e.preventDefault();
 
-        if (!validate()) return;
+        if (validate()) {
+            // Proceed with form submission
+        } else {
+            console.log('Validation failed:', errors);
+        }
 
         let weeksArray = Array(7).fill(0);
         if (formData.repeat === 'recurring') {
