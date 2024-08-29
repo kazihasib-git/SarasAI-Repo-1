@@ -79,6 +79,7 @@ const Schedule = ({ componentName, timezoneID }) => {
     const [dateSelected, setDateSelected] = useState(false);
     const dispatch = useDispatch();
     const { timezones, platforms, hosts } = useSelector(state => state.util);
+
     const [meetingTypes, setMeetingtypes] = useState(['webinars', 'meetings']);
 
     let scheduleSessionOpenKey,
@@ -199,6 +200,9 @@ const Schedule = ({ componentName, timezoneID }) => {
                 setSelectedSlot(null);
                 setDateSelected(true);
             });
+        } else {
+            toast.error('Please Select From Date');
+            return;
         }
     };
 
@@ -392,6 +396,7 @@ const Schedule = ({ componentName, timezoneID }) => {
 
     const onSubmit = formData => {
         // Ensure "From Time" and "To Time" are selected
+
         if (!fromTime) {
             toast.error('Please select a From Time');
             return;
@@ -453,6 +458,7 @@ const Schedule = ({ componentName, timezoneID }) => {
         formData.event_status = 'scheduled';
         formData.weeks = weeksArray;
         formData.studentId = studentId;
+
         formData.batchId = batchId;
         formData.timezone_id = timezoneId ? Number(timezoneId) : timezoneID;
 
@@ -687,9 +693,9 @@ const Schedule = ({ componentName, timezoneID }) => {
                                                                     onChange={
                                                                         field.onChange
                                                                     }
-                                                                    errors={
-                                                                        errors
-                                                                    }
+                                                                    errors={{
+                                                                        errors,
+                                                                    }}
                                                                     options={
                                                                         platforms
                                                                     }
