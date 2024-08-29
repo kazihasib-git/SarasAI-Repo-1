@@ -401,6 +401,15 @@ const Schedule = ({ componentName, timezoneID }) => {
             toast.error('Please select a To Time');
             return;
         }
+        // console.log("FORMDATA")
+        if (!formData.host_email_id) {
+            toast.error("Please Select Host Name")
+            return;
+        }
+        if(!formData.meeting_type){
+            toast.error("Please select Meeting Type")
+            return;
+        }
 
         // Convert times to minutes for easier comparison
         const fromTimeInMinutes = convertTimeToMinutes(fromTime);

@@ -42,6 +42,7 @@ import CustomPlatformForm from '../../../CustomFields/CustomPlatformForm';
 import { Controller } from 'react-hook-form';
 import CustomHostNameForm from '../../../CustomFields/CustomHostNameField';
 import CustomMeetingTypeField from '../../../CustomFields/CustomMeetingTypeField';
+import { toast } from 'react-toastify';
 
 const CustomButton = ({
     onClick,
@@ -175,6 +176,16 @@ const CreateSession = ({ componentName, timezoneID }) => {
     const handleSubmit = e => {
         e.preventDefault();
         console.log(formData.fromTime);
+
+        if(!formData.host_email_id){
+            toast.error("Please Select Host Name");
+            return;
+        }
+        
+        if(!formData.meeting_type){
+            toast.error("Please Select Meeting Type");
+            return;
+        }
 
         const studentId = students.map(student => student.id);
         const batchId = batches.map(batch => batch.id);
