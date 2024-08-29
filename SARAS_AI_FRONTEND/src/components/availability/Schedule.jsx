@@ -18,8 +18,8 @@ import CustomDateField from '../CustomFields/CustomDateField';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import CustomFormControl from '../CustomFields/CustomFromControl';
 import CustomHostNameForm from '../CustomFields/CustomHostNameField';
-import CustomMeetingTypeForm from '../CustomFields/CustomMeetingTypeField';
-import { useForm, Controller } from 'react-hook-form';
+import CustomMeetingTypeField from '../CustomFields/CustomMeetingTypeField';
+import { useForm, Controller, useWatch } from 'react-hook-form';
 import { timezoneIdToName } from '../../utils/timezoneIdToName';
 import { convertFromUTC } from '../../utils/dateAndtimeConversion';
 import {
@@ -67,7 +67,6 @@ const actionButtons = [
 ];
 
 const Schedule = ({ componentName, timezoneID }) => {
-    console.log('timezoneID=======>', timezoneID);
     const [fromDate, setFromDate] = useState(null);
     const [toDate, setToDate] = useState(null);
     const [fromTime, setFromTime] = useState(null);
@@ -80,7 +79,7 @@ const Schedule = ({ componentName, timezoneID }) => {
     const [dateSelected, setDateSelected] = useState(false);
     const dispatch = useDispatch();
     const { timezones, platforms, hosts } = useSelector(state => state.util);
-    const [meetingTypes, setMeetingtypes] = useState(['webinars' , 'meetings']) ;
+    const [meetingTypes, setMeetingtypes] = useState(['webinars', 'meetings']);
 
     let scheduleSessionOpenKey,
         schedulingStateKey,
@@ -155,11 +154,12 @@ const Schedule = ({ componentName, timezoneID }) => {
         [studentKey]: students,
         [batchKey]: batches,
     } = schedulingState;
-    // console.log('timezoneID:::::', timezoneId) ;
+
     const {
         register,
         handleSubmit,
         control,
+        reset,
         formState: { errors },
     } = useForm({
         defaultValues: {
@@ -207,6 +207,7 @@ const Schedule = ({ componentName, timezoneID }) => {
         dispatch(getPlatforms());
         dispatch(getAllHosts());
     }, [dispatch]);
+
     const convertSessions = async () => {
         if (
             availableSlots &&
@@ -264,9 +265,6 @@ const Schedule = ({ componentName, timezoneID }) => {
                     value: `${item.id}-${index}`, // Create a unique value by combining item.id and index
                 }));
 
-                console.log('OPTIONS : ', options);
-                // console.log("PROCESSED SLOT : ", processedSlots)
-
                 setAvailableSlotsOptions(options);
                 setSlotData(processedSlots);
             } catch (error) {
@@ -302,21 +300,15 @@ const Schedule = ({ componentName, timezoneID }) => {
     const handleSelectOption = e => {
         const selectedValue = e.target.value;
         const [selectedId, selectedIndex] = selectedValue.split('-'); // Extract the id and index
-        console.log('SELECTED ID : ', selectedId);
 
         const selectedSlots = slotData.filter(slot => slot.id == selectedId); // Find all slots by id
-        console.log('SELECTED SLOTS: ', selectedSlots);
 
         // Get the specific slot by index
-        const selectedSlot = selectedSlots[selectedIndex];
-        console.log('SELECTED SLOT: ', selectedSlot);
+        const selectedSlot = selectedSlots[0];
 
         if (selectedSlot) {
             const slotStartTime = selectedSlot.startTime;
             const slotEndTime = selectedSlot.endTime;
-
-            console.log('SLOT START TIME: ', slotStartTime);
-            console.log('SLOT END TIME: ', slotEndTime);
 
             setSelectedSlot(selectedSlot); // Set the specific slot
         } else {
@@ -388,7 +380,7 @@ const Schedule = ({ componentName, timezoneID }) => {
             return;
         }
     };
-    
+
     const formatTime = time => {
         const [hours, minutes] = time.split(':');
         const hour = parseInt(hours, 10);
@@ -409,10 +401,6 @@ const Schedule = ({ componentName, timezoneID }) => {
             toast.error('Please select a To Time');
             return;
         }
-        console.log("fromTime:", fromTime)
-        console.log("toTime: ", toTime)
-        console.log(" selectedSlot.startTime:", selectedSlot['From Time'])
-        console.log("selectedSlot.endTime: ",selectedSlot['To Time'])
 
         // Convert times to minutes for easier comparison
         const fromTimeInMinutes = convertTimeToMinutes(fromTime);
@@ -420,7 +408,9 @@ const Schedule = ({ componentName, timezoneID }) => {
         const slotStartTimeInMinutes = convertTimeToMinutes(
             selectedSlot['From Time']
         );
-        const slotEndTimeInMinutes = convertTimeToMinutes(selectedSlot['To Time']);
+        const slotEndTimeInMinutes = convertTimeToMinutes(
+            selectedSlot['To Time']
+        );
 
         // Validate that selected times are within the slot's time range
         if (
@@ -474,6 +464,7 @@ const Schedule = ({ componentName, timezoneID }) => {
             .catch(error => {
                 console.error('Error:', error);
             });
+        reset();
     };
 
     // Helper function to convert time string to minutes since midnight
@@ -481,6 +472,12 @@ const Schedule = ({ componentName, timezoneID }) => {
         const [hours, minutes] = time.split(':').map(Number);
         return hours * 60 + minutes;
     };
+
+    const platform_id = useWatch({
+        control,
+        name: 'platform_id',
+        defaultValue: 0, // Provide a default value if necessary
+    });
 
     const content = (
         <Box
@@ -557,10 +554,6 @@ const Schedule = ({ componentName, timezoneID }) => {
                                                     errors={errors}
                                                 />
                                             </Grid>
-                                            {console.log(
-                                                'SELECT SLOTS DATA ',
-                                                selectedSlot
-                                            )}
                                             {selectedSlot && (
                                                 <>
                                                     <Grid
@@ -704,68 +697,77 @@ const Schedule = ({ componentName, timezoneID }) => {
                                                             )}
                                                         />
                                                     </Grid>
-                                                    <Grid
-                                                        item
-                                                        xs={12}
-                                                        display="flex"
-                                                        justifyContent="center"
-                                                    >
-                                                        <Controller
-                                                            name="host_email_id"
-                                                            control={control}
-                                                            render={({
-                                                                field,
-                                                            }) => (
-                                                                <CustomHostNameForm
-                                                                    label="Host Name"
+                                                    {platform_id === 1 && (
+                                                        <>
+                                                            <Grid
+                                                                item
+                                                                xs={12}
+                                                                display="flex"
+                                                                justifyContent="center"
+                                                            >
+                                                                <Controller
                                                                     name="host_email_id"
-                                                                    value={
-                                                                        field.value
+                                                                    control={
+                                                                        control
                                                                     }
-                                                                    onChange={
-                                                                        field.onChange
-                                                                    }
-                                                                    errors={
-                                                                        errors
-                                                                    }
-                                                                    options={
-                                                                        hosts.users
-                                                                    }
+                                                                    render={({
+                                                                        field,
+                                                                    }) => (
+                                                                        <CustomHostNameForm
+                                                                            label="Host Name"
+                                                                            name="host_email_id"
+                                                                            value={
+                                                                                field.value
+                                                                            }
+                                                                            onChange={
+                                                                                field.onChange
+                                                                            }
+                                                                            errors={
+                                                                                errors
+                                                                            }
+                                                                            options={
+                                                                                hosts.users
+                                                                            }
+                                                                        />
+                                                                    )}
                                                                 />
-                                                            )}
-                                                        />
-                                                    </Grid>
-                                                    <Grid
-                                                        item
-                                                        xs={12}
-                                                        display="flex"
-                                                        justifyContent="center"
-                                                    >
-                                                        <Controller
-                                                            name="meeting_type"
-                                                            control={control}
-                                                            render={({
-                                                                field,
-                                                            }) => (
-                                                                <CustomMeetingTypeForm
-                                                                    label="Meeting Type"
+                                                            </Grid>
+                                                            <Grid
+                                                                item
+                                                                xs={12}
+                                                                display="flex"
+                                                                justifyContent="center"
+                                                            >
+                                                                <Controller
                                                                     name="meeting_type"
-                                                                    value={
-                                                                        field.value
+                                                                    control={
+                                                                        control
                                                                     }
-                                                                    onChange={
-                                                                        field.onChange
-                                                                    }
-                                                                    errors={
-                                                                        errors
-                                                                    }
-                                                                    options={
-                                                                        meetingTypes
-                                                                    }
+                                                                    render={({
+                                                                        field,
+                                                                    }) => (
+                                                                        <CustomMeetingTypeField
+                                                                            label="Meeting Type"
+                                                                            name="meeting_type"
+                                                                            value={
+                                                                                field.value
+                                                                            }
+                                                                            onChange={
+                                                                                field.onChange
+                                                                            }
+                                                                            errors={
+                                                                                errors
+                                                                            }
+                                                                            options={
+                                                                                meetingTypes
+                                                                            }
+                                                                        />
+                                                                    )}
                                                                 />
-                                                            )}
-                                                        />
-                                                    </Grid>
+                                                            </Grid>
+                                                        </>
+                                                    )}
+
                                                     <Grid
                                                         item
                                                         xs={12}
@@ -1046,7 +1048,7 @@ const Schedule = ({ componentName, timezoneID }) => {
             backgroundColor="#F56D3B"
             borderColor="#F56D3B"
             color="#FFFFFF"
-            textTransform= "none"
+            textTransform="none"
         >
             Submit
         </CustomButton>

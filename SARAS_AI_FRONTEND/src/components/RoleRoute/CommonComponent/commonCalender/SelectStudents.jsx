@@ -187,6 +187,7 @@ const SelectStudents = ({ componentName }) => {
     console.log('Students : ', students, 'selectedStudents', selectedStudents);
 
     useEffect(() => {
+        
         let updatedSelectedStudents = [];
 
         if (students && students.length > 0) {
