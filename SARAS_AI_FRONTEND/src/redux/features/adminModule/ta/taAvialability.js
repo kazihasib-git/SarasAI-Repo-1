@@ -585,7 +585,7 @@ export const taAvailabilitySlice = createSlice({
         });
         builder.addCase(editTASchdeuledStudents.fulfilled, (state, action) => {
             state.loading = false;
-            toast.success(action.payload.message || 'Students Updated Successfully')
+            // toast.success(action.payload.message || 'Students Updated Successfully')
         });
         builder.addCase(editTASchdeuledStudents.rejected, (state, action) => {
             state.loading = false;

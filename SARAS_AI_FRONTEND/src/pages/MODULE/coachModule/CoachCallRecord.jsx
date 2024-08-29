@@ -93,6 +93,8 @@ const CoachCallRecord = () => {
             console.log("BEFORE PROCESSING DATA")
             processCalls();
             console.log("AFTERR PROCESSING DATA")
+        }else{
+            setProcessedCalls([]) ;
         }
     },[calls, timezones, storedTimezoneId])
 

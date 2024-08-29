@@ -199,6 +199,9 @@ const Schedule = ({ componentName, timezoneID }) => {
                 setSelectedSlot(null);
                 setDateSelected(true);
             });
+        }else{
+            toast.error("Please Provide From Date")
+            return;
         }
     };
 
@@ -1012,26 +1015,15 @@ const Schedule = ({ componentName, timezoneID }) => {
                                         display="flex"
                                         justifyContent="center"
                                     >
-                                        <Button
-                                            //onSubmit={handleSubmit(handleDateSubmit)}
-                                            type="button"
-                                            variant="contained"
-                                            style={{
-                                                borderRadius: '50px',
-                                                padding: '18px 30px',
-                                                marginTop: 30,
-                                                backgroundColor: '#F56D3B',
-                                                height: '60px',
-                                                width: '121px',
-                                                fontSize: '16px',
-                                                fontWeight: '700px',
-                                                text: '#FFFFFF',
-                                                textTransform: 'none',
-                                            }}
+                                        <CustomButton
                                             onClick={handleDateSubmit}
+                                            backgroundColor="#F56D3B"
+                                            borderColor="#F56D3B"
+                                            color="#FFFFFF"
+                                            textTransform="none"
                                         >
-                                            Submit{' '}
-                                        </Button>
+                                            Submit
+                                        </CustomButton>
                                     </Grid>
                                 </>
                             )}
