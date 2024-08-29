@@ -117,12 +117,12 @@ const CancelSchedule = ({ componentName }) => {
     };
 
     const actions = (
-        <Box>
+        <Box style={{ marginBottom: '30px' }}>
             <CustomButton
                 onClick={handleCancel}
-                backgroundColor="#FFFFFF"
+                backgroundColor="#F56D38"
                 borderColor="#F56D38"
-                color="#F56D38"
+                color="#FFFFFF"
                 sx={{ mr: 2 }}
             >
                 Yes
@@ -132,9 +132,9 @@ const CancelSchedule = ({ componentName }) => {
                     dispatch(closeSessionAction());
                     dispatch(openSessionAction());
                 }}
-                backgroundColor="#F56D38"
+                backgroundColor="#FFFFFF"
                 borderColor="#F56D38"
-                color="#FFFFFF"
+                color="#F56D38"
             >
                 No
             </CustomButton>
@@ -142,19 +142,30 @@ const CancelSchedule = ({ componentName }) => {
     );
 
     const content = (
-        <>
-            <DialogTitle>
+        <div style={{ overflowY: 'hidden' }}>
+            <DialogTitle
+                sx={{
+                    fontWeight: '600',
+                    fontSize: '25px',
+                    color: '#1A1E3D',
+                    overflowY: 'hidden',
+                }}
+            >
                 {`'${schduldeCancelData['Session Name']}'`}
             </DialogTitle>
             <DialogContent
-                style={{ display: 'flex', justifyContent: 'center' }}
+                style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    marginBottom: '-25px',
+                }}
             >
                 <Typography>
                     Scheduled for &nbsp;
-                    {schduldeCancelData.Date} from {schduldeCancelData.Time}{' '}
+                    {schduldeCancelData.Date} from {schduldeCancelData.Time} ?
                 </Typography>
             </DialogContent>
-        </>
+        </div>
     );
 
     return (
