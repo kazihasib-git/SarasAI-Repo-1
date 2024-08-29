@@ -496,9 +496,10 @@ const Schedule = ({ componentName, timezoneID }) => {
             display="flex"
             justifyContent="center"
             alignItems="center"
+            
             sx={{ height: '100%', width: '100%' }}
         >
-            <Grid container spacing={3} justifyContent="center">
+            <Grid container spacing={3} justifyContent="center" mt={0}>
                 <form onSubmit={handleSubmit(onSubmit)} noValidate>
                     <Box display="flex" justifyContent="center" m={4}>
                         <Grid container spacing={3} justifyContent="center">
@@ -508,6 +509,7 @@ const Schedule = ({ componentName, timezoneID }) => {
                                 sm={6}
                                 display="flex"
                                 justifyContent="center"
+                                mt={0}
                             >
                                 {/* //TODO : NEED TO SHOW ERROR MESSAGE ERROR HERE WHEN FIELD IS NOT FILLED  */}
                                 <CustomDateField
