@@ -92,6 +92,8 @@ const CallRecords = () => {
     useEffect(() => {
         if (calls && calls.length > 0 && timezones && storedTimezoneId) {
             processCalls();
+        }else{
+            setProcessedCalls([]) ; 
         }
     }, [calls, timezones, storedTimezoneId]);
 

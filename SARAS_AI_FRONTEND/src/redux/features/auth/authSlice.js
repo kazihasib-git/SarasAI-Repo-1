@@ -47,6 +47,7 @@ export const logout = createAsyncThunk(
 
 const initialState = {
     userData: {},
+    loginData : {},
     login: false,
     role: null,
     name: '',
@@ -75,6 +76,7 @@ const authSlice = createSlice({
         builder.addCase(login.fulfilled, (state, action) => {
             toast.success(action.payload.message || 'Login Successfully')
             state.loading = false;
+            state.loginData = action.payload;
             state.userData = action.payload.admin_user; // Update to use the correct user object
             state.login = true;
             state.name = action.payload.admin_user.name;
@@ -96,7 +98,9 @@ const authSlice = createSlice({
             toast.error(action.payload || 'Failed To Login')
             state.loading = false;
             state.error = action.error.message;
-            state.userData = [];
+            state.userData = {};
+            state.loginData = {};
+
             state.login = false;
         });
 
