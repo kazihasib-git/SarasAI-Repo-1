@@ -220,9 +220,15 @@ const EditStudentsFromSession = ({ componentName }) => {
             admin_user_id: Number(id),
             studentId: selectedStudents.map(id => id),
         };
-        dispatch(editScheduledStudentsApi({ Id, data })).then(() => {
+        dispatch(editScheduledStudentsApi({ Id, data }))
+        .unwrap()
+        .then(() => {
             dispatch(closePopupActions());
-        });
+            toast.success("Student Updated Successfully.")
+        })
+        .catch(error => {
+            toast.error(`${error}`);
+        })
     };
 
     const content = (

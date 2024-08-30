@@ -466,7 +466,7 @@ export const coachAvailabilitySlice = createSlice({
         builder.addCase(createCoachSlots.fulfilled, (state, action) => {
             state.loading = false;
             // state.slotCoachEventData = action.payload?.data;
-            toast.success(action.payload.message || 'Slot Created Successfully')
+            // toast.success(action.payload.message || 'Slot Created Successfully')
 
         });
         builder.addCase(createCoachSlots.rejected, (state, action) => {
@@ -554,7 +554,7 @@ export const coachAvailabilitySlice = createSlice({
             editCoachScheduledStudents.fulfilled,
             (state, action) => {
                 state.loading = false;
-                toast.success(action.payload.message || 'Student Updated Successfully')
+                // toast.success(action.payload.message || 'Student Updated Successfully')
             }
         );
         builder.addCase(
@@ -562,7 +562,7 @@ export const coachAvailabilitySlice = createSlice({
             (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
-                toast.error(action.payload || 'Failed To Update Students')
+                // toast.error(action.payload || 'Failed To Update Students')
             }
         );
 
@@ -588,13 +588,13 @@ export const coachAvailabilitySlice = createSlice({
             editCoachScheduledBatches.fulfilled,
             (state, action) => {
                 state.loading = false;
-                toast.success(action.payload.message || 'Batches Updated Successfully')
+                // toast.success(action.payload.message || 'Batches Updated Successfully')
             }
         );
         builder.addCase(editCoachScheduledBatches.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
-            toast.error(action.payload || 'Failed To Update Batches')
+            // toast.error(action.payload || 'Failed To Update Batches')
         });
     },
 });
