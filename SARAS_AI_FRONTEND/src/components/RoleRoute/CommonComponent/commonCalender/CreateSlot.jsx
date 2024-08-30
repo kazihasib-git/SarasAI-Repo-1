@@ -27,6 +27,7 @@ import CustomTimeZoneForm from '../../../CustomFields/CustomTimeZoneForm';
 import ReusableDialog from '../../../CustomFields/ReusableDialog';
 import CustomButton from '../../../CustomFields/CustomButton';
 import { toast } from 'react-toastify';
+import CustomFutureDateField from '../../../CustomFields/CustomFutureDateField';
 
 const weekDays = [
     'Sunday',
@@ -195,7 +196,7 @@ const CreateSlot = ({ componentName, timezoneID }) => {
                             display="flex"
                             justifyContent="center"
                         >
-                            <CustomDateField
+                            <CustomFutureDateField
                                 label="From Date"
                                 value={formData.fromDate}
                                 onChange={date =>

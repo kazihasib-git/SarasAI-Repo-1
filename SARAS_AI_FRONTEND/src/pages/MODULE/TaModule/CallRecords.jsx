@@ -178,7 +178,11 @@ const CallRecords = () => {
         setVideoUrl('');
         setIdVideo(null);
     };
-
+    const sortedCalls = processedCalls.sort((a, b) => {
+        const timeA = moment(a.start_time, 'HH:mm A'); 
+        const timeB = moment(b.start_time, 'HH:mm A');
+        return timeA - timeB;
+    });
     const handlePlayVideo = url => {
         setVideoUrl(url);
         setVideoDialogOpen(true);
@@ -238,7 +242,7 @@ const CallRecords = () => {
                     gap="20px"
                     justifyContent="space-between"
                 >
-                    {processedCalls.map(call => (
+                    {sortedCalls.map(call => (
                         <Card
                             key={call.id}
                             sx={{
