@@ -27,6 +27,7 @@ const ManageCoaches = () => {
     const [editData, setEditData] = useState();
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const [filteredData, setFilteredData] = useState([]);
 
     // Get coaches and timezones from Redux store
     const { coaches, createCoachOpen, editCoachOpen } = useSelector(
@@ -41,32 +42,62 @@ const ManageCoaches = () => {
         dispatch(getTimezone()); // Fetch timezones when the component mounts
     }, [dispatch]);
 
-    useEffect(() => {
-        const transformData = async () => {
-            if (coaches.length > 0 && timezones.length > 0) {
-                const transformed = await Promise.all(
-                    coaches.map(async item => {
-                        const timezonename = await timezoneIdToName(
-                            item.timezone_id,
-                            timezones
-                        );
-                        console.log('timezonename: ', timezonename);
-                        return {
-                            id: item.id,
-                            'Coach Name': item.name,
-                            Username: item.username,
-                            Location: item.location,
-                            'Time Zone': timezonename,
-                            is_active: item.is_active,
-                        };
-                    })
-                );
-                setCoachesData(transformed);
-            }
-        };
+    // useEffect(() => {
+    //     const transformData = async () => {
+    //         if (coaches.length > 0 && timezones.length > 0) {
+    //             const transformed = await Promise.all(
+    //                 coaches.map(async item => {
+    //                     const timezonename = await timezoneIdToName(
+    //                         item.timezone_id,
+    //                         timezones
+    //                     );
+    //                     console.log('timezonename: ', timezonename);
+    //                     return {
+    //                         id: item.id,
+    //                         'Coach Name': item.name,
+    //                         Username: item.username,
+    //                         Location: item.location,
+    //                         'Time Zone': timezonename,
+    //                         is_active: item.is_active,
+    //                     };
+    //                 })
+    //             );
+    //             setCoachesData(transformed);
+    //         }
+    //     };
 
-        transformData();
-    }, [coaches, timezones]);
+    //     transformData();
+    // }, [coaches, timezones]);
+
+    useEffect(() => {
+        if(coaches && coaches.length > 0){
+            const transformData = coaches.map((item) => ({
+                id: item.id,
+                'Coach Name': item.name,
+                Username: item.username,
+                Location: item.location,
+                'Time Zone': timezoneIdToName(item.timezone_id, timezones),
+                is_active: item.is_active,
+            }));
+
+
+            // Filter data based on the search query
+            const filteredTasData = transformData.filter(data => {
+                const matchName = data['Coach Name']?.toLowerCase().includes(searchQuery.toLowerCase());
+                const matchUsername = data.Username?.toLowerCase().includes(searchQuery.toLowerCase());
+                const matchLocation = data.Location?.toLowerCase().includes(searchQuery.toLowerCase());
+                const matchTimezone = data['Time Zone']?.toLowerCase().includes(searchQuery.toLowerCase());
+    
+                return matchName || matchUsername || matchLocation || matchTimezone;
+            });
+
+            setCoachesData(transformData);
+            setFilteredData(transformData);
+        }else {
+            setCoachesData([]);
+            setFilteredData([])
+        }
+    },[coaches, searchQuery, timezones])
 
     const handleAddCoach = () => {
         navigate('/createcoach');
@@ -105,16 +136,16 @@ const ManageCoaches = () => {
     ];
 
     // Filter coachesData based on the search query
-    const filteredCoachesData = coachesData.filter(coach =>
-        ['Coach Name', 'Username', 'Location', 'Time Zone'].some(
-            key =>
-                coach[key] &&
-                coach[key]
-                    .toString()
-                    .toLowerCase()
-                    .includes(searchQuery.toLowerCase())
-        )
-    );
+    // const filteredCoachesData = coachesData.filter(coach =>
+    //     ['Coach Name', 'Username', 'Location', 'Time Zone'].some(
+    //         key =>
+    //             coach[key] &&
+    //             coach[key]
+    //                 .toString()
+    //                 .toLowerCase()
+    //                 .includes(searchQuery.toLowerCase())
+    //     )
+    // );
 
     return (
         <>
@@ -207,7 +238,7 @@ const ManageCoaches = () => {
                     >
                         <DynamicTable
                             headers={headers}
-                            initialData={filteredCoachesData}
+                            initialData={filteredData}
                             actionButtons={actionButtons}
                             componentName={'MANAGECOACH'}
                         />

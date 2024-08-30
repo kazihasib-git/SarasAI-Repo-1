@@ -24,7 +24,6 @@ export const updateCoachmenuprofile = createAsyncThunk(
             `${baseUrl}/coach/coach-profile`,
             data
         );
-        console.log(response.data, 'response.data');
         return response.data;
     }
     catch (error) {
@@ -46,7 +45,6 @@ export const getCoachMenuSlots = createAsyncThunk(
         const response = await axiosInstance.get(
             `${baseUrl}/coach/calendar/slots`
         );
-        console.log(response.data, 'response.data');
         return response.data;
     }
 );
@@ -93,7 +91,6 @@ export const getCoachMenuSessions = createAsyncThunk(
         const response = await axiosInstance.get(
             `${baseUrl}/coach/calendar/sessions`
         );
-        console.log(response.data, 'response.data');
         return response.data;
     }
 );
@@ -397,6 +394,51 @@ export const getCoachMyStudents = createAsyncThunk(
         return response.data;
     }
 );
+
+
+// Update Students In Coach Session
+export const updateStudentsInCoachSession = createAsyncThunk(
+    'coachMenu/updateStudentsInCoachSession',
+    async ( data , { rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.post(
+                `${baseUrl}/coach/calendar/update-schedule-students`,
+                data
+            )
+            return response.data;
+        }catch(error){
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.error);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Update Students in Session'
+                );
+            }
+        }
+    }
+)
+
+// Update Batches In Coach Session
+export const updateBatchesInCoachSession = createAsyncThunk(
+    'coachMenu/updateBatchesInCoachSession',
+    async ( data, { rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.post(
+                `${baseUrl}/coach/calendar/update-schedule-batches`,
+                data
+            )
+            return response.data;
+        }catch(error){
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.error);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Updating Batches In Session'
+                );
+            };   
+        }
+    }
+)
 
 const initialState = {
     coachProfileData: [], // Coach Profile Data
@@ -981,6 +1023,34 @@ export const coachMenuSlice = createSlice({
             state.error = action.error.message;
             state.myStudentData = [];
         });
+
+
+        // Update Student In Session
+        builder.addCase(updateStudentsInCoachSession.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(updateStudentsInCoachSession.fulfilled, (state, action) => {
+            state.loading = false;
+            // TODO :----->
+        })
+        builder.addCase(updateStudentsInCoachSession.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+            
+        })
+
+        // Update Batcches In Session
+        builder.addCase(updateBatchesInCoachSession.pending, (state) => {
+            state.loading = true;
+        })
+        builder.addCase(updateBatchesInCoachSession.fulfilled, (state, action) => {
+            state.loading = false;
+            // TODO :----->
+        })
+        builder.addCase(updateBatchesInCoachSession.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+        })
     },
 });
 
