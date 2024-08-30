@@ -77,7 +77,6 @@ const CreateSession = ({ componentName, timezoneID }) => {
     let sliceName, createSessionApi, getSessionApi, getSlotApi;
 
     switch (componentName) {
-
         case 'TAMENU':
             sliceName = 'taMenu';
             createSessionApi = createTaMenuSessions;
@@ -139,26 +138,67 @@ const CreateSession = ({ componentName, timezoneID }) => {
     };
 
     const validate = () => {
-        // TODO : NEED TO ADD VALIDATION
-        if(!formData.fromTime){
-            toast.error("Please add from time")
-            return;
+
+        if(!formData.sessionName){
+            toast.error('Please enter meeting name')
+            return false;
         }
-    }
+        
+        // Check if 'duration' is provided and in the correct format
+        if (!formData.duration) {
+            toast.error('Please select duration');
+            return false;
+        }
+
+        if(!formData.platform_id){
+            toast.error('Please select meeting platform')
+            return false;
+        }
+
+        if(formData.platform_id === 1 ){
+            // Check if 'host_email_id' is provided
+            if (!formData.host_email_id) {
+                toast.error('Please Select Host Name');
+                return false;
+            }
+        
+            // Check if 'meeting_type' is provided
+            if (!formData.meeting_type) {
+                toast.error('Please Select Meeting Type');
+                return false;
+            }
+        }
+
+        // Check if 'fromDate' is provided
+        if (!formData.fromDate) {
+            toast.error('Please select  from date');
+            return false;
+        }
+        
+        // Check if 'fromTime' is provided
+        if (!formData.fromTime) {
+            toast.error('Please add from time');
+            return false;
+        }
+
+        // Chech message
+        if(!formData.message){
+            toast.error('Please enter message');
+            return false;
+        }
+
+        // Check if 'timezone_id' is provided
+        if (!formData.timezone_id) {
+            toast.error('Please select a timezone');
+            return false;
+        }    
+        return true;
+    };
 
     const handleSubmit = e => {
         e.preventDefault();
-        console.log(formData.fromTime);
 
-        if(!formData.host_email_id){
-            toast.error("Please Select Host Name");
-            return;
-        }
-        
-        if(!formData.meeting_type){
-            toast.error("Please Select Meeting Type");
-            return;
-        }
+        if(!validate()) return;
 
         const studentId = students.map(student => student.id);
         const batchId = batches.map(batch => batch.id);
@@ -194,26 +234,24 @@ const CreateSession = ({ componentName, timezoneID }) => {
             event_status: 'scheduled',
             studentId: studentId,
             batchId: batchId,
-            host_email_id : formData.host_email_id,
-            meeting_type : formData.meeting_type,
+            host_email_id: formData.host_email_id,
+            meeting_type: formData.meeting_type,
         };
 
         dispatch(createSessionApi(data))
-        .unwrap()
-        .then(() => {
-            dispatch(getSessionApi());
-            dispatch(getSlotApi());
-            dispatch(closeScheduleNewSession());
+            .unwrap()
+            .then(() => {
+                dispatch(getSessionApi());
+                dispatch(getSlotApi());
+                dispatch(closeScheduleNewSession());
 
-            // Reset the form after submission
-            setFormData(initialFormData);
-        }) .catch((error) => {
-       
-            console.error("API Error:", error);
-        });
+                // Reset the form after submission
+                setFormData(initialFormData);
+            })
+            .catch(error => {
+                console.error('API Error:', error);
+            });
     };
-   
-
 
     const content = (
         <Box
@@ -253,7 +291,19 @@ const CreateSession = ({ componentName, timezoneID }) => {
                                         }
                                         errors={!!error.sessionName}
                                         helperText={error.sessionName}
-                                        sx={{ width: '100%' }}
+                                        sx={{
+                                            width: '100%',
+                                            '& .MuiOutlinedInput-root': {
+                                                '&.Mui-focused fieldset': {
+                                                    borderColor: '#F56D3B',
+                                                },
+                                            },
+                                            '& .MuiInputLabel-root': {
+                                                '&.Mui-focused': {
+                                                    color: '#000000',
+                                                },
+                                            },
+                                        }}
                                     />
                                 </Grid>
                                 <Grid
@@ -308,15 +358,19 @@ const CreateSession = ({ componentName, timezoneID }) => {
                                             display="flex"
                                             justifyContent="center"
                                         >
-                                            <CustomHostNameForm 
+                                            <CustomHostNameForm
                                                 label="Host Name"
                                                 name="host_email_id"
                                                 value={formData.value}
-                                                onChange={e => handleChange('host_email_id', e.target.value)}                                                
+                                                onChange={e =>
+                                                    handleChange(
+                                                        'host_email_id',
+                                                        e.target.value
+                                                    )
+                                                }
                                                 options={hosts.users}
                                                 errors={!!error.host_email_id}
                                             />
-
                                         </Grid>
                                         <Grid
                                             item
@@ -328,11 +382,15 @@ const CreateSession = ({ componentName, timezoneID }) => {
                                                 label="Meeting Type"
                                                 name="meeting_type"
                                                 value={formData.value}
-                                                onChange={e => handleChange('meeting_type', e.target.value)}
+                                                onChange={e =>
+                                                    handleChange(
+                                                        'meeting_type',
+                                                        e.target.value
+                                                    )
+                                                }
                                                 options={meetingTypes}
                                                 errors={!!error.meeting_name}
                                             />
-
                                         </Grid>
                                     </>
                                 )}
@@ -354,7 +412,6 @@ const CreateSession = ({ componentName, timezoneID }) => {
                                     <CustomDateField
                                         label="From Date"
                                         name="fromDate"
-                                        
                                         value={formData.fromDate}
                                         onChange={date =>
                                             handleChange('fromDate', date)
@@ -402,7 +459,19 @@ const CreateSession = ({ componentName, timezoneID }) => {
                                     }
                                     errors={!!error.message}
                                     helperText={error.message}
-                                    sx={{ width: '100%' }}
+                                    sx={{
+                                        width: '100%',
+                                        '& .MuiOutlinedInput-root': {
+                                            '&.Mui-focused fieldset': {
+                                                borderColor: '#F56D3B',
+                                            },
+                                        },
+                                        '& .MuiInputLabel-root': {
+                                            '&.Mui-focused': {
+                                                color: '#000000',
+                                            },
+                                        },
+                                    }}
                                     multiline
                                     rows={4}
                                 />
@@ -422,7 +491,7 @@ const CreateSession = ({ componentName, timezoneID }) => {
                                     sx={{ width: '100%' }}
                                     value={timezoneID}
                                     // onChange={field.onChange}
-                                    disabled={timezoneID != null}
+                                    // disabled={timezoneID != null}
                                     options={timezones}
                                 />
                             </Grid>
@@ -449,7 +518,7 @@ const CreateSession = ({ componentName, timezoneID }) => {
                                             borderRadius: '50px',
                                             textTransform: 'none',
                                             padding: '18px 30px',
-                                            fontWeight: '700',
+                                            // fontWeight: '700',
                                             fontFamily: 'Regular',
                                             fontSize: '16px',
                                             '&:hover': {
@@ -470,7 +539,7 @@ const CreateSession = ({ componentName, timezoneID }) => {
                                             border: '2px solid #F56D3B',
                                             borderRadius: '50px',
                                             textTransform: 'none',
-                                            fontWeight: '700',
+                                            // fontWeight: '700',
                                             fontSize: '16px',
                                             fontFamily: 'Regular',
                                             padding: '18px 30px',
@@ -500,7 +569,7 @@ const CreateSession = ({ componentName, timezoneID }) => {
                 color: '#FFFFFF',
                 textTransform: 'none',
                 fontFamily: 'Bold',
-                textTransform: 'none' 
+                textTransform: 'none',
             }}
         >
             Submit

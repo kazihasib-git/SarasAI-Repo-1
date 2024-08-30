@@ -90,7 +90,6 @@ export const getTaMenuSessions = createAsyncThunk(
         const response = await axiosInstance.get(
             `${baseUrl}/ta/calendar/sessions`
         );
-        console.log(response.data, 'response.data');
         return response.data;
     }
 );
@@ -291,8 +290,51 @@ export const getTaMenuAssignedBatches = createAsyncThunk(
     }
 );
 
-//upload video
+// Update Students In Ta Session
+export const updateStudentsInTaSession = createAsyncThunk(
+    'taMenu/updateStudentsInTaSession',
+    async ({id, data }, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.post(
+                `${baseUrl}/ta/calendar/update-schedule-students/${id}`,
+                data
+            );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.error);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Update Students in Session'
+                );
+            }
+        }
+    }
+);
 
+// Update Batches in Ta Session
+export const updateBatchesInTaSession = createAsyncThunk(
+    'taMenu/updateBatchesInTaSession',
+    async ( {id, data},{ rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.post(
+                `${baseUrl}/ta/calendar/update-schedule-batches/${id}`,
+                data
+            )
+            return response.data;
+        }catch(error){
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.error);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Updating Batches In Session'
+                );
+            };   
+        }
+    }
+)
+
+//upload video
 export const uploadSessionRecording = createAsyncThunk(
     'taMenu/uploadSessionRecording',
     async ({ id, session_recording_url }) => {
@@ -521,15 +563,14 @@ export const taMenuSlice = createSlice({
             state.loading = false;
             state.taSessions = action.payload.data;
             toast.success(
-                action.payload.message || 'Session have been successfully created'
+                action.payload.message ||
+                    'Session have been successfully created'
             );
         });
         builder.addCase(createTaMenuSessions.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
-            toast.error(
-                action.payload || 'Failed to Create TA Sessions'
-            );
+            toast.error(action.payload || 'Failed to Create TA Sessions');
         });
 
         // Get Slots Between Dates
@@ -723,6 +764,34 @@ export const taMenuSlice = createSlice({
             state.error = action.error.message;
             state.assignedTaBatches = [];
         });
+
+
+        // Update Students In Session
+        builder.addCase(updateStudentsInTaSession.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(updateStudentsInTaSession.fulfilled, (state, action) => {
+            state.loading = false;
+            // TODO : ----->
+        })
+        builder.addCase(updateStudentsInTaSession.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+        })
+
+        //Update Batches In Session
+        builder.addCase(updateBatchesInTaSession.pending , (state) => {
+            state.loading = true;
+        })
+        builder.addCase(updateBatchesInTaSession.fulfilled, (state, action) => {
+            state.loading = false;
+            // TODO : ----->
+        })
+        builder.addCase(updateBatchesInTaSession.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+        })
+
 
         //upload video
         builder.addCase(uploadSessionRecording.pending, state => {

@@ -78,6 +78,24 @@ export const updateTA = createAsyncThunk(
         }
     }
 );
+export const activate_deactive_TA = createAsyncThunk(
+    'taModule/activate_deactive_ta',
+    async ({ id }, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.patch(
+                `${baseUrl}/admin/manage_tas/active-deactive/${id}`,
+               
+            );
+            return response.data;
+        } catch (error) {
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message)
+            }else{
+                return rejectWithValue('An Error Occurred While editing TA')
+            }
+        }
+    }
+);
 
 export const deleteTA = createAsyncThunk(
     'taModule/deleteTA', 
@@ -485,6 +503,27 @@ export const taSlice = createSlice({
             state.loading = false;
             state.error = action.payload || action.error.message;
             toast.error(action.payload || 'Failed To Update TA. Please Try Again')
+        });
+        
+        //activate deactivate Ta
+        builder.addCase(activate_deactive_TA.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(activate_deactive_TA.fulfilled, (state, action) => {
+            state.loading = false;
+            const index = state.tas.findIndex(
+                ta => ta.id === action.payload.id
+            );
+            if (index !== -1) {
+                state.tas[index] = action.payload;
+                // console.log("PAYLOAD ACTION : ", action.payload)
+            }
+            toast.success(action.payload.message || 'TA edited Successfully');
+        });
+        builder.addCase(activate_deactive_TA.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload || action.error.message;
+            toast.error(action.payload || 'Failed To Edit TA. Please Try Again')
         });
 
         // Delete TA

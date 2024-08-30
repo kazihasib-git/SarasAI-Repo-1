@@ -97,11 +97,13 @@ const SelectStudents = ({ componentName }) => {
         dispatch(getStudentsApi());
     }, [dispatch]);
 
-    console.log('Students Data : ', studentsData);
+    console.log('dataaa' , studentsData) ; 
+
 
     useEffect(() => {
         if (studentsData && studentsData.length > 0) {
-            const transformedData = studentsData.map((stu, index) => ({
+            const transformedData = studentsData.filter(item =>
+                item.student.batches.some(batch => batch.is_active === 1)).map((stu, index) => ({
                 'S. No.': index + 1,
                 'Student Name': stu.student.name,
                 Program:

@@ -15,6 +15,7 @@ import {
     getAssignBatches,
     toggleAssignBatchStatus,
 } from '../../redux/features/adminModule/ta/taSlice';
+import DeleteConfirmation from '../../components/CommonComponent/DeleteConfirmation';
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
     borderRadius: '50px',
@@ -102,6 +103,9 @@ const DynamicTable = ({
     }, [initialData]);
 
     const [currentPage, setCurrentPage] = useState(1);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [itemIdToDelete, setItemIdToDelete] = useState(null);
+
     const itemsPerPage = 10;
     const totalPages = Math.ceil(data.length / itemsPerPage);
     const currentData = data.slice(
@@ -139,7 +143,21 @@ const DynamicTable = ({
             );
         }
     };
-
+    const handleOpenDialog = (id, ta_id) => {
+        setItemIdToDelete(id);
+        setIsDialogOpen(true);
+    };
+    const handleCloseDialog = () => {
+        console.log('handledelte');
+        setIsDialogOpen(false);
+        setItemIdToDelete(null);
+    };
+    const handleConfirmDelete = (id, ta_id) => {
+        if (id) {
+            handleDelete(id, ta_id);
+        }
+        handleCloseDialog();
+    };
     const handleDelete = (id, ta_id) => {
         // Implement delete functionality here
         console.log('Deleting item with id:', id);
@@ -265,7 +283,7 @@ const DynamicTable = ({
                                                     key={idx}
                                                     color="primary"
                                                     onClick={() =>
-                                                        handleDelete(
+                                                        handleOpenDialog(
                                                             item.id,
                                                             ta_id
                                                         )
@@ -327,6 +345,13 @@ const DynamicTable = ({
                         },
                     }}
                 />
+                 {isDialogOpen && (
+                <DeleteConfirmation
+                open={isDialogOpen}
+                handleClose={handleCloseDialog}
+                onConfirm={()=>{handleConfirmDelete(itemIdToDelete,ta_id)}}
+             />
+            )}
             </div>
         </div>
     );
@@ -339,7 +364,7 @@ const actionButtons = [
     },
     {
         type: 'delete',
-        onClick: id => console.log(`Edit clicked for id ${id}`),
+        onClick: id => handleOpenDialog(id),
     },
 ];
 
