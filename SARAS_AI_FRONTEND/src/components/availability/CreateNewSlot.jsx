@@ -103,7 +103,52 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
         });
     };
 
+    function convertTo24Hour(time12h) {
+        const [time, modifier] = time12h.split(' ');
+    
+        let [hours, minutes] = time.split(':');
+    
+        if (hours === '12') {
+            hours = '00';
+        }
+    
+        if (modifier === 'PM') {
+            hours = parseInt(hours, 10) + 12;
+        }
+    
+        return [parseInt(hours, 10),minutes];
+    }
+
+    function isHourLessOrEqual(inputTime) {
+        // Get the current date and time
+        const currentTime = new Date();
+    
+        // Split the input time string into hour, minutes, and seconds
+        const [inputHour, inputMinutes, inputSeconds] = inputTime.split(':').map(Number);
+    
+        // Create a date object for the input time with today's date
+        const inputDate = new Date();
+        inputDate.setHours(inputHour, inputMinutes, inputSeconds);
+    
+        // Compare the input time with the current time
+        return inputDate <= currentTime;
+    }
+
     const validate = () => {
+
+        let currentDate = new Date();
+        let inputDate = new Date(fromDate)
+        
+
+        let sameDate = false;
+
+        if (currentDate.getFullYear() === inputDate.getFullYear() &&
+        currentDate.getMonth() === inputDate.getMonth() &&
+        currentDate.getDate() === inputDate.getDate()) {
+                console.log("Both dates are the same.");
+                sameDate = true;
+            }
+
         if (!fromDate) {
             toast.error('Please select From Date');
             return false;
@@ -124,6 +169,22 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
             toast.error('Please select at least one day');
             return false;
         }
+
+
+        
+        // if(sameDate && isHourLessOrEqual(fromTime)){
+        //     let today = new Date();
+        //     today.setDate(today.getDate() - 1)
+        //     let year = today.getFullYear();      // Gets the full year (e.g., 2024)
+        //     let month = today.getMonth() + 1;    // Gets the month (0-11, so add 1 to get 1-12)
+        //     let day = today.getDate();           // Gets the day of the month (1-31)
+
+        //     const formattedDate = `${day.toString().padStart(2, '0')}-${month.toString().padStart(2, '0')}-${year}`;
+
+        //     toast.error(`Please select date after ${formattedDate}`);
+        //     return false;
+        // }
+
         return true;
     };
 

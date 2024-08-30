@@ -198,26 +198,34 @@ console.log('reschedule session timezoneID' , timezoneID) ;
         );
     };
 
-    const handleSubmit = () => {
-        const errors = [];
-    
+    const validate = () => {
+
+
         if (!selectDate) {
-            errors.push('Please Select The Date');
+            toast.error('Please Select The Date');
+            return false;
         }
         if (!selectedSlots[0]) {
-            errors.push('Please Select the Slot');
+            toast.error('Please Select the Slot');
+            return false;
         }
         if (!fromTime) {
-            errors.push('Please Select the Start Time');
+            toast.error('Please Select the Start Time');
+            return false;
         }
         if (!toTime) {
-            errors.push('Please Select the End Time');
+            toast.error('Please Select the End Time');
+            return false;
         }
-    
-        if (errors.length) {
-            errors.forEach(error => toast.error(error));
-            return;
-        }
+
+        return true;
+
+
+    }
+
+    const handleSubmit = () => {
+
+        if(!validate()) return;
 
         const sessionId = sessionDataForReschdeule?.id || '';
 
