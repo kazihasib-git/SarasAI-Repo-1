@@ -18,6 +18,7 @@ import CustomDateField from '../../../CustomFields/CustomDateField';
 import ReusableDialog from '../../../CustomFields/ReusableDialog';
 import CustomButton from '../../../CustomFields/CustomButton';
 import { timezoneIdToName } from '../../../../utils/timezoneIdToName';
+import CustomFutureDateField from '../../../CustomFields/CustomFutureDateField';
 
 const MarkLeaveDate = ({ componentName, timezoneID }) => {
     const { timezones } = useSelector(state => state.util);
@@ -119,7 +120,7 @@ const MarkLeaveDate = ({ componentName, timezoneID }) => {
                 }}
             >
                 <Grid item xs={12} sm={6}>
-                    <CustomDateField
+                    <CustomFutureDateField
                         label="From Date"
                         name="fromDate"
                         value={formData.fromDate}
@@ -129,7 +130,7 @@ const MarkLeaveDate = ({ componentName, timezoneID }) => {
                     />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <CustomDateField
+                    <CustomFutureDateField
                         label="To Date"
                         name="toDate"
                         value={formData.toDate}

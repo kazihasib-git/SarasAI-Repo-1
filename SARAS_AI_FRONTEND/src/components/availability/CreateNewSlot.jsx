@@ -29,6 +29,7 @@ import {
 } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import { toast } from 'react-toastify';
 import CustomButton from '../CustomFields/CustomButton';
+import CustomFutureDateField from '../CustomFields/CustomFutureDateField';
 
 const weekDays = [
     'Sunday',
@@ -213,10 +214,18 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
         formData.weeks = weeksArray;
         formData.admin_user_id = taId.id;
         formData.timezone_id = `${timezoneID}`;
-        dispatch(createSlotApi(formData)).then(() => {
+        dispatch(createSlotApi(formData))
+        .unwrap() // Ensure to unwrap the promise for direct handling
+        .then(() => {
             dispatch(closeCreateNewSlots());
             dispatch(getSlotsApi(taId.id));
+            toast.success('Slot has been successfully created');
+        })
+        .catch(error => {
+            console.error('Error creating slot:', error);
+            toast.error(` ${error}`);
         });
+    
     };
 
     const content = (
@@ -245,7 +254,7 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
                             display="flex"
                             justifyContent="center"
                         >
-                            <CustomDateField
+                            <CustomFutureDateField
                                 label="From Date"
                                 value={fromDate}
                                 onChange={date => setFromDate(date)}

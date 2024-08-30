@@ -244,7 +244,11 @@ const ScheduledCall = ({ role }) => {
     const handleClose = () => {
         setNewMeetingPopUpOpen(false);
     };
-
+    const sortedCalls = scheduledCalls.sort((a, b) => {
+        const timeA = moment(a.start_time, 'HH:mm A'); 
+        const timeB = moment(b.start_time, 'HH:mm A');
+        return timeA - timeB;
+    });
     const onNewMeetingSubmit = props => {
         console.log(props);
         setNewMeetingPopUpOpen(false);
@@ -369,7 +373,7 @@ const ScheduledCall = ({ role }) => {
             </LocalizationProvider> 
 
             <Grid container spacing={2}>
-                {scheduledCalls.map(call => (
+                {sortedCalls.map(call => (
                     <Grid item key={call.id} xs={12} sm={6} md={4}>
                         <Card
                             sx={{

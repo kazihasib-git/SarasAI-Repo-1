@@ -472,7 +472,7 @@ export const coachAvailabilitySlice = createSlice({
         builder.addCase(createCoachSlots.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
-            toast.error(action.payload || 'Failed To Create Slot')
+            // toast.error(action.payload || 'Failed To Create Slot')
         });
 
         builder.addCase(getCoachScheduleSession.pending, state => {
@@ -506,12 +506,12 @@ export const coachAvailabilitySlice = createSlice({
         });
         builder.addCase(deleteCoachFutureSlots.fulfilled, (state, action) => {
             state.loading = false;
-            toast.success(action.payload.message || 'All Future Slots Deleted Successfully')
+            // toast.success(action.payload.message || 'All Future Slots Deleted Successfully')
         });
         builder.addCase(deleteCoachFutureSlots.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
-            toast.error(action.payload || 'Failed To Delete All Future Slots')
+            // toast.error(action.payload || 'Failed To Delete All Future Slots')
         });
 
         // Reason for Leave
@@ -521,12 +521,12 @@ export const coachAvailabilitySlice = createSlice({
         builder.addCase(reasonForCoachLeave.fulfilled, (state, action) => {
             state.loading = false;
             state.reasonForCoachLeaveData = action.payload.data;
-            toast.success(action.payload.message || 'Marked Leave Successfully')
+            // toast.success(action.payload.message || 'Marked Leave Successfully')
         });
         builder.addCase(reasonForCoachLeave.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
-            toast.error(action.payload || 'Failed To Mark Leave')
+            // toast.error(action.payload || 'Failed To Mark Leave')
         });
 
         // Get Coach Scheduled Students

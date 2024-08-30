@@ -483,12 +483,12 @@ export const taAvailabilitySlice = createSlice({
         });
         builder.addCase(createSlots.fulfilled, (state, action) => {
             state.loading = false;
-            toast.success(action.payload.message || 'Slot Created Successfully')
+            // toast.success(action.payload.message || 'Slot Created Successfully')
         });
         builder.addCase(createSlots.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
-            toast.error(action.payload || 'Failed To Create Slot')
+            // toast.error(action.payload || 'Failed To Create Slot')
         });
 
         // Get Schedule Session
@@ -528,12 +528,12 @@ export const taAvailabilitySlice = createSlice({
         });
         builder.addCase(deleteTaFutureSlots.fulfilled, (state, action) => {
             state.loading = false;
-            toast.success(action.payload.message || 'All Future Slots Deleted Successfully')
+            // toast.success(action.payload.message || 'All Future Slots Deleted Successfully')
         });
         builder.addCase(deleteTaFutureSlots.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
-            toast.error(action.payload || 'Failed To Delete All Future Slots')
+            // toast.error(action.payload || 'Failed To Delete All Future Slots')
         });
 
         // Reason for Leave
@@ -548,7 +548,7 @@ export const taAvailabilitySlice = createSlice({
         builder.addCase(reasonForLeave.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
-            toast.error(action.payload || 'Failed To Mark Leave')
+            // toast.error(action.payload || 'Failed To Mark Leave')
         });
 
         // Change Platform

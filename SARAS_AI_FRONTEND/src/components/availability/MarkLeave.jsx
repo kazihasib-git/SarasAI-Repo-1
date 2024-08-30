@@ -18,6 +18,7 @@ import {
 } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import CustomButton from '../CustomFields/CustomButton';
 import { timezoneIdToName } from '../../utils/timezoneIdToName';
+import CustomFutureDateField from '../CustomFields/CustomFutureDateField';
 
 const MarkLeave = ({ componentName, timezoneID }) => {
     const { id: taId } = useParams(); // Ensure taId is correctly extracted
@@ -121,14 +122,14 @@ const MarkLeave = ({ componentName, timezoneID }) => {
             }}
         >
             <Grid item xs={12} sm={6} sx={{ pr: 2 }}>
-                <CustomDateField
+                <CustomFutureDateField
                     label="From Date"
                     value={fromDate}
                     onChange={setFromDate}
                 />
             </Grid>
             <Grid item xs={12} sm={6} sx={{ pl: 2 }}>
-                <CustomDateField
+                <CustomFutureDateField
                     label="To Date"
                     value={toDate}
                     onChange={setToDate}

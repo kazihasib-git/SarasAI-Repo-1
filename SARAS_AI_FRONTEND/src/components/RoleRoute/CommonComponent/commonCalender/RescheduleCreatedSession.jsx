@@ -14,6 +14,7 @@ import { getTaMenuSessionForLeave, getTaMenuSessions, getTaMenuSlots, getTaMenuS
 import { convertFromUTC } from '../../../../utils/dateAndtimeConversion';
 import { toast } from 'react-toastify';
 import PopTableSlot from '../../../CommonComponent/PopTableSlot';
+import CustomFutureDateField from '../../../CustomFields/CustomFutureDateField';
  
 const CustomButton = ({
     onClick,
@@ -260,7 +261,7 @@ console.log('reschedule session timezoneID' , timezoneID) ;
                 pt={'16px'}
                 style={{ display: 'flex', justifyContent: 'center' }}
             >
-                <CustomDateField
+                <CustomFutureDateField
                     label="Select Date"
                     value={selectDate}
                     onChange={handleDateChange}

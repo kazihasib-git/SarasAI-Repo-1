@@ -24,7 +24,7 @@ import {
 } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import CustomButton from '../CustomFields/CustomButton';
 import { Controller, useForm } from 'react-hook-form';
-
+import { toast } from 'react-toastify';
 const DeleteAllSlots = ({ componentName }) => {
 
     const dispatch = useDispatch();
@@ -83,7 +83,7 @@ const DeleteAllSlots = ({ componentName }) => {
     }
 
     const onSubmit = async () => {
-        try {
+        
             //get today date in YYYY-MM-DD format
             // const today = new Date();
             // const dd = String(today.getDate()).padStart(2, '0');
@@ -97,15 +97,18 @@ const DeleteAllSlots = ({ componentName }) => {
             // };
 
             // dispatch actions
-            dispatch(deleteFutureSlotsApi(userId)).then(() => {
-                // console.log('FEtching data after deleting slots');
+            dispatch(deleteFutureSlotsApi(userId))
+            .unwrap() 
+            .then(() => {
                 dispatch(closePopupAction());
                 dispatch(getSlotsApi(userId));
                 dispatch(getSessionsApi(userId));
+                toast.success('Slot(s) have been successfully deleted.');
+            })
+            .catch(error => {
+               
+                toast.error(` ${error}`);
             });
-        } catch (error) {
-            console.log('Error : ', error);
-        }
     };
 
     useEffect(() => {
