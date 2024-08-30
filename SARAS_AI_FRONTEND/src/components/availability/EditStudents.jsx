@@ -131,7 +131,9 @@ const EditStudents = ({ componentname }) => {
     useEffect(() => {
         if (assignedStudents) {
             // Transform and filter the data
-            const transformedData = assignedStudents.map((stu, index) => ({
+            const transformedData = assignedStudents
+            .filter(item => item.is_active === 1)
+            .map((stu, index) => ({
                 'S. No.': index + 1,
                 'Student Name': stu.student.name,
                 Program:
@@ -303,7 +305,7 @@ const EditStudents = ({ componentname }) => {
 
         dispatch(closeDialogAction());
     };
-
+console.log('student data ::' , filteredStudents)
     const headers = ['S. No.', 'Student Name', 'Program', 'Batch', 'Select'];
 
     const content = (

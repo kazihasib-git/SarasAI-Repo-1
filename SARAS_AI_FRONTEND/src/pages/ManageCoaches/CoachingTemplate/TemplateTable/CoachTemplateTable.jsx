@@ -8,7 +8,7 @@ import editIcon from '../../../../assets/editIcon.png';
 import bin from '../../../../assets/bin.png';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { useDispatch } from 'react-redux';
-
+import { updateCoachActivity } from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
 const CoachTemplateTable = ({
     headers,
     initialData,
@@ -63,7 +63,12 @@ const CoachTemplateTable = ({
         }
     };
 
-    const handleToggle = id => {
+    const handleToggle = (id ,event)=> {
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        console.log('updatedData', { id, data });
         const updatedData = data.map(item =>
             item.id === id
                 ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
@@ -72,11 +77,11 @@ const CoachTemplateTable = ({
         setData(updatedData);
 
         const toggledItem = updatedData.find(item => item.id === id);
-        const requestData = { is_active: toggledItem.is_active };
+        const requestData = { activity_id: toggledItem.id, status: toggledItem.is_active };
 
         switch (componentName) {
-            case 'MANAGETA':
-                // dispatch(updateTA({ id, data: requestData }));
+            case 'COACHTEMPLATE':
+                dispatch(updateCoachActivity({ data: requestData }));
                 break;
             default:
                 console.warn(
@@ -98,7 +103,7 @@ const CoachTemplateTable = ({
     //         return "#000000";
     //     }
     //   };
-
+    console.log('currunt data', currentData);
     return (
         <div className="tableContainer">
             <table>
@@ -194,7 +199,7 @@ const CoachTemplateTable = ({
                                                 return (
                                                     <AntSwitch
                                                         key={idx}
-                                                        checked={item.is_active}
+                                                        checked={item.is_active} 
                                                         onChange={() =>
                                                             handleToggle(
                                                                 item.id
