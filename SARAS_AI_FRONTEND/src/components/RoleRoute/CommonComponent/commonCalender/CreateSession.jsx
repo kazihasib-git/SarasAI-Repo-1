@@ -412,7 +412,7 @@ const CreateSession = ({ componentName, timezoneID }) => {
                                     sx={{ width: '100%' }}
                                     value={timezoneID}
                                     // onChange={field.onChange}
-                                    disabled={timezoneID != null}
+                                    // disabled={timezoneID != null}
                                     options={timezones}
                                 />
                             </Grid>
