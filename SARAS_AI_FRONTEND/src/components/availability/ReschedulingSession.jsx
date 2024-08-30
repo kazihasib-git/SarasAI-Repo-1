@@ -39,6 +39,7 @@ import PopTableSlot from '../CommonComponent/PopTableSlot';
 const headers = ['S. No.', 'Slots Available', 'Select'];
 
 const ReschedulingSession = ({ componentName, timezoneID }) => {
+    
     const { timezones, platforms , hosts} = useSelector(state => state.util);
 
     const taId = useParams();
@@ -58,7 +59,7 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
     const [meetingType, setMeetingType] = useState(''); 
     const [toTime, setToTime] = useState(null);
     const [transformedSlotsData, setTransformedSlotsData] = useState([]);
-    const [meetingTypes, setMeetingtypes] = useState(['Webinar' , 'Meeting']) ;
+    const [meetingTypes, setMeetingtypes] = useState(['webinars', 'meetings']);
     const {
         control,
         formState: { errors },

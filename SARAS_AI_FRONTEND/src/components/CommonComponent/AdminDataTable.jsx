@@ -19,6 +19,7 @@ import {
     toggleCoachAssignBatchStatus,
     toggleCoachAssignStudentStatus,
 } from '../../redux/features/adminModule/coach/coachSlice';
+import DeleteConfirmation from './DeleteConfirmation';
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
     borderRadius: '50px',
@@ -108,6 +109,9 @@ const AdminDataTable = ({
     }, [initialData]);
 
     const [currentPage, setCurrentPage] = useState(1);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [itemIdToDelete, setItemIdToDelete] = useState(null);
+
     const itemsPerPage = 10;
     const totalPages = Math.ceil(data.length / itemsPerPage);
     const currentData = data.slice(
@@ -119,25 +123,48 @@ const AdminDataTable = ({
     const handlePageChange = (event, pageNumber) => {
         setCurrentPage(pageNumber);
     };
-
+    const handleOpenDialog = (id, ta_id) => {
+        setItemIdToDelete(id);
+        setIsDialogOpen(true);
+    };
+    const handleConfirmDelete = (id, ta_id) => {
+        if (id) {
+            handleDelete(id);
+        }
+        handleCloseDialog();
+    };
+    const handleCloseDialog = () => {
+        console.log('handledelte');
+        setIsDialogOpen(false);
+        setItemIdToDelete(null);
+    };
+    const handleDelete = id => {
+        switch (componentName) {
+            case 'ASSIGNCOACHSTUDENT':
+                dispatch(deleteCoachAssignedStudent({ id })).then(() => {
+                    dispatch(getCoachAssignStudents(ta_id));
+                });
+                break;
+            case 'ASSIGNCOACHBATCH':
+                dispatch(deleteCoachAssignedBatch({ id })).then(() => {
+                    dispatch(getCoachAssignBatches(ta_id));
+                });
+                break;
+            default:
+                console.warn(
+                    `No delete action defined for component: ${componentName}`
+                );
+                break;
+        }
+    };
+    
     const handleToggle = id => {
         // Log the initial state of the item being toggled
-        console.log('Toggling ID:', id);
-        console.log(
-            'Before Toggle:',
-            data.find(item => item.id === id)
-        );
 
         const updatedData = data.map(item =>
             item.id === id
                 ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
                 : item
-        );
-
-        // Log the updated state of the item
-        console.log(
-            'After Toggle:',
-            updatedData.find(item => item.id === id)
         );
 
         setData(updatedData);
@@ -170,25 +197,7 @@ const AdminDataTable = ({
         }
     };
 
-    const handleDelete = id => {
-        switch (componentName) {
-            case 'ASSIGNCOACHSTUDENT':
-                dispatch(deleteCoachAssignedStudent({ id })).then(() => {
-                    dispatch(getCoachAssignStudents(ta_id));
-                });
-                break;
-            case 'ASSIGNCOACHBATCH':
-                dispatch(deleteCoachAssignedBatch({ id })).then(() => {
-                    dispatch(getCoachAssignBatches(ta_id));
-                });
-                break;
-            default:
-                console.warn(
-                    `No delete action defined for component: ${componentName}`
-                );
-                break;
-        }
-    };
+    
 
     const handleNavigate = path => {
         navigate(path);
@@ -300,7 +309,10 @@ const AdminDataTable = ({
                                                     key={idx}
                                                     color="primary"
                                                     onClick={() =>
-                                                        handleDelete(item.id)
+                                                        handleOpenDialog(
+                                                            item.id,
+                                                            ta_id
+                                                        )
                                                     }
                                                 >
                                                     <img
@@ -359,6 +371,13 @@ const AdminDataTable = ({
                         },
                     }}
                 />
+                 {isDialogOpen && (
+                <DeleteConfirmation
+                open={isDialogOpen}
+                handleClose={handleCloseDialog}
+                onConfirm={()=>{handleConfirmDelete(itemIdToDelete,ta_id)}}
+             />
+                 )}
             </div>
         </div>
     );

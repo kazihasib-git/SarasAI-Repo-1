@@ -28,12 +28,12 @@ const CustomTimeZoneForm = ({
                 shrink
                 style={{ margin: 0 }}
                 sx={{
-                    color: hasError ? '#d32f2f' : '#1A1E3D',
+                    color: hasError ? '#1A1E3D' : '#1A1E3D',
                     '&.Mui-focused': {
                         color: '#1A1E3D', // Change label color on focus regardless of error
                     },
                     '&.MuiFormLabel-filled': {
-                        color: hasError ? '#d32f2f' : '#1A1E3D', // Change label color when the field is filled
+                        color: hasError ? '#1A1E3D' : '#1A1E3D', // Change label color when the field is filled
                     },
                     backgroundColor: 'white',
                 }}

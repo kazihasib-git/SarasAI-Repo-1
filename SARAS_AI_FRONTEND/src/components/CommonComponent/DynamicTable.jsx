@@ -25,9 +25,9 @@ import {
     updateWOLQuestion,
 } from '../../redux/features/adminModule/coachingTools/wol/wolSlice';
 import { openScheduleSession } from '../../redux/features/adminModule/ta/taScheduling';
-
-import { updateTA } from '../../redux/features/adminModule/ta/taSlice';
-import { updateCoach } from '../../redux/features/adminModule/coach/coachSlice';
+import { openDeleteTaSlots } from '../../redux/features/adminModule/ta/taAvialability';
+import { updateTA, activate_deactive_TA } from '../../redux/features/adminModule/ta/taSlice';
+import { activate_deactivate_Coach, updateCoach } from '../../redux/features/adminModule/coach/coachSlice';
 import { openCoachScheduleSession } from '../../redux/features/adminModule/coach/coachSchedule';
 import AssessmentDialog from '../../pages/MODULE/coachModule/AssessmentDialog';
 import {
@@ -38,6 +38,7 @@ import {
     deleteCoachMapping,
     showCoachMapping,
 } from '../../redux/features/adminModule/coach/coachSlice';
+import DeleteConfirmation from './DeleteConfirmation';
 
 const DynamicTable = ({
     headers,
@@ -59,6 +60,8 @@ const DynamicTable = ({
     const [modalOpen, setModalOpen] = useState(false);
     const [modalData, setModalData] = useState(null);
     const [assessmentData, setAssessmentData] = useState([]);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [itemIdToDelete, setItemIdToDelete] = useState(null);
 
     useEffect(() => {
         setData(
@@ -67,10 +70,10 @@ const DynamicTable = ({
                 is_active: item.is_active !== undefined ? item.is_active : 0,
             }))
         );
-        
+
         // Calculate new total pages
         const newTotalPages = Math.ceil(initialData.length / itemsPerPage);
-        
+
         // Adjust current page if it's now out of bounds
         if (currentPage > newTotalPages) {
             setCurrentPage(Math.max(1, newTotalPages));
@@ -89,7 +92,24 @@ const DynamicTable = ({
         const maxPage = Math.ceil(data.length / itemsPerPage);
         setCurrentPage(Math.min(Math.max(1, pageNumber), maxPage));
     };
+    const handleOpenDialog = itemId => {
+        setItemIdToDelete(itemId);
+        setIsDialogOpen(true);
+       
+    };
 
+    const handleCloseDialog = () => {
+        console.log("handledelte");
+        setIsDialogOpen(false);
+        setItemIdToDelete(null);
+       
+    };
+    const handleConfirmDelete = id => {
+        if (id) {
+            handleDelete(id);
+        }
+        handleCloseDialog();
+    };
     const handleDelete = id => {
         console.log('COMPONENTNAME : ', componentName);
         if (componentName === 'TAMAPPING') {
@@ -181,7 +201,7 @@ const DynamicTable = ({
     };
 
     const handlePopup = (id, name, timezone) => {
-        console.log('schedulingnn timezoneid' , id) ; 
+        console.log('schedulingnn timezoneid', id);
         const data = { id, name, timezone };
         if (componentName === 'TAMAPPING') {
             dispatch(openScheduleSession(data));
@@ -196,11 +216,14 @@ const DynamicTable = ({
             event.preventDefault();
             event.stopPropagation();
         }
+        
         const updatedData = data.map(item =>
+            
             item.id === id
                 ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
                 : item
         );
+        
         setData(updatedData);
         // const toggleButton = actionButtons.find(
         //     action => action.type === 'switch'
@@ -214,11 +237,11 @@ const DynamicTable = ({
 
         switch (componentName) {
             case 'MANAGETA':
-                dispatch(updateTA({ id, data: requestData }));
+                dispatch(activate_deactive_TA({ id  }));
                 break;
 
             case 'MANAGECOACH':
-                dispatch(updateCoach({ id, data: requestData }));
+                dispatch(activate_deactivate_Coach({ id }));
                 break;
 
             case 'WOLCATEGORY':
@@ -436,7 +459,8 @@ const DynamicTable = ({
                                                             color: '#F56D3B',
                                                             backgroundColor:
                                                                 '#FEEBE3',
-                                                            gap: '4px',height: '30px',
+                                                            gap: '4px',
+                                                            height: '30px',
                                                             width: '70px',
                                                             borderRadius:
                                                                 '15px',
@@ -477,11 +501,17 @@ const DynamicTable = ({
                                             }
                                             if (button.type === 'delete') {
                                                 return (
+                                                    <>
                                                     <IconButton
                                                         key={idx}
                                                         color="primary"
+                                                        // onClick={() =>
+                                                        //     handleDelete(
+                                                        //         item.id
+                                                        //     )
+                                                        // }
                                                         onClick={() =>
-                                                            handleDelete(
+                                                            handleOpenDialog(
                                                                 item.id
                                                             )
                                                         }
@@ -495,6 +525,7 @@ const DynamicTable = ({
                                                             }}
                                                         />
                                                     </IconButton>
+                                                    </>
                                                 );
                                             }
                                             if (button.type === 'calendar') {
@@ -622,6 +653,13 @@ const DynamicTable = ({
                     onClose={() => setassessmentModalOpen(false)}
                     assessmentData={assessmentData}
                 />
+            )}
+            {isDialogOpen && (
+                <DeleteConfirmation
+                open={isDialogOpen}
+                handleClose={handleCloseDialog}
+                onConfirm={()=>{handleConfirmDelete(itemIdToDelete)}}
+             />
             )}
             <Modal
                 open={modalOpen}

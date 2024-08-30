@@ -134,7 +134,8 @@ const EditBatches = ({ componentname }) => {
 
     useEffect(() => {
         if (assignedBatches) {
-            const transformedData = assignedBatches.map((batch, index) => ({
+            const transformedData = assignedBatches.filter(item => item.is_active === 1)
+            .map((batch, index) => ({
                 'S. No.': index + 1,
                 'Batch Name': batch.batch.name,
                 Branch: batch.batch.branch.name,

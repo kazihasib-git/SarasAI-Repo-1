@@ -334,6 +334,7 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
                             <Grid
                                 item
                                 xs={12}
+                                sm={6}
                                 display="flex"
                                 justifyContent="center"
                             >
@@ -364,13 +365,24 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
                             <>
                                 <Grid
                                     container
-                                    spacing={3}
-                                    justifyContent="center"
-                                    sx={{ pt: 3 }}
+                                    sx={{
+                                        display: 'flex',
+                                        justifyContent: 'center', // Center the checkboxes
+                                        gap: 2,
+                                        flexWrap: 'wrap',
+                                        maxWidth: '65%',
+                                        marginLeft: 'auto',
+                                        marginRight: 'auto',
+                                    }}
                                 >
                                     <Grid item xs={12}>
                                         <FormControl component="fieldset">
-                                            <FormGroup row>
+                                            <FormGroup
+                                                row
+                                                sx={{
+                                                    justifyContent: 'center',
+                                                }}
+                                            >
                                                 {weekDays.map(day => (
                                                     <FormControlLabel
                                                         key={day}
@@ -438,7 +450,7 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
                 backgroundColor="#F56D3B"
                 color="white"
                 borderColor="#F56D3B"
-                textTransform= "none"
+                textTransform="none"
             >
                 Submit
             </CustomButton>

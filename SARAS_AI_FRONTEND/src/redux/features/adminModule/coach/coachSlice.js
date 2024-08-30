@@ -85,6 +85,26 @@ export const updateCoach = createAsyncThunk(
     }
 );
 
+export const activate_deactivate_Coach = createAsyncThunk(
+    'coachModule/activate_deactivate_Coach',
+    async ({ id }, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.patch(
+                `${baseUrl}/admin/manage_coaches/active-deactive/${id}`,
+                
+            );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Editing Coach'
+                );
+            }
+        }
+    }
+);
 export const deleteCoach = createAsyncThunk(
     'coachModule/deleteCoach',
     async (id, { rejectWithValue }) => {
@@ -545,6 +565,31 @@ export const coachSlice = createSlice({
             state.error = action.payload || action.error.message;
             toast.error(
                 action.payload || 'Failed To Update Coach. Please Try Again'
+            );
+        });
+        
+        // activate deactive coach
+
+        builder.addCase(activate_deactivate_Coach.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(activate_deactivate_Coach.fulfilled, (state, action) => {
+            state.loading = false;
+            const index = state.coaches.findIndex(
+                coach => coach.id === action.payload.id
+            );
+            if (index !== -1) {
+                state.coaches[index] = action.payload;
+            }
+            toast.success(
+                action.payload.message || 'Coach edited Successfully'
+            );
+        });
+        builder.addCase(activate_deactivate_Coach.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload || action.error.message;
+            toast.error(
+                action.payload || 'Failed To edit Coach. Please Try Again'
             );
         });
 

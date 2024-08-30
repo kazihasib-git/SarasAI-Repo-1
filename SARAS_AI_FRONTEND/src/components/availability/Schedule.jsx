@@ -48,6 +48,9 @@ import { fetchCoachScheduleById } from '../../redux/features/adminModule/coach/C
 import CustomButton from '../CustomFields/CustomButton';
 import CustomPlatformForm from '../CustomFields/CustomPlatformForm';
 
+import editButtonBackground from '../../assets/editbuttonbackground.svg';
+import editButtonIcon from '../../assets/editbutton.svg';
+
 const headers = ['S. No.', 'Slot Date', 'From Time', 'To Time', 'Select'];
 
 const weekDays = [
@@ -79,6 +82,7 @@ const Schedule = ({ componentName, timezoneID }) => {
     const [dateSelected, setDateSelected] = useState(false);
     const dispatch = useDispatch();
     const { timezones, platforms, hosts } = useSelector(state => state.util);
+
     const [meetingTypes, setMeetingtypes] = useState(['webinars', 'meetings']);
 
     let scheduleSessionOpenKey,
@@ -199,6 +203,9 @@ const Schedule = ({ componentName, timezoneID }) => {
                 setSelectedSlot(null);
                 setDateSelected(true);
             });
+        } else {
+            toast.error('Please Select From Date');
+            return;
         }
     };
 
@@ -332,53 +339,71 @@ const Schedule = ({ componentName, timezoneID }) => {
         }
     };
 
-    const validate = () => {
+    const validate = (formData) => {
+        // Ensure all required fields are filled in
         if (!fromTime) {
-            toast.error('Please select from time');
-            return;
+            toast.error('Please select a From Time');
+            return false;
         }
-
+    
         if (!toTime) {
-            toast.error('Please select to time');
-            return;
+            toast.error('Please select a To Time');
+            return false;
         }
-
+    
         if (students.length === 0) {
             toast.error('Please assign students');
-            return;
-        } else if (batches.length === 0) {
+            return false;
+        }
+    
+        if (batches.length === 0) {
             toast.error('Please assign batches');
-            return;
+            return false;
         }
-
-        // if (toTime) {
-        //     if (toTime < fromTime) {
-        //         toast.error('To time should be greater than from time!');
-        //     }
-        // }
-
-        if (!fromDate || !fromTime || !toTime) {
-            toast.error('Please fill in all fields');
-            return;
+    
+        if (!fromDate) {
+            toast.error('Please select from Date');
+            return false;
         }
-
-        // if (toDate < fromDate) {
-        //     toast.error('To Date should be greater than From Date!');
-        //     return;
-        // }
-
-        if (toTime < fromTime) {
-            toast.error('To Time should be greater than From Time!');
-            return;
+    
+        // Validate "To Time" is greater than "From Time"
+        const fromTimeInMinutes = convertTimeToMinutes(fromTime);
+        const toTimeInMinutes = convertTimeToMinutes(toTime);
+    
+        if (toTimeInMinutes <= fromTimeInMinutes) {
+            toast.error('To Time must be later than From Time');
+            return false;
         }
-        if (!formData.host_email_id) {
-            toast.error('Please provide a valid email.');
-            return;
+    
+        // Validate that selected times are within the slot's time range
+        const slotStartTimeInMinutes = convertTimeToMinutes(selectedSlot['From Time']);
+        const slotEndTimeInMinutes = convertTimeToMinutes(selectedSlot['To Time']);
+    
+        if (fromTimeInMinutes < slotStartTimeInMinutes || toTimeInMinutes > slotEndTimeInMinutes) {
+            toast.error(`Time must be between ${formatTime(selectedSlot['From Time'])} and ${formatTime(selectedSlot['To Time'])}`);
+            return false;
         }
-        if (!formData.meeting_type) {
-            toast.error('Please provide Meeting Type.');
-            return;
+    
+        if (formData.platform_id === 1) {
+            if (!formData.host_email_id) {
+                toast.error('Please provide a valid email.');
+                return false;
+            }
+    
+            if (!formData.meeting_type) {
+                toast.error('Please select Meeting Type.');
+                return false;
+            }
+            
         }
+        
+        // Check if 'timezone_id' is provided
+        if (!formData.timezone_id) {
+            toast.error('Please select a timezone');
+            return false;
+        }    
+    
+        return true;
     };
 
     const formatTime = time => {
@@ -390,49 +415,14 @@ const Schedule = ({ componentName, timezoneID }) => {
         return `${formattedHour}:${minute < 10 ? '0' : ''}${minute} ${ampm}`;
     };
 
-    const onSubmit = formData => {
-        // Ensure "From Time" and "To Time" are selected
-        if (!fromTime) {
-            toast.error('Please select a From Time');
-            return;
-        }
-
-        if (!toTime) {
-            toast.error('Please select a To Time');
-            return;
-        }
-
-        // Convert times to minutes for easier comparison
-        const fromTimeInMinutes = convertTimeToMinutes(fromTime);
-        const toTimeInMinutes = convertTimeToMinutes(toTime);
-        const slotStartTimeInMinutes = convertTimeToMinutes(
-            selectedSlot['From Time']
-        );
-        const slotEndTimeInMinutes = convertTimeToMinutes(
-            selectedSlot['To Time']
-        );
-
-        // Validate that selected times are within the slot's time range
-        if (
-            fromTimeInMinutes < slotStartTimeInMinutes ||
-            toTimeInMinutes > slotEndTimeInMinutes
-        ) {
-            toast.error(
-                `Time must be between ${formatTime(selectedSlot['From Time'])} and ${formatTime(selectedSlot['To Time'])}`
-            );
-            return;
-        }
-
-        // Validate that "To Time" is greater than "From Time"
-        if (toTimeInMinutes <= fromTimeInMinutes) {
-            toast.error('To Time must be later than From Time');
-            return;
-        }
-
-        // Continue with the submission if all validations pass
+    const onSubmit = (formData) => {
+        // Perform validation
+        if (!validate(formData)) return;
+    
+        // Prepare data for submission
         const studentId = students.map(student => student.id);
         const batchId = batches.map(batch => batch.id);
-
+    
         let weeksArray = Array(7).fill(0);
         if (repeat === 'recurring') {
             selectedDays.forEach(day => {
@@ -443,7 +433,8 @@ const Schedule = ({ componentName, timezoneID }) => {
             const index = new Date(fromDate).getDay();
             weeksArray[index] = 1;
         }
-
+    
+        // Add validated fields to formData
         formData.start_time = fromTime;
         formData.end_time = toTime;
         formData.schedule_date = fromDate;
@@ -455,7 +446,8 @@ const Schedule = ({ componentName, timezoneID }) => {
         formData.studentId = studentId;
         formData.batchId = batchId;
         formData.timezone_id = timezoneId ? Number(timezoneId) : timezoneID;
-
+    
+        // Submit data
         dispatch(createScheduleAction(formData))
             .then(() => {
                 dispatch(closeScheduleSessionAction());
@@ -486,7 +478,7 @@ const Schedule = ({ componentName, timezoneID }) => {
             alignItems="center"
             sx={{ height: '100%', width: '100%' }}
         >
-            <Grid container spacing={3} justifyContent="center">
+            <Grid container spacing={3} justifyContent="center" mt={0}>
                 <form onSubmit={handleSubmit(onSubmit)} noValidate>
                     <Box display="flex" justifyContent="center" m={4}>
                         <Grid container spacing={3} justifyContent="center">
@@ -496,6 +488,7 @@ const Schedule = ({ componentName, timezoneID }) => {
                                 sm={6}
                                 display="flex"
                                 justifyContent="center"
+                                mt={0}
                             >
                                 {/* //TODO : NEED TO SHOW ERROR MESSAGE ERROR HERE WHEN FIELD IS NOT FILLED  */}
                                 <CustomDateField
@@ -687,9 +680,9 @@ const Schedule = ({ componentName, timezoneID }) => {
                                                                     onChange={
                                                                         field.onChange
                                                                     }
-                                                                    errors={
-                                                                        errors
-                                                                    }
+                                                                    errors={{
+                                                                        errors,
+                                                                    }}
                                                                     options={
                                                                         platforms
                                                                     }
@@ -781,14 +774,83 @@ const Schedule = ({ componentName, timezoneID }) => {
                                                             sx={{ mb: 3 }}
                                                         >
                                                             <Button
+                                                                variant="outlined"
+                                                                onClick={
+                                                                    handleAssignBatches
+                                                                }
+                                                                sx={{
+                                                                    backgroundColor:
+                                                                        '#FEEBE3',
+                                                                    color: '#F56D3B',
+
+                                                                    height: '60px',
+                                                                    width: '201px',
+
+                                                                    border: 'none',
+                                                                    borderRadius:
+                                                                        '50px',
+                                                                    textTransform:
+                                                                        'none',
+                                                                    fontWeight:
+                                                                        '400',
+                                                                    fontSize:
+                                                                        '16px',
+                                                                    fontFamily:
+                                                                        'Regular',
+                                                                    padding:
+                                                                        '18px 30px',
+                                                                    pl: '50px',
+                                                                    '&:hover': {
+                                                                        backgroundColor:
+                                                                            'unset', // Remove hover background color
+                                                                    },
+                                                                    '&::before':
+                                                                        {
+                                                                            content:
+                                                                                '""',
+                                                                            display:
+                                                                                'block',
+                                                                            backgroundImage: `url(${editButtonBackground})`,
+                                                                            backgroundSize:
+                                                                                '100% 100%',
+                                                                            width: '15px',
+                                                                            height: '15px',
+                                                                            position:
+                                                                                'absolute',
+                                                                            left: '25px',
+                                                                            top: '50%',
+                                                                            transform:
+                                                                                'translateY(-50%)',
+                                                                        },
+                                                                    '&::after':
+                                                                        {
+                                                                            content:
+                                                                                '""',
+                                                                            display:
+                                                                                'block',
+                                                                            backgroundImage: `url(${editButtonIcon})`,
+                                                                            backgroundSize:
+                                                                                '100% 100%',
+                                                                            width: '15px',
+                                                                            height: '12px',
+                                                                            position:
+                                                                                'absolute',
+                                                                            left: '27px',
+                                                                            top: '22px',
+                                                                        },
+                                                                }}
+                                                            >
+                                                                Edit Batches
+                                                            </Button>
+                                                            <Button
                                                                 variant="contained"
                                                                 onClick={
                                                                     handleAssignStudents
                                                                 }
                                                                 sx={{
                                                                     backgroundColor:
-                                                                        '#F56D3B',
-                                                                    color: 'white',
+                                                                        'unset',
+                                                                    color: '#F56D3B',
                                                                     height: '60px',
                                                                     width: '201px',
                                                                     borderRadius:
@@ -797,48 +859,56 @@ const Schedule = ({ componentName, timezoneID }) => {
                                                                         'none',
                                                                     padding:
                                                                         '18px 30px',
+
                                                                     fontWeight:
-                                                                        '700',
+                                                                        '400',
                                                                     fontSize:
                                                                         '16px',
+                                                                    fontFamily:
+                                                                        'Regular',
                                                                     '&:hover': {
                                                                         backgroundColor:
-                                                                            '#D4522A',
+                                                                            'unset', // Remove hover background color
                                                                     },
+                                                                    pl: '50px',
+                                                                    border: '2px solid #F56D3B',
+                                                                    '&::before':
+                                                                        {
+                                                                            content:
+                                                                                '""',
+                                                                            display:
+                                                                                'block',
+                                                                            backgroundImage: `url(${editButtonBackground})`,
+                                                                            backgroundSize:
+                                                                                '100% 100%',
+                                                                            width: '15px',
+                                                                            height: '15px',
+                                                                            position:
+                                                                                'absolute',
+                                                                            left: '25px',
+                                                                            top: '50%',
+                                                                            transform:
+                                                                                'translateY(-50%)',
+                                                                        },
+                                                                    '&::after':
+                                                                        {
+                                                                            content:
+                                                                                '""',
+                                                                            display:
+                                                                                'block',
+                                                                            backgroundImage: `url(${editButtonIcon})`,
+                                                                            backgroundSize:
+                                                                                '100% 100%',
+                                                                            width: '15px',
+                                                                            height: '12px',
+                                                                            position:
+                                                                                'absolute',
+                                                                            left: '27px',
+                                                                            top: '20px',
+                                                                        },
                                                                 }}
                                                             >
                                                                 Edit Students
-                                                            </Button>
-                                                            <Button
-                                                                variant="outlined"
-                                                                onClick={
-                                                                    handleAssignBatches
-                                                                }
-                                                                sx={{
-                                                                    backgroundColor:
-                                                                        'white',
-                                                                    color: '#F56D3B',
-                                                                    height: '60px',
-                                                                    width: '194px',
-                                                                    border: '2px solid #F56D3B',
-                                                                    borderRadius:
-                                                                        '50px',
-                                                                    textTransform:
-                                                                        'none',
-                                                                    fontWeight:
-                                                                        '700',
-                                                                    fontSize:
-                                                                        '16px',
-                                                                    padding:
-                                                                        '18px 30px',
-                                                                    '&:hover': {
-                                                                        backgroundColor:
-                                                                            '#F56D3B',
-                                                                        color: 'white',
-                                                                    },
-                                                                }}
-                                                            >
-                                                                Edit Batches
                                                             </Button>
                                                         </Box>
                                                     </Grid>
@@ -875,14 +945,28 @@ const Schedule = ({ componentName, timezoneID }) => {
                                                                     <FormControlLabel
                                                                         value="onetime"
                                                                         control={
-                                                                            <Radio />
+                                                                            <Radio
+                                                                                sx={{
+                                                                                    '&.Mui-checked':
+                                                                                        {
+                                                                                            color: '#F56D3B',
+                                                                                        },
+                                                                                }}
+                                                                            />
                                                                         }
                                                                         label="One-Time"
                                                                     />
                                                                     <FormControlLabel
                                                                         value="recurring"
                                                                         control={
-                                                                            <Radio />
+                                                                            <Radio
+                                                                                sx={{
+                                                                                    '&.Mui-checked':
+                                                                                        {
+                                                                                            color: '#F56D3B',
+                                                                                        },
+                                                                                }}
+                                                                            />
                                                                         }
                                                                         label="Recurring"
                                                                     />
@@ -905,6 +989,21 @@ const Schedule = ({ componentName, timezoneID }) => {
                                                                     <FormControl component="fieldset">
                                                                         <FormGroup
                                                                             row
+                                                                            sx={{
+                                                                                display:
+                                                                                    'flex',
+                                                                                justifyContent:
+                                                                                    'center', // Center the checkboxes
+                                                                                gap: 2,
+                                                                                flexWrap:
+                                                                                    'wrap',
+                                                                                maxWidth:
+                                                                                    '65%',
+                                                                                marginLeft:
+                                                                                    'auto',
+                                                                                marginRight:
+                                                                                    'auto',
+                                                                            }}
                                                                         >
                                                                             {weekDays.map(
                                                                                 day => (
@@ -1012,26 +1111,15 @@ const Schedule = ({ componentName, timezoneID }) => {
                                         display="flex"
                                         justifyContent="center"
                                     >
-                                        <Button
-                                            //onSubmit={handleSubmit(handleDateSubmit)}
-                                            type="button"
-                                            variant="contained"
-                                            style={{
-                                                borderRadius: '50px',
-                                                padding: '18px 30px',
-                                                marginTop: 30,
-                                                backgroundColor: '#F56D3B',
-                                                height: '60px',
-                                                width: '121px',
-                                                fontSize: '16px',
-                                                fontWeight: '700px',
-                                                text: '#FFFFFF',
-                                                textTransform: 'none',
-                                            }}
+                                        <CustomButton
                                             onClick={handleDateSubmit}
+                                            backgroundColor="#F56D3B"
+                                            borderColor="#F56D3B"
+                                            color="#FFFFFF"
+                                            textTransform="none"
                                         >
-                                            Submit{' '}
-                                        </Button>
+                                            Submit
+                                        </CustomButton>
                                     </Grid>
                                 </>
                             )}

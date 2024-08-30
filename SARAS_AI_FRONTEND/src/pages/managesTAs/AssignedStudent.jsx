@@ -16,6 +16,7 @@ import {
     deleteAssignedStudent,
 } from '../../redux/features/adminModule/ta/taSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import DeleteConfirmation from '../../components/CommonComponent/DeleteConfirmation';
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
     borderRadius: '50px',
@@ -104,6 +105,9 @@ const DynamicTable = ({
     }, [initialData]);
 
     const [currentPage, setCurrentPage] = useState(1);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [itemIdToDelete, setItemIdToDelete] = useState(null);
+
     const itemsPerPage = 10;
     const totalPages = Math.ceil(data.length / itemsPerPage);
     const currentData = data.slice(
@@ -115,7 +119,28 @@ const DynamicTable = ({
     const handlePageChange = (event, pageNumber) => {
         setCurrentPage(pageNumber);
     };
-
+    const handleOpenDialog = (id, ta_id) => {
+        setItemIdToDelete(id);
+        setIsDialogOpen(true);
+    };
+    const handleCloseDialog = () => {
+        console.log('handledelte');
+        setIsDialogOpen(false);
+        setItemIdToDelete(null);
+    };
+    const handleConfirmDelete = (id, ta_id) => {
+        if (id) {
+            handleDelete(id, ta_id);
+        }
+        handleCloseDialog();
+    };
+    const handleDelete = (id, ta_id) => {
+        // Implement delete functionality here
+        console.log('Deleting item with id:', id);
+        dispatch(deleteAssignedStudent({ id })).then(() => {
+            dispatch(getAssignStudents(ta_id));
+        });
+    };
     const handleToggle = async id => {
         console.log('id : ', id);
         const updatedData = data.map(item =>
@@ -132,14 +157,6 @@ const DynamicTable = ({
                 dispatch(getAssignStudents(ta_id));
             }
         );
-    };
-
-    const handleDelete = (id, ta_id) => {
-        // Implement delete functionality here
-        console.log('Deleting item with id:', id);
-        dispatch(deleteAssignedStudent({ id })).then(() => {
-            dispatch(getAssignStudents(ta_id));
-        });
     };
 
     const handleNavigate = path => {
@@ -256,12 +273,13 @@ const DynamicTable = ({
                                                     key={idx}
                                                     color="primary"
                                                     onClick={() =>
-                                                        handleDelete(
+                                                        handleOpenDialog(
                                                             item.id,
                                                             ta_id
                                                         )
                                                     }
                                                 >
+                                                   
                                                     <img
                                                         src={bin}
                                                         alt=""
@@ -282,6 +300,7 @@ const DynamicTable = ({
                 </tbody>
             </table>
             <div className="pagination">
+                
                 <Pagination
                     count={totalPages}
                     page={currentPage}
@@ -317,7 +336,15 @@ const DynamicTable = ({
                             },
                         },
                     }}
+                   
                 />
+                 {isDialogOpen && (
+                <DeleteConfirmation
+                open={isDialogOpen}
+                handleClose={handleCloseDialog}
+                onConfirm={()=>{handleConfirmDelete(itemIdToDelete,ta_id)}}
+             />
+            )}
             </div>
         </div>
     );
@@ -331,7 +358,7 @@ const actionButtons = [
     },
     {
         type: 'delete',
-        onClick: id => console.log(`Edit clicked for id ${id}`),
+        onClick: id => handleOpenDialog(id),
     },
 ];
 
