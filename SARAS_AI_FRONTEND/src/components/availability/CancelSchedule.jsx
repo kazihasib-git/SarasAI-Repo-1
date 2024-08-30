@@ -117,7 +117,7 @@ const CancelSchedule = ({ componentName }) => {
     };
 
     const actions = (
-        <Box style={{marginBottom:'30px'}}>
+        <Box style={{ marginBottom: '30px' }}>
             <CustomButton
                 onClick={handleCancel}
                 backgroundColor="#F56D38"
@@ -142,25 +142,30 @@ const CancelSchedule = ({ componentName }) => {
     );
 
     const content = (
-        <>
-            <DialogTitle 
-            sx={{
-                fontWeight: '600',
-                fontSize: '25px',
-                color: '#1A1E3D',
-            }}>
+        <div style={{ overflowY: 'hidden' }}>
+            <DialogTitle
+                sx={{
+                    fontWeight: '600',
+                    fontSize: '25px',
+                    color: '#1A1E3D',
+                    overflowY: 'hidden',
+                }}
+            >
                 {`'${schduldeCancelData['Session Name']}'`}
             </DialogTitle>
             <DialogContent
-
-                style={{ display: 'flex', justifyContent: 'center' , marginBottom:'-25px' }}
+                style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    marginBottom: '-25px',
+                }}
             >
                 <Typography>
                     Scheduled for &nbsp;
-                    {schduldeCancelData.Date} from {schduldeCancelData.Time}{' '}?
+                    {schduldeCancelData.Date} from {schduldeCancelData.Time} ?
                 </Typography>
             </DialogContent>
-        </>
+        </div>
     );
 
     return (
