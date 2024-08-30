@@ -3,7 +3,7 @@ name: Build and Deploy Frontend
 on:
   push:
     branches:
-      - Developer  # Trigger only on the 'developer' branch
+      - Developer  # Trigger only on the 'Developer' branch
   schedule:
     - cron: '30 9 * * 3'  # Every Wednesday at 3:00 PM IST
     - cron: '30 9 * * 5'  # Every Friday at 3:00 PM IST
@@ -11,6 +11,9 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+
+    env:
+      FRONTEND_DIR: SARAS_AI_FRONTEND
 
     steps:
       - name: Checkout code
@@ -22,20 +25,18 @@ jobs:
           node-version: '18'
 
       - name: Install frontend dependencies
-        run: |
-          npm install
-        working-directory: SARAS_AI_FRONTEND
+        run: npm install
+        working-directory: ${{ env.FRONTEND_DIR }}
 
       - name: Build frontend project
         run: npm run build
-        working-directory: SARAS_AI_FRONTEND
+        working-directory: ${{ env.FRONTEND_DIR }}
 
       - name: Azure Login
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # Azure Docker Login
       - name: Azure Docker Login
         if: success()
         uses: azure/docker-login@v1
@@ -44,39 +45,23 @@ jobs:
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
 
-      # Build Docker image for frontend
-      - name: Build Docker image for frontend
+      - name: Build and Push Docker image
         if: success()
         run: |
-          cd SARAS_AI_FRONTEND
-          docker build -t sarasai.azurecr.io/sarasfront1:${{ github.sha }} .
-
-      # Tag Docker image as 'latest'
-      - name: Tag Docker image as 'latest'
-        if: success()
-        run: |
-          docker tag sarasai.azurecr.io/sarasfront1:${{ github.sha }} sarasai.azurecr.io/sarasfront1:latest
-
-      # Push Docker image with commit SHA tag to ACR
-      - name: Push Docker image with commit SHA tag to ACR
-        if: success()
-        run: |
-          docker push sarasai.azurecr.io/sarasfront1:${{ github.sha }}
-
-      # Push Docker image with 'latest' tag to ACR
-      - name: Push Docker image with 'latest' tag to ACR
-        if: success()
-        run: |
+          cd ${{ env.FRONTEND_DIR }}
+          IMAGE_NAME=sarasai.azurecr.io/sarasfront1:${{ github.sha }}
+          docker build -t $IMAGE_NAME .
+          docker tag $IMAGE_NAME sarasai.azurecr.io/sarasfront1:latest
+          docker push $IMAGE_NAME
           docker push sarasai.azurecr.io/sarasfront1:latest
 
-          
       - name: Deploy to Azure Container Apps
         if: success()
         run: |
-         RESOURCE_GROUP=devops-testing-rg
-         CONTAINER_APP_NAME=sarasaifrontend
-         ACR_LOGIN_SERVER=${{ secrets.ACR_LOGIN_SERVER }}
-         IMAGE_NAME=sarasfront1  # Ensure this matches the image name used in the build step
+          RESOURCE_GROUP=devops-testing-rg
+          CONTAINER_APP_NAME=sarasaifrontend
+          ACR_LOGIN_SERVER=${{ secrets.ACR_LOGIN_SERVER }}
+          IMAGE_NAME=sarasfront1
 
           for i in {1..5}; do
             az containerapp update \
