@@ -72,7 +72,7 @@ const CreateSlot = ({ componentName, timezoneID }) => {
         fromTime: null,
         toTime: null,
         timezone_id: timezone ? timezone : null,
-    }
+    };
 
     const [formData, setFormData] = useState(initialFormData);
 
@@ -100,9 +100,9 @@ const CreateSlot = ({ componentName, timezoneID }) => {
         });
     };
 
-    const validate = (formData) => {
+    const validate = formData => {
         let validationErrors = {};
-    
+
         if (!formData.fromDate) {
             validationErrors.fromDate = 'Please select From Date';
             toast.error('Please select From Date');
@@ -119,11 +119,14 @@ const CreateSlot = ({ componentName, timezoneID }) => {
             validationErrors.toDate = 'Please select To Date';
             toast.error('Please select To Date');
         }
-        if (formData.repeat === 'recurring' && formData.selectedDays.length === 0) {
+        if (
+            formData.repeat === 'recurring' &&
+            formData.selectedDays.length === 0
+        ) {
             validationErrors.selectedDays = 'Please select at least one day';
             toast.error('Please select at least one day');
         }
-    
+
         setErrors(validationErrors);
         return Object.keys(validationErrors).length === 0;
     };
@@ -131,7 +134,7 @@ const CreateSlot = ({ componentName, timezoneID }) => {
     const handleSubmit = e => {
         e.preventDefault();
 
-        if (!validate(formData)) return; 
+        if (!validate(formData)) return;
 
         let weeksArray = Array(7).fill(0);
         if (formData.repeat === 'recurring') {
@@ -157,18 +160,15 @@ const CreateSlot = ({ componentName, timezoneID }) => {
         };
 
         dispatch(createSlotApi(data))
-        .unwrap()
-        .then(() => {
-           
-            dispatch(getSlotsApi());
-            dispatch(closeCreateNewSlot());
-            setFormData(initialFormData);
-        })
-        .catch((error) => {
-           
-            console.error("API Error:", error);
-        });
-    
+            .unwrap()
+            .then(() => {
+                dispatch(getSlotsApi());
+                dispatch(closeCreateNewSlot());
+                setFormData(initialFormData);
+            })
+            .catch(error => {
+                console.error('API Error:', error);
+            });
     };
 
     console.log('formData', formData.timezone_id);
@@ -254,12 +254,11 @@ const CreateSlot = ({ componentName, timezoneID }) => {
                             justifyContent="center"
                         >
                             <CustomTimeZoneForm
-
                                 label="Time Zone"
                                 name="timezone_id"
                                 value={timezoneID}
                                 // onChange={field.onChange}
-                                //disabled={timezoneID!=null}
+                                disabled={timezoneID != null}
                                 options={timezones}
                                 errors={errors}
                             />
@@ -273,6 +272,7 @@ const CreateSlot = ({ componentName, timezoneID }) => {
                             <Grid
                                 item
                                 xs={12}
+                                sm={6}
                                 display="flex"
                                 justifyContent="center"
                             >
@@ -306,13 +306,24 @@ const CreateSlot = ({ componentName, timezoneID }) => {
                             <>
                                 <Grid
                                     container
-                                    spacing={3}
-                                    justifyContent="center"
-                                    sx={{ pt: 3 }}
+                                    sx={{
+                                        display: 'flex',
+                                        justifyContent: 'center', // Center the checkboxes
+                                        gap: 2,
+                                        flexWrap: 'wrap',
+                                        maxWidth: '65%',
+                                        marginLeft: 'auto',
+                                        marginRight: 'auto',
+                                    }}
                                 >
                                     <Grid item xs={12}>
                                         <FormControl component="fieldset">
-                                            <FormGroup row>
+                                            <FormGroup
+                                                row
+                                                sx={{
+                                                    justifyContent: 'center',
+                                                }}
+                                            >
                                                 {weekDays.map(day => (
                                                     <FormControlLabel
                                                         key={day}
@@ -367,8 +378,8 @@ const CreateSlot = ({ componentName, timezoneID }) => {
         <>
             <CustomButton
                 onClick={() => {
-                    dispatch(closeCreateNewSlot())
-                    setFormData(initialFormData)
+                    dispatch(closeCreateNewSlot());
+                    setFormData(initialFormData);
                 }}
                 style={{
                     backgroundColor: 'white',
@@ -400,8 +411,8 @@ const CreateSlot = ({ componentName, timezoneID }) => {
         <ReusableDialog
             open={createNewSlotPopup}
             handleClose={() => {
-                dispatch(closeCreateNewSlot())
-                setFormData(initialFormData)
+                dispatch(closeCreateNewSlot());
+                setFormData(initialFormData);
             }}
             title="Create New Slot"
             actions={actions}
