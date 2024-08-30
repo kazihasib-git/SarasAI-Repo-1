@@ -128,10 +128,11 @@ function App() {
 
     useEffect(() => {
         if (login) {
-            console.log('inside user Effect in app.js', role);
-            //const lastRoute = localStorage.getItem('lastRoute');
+            const lastRoute = localStorage.getItem('lastRoute');
 
-            if (role.includes(1984)) {
+            if (lastRoute) {
+                navigate(lastRoute, { replace: true });
+            } else if (role.includes(1984)) {
                 // Coach role
                 navigate('/coachmenu_profile', { replace: true });
             } else if (role.includes(2001)) {
@@ -159,6 +160,7 @@ function App() {
                 {!login}
                 {<Route path="login" element={<Login />} />}
                 <Route path="Resetpassword" element={<ForgetPassword/>} />
+                
                 {/* Protected Routes */}
                 {login && role == 5150 && (
                     <Route path="/" element={<Main page="Dashboard" />}>

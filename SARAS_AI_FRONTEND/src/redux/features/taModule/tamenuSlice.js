@@ -29,7 +29,6 @@ export const updateTaMenuProfile = createAsyncThunk(
 );
 
 // get ta's my students api
-
 export const getMyStudents = createAsyncThunk(
     'taMenu/getMyStudents',
     async () => {
@@ -302,7 +301,7 @@ export const updateStudentsInTaSession = createAsyncThunk(
             return response.data;
         } catch (error) {
             if (error.response && error.response.data) {
-                return rejectWithValue(error.response.data.error);
+                return rejectWithValue(error.response.data.message);
             } else {
                 return rejectWithValue(
                     'An Error Occurred While Update Students in Session'
@@ -324,7 +323,7 @@ export const updateBatchesInTaSession = createAsyncThunk(
             return response.data;
         }catch(error){
             if (error.response && error.response.data) {
-                return rejectWithValue(error.response.data.error);
+                return rejectWithValue(error.response.data.message);
             } else {
                 return rejectWithValue(
                     'An Error Occurred While Updating Batches In Session'
@@ -772,11 +771,13 @@ export const taMenuSlice = createSlice({
         });
         builder.addCase(updateStudentsInTaSession.fulfilled, (state, action) => {
             state.loading = false;
+            toast.success(action.payload.message || 'Students Updated Successfully in Session')
             // TODO : ----->
         })
         builder.addCase(updateStudentsInTaSession.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            toast.error(action.payload || 'Failed to Update Students in Session')
         })
 
         //Update Batches In Session
@@ -785,11 +786,13 @@ export const taMenuSlice = createSlice({
         })
         builder.addCase(updateBatchesInTaSession.fulfilled, (state, action) => {
             state.loading = false;
+            toast.success(action.payload.message || 'Batches Updated Successfully')
             // TODO : ----->
         })
         builder.addCase(updateBatchesInTaSession.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            toast.error(action.payload || 'Failed to Update Batches in Session')
         })
 
 

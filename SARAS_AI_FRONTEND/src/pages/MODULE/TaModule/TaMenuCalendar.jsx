@@ -28,6 +28,10 @@ import CancelSession from '../../../components/RoleRoute/CommonComponent/commonC
 import RescheduleCreatedSession from '../../../components/RoleRoute/CommonComponent/commonCalender/RescheduleCreatedSession';
 import LeaveReason from '../../../components/RoleRoute/CommonComponent/commonCalender/LeaveReason';
 import CreatedSessions from '../../../components/RoleRoute/CommonComponent/commonCalender/CreatedSessions';
+import EditStudentsFromSession from '../../../components/availability/EditStudentsFromSession';
+import EditBatchesFromSession from '../../../components/availability/EditBatchesFromSession';
+import EditBatchesSessionLink from '../../../components/RoleRoute/CommonComponent/commonCalender/EditBatchesSessionLink';
+import EditStudentsSessionLink from '../../../components/RoleRoute/CommonComponent/commonCalender/EditStudentsSessionLink';
 
 const CustomButton = ({
     onClick,
@@ -89,6 +93,8 @@ const TAMenuCalendar = () => {
         openCancelSession,
         openLeaveReason,
         RescheduleSession,
+        openEditStudentsPopup,
+        openEditBatchesPopup,
     } = useSelector(state => state.commonCalender);
 
     const { taSlots, taSessions } = useSelector(state => state.taMenu);
@@ -388,6 +394,16 @@ const TAMenuCalendar = () => {
                         taSessions={taSessions}
                         platformName={platformName}
                         platformUrl={platformUrl}
+                    />
+                )}
+                 {openEditStudentsPopup && (
+                    <EditStudentsSessionLink
+                        componentName={'TAMENU'}
+                        />
+                )}
+                {openEditBatchesPopup && (
+                    <EditBatchesSessionLink
+                        componentName={'TAMENU'}
                     />
                 )}
             </Box>

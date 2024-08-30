@@ -36,6 +36,10 @@ import { timezoneIdToName } from '../../../utils/timezoneIdToName';
 import { getTimezone } from '../../../redux/features/utils/utilSlice';
 import LeaveReason from '../../../components/RoleRoute/CommonComponent/commonCalender/LeaveReason';
 import RescheduleCreatedSession from '../../../components/RoleRoute/CommonComponent/commonCalender/RescheduleCreatedSession';
+import EditStudentsFromSession from '../../../components/availability/EditStudentsFromSession';
+import EditBatchesFromSession from '../../../components/availability/EditBatchesFromSession';
+import EditBatchesSessionLink from '../../../components/RoleRoute/CommonComponent/commonCalender/EditBatchesSessionLink';
+import EditStudentsSessionLink from '../../../components/RoleRoute/CommonComponent/commonCalender/EditStudentsSessionLink';
 
 const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
 
@@ -98,6 +102,8 @@ const CoachMenuCalendar = () => {
         sessionEventData,
         openLeaveReason,
         RescheduleSession,
+        openEditStudentsPopup,
+        openEditBatchesPopup,
     } = useSelector(state => state.commonCalender);
 
     const {
@@ -435,6 +441,16 @@ const CoachMenuCalendar = () => {
                         coachSessions={coachSessions}
                         platformName={platformName}
                         platformUrl={platformUrl}
+                    />
+                )}
+                {openEditStudentsPopup && (
+                    <EditStudentsSessionLink
+                        componentName={'COACHMENU'}
+                    />
+                )}
+                {openEditBatchesPopup && (
+                    <EditBatchesSessionLink
+                        componentName={'COACHMENU'}
                     />
                 )}
             </Box>
