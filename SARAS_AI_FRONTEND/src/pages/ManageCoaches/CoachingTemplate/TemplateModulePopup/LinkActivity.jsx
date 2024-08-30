@@ -320,6 +320,7 @@ const LinkActivityPopup = ({
     const coachOptions = coaches.map(coach => ({
         value: coach.name,
         label: coach.name,
+        username:coach.username,
         id: coach.id,
     }));
 
@@ -373,7 +374,7 @@ const LinkActivityPopup = ({
     const handleChangeMeetingName = event => {
         setSelectMeetingType(event.target.value);
     };
-
+console.log('coachOptions', coachOptions)
     const contentComponent = (
         <Grid
             container
