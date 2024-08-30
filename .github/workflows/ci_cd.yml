@@ -1,0 +1,54 @@
+name: Build and Deploy Frontend
+
+on:
+  push:
+    branches:
+      - Developer  # Trigger only on the 'developer' branch
+  schedule:
+    - cron: '30 9 * * 3'  # Every Wednesday at 3:00 PM IST
+    - cron: '30 9 * * 5'  # Every Friday at 3:00 PM IST
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install frontend dependencies
+        run: |
+          npm install
+        working-directory: SARAS_AI_FRONTEND
+
+      - name: Build frontend project
+        run: npm run build
+        working-directory: SARAS_AI_FRONTEND
+
+      - name: Azure Login
+        if: success()
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # Azure Docker Login
+      - name: Azure Docker Login
+        if: success()
+        uses: azure/docker-login@v1
+        with:
+          login-server: sarasai.azurecr.io
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      # Build and push Docker image for frontend to ACR
+      - name: Build and push Docker image for frontend
+        if: success()
+        run: |
+          cd SARAS_AI_FRONTEND
+          docker build . -t sarasai.azurecr.io/sarasfront1:${{ github.sha }}
+          docker push sarasai.azurecr.io/sarasfront1:${{ github.sha }}
