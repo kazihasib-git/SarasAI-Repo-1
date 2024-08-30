@@ -362,7 +362,7 @@ const Schedule = ({ componentName, timezoneID }) => {
             toast.error('Please select a To Time');
             return false;
         }
-    
+
         // Validate "To Time" is greater than "From Time"
         // const fromTimeInMinutes = convertTimeToMinutes(fromTime);
         // const toTimeInMinutes = convertTimeToMinutes(toTime);
@@ -386,13 +386,13 @@ const Schedule = ({ componentName, timezoneID }) => {
                 toast.error('Please provide a valid email.');
                 return false;
             }
-    
+
             if (!formData.meeting_type) {
                 toast.error('Please select Meeting Type.');
                 return false;
             }   
         }
-        
+
         // Check if 'timezone_id' is provided
         if (!formData.timezone_id) {
             toast.error('Please select a timezone');
@@ -416,14 +416,14 @@ const Schedule = ({ componentName, timezoneID }) => {
         return `${formattedHour}:${minute < 10 ? '0' : ''}${minute} ${ampm}`;
     };
 
-    const onSubmit = (formData) => {
+    const onSubmit = formData => {
         // Perform validation
         if (!validate(formData)) return;
-    
+
         // Prepare data for submission
         const studentId = students.map(student => student.id);
         const batchId = batches.map(batch => batch.id);
-    
+
         let weeksArray = Array(7).fill(0);
         if (repeat === 'recurring') {
             selectedDays.forEach(day => {
@@ -434,7 +434,7 @@ const Schedule = ({ componentName, timezoneID }) => {
             const index = new Date(fromDate).getDay();
             weeksArray[index] = 1;
         }
-    
+
         // Add validated fields to formData
         formData.start_time = fromTime;
         formData.end_time = toTime;
@@ -447,7 +447,7 @@ const Schedule = ({ componentName, timezoneID }) => {
         formData.studentId = studentId;
         formData.batchId = batchId;
         formData.timezone_id = timezoneId ? Number(timezoneId) : timezoneID;
-    
+
         // Submit data
         dispatch(createScheduleAction(formData))
             .then(() => {
