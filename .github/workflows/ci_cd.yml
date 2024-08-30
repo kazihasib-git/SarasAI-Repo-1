@@ -76,7 +76,7 @@ jobs:
          RESOURCE_GROUP=devops-testing-rg
          CONTAINER_APP_NAME=sarasaifrontend
          ACR_LOGIN_SERVER=${{ secrets.ACR_LOGIN_SERVER }}
-         IMAGE_NAME=${{ secrets.ACR_LOGIN_SERVER }}/sarasaifrontend
+         IMAGE_NAME=sarasfront1  # Ensure this matches the image name used in the build step
 
           for i in {1..5}; do
             az containerapp update \
