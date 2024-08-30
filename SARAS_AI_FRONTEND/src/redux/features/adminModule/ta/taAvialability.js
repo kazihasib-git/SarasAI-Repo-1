@@ -483,7 +483,6 @@ export const taAvailabilitySlice = createSlice({
         });
         builder.addCase(createSlots.fulfilled, (state, action) => {
             state.loading = false;
-            // state.slotData = action.payload?.data;
             toast.success(action.payload.message || 'Slot Created Successfully')
         });
         builder.addCase(createSlots.rejected, (state, action) => {
