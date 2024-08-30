@@ -26,8 +26,14 @@ import {
 } from '../../redux/features/adminModule/coachingTools/wol/wolSlice';
 import { openScheduleSession } from '../../redux/features/adminModule/ta/taScheduling';
 import { openDeleteTaSlots } from '../../redux/features/adminModule/ta/taAvialability';
-import { updateTA, activate_deactive_TA } from '../../redux/features/adminModule/ta/taSlice';
-import { activate_deactivate_Coach, updateCoach } from '../../redux/features/adminModule/coach/coachSlice';
+import {
+    updateTA,
+    activate_deactive_TA,
+} from '../../redux/features/adminModule/ta/taSlice';
+import {
+    activate_deactivate_Coach,
+    updateCoach,
+} from '../../redux/features/adminModule/coach/coachSlice';
 import { openCoachScheduleSession } from '../../redux/features/adminModule/coach/coachSchedule';
 import AssessmentDialog from '../../pages/MODULE/coachModule/AssessmentDialog';
 import {
@@ -95,14 +101,12 @@ const DynamicTable = ({
     const handleOpenDialog = itemId => {
         setItemIdToDelete(itemId);
         setIsDialogOpen(true);
-       
     };
 
     const handleCloseDialog = () => {
-        console.log("handledelte");
+        console.log('handledelte');
         setIsDialogOpen(false);
         setItemIdToDelete(null);
-       
     };
     const handleConfirmDelete = id => {
         if (id) {
@@ -212,19 +216,18 @@ const DynamicTable = ({
     };
 
     const handleToggle = (id, event) => {
-        console.log("ID and EVENT :", id , event)
+        console.log('ID and EVENT :', id, event);
         if (event) {
             event.preventDefault();
             event.stopPropagation();
         }
-        console.log("data",data);
+        console.log('data', data);
         const updatedData = data.map(item =>
-            
             item.id === id
                 ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
                 : item
         );
-        console.log("updateddtata",updatedData);
+        console.log('updateddtata', updatedData);
         setData(updatedData);
         // const toggleButton = actionButtons.find(
         //     action => action.type === 'switch'
@@ -238,7 +241,7 @@ const DynamicTable = ({
 
         switch (componentName) {
             case 'MANAGETA':
-                dispatch(activate_deactive_TA({ id  }));
+                dispatch(activate_deactive_TA({ id }));
                 break;
 
             case 'MANAGECOACH':
@@ -265,9 +268,11 @@ const DynamicTable = ({
 
     const getColorForAvailability = availability => {
         switch (availability) {
-            case 'available':
+            case 'Available':
                 return '#00C808';
             case 'On leave':
+                return '#F48606';
+            case 'Leave':
                 return '#F48606';
             case 'In active':
                 return '#060FDD';
@@ -503,29 +508,29 @@ const DynamicTable = ({
                                             if (button.type === 'delete') {
                                                 return (
                                                     <>
-                                                    <IconButton
-                                                        key={idx}
-                                                        color="primary"
-                                                        // onClick={() =>
-                                                        //     handleDelete(
-                                                        //         item.id
-                                                        //     )
-                                                        // }
-                                                        onClick={() =>
-                                                            handleOpenDialog(
-                                                                item.id
-                                                            )
-                                                        }
-                                                    >
-                                                        <img
-                                                            src={bin}
-                                                            alt=""
-                                                            style={{
-                                                                width: '20px',
-                                                                height: '20px',
-                                                            }}
-                                                        />
-                                                    </IconButton>
+                                                        <IconButton
+                                                            key={idx}
+                                                            color="primary"
+                                                            // onClick={() =>
+                                                            //     handleDelete(
+                                                            //         item.id
+                                                            //     )
+                                                            // }
+                                                            onClick={() =>
+                                                                handleOpenDialog(
+                                                                    item.id
+                                                                )
+                                                            }
+                                                        >
+                                                            <img
+                                                                src={bin}
+                                                                alt=""
+                                                                style={{
+                                                                    width: '20px',
+                                                                    height: '20px',
+                                                                }}
+                                                            />
+                                                        </IconButton>
                                                     </>
                                                 );
                                             }
@@ -657,10 +662,12 @@ const DynamicTable = ({
             )}
             {isDialogOpen && (
                 <DeleteConfirmation
-                open={isDialogOpen}
-                handleClose={handleCloseDialog}
-                onConfirm={()=>{handleConfirmDelete(itemIdToDelete)}}
-             />
+                    open={isDialogOpen}
+                    handleClose={handleCloseDialog}
+                    onConfirm={() => {
+                        handleConfirmDelete(itemIdToDelete);
+                    }}
+                />
             )}
             <Modal
                 open={modalOpen}

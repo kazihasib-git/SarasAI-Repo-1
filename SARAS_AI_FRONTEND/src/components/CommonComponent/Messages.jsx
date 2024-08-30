@@ -15,6 +15,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'; // Import an appropriate icon
 import RefreshIcon from '@mui/icons-material/Refresh';
 import moment from 'moment';
+import { AudioRecorder } from 'react-audio-voice-recorder';
 
 import {
     getTaCoachAllChats,
@@ -95,6 +96,7 @@ const Messages = ({ role }) => {
     const [chatUserMapping, setchatUserMappingData] = useState([]);
     const [currentChatId, setcurrentChatId] = useState(0);
     const [selectedFile, setSelectedFile] = useState(null);
+    const [audioFile, setAudioFile] = useState(null);
 
     const {
         coachProfileData,
@@ -157,7 +159,7 @@ const Messages = ({ role }) => {
     };
 
     const handleSendMessageAndFile = async () => {
-        if (!newMessage.trim() && !selectedFile) {
+        if (!newMessage.trim() && !selectedFile && !audioFile) {
             return;
         }
 
@@ -171,6 +173,9 @@ const Messages = ({ role }) => {
 
         if (selectedFile) {
             formData.append('files', selectedFile);
+        }
+        if (audioFile) {
+            formData.append('files', audioFile, 'voice-recording.wav');
         }
 
         try {
@@ -191,6 +196,12 @@ const Messages = ({ role }) => {
                               url: URL.createObjectURL(selectedFile), // Temporary URL for local preview
                           }
                         : null,
+                    audio: audioFile
+                        ? {
+                              name: 'voice-recording.wav',
+                              url: URL.createObjectURL(audioFile), // Temporary URL for local preview
+                          }
+                        : null,
                 },
             ]);
 
@@ -204,6 +215,7 @@ const Messages = ({ role }) => {
 
             setNewMessage('');
             setSelectedFile(null);
+            setAudioFile(null);
             if (fileInputRef.current) {
                 fileInputRef.current.value = '';
             }
@@ -224,6 +236,22 @@ const Messages = ({ role }) => {
             fileInputRef.current.value = '';
         }
     };
+
+    const handleCancelAudio = () => {
+        setAudioFile(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    };
+
+    const handleAudioStop = audioBlob => {
+        // Set a default name for the audio file
+        const audioFileWithName = new File([audioBlob], 'voice-recording.wav', {
+            type: audioBlob.type,
+        });
+        setAudioFile(audioFileWithName);
+    };
+
     useEffect(() => {
         const setUserToChat = async () => {
             if (role === 'coach' || role === 'ta') {
@@ -665,7 +693,7 @@ const Messages = ({ role }) => {
                                 multiline
                                 maxRows={5} // Allows the textbox to expand up to 5 rows if needed
                                 sx={{
-                                    width: '50%', 
+                                    width: '50%',
                                     borderRadius: '42px',
                                     marginRight: '10px',
                                     flexGrow: 1,
@@ -683,9 +711,9 @@ const Messages = ({ role }) => {
                                         },
                                     },
                                     '& .MuiInputBase-input': {
-                                        padding: '12px 14px', 
+                                        padding: '12px 14px',
                                         // Adjust the padding to control the height
-                                          paddingRight: '120px',
+                                        paddingRight: '120px',
                                         height: 'auto', // Ensures height adjusts with content
                                     },
                                 }}
@@ -726,6 +754,35 @@ const Messages = ({ role }) => {
                                         </IconButton>
                                     </div>
                                 )}
+                                {audioFile && (
+                                    <div
+                                        style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            marginRight: '10px',
+                                        }}
+                                    >
+                                        <Typography
+                                            variant="caption"
+                                            sx={{
+                                                maxWidth: '100px',
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis',
+                                                whiteSpace: 'nowrap',
+                                            }}
+                                        >
+                                            {audioFile.name}
+                                        </Typography>
+                                        <IconButton
+                                            size="small"
+                                            onClick={handleCancelAudio}
+                                            sx={{ marginLeft: '5px' }}
+                                        >
+                                            <CancelIcon fontSize="small" />
+                                        </IconButton>
+                                    </div>
+                                )}
+
                                 <input
                                     type="file"
                                     ref={fileInputRef}
@@ -738,9 +795,25 @@ const Messages = ({ role }) => {
                                 >
                                     <img src={PaperclipIcon} alt="Attach" />
                                 </IconButton>
-                                <IconButton className="input-icon">
-                                    <MicNoneIcon />
-                                </IconButton>
+                                <AudioRecorder
+                                    onRecordingComplete={handleAudioStop}
+                                    audioTrackConstraints={{
+                                        noiseSuppression: true,
+                                        echoCancellation: true,
+                                    }}
+                                    render={({
+                                        startRecording,
+                                        stopRecording,
+                                    }) => (
+                                        <IconButton
+                                            className="input-icon"
+                                            onMouseDown={startRecording}
+                                            onMouseUp={stopRecording}
+                                        >
+                                            <MicNoneIcon />
+                                        </IconButton>
+                                    )}
+                                />
                                 <IconButton
                                     className="input-icon"
                                     onClick={handleSendMessageAndFile}
