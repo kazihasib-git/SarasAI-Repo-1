@@ -138,26 +138,67 @@ const CreateSession = ({ componentName, timezoneID }) => {
     };
 
     const validate = () => {
-        // TODO : NEED TO ADD VALIDATION
+
+        if(!formData.sessionName){
+            toast.error('Please enter meeting name')
+            return false;
+        }
+        
+        // Check if 'duration' is provided and in the correct format
+        if (!formData.duration) {
+            toast.error('Please select duration');
+            return false;
+        }
+
+        if(!formData.platform_id){
+            toast.error('Please select meeting platform')
+            return false;
+        }
+
+        if(formData.platform_id === 1 ){
+            // Check if 'host_email_id' is provided
+            if (!formData.host_email_id) {
+                toast.error('Please Select Host Name');
+                return false;
+            }
+        
+            // Check if 'meeting_type' is provided
+            if (!formData.meeting_type) {
+                toast.error('Please Select Meeting Type');
+                return false;
+            }
+        }
+
+        // Check if 'fromDate' is provided
+        if (!formData.fromDate) {
+            toast.error('Please select  from date');
+            return false;
+        }
+        
+        // Check if 'fromTime' is provided
         if (!formData.fromTime) {
             toast.error('Please add from time');
-            return;
+            return false;
         }
+
+        // Chech message
+        if(!formData.message){
+            toast.error('Please enter message');
+            return false;
+        }
+
+        // Check if 'timezone_id' is provided
+        if (!formData.timezone_id) {
+            toast.error('Please select a timezone');
+            return false;
+        }    
+        return true;
     };
 
     const handleSubmit = e => {
         e.preventDefault();
-        console.log(formData.fromTime);
 
-        if (!formData.host_email_id) {
-            toast.error('Please Select Host Name');
-            return;
-        }
-
-        if (!formData.meeting_type) {
-            toast.error('Please Select Meeting Type');
-            return;
-        }
+        if(!validate()) return;
 
         const studentId = students.map(student => student.id);
         const batchId = batches.map(batch => batch.id);
@@ -450,7 +491,7 @@ const CreateSession = ({ componentName, timezoneID }) => {
                                     sx={{ width: '100%' }}
                                     value={timezoneID}
                                     // onChange={field.onChange}
-                                    disabled={timezoneID != null}
+                                    // disabled={timezoneID != null}
                                     options={timezones}
                                 />
                             </Grid>
