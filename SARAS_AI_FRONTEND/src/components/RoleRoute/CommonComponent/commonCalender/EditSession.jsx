@@ -36,6 +36,7 @@ import {
     getTimezone,
 } from '../../../../redux/features/utils/utilSlice';
 import CustomPlatformForm from '../../../CustomFields/CustomPlatformForm';
+import CustomFutureDateField from '../../../CustomFields/CustomFutureDateField';
 
 const CustomButton = ({
     onClick,
@@ -349,7 +350,7 @@ const EditSession = ({ componentName }) => {
                                     display="flex"
                                     justifyContent="center"
                                 >
-                                    <CustomDateField
+                                    <CustomFutureDateField
                                         label="From Date"
                                         name="fromDate"
                                         value={formData.fromDate}
