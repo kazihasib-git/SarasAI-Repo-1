@@ -5,8 +5,9 @@ on:
     branches:
       - Developer  # Trigger only on the 'Developer' branch
   schedule:
-    - cron: '30 9 * * 3'  # Every Wednesday at 3:00 PM IST
-    - cron: '30 9 * * 5'  # Every Friday at 3:00 PM IST
+    - cron: '30 9 * * 3'
+    - cron: '30 9 * * 5'
+  workflow_dispatch:
 
 jobs:
   build-and-test:
