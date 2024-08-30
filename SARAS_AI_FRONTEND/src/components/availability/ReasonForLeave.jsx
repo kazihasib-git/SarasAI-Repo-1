@@ -95,10 +95,17 @@ const ReasonForLeave = ({ componentName }) => {
                 data: slots
             };
 
-            dispatch(reasonForLeaveAction(requestBody)).then(() => {
+            dispatch(reasonForLeaveAction(requestBody))
+            .unwrap()
+            .then(() => {
                 dispatch(getSlotsApi(id));
                 dispatch(getSessionApi(id));
                 dispatch(closeReasonForLeaveAction());
+                toast.success("Leave has been successfully created.")
+            })
+            .catch(error => {
+               
+                toast.error(` ${error}`);
             });
         }
     };

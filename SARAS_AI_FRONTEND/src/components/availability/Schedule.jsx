@@ -50,6 +50,7 @@ import CustomPlatformForm from '../CustomFields/CustomPlatformForm';
 
 import editButtonBackground from '../../assets/editbuttonbackground.svg';
 import editButtonIcon from '../../assets/editbutton.svg';
+import CustomFutureDateField from '../CustomFields/CustomFutureDateField';
 
 const headers = ['S. No.', 'Slot Date', 'From Time', 'To Time', 'Select'];
 
@@ -351,15 +352,15 @@ const Schedule = ({ componentName, timezoneID }) => {
             return false;
         }
     
-        if (students.length === 0) {
-            toast.error('Please assign students');
-            return false;
-        }
+        // if (students.length === 0) {
+        //     toast.error('Please assign students');
+        //     return false;
+        // }
     
-        if (batches.length === 0) {
-            toast.error('Please assign batches');
-            return false;
-        }
+        // if (batches.length === 0) {
+        //     toast.error('Please assign batches');
+        //     return false;
+        // }
     
         if (!fromDate) {
             toast.error('Please select from Date');
@@ -491,7 +492,7 @@ const Schedule = ({ componentName, timezoneID }) => {
                                 mt={0}
                             >
                                 {/* //TODO : NEED TO SHOW ERROR MESSAGE ERROR HERE WHEN FIELD IS NOT FILLED  */}
-                                <CustomDateField
+                                <CustomFutureDateField
                                     label="Date"
                                     name="schedule_date"
                                     placeholder="From Date"

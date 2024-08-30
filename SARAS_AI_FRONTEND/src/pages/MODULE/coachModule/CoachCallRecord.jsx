@@ -166,7 +166,11 @@ const CoachCallRecord = () => {
             setDate(nextDate);
         }
     };
-
+    const sortedCalls = processedCalls.sort((a, b) => {
+        const timeA = moment(a.start_time, 'HH:mm A'); 
+        const timeB = moment(b.start_time, 'HH:mm A');
+        return timeA - timeB;
+    });
     const handleDecrement = () => {
         const newDate = moment(date).subtract(1, 'days');
         setDate(newDate);
@@ -241,7 +245,7 @@ const CoachCallRecord = () => {
                     gap="20px"
                     justifyContent="space-between"
                 >
-                    {processedCalls.map(call => (
+                    {sortedCalls.map(call => (
                         <Card
                             key={call.id}
                             sx={{

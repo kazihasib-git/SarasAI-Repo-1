@@ -44,6 +44,7 @@ import CustomHostNameForm from '../../../CustomFields/CustomHostNameField';
 import CustomMeetingTypeField from '../../../CustomFields/CustomMeetingTypeField';
 import CustomButton from '../../../CustomFields/CustomButton';
 import { toast } from 'react-toastify';
+import CustomFutureDateField from '../../../CustomFields/CustomFutureDateField';
 
 const headers = ['S. No.', 'Slot Date', 'From Time', 'To Time', 'Select'];
 
@@ -397,7 +398,7 @@ const CreateSession = ({ componentName, timezoneID }) => {
                                     display="flex"
                                     justifyContent="center"
                                 >
-                                    <CustomDateField
+                                    <CustomFutureDateField
                                         label="From Date"
                                         name="fromDate"
                                         value={formData.fromDate}
