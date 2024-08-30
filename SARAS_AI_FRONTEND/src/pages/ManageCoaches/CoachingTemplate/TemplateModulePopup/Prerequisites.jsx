@@ -66,7 +66,7 @@ const PrerequisitesPopup = ({
     prereqActivityData,
     handleClose,
 }) => {
-    console.log('Pre Req Data :', prereqModuleData, prereqActivityData);
+    
 
     const dispatch = useDispatch();
     const {
@@ -120,8 +120,16 @@ const PrerequisitesPopup = ({
             const selectedModule = coachTemplatesId.modules.find(
                 mod => mod.id === selectedModuleId
             );
-            console.log('Selected Module :', selectedModule);
-            if (selectedModule) {
+            
+            if (selectedModule && selectedModuleId == prereqModuleData.id) {
+                const options =
+                    selectedModule.activities?.filter(item => item.id != prereqActivityData.id)
+                    .map(activity => ({
+                        value: activity.id,
+                        label: activity.activity_name,
+                    })) || [];
+                setActivityOptions(options);
+            } else if (selectedModule) {
                 const options =
                     selectedModule.activities?.map(activity => ({
                         value: activity.id,
@@ -247,7 +255,7 @@ const PrerequisitesPopup = ({
                 md={6}
                 style={{ margin: '10px 0px', width: '80%' }}
             >
-                <FormControlLabel
+                <FormControlLabel   
                     control={
                         <Checkbox
                             checked={activityDependence}
