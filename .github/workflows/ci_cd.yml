@@ -31,7 +31,6 @@ jobs:
         working-directory: SARAS_AI_FRONTEND
 
       - name: Azure Login
-        if: success()
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
@@ -45,10 +44,43 @@ jobs:
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
 
-      # Build and push Docker image for frontend to ACR
-      - name: Build and push Docker image for frontend
+      # Build Docker image for frontend
+      - name: Build Docker image for frontend
         if: success()
         run: |
           cd SARAS_AI_FRONTEND
-          docker build . -t sarasai.azurecr.io/sarasfront1:${{ github.sha }}
+          docker build -t sarasai.azurecr.io/sarasfront1:${{ github.sha }} .
+
+      # Tag Docker image as 'latest'
+      - name: Tag Docker image as 'latest'
+        if: success()
+        run: |
+          docker tag sarasai.azurecr.io/sarasfront1:${{ github.sha }} sarasai.azurecr.io/sarasfront1:latest
+
+      # Push Docker image with commit SHA tag to ACR
+      - name: Push Docker image with commit SHA tag to ACR
+        if: success()
+        run: |
           docker push sarasai.azurecr.io/sarasfront1:${{ github.sha }}
+
+      # Push Docker image with 'latest' tag to ACR
+      - name: Push Docker image with 'latest' tag to ACR
+        if: success()
+        run: |
+          docker push sarasai.azurecr.io/sarasfront1:latest
+
+          
+      - name: Deploy to Azure Container Apps
+        if: success()
+        run: |
+         RESOURCE_GROUP=devops-testing-rg
+         CONTAINER_APP_NAME=sarasaifrontend
+         ACR_LOGIN_SERVER=${{ secrets.ACR_LOGIN_SERVER }}
+         IMAGE_NAME=${{ secrets.ACR_LOGIN_SERVER }}/sarasaifrontend
+
+          for i in {1..5}; do
+            az containerapp update \
+              --name $CONTAINER_APP_NAME \
+              --resource-group $RESOURCE_GROUP \
+              --image $ACR_LOGIN_SERVER/$IMAGE_NAME:${{ github.sha }} && break || sleep 60
+          done
