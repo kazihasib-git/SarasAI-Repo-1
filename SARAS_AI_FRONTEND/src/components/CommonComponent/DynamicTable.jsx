@@ -212,19 +212,18 @@ const DynamicTable = ({
     };
 
     const handleToggle = (id, event) => {
-        console.log("ID and EVENT :", id , event)
         if (event) {
             event.preventDefault();
             event.stopPropagation();
         }
-        console.log("data",data);
+        
         const updatedData = data.map(item =>
             
             item.id === id
                 ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
                 : item
         );
-        console.log("updateddtata",updatedData);
+        
         setData(updatedData);
         // const toggleButton = actionButtons.find(
         //     action => action.type === 'switch'

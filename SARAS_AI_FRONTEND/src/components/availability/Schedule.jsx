@@ -352,15 +352,15 @@ const Schedule = ({ componentName, timezoneID }) => {
             return false;
         }
     
-        // if (students.length === 0) {
-        //     toast.error('Please assign students');
-        //     return false;
-        // }
+        if (students.length === 0) {
+            toast.error('Please assign students');
+            return false;
+        }
     
-        // if (batches.length === 0) {
-        //     toast.error('Please assign batches');
-        //     return false;
-        // }
+        if (batches.length === 0) {
+            toast.error('Please assign batches');
+            return false;
+        }
     
         if (!fromDate) {
             toast.error('Please select from Date');

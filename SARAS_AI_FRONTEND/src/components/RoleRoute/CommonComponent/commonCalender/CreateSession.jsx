@@ -292,7 +292,19 @@ const CreateSession = ({ componentName, timezoneID }) => {
                                         }
                                         errors={!!error.sessionName}
                                         helperText={error.sessionName}
-                                        sx={{ width: '100%' }}
+                                        sx={{
+                                            width: '100%',
+                                            '& .MuiOutlinedInput-root': {
+                                                '&.Mui-focused fieldset': {
+                                                    borderColor: '#F56D3B',
+                                                },
+                                            },
+                                            '& .MuiInputLabel-root': {
+                                                '&.Mui-focused': {
+                                                    color: '#000000',
+                                                },
+                                            },
+                                        }}
                                     />
                                 </Grid>
                                 <Grid
@@ -448,7 +460,19 @@ const CreateSession = ({ componentName, timezoneID }) => {
                                     }
                                     errors={!!error.message}
                                     helperText={error.message}
-                                    sx={{ width: '100%' }}
+                                    sx={{
+                                        width: '100%',
+                                        '& .MuiOutlinedInput-root': {
+                                            '&.Mui-focused fieldset': {
+                                                borderColor: '#F56D3B',
+                                            },
+                                        },
+                                        '& .MuiInputLabel-root': {
+                                            '&.Mui-focused': {
+                                                color: '#000000',
+                                            },
+                                        },
+                                    }}
                                     multiline
                                     rows={4}
                                 />
