@@ -1,149 +1,136 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { getTaMenuAssignedStudents } from '../../../../redux/features/taModule/tamenuSlice'
-import { getCoachMenuAssignedStudents } from '../../../../redux/features/coachModule/coachmenuprofileSilce'
+import { getTaMenuAssignedBatches, getTaMenuAssignedStudents } from '../../../../redux/features/taModule/tamenuSlice'
+import { getCoachMenuAssignedBatches, getCoachMenuAssignedStudents } from '../../../../redux/features/coachModule/coachmenuprofileSilce'
 import { closeEditStudents } from '../../../../redux/features/commonCalender/commonCalender'
 import ReusableDialog from '../../../CustomFields/ReusableDialog'
-import { Divider, Grid, MenuItem } from '@mui/material'
+import { Divider, Grid, MenuItem, Typography } from '@mui/material'
 import CustomTextField from '../../../CustomFields/CustomTextField'
 import PopUpTable from '../../../CommonComponent/PopUpTable'
+import { toast } from 'react-toastify'
+import CustomButton from '../../../CustomFields/CustomButton'
 
 const EditBatchesSessionLink = () => {
     const dispatch = useDispatch()
 
-    const [selectedTerm, setSelectedTerm] = useState([])
-    const [selectedBatch, setSelectedBatch] = useState('');
-    const [searchName, setSearchName] = useState('')
-    const [selectedStudents, setSelectedStudents] = useState([])
-    const [filteredStudents, setFilteredStudents] = useState([]);
+    const [selectedBatch, setSelectedBatch] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [selectedBranch, setSelectedBranch] = useState('');
+    const [filteredBatches, setFilteredBatches] = useState([]);
 
-    let sliceName, getStudentsApi, studentDataState;
+    let sliceName, 
+        getBatchesApi,
+        batchesDataState;
 
     switch ( componentName ) {
         case 'TAMENU':
             sliceName = 'taMenu'
-            getStudentsApi = getTaMenuAssignedStudents;
-            studentDataState = 'assignedTaStudents';
+            getBatchesApi = getTaMenuAssignedBatches;
+            batchesDataState = 'assignedTaBatches';
             break;
         
         case 'COACHMENU':
             sliceName = 'coachMenu'
-            getStudentsApi = getCoachMenuAssignedStudents;
-            studentDataState = 'assignedCoachStudents';
+            getBatchesApi = getCoachMenuAssignedBatches;
+            batchesDataState = 'assignedCoachBatches';
             break;
     
         default:
             sliceName = null;
-            getStudentsApi = null;
-            studentDataState = null;
+            getBatchesApi = null;
+            batchesDataState = null;
             break;
     }
 
     const stateSelector = useSelector((state) => state[sliceName])
 
-    const { [studentDataState]: studentsData } = stateSelector
+    const { [batchesDataState]: batchesData } = stateSelector
 
-    const { editStudents } = useSelector((state) => state.commonCalender)
+    const { editBatches } = useSelector((state) => state.commonCalender)
 
     useEffect(() => {
-        dispatch(getStudentsApi())
+        dispatch(getBatchesApi())
     }, [dispatch])
 
+    console.log("batchess :", batchesData)
     useEffect(() => {
-        const transformedSelectedStudents = editStudents.map((student) => student.id);
-        setSelectedStudents(transformedSelectedStudents);
-    },[editStudents])
-
-    useEffect(() => {
-        if (studentsData && studentsData.length > 0) {
-            const transformedData = studentsData.map((stu, index) => ({
-                'S. No.': index + 1,
-                'Student Name': stu.student.name,
-                Program:
-                    stu.student.packages.map(pack => pack.name).join(', ') ||
-                    'N/A',
-                Batch:
-                    stu.student.batches
-                        .map(batch => batch.batch_name)
-                        .join(', ') || 'N/A',
-                Select: stu.is_active ? 'Active' : 'Inactive',
-                is_active: stu.is_active,
-                id: stu.student.id,
-            }));
-
-            // TODO : ADD FILTER
-
-            setFilteredStudents(transformedData);
+        if(batchesData && batchesData.length){
+            const transformedData = batchesData;
+            
+            const filtered = transformedData.filter(batch => {
+                const matchesBranch = selectedBranch ? batch.Branch = selectedBranch : true;
+                const matchesQuery = searchQuery ? batch['Batch Name'].toLowerCase().includes(searchQuery.toLowerCase()) : true;
+                return matchesBranch && matchesQuery;
+            });
+            setFilteredBatches(filtered);
+        }else {
+            setFilteredBatches();
         }
-    }, [studentsData, selectedTerm, selectedBatch, searchName]);
+    },[batchesData, selectedBatch, searchQuery]);
 
-    const batchOptions =
-    studentsData && Array.isArray(studentsData)
-        ? [
-              ...new Set(
-                  studentsData
-                      .filter(
-                          student =>
-                              !selectedTerm ||
-                              student.student.academic_term === selectedTerm
-                      )
-                      .flatMap(student =>
-                          student.student.batches.map(
-                              batch => batch.batch_name
-                          )
-                      )
-              ),
-          ]
-        : [];
 
-const academicTermOptions =
-    studentsData && Array.isArray(studentsData)
-        ? [
-              ...new Set(
-                  studentsData.flatMap(student =>
-                      student.student.packages.map(pack => pack.name)
-                  )
-              ),
-          ]
-        : [];
+    const batchOptions = assignedBatches ? [...new Set(batchesData)] : [];
 
     useEffect(() => {
-        
-    },[])
-
-    const handleSelectStudents = id => {
-        setSelectedStudents(prev =>
-            prev.includes(id) ? prev.filter(sid => sid !== id) : [...prev, id]
-        );
-    };
     
+    })
+
+    const handleSelectBatch = id => {
+        setSelectedBatch(prev => prev.includes(id) ? prev.filter(sid => sid !== id) : [...prev, id])
+    }
+
+    const handleBranchChange = e => {
+        const selectedBranchValue = e.target.value
+        setSelectedBranch(selectedBranchValue);
+
+        if(!selectedBranchValue){
+            setFilteredBatches(
+
+            )
+        }
+    }
+
+    const validate = () => {
+        if(selectedBatch.length === 0){
+            toast.error('Please Select at Least One Batch')
+            return false;
+        }
+        return true;
+    }
+
+
+    const handleSubmit = () => {
+        if(!validate()) return;
+
+        const Id = meetingId;
+        const data = {
+            batchId: selectedBatch.map(id => id)
+        }
+        dispatch().then(() => {
+            dispatch();
+        });
+    }
+
+
     const content = (
         <>
             <Grid container spacing={2} justifyContent="center" sx={{ mt: 0 }}>
                 <Grid item sm={6}>
                     <CustomTextField
                         select
-                        label="Program"
-                        value={selectedTerm}
-                        onChange={e => setSelectedTerm(e.target.value)}
+                        label="Branch"
+                        value={selectedBranch}
+                        onChange={handleBranchChange}
+                        onClear={() =>
+                            handleBranchChange({ target: { value: '' } })
+                        } // Clear functionality
                     >
-                        {academicTermOptions.map(term => (
-                            <MenuItem key={term} value={term}>
-                                {term}
-                            </MenuItem>
-                        ))}
-                    </CustomTextField>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                    <CustomTextField
-                        select
-                        label="Batch"
-                        value={selectedBatch}
-                        onChange={e => setSelectedBatch(e.target.value)}
-                    >
-                        {batchOptions.map(batch => (
-                            <MenuItem key={batch} value={batch}>
-                                {batch}
+                        <MenuItem value="">
+                            <em>All</em>
+                        </MenuItem>
+                        {batchOptions.map((branch, index) => (
+                            <MenuItem key={index} value={branch}>
+                                {branch}
                             </MenuItem>
                         ))}
                     </CustomTextField>
@@ -151,29 +138,29 @@ const academicTermOptions =
                 <Grid item xs={12}>
                     <Divider sx={{ border: '1px solid #C2C2E7' }} />
                 </Grid>
-                <Grid item xs={12} marginBottom={2}>
+                <Grid item xs={12} mb={2}>
                     <CustomTextField
-                        label="Search By Student Name"
-                        value={searchName}
-                        onChange={e => setSearchName(e.target.value)}
+                        label="Search By Batch Name"
+                        value={searchQuery}
+                        onChange={e => setSearchQuery(e.target.value)}
                     />
                 </Grid>
             </Grid>
             <PopUpTable
                 headers={headers}
-                initialData={filteredStudents}
-                onRowClick={handleSelectStudents}
-                selectedBox={selectedStudents}
+                initialData={filteredBatches}
+                onRowClick={handleSelectBatch}
+                selectedBox={selectedBatch}
             />
             <Typography
                 variant="subtitle1"
                 gutterBottom
                 sx={{ mt: 2, textAlign: 'center' }}
             >
-                {selectedStudents.length} Student(s) Selected
+                {selectedBatch.length} batch(es) Selected
             </Typography>
         </>
-    );
+    )
 
     const actions = (
         <CustomButton
@@ -182,20 +169,18 @@ const academicTermOptions =
                 backgroundColor: '#F56D3B',
                 borderColor: '#F56D3B',
                 color: '#FFFFFF',
-                textTransform: 'none',
-                fontFamily: 'Bold',
-               textTransform: 'none' 
+                textTransform: 'none',  
             }}
         >
             Submit
         </CustomButton>
-    );
+    )
 
     return (
         <ReusableDialog
-          open={openEditStudentsPopup}
-          handleClose={() => dispatch(closeEditStudents())}
-          title={`Assign Students`}
+          open={openEditBatchesPopup}
+          handleClose={() => dispatch()}
+          title={`Assign Batches to Session`}
           content={content}
           actions={actions}
         />

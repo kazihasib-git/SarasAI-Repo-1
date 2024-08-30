@@ -26,6 +26,7 @@ import CustomTimeField from '../../../CustomFields/CustomTimeField';
 import CustomTimeZoneForm from '../../../CustomFields/CustomTimeZoneForm';
 import ReusableDialog from '../../../CustomFields/ReusableDialog';
 import CustomButton from '../../../CustomFields/CustomButton';
+import { toast } from 'react-toastify';
 
 const weekDays = [
     'Sunday',
@@ -99,21 +100,30 @@ const CreateSlot = ({ componentName, timezoneID }) => {
         });
     };
 
-    const validate = () => {
+    const validate = (formData) => {
         let validationErrors = {};
-        // if (!formData.fromDate)
-        //     validationErrors.fromDate = 'Please select From Date';
-        if (!formData.fromTime)
+    
+        if (!formData.fromDate) {
+            validationErrors.fromDate = 'Please select From Date';
+            toast.error('Please select From Date');
+        }
+        if (!formData.fromTime) {
             validationErrors.fromTime = 'Please select From Time';
-        if (!formData.toTime) validationErrors.toTime = 'Please select To Time';
-        if (formData.repeat === 'recurring' && !formData.toDate)
+            toast.error('Please select From Time');
+        }
+        if (!formData.toTime) {
+            validationErrors.toTime = 'Please select To Time';
+            toast.error('Please select To Time');
+        }
+        if (formData.repeat === 'recurring' && !formData.toDate) {
             validationErrors.toDate = 'Please select To Date';
-        if (
-            formData.repeat === 'recurring' &&
-            formData.selectedDays.length === 0
-        )
+            toast.error('Please select To Date');
+        }
+        if (formData.repeat === 'recurring' && formData.selectedDays.length === 0) {
             validationErrors.selectedDays = 'Please select at least one day';
-
+            toast.error('Please select at least one day');
+        }
+    
         setErrors(validationErrors);
         return Object.keys(validationErrors).length === 0;
     };
@@ -121,11 +131,7 @@ const CreateSlot = ({ componentName, timezoneID }) => {
     const handleSubmit = e => {
         e.preventDefault();
 
-        if (validate()) {
-            // Proceed with form submission
-        } else {
-            console.log('Validation failed:', errors);
-        }
+        if (!validate(formData)) return; 
 
         let weeksArray = Array(7).fill(0);
         if (formData.repeat === 'recurring') {
@@ -253,7 +259,7 @@ const CreateSlot = ({ componentName, timezoneID }) => {
                                 name="timezone_id"
                                 value={timezoneID}
                                 // onChange={field.onChange}
-                                disabled={timezoneID!=null}
+                                //disabled={timezoneID!=null}
                                 options={timezones}
                                 errors={errors}
                             />
