@@ -90,6 +90,7 @@ import AssignTaCourses from './pages/managesTAs/AssignedTaCourses.jsx';
 import AssignedTemplateStudents from './pages/ManageCoaches/CoachingTemplate/AssignedTemplateStudents.jsx';
 
 import ForgetPassword from './components/AUTH/ForgetPassword.jsx';
+import { useGetTimezonesQuery } from './redux/services/timezones/timezonesApi.js';
 
 const ROLES = {
     Teaching: 2001,
@@ -101,9 +102,13 @@ function App() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const { userData, login, role, accessToken } = useSelector(
+    const { login, role, accessToken } = useSelector(
         state => state.auth
     );
+
+    const { data: timezones, error, isLoading } = useGetTimezonesQuery();
+
+    console.log("TIMEZONESS :", timezones);
 
     const access_token = localStorage.getItem('accessToken');
     const userRole = localStorage.getItem('role');

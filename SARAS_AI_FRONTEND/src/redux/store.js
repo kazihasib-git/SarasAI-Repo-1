@@ -20,6 +20,7 @@ import utilReducer from './features/utils/utilSlice';
 import timeZoneReducer from './features/timeZone/timezone';
 import linkActivityReducer from './features/adminModule/coach/LinkActivitySlice';
 import coachingToolsReducer from './features/adminModule/coachingTools/coachingTools';
+import { timezonesApi } from './services/timezones/timezonesApi';
 
 const store = configureStore({
     reducer: {
@@ -44,12 +45,14 @@ const store = configureStore({
         [studentsApi.reducerPath]: studentsApi.reducer,
         [batchesApi.reducerPath]: batchesApi.reducer,
         [coursesApi.reducerPath]: coursesApi.reducer,
+        [timezonesApi.reducerPath]: timezonesApi.reducer,
     },
     middleware: getDefaultMiddleware =>
         getDefaultMiddleware()
             .concat(studentsApi.middleware)
             .concat(batchesApi.middleware)
-            .concat(coursesApi.middleware),
+            .concat(coursesApi.middleware)
+            .concat(timezonesApi.middleware)
 });
 
 setupListeners(store.dispatch);
