@@ -347,6 +347,7 @@ function App() {
                 {/* Routes for Coachemenu */}
                 {login && role == 1984 && (
                     <Route path="/" element={<Main page="Coach Menu" />}>
+                        <Route index element={<CoachMenuProfile page="Coach Menu Profile" />} />
                         <Route
                             path="coachmenu"
                             element={<CoachMenu page="Coach Menu" />}
@@ -414,9 +415,10 @@ function App() {
                         path="/"
                         element={<Main page="Teaching Assistant Menu" />}
                     >
+                         <Route index element={<TaMenuProfile page="TA My Profile" />} />
                         <Route
                             path="tamenu_profile"
-                            element={<TaMenuProfile page="My Profile" />}
+                            element={<TaMenuProfile page="TA My Profile" />}
                         />
                         <Route
                             path="tamenu_students"
