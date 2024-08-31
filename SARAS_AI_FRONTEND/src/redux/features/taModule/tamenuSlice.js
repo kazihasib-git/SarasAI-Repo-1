@@ -173,12 +173,23 @@ export const reasonForTaMenuLeave = createAsyncThunk(
 // Reschedule Session for TA Leave
 export const rescheduleSessionForTaLeave = createAsyncThunk(
     'taMenu/rescheduleSession',
-    async ({ id, data }) => {
+    async ({ id, data}, {rejectWithValue}) => {
+        try{
         const response = await axiosInstance.post(
             `${baseUrl}/ta/calendar/reschedule/${id}`,
             data
         );
         return response.data;
+    
+}catch (error) {
+    if (error.response && error.response.data) {
+        return rejectWithValue(error.response.data.message);
+    } else {
+        return rejectWithValue(
+            'An Error Occurred While Creating TA slots'
+        );
+    }
+}
     }
 );
 
@@ -675,6 +686,7 @@ export const taMenuSlice = createSlice({
             (state, action) => {
                 state.loading = false;
                 state.taRescheduleSessions = action.payload.data;
+                toast.success(action.payload.message || 'Successfully created');
             }
         );
         builder.addCase(
@@ -682,6 +694,7 @@ export const taMenuSlice = createSlice({
             (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
+                toast.error(action.payload || 'Failed To Reschedule');
             }
         );
 

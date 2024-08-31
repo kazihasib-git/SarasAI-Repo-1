@@ -79,32 +79,30 @@ const CoachCallRecord = () => {
 
     const dispatch = useDispatch();
     const calls = useSelector(state => state.coachMenu.coachCallRecords);
-    const { timezones } =  useSelector((state) => state.util)
+    const { timezones } = useSelector(state => state.util);
     const { userData } = useSelector(state => state.auth);
 
     useEffect(() => {
         dispatch(getCoachCallRecords(date.format('YYYY-MM-DD')));
-        dispatch(getTimezone())
+        dispatch(getTimezone());
     }, [date, dispatch]);
 
-
     useEffect(() => {
-        if(calls && calls.length > 0 && timezones && storedTimezoneId){
-            console.log("BEFORE PROCESSING DATA")
+        if (calls && calls.length > 0 && timezones && storedTimezoneId) {
+            console.log('BEFORE PROCESSING DATA');
             processCalls();
-            console.log("AFTERR PROCESSING DATA")
-        }else{
-            setProcessedCalls([]) ;
+            console.log('AFTERR PROCESSING DATA');
+        } else {
+            setProcessedCalls([]);
         }
-    },[calls, timezones, storedTimezoneId])
+    }, [calls, timezones, storedTimezoneId]);
 
-    
     const processCalls = async () => {
         const timezonename = timezoneIdToName(storedTimezoneId, timezones);
-        console.log("TIMEZONE NAME :", timezonename, calls)
+        console.log('TIMEZONE NAME :', timezonename, calls);
         try {
             const processed = await Promise.all(
-                calls.map(async (call) => {
+                calls.map(async call => {
                     const localTime = await convertFromUTC({
                         start_date: call.date,
                         start_time: call.start_time,
@@ -128,7 +126,6 @@ const CoachCallRecord = () => {
         }
     };
 
-
     function convertTo12HourFormat(time24) {
         const [hours, minutes, seconds] = time24.split(':').map(Number);
         const suffix = hours >= 12 ? 'PM' : 'AM';
@@ -136,7 +133,6 @@ const CoachCallRecord = () => {
         const formattedMinutes = minutes.toString().padStart(2, '0');
         return `${hours12}:${formattedMinutes} ${suffix}`;
     }
-
 
     const handleClickOpen = call => {
         setSelectedCall(call);
@@ -167,7 +163,7 @@ const CoachCallRecord = () => {
         }
     };
     const sortedCalls = processedCalls.sort((a, b) => {
-        const timeA = moment(a.start_time, 'HH:mm A'); 
+        const timeA = moment(a.start_time, 'HH:mm A');
         const timeB = moment(b.start_time, 'HH:mm A');
         return timeA - timeB;
     });
@@ -263,7 +259,7 @@ const CoachCallRecord = () => {
                                     justifyContent="space-between"
                                 >
                                     <Typography variant="h6">
-                                    {/* {userData.name}`session */}
+                                        {/* {userData.name}`session */}
                                         {call.meeting_name}
                                     </Typography>
                                 </Box>
@@ -278,8 +274,12 @@ const CoachCallRecord = () => {
                                 >
                                     {moment(call.date).format('MMMM D, YYYY') ||
                                         'No Date'}{' '}
-                                    | {convertTo12HourFormat(call.start_time) || 'No Start Time'} -{' '}
-                                    {convertTo12HourFormat(call.end_time) || 'No End Time'}
+                                    |{' '}
+                                    {convertTo12HourFormat(call.start_time) ||
+                                        'No Start Time'}{' '}
+                                    -{' '}
+                                    {convertTo12HourFormat(call.end_time) ||
+                                        'No End Time'}
                                 </Typography>
 
                                 <Typography
@@ -307,7 +307,7 @@ const CoachCallRecord = () => {
                                     justifyContent="space-between"
                                     sx={{ mt: 2 }}
                                 >
-                                   <CustomButton
+                                    <CustomButton
                                         onClick={() => handleClickOpen(call)}
                                         color="#F56D3B"
                                         backgroundColor="#FFFFFF"
@@ -366,14 +366,14 @@ const CoachCallRecord = () => {
                 open={open}
                 onClose={handleClose}
                 onSave={handleSaveNotes}
-                role="TA"
+                role="COACH"
                 selectedId={selectedCall}
             />
 
             <VideoUploadDialog
                 open={uploadDialogOpen}
                 onClose={handleCloseUploadDialog}
-                role="TA"
+                role="COACH"
                 selectedId={idVideo}
             />
 

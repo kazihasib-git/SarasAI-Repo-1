@@ -104,20 +104,24 @@ const CreateSlot = ({ componentName, timezoneID }) => {
         let validationErrors = {};
 
         if (!formData.fromDate) {
-            validationErrors.fromDate = 'Please select From Date';
+            validationErrors.fromDate = '';
             toast.error('Please select From Date');
+            return;
         }
         if (!formData.fromTime) {
             validationErrors.fromTime = 'Please select From Time';
             toast.error('Please select From Time');
+            return;
         }
         if (!formData.toTime) {
             validationErrors.toTime = 'Please select To Time';
             toast.error('Please select To Time');
+            return;
         }
         if (formData.repeat === 'recurring' && !formData.toDate) {
             validationErrors.toDate = 'Please select To Date';
             toast.error('Please select To Date');
+            return;
         }
         if (
             formData.repeat === 'recurring' &&
@@ -125,6 +129,7 @@ const CreateSlot = ({ componentName, timezoneID }) => {
         ) {
             validationErrors.selectedDays = 'Please select at least one day';
             toast.error('Please select at least one day');
+            return;
         }
 
         setErrors(validationErrors);
