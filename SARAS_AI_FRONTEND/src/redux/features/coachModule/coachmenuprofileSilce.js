@@ -221,13 +221,23 @@ export const reasonForCoachMenuLeave = createAsyncThunk(
 // Reschedule Session for Coach Leave
 export const rescheduleSessionForCoachLeave = createAsyncThunk(
     'coachMenu/rescheduleSession',
-    async ({ id, data }) => {
+    async ({ id, data}, {rejectWithValue}) => {
+        try{
         console.log('id & data', id, data);
         const response = await axiosInstance.post(
             `${baseUrl}/coach/calendar/reschedule/${id}`,
             data
         );
         return response.data;
+    }catch (error) {
+        if (error.response && error.response.data) {
+            return rejectWithValue(error.response.data.message);
+        } else {
+            return rejectWithValue(
+                'An Error Occurred While Creating TA slots'
+            );
+        }
+    }
     }
 );
 
@@ -940,6 +950,7 @@ export const coachMenuSlice = createSlice({
             (state, action) => {
                 state.loading = false;
                 state.rescheduledSessions = action.payload.data;
+                toast.success(action.payload.message || 'Successfully created');
             }
         );
         builder.addCase(
@@ -947,6 +958,7 @@ export const coachMenuSlice = createSlice({
             (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
+                toast.error(action.payload || 'Failed To Reschedule');
             }
         );
 
