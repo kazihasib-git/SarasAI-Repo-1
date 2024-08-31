@@ -15,6 +15,7 @@ export const getCoachMenuProfile = createAsyncThunk(
     }
 );
 
+
 // Update coach profile
 export const updateCoachmenuprofile = createAsyncThunk(
     'coachMenu/updateprofile',
@@ -440,6 +441,30 @@ export const updateBatchesInCoachSession = createAsyncThunk(
     }
 )
 
+
+export const updateCoachScheduledCall = createAsyncThunk(
+    'coachMenu/updateCoachScheduledCall',
+    async ({ id, data }, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.put(
+                `${baseUrl}/coach/schedule-call/update-schedule-calls/${id}`,
+                data
+            );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An error occurred while updating the scheduled call'
+                );
+            }
+        }
+    }
+);
+
+
+
 const initialState = {
     coachProfileData: [], // Coach Profile Data
     updateProfileData: [],
@@ -489,6 +514,7 @@ const initialState = {
     error: null,
     coachCallRequests: [],
     coachScheduledCalls: [],
+    updatedCoachScheduledCall: null,
 };
 
 export const coachMenuSlice = createSlice({
@@ -1054,6 +1080,20 @@ export const coachMenuSlice = createSlice({
             state.loading = false;
             toast.error(action.payload || 'Failed To Update Batches in Session')
             state.error = action.error.message;
+        })
+// update scheduled calls
+        builder.addCase(updateCoachScheduledCall.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(updateCoachScheduledCall.fulfilled, (state, action) => {
+            state.loading = false;
+            state.updatedScheduledCall = action.payload.data;
+            toast.success(action.payload.message || 'Scheduled call updated successfully');
+        });
+        builder.addCase(updateCoachScheduledCall.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+            toast.error(action.payload || 'Failed to update scheduled call');
         })
     },
 });

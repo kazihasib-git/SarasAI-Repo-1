@@ -12,7 +12,7 @@ import {
     openEditActivityPopup,
     openEditModulePopup,
     openTemplateActivityPopup,
-    updateCoachActivity,
+    updateModuleActivity,
 } from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
 import ViewActivityPopup from '../TemplateModulePopup/ViewActivity';
 
@@ -95,14 +95,14 @@ const TemplateModuleTable = ({ modulesData }) => {
     const { selectedCoachTemplate } = useSelector(state => state.coachTemplate);
 
     const handleToggle = (moduleId, activityId, currentStatus) => {
-        const newStatus = !currentStatus;
+        const newStatus = !currentStatus ;  
         const data = {
             activity_id: activityId,
             status: newStatus,
         };
 
-        // Dispatch the updateCoachActivity action
-        dispatch(updateCoachActivity({ data }))
+        // Dispatch the updateModuleActivity action
+        dispatch(updateModuleActivity({ data }))
             .unwrap()
             .then(() => {
                 // console.log("SLOT EVENT DATA : ", slotEventData)

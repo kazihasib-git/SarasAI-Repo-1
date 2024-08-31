@@ -379,6 +379,30 @@ export const assignSessionNotes = createAsyncThunk(
     }
 );
 
+
+
+export const updateTaScheduledCall = createAsyncThunk(
+    'coachMenu/updateTaScheduledCall',
+    async ({ id, data }, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.put(
+                `${baseUrl}/ta/schedule-call/update-schedule-calls/${id}`,
+                data
+            );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An error occurred while updating the scheduled call'
+                );
+            }
+        }
+    }
+);
+
+
 const initialState = {
     taProfileData: [], // TA Profile Data
     myStudentData: [], // TA My Students
@@ -411,6 +435,8 @@ const initialState = {
     loading: false,
     error: null,
     sessionNotesData: [],
+    updatedTaScheduledCall: null,
+
 };
 
 export const taMenuSlice = createSlice({
@@ -820,6 +846,21 @@ export const taMenuSlice = createSlice({
             state.loading = false;
             state.error = action.error.message;
         });
+
+
+        builder.addCase(updateTaScheduledCall.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(updateTaScheduledCall.fulfilled, (state, action) => {
+            state.loading = false;
+            state.updatedScheduledCall = action.payload.data;
+            toast.success(action.payload.message || 'Scheduled call updated successfully');
+        });
+        builder.addCase(updateTaScheduledCall.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+            toast.error(action.payload || 'Failed to update scheduled call');
+        })
     },
 });
 
