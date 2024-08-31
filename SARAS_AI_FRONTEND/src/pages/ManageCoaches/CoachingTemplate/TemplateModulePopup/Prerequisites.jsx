@@ -24,6 +24,7 @@ import {
 import CustomModuleFormControl from '../../../../components/CustomFields/CustomModuleFormControl';
 import CustomActivityFormControl from '../../../../components/CustomFields/CustomActivityFormControl';
 import { toast } from 'react-toastify';
+import CustomFutureDateField from '../../../../components/CustomFields/CustomFutureDateField';
 
 const CustomButton = ({
     onClick,
@@ -227,7 +228,7 @@ const PrerequisitesPopup = ({
                     name="lockUntil"
                     control={control}
                     render={({ field }) => (
-                        <CustomDateField
+                        <CustomFutureDateField
                             label="Lock Until"
                             fullWidth
                             {...field}
