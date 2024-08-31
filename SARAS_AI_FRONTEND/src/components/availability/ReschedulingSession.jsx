@@ -36,6 +36,7 @@ import { convertFromUTC } from '../../utils/dateAndtimeConversion';
 import { getTimezone , getAllHosts} from '../../redux/features/utils/utilSlice';
 import { toast } from 'react-toastify';
 import PopTableSlot from '../CommonComponent/PopTableSlot';
+import CustomFutureDateField from '../CustomFields/CustomFutureDateField';
 const headers = ['S. No.', 'Slots Available', 'Select'];
 
 const ReschedulingSession = ({ componentName, timezoneID }) => {
@@ -304,7 +305,7 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
                 pt={'16px'}
                 style={{ display: 'flex', justifyContent: 'center' }}
             >
-                <CustomDateField
+                <CustomFutureDateField
                     label="Select Date"
                     value={selectDate}
                     onChange={handleDateChange}

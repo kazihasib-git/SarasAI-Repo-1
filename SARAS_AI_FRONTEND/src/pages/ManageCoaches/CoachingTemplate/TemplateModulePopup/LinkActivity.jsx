@@ -11,6 +11,7 @@ import {
     FormControlLabel,
     FormControl,
 } from '@mui/material';
+import { toast } from 'react-toastify';
 import { Controller, useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import VideoUploadComponent from './videoUpload/VideoUploadComponent';
@@ -142,12 +143,32 @@ const LinkActivityPopup = ({
     const onSubmit = async data => {
         //console.log("---------------->", data , "activityId", activityId, "activityType", activityType, "selectedAssessmentId", selectedAssessmentId, "selectedSessionType", selectedSessionType);
         setSelectedAssessmentId(data.assessment);
+        console.log(activityType,"actibjbcjecjece");
+    
+
+        if (activityType === 'videos' && !videoUrl) {
+            toast.error('Please upload a valid video.');
+        } else if (activityType === 'pdf' && !upload_pdf_url) {
+            toast.error('Please upload a valid PDF.');
+            return; // Exit if the PDF URL is not provided
+        } else if (activityType === 'test' && !selectedAssessmentId ) {
+            toast.error('Please provide a valid Assesment Type.');
+        } else if (activityType === 'virtual meet' && !selectedSessionType ) {
+            toast.error('Please provide a valid Session.');
+        } else if (activityType === 'link' && !data.link) {
+            toast.error('Please provide a valid link.');
+            return; // Exit if the link is not provided
+        }
+    
+      
+       
         const payload = {
             activity_id: activityId, // Ensure this value is correctly set
             activity_type_id: selectedActivityId,
             // activityType === 'test'
             //     ? selectedAssessmentId
             //    : selectedActivityId, // Ensure this value is correctly set
+            
             link: videoUrl || upload_pdf_url || data.link, // Add other fields if needed
             virtual_meeting_type: selectedSessionType,
             test_type: selectedAssessmentId,
