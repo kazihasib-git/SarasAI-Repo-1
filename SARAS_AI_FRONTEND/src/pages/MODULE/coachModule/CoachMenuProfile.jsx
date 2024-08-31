@@ -307,37 +307,6 @@ const CoachMenuProfile = () => {
                                 />
                             </Grid>
 
-                            {/* <Grid item xs={12} sm={6} md={4}>
-                                <CustomTextField
-                                    label="Password"
-                                    name="password"
-                                    type="password"
-                                    placeholder="Enter Password"
-                                    autoComplete="current-password"
-                                    register={register}
-                                    validation={{
-                                        required: 'Password is required',
-                                        minLength: {
-                                            value: 8,
-                                            message:
-                                                'Password must be at least 8 characters long',
-                                        },
-                                        maxLength: {
-                                            value: 20,
-                                            message:
-                                                'Password cannot exceed 20 characters',
-                                        },
-                                        pattern: {
-                                            value: /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$/,
-                                            message:
-                                                'Password must include at least one uppercase letter, one lowercase letter, one number, and one special character',
-                                        },
-                                    }}
-                                    errors={errors}
-                                    disabled={!isEditing}
-                                />
-                            </Grid> */}
-
                             <Grid item xs={12} sm={6} md={4}>
                                 <CustomTextField
                                     label="Email Address"

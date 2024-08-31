@@ -8,7 +8,7 @@ import editIcon from '../../../../assets/editIcon.png';
 import bin from '../../../../assets/bin.png';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { useDispatch } from 'react-redux';
-import { updateCoachActivity } from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
+import { updateTemplateActivity } from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
 const CoachTemplateTable = ({
     headers,
     initialData,
@@ -24,7 +24,6 @@ const CoachTemplateTable = ({
     );
 
     const [currentPage, setCurrentPage] = useState(1);
-
     useEffect(() => {
         setData(
             initialData.map(item => ({
@@ -81,7 +80,7 @@ const CoachTemplateTable = ({
 
         switch (componentName) {
             case 'COACHTEMPLATE':
-                dispatch(updateCoachActivity({ data: requestData }));
+                dispatch(updateTemplateActivity({ data: requestData }));
                 break;
             default:
                 console.warn(
@@ -103,7 +102,7 @@ const CoachTemplateTable = ({
     //         return "#000000";
     //     }
     //   };
-    console.log('currunt data', currentData);
+    console.log('currunt data:::', currentData);
     return (
         <div className="tableContainer">
             <table>

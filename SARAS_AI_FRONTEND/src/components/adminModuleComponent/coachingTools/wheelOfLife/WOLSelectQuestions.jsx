@@ -167,7 +167,7 @@ const WOLSelectQuestions = () => {
                             fontFamily: 'ExtraLight',
                         }}
                     >
-                        Wheel Of Life Test Config test
+                        Wheel Of Life Test Config
                     </p>
                 </Box>
             </Box>

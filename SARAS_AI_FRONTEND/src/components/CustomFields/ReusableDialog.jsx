@@ -48,7 +48,7 @@ const ReusableDialog = ({ open, handleClose, title, content, actions }) => (
                 m: 0,
                 paddingTop: '16px',
                 // marginTop:'55px' ,
-                marginBottom:'-30px', 
+                // marginBottom:'-30px', 
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',

@@ -15,10 +15,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
     //updateTaMenuSession,
     getTaMenuSessions,
+    updateTaScheduledCall
 } from '../../../../redux/features/taModule/tamenuSlice';
 import {
     // updateCoachMenuSession,
+
     getCoachMenuSessions,
+    updateCoachScheduledCall
 } from '../../../../redux/features/coachModule/coachmenuprofileSilce';
 import {
     closeEditSession,
@@ -104,15 +107,16 @@ const durationOptions = [
 
 const EditSession = ({ componentName }) => {
 
+    console.log('componenetname', componentName)
     const dispatch = useDispatch();
     const { timezones, platforms } = useSelector(state => state.util);
 
-    const { editSession, students, batches, sessionData } = useSelector(
-        state => state.commonCalender
-    );
+    const { editSession, students, batches, sessionData } = useSelector(state => state.commonCalender);
 
-    const startTime = moment(sessionData.start_time, "HH:mm:ss");
-    const endTime = moment(sessionData.end_time, "HH:mm:ss");
+    const authToken = useSelector(state => state.auth.token); // Assuming you store the auth token in Redux
+
+    const startTime = moment(sessionData.start_time, "HH:MM:SS");
+    const endTime = moment(sessionData.end_time, "HH:MM:SS");
     const timeDifference = moment.duration(endTime.diff(startTime));
     const formattedDifference = [
         String(Math.floor(timeDifference.asHours())).padStart(2, '0'),
@@ -122,7 +126,7 @@ const EditSession = ({ componentName }) => {
 
     const [error, setError] = useState({});
     const studentData = sessionData.students || [];
-    
+
     const studentIdArray = [];
     if (studentData && studentData.length > 0) {
         students.forEach(student => {
@@ -135,14 +139,14 @@ const EditSession = ({ componentName }) => {
     const [formData, setFormData] = useState({
         sessionName: sessionData.meeting_name || '',
         duration: formattedDifference,
-        message: sessionData.message || '', 
+        message: sessionData.message || '',
         students: studentIdArray || [], // sessionData.students || [];
         batches: sessionData.batch || [],
-        platform_id : sessionData.platform_id || null,
+        platform_id: sessionData.platform_id || null,
         fromDate: sessionData.date || '',
         toDate: sessionData.to_date || '',
-        fromTime: moment(sessionData.start_time, "HH:mm:ss"),
-        toTime: moment(sessionData.end_time, "HH:mm:ss"),
+        fromTime: moment(sessionData.start_time, "HH:MM:SS"),
+        toTime: moment(sessionData.end_time, "HH:MM:SS"),
         timezone_id: sessionData.timezone_id || null,
     });
 
@@ -186,7 +190,7 @@ const EditSession = ({ componentName }) => {
 
     const handleChange = (field, value) => {
         if (field === 'timezone') {
-            setFormData(prev => ({ ...prev, [field]: value.time_zone }));
+            setFormData(prev => ({ ...prev, [field]: value.timezone_id }));
         }
         setFormData(prev => ({ ...prev, [field]: value }));
     };
@@ -209,48 +213,80 @@ const EditSession = ({ componentName }) => {
     };
 
     const validate = () => {
-        
+
     };
+
 
     const handleSubmit = e => {
         e.preventDefault();
 
-        const studentId = students.map(student => student.id);
-        const batchId = batches.map(batch => batch.id);
-
         const fromDateTimeString = `${formData.fromDate}T${formData.fromTime}`;
-        const fromDateTime = new Date(fromDateTimeString);
+        console.log('fromDateTimeString:', fromDateTimeString);
 
-        const [hours, minutes, seconds] = formData.duration
+        const fromDateTime = new Date(fromDateTimeString);
+        console.log('fromDateTime:', fromDateTime);
+
+        // Assuming formData.duration is in the format "HH:MM:SS"
+        const [hours, minutes, seconds] = formData?.duration
             .split(':')
             .map(Number);
         const durationInMs = (hours * 3600 + minutes * 60 + seconds) * 1000;
 
+        // Calculate endDateTime by adding duration to fromDateTime
         const endDateTime = new Date(fromDateTime.getTime() + durationInMs);
+        // console.log('endDateTime:', endDateTime);
+
+        // Extracting time from endDateTime in HH:MM:SS format
         const endTime = endDateTime.toTimeString().split(' ')[0];
 
+        console.log("END TIME DATA ::", endTime, formData.duration)
+
+        const studentId = students.map(student => student.id);
+        const batchId = batches.map(batch => batch.id);
+
         const data = {
-            id: sessionData.id,
             meeting_name: formData.sessionName,
-            duration: formData.duration,
+            platform_id: formData.platform_id,
             schedule_date: formData.fromDate,
             start_time: formData.fromTime,
             end_time: endTime,
-            message: formData.message,
-            platform_id: formData.platform_id,
             timezone_id: formData.timezone_id,
-            event_status: 'scheduled',
+            event_status: 'rescheduled',
+            message: formData.message,
             studentId: studentId,
             batchId: batchId,
-            //weeks: weeksArray,
         };
 
-        console.log(data);
-        // dispatch(updateSessionApi(data)).then(() => {
-        //     dispatch(getSessionApi());
-        //     dispatch(closeEditSession());
-        // });
-        dispatch(closeEditSession());
+        const headers = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+        };
+
+        if (componentName === 'COACHMENU') {
+            dispatch(updateCoachScheduledCall({ id: sessionData.id, data }))
+                .then(() => {
+                    dispatch(getCoachMenuSessions());
+                    dispatch(closeEditSession());
+                })
+                .catch(error => {
+                    console.error('Error updating coach scheduled call:', error);
+                    // Handle error (e.g., show error message to user)
+                });
+        } else if (componentName === 'TAMENU') {
+            dispatch(updateTaScheduledCall({ id: sessionData.id, data, headers }))
+                .then(() => {
+                    dispatch(getTaScheduledCalls());
+                    dispatch(closeEditSession());
+                })
+                .catch(error => {
+                    console.error('Error updating TA scheduled call:', error);
+                    // Handle error (e.g., show error message to user)
+                });
+        } else {
+            console.error('Invalid componentName:', componentName);
+            // Handle invalid componentName (e.g., show error message to user)
+        }
     };
 
     const content = (
@@ -504,11 +540,12 @@ const EditSession = ({ componentName }) => {
         </CustomButton>
     );
 
+
     return (
         <ReusableDialog
-            open={EditSession}
+            open={editSession}
             handleClose={() => dispatch(closeEditSession())}
-            title={`Edit Session`}
+            title={`Edit ${componentName === 'COACHMENU' ? 'Coach' : 'TA'} Session`}
             content={content}
             actions={actions}
         />
