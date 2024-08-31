@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { getTaMenuAssignedStudents, getTaMenuSessions, updateStudentsInTaSession } from '../../../../redux/features/taModule/tamenuSlice';
-import { getCoachMenuAssignedStudents, getCoachMenuSessions, updateBatchesInCoachSession, updateStudentsInCoachSession } from '../../../../redux/features/coachModule/coachmenuprofileSilce';
+import { getTaMenuAssignedStudents, getSelectedTaMenuAssignedStudents , getTaMenuSessions, updateStudentsInTaSession } from '../../../../redux/features/taModule/tamenuSlice';
+import { getCoachMenuAssignedStudents, getCoachMenuSessions,getSelectedCoachMenuAssignedStudents, updateBatchesInCoachSession, updateStudentsInCoachSession } from '../../../../redux/features/coachModule/coachmenuprofileSilce';
 import { toast } from 'react-toastify';
 import { closeEditStudents } from '../../../../redux/features/commonCalender/commonCalender';
 import CustomButton from '../../../CustomFields/CustomButton';
@@ -24,14 +24,17 @@ const EditStudentsSessionLink = ({ componentName }) => {
 
   let sliceName,
     getAssignStudentsApi,
+    getAssignSelectedStudentsApi,
     assignedStudentsState,
     editStudentsApi,
     getSessionApi;
+
 
   switch (componentName) {
     case 'TAMENU':
       sliceName = 'taMenu';
       getAssignStudentsApi = getTaMenuAssignedStudents;
+      getAssignSelectedStudentsApi=getSelectedTaMenuAssignedStudents;
       assignedStudentsState = 'assignedTaStudents';
       editStudentsApi = updateStudentsInTaSession
       getSessionApi = getTaMenuSessions
@@ -40,6 +43,7 @@ const EditStudentsSessionLink = ({ componentName }) => {
     case 'COACHMENU':
       sliceName = 'coachMenu';
       getAssignStudentsApi = getCoachMenuAssignedStudents;
+      getAssignSelectedStudentsApi=getSelectedCoachMenuAssignedStudents;
       assignedStudentsState = 'assignedCoachStudents';
       editStudentsApi = updateStudentsInCoachSession;
       getSessionApi = getCoachMenuSessions
@@ -48,6 +52,7 @@ const EditStudentsSessionLink = ({ componentName }) => {
     default:
       sliceName = null;
       getAssignStudentsApi = null;
+      getAssignSelectedStudentsApi= null;
       assignedStudentsState = null;
       editStudentsApi = null;
       getSessionApi = null;
@@ -60,10 +65,13 @@ const EditStudentsSessionLink = ({ componentName }) => {
 
   console.log("Students", students)
 
-  const { editStudents, meetingId, openEditStudentsPopup } = useSelector((state) => state.commonCalender)
-
+  const { editStudents, meetingId,sessionEventData, openEditStudentsPopup } = useSelector((state) => state.commonCalender)
+  
   useEffect(() => {
+
     dispatch(getAssignStudentsApi())
+    dispatch(getAssignSelectedStudentsApi(sessionEventData.id));
+
   }, [dispatch])
 
   useEffect(() => {

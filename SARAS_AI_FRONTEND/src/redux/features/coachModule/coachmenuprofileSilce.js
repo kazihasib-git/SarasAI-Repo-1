@@ -127,12 +127,34 @@ export const getCoachMenuAssignedStudents = createAsyncThunk(
     }
 );
 
+//Get Selected Assigend Students
+export const getSelectedCoachMenuAssignedStudents = createAsyncThunk(
+    'coachMenu/getSelectedAssignedStudents',
+    async (id) => {
+        const response = await axiosInstance.get(
+            `${baseUrl}/coach/calendar/get-schedule-students/${id}`
+        );
+        return response.data;
+    }
+);
+
 // Get Assigned Batches
 export const getCoachMenuAssignedBatches = createAsyncThunk(
     'coachMenu/getAssignedBatches',
     async () => {
         const response = await axiosInstance.get(
             `${baseUrl}/coach/get-batches`
+        );
+        return response.data;
+    }
+);
+
+//get selected Assigned Btches 
+export const getSelectedCoachMenuAssignedBatches = createAsyncThunk(
+    'coachMenu/getSelectedAssignedBatches',
+    async (id) => {
+        const response = await axiosInstance.get(
+            `${baseUrl}/coach/calendar/get-schedule-batches/${id}`
         );
         return response.data;
     }
@@ -728,6 +750,25 @@ export const coachMenuSlice = createSlice({
                 state.error = action.error.message;
             }
         );
+        //get selected Assigend students
+        builder.addCase(getSelectedCoachMenuAssignedStudents.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(
+            getSelectedCoachMenuAssignedStudents.fulfilled,
+            (state, action) => {
+                state.loading = false;
+                state.assignedCoachStudents = action.payload.data;
+            }
+        );
+        builder.addCase(
+            getSelectedCoachMenuAssignedStudents.rejected,
+            (state, action) => {
+                state.loading = false;
+                state.assignedCoachStudents = [];
+                state.error = action.error.message;
+            }
+        );
 
         // Get Coach Assigned Batches
         builder.addCase(getCoachMenuAssignedBatches.pending, state => {
@@ -748,6 +789,26 @@ export const coachMenuSlice = createSlice({
                 state.assignedCoachBatches = [];
             }
         );
+         // Get Selected Coach Assigned Batches
+         builder.addCase(getSelectedCoachMenuAssignedBatches.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(
+            getSelectedCoachMenuAssignedBatches.fulfilled,
+            (state, action) => {
+                state.loading = false;
+                state.assignedCoachBatches = action.payload.data;
+            }
+        );
+        builder.addCase(
+            getSelectedCoachMenuAssignedBatches.rejected,
+            (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+                state.assignedCoachBatches = [];
+            }
+        );
+
 
         // Get Slots for Leave
         builder.addCase(getCoachMenuSlotsForLeave.pending, state => {

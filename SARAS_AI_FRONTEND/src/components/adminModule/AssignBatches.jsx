@@ -99,7 +99,6 @@ const AssignBatches = ({ componentname }) => {
         loading,
     } = stateSelector || {};
 
-    console.log('id', taID, coachID);
 
     useEffect(() => {
         if (stateModuleKey && assignBatchOpen) {
