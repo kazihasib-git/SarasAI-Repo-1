@@ -46,7 +46,6 @@ const CoachMenuProfile = () => {
     });
 
     const { coachProfileData } = useSelector(state => state.coachMenu);
-    console.log(coachProfileData,"jjhjsjfjshjsfhjshf>>>>>>>>>>>");
     const { timezones } = useSelector(state => state.util);
     useEffect(() => {
         dispatch(getTimezone());

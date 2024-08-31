@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { baseUrl } from '../../../utils/baseURL';
 import axiosInstance from '../../services/httpService';
 import { toast } from 'react-toastify';
+import coachSchedule from '../adminModule/coach/coachSchedule';
 
 // Get Coach profile
 export const getCoachMenuProfile = createAsyncThunk(
@@ -475,7 +476,9 @@ const initialState = {
     coachSlotsByDate: [], // Coach Slots By Date
     coachSessions: [], // Coach Sessions,
     assignedCoachStudents: [], // Assigned Students to Coach
+    coachScheduleStudents:[],
     assignedCoachBatches: [], // Assigned Students to Batch
+    coachScheduleBatches:[],
     selectedCoachStudents: [], // Selected Students for creating Schedules
     selectedCoachBatches: [], // Selected Batches for creating Schedules
     myStudentData: [], // Coach My Students
@@ -758,14 +761,15 @@ export const coachMenuSlice = createSlice({
             getSelectedCoachMenuAssignedStudents.fulfilled,
             (state, action) => {
                 state.loading = false;
-                state.assignedCoachStudents = action.payload.data;
+                console.log("PAYLOAD", action.payload.data)
+                state.coachScheduleStudents = action.payload.data;
             }
         );
         builder.addCase(
             getSelectedCoachMenuAssignedStudents.rejected,
             (state, action) => {
                 state.loading = false;
-                state.assignedCoachStudents = [];
+                state.coachScheduleStudents = [];
                 state.error = action.error.message;
             }
         );
@@ -797,7 +801,7 @@ export const coachMenuSlice = createSlice({
             getSelectedCoachMenuAssignedBatches.fulfilled,
             (state, action) => {
                 state.loading = false;
-                state.assignedCoachBatches = action.payload.data;
+                state.coachScheduleBatches = action.payload.data;
             }
         );
         builder.addCase(
@@ -805,7 +809,7 @@ export const coachMenuSlice = createSlice({
             (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
-                state.assignedCoachBatches = [];
+                state.coachScheduleBatches = [];
             }
         );
 

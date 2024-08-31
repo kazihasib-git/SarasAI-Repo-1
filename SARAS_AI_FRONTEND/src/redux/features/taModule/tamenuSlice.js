@@ -418,7 +418,9 @@ const initialState = {
     selectedTaStudents: [],
     selectedTaBatches: [],
     assignedTaStudents: [],
+    taScheduleStudents:[],
     assignedTaBatches: [],
+    taScheduleBatches:[],
     taLeave: [],
     taRescheduleSessions: [],
     taCallRecords: [], //call recording
@@ -787,12 +789,12 @@ export const taMenuSlice = createSlice({
             getSelectedTaMenuAssignedStudents.fulfilled,
             (state, action) => {
                 state.loading = false;
-                state.assignedTaStudents = action.payload;
+                state.taScheduleStudents= action.payload;
             }
         );
         builder.addCase(getSelectedTaMenuAssignedStudents.rejected, (state, action) => {
             state.loading = false;
-            state.assignedTaStudents = [];
+            state.taScheduleStudents = [];
             state.error = action.error.message;
         });
 
@@ -816,12 +818,12 @@ export const taMenuSlice = createSlice({
         });
         builder.addCase(getSelectedTaMenuAssignedBatches.fulfilled, (state, action) => {
             state.loading = false;
-            state.assignedTaBatches = action.payload;
+            state.taScheduleBatches = action.payload;
         });
         builder.addCase(getSelectedTaMenuAssignedBatches.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
-            state.assignedTaBatches = [];
+            state.taScheduleBatches = [];
         });
 
         // Update Students In Session

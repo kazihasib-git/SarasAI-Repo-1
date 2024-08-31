@@ -25,6 +25,7 @@ const EditStudentsSessionLink = ({ componentName }) => {
   let sliceName,
     getAssignStudentsApi,
     getAssignSelectedStudentsApi,
+    getAssignedSelectedStudentsState,
     assignedStudentsState,
     editStudentsApi,
     getSessionApi;
@@ -33,8 +34,9 @@ const EditStudentsSessionLink = ({ componentName }) => {
   switch (componentName) {
     case 'TAMENU':
       sliceName = 'taMenu';
+      getAssignSelectedStudentsApi = getSelectedTaMenuAssignedStudents;
+      getAssignedSelectedStudentsState = 'taScheduleStudents';
       getAssignStudentsApi = getTaMenuAssignedStudents;
-      getAssignSelectedStudentsApi=getSelectedTaMenuAssignedStudents;
       assignedStudentsState = 'assignedTaStudents';
       editStudentsApi = updateStudentsInTaSession
       getSessionApi = getTaMenuSessions
@@ -42,8 +44,9 @@ const EditStudentsSessionLink = ({ componentName }) => {
 
     case 'COACHMENU':
       sliceName = 'coachMenu';
+      getAssignSelectedStudentsApi = getSelectedCoachMenuAssignedStudents;
+      getAssignedSelectedStudentsState = 'coachScheduleStudents';
       getAssignStudentsApi = getCoachMenuAssignedStudents;
-      getAssignSelectedStudentsApi=getSelectedCoachMenuAssignedStudents;
       assignedStudentsState = 'assignedCoachStudents';
       editStudentsApi = updateStudentsInCoachSession;
       getSessionApi = getCoachMenuSessions
@@ -53,6 +56,7 @@ const EditStudentsSessionLink = ({ componentName }) => {
       sliceName = null;
       getAssignStudentsApi = null;
       getAssignSelectedStudentsApi= null;
+      getAssignedSelectedStudentsState = null;
       assignedStudentsState = null;
       editStudentsApi = null;
       getSessionApi = null;
@@ -61,9 +65,10 @@ const EditStudentsSessionLink = ({ componentName }) => {
 
   const stateSelector = useSelector(state => state[sliceName]);
 
-  const { [assignedStudentsState]: students } = stateSelector
-
-  console.log("Students", students)
+  const { 
+    [assignedStudentsState]: students,
+    [getAssignSelectedStudentsApi] : sessionStudents,
+   } = stateSelector
 
   const { editStudents, meetingId,sessionEventData, openEditStudentsPopup } = useSelector((state) => state.commonCalender)
   
@@ -74,14 +79,15 @@ const EditStudentsSessionLink = ({ componentName }) => {
 
   }, [dispatch])
 
+  console.log("Students", students, sessionStudents)
+  
   useEffect(() => {
-    console.log("Edit Students", editStudents)
-    if (editStudents) {
+    if (sessionStudents) {
       setSelectedStudents(
-        editStudents.map(student => student.id)
+        sessionStudents.map(student => student.id)
       );
     }
-  }, [editStudents])
+  }, [sessionStudents])
 
   useEffect(() => {
     if (students && students.length > 0) {
