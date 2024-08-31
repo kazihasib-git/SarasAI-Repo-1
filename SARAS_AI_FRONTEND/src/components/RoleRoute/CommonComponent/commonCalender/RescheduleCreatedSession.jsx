@@ -242,13 +242,18 @@ console.log('reschedule session timezoneID' , timezoneID) ;
         }
 
         dispatch(rescheduleApi(rescheduleData))
+        .unwrap()
         .then(() => {
-            dispatch(closeReschedulePopup())
-            dispatch(getAllSlotsApi())
-            dispatch(getAllSessionsApi())
-            dispatch(getSessionsBySlotsApi(slotsLeaveData))
-            dispatch(openCreatedSessions(slotsLeaveData))
+            dispatch(closeReschedulePopup());
+            dispatch(getAllSlotsApi());
+            dispatch(getAllSessionsApi());
+            dispatch(getSessionsBySlotsApi(slotsLeaveData));
+            dispatch(openCreatedSessions(slotsLeaveData));
         })
+        .catch((error) => {
+            console.error('Error rescheduling session:', error);
+            
+        });
     };
 
     const content = (
