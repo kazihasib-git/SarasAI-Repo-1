@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { getTaMenuAssignedBatches, getTaMenuAssignedStudents, getTaMenuSessions, updateBatchesInTaSession } from '../../../../redux/features/taModule/tamenuSlice'
-import { getCoachMenuAssignedBatches, getCoachMenuAssignedStudents, getCoachMenuSessions, updateBatchesInCoachSession } from '../../../../redux/features/coachModule/coachmenuprofileSilce'
+import { getTaMenuAssignedBatches , getSelectedTaMenuAssignedBatches,  getTaMenuAssignedStudents, getTaMenuSessions, updateBatchesInTaSession } from '../../../../redux/features/taModule/tamenuSlice'
+import { getCoachMenuAssignedBatches , getSelectedCoachMenuAssignedBatches , getCoachMenuAssignedStudents, getCoachMenuSessions, updateBatchesInCoachSession } from '../../../../redux/features/coachModule/coachmenuprofileSilce'
 import { closeEditBatches, closeEditStudents } from '../../../../redux/features/commonCalender/commonCalender'
 import ReusableDialog from '../../../CustomFields/ReusableDialog'
 import { Divider, Grid, MenuItem, Typography } from '@mui/material'
@@ -23,6 +23,7 @@ const EditBatchesSessionLink = ({ componentName }) => {
     let sliceName, 
         getBatchesApi,
         batchesDataState,
+        getSelectedBatchesApi,
         updateBatchesApi,
         getSessionApi;
 
@@ -30,6 +31,7 @@ const EditBatchesSessionLink = ({ componentName }) => {
         case 'TAMENU':
             sliceName = 'taMenu'
             getBatchesApi = getTaMenuAssignedBatches;
+            getSelectedBatchesApi= getSelectedTaMenuAssignedBatches;
             batchesDataState = 'assignedTaBatches';
             updateBatchesApi = updateBatchesInTaSession;
             getSessionApi = getTaMenuSessions
@@ -38,6 +40,7 @@ const EditBatchesSessionLink = ({ componentName }) => {
         case 'COACHMENU':
             sliceName = 'coachMenu'
             getBatchesApi = getCoachMenuAssignedBatches;
+            getSelectedBatchesApi= getSelectedCoachMenuAssignedBatches;
             batchesDataState = 'assignedCoachBatches';
             updateBatchesApi = updateBatchesInCoachSession;
             getSessionApi = getCoachMenuSessions;
@@ -46,6 +49,7 @@ const EditBatchesSessionLink = ({ componentName }) => {
         default:
             sliceName = null;
             getBatchesApi = null;
+            getSelectedBatchesApi=null;
             batchesDataState = null;
             updateBatchesApi = null;
             getSessionApi = null;
@@ -56,10 +60,12 @@ const EditBatchesSessionLink = ({ componentName }) => {
 
     const { [batchesDataState]: batchesData } = stateSelector
 
-    const { editBatches, meetingId, openEditBatchesPopup } = useSelector((state) => state.commonCalender)
+    const { editBatches, meetingId, sessionEventData, openEditBatchesPopup } = useSelector((state) => state.commonCalender)
 
     useEffect(() => {
+
         dispatch(getBatchesApi())
+        dispatch(getSelectedBatchesApi(sessionEventData.id))
     }, [dispatch])
 
     console.log("batchess :", batchesData, editBatches)
@@ -85,7 +91,7 @@ const EditBatchesSessionLink = ({ componentName }) => {
     },[batchesData, selectedBatch, searchQuery]);
 
 
-    const batchOptions = batchesData ? [...new Set(batchesData.map(batch => batch.batch.branch.name))] : [];
+    const batchOptions = (batchesData && batchesData.length > 0) ? [...new Set(batchesData.map(batch => batch.batch.branch.name))] : [];
 
     useEffect(() => {
         if(editBatches){
