@@ -140,28 +140,35 @@ const LinkActivityPopup = ({
         }
     }, [coachData]);
 
+    const validateActivityData = (activityType, videoUrl, upload_pdf_url, selectedAssessmentId, selectedSessionType, data) => {
+        if (activityType === 'videos' && !videoUrl) {
+            toast.error('Please upload a valid video.');
+            return false;
+        } else if (activityType === 'pdf' && !upload_pdf_url) {
+            toast.error('Please upload a valid PDF.');
+            return false;
+        } else if (activityType === 'test' && !selectedAssessmentId) {
+            toast.error('Please provide a valid Assessment Type.');
+            return false;
+        } else if (activityType === 'virtual meet' && !selectedSessionType) {
+            toast.error('Please provide a valid Session.');
+            return false;
+        } else if (activityType === 'link' && !data.link) {
+            toast.error('Please provide a valid link.');
+            return false;
+        }
+    
+        return true; // Return true if all validations pass
+    };
+    
     const onSubmit = async data => {
         //console.log("---------------->", data , "activityId", activityId, "activityType", activityType, "selectedAssessmentId", selectedAssessmentId, "selectedSessionType", selectedSessionType);
         setSelectedAssessmentId(data.assessment);
         console.log(activityType,"actibjbcjecjece");
-    
-
-        if (activityType === 'videos' && !videoUrl) {
-            toast.error('Please upload a valid video.');
-        } else if (activityType === 'pdf' && !upload_pdf_url) {
-            toast.error('Please upload a valid PDF.');
-            return; // Exit if the PDF URL is not provided
-        } else if (activityType === 'test' && !selectedAssessmentId ) {
-            toast.error('Please provide a valid Assesment Type.');
-        } else if (activityType === 'virtual meet' && !selectedSessionType ) {
-            toast.error('Please provide a valid Session.');
-        } else if (activityType === 'link' && !data.link) {
-            toast.error('Please provide a valid link.');
-            return; // Exit if the link is not provided
+        const isValid = validateActivityData(activityType, videoUrl, upload_pdf_url, selectedAssessmentId, selectedSessionType, data);
+        if (!isValid) {
+            return; // Exit if validation fails
         }
-    
-      
-       
         const payload = {
             activity_id: activityId, // Ensure this value is correctly set
             activity_type_id: selectedActivityId,
