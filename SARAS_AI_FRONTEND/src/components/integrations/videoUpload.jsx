@@ -13,7 +13,10 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { uploadSessionRecording as uploadCoachSessionRecording } from '../../redux/features/coachModule/coachmenuprofileSilce';
+import {
+    getCoachCallRecords,
+    coachUploadSessionRecording,
+} from '../../redux/features/coachModule/coachmenuprofileSilce';
 import {
     getTaCallRecords,
     uploadSessionRecording as uploadTASessionRecording,
@@ -131,11 +134,15 @@ const VideoUploadDialog = ({ open, onClose, role, selectedId }) => {
                 try {
                     if (role === 'COACH') {
                         await dispatch(
-                            uploadCoachSessionRecording({
+                            coachUploadSessionRecording({
                                 id: selectedId,
                                 session_recording_url: videoUrl,
                             })
-                        ).unwrap();
+                        )
+                            .unwrap()
+                            .then(() => {
+                                dispatch(getCoachCallRecords());
+                            });
                     } else if (role === 'TA') {
                         await dispatch(
                             uploadTASessionRecording({
