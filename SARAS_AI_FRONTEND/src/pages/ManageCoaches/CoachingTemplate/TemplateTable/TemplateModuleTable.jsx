@@ -411,14 +411,13 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                                 '1px solid #e0e0e0',
                                                         }}
                                                     >
-                                                        {activity.dependent
+                                                        {activity.prerequisites
                                                             .length > 0 ? (
-                                                            activity.dependent
+                                                            activity.prerequisites
                                                                 .map(
                                                                     prereq =>
                                                                         prereq
-                                                                            .dependency_activity
-                                                                            ?.activity_name
+                                                                            .dependencies.map((dep) => dep.dependency_activity.activity_name)
                                                                 )
                                                                 .join(', ')
                                                         ) : (

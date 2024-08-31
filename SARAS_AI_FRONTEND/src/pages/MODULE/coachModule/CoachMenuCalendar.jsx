@@ -112,23 +112,21 @@ const CoachMenuCalendar = () => {
     } = useSelector(state => state.coachMenu);
 
     useEffect(() => {
+        dispatch(getTimezone())
+    },[dispatch])
+
+    useEffect(() => {
         dispatch(getCoachMenuSlots());
         dispatch(getCoachMenuSessions());
     }, [dispatch]);
 
     useEffect(() => {
         convertEvents();
-    }, [coachSessions, timezones]);
+    }, [coachSessions]);
 
     useEffect(() => {
         convertSlots();
-    }, [coachSlots, timezones]);
-
-    useEffect(() => {
-        if(!timezones && timezones.leave === 0){
-            dispatch(getTimezone())
-        }
-    },[dispatch])
+    }, [coachSlots]);
 
     // console.log('coach slots :', coachSlots);
     // console.log('coachSessions', coachSessions);
