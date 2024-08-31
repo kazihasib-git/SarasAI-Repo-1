@@ -25,6 +25,7 @@ import {
     getWolTestConfig,
     getWolTestConfigCategoryWise,
     handleIdToSubmitSelectedQuestions,
+    handleOpenSelectCategoryQuestions
 } from '../../../../redux/features/adminModule/coachingTools/wol/wolSlice';
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
@@ -70,13 +71,18 @@ const WOLTestConfigSelectQuestions = () => {
         }
     }, [wolTestConfigCategoryWise.data]);
 
-    const handleSelectQuestions = (cat_id, id) => {
-        console.log('Select Questions:', cat_id, id);
+    const handleSelectQuestions = (cat_id, id , total_ques) => {
+
+        const categoryInfo = {cat_id ,total_ques} ; 
+        console.log("CategoryInfo  ::>", categoryInfo)
         dispatch(getWolQuestionCategoryWise(cat_id));
         dispatch(handleIdToSubmitSelectedQuestions(id));
+        dispatch(handleOpenSelectCategoryQuestions(categoryInfo)) ; 
         navigate('/WolselectQuestions');
     };
 
+
+    
     const handleSubmit = e => {
         e.preventDefault();
 
@@ -244,7 +250,8 @@ const WOLTestConfigSelectQuestions = () => {
                                             onClick={() =>
                                                 handleSelectQuestions(
                                                     category.wol_category_id,
-                                                    category.id
+                                                    category.id,
+                                                    category.number_of_questions_for_total
                                                 )
                                             }
                                         >

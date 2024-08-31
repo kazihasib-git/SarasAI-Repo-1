@@ -39,12 +39,11 @@ const weekDays = [
     'Saturday',
 ];
 
-const timezone = Number(localStorage.getItem('timezone_id'));
+// const timezone = Number(localStorage.getItem('timezone_id'));
 
 const CreateSlot = ({ componentName, timezoneID }) => {
-    // console.log('component Name :', componentName);
-    // console.log('timezone', timezone);
-
+    console.log('create slot timezoneID :' ,  timezoneID) ; 
+    
     let createSlotApi, getSlotsApi;
 
     switch (componentName) {
@@ -72,7 +71,7 @@ const CreateSlot = ({ componentName, timezoneID }) => {
         repeat: 'onetime',
         fromTime: null,
         toTime: null,
-        timezone_id: timezone ? timezone : null,
+        timezone_id: timezoneID,
     };
 
     const [formData, setFormData] = useState(initialFormData);
@@ -173,6 +172,7 @@ const CreateSlot = ({ componentName, timezoneID }) => {
     };
 
     console.log('formData', formData.timezone_id);
+    console.log('timezoneid comming' , timezoneID) ; 
 
     const content = (
         <Box
@@ -257,9 +257,9 @@ const CreateSlot = ({ componentName, timezoneID }) => {
                             <CustomTimeZoneForm
                                 label="Time Zone"
                                 name="timezone_id"
-                                value={timezoneID}
-                                // onChange={field.onChange}
-                                disabled={timezoneID != null}
+                                value={formData.timezone_id}
+                                onChange={e=>handleChange('timezone_id' , e.target.value)}
+                                // disabled={timezoneID != null}
                                 options={timezones}
                                 errors={errors}
                             />

@@ -32,6 +32,7 @@ import EditStudentsFromSession from '../../../components/availability/EditStuden
 import EditBatchesFromSession from '../../../components/availability/EditBatchesFromSession';
 import EditBatchesSessionLink from '../../../components/RoleRoute/CommonComponent/commonCalender/EditBatchesSessionLink';
 import EditStudentsSessionLink from '../../../components/RoleRoute/CommonComponent/commonCalender/EditStudentsSessionLink';
+import { ConstructionOutlined } from '@mui/icons-material';
 
 const CustomButton = ({
     onClick,
@@ -302,6 +303,7 @@ const TAMenuCalendar = () => {
         console.log(`Platform Meeting URL: ${platformUrl}`);
     }, [taSessions, targetSessionId]);
 
+    console.log('storedtimezoneID to be sent ' , storedTimezoneId) ; 
     return (
         <>
             <Header />
