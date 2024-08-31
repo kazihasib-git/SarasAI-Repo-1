@@ -218,32 +218,47 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
         );
     };
 
-    const handleSubmit = () => {
-        const errors = [];
+
+    const validate = () => {
+
+
+        
 
         if (!selectDate) {
-            errors.push('Please Select The Date');
-        }
-        if (!selectedSlots[0]) {
-            errors.push('Please Select the Slot');
-        }
-        if (!fromTime) {
-            errors.push('Please Select the Start Time');
-        }
-        if (!toTime) {
-            errors.push('Please Select the End Time');
-        }
-        if (!email) {
-            errors.push('Please provide a valid email');
-          }
-        if (!meetingType) {
-            errors.push('Please select the Meeting Type');
+            toast.error('Please Select The Date');
+            return false;
         }
 
-        if (errors.length) {
-            errors.forEach(error => toast.error(error));
-            return;
+        if (!selectedSlots[0]) {
+            toast.error('Please Select the Slot');
+            return false;
         }
+
+        if (!fromTime) {
+            toast.error('Please Select the Start Time');
+            return false;
+        }
+        if (!toTime) {
+            toast.error('Please Select the End Time');
+            return false;
+        }
+        if (!email) {
+            toast.error('Please provide a valid Host Name');
+            return false;
+          }
+        if (!meetingType) {
+            toast.error('Please select the Meeting Type');
+            return false;
+        }
+
+        return true;
+
+
+    }
+
+    const handleSubmit = () => {
+        
+        if(!validate()) return;
         
 
         const sessionId = sessionEventData?.id || '';

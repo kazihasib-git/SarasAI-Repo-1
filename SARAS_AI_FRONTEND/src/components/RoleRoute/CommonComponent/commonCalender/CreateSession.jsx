@@ -66,6 +66,8 @@ const CreateSession = ({ componentName, timezoneID }) => {
         students: [],
         batches: [],
         platform_id: null,
+        host_email_id : null,
+        meeting_type : null,
         fromDate: null,
         toDate: null,
         fromTime: null,

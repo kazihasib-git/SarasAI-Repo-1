@@ -28,6 +28,7 @@ const initialState = {
 
     editStudents : [],
     editBatches : [],
+    meetingId : null,
     openEditStudentsPopup : false,
     openEditBatchesPopup : false,
 
@@ -144,14 +145,16 @@ const commonCalender = createSlice({
 
         openEditStudents(state, action){
             state.openEditStudentsPopup = true;
-            state.editStudents = action.payload
+            state.editStudents = action.payload.students;
+            state.meetingId = action.payload.id;
         },
         closeEditStudents(state, action){
             state.openEditStudentsPopup = false
         },
         openEditBatches(state, action){
             state.openEditBatchesPopup = true;
-            state.editBatches = action.payload
+            state.editBatches = action.payload.batches;
+            state.meetingId = action.payload.id;
         },
         closeEditBatches(state, action){
             state.openEditBatchesPopup = false

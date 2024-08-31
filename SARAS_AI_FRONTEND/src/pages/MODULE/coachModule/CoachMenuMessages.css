@@ -383,6 +383,10 @@ h1 {
     background-color:#68D391; /* Color when online */
 }
 
+ .audio-recorder {
+    background-color: none;
+} 
+
 
 /* Responsive Box adjustments */
 @media (max-width: 768px) {

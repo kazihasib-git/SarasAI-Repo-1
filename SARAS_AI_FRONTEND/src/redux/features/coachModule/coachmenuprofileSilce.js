@@ -399,16 +399,16 @@ export const getCoachMyStudents = createAsyncThunk(
 // Update Students In Coach Session
 export const updateStudentsInCoachSession = createAsyncThunk(
     'coachMenu/updateStudentsInCoachSession',
-    async ( data , { rejectWithValue }) => {
+    async ( {id ,data} , { rejectWithValue }) => {
         try{
             const response = await axiosInstance.post(
-                `${baseUrl}/coach/calendar/update-schedule-students`,
+                `${baseUrl}/coach/calendar/update-schedule-students/${id}`,
                 data
             )
             return response.data;
         }catch(error){
             if (error.response && error.response.data) {
-                return rejectWithValue(error.response.data.error);
+                return rejectWithValue(error.response.data.message);
             } else {
                 return rejectWithValue(
                     'An Error Occurred While Update Students in Session'
@@ -421,16 +421,16 @@ export const updateStudentsInCoachSession = createAsyncThunk(
 // Update Batches In Coach Session
 export const updateBatchesInCoachSession = createAsyncThunk(
     'coachMenu/updateBatchesInCoachSession',
-    async ( data, { rejectWithValue }) => {
+    async ({id, data}, { rejectWithValue }) => {
         try{
             const response = await axiosInstance.post(
-                `${baseUrl}/coach/calendar/update-schedule-batches`,
+                `${baseUrl}/coach/calendar/update-schedule-batches/${id}`,
                 data
             )
             return response.data;
         }catch(error){
             if (error.response && error.response.data) {
-                return rejectWithValue(error.response.data.error);
+                return rejectWithValue(error.response.data.message);
             } else {
                 return rejectWithValue(
                     'An Error Occurred While Updating Batches In Session'
@@ -1031,11 +1031,13 @@ export const coachMenuSlice = createSlice({
         });
         builder.addCase(updateStudentsInCoachSession.fulfilled, (state, action) => {
             state.loading = false;
+            toast.success(action.payload.message || 'Students Updated Successfully in Session')
             // TODO :----->
         })
         builder.addCase(updateStudentsInCoachSession.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            toast.error(action.payload || 'Failed to Update Students in Session')
             
         })
 
@@ -1045,10 +1047,12 @@ export const coachMenuSlice = createSlice({
         })
         builder.addCase(updateBatchesInCoachSession.fulfilled, (state, action) => {
             state.loading = false;
+            toast.success(action.payload.message || 'Batches Updated Successfully in Session')
             // TODO :----->
         })
         builder.addCase(updateBatchesInCoachSession.rejected, (state, action) => {
             state.loading = false;
+            toast.error(action.payload || 'Failed To Update Batches in Session')
             state.error = action.error.message;
         })
     },

@@ -181,9 +181,16 @@ const EditBatchesFromSession = ({ componentName }) => {
             admin_user_id: Number(id),
             batchId: selectedBatch.map(id => id),
         };
-        dispatch(editScheduledBatchesApi({ Id, data })).then(() => {
+        dispatch(editScheduledBatchesApi({ Id, data }))
+        .unwrap()
+        .then(() => {
             dispatch(closePopupActions());
-        });
+            toast.success("Batches Updated Successfully")
+        })
+        .catch(error =>{
+            toast.error(`${error}`);
+        })
+        
     };
 
     const content = (

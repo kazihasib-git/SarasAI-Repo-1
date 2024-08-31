@@ -199,7 +199,7 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
                 slotPropGetter={slotPropGetter}
                 onSelectEvent={showSessionPopUp}
                 scrollToTime={getScrollToTime()}
-                step={30}
+                step={15}
                 selectable
                 views={{ week: true }}
                 defaultView={Views.WEEK}

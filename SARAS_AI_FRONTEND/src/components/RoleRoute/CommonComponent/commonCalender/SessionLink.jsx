@@ -78,12 +78,21 @@ const SessionLink = ({ componentName, platformName, platformUrl }) => {
     }
 
     const handleEditBatches = () => {
-        dispatch(openEditStudents(sessionEventData.students))
+        const data = {
+            id : sessionEventData.id,
+            batches : sessionEventData.batches
+        }
+        dispatch(openEditBatches(data))
+        
     };
     const handleChangeMode = () => {};
 
     const handleEditStudents = () => {
-        dispatch(openEditBatches(sessionEventData.batches))
+        const data = {
+            id: sessionEventData.id,
+            students : sessionEventData.students
+        }
+        dispatch(openEditStudents(data))
     };
 
     const handleLinkCopy = () => {

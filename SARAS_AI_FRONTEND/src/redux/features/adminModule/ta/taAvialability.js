@@ -512,11 +512,14 @@ export const taAvailabilitySlice = createSlice({
         builder.addCase(fetchAvailableSlots.fulfilled, (state, action) => {
             state.loading = false;
             state.availableSlotsData = action.payload?.data;
+            // toast.success(action.payload.message || "slot found");
+
         });
         builder.addCase(fetchAvailableSlots.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
             state.availableSlotsData = [];
+            // toast.error(action.payload || "slots not found");
         });
 
         // Delete Future Slots
@@ -589,7 +592,7 @@ export const taAvailabilitySlice = createSlice({
         builder.addCase(editTASchdeuledStudents.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
-            toast.error(action.payload || 'Failed To Update Students')
+            // toast.error(action.payload || 'Failed To Update Students')
         });
 
         // Get TA Scheduled Batches
@@ -612,7 +615,7 @@ export const taAvailabilitySlice = createSlice({
         });
         builder.addCase(editTASchdeuledBatches.fulfilled, (state, action) => {
             state.loading = false;
-            toast.success(action.payload.message || 'Batches Updated Successfully')
+            // toast.success(action.payload.message || 'Batches Updated Successfully')
         });
         builder.addCase(editTASchdeuledBatches.rejected, (state, action) => {
             state.loading = false;

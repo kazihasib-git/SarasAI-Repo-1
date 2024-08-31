@@ -144,7 +144,7 @@ const EditStudentsFromSession = ({ componentName }) => {
 
             setFilteredStudents(filtered);
         } else {
-            setFilteredStudents();
+            setFilteredStudents([]);
         }
     }, [assignedStudents, selectedTerm, selectedBatch, searchName]);
 
@@ -205,7 +205,7 @@ const EditStudentsFromSession = ({ componentName }) => {
 
     const validate = () => {
         if (selectedStudents.length === 0) {
-            toast.error('Please Select At Least One Student');
+            toast.error('Please Select Atleast One Student');
             return false; // Return false if validation fails
         }
         return true; // Return true if validation passes
@@ -220,9 +220,15 @@ const EditStudentsFromSession = ({ componentName }) => {
             admin_user_id: Number(id),
             studentId: selectedStudents.map(id => id),
         };
-        dispatch(editScheduledStudentsApi({ Id, data })).then(() => {
+        dispatch(editScheduledStudentsApi({ Id, data }))
+        .unwrap()
+        .then(() => {
             dispatch(closePopupActions());
-        });
+            toast.success("Student Updated Successfully.")
+        })
+        .catch(error => {
+            toast.error(`${error}`);
+        })
     };
 
     const content = (
