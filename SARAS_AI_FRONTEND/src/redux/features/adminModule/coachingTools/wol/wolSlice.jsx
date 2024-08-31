@@ -338,6 +338,7 @@ const initialState = {
     categoryIdToSubmitSelectedQuestions: null,
     loading: false,
     error: null,
+    categoryInfo:{}
 };
 
 const wolSlice = createSlice({
@@ -356,6 +357,14 @@ const wolSlice = createSlice({
         handleIdToSubmitSelectedQuestions: (state, action) => {
             state.categoryIdToSubmitSelectedQuestions = action.payload;
         },
+
+        handleOpenSelectCategoryQuestions : (state , action)=>{
+            console.log('action.payload', action.payload)
+            state.categoryInfo = action.payload ; 
+            
+        },
+        
+        
     },
 
     extraReducers: builder => {
@@ -654,6 +663,7 @@ export const {
     setEditData,
     seteditwolQuestionData,
     handleIdToSubmitSelectedQuestions,
+    handleOpenSelectCategoryQuestions
 } = wolSlice.actions;
 
 export default wolSlice.reducer;

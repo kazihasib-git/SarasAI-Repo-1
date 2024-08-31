@@ -106,7 +106,7 @@ export const updateCoachActivity = createAsyncThunk(
     async ({ data }, { rejectWithValue }) => {
         try {
             const response = await axiosInstance.post(
-                `${baseUrl}/admin/coaching-templates/activity-status`,
+                `${baseUrl}/admin/coaching-templates/template-status`,
                 data
             );
             console.log('API Response: ', response.data);
@@ -486,7 +486,7 @@ export const coachTemplateSlice = createSlice({
                 state.loading = true;
             })
             .addCase(updateEditActivity.fulfilled, (state, action) => {
-                state.loading = false;
+                state.loading = false; 
                 // state.coachTemplates.push(action.payload.data);
                 state.editActivityData = action.payload?.data;
                 toast.success(
@@ -499,7 +499,7 @@ export const coachTemplateSlice = createSlice({
                 toast.error(action.payload || 'Failed to update Activity');
             });
 
-        // createCoachTemplateActivity
+        // createCoachTemplateActivity 
         builder
             .addCase(createCoachTemplateActivity.pending, state => {
                 state.loading = true;

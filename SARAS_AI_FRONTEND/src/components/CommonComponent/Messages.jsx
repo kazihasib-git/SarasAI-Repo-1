@@ -15,7 +15,9 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'; // Import an appropriate icon
 import RefreshIcon from '@mui/icons-material/Refresh';
 import moment from 'moment';
-import { AudioRecorder } from 'react-audio-voice-recorder';
+import PauseIcon from '@mui/icons-material/Pause';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import DoneIcon from '@mui/icons-material/Done';
 
 import {
     getTaCoachAllChats,
@@ -96,7 +98,14 @@ const Messages = ({ role }) => {
     const [chatUserMapping, setchatUserMappingData] = useState([]);
     const [currentChatId, setcurrentChatId] = useState(0);
     const [selectedFile, setSelectedFile] = useState(null);
-    const [audioFile, setAudioFile] = useState(null);
+    const [isRecording, setIsRecording] = useState(false);
+    const [recordedUrl, setRecordedUrl] = useState(null);
+    const mediaStream = useRef(null);
+    const mediaRecorder = useRef(null);
+    const chunks = useRef([]);
+    const [isPaused, setIsPaused] = useState(false);
+    //const [recordingText, setRecordingText] = useState('');
+    const [recordingName, setRecordingName] = useState('');
 
     const {
         coachProfileData,
@@ -158,8 +167,86 @@ const Messages = ({ role }) => {
         }
     };
 
+    const startRecording = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({
+                audio: true,
+            });
+            mediaStream.current = stream;
+            mediaRecorder.current = new MediaRecorder(stream);
+
+            mediaRecorder.current.ondataavailable = e => {
+                if (e.data.size > 0) {
+                    chunks.current.push(e.data);
+                }
+            };
+
+            mediaRecorder.current.onstop = () => {
+                const recordedBlob = new Blob(chunks.current, {
+                    type: 'audio/mp3',
+                });
+                const url = URL.createObjectURL(recordedBlob);
+                setRecordedUrl(url);
+                setRecordingName('voice-recording.mp3');
+                chunks.current = [];
+            };
+
+            mediaRecorder.current.start();
+            setIsRecording(true);
+        } catch (error) {
+            console.error('Error accessing microphone:', error);
+        }
+    };
+
+    const stopRecording = () => {
+        if (
+            mediaRecorder.current &&
+            mediaRecorder.current.state !== 'inactive'
+        ) {
+            mediaRecorder.current.stop();
+        }
+        setIsRecording(false);
+        setIsPaused(false);
+
+        if (mediaStream.current) {
+            mediaStream.current.getTracks().forEach(track => track.stop());
+        }
+    };
+
+    const pauseRecording = () => {
+        if (
+            mediaRecorder.current &&
+            mediaRecorder.current.state === 'recording'
+        ) {
+            mediaRecorder.current.pause();
+            setIsPaused(true);
+        } else if (
+            mediaRecorder.current &&
+            mediaRecorder.current.state === 'paused'
+        ) {
+            mediaRecorder.current.resume();
+            setIsPaused(false);
+        }
+    };
+    const discardRecording = () => {
+        if (mediaRecorder.current) {
+            mediaRecorder.current.onstop = () => {};
+            mediaRecorder.current.stop();
+        }
+        chunks.current = [];
+        setRecordedUrl(null);
+        setRecordingName('');
+        // setRecordingText('');
+        setIsRecording(false);
+        setIsPaused(false);
+
+        if (mediaStream.current) {
+            mediaStream.current.getTracks().forEach(track => track.stop());
+        }
+    };
+
     const handleSendMessageAndFile = async () => {
-        if (!newMessage.trim() && !selectedFile && !audioFile) {
+        if (!newMessage.trim() && !selectedFile && !recordedUrl) {
             return;
         }
 
@@ -174,8 +261,13 @@ const Messages = ({ role }) => {
         if (selectedFile) {
             formData.append('files', selectedFile);
         }
-        if (audioFile) {
-            formData.append('files', audioFile, 'voice-recording.wav');
+
+        if (recordedUrl && recordingName) {
+            const recordedBlob = await fetch(recordedUrl).then(r => r.blob());
+            const recordedFile = new File([recordedBlob], recordingName, {
+                type: 'audio/mp3',
+            });
+            formData.append('files', recordedFile);
         }
 
         try {
@@ -183,7 +275,7 @@ const Messages = ({ role }) => {
                 sentMessage({ role: role, data: formData })
             );
 
-            // Update local state with both message and file info
+            // Update local state with both message, file info, and audio info
             setMessages(prevMessages => [
                 ...prevMessages,
                 {
@@ -196,10 +288,10 @@ const Messages = ({ role }) => {
                               url: URL.createObjectURL(selectedFile), // Temporary URL for local preview
                           }
                         : null,
-                    audio: audioFile
+                    audio: recordedUrl
                         ? {
-                              name: 'voice-recording.wav',
-                              url: URL.createObjectURL(audioFile), // Temporary URL for local preview
+                              url: recordedUrl,
+                              name: recordingName,
                           }
                         : null,
                 },
@@ -213,9 +305,11 @@ const Messages = ({ role }) => {
                 })
             );
 
+            // Reset state after sending
             setNewMessage('');
             setSelectedFile(null);
-            setAudioFile(null);
+            setRecordedUrl(null);
+            setRecordingName('');
             if (fileInputRef.current) {
                 fileInputRef.current.value = '';
             }
@@ -238,7 +332,7 @@ const Messages = ({ role }) => {
     };
 
     const handleCancelAudio = () => {
-        setAudioFile(null);
+        setRecordingName(null);
         if (fileInputRef.current) {
             fileInputRef.current.value = '';
         }
@@ -544,7 +638,11 @@ const Messages = ({ role }) => {
                             </IconButton>
                         </Box>
                         <Divider
-                            sx={{ mt: 0, mb: 0, border: '1px solid #C2C2E7' }}
+                            sx={{
+                                mt: 0,
+                                mb: 0,
+                                border: '1px solid #C2C2E7',
+                            }}
                         />
 
                         <Box className="chat-messages">
@@ -687,6 +785,7 @@ const Messages = ({ role }) => {
                                 variant="outlined"
                                 placeholder="Type a message..."
                                 value={newMessage}
+                                //value={newMessage}
                                 onChange={handleMessageChange}
                                 onKeyPress={handleKeyPress}
                                 fullWidth
@@ -754,34 +853,6 @@ const Messages = ({ role }) => {
                                         </IconButton>
                                     </div>
                                 )}
-                                {audioFile && (
-                                    <div
-                                        style={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            marginRight: '10px',
-                                        }}
-                                    >
-                                        <Typography
-                                            variant="caption"
-                                            sx={{
-                                                maxWidth: '100px',
-                                                overflow: 'hidden',
-                                                textOverflow: 'ellipsis',
-                                                whiteSpace: 'nowrap',
-                                            }}
-                                        >
-                                            {audioFile.name}
-                                        </Typography>
-                                        <IconButton
-                                            size="small"
-                                            onClick={handleCancelAudio}
-                                            sx={{ marginLeft: '5px' }}
-                                        >
-                                            <CancelIcon fontSize="small" />
-                                        </IconButton>
-                                    </div>
-                                )}
 
                                 <input
                                     type="file"
@@ -795,31 +866,96 @@ const Messages = ({ role }) => {
                                 >
                                     <img src={PaperclipIcon} alt="Attach" />
                                 </IconButton>
-                                <AudioRecorder
-                                    onRecordingComplete={handleAudioStop}
-                                    audioTrackConstraints={{
-                                        noiseSuppression: true,
-                                        echoCancellation: true,
-                                    }}
-                                    render={({
-                                        startRecording,
-                                        stopRecording,
-                                    }) => (
+                                {recordedUrl && recordingName && (
+                                    <div
+                                        style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            marginRight: '10px',
+                                        }}
+                                    >
+                                        <Typography
+                                            variant="caption"
+                                            sx={{
+                                                border: '1px solid white',
+                                                borderRadius: '5px',
+                                                color: 'white',
+                                                padding: '4px 4px',
+                                                textDecoration: 'none',
+                                                backgroundColor: '#333',
+                                                marginRight: '10px',
+                                            }}
+                                        >
+                                            <a
+                                                style={{
+                                                    color: 'white',
+                                                    textDecoration: 'none',
+                                                }}
+                                                href={recordedUrl}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                <InsertDriveFileIcon
+                                                    sx={{
+                                                        maxWidth: '100px',
+                                                        overflow: 'hidden',
+                                                        textOverflow:
+                                                            'ellipsis',
+                                                    }}
+                                                />
+                                                {recordingName}
+                                            </a>
+                                        </Typography>
+                                        <IconButton
+                                            size="small"
+                                            onClick={handleCancelAudio}
+                                            sx={{ marginLeft: '5px' }}
+                                        >
+                                            <CancelIcon fontSize="small" />
+                                        </IconButton>
+                                    </div>
+                                )}
+                                {isRecording ? (
+                                    <div
+                                        style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            marginRight: '10px',
+                                        }}
+                                    >
+                                        <IconButton onClick={pauseRecording}>
+                                            {isPaused ? (
+                                                <PlayArrowIcon />
+                                            ) : (
+                                                <PauseIcon />
+                                            )}
+                                        </IconButton>
+                                        <IconButton onClick={discardRecording}>
+                                            <CancelIcon />
+                                        </IconButton>
+                                        <IconButton onClick={stopRecording}>
+                                            <DoneIcon />
+                                        </IconButton>
+                                    </div>
+                                ) : (
+                                    <>
                                         <IconButton
                                             className="input-icon"
-                                            onMouseDown={startRecording}
-                                            onMouseUp={stopRecording}
+                                            onClick={startRecording}
                                         >
                                             <MicNoneIcon />
                                         </IconButton>
-                                    )}
-                                />
-                                <IconButton
-                                    className="input-icon"
-                                    onClick={handleSendMessageAndFile}
-                                >
-                                    <img src={SendButtonIcon} alt="Send" />
-                                </IconButton>
+                                        <IconButton
+                                            className="input-icon"
+                                            onClick={handleSendMessageAndFile}
+                                        >
+                                            <img
+                                                src={SendButtonIcon}
+                                                alt="Send"
+                                            />
+                                        </IconButton>
+                                    </>
+                                )}
                             </div>
 
                             <Box className="checkbox-container">

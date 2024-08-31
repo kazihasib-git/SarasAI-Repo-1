@@ -358,9 +358,11 @@ const Schedule = ({ componentName, timezoneID }) => {
             return false;
         }
 
-        if (!toTime) {
-            toast.error('Please select a To Time');
-            return false;
+        if(repeat==='recurring'){
+            if (!toTime) {
+                toast.error('Please select a To Time');
+                return false;
+            }
         }
 
         // Validate "To Time" is greater than "From Time"
@@ -446,8 +448,8 @@ const Schedule = ({ componentName, timezoneID }) => {
         formData.weeks = weeksArray;
         formData.studentId = studentId;
         formData.batchId = batchId;
-        formData.timezone_id = timezoneId ? Number(timezoneId) : timezoneID;
-
+        // formData.timezone_id = timezoneId ? Number(timezoneId) : timezoneID;
+    
         // Submit data
         dispatch(createScheduleAction(formData))
             .then(() => {
@@ -471,6 +473,8 @@ const Schedule = ({ componentName, timezoneID }) => {
         name: 'platform_id',
         defaultValue: 0, // Provide a default value if necessary
     });
+
+    
 
     const content = (
         <Box
@@ -633,23 +637,19 @@ const Schedule = ({ componentName, timezoneID }) => {
                                                                     label="Time Zone"
                                                                     name="timezone_id"
                                                                     value={
-                                                                        timezoneId
-                                                                            ? Number(
-                                                                                  timezoneId
-                                                                              )
-                                                                            : timezoneID
+                                                                        field.value
                                                                     }
                                                                     onChange={
                                                                         field.onChange
                                                                     }
-                                                                    // disabled={
-                                                                    //     timezoneId
-                                                                    //         ? Number(
-                                                                    //               timezoneId
-                                                                    //           )
-                                                                    //         : timezoneID !=
-                                                                    //           null
-                                                                    // }
+                                                                    disabled={
+                                                                        timezoneId
+                                                                            ? Number(
+                                                                                  timezoneId
+                                                                              )
+                                                                            : timezoneID !=
+                                                                              null
+                                                                    }
                                                                     options={
                                                                         timezones
                                                                     }

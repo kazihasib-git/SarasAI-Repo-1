@@ -77,7 +77,7 @@ const CoachTemplateTable = ({
         setData(updatedData);
 
         const toggledItem = updatedData.find(item => item.id === id);
-        const requestData = { activity_id: toggledItem.id, status: toggledItem.is_active };
+        const requestData = { template_id: toggledItem.id, status: toggledItem.is_active };
 
         switch (componentName) {
             case 'COACHTEMPLATE':

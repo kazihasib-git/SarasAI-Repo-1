@@ -121,7 +121,7 @@ const ScheduledCall = ({ role }) => {
 
             const data = {
                 date: formatDate(date),
-                timezone_name: taTimeZone.time_zone,
+                timezone_name: taTimeZone,
             };
 
             dispatch(getTaScheduledCalls(data))
