@@ -26,7 +26,7 @@ const headers = [
     'Actions',
 ];
 
-const ManageTA = () => {
+const ManagesTAs = () => {
     
     const dispatch = useDispatch();
 
@@ -188,4 +188,4 @@ const ManageTA = () => {
     );
 };
 
-export default ManageTA;
+export default ManagesTAs;

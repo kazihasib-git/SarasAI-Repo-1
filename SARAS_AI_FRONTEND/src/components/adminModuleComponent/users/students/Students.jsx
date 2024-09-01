@@ -11,6 +11,7 @@ import DynamicTable from '../../../CommonComponent/DynamicTable';
 import { useDispatch } from 'react-redux';
 
 const Students = () => {
+    
     const dispatch = useDispatch();
     const [input, setInput] = useState('');
     const [students, setStudents] = useState([]);
@@ -24,9 +25,7 @@ const Students = () => {
     const { data: apiData, error, isLoading } = useGetStudentsQuery();
 
     useEffect(() => {
-        //const dataToUse = useDummyData ? studentDummyDatadata : apiData;
-        console.log('apiData ', apiData);
-        if (apiData) {
+        if (apiData && apiData.length > 0) {
             const transformedData = apiData.map((item, index) => ({
                 id: item.student_id,
                 'Student Name': item.student_name,
@@ -37,8 +36,9 @@ const Students = () => {
                     item.batches.map(batch => batch.batch_name).join(', ') ||
                     'N/A',
             }));
-            console.log('TransformedData', transformedData);
             setStudents(transformedData);
+        }else {
+            setStudents([])
         }
     }, [apiData]);
 

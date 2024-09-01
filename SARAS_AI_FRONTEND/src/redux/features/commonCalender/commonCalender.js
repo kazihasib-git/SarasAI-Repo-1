@@ -49,7 +49,6 @@ const commonCalender = createSlice({
 
         // For New Session
         openScheduleNewSession: (state, action) => {
-            console.log('PAYLOAD DATA :', action.payload);
             state.scheduleNewSessionPopup = true;
             if (action.payload?.studentId) {
                 state.students = action.payload.studentId;
@@ -65,7 +64,6 @@ const commonCalender = createSlice({
         },
         openSelectStudents: (state, action) => {
             state.selectStudentPopup = true;
-            console.log("OPENSELECTSTUDENTS:", action.payload)
             state.preSelectedStudents = action.payload ? action.payload: [];
             // asign students
         },
@@ -96,7 +94,6 @@ const commonCalender = createSlice({
             state.createdSlots = false;
         },
         openCreatedSessions: (state, action) => {
-            console.log('PAYLOAD ', action.payload);
             state.openCreatedSessions = true;
             state.slotsLeaveData = action.payload;
         },

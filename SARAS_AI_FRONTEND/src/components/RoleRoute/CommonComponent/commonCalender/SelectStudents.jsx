@@ -97,8 +97,6 @@ const SelectStudents = ({ componentName }) => {
         dispatch(getStudentsApi());
     }, [dispatch]);
 
-    console.log('dataaa' , studentsData) ; 
-
 
     useEffect(() => {
         if (studentsData && studentsData.length > 0) {
@@ -186,8 +184,6 @@ const SelectStudents = ({ componentName }) => {
                   ),
               ]
             : [];
-
-    console.log('Students : ', students, 'selectedStudents', selectedStudents);
 
     useEffect(() => {
         

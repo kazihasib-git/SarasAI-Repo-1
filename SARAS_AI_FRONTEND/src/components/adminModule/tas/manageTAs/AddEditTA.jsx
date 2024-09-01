@@ -45,7 +45,6 @@ import CustomTimeZoneForm from '../../../CustomFields/CustomTimeZoneForm';
 import CustomDateOfBirth from '../../../CustomFields/CustomDateOfBirth';
 
 const AddEditTA = ({ data }) => {
-    console.log('DATA :', data);
     const {
         register,
         handleSubmit,
@@ -90,8 +89,6 @@ const AddEditTA = ({ data }) => {
         dispatch(accessTaName(data));
 
         if (data.profile_picture) {
-            // const blobUrl = base64ToBlobUrl(data.profile_picture);
-            // console.log('url', blobUrl);
             setSelectedImage(data.profile_picture);
         }
 
@@ -149,7 +146,6 @@ const AddEditTA = ({ data }) => {
     };
 
     const onSubmit = async formData => {
-        // console.log('formData :', formData);
 
         if (selectedImage && selectedImage.startsWith('data:image/')) {
             const base64Data = selectedImage.replace(

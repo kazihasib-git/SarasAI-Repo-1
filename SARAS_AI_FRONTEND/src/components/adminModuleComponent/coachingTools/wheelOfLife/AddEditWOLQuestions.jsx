@@ -53,12 +53,13 @@ const AddEditWOLQuestions = () => {
 
     useEffect(() => {
         if (wolCategoryData && wolCategoryData.length > 0) {
-            console.log(wolCategoryData.message);
             const transformData = wolCategoryData.map(item => ({
                 id: item.id,
                 name: item.name,
             }));
             setCategories(transformData);
+        }else {
+            setCategories([])
         }
     }, [wolCategoryData]);
 
@@ -125,8 +126,6 @@ const AddEditWOLQuestions = () => {
     const formats = ['bold', 'italic', 'underline', 'align', 'link'];
 
     const onSubmit = formData => {
-        console.log('formData', formData.category);
-        console.log('questionValue', questionValue);
 
         const data = {
             wol_category_id: Number(formData.category),

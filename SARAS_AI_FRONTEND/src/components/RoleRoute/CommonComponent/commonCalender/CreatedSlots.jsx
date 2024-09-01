@@ -19,21 +19,20 @@ const headers = ['S. No.', 'Date', 'Slot Time', 'Select'];
 
 const CreatedSlots = ({ componentName ,timezoneID }) => {
 
-    console.log('Created SLots timezoneID' , timezoneID)  ;
-
-
     const { timezones } = useSelector(state => state.util);
-
-    console.log('Comp Name :', componentName);
 
     const dispatch = useDispatch();
     const [selectedSlots, setSelectedSlots] = useState([]);
     const [slots, setSlots] = useState([]);
 
-    let sliceName, getSessionFromSlotsApi, sessionBySlotsState;
+    
+    
     useEffect(() => {
         dispatch(getTimezone());
     }, [dispatch]);
+
+    let sliceName, getSessionFromSlotsApi, sessionBySlotsState;
+
     switch (componentName) {
         case 'TAMENU':
             sliceName = 'taMenu';
@@ -58,8 +57,6 @@ const CreatedSlots = ({ componentName ,timezoneID }) => {
     const { createdSlots } = useSelector(state => state.commonCalender);
 
     const { [sessionBySlotsState]: sessionsData } = selectState;
-
-    console.log('SessionData :', sessionsData);
 
     const formatTime = time => {
         const [hours, minutes] = time.split(':');

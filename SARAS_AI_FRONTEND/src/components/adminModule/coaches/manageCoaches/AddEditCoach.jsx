@@ -44,7 +44,6 @@ import CustomDateOfBirth from '../../../CustomFields/CustomDateOfBirth';
 import EditIcon from '@mui/icons-material/Edit';
 
 function AddEditCoach({ data }) {
-    console.log('coach Data', data);
     const {
         register,
         handleSubmit,
@@ -591,8 +590,7 @@ function AddEditCoach({ data }) {
                                             'Highest Qualification is required',
                                     }}
                                     render={({ field }) => (
-                                        <>
-                                            {/* {console.log("DATA highest_qualification : ", field.value)} */}
+                                        
                                             <CustomFormControl
                                                 label="Highest Qualification"
                                                 name="highest_qualification"
@@ -601,7 +599,7 @@ function AddEditCoach({ data }) {
                                                 errors={errors}
                                                 options={qualificationOptions}
                                             />
-                                        </>
+                                        
                                     )}
                                 />
                             </Grid>

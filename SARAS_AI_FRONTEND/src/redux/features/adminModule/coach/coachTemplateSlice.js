@@ -109,7 +109,6 @@ export const updateCoachActivity = createAsyncThunk(
                 `${baseUrl}/admin/coaching-templates/activity-status`,
                 data
             );
-            console.log('API Response: ', response.data);
             return response.data;
         } catch (error) {
             console.error(
@@ -208,7 +207,6 @@ export const getStudentBatchMapping = createAsyncThunk(
         const response = await axiosInstance.get(
             `${baseUrl}/admin/student-batch-mapping/getAllStudentWithBatches`
         );
-        console.log('Response : ', response);
         return response.data;
     }
 );
@@ -272,8 +270,6 @@ export const coachTemplateSlice = createSlice({
     initialState,
     reducers: {
         accessCoachTemplateName(state, action) {
-            //   console.log("ACTION : ", action);
-            console.log('ACTION PAYLOAD : ', action.payload);
             // state.template_name = action.payload.name;
             state.templateId = action.payload.id;
         },
@@ -296,7 +292,6 @@ export const coachTemplateSlice = createSlice({
             state.createCoachTemplateOpen = false;
         },
         openEditTemplateCoach(state) {
-            console.log('CLICKED !');
             state.editCoachTemplateOpen = true;
         },
         closeEditTemplateCoach(state) {
@@ -310,7 +305,6 @@ export const coachTemplateSlice = createSlice({
         },
         openTemplateActivityPopup(state, action) {
             state.openActivityPopUp = true;
-            console.log('Action payload : ', action.payload);
             state.moduleID = action.payload;
         },
         closeTemplateActivityPopup(state) {
@@ -318,7 +312,6 @@ export const coachTemplateSlice = createSlice({
         },
         openEditModulePopup(state, action) {
             state.openEditModulePopUp = true;
-            console.log('EDIT MODULE DATA  : ', action.payload);
             state.editModuleData = action.payload;
         },
         closeEditModulePopup(state) {
@@ -326,7 +319,6 @@ export const coachTemplateSlice = createSlice({
         },
         openEditActivityPopup(state, action) {
             state.openEditActivityPopUp = true;
-            console.log('EDIT Activity DATA  : ', action.payload);
             state.editActivityData = action.payload;
         },
         closeEditActivityPopup(state) {
@@ -360,7 +352,6 @@ export const coachTemplateSlice = createSlice({
                 state.loading = true;
             })
             .addCase(getAllCoachTemplates.fulfilled, (state, action) => {
-                console.log('ACTION  getAllCOachTemplate: ', action.payload);
                 state.loading = false;
                 state.coachTemplates = action.payload.data;
             })
@@ -375,7 +366,6 @@ export const coachTemplateSlice = createSlice({
                 state.loading = true;
             })
             .addCase(createCoachTemplate.fulfilled, (state, action) => {
-                console.log('action .payload', action.payload);
                 state.loading = false;
                 state.coachTemplates.push(action.payload.data);
                 state.selectedCoachTemplate = action.payload.data.id;
@@ -398,7 +388,6 @@ export const coachTemplateSlice = createSlice({
             })
             .addCase(getAllCoachTemplateModules.fulfilled, (state, action) => {
                 state.loading = false;
-                console.log('MODULE DATA  : ', action.payload);
                 state.modulesData = action.payload?.data;
             })
             .addCase(getAllCoachTemplateModules.rejected, (state, action) => {
@@ -412,7 +401,6 @@ export const coachTemplateSlice = createSlice({
                 state.loading = true;
             })
             .addCase(createCoachTemplateModule.fulfilled, (state, action) => {
-                console.log('ACTION CreateCoachTemplate : ', action.payload);
                 state.loading = false;
                 state.createCoachModule = action.payload.data;
                 toast.success(
@@ -432,7 +420,6 @@ export const coachTemplateSlice = createSlice({
                 state.loading = true;
             })
             .addCase(getCoachTemplateModuleId.fulfilled, (state, action) => {
-                console.log('ACtion playlod', action.payload);
                 state.loading = false;
                 state.coachTemplatesId = action.payload.data;
                 state.template_name = action.payload.data.name;
@@ -543,7 +530,6 @@ export const coachTemplateSlice = createSlice({
         });
         builder.addCase(getStudentBatchMapping.fulfilled, (state, action) => {
             state.loading = false;
-            // console.log("MAPPING PAYLOAD :", action.payload )
             state.studentBatchMapping = action.payload;
         });
         builder.addCase(getStudentBatchMapping.rejected, (state, action) => {

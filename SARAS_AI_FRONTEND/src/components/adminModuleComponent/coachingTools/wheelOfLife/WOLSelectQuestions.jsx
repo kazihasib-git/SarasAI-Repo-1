@@ -64,10 +64,6 @@ const WOLSelectQuestions = () => {
             wolQuestionCategoryWise.data &&
             wolQuestionCategoryWise.data.length > 0
         ) {
-            console.log(
-                'Wol Question Category Wise',
-                wolQuestionCategoryWise.data
-            );
             const transformedData = wolQuestionCategoryWise.data.map(data => ({
                 ...data,
                 question: stripHtml(data.question),
@@ -78,14 +74,17 @@ const WOLSelectQuestions = () => {
                 wolQuestionCategoryWise.data[0].wol_category_name
             );
             setCategoryId(wolQuestionCategoryWise.data[0].id);
+        }else {
+            setQuestions()
+            setTotalQuestions()
+            setSelectedCategory()
+            setCategoryId()
         }
     }, [wolQuestionCategoryWise.data]);
 
     useEffect(() => {
         dispatch(selectedQuestionsList(categoryIdToSubmitSelectedQuestions));
     }, [dispatch]);
-
-    console.log('selectedQuestionsListData', selectedQuestionsListData);
 
     useEffect(() => {
         if (

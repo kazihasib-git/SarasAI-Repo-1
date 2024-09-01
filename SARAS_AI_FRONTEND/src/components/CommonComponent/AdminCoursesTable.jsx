@@ -81,8 +81,6 @@ const AdminCoursesTable = ({ taId }) => {
             courses: assignedCourses,
         };
 
-        console.log(requestData);
-
         // Dispatch the API call to assign/unassign the ta to/from the courses
          dispatch(assignCourseToTa(requestData)).unwrap();
         navigate('/ta-course-mapping'); // Navigate to the desired page

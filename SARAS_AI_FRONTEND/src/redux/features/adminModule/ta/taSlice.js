@@ -392,13 +392,10 @@ export const taSlice = createSlice({
     initialState,
     reducers: {
         accessTaName(state, action) {
-            // console.log("ACTION : ", action);
-            // console.log("ACTION PAYLOAD : ", action.payload);
             state.ta_name = action.payload.name;
             state.taID = action.payload.id;
         },
         setSelectedTA(state, action) {
-            // console.log("ACTION : ", action);
             state.selectedTA = action.payload;
         },
         openCreateTa(state) {
@@ -495,7 +492,6 @@ export const taSlice = createSlice({
             );
             if (index !== -1) {
                 state.tas[index] = action.payload;
-                // console.log("PAYLOAD ACTION : ", action.payload)
             }
             toast.success(action.payload.message || 'TA Updated Successfully');
         });
@@ -516,7 +512,6 @@ export const taSlice = createSlice({
             );
             if (index !== -1) {
                 state.tas[index] = action.payload;
-                // console.log("PAYLOAD ACTION : ", action.payload)
             }
             toast.success(action.payload.message || 'TA edited Successfully');
         });
@@ -547,7 +542,6 @@ export const taSlice = createSlice({
         });
         builder.addCase(getStudentBatchMapping.fulfilled, (state, action) => {
             state.loading = false;
-            // console.log("MAPPING PAYLOAD :", action.payload )
             state.studentBatchMapping = action.payload;
         });
         builder.addCase(getStudentBatchMapping.rejected, (state, action) => {
@@ -573,7 +567,6 @@ export const taSlice = createSlice({
             state.loading = true;
         });
         builder.addCase(showTAMapping.fulfilled, (state, action) => {
-            // console.log("TAMAPPING : ", action.payload);
             state.loading = false;
             state.taMapping = action.payload.data;
         });
@@ -587,7 +580,6 @@ export const taSlice = createSlice({
             state.loading = true;
         });
         builder.addCase(getAssignStudents.fulfilled, (state, action) => {
-            console.log('ACTION : ', action.payload);
             state.loading = false;
             state.assignedStudents = action.payload.data;
         });
@@ -731,7 +723,6 @@ export const taSlice = createSlice({
             state.loading = true;
         });
         builder.addCase(showTaCourseMapping.fulfilled, (state, action) => {
-            console.log('Ta mapping action ', action.payload);
             state.loading = false;
             state.taCourseMappingData = action.payload.tas;
         });
@@ -745,7 +736,6 @@ export const taSlice = createSlice({
             state.loading = true;
         });
         builder.addCase(getAllCoursesWithTas.fulfilled, (state, action) => {
-            console.log('Ta mapping action ', action.payload);
             state.loading = false;
             state.allCoursesWithTas = action.payload.courses;
         });
@@ -760,7 +750,6 @@ export const taSlice = createSlice({
             state.loading = true;
         });
         builder.addCase(assignCourseToTa.fulfilled, (state, action) => {
-            console.log('Ta mapping action ', action.payload);
             state.loading = false;
             toast.success(action.payload.message || 'Courses Assigned To Ta Successfully')
         });

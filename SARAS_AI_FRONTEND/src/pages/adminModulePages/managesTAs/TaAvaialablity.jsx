@@ -73,7 +73,7 @@ const headers = [
     'Calendar',
 ];
 
-const TaAvialability = () => {
+const TAAvailability = () => {
     const dispatch = useDispatch();
     const { todaysAvailableTa } = useSelector(state => state.taAvailability);
     const [taAvailabilityData, setTaAvailabilityData] = useState([]);
@@ -129,4 +129,4 @@ const TaAvialability = () => {
 };
 
 export { DynamicTable };
-export default TaAvialability;
+export default TAAvailability;

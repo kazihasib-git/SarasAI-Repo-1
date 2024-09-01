@@ -82,7 +82,7 @@ const PopUpTable = ({
     onCancelClick,
     itemsPerPage = 10,
 }) => {
-    console.log("POP UP TABLE !")
+
     const [data, setData] = useState(initialData ?? []);
     const [openPopup, setOpenPopup] = useState(false);
     const [currentStudentNames, setCurrentStudentNames] = useState([]);

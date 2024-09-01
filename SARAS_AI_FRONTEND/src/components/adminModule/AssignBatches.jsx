@@ -99,8 +99,6 @@ const AssignBatches = ({ componentname }) => {
         loading,
     } = stateSelector || {};
 
-    console.log('id', taID, coachID);
-
     useEffect(() => {
         if (stateModuleKey && assignBatchOpen) {
             dispatch(getBatchMappingAction());
@@ -120,7 +118,6 @@ const AssignBatches = ({ componentname }) => {
             } else if (componentname === 'ADDEDITTA') {
                 const id = taID || assignedId;
                 dispatch(getAssignBatches(id)).then(action => {
-                    console.log(action.payload);
                     const previouslyAssignedStudents = action.payload.data.map(
                         batches => batches.batch.id
                     );
@@ -132,7 +129,6 @@ const AssignBatches = ({ componentname }) => {
 
     useEffect(() => {
         if (batchMapping && batchMapping.length > 0) {
-            console.log('BATCHMAPPING : ', batchMapping);
             const transformedData = batchMapping.map((batch, index) => ({
                 'S. No.': index + 1,
                 'Batch Name': batch.name,

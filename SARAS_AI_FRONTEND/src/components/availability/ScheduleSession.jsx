@@ -178,7 +178,7 @@ const ScheduleSession = ({ componentName }) => {
             admin_user_id: sessionData.admin_user_id,
             platform_id: selectedPlatform,
         };
-        console.log('data and id', data, id);
+
         dispatch(changePlatform({ id, data })).then(() => {
             dispatch(fetchTAScheduleById(sessionData.admin_user_id));
         });

@@ -58,20 +58,17 @@ const WOLTestConfigSelectQuestions = () => {
 
     useEffect(() => {
         if (wolTestConfigCategoryWise.data) {
-            console.log(
-                'Wol Test Config Category Wise',
-                wolTestConfigCategoryWise.data
-            );
             setTotalQuestions(wolTestConfigCategoryWise.data.total_questions);
             setSelectedQuestions(
                 wolTestConfigCategoryWise.data.selected_questions
             );
             setCategory(wolTestConfigCategoryWise.data.questions);
+        }else {
+            setCategory()
         }
     }, [wolTestConfigCategoryWise.data]);
 
     const handleSelectQuestions = (cat_id, id) => {
-        console.log('Select Questions:', cat_id, id);
         dispatch(getWolQuestionCategoryWise(cat_id));
         dispatch(handleIdToSubmitSelectedQuestions(id));
         navigate('/WolselectQuestions');
@@ -80,7 +77,6 @@ const WOLTestConfigSelectQuestions = () => {
     const handleSubmit = e => {
         e.preventDefault();
 
-        console.log('Submit');
     };
 
     return (

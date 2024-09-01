@@ -35,7 +35,7 @@ import {
     updateCoach,
 } from '../../redux/features/adminModule/coach/coachSlice';
 import { openCoachScheduleSession } from '../../redux/features/adminModule/coach/coachSchedule';
-import AssessmentDialog from '../../pages/MODULE/coachModule/AssessmentDialog';
+import AssessmentDialog from '../../pages/coachModule/AssessmentDialog';
 import {
     deleteTaMapping,
     showTAMapping,
@@ -98,24 +98,25 @@ const DynamicTable = ({
         const maxPage = Math.ceil(data.length / itemsPerPage);
         setCurrentPage(Math.min(Math.max(1, pageNumber), maxPage));
     };
+
     const handleOpenDialog = itemId => {
         setItemIdToDelete(itemId);
         setIsDialogOpen(true);
     };
 
     const handleCloseDialog = () => {
-        console.log('handledelte');
         setIsDialogOpen(false);
         setItemIdToDelete(null);
     };
+
     const handleConfirmDelete = id => {
         if (id) {
             handleDelete(id);
         }
         handleCloseDialog();
     };
+
     const handleDelete = id => {
-        console.log('COMPONENTNAME : ', componentName);
         if (componentName === 'TAMAPPING') {
             dispatch(deleteTaMapping(id)).then(() => {
                 dispatch(showTAMapping());
@@ -125,14 +126,10 @@ const DynamicTable = ({
                 dispatch(showCoachMapping());
             });
         }
-        console.log('Deleting item with id:', id);
     };
 
     const handleCalender = (type, id, taName) => {
-        //         // Implement view functionality here based on type ('students' or 'batches')
-
-        //         console.log(`Viewing ${type} for item with id:`, id);
-        console.log('COMPONENTNAME : ', componentName);
+        
         if (componentName === 'COACHAVAILABLE') {
             navigate(`/coach-calender/${taName}/${id}`);
         } else if (componentName === 'TAAVAILABLE')
@@ -140,8 +137,7 @@ const DynamicTable = ({
     };
 
     const handleView = (type, id) => {
-        // console.log("ID handleview : ", id);
-        console.log('component name is', componentName);
+
         if (componentName === 'TAMAPPING') {
             if (type === 'students') {
                 navigate(`/active-students/${id}`); // Append id as a parameter
@@ -192,12 +188,10 @@ const DynamicTable = ({
                 }
             } else if (componentName === 'COACHCOURSEMAPPING') {
                 if (type === 'courses') {
-                    console.log(id);
                     navigate(`/active-Coach-courses/${id}`); // Append id as a parameter
                 }
             } else if (componentName === 'TACOURSEMAPPING') {
                 if (type === 'courses') {
-                    console.log(id);
                     navigate(`/active-Ta-courses/${id}`); // Append id as a parameter
                 }
             }
@@ -205,7 +199,7 @@ const DynamicTable = ({
     };
 
     const handlePopup = (id, name, timezone) => {
-        console.log('schedulingnn timezoneid', id);
+
         const data = { id, name, timezone };
         if (componentName === 'TAMAPPING') {
             dispatch(openScheduleSession(data));
@@ -248,12 +242,10 @@ const DynamicTable = ({
                 break;
 
             case 'WOLCATEGORY':
-                console.log('WOL Categories : ', id, requestData);
                 dispatch(activeDeactiveWOLCategory(id));
                 break;
 
             case 'WOLQUESTION':
-                console.log('WOL WOLQUESTION : ', id);
                 dispatch(toggleWOLQuestionStatus(id));
                 break;
 
@@ -312,14 +304,12 @@ const DynamicTable = ({
                     ) : (
                         currentData.map((item, index) => (
                             <tr key={item.id} id="tableRow">
-                                {/* {console.log("CUURENT : ", item)} */}
                                 <td>
                                     {(currentPage - 1) * itemsPerPage +
                                         index +
                                         1}
                                 </td>
                                 {Object.keys(item).map((key, idx) => {
-                                    // {console.log("KEY : ", key)}
                                     if (key === 'Availability') {
                                         return (
                                             <td

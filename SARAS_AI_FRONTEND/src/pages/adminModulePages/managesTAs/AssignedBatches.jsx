@@ -364,7 +364,7 @@ const actionButtons = [
     },
 ];
 
-const AssignBatches = () => {
+const AssignedBatches = () => {
     const { id } = useParams();
     const dispatch = useDispatch();
     
@@ -409,4 +409,4 @@ const AssignBatches = () => {
     );
 };
 
-export default AssignBatches;
+export default AssignedBatches;

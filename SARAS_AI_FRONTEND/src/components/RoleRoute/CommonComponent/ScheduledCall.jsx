@@ -9,10 +9,9 @@ import {
     IconButton,
     Popover,
 } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import editIcon from '../../../assets/editIcon.png';
-import CreateMeetingDialog from '../../../pages/MODULE/coachModule/CreateMeetingDialog';
+import CreateMeetingDialog from '../../../pages/coachModule/CreateMeetingDialog';
 import calender from '../../../assets/calender.svg';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
@@ -32,7 +31,7 @@ import {
 } from '../../../redux/features/commonCalender/commonCalender';
 import SessionLink from './commonCalender/SessionLink';
 import EditSession from './commonCalender/EditSession';
-import ParticipantsDialog from '../../../pages/MODULE/coachModule/ParticipantsDialog';
+import ParticipantsDialog from '../../../pages/coachModule/ParticipantsDialog';
 import { convertFromUTC } from '../../../utils/dateAndtimeConversion';
 
 const CustomButton = ({
@@ -255,7 +254,6 @@ const ScheduledCall = ({ role }) => {
     };
 
     const handleClickJoinSession = call => {
-        console.log( "Call DATA :",call);
         const transformedCall = {
             // title: call.meeting_name,
             start: new Date(call.date.split(' ')[0] + 'T' + call.start_time),
@@ -276,7 +274,6 @@ const ScheduledCall = ({ role }) => {
     };
 
     const handleEditClick = data => {
-        console.log("EdiT DATA :", data)
         dispatch(openEditSession(data));
     };
 

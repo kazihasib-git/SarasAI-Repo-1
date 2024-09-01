@@ -52,8 +52,6 @@ const LeaveReason = ({ componentName }) => {
             return;
         }
 
-        console.log("slotsLeaveData :", slotsLeaveData)
-
         if(slotsLeaveData && slotsLeaveData.data){
             const slots = slotsLeaveData.data;
 

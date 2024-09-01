@@ -456,13 +456,10 @@ export const coachSlice = createSlice({
     initialState,
     reducers: {
         accessCoachName(state, action) {
-            //   console.log("ACTION : ", action);
-            //   console.log("ACTION PAYLOAD : ", action.payload);
             state.coach_name = action.payload.name;
             state.coachID = action.payload.id;
         },
         setSelectedCoach(state, action) {
-            //   console.log("ACTION : ", action);
             state.selectedCoach = action.payload;
         },
         openCreateCoach(state) {
@@ -704,7 +701,6 @@ export const coachSlice = createSlice({
             state.loading = true;
         });
         builder.addCase(showCoachMapping.fulfilled, (state, action) => {
-            console.log('Coach mapping action ', action.payload);
             state.loading = false;
             state.coachMapping = action.payload.data;
         });
@@ -719,7 +715,6 @@ export const coachSlice = createSlice({
             state.loading = true;
         });
         builder.addCase(showCoachCourseMapping.fulfilled, (state, action) => {
-            console.log('Coach mapping action ', action.payload);
             state.loading = false;
             state.coachCourseMappingData = action.payload.coaches;
         });
@@ -734,7 +729,6 @@ export const coachSlice = createSlice({
             state.loading = true;
         });
         builder.addCase(getAllCoursesWithCoaches.fulfilled, (state, action) => {
-            console.log('Coach mapping action ', action.payload);
             state.loading = false;
             state.allCoursesWithCoaches = action.payload.courses;
         });
@@ -749,7 +743,6 @@ export const coachSlice = createSlice({
             state.loading = true;
         });
         builder.addCase(assignCourseToCoach.fulfilled, (state, action) => {
-            console.log('Coach mapping action ', action.payload);
             state.loading = false;
             toast.success(
                 action.payload.message ||
@@ -769,7 +762,6 @@ export const coachSlice = createSlice({
         builder.addCase(
             getCoachStudentBatchMapping.fulfilled,
             (state, action) => {
-                console.log('action ', action.payload);
                 state.loading = false;
                 state.coachStudentBatchMapping = action.payload;
             }
@@ -789,7 +781,6 @@ export const coachSlice = createSlice({
         });
         builder.addCase(getCoachBatchMapping.fulfilled, (state, action) => {
             state.loading = false;
-            // console.log("MAPPING PAYLOAD :", action.payload )
             state.coachBatchMapping = action.payload?.batches;
         });
         builder.addCase(getCoachBatchMapping.rejected, (state, action) => {

@@ -1,10 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import '../../pages/MODULE/coachModule/CoachMenuMessages.css';
+import '../../pages/coachModule/CoachMenuMessages.css';
 
 import filterIcon from '../../assets/filtericon1.svg';
 import PaperclipIcon from '../../assets/paperclip.svg';
-import VoiceIcon from '../../assets/voice1.svg';
 import MicNoneIcon from '@mui/icons-material/MicNone';
 import SendButtonIcon from '../../assets/sendbutton.svg';
 import NotificationIcon from '../../assets/NotificationIcon.svg';
@@ -14,7 +13,6 @@ import userimg from '../../assets/userimg.png';
 import CancelIcon from '@mui/icons-material/Cancel';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'; // Import an appropriate icon
 import RefreshIcon from '@mui/icons-material/Refresh';
-import moment from 'moment';
 import { AudioRecorder } from 'react-audio-voice-recorder';
 
 import {
@@ -323,7 +321,6 @@ const Messages = ({ role }) => {
             }
         }
         setMessages(reformedChatData);
-        console.log(reformedChatData);
     }, [chatRecordsbychatId]);
 
     useEffect(() => {
@@ -549,7 +546,6 @@ const Messages = ({ role }) => {
 
                         <Box className="chat-messages">
                             {messages.map((msg, index) => {
-                                console.log('====>', msg);
                                 const isFirstMessageFromSameSender =
                                     index === 0 ||
                                     messages[index - 1].sender !== msg.sender;

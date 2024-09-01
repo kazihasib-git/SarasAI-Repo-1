@@ -82,7 +82,7 @@ const PopTableSlot = ({
     onCancelClick,
     itemsPerPage = 10,
 }) => {
-    console.log('CHECK pop table slot');
+
     const [data, setData] = useState(initialData ?? []);
     const [openPopup, setOpenPopup] = useState(false);
     const [currentStudentNames, setCurrentStudentNames] = useState([]);
@@ -114,7 +114,6 @@ const PopTableSlot = ({
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );
-    console.log('DATA : ', data);
 
     const handleViewClick = studentList => {
         setCurrentStudentNames(studentList);

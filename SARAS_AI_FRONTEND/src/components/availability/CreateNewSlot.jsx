@@ -145,7 +145,6 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
         if (currentDate.getFullYear() === inputDate.getFullYear() &&
         currentDate.getMonth() === inputDate.getMonth() &&
         currentDate.getDate() === inputDate.getDate()) {
-                console.log("Both dates are the same.");
                 sameDate = true;
             }
 
@@ -189,10 +188,8 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
     };
 
     const onSubmit = async formData => {
-        // console.log('form data', formData);
 
         if (!validate()) {
-            console.log('NOT VALID DATA');
             return;
         }
 

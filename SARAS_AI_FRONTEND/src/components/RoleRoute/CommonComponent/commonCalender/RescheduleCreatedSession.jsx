@@ -55,7 +55,7 @@ const headers = ['S. No.', 'Slots Available', 'Select'];
 
 
 const RescheduleCreatedSession = ({ componentName , timezoneID}) => {
-console.log('reschedule session timezoneID' , timezoneID) ;
+
     const dispatch = useDispatch();
     const { RescheduleSession, slotsLeaveData, sessionDataForReschdeule, dataToFindScheduleInSlot } = useSelector((state) => state.commonCalender)
 
@@ -192,7 +192,6 @@ console.log('reschedule session timezoneID' , timezoneID) ;
     };
 
     const handleSelectSlot = id => {
-        console.log('Selected Slot ID:', id);
         setSelectedSlots(prev =>
             prev.includes(id) ? prev.filter(sid => sid !== id) : [...prev, id]
         );

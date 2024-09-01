@@ -335,7 +335,6 @@ export const taAvailabilitySlice = createSlice({
             state.markLeaveOpen = false;
         },
         openScheduledSlots(state, action) {
-            console.log('OPENSCHEDULE SLOTS : ', action.payload);
             state.scheduledSlotsOpen = true;
             state.markLeaveData = action.payload;
         },
@@ -344,7 +343,6 @@ export const taAvailabilitySlice = createSlice({
             state.markLeaveData = [];
         },
         openScheduledSession(state, action) {
-            // console.log("Open Action slotEventData : ", action.payload)
             state.scheduledSessionOpen = true;
             state.slotEventData = action.payload;
         },
@@ -353,7 +351,6 @@ export const taAvailabilitySlice = createSlice({
         },
         openCancelSession(state, action) {
             state.cancelSessionOpen = true;
-            console.log('ACTION : ', action.payload);
             state.schduldeCancelData = action.payload;
         },
         closeCancelSession(state) {
@@ -368,7 +365,6 @@ export const taAvailabilitySlice = createSlice({
             state.markLeaveData = [];
         },
         openRescheduleSession(state, action) {
-            console.log('Open Action sessionEventData : ', action.payload);
             state.resheduleSessionOpen = true;
             state.sessionEventData = action.payload;
         },
@@ -384,7 +380,6 @@ export const taAvailabilitySlice = createSlice({
         },
 
         openDeleteTaSlots(state, action) {
-            console.log('Payload :', action.payload);
             state.deletingCoachFutureSlots = true;
             state.taId = action.payload.id;
             state.taName = action.payload.name;
@@ -403,7 +398,6 @@ export const taAvailabilitySlice = createSlice({
             state.openEventData = false;
         },
         openTaEditScheduledStudents(state, action) {
-            console.log('Action :', action.payload);
             state.taEditScheduledStudents = true;
             state.meetingId = action.payload.id;
         },

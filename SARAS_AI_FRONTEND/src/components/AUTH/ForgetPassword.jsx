@@ -53,7 +53,7 @@ const ForgetPassword = () => {
                 errRef.current.focus();
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
             setErrMsg('Reset Failed');
             errRef.current.focus();
         }

@@ -245,7 +245,6 @@ const EditSession = ({ componentName }) => {
             //weeks: weeksArray,
         };
 
-        console.log(data);
         // dispatch(updateSessionApi(data)).then(() => {
         //     dispatch(getSessionApi());
         //     dispatch(closeEditSession());

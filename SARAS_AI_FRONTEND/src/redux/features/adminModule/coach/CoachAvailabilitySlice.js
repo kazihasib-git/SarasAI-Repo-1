@@ -316,7 +316,6 @@ export const coachAvailabilitySlice = createSlice({
             state.coachMarkLeaveData = [];
         },
         openCoachScheduledSession(state, action) {
-            console.log('Open Action slotCoachEventData : ', action.payload);
             state.scheduledCoachSessionOpen = true;
             state.slotCoachEventData = action.payload;
         },
@@ -345,7 +344,6 @@ export const coachAvailabilitySlice = createSlice({
             state.coachMarkLeaveData = [];
         },
         openCoachRescheduleSession(state, action) {
-            console.log('Open Action sessionCoachEventData : ', action.payload);
             state.resheduleCoachSessionOpen = true;
             state.sessionCoachEventData = action.payload;
         },
@@ -354,7 +352,6 @@ export const coachAvailabilitySlice = createSlice({
         },
 
         openDeleteCoachSlots(state, action) {
-            console.log('Payload :', action.payload);
             state.deletingCoachFutureSlots = true;
             state.coachId = action.payload.id;
             state.coachName = action.payload.name;
@@ -382,7 +379,6 @@ export const coachAvailabilitySlice = createSlice({
         //   state.customResheduleSessionOpen = false;
         // },
         openCoachEditScheduledStudents(state, action) {
-            console.log('Action :', action.payload);
             state.coachEditScheduledStudents = true;
             state.meetingId = action.payload.id;
         },

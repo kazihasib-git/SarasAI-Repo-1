@@ -13,7 +13,6 @@ import PopUpTable from '../../../CommonComponent/PopUpTable';
 const headers = ['S. No.', 'Student Name', 'Program', 'Batch', 'Select'];
 
 const EditStudentsSessionLink = ({ componentName }) => {
-  console.log(componentName)
   const dispatch = useDispatch();
 
   const [selectedTerm, setSelectedTerm] = useState([]);
@@ -58,8 +57,6 @@ const EditStudentsSessionLink = ({ componentName }) => {
 
   const { [assignedStudentsState]: students } = stateSelector
 
-  console.log("Students", students)
-
   const { editStudents, meetingId, openEditStudentsPopup } = useSelector((state) => state.commonCalender)
 
   useEffect(() => {
@@ -67,7 +64,6 @@ const EditStudentsSessionLink = ({ componentName }) => {
   }, [dispatch])
 
   useEffect(() => {
-    console.log("Edit Students", editStudents)
     if (editStudents) {
       setSelectedStudents(
         editStudents.map(student => student.id)

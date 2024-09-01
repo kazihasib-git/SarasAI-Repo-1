@@ -23,8 +23,6 @@ const AddEditWOLCategory = () => {
 
     const handleSubmit = async () => {
         if (editData) {
-            //setCategoryName(editData.name);
-            console.log('Edit');
             try {
                 const updatedWOL = await dispatch(
                     updateWOLCategory({
@@ -33,7 +31,7 @@ const AddEditWOLCategory = () => {
                     })
                 ).unwrap();
             } catch (error) {
-                console.log(error.message); //TODO: Show toast message
+                console.error(error.message); //TODO: Show toast message
             }
         } else {
             try {
@@ -41,7 +39,7 @@ const AddEditWOLCategory = () => {
                     createWOLCategory({ name: categoryName })
                 ).unwrap();
             } catch (error) {
-                console.log(error.message); //TODO: Show toast message
+                console.error(error.message); //TODO: Show toast message
             }
         }
         dispatch(getWOLCategory()).then(() => {
@@ -56,7 +54,6 @@ const AddEditWOLCategory = () => {
     };
 
     useEffect(() => {
-        console.log(editData);
         if (editData) {
             setCategoryName(editData.name);
         }

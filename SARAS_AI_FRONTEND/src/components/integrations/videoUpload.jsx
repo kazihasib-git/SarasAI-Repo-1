@@ -122,10 +122,9 @@ const VideoUploadDialog = ({ open, onClose, role, selectedId }) => {
             uploadVideoToVimeo();
         }
     }, [file]);
-    // console.log('id', selectedId);
+    
     useEffect(() => {
         if (videoUrl && selectedId) {
-            console.log('Video URL:', videoUrl);
 
             const sessionUrl = async () => {
                 try {

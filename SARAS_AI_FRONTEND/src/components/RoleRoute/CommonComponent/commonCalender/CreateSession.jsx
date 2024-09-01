@@ -128,7 +128,6 @@ const CreateSession = ({ componentName, timezoneID }) => {
     ];
 
     const handleChange = (field, value) => {
-        console.log('field', field, ':', value);
         setFormData(prev => ({ ...prev, [field]: value }));
     };
 
@@ -207,10 +206,8 @@ const CreateSession = ({ componentName, timezoneID }) => {
         const batchId = batches.map(batch => batch.id);
 
         const fromDateTimeString = `${formData.fromDate}T${formData.fromTime}`;
-        console.log('fromDateTimeString:', fromDateTimeString);
 
         const fromDateTime = new Date(fromDateTimeString);
-        console.log('fromDateTime:', fromDateTime);
 
         // Assuming formData.duration is in the format "HH:MM:SS"
         const [hours, minutes, seconds] = formData?.duration
@@ -220,7 +217,6 @@ const CreateSession = ({ componentName, timezoneID }) => {
 
         // Calculate endDateTime by adding duration to fromDateTime
         const endDateTime = new Date(fromDateTime.getTime() + durationInMs);
-        // console.log('endDateTime:', endDateTime);
 
         // Extracting time from endDateTime in HH:MM:SS format
         const endTime = endDateTime.toTimeString().split(' ')[0];

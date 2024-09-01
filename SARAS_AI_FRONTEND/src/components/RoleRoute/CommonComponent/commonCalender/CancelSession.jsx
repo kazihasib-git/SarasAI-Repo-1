@@ -61,7 +61,6 @@ const CancelSession = ({ componentName }) => {
     const { openCancelSession, sessionCancelData, slotsLeaveData } =
         useSelector(state => state.commonCalender);
 
-    console.log('slot Leave Data', slotsLeaveData);
 
     const handleCancel = () => {
         const sessionId = sessionCancelData.id;

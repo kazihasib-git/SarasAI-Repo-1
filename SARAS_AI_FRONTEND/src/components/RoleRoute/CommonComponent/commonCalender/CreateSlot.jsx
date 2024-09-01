@@ -42,9 +42,7 @@ const weekDays = [
 const timezone = Number(localStorage.getItem('timezone_id'));
 
 const CreateSlot = ({ componentName, timezoneID }) => {
-    // console.log('component Name :', componentName);
-    // console.log('timezone', timezone);
-
+    
     let createSlotApi, getSlotsApi;
 
     switch (componentName) {
@@ -85,7 +83,6 @@ const CreateSlot = ({ componentName, timezoneID }) => {
     }, [dispatch]);
 
     const handleChange = (field, value) => {
-        console.log('field', field, ':', value);
         if (field === 'timezone_id') {
             setFormData(prev => ({ ...prev, [field]: value }));
         }
@@ -171,8 +168,6 @@ const CreateSlot = ({ componentName, timezoneID }) => {
                 console.error('API Error:', error);
             });
     };
-
-    console.log('formData', formData.timezone_id);
 
     const content = (
         <Box

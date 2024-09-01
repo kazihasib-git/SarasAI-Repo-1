@@ -141,7 +141,6 @@ const coachScheduling = createSlice({
     initialState,
     reducers: {
         openCoachScheduleSession(state, action) {
-            console.log('Open Action  coach : ', action.payload);
             state.coachID = action.payload.id;
             state.coachName = action.payload.name;
             state.coachTimezone = action.payload.timezone;
@@ -154,7 +153,6 @@ const coachScheduling = createSlice({
             state.scheduleCoachSessionOpen = true;
         },
         closeCoachScheduleSession(state, action) {
-            console.log('Close Action : ', action.payload);
             state.coachID = null;
             state.coachName = null;
             state.coachTimezone = null;

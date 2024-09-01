@@ -115,8 +115,6 @@ const SessionLink = ({ componentName, platformName, platformUrl }) => {
         window.open(data.platform_meeting.host_meeting_url, '_blank');
     };
 
-    console.log("   ",sessionEventData)
-
     const content = (
         <Box sx={{ textAlign: 'center' }}>
             <Typography variant="body1" sx={{ mb: 2 }}>

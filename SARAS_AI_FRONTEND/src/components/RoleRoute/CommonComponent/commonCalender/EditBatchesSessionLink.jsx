@@ -62,8 +62,6 @@ const EditBatchesSessionLink = ({ componentName }) => {
         dispatch(getBatchesApi())
     }, [dispatch])
 
-    console.log("batchess :", batchesData, editBatches)
-
     useEffect(() => {
         if(batchesData && batchesData.length){
             const transformedData = batchesData.map((batch, index) => ({

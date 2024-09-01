@@ -20,7 +20,6 @@ export const createWOLCategory = createAsyncThunk(
     'wol/createWOLCategory',
     async (data, { rejectWithValue }) => {
         try{
-        console.log(data);
         const response = await axiosInstance.post(
             `${baseUrl}/admin/wol/wol-category`,
             data
@@ -88,7 +87,6 @@ export const deleteWOLCategory = createAsyncThunk(
 export const activeDeactiveWOLCategory = createAsyncThunk(
     'wol/activeDeactiveWOLCategory',
     async id => {
-        console.log('in activeDeactiveWOLCategory', id);
         const response = await axiosInstance.get(
             `${baseUrl}/admin/wol/wol-category/${id}`
         );

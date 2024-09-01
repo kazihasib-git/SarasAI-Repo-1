@@ -3,7 +3,7 @@ import { Box } from '@mui/material';
 import Header from '../../../../components/Header/Header';
 import Sidebar from '../../../../components/Sidebar/Sidebar';
 import { useGetCoursesQuery } from '../../../../redux/services/courses/coursesApi';
-import { DynamicTable } from '../../../managesTAs/TaAvaialablity';
+import { DynamicTable } from '../../managesTAs/TaAvaialablity';
 
 const CoursePage = () => {
     const [input, setInput] = useState('');
@@ -17,7 +17,6 @@ const CoursePage = () => {
 
     useEffect(() => {
         if (data && data.length > 0) {
-            console.log('DATA course: ', data);
             const transformedData = data?.map(item => ({
                 id: item.id,
                 'Course Name': item.name,
@@ -27,6 +26,8 @@ const CoursePage = () => {
                 end_date: item.end_date,
             }));
             setCourses(transformedData);
+        }else {
+            setCourses()
         }
     }, [data]);
 
