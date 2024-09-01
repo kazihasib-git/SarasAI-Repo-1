@@ -1137,10 +1137,10 @@ export const coachMenuSlice = createSlice({
             updateStudentsInCoachSession.fulfilled,
             (state, action) => {
                 state.loading = false;
-                toast.success(
-                    action.payload.message ||
-                        'Students Updated Successfully in Session'
-                );
+                // toast.success(
+                //     action.payload.message ||
+                //         'Students Updated Successfully in Session'
+                // );
                 // TODO :----->
             }
         );
@@ -1149,9 +1149,9 @@ export const coachMenuSlice = createSlice({
             (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
-                toast.error(
-                    action.payload || 'Failed to Update Students in Session'
-                );
+                // toast.error(
+                //     action.payload || 'Failed to Update Students in Session'
+                // );
             }
         );
 
@@ -1161,12 +1161,12 @@ export const coachMenuSlice = createSlice({
         })
         builder.addCase(updateBatchesInCoachSession.fulfilled, (state, action) => {
             state.loading = false;
-            toast.success(action.payload.message || 'Batches Updated Successfully in Session')
+            // toast.success(action.payload.message || 'Batches Updated Successfully in Session')
             // TODO :----->
         })
         builder.addCase(updateBatchesInCoachSession.rejected, (state, action) => {
             state.loading = false;
-            toast.error(action.payload || 'Failed To Update Batches in Session')
+            // toast.error(action.payload || 'Failed To Update Batches in Session')
             state.error = action.error.message;
         })
 // update scheduled calls
@@ -1175,7 +1175,7 @@ export const coachMenuSlice = createSlice({
         });
         builder.addCase(updateCoachScheduledCall.fulfilled, (state, action) => {
             state.loading = false;
-            state.updatedScheduledCall = action.payload.data;
+            //state.updatedScheduledCall = action.payload.data;
             toast.success(action.payload.message || 'Scheduled call updated successfully');
         });
         builder.addCase(updateCoachScheduledCall.rejected, (state, action) => {

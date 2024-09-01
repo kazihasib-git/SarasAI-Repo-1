@@ -2,7 +2,6 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { baseUrl } from '../../../utils/baseURL';
 import axios from 'axios';
 import axiosInstance from '../../services/httpService';
-import { actions } from 'react-table';
 import { toast } from 'react-toastify';
 const accessToken = localStorage.getItem('accessToken');
 
@@ -799,7 +798,7 @@ export const taMenuSlice = createSlice({
             getTaMenuAssignedStudents.fulfilled,
             (state, action) => {
                 state.loading = false;
-                state.assignedTaStudents = action.payload;
+                state.assignedTaStudents = action.payload //.data;
             }
         );
         builder.addCase(getTaMenuAssignedStudents.rejected, (state, action) => {
@@ -815,7 +814,7 @@ export const taMenuSlice = createSlice({
             getSelectedTaMenuAssignedStudents.fulfilled,
             (state, action) => {
                 state.loading = false;
-                state.taScheduleStudents= action.payload;
+                state.taScheduleStudents= action.payload.data;
             }
         );
         builder.addCase(getSelectedTaMenuAssignedStudents.rejected, (state, action) => {
@@ -830,7 +829,7 @@ export const taMenuSlice = createSlice({
         });
         builder.addCase(getTaMenuAssignedBatches.fulfilled, (state, action) => {
             state.loading = false;
-            state.assignedTaBatches = action.payload.data;
+            state.assignedTaBatches = action.payload //.data;
         });
         builder.addCase(getTaMenuAssignedBatches.rejected, (state, action) => {
             state.loading = false;
@@ -844,7 +843,7 @@ export const taMenuSlice = createSlice({
         });
         builder.addCase(getSelectedTaMenuAssignedBatches.fulfilled, (state, action) => {
             state.loading = false;
-            state.taScheduleBatches = action.payload;
+            state.taScheduleBatches = action.payload.data;
         });
         builder.addCase(getSelectedTaMenuAssignedBatches.rejected, (state, action) => {
             state.loading = false;
@@ -858,13 +857,13 @@ export const taMenuSlice = createSlice({
         });
         builder.addCase(updateStudentsInTaSession.fulfilled, (state, action) => {
             state.loading = false;
-            toast.success(action.payload.message || 'Students Updated Successfully in Session')
+            //toast.success(action.payload.message || 'Students Updated Successfully in Session')
             // TODO : ----->
         })
         builder.addCase(updateStudentsInTaSession.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
-            toast.error(action.payload || 'Failed to Update Students in Session')
+            //toast.error(action.payload || 'Failed to Update Students in Session')
         })
 
         //Update Batches In Session
@@ -873,13 +872,13 @@ export const taMenuSlice = createSlice({
         })
         builder.addCase(updateBatchesInTaSession.fulfilled, (state, action) => {
             state.loading = false;
-            toast.success(action.payload.message || 'Batches Updated Successfully')
+            //toast.success(action.payload.message || 'Batches Updated Successfully')
             // TODO : ----->
         })
         builder.addCase(updateBatchesInTaSession.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
-            toast.error(action.payload || 'Failed to Update Batches in Session')
+            //toast.error(action.payload || 'Failed to Update Batches in Session')
         })
 
 
@@ -914,7 +913,7 @@ export const taMenuSlice = createSlice({
         });
         builder.addCase(updateTaScheduledCall.fulfilled, (state, action) => {
             state.loading = false;
-            state.updatedScheduledCall = action.payload.data;
+            //state.updatedScheduledCall = action.payload.data;
             toast.success(action.payload.message || 'Scheduled call updated successfully');
         });
         builder.addCase(updateTaScheduledCall.rejected, (state, action) => {
