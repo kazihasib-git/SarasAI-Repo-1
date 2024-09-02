@@ -67,7 +67,7 @@ const commonCalender = createSlice({
         openSelectStudents: (state, action) => {
             state.selectStudentPopup = true;
             state.preSelectedStudents = action.payload ? action.payload: [];
-            if(action.payload.editStudents){
+            if(action.payload?.editStudents){
                 state.editStudents = action.payload.editStudents;
             }
             // asign students
@@ -82,7 +82,7 @@ const commonCalender = createSlice({
             console.log("action payload", action.payload)
             state.selectBatchPopup = true;
             state.preSelectedBatches = action.payload || [];
-            if(action.payload.editBatches){
+            if(action.payload?.editBatches){
                 state.editBatches = action.payload.editBatches
             }
         },

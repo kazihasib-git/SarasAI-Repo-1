@@ -47,7 +47,8 @@ const SelectBatches = ({ componentName }) => {
     }
 
     const stateSelector = useSelector(state => state[sliceName]);
-    const { batches, editBatches, selectBatchPopup, sessionData } = useSelector(
+    
+    const { batches, selectBatchPopup, sessionData } = useSelector(
         state => state.commonCalender
     );
 
@@ -89,7 +90,7 @@ const SelectBatches = ({ componentName }) => {
         if (batches && batches.length > 0) {
             setSelectedBatch(batches.map(prev => prev.id));
         }
-    }, [batches, editBatches]);
+    }, [batches]);
 
     useEffect(() => {
         if(sessionData && sessionData.batch && sessionData.batch.length > 0){
@@ -123,7 +124,8 @@ const SelectBatches = ({ componentName }) => {
         const data = {
             batchId: selectedBatch ? selectedBatch.map(id => ({ id })) : [],
         };
-        if(editBatches){
+        
+        if(sessionData){
             const updatedSessionData = {
                 ...sessionData,
                 batch: selectedBatch ? selectedBatch.map(id => ({ id })) : [],

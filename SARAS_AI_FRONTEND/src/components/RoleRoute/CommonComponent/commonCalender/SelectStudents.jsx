@@ -56,8 +56,6 @@ const SelectStudents = ({ componentName }) => {
         batches,
         selectStudentPopup,
         preSelectedStudents,
-        editStudents,
-        editBatches,
         sessionData,
     } = useSelector(state => state.commonCalender);
 
