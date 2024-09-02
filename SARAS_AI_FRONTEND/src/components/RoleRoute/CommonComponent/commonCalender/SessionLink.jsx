@@ -52,6 +52,7 @@ const CustomButton = ({
 };
 
 const SessionLink = ({ componentName, platformName, platformUrl }) => {
+
     const dispatch = useDispatch();
     const { sessionEventData, openSession } = useSelector(
         state => state.commonCalender
@@ -78,21 +79,13 @@ const SessionLink = ({ componentName, platformName, platformUrl }) => {
     }
 
     const handleEditBatches = () => {
-        const data = {
-            id : sessionEventData.id,
-            batches : sessionEventData.batches
-        }
-        dispatch(openEditBatches(data))
-        
+        dispatch(openEditBatches({ id : sessionEventData.id }))
     };
+
     const handleChangeMode = () => {};
 
     const handleEditStudents = () => {
-        const data = {
-            id: sessionEventData.id,
-            students : sessionEventData.students
-        }
-        dispatch(openEditStudents(data))
+        dispatch(openEditStudents({ id : sessionEventData.id }))
     };
 
     const handleLinkCopy = () => {

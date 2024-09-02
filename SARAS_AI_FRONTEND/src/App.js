@@ -215,12 +215,12 @@ function App() {
                             path="ta-availability"
                             element={<TAAvailability page="TA Availability" />}
                         />
-                        <Route
+                        {/* <Route
                             path="TaProfile"
                             element={
                                 <AddEditTeachingAssistant page="Ta-Profile" />
                             }
-                        />
+                        /> */}
                         <Route
                             path="ta-scheduling"
                             element={<TaScheduling page="TA Scheduling" />}

@@ -101,7 +101,8 @@ const EditStudentsFromSession = ({ componentName }) => {
     } = availabilityStateSelector;
 
     useEffect(() => {
-        dispatch(assignedStudentsApi(id)).then(() => {
+        dispatch(assignedStudentsApi(id))
+        .then(() => {
             dispatch(scheduledStudentsApi(meetingId));
         });
     }, [dispatch]);

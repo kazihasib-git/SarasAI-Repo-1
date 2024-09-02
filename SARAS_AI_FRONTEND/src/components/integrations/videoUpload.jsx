@@ -138,11 +138,10 @@ const VideoUploadDialog = ({ open, onClose, role, selectedId }) => {
                                 id: selectedId,
                                 session_recording_url: videoUrl,
                             })
-                        )
-                            .unwrap()
-                            .then(() => {
-                                dispatch(getCoachCallRecords());
-                            });
+                        ).unwrap();
+                        // .then(() => {
+                        //     dispatch(getCoachCallRecords());
+                        // });
                     } else if (role === 'TA') {
                         await dispatch(
                             uploadTASessionRecording({
@@ -157,6 +156,7 @@ const VideoUploadDialog = ({ open, onClose, role, selectedId }) => {
                     }
 
                     setUploadProgress(100);
+
                     //onClose();
                 } catch {
                     setError('Update failed. Please try again.');

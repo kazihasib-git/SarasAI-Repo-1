@@ -13,7 +13,7 @@ import PopUpTable from '../../../CommonComponent/PopUpTable';
 const headers = ['S. No.', 'Student Name', 'Program', 'Batch', 'Select'];
 
 const EditStudentsSessionLink = ({ componentName }) => {
-  console.log(componentName)
+
   const dispatch = useDispatch();
 
   const [selectedTerm, setSelectedTerm] = useState([]);
@@ -67,27 +67,19 @@ const EditStudentsSessionLink = ({ componentName }) => {
 
   const { 
     [assignedStudentsState]: students,
-    [getAssignSelectedStudentsApi] : sessionStudents,
+    [getAssignedSelectedStudentsState] : sessionStudents,
    } = stateSelector
 
-  const { editStudents, meetingId,sessionEventData, openEditStudentsPopup } = useSelector((state) => state.commonCalender)
+  const { meetingId, openEditStudentsPopup } = useSelector((state) => state.commonCalender)
   
   useEffect(() => {
-
     dispatch(getAssignStudentsApi())
-    dispatch(getAssignSelectedStudentsApi(sessionEventData.id));
-
+    .then(() => {
+      dispatch(getAssignSelectedStudentsApi(meetingId));
+    })
   }, [dispatch])
 
   console.log("Students", students, sessionStudents)
-  
-  useEffect(() => {
-    if (sessionStudents) {
-      setSelectedStudents(
-        sessionStudents.map(student => student.id)
-      );
-    }
-  }, [sessionStudents])
 
   useEffect(() => {
     if (students && students.length > 0) {
@@ -172,6 +164,14 @@ const EditStudentsSessionLink = ({ componentName }) => {
       ]
       : [];
 
+      useEffect(() => {
+        if (sessionStudents && sessionStudents.length > 0) {
+          setSelectedStudents(
+            sessionStudents.map(student => student.student_id)
+          );
+        }
+      }, [sessionStudents])
+
   const handleSelectStudent = (id) => {
     setSelectedStudents(prev =>
       prev.includes(id) ? prev.filter(sid => sid !== id) : [...prev, id]
@@ -194,10 +194,16 @@ const EditStudentsSessionLink = ({ componentName }) => {
       studentId : selectedStudents.map(id => id),
     }
     dispatch(editStudentsApi({ id, data }))
+      .unwrap()
       .then(() => {
         dispatch(closeEditStudents())
-        dispatch(getSessionApi())
+        toast.success("Student Updated Successfully.")
+        // dispatch(getSessionApi())
       })
+      .catch(error =>{
+        toast.error(`${error}`);
+    })
+    
   };
 
   const content = (
