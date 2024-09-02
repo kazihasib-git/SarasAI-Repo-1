@@ -143,7 +143,7 @@ const CreateSession = ({ componentName, timezoneID }) => {
     const validate = () => {
 
         if (!formData.sessionName) {
-            toast.error('Please enter meeting name')
+            toast.error('Please enter session name')
             return false;
         }
 

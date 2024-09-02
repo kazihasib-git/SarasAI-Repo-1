@@ -2,17 +2,23 @@ import React, { useState, useEffect } from 'react';
 import Profile from '../../../assets/profile.png';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../../redux/features/auth/authSlice';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom'; 
 
 function NavAvator() {
     const [isOnline, setIsOnline] = useState(true);
     const dispatch = useDispatch();
     const navigate = useNavigate(); // Initialize navigate
     const { userData, role } = useSelector(state => state.auth);
+    const { taProfileData } = useSelector(state => state.taMenu);
+    const { coachProfileData } = useSelector(state => state.coachMenu);
     const [role1, setrole1]= useState();
+    
+    
     useEffect(() => {
         setrole1(role);
     }, [role]);
+
+    
 
     const handleLogout = () => {
         // Clear the route and other relevant data from localStorage
@@ -28,6 +34,8 @@ function NavAvator() {
         })    
     };
 
+    
+
     const getRoleText = () => {
         if (role1 === '2001') return 'TA Teacher';
         if (role1 === '1984') return 'Coach Teacher';
@@ -35,7 +43,13 @@ function NavAvator() {
         return 'Unknown Role'; // Fallback for undefined or other roles
     };
 
+    let image = Profile;
+    if (role1 === '2001') image = taProfileData.profile_picture;
+    if (role1 === '1984') image = coachProfileData.profile_picture;
+
+
     return (
+        
         <li className="nav-item dropdown pe-3">
             <a
                 className="nav-link nav-profile d-flex align-items-center pe-0"
@@ -44,7 +58,7 @@ function NavAvator() {
             >
                 <div className="profile-container">
                     <img
-                        src={userData?.profile_picture || Profile}
+                        src={ image }
                         alt=""
                         className="profile-image rounded-circle"
                     />
