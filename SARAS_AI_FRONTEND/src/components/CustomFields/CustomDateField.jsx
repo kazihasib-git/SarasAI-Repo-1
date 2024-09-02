@@ -10,6 +10,7 @@ const CustomDateField = ({
     onChange,
     disableFutureDates,
     sx,
+    disabled,
     ...props
 }) => {
     const handleDateChange = date => {
@@ -24,6 +25,7 @@ const CustomDateField = ({
                 value={value ? moment(value, 'YYYY-MM-DD') : null}
                 onChange={handleDateChange}
                 disableFuture={disableFutureDates}
+                disabled={disabled}
                 slotProps={{
                     textField: {
                         InputLabelProps: {
@@ -49,6 +51,16 @@ const CustomDateField = ({
                                 '&.Mui-focused': {
                                     color: '#1A1E3D',
                                 },
+                            },
+                            '& .MuiInputLabel-root': {
+                                margin: 0,
+                                color: disabled ? '#A0A0A0' : '#1A1E3D', // Label color when disabled
+                                '&.Mui-focused': {
+                                    color: disabled ? '#A0A0A0' : '#1A1E3D', // Label color on focus when disabled
+                                },
+                            },
+                            '& .Mui-disabled .MuiInputLabel-root': {
+                                color: '#A0A0A0', // Ensure label color is gray when disabled
                             },
                             width: '100%', // Ensure full width
                             ...sx,
