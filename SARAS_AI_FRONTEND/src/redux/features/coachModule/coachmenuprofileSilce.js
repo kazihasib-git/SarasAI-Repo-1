@@ -243,23 +243,23 @@ export const reasonForCoachMenuLeave = createAsyncThunk(
 // Reschedule Session for Coach Leave
 export const rescheduleSessionForCoachLeave = createAsyncThunk(
     'coachMenu/rescheduleSession',
-    async ({ id, data}, {rejectWithValue}) => {
-        try{
-        console.log('id & data', id, data);
-        const response = await axiosInstance.post(
-            `${baseUrl}/coach/calendar/reschedule/${id}`,
-            data
-        );
-        return response.data;
-    }catch (error) {
-        if (error.response && error.response.data) {
-            return rejectWithValue(error.response.data.message);
-        } else {
-            return rejectWithValue(
-                'An Error Occurred While Creating TA slots'
+    async ({ id, data }, { rejectWithValue }) => {
+        try {
+            console.log('id & data', id, data);
+            const response = await axiosInstance.post(
+                `${baseUrl}/coach/calendar/reschedule/${id}`,
+                data
             );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Creating TA slots'
+                );
+            }
         }
-    }
     }
 );
 
@@ -335,13 +335,21 @@ export const getCoachCallRecords = createAsyncThunk(
 
 export const coachUploadSessionRecording = createAsyncThunk(
     'coachMenu/coachUploadSessionRecording',
-    async ({ id, session_recording_url }) => {
-        const response = await axiosInstance.put(
-            `${baseUrl}/coach/call-recording/upload-session-recording/${id}`,
-            { session_recording_url }
-        );
+    async ({ id, session_recording_url }, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.put(
+                `${baseUrl}/coach/call-recording/upload-session-recording/${id}`,
+                { session_recording_url }
+            );
 
-        return response.data;
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue('An Error Occurred While Upload  video');
+            }
+        }
     }
 );
 
@@ -1012,12 +1020,16 @@ export const coachMenuSlice = createSlice({
                 // Assuming the response contains session_recording_url
                 state.sessionRecordingUrl =
                     action.payload.session_recording_url;
+                toast.success(
+                    action.payload.message || 'Video upload successfully !'
+                );
             }
         );
         builder.addCase(
             coachUploadSessionRecording.rejected,
             (state, action) => {
                 state.error = action.payload;
+                toast.error(action.payload || 'Failed to Upload video');
             }
         );
 
@@ -1137,10 +1149,10 @@ export const coachMenuSlice = createSlice({
             updateStudentsInCoachSession.fulfilled,
             (state, action) => {
                 state.loading = false;
-                toast.success(
-                    action.payload.message ||
-                        'Students Updated Successfully in Session'
-                );
+                // toast.success(
+                //     action.payload.message ||
+                //         'Students Updated Successfully in Session'
+                // );
                 // TODO :----->
             }
         );
@@ -1149,9 +1161,9 @@ export const coachMenuSlice = createSlice({
             (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
-                toast.error(
-                    action.payload || 'Failed to Update Students in Session'
-                );
+                // toast.error(
+                //     action.payload || 'Failed to Update Students in Session'
+                // );
             }
         );
 
@@ -1161,12 +1173,12 @@ export const coachMenuSlice = createSlice({
         })
         builder.addCase(updateBatchesInCoachSession.fulfilled, (state, action) => {
             state.loading = false;
-            toast.success(action.payload.message || 'Batches Updated Successfully in Session')
+            // toast.success(action.payload.message || 'Batches Updated Successfully in Session')
             // TODO :----->
         })
         builder.addCase(updateBatchesInCoachSession.rejected, (state, action) => {
             state.loading = false;
-            toast.error(action.payload || 'Failed To Update Batches in Session')
+            // toast.error(action.payload || 'Failed To Update Batches in Session')
             state.error = action.error.message;
         })
 // update scheduled calls
@@ -1175,7 +1187,7 @@ export const coachMenuSlice = createSlice({
         });
         builder.addCase(updateCoachScheduledCall.fulfilled, (state, action) => {
             state.loading = false;
-            state.updatedScheduledCall = action.payload.data;
+            //state.updatedScheduledCall = action.payload.data;
             toast.success(action.payload.message || 'Scheduled call updated successfully');
         });
         builder.addCase(updateCoachScheduledCall.rejected, (state, action) => {

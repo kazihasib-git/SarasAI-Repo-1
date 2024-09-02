@@ -21,6 +21,7 @@ const CustomPlatformForm = ({
     return (
         <FormControl variant="outlined" disabled={disabled} fullWidth>
             <InputLabel
+                shrink
                 style={{ margin: 0 }}
                 sx={{
                     color: hasError ? 'red' : '#1A1E3D',

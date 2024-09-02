@@ -15,6 +15,7 @@ const initialState = {
 
     createNewSlotPopup: false, // for new slot popup
     scheduleNewSessionPopup: false, //  for new session Popup
+    editSchedulePopup : false,
     selectStudentPopup: false,
     selectBatchPopup: false,
     markLeave: false,
@@ -65,21 +66,30 @@ const commonCalender = createSlice({
         },
         openSelectStudents: (state, action) => {
             state.selectStudentPopup = true;
-            console.log("OPENSELECTSTUDENTS:", action.payload)
             state.preSelectedStudents = action.payload ? action.payload: [];
+            if(action.payload?.editStudents){
+                state.editStudents = action.payload.editStudents;
+            }
             // asign students
         },
         closeSelectStudents: (state, action) => {
             state.selectStudentPopup = false;
             state.preSelectedStudents = [];
+            // state.editStudents = [];
+            
         },
         openSelectBatches: (state, action) => {
+            console.log("action payload", action.payload)
             state.selectBatchPopup = true;
             state.preSelectedBatches = action.payload || [];
+            if(action.payload?.editBatches){
+                state.editBatches = action.payload.editBatches
+            }
         },
         closeSelectBatches: (state, action) => {
             state.selectBatchPopup = false;
             state.preSelectedBatches = [];
+            // state.editBatches = [];
         },
 
         // For Leave
@@ -133,19 +143,8 @@ const commonCalender = createSlice({
             state.sessionEventData = [];
             state.openSession = false;
         },
-
-        openEditSession(state, action) {
-            state.editSession = true;
-            state.sessionData = action.payload;
-        },
-        closeEditSession(state, action) {
-            state.editSession = false;
-            state.sessionData = null;
-        },
-
         openEditStudents(state, action){
             state.openEditStudentsPopup = true;
-            state.editStudents = action.payload.students;
             state.meetingId = action.payload.id;
         },
         closeEditStudents(state, action){
@@ -153,12 +152,30 @@ const commonCalender = createSlice({
         },
         openEditBatches(state, action){
             state.openEditBatchesPopup = true;
-            state.editBatches = action.payload.batches;
             state.meetingId = action.payload.id;
         },
         closeEditBatches(state, action){
             state.openEditBatchesPopup = false
         },
+
+        openEditSession(state, action) {
+            console.log("ACTION PAYLOAD", action.payload)
+            state.editSession = true;
+            state.sessionData = action.payload.sessionData;
+            if(action.payload.studentId){
+                state.editStudents = action.payload.studentId;
+            }
+            if(action.payload.batchId){
+                state.editBatches = action.payload.batchId;
+            }
+        },
+        closeEditSession(state, action) {
+            state.editSession = false;
+            state.sessionData = [];
+            state.editBatches = [];
+            state.editStudents = [];
+        },
+
 
         //add data from slot in reschedule to find sessions again after rescheduling
         addDataToFindScheduleInSlot(state, action) {

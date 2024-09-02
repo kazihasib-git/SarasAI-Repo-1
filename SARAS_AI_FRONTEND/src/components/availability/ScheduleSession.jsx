@@ -188,6 +188,7 @@ const ScheduleSession = ({ componentName }) => {
 
     //     window.open(sessionData.platform_meet.host_meeting_url, '_blank');
     // };
+    
     const handleJoinCall = data => {
         const eventData = {
             ...sessionData,
