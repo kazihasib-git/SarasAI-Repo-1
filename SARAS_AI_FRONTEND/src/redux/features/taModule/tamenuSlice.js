@@ -173,23 +173,22 @@ export const reasonForTaMenuLeave = createAsyncThunk(
 // Reschedule Session for TA Leave
 export const rescheduleSessionForTaLeave = createAsyncThunk(
     'taMenu/rescheduleSession',
-    async ({ id, data}, {rejectWithValue}) => {
-        try{
-        const response = await axiosInstance.post(
-            `${baseUrl}/ta/calendar/reschedule/${id}`,
-            data
-        );
-        return response.data;
-    
-}catch (error) {
-    if (error.response && error.response.data) {
-        return rejectWithValue(error.response.data.message);
-    } else {
-        return rejectWithValue(
-            'An Error Occurred While Creating TA slots'
-        );
-    }
-}
+    async ({ id, data }, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.post(
+                `${baseUrl}/ta/calendar/reschedule/${id}`,
+                data
+            );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Creating TA slots'
+                );
+            }
+        }
     }
 );
 
@@ -303,7 +302,7 @@ export const getTaMenuAssignedBatches = createAsyncThunk(
 // Update Students In Ta Session
 export const updateStudentsInTaSession = createAsyncThunk(
     'taMenu/updateStudentsInTaSession',
-    async ({id, data }, { rejectWithValue }) => {
+    async ({ id, data }, { rejectWithValue }) => {
         try {
             const response = await axiosInstance.post(
                 `${baseUrl}/ta/calendar/update-schedule-students/${id}`,
@@ -325,38 +324,48 @@ export const updateStudentsInTaSession = createAsyncThunk(
 // Update Batches in Ta Session
 export const updateBatchesInTaSession = createAsyncThunk(
     'taMenu/updateBatchesInTaSession',
-    async ( {id, data},{ rejectWithValue }) => {
-        try{
+    async ({ id, data }, { rejectWithValue }) => {
+        try {
             const response = await axiosInstance.post(
                 `${baseUrl}/ta/calendar/update-schedule-batches/${id}`,
                 data
-            )
+            );
             return response.data;
-        }catch(error){
+        } catch (error) {
             if (error.response && error.response.data) {
                 return rejectWithValue(error.response.data.message);
             } else {
                 return rejectWithValue(
                     'An Error Occurred While Updating Batches In Session'
                 );
-            };   
+            }
         }
     }
-)
+);
 
 //upload video
 export const uploadSessionRecording = createAsyncThunk(
     'taMenu/uploadSessionRecording',
-    async ({ id, session_recording_url }) => {
-        console.log('Assigning session notes with ID:', id);
+    async ({ id, session_recording_url }, { rejectWithValue }) => {
+        try {
+            console.log('Assigning session notes with ID:', id);
 
-        const response = await axiosInstance.put(
-            `${baseUrl}/ta/call-recording/upload-session-recording/${id}`,
+            const response = await axiosInstance.put(
+                `${baseUrl}/ta/call-recording/upload-session-recording/${id}`,
 
-            { session_recording_url }
-        );
+                { session_recording_url }
+            );
 
-        return response.data;
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Uploading video'
+                );
+            }
+        }
     }
 );
 
@@ -777,37 +786,47 @@ export const taMenuSlice = createSlice({
             state.assignedTaBatches = [];
         });
 
-
         // Update Students In Session
-        builder.addCase(updateStudentsInTaSession.pending, (state) => {
+        builder.addCase(updateStudentsInTaSession.pending, state => {
             state.loading = true;
         });
-        builder.addCase(updateStudentsInTaSession.fulfilled, (state, action) => {
-            state.loading = false;
-            toast.success(action.payload.message || 'Students Updated Successfully in Session')
-            // TODO : ----->
-        })
+        builder.addCase(
+            updateStudentsInTaSession.fulfilled,
+            (state, action) => {
+                state.loading = false;
+                toast.success(
+                    action.payload.message ||
+                        'Students Updated Successfully in Session'
+                );
+                // TODO : ----->
+            }
+        );
         builder.addCase(updateStudentsInTaSession.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
-            toast.error(action.payload || 'Failed to Update Students in Session')
-        })
+            toast.error(
+                action.payload || 'Failed to Update Students in Session'
+            );
+        });
 
         //Update Batches In Session
-        builder.addCase(updateBatchesInTaSession.pending , (state) => {
+        builder.addCase(updateBatchesInTaSession.pending, state => {
             state.loading = true;
-        })
+        });
         builder.addCase(updateBatchesInTaSession.fulfilled, (state, action) => {
             state.loading = false;
-            toast.success(action.payload.message || 'Batches Updated Successfully')
+            toast.success(
+                action.payload.message || 'Batches Updated Successfully'
+            );
             // TODO : ----->
-        })
+        });
         builder.addCase(updateBatchesInTaSession.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
-            toast.error(action.payload || 'Failed to Update Batches in Session')
-        })
-
+            toast.error(
+                action.payload || 'Failed to Update Batches in Session'
+            );
+        });
 
         //upload video
         builder.addCase(uploadSessionRecording.pending, state => {
@@ -815,9 +834,13 @@ export const taMenuSlice = createSlice({
         });
         builder.addCase(uploadSessionRecording.fulfilled, (state, action) => {
             state.sessionRecordingUrl = action.payload.session_recording_url;
+            toast.success(
+                action.payload.message || 'Video upload successfully !'
+            );
         });
         builder.addCase(uploadSessionRecording.rejected, (state, action) => {
             state.error = action.payload;
+            toast.error(action.payload || 'Failed to Upload video');
         });
 
         //session notes

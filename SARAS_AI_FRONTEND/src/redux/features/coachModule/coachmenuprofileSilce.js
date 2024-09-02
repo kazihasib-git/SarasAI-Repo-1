@@ -219,23 +219,23 @@ export const reasonForCoachMenuLeave = createAsyncThunk(
 // Reschedule Session for Coach Leave
 export const rescheduleSessionForCoachLeave = createAsyncThunk(
     'coachMenu/rescheduleSession',
-    async ({ id, data}, {rejectWithValue}) => {
-        try{
-        console.log('id & data', id, data);
-        const response = await axiosInstance.post(
-            `${baseUrl}/coach/calendar/reschedule/${id}`,
-            data
-        );
-        return response.data;
-    }catch (error) {
-        if (error.response && error.response.data) {
-            return rejectWithValue(error.response.data.message);
-        } else {
-            return rejectWithValue(
-                'An Error Occurred While Creating TA slots'
+    async ({ id, data }, { rejectWithValue }) => {
+        try {
+            console.log('id & data', id, data);
+            const response = await axiosInstance.post(
+                `${baseUrl}/coach/calendar/reschedule/${id}`,
+                data
             );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Creating TA slots'
+                );
+            }
         }
-    }
     }
 );
 
@@ -311,13 +311,21 @@ export const getCoachCallRecords = createAsyncThunk(
 
 export const coachUploadSessionRecording = createAsyncThunk(
     'coachMenu/coachUploadSessionRecording',
-    async ({ id, session_recording_url }) => {
-        const response = await axiosInstance.put(
-            `${baseUrl}/coach/call-recording/upload-session-recording/${id}`,
-            { session_recording_url }
-        );
+    async ({ id, session_recording_url }, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.put(
+                `${baseUrl}/coach/call-recording/upload-session-recording/${id}`,
+                { session_recording_url }
+            );
 
-        return response.data;
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue('An Error Occurred While Upload  video');
+            }
+        }
     }
 );
 
@@ -921,12 +929,16 @@ export const coachMenuSlice = createSlice({
                 // Assuming the response contains session_recording_url
                 state.sessionRecordingUrl =
                     action.payload.session_recording_url;
+                toast.success(
+                    action.payload.message || 'Video upload successfully !'
+                );
             }
         );
         builder.addCase(
             coachUploadSessionRecording.rejected,
             (state, action) => {
                 state.error = action.payload;
+                toast.error(action.payload || 'Failed to Upload video');
             }
         );
 
