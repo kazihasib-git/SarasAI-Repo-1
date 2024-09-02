@@ -1,0 +1,69 @@
+name: Build and Deploy Frontend
+
+on:
+  schedule:
+    - cron: '30 9 * * 3'  # Every Wednesday at 3:00 PM IST
+    - cron: '30 9 * * 5'  # Every Friday at 3:00 PM IST
+  workflow_dispatch:  # Allows manual triggering of the workflow
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    env:
+      FRONTEND_DIR: SARAS_AI_FRONTEND
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install frontend dependencies
+        run: npm install
+        working-directory: ${{ env.FRONTEND_DIR }}
+
+      - name: Build frontend project
+        run: npm run build
+        working-directory: ${{ env.FRONTEND_DIR }}
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Azure Docker Login
+        if: success()
+        uses: azure/docker-login@v1
+        with:
+          login-server: sarasai.azurecr.io
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: Build and Push Docker image
+        if: success()
+        run: |
+          cd ${{ env.FRONTEND_DIR }}
+          IMAGE_NAME=sarasai.azurecr.io/sarasfront1:${{ github.sha }}
+          docker build -t $IMAGE_NAME .
+          docker tag $IMAGE_NAME sarasai.azurecr.io/sarasfront1:latest
+          docker push $IMAGE_NAME
+          docker push sarasai.azurecr.io/sarasfront1:latest
+
+      - name: Deploy to Azure Container Apps
+        if: success()
+        run: |
+          RESOURCE_GROUP=devops-testing-rg
+          CONTAINER_APP_NAME=sarasaifrontend
+          ACR_LOGIN_SERVER=${{ secrets.ACR_LOGIN_SERVER }}
+          IMAGE_NAME=sarasfront1
+
+          for i in {1..5}; do
+            az containerapp update \
+              --name $CONTAINER_APP_NAME \
+              --resource-group $RESOURCE_GROUP \
+              --image $ACR_LOGIN_SERVER/$IMAGE_NAME:${{ github.sha }} && break || sleep 60
+          done

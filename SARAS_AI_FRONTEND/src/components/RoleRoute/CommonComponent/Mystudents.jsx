@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useGetStudentsQuery } from '../../../redux/services/students/studentsApi'; // Import your API hook
+// import { useGetStudentsQuery } from '../../../redux/services/students/studentsApi'; // Import your API hook
 import { Box } from '@mui/material';
 import Pagination from '@mui/material/Pagination';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../Header/Header';
 import Sidebar from '../../Sidebar/Sidebar';
-import { studentDummyDatadata } from '../../../fakeData/studentData';
+import { useDispatch, useSelector } from 'react-redux';
 import DynamicTable from '../../CommonComponent/DynamicTable';
+import { getMyStudents } from '../../../redux/features/taModule/tamenuSlice';
 
 const Mystudents = ({ role }) => {
     const [input, setInput] = useState('');
@@ -16,50 +17,129 @@ const Mystudents = ({ role }) => {
         setInput(value);
     };
 
-    const useDummyData = false;
+    const { myStudentData } = useSelector(state =>
+        role === 'TA' ? state.taMenu : state.coachMenu
+    );
 
-    const { data: apiData, error, isLoading } = useGetStudentsQuery();
+    // useEffect(() => {
+    //     dispatch(getMyStudents());
+    // }, []);
 
     useEffect(() => {
-        const dataToUse = useDummyData ? studentDummyDatadata : apiData;
-        if (apiData) {
-            const transformedData = apiData.map(item => ({
-                id: item.student_id,
-                Name: item.student_name,
-                'Activities Sceduled': '',
-                'Activities Completed': '',
-                'Due Dates Missed': '',
-                'Acedemic Term': item.academic_term,
-                Batch: item.primary_phone,
-            }));
-            setStudents(transformedData);
-        }
-    }, [apiData, useDummyData]);
+        if (role === 'TA') {
+            if (myStudentData) {
+                console.log('myStudentData', myStudentData);
+                const transformedData = Object.values(myStudentData).map(
+                    item => ({
+                        id: item.Student_Id,
+                        Name: item.Student_Name,
+                        Program: item.Program,
+                        Batch: item.Batch,
+                        'Live Sessions Scheduled': item.Live_Sessions_Scheduled,
+                        'Live Sessions Attended': item.Live_Sessions_Attended,
+                    })
+                );
+                setStudents(transformedData);
+            }
+        } else if (role === 'Coach') {
+            if (myStudentData) {
+                console.log('myStudentData', myStudentData);
+                const transformedData = myStudentData.map(student => {
+                    // Extract package names
+                    const packageNames = student.packages
+                        .map(pkg => pkg.package_name)
+                        .join(', ');
 
-    if (isLoading) {
-        return <div>Loading....</div>;
+                    // Extract batch names
+                    const batchNames = student.student_batch_mappings
+                        .map(mapping => mapping.batch.name)
+                        .join(', ');
+
+                    // Count the number of activities
+                    // Assuming you have multiple modules within a template
+                    const activitiesScheduled = student.coachingtemplate.reduce(
+                        (count, template) => {
+                            return (
+                                count +
+                                template.modules.reduce(
+                                    (moduleCount, module) => {
+                                        console.log(
+                                            `Module ${module.module_name} has ${module.activities.length} activities.`
+                                        );
+                                        return (
+                                            moduleCount +
+                                            module.activities.length
+                                        );
+                                    },
+                                    0
+                                )
+                            );
+                        },
+                        0
+                    );
+                    console.log(
+                        `Total activities scheduled: ${activitiesScheduled}`
+                    );
+
+                    // Set default values for Activities Completed and Due Dates Missed
+                    const activitiesCompleted = 0;
+                    const dueDatesMissed = 0;
+
+                    return {
+                        id: student.id,
+                        Name: student.name,
+                        Program: packageNames,
+                        Batch: batchNames,
+                        'Activities Scheduled': activitiesScheduled,
+                        'Activities Completed': activitiesCompleted,
+                        'Due Dates Missed': dueDatesMissed,
+                    };
+                });
+                setStudents(transformedData);
+            }
+        }
+    }, [myStudentData, role]); // Include role in dependencies to handle role change
+
+    let headers = [];
+
+    if (role === 'TA') {
+        headers = [
+            'S.No',
+            'Student Name',
+            'Program',
+            'Batch',
+            'Live Sessions Scheduled',
+            'Live Sessions Attended',
+            'Status',
+        ];
+    } else {
+        headers = [
+            'S.No',
+            'Student Name',
+            'Program',
+            'Batch',
+            'Activities Scheduled',
+            'Activities Completed',
+            'Due Dates Missed',
+            'Status',
+        ];
     }
 
-    // const headers = ['S.No', 'Student Name', 'Acadamic Term', 'Batch', 'Live Sesions Scheduled', 'Live Sessions Attended', 'Status'];
-    const headers = [
-        'S.No',
-        'Student Name',
-        'Acadamic Term',
-        'Batch',
-        'Activities Scheduled',
-        'Activities Completed',
-        'Due Dates Missed',
-        'Status',
-    ];
-
+    // const actionButtons = [
+    //     {
+    //         type: 'view',
+    //         onClick: student => {
+    //             navigate(`/student-detail/${student.id}`, {
+    //                 state: { student },
+    //             });
+    //         },
+    //     },
+    // ];
     const actionButtons = [
         {
             type: 'view',
-            onClick: student => {
-                navigate(`/student-detail/${student.id}`, {
-                    state: { student },
-                });
-            },
+            onClick: () => {},
+            disabled: true,
         },
     ];
     // Filter students based on the search input
@@ -77,7 +157,13 @@ const Mystudents = ({ role }) => {
                 marginTop={3}
                 alignItems={'center'}
             >
-                <p style={{ fontSize: '44px', justifyContent: 'center' }}>
+                <p
+                    style={{
+                        fontFamily: 'ExtraLight',
+                        fontSize: '40px',
+                        justifyContent: 'center',
+                    }}
+                >
                     My Students
                 </p>
                 <div className="inputBtnContainer">

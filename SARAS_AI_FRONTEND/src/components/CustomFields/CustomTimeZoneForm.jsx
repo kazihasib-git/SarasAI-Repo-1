@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     FormControl,
     InputLabel,
-    Select,
-    MenuItem,
+    Autocomplete,
+    TextField,
     Typography,
+    OutlinedInput,
 } from '@mui/material';
 
 const CustomTimeZoneForm = ({
@@ -17,6 +18,8 @@ const CustomTimeZoneForm = ({
     options,
     disabled,
 }) => {
+    const [inputValue, setInputValue] = useState('');
+
     const hasError = !!errors[name];
 
     return (
@@ -25,62 +28,87 @@ const CustomTimeZoneForm = ({
                 shrink
                 style={{ margin: 0 }}
                 sx={{
-                    color: hasError ? 'red' : '#1A1E3D',
+                    color: hasError ? '#1A1E3D' : '#1A1E3D',
                     '&.Mui-focused': {
                         color: '#1A1E3D', // Change label color on focus regardless of error
                     },
                     '&.MuiFormLabel-filled': {
-                        color: hasError ? 'red' : '#1A1E3D', // Change label color when the field is filled
+                        color: hasError ? '#1A1E3D' : '#1A1E3D', // Change label color when the field is filled
                     },
                     backgroundColor: 'white',
                 }}
             >
                 {label}
             </InputLabel>
-            <Select
-                label={label}
-                name={name}
-                value={value}
-                placeholder={placeholder}
-                onChange={onChange}
-                error={!!errors[name]}
+            <Autocomplete
+                value={options.find(option => option.id === value) || null}
+                onChange={(event, newValue) => {
+                    onChange({
+                        target: {
+                            name,
+                            value: newValue ? newValue.id : '',
+                        },
+                    });
+                }}
+                inputValue={inputValue}
+                onInputChange={(event, newInputValue) => {
+                    setInputValue(newInputValue);
+                }}
                 disabled={disabled}
-                MenuProps={{
-                    PaperProps: {
-                        style: {
-                            maxHeight: 200, // Set max height to make it scrollable
+                options={options}
+                getOptionLabel={option => option.time_zone}
+                renderInput={params => (
+                    <TextField
+                        {...params}
+                        //label={label}
+                        placeholder={placeholder}
+                        variant="outlined"
+                        error={hasError}
+                        sx={{
+                            '& .MuiOutlinedInput-root': {
+                                borderRadius: '50px',
+                                height: '60px',
+                                padding: '18px 2px',
+                                '& fieldset': {
+                                    borderColor: '#D0D0EC', // Default border color
+                                },
+                                '&:hover fieldset': {
+                                    borderColor: '#D0D0EC', //'rgb(245, 109, 59)', // Border color on hover
+                                },
+                                '&.Mui-focused fieldset': {
+                                    borderColor: hasError
+                                        ? '#d32f2f'
+                                        : 'rgb(245, 109, 59)', // Border color on focus
+                                },
+                            },
+                        }}
+                    />
+                )}
+                sx={{
+                    '& .MuiAutocomplete-popover': {
+                        '& .MuiOutlinedInput-root': {
+                            '& fieldset': {
+                                borderColor: '#D0D0EC', // Border color of the dropdown
+                            },
+                            '&:hover fieldset': {
+                                borderColor: 'rgb(245, 109, 59)', // Border color on hover
+                            },
+                            '&.Mui-focused fieldset': {
+                                borderColor: hasError
+                                    ? '#d32f2f'
+                                    : 'rgb(245, 109, 59)', // Border color on focus
+                            },
                         },
                     },
                 }}
-                sx={{
-                    borderRadius: '50px',
-                    height: '60px',
-                    padding: '18px 2px',
-                    '& .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#D0D0EC',
-                    },
-                    '&:hover .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#D0D0EC',
-                    },
-                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: hasError ? 'red' : 'rgb(245, 109, 59)', // Change border color on focus based on error
-                        color: '#1A1E3D',
-                    },
-                }}
-            >
-                {options.map(option => (
-                    <MenuItem key={option.id} value={option.id}>
-                        {option.time_zone}
-                    </MenuItem>
-                ))}
-            </Select>
+            />
             {hasError && (
                 <Typography
                     variant="body2"
                     color="error"
                     sx={{ fontSize: '0.75rem' }}
                 >
-                    {errors[name].message}
+                    {errors[name]?.message}
                 </Typography>
             )}
         </FormControl>

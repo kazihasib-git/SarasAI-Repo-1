@@ -17,8 +17,11 @@ import CustomTimeField from '../CustomFields/CustomTimeField';
 import CustomDateField from '../CustomFields/CustomDateField';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import CustomFormControl from '../CustomFields/CustomFromControl';
-import { useForm, Controller } from 'react-hook-form';
-
+import CustomHostNameForm from '../CustomFields/CustomHostNameField';
+import CustomMeetingTypeField from '../CustomFields/CustomMeetingTypeField';
+import { useForm, Controller, useWatch } from 'react-hook-form';
+import { timezoneIdToName } from '../../utils/timezoneIdToName';
+import { convertFromUTC } from '../../utils/dateAndtimeConversion';
 import {
     closeScheduleSession,
     createTASchedule,
@@ -36,6 +39,7 @@ import {
 import {
     getPlatforms,
     getTimezone,
+    getAllHosts,
 } from '../../redux/features/utils/utilSlice';
 import CustomTimeZoneForm from '../CustomFields/CustomTimeZoneForm';
 import { fetchTAScheduleById } from '../../redux/features/adminModule/ta/taAvialability';
@@ -43,6 +47,10 @@ import { toast } from 'react-toastify';
 import { fetchCoachScheduleById } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import CustomButton from '../CustomFields/CustomButton';
 import CustomPlatformForm from '../CustomFields/CustomPlatformForm';
+
+import editButtonBackground from '../../assets/editbuttonbackground.svg';
+import editButtonIcon from '../../assets/editbutton.svg';
+import CustomFutureDateField from '../CustomFields/CustomFutureDateField';
 
 const headers = ['S. No.', 'Slot Date', 'From Time', 'To Time', 'Select'];
 
@@ -62,19 +70,22 @@ const actionButtons = [
     },
 ];
 
-const Schedule = ({ componentName }) => {
+const Schedule = ({ componentName, timezoneID }) => {
     const [fromDate, setFromDate] = useState(null);
     const [toDate, setToDate] = useState(null);
     const [fromTime, setFromTime] = useState(null);
     const [toTime, setToTime] = useState(null);
-    const [timezone, setTimezone] = useState('');
     const [repeat, setRepeat] = useState('onetime');
     const [selectedDays, setSelectedDays] = useState([]);
     const [slotData, setSlotData] = useState([{}]);
-    const [selectedSlot, setSelectedSlot] = useState([{}]);
+    const [selectedSlot, setSelectedSlot] = useState(null);
     const [availableSlotsOptions, setAvailableSlotsOptions] = useState([]);
-
+    const [dateSelected, setDateSelected] = useState(false);
     const dispatch = useDispatch();
+    const { timezones, platforms, hosts } = useSelector(state => state.util);
+
+    const [meetingTypes, setMeetingtypes] = useState(['webinars', 'meetings']);
+
     let scheduleSessionOpenKey,
         schedulingStateKey,
         availableKey,
@@ -103,6 +114,7 @@ const Schedule = ({ componentName }) => {
             closeScheduleSessionAction = closeScheduleSession;
             createScheduleAction = createTASchedule;
             break;
+
         case 'COACHSCHEDULE':
             scheduleSessionOpenKey = 'scheduleCoachSessionOpen';
             schedulingStateKey = 'coachScheduling';
@@ -142,7 +154,7 @@ const Schedule = ({ componentName }) => {
         [scheduleSessionOpenKey]: scheduleSessionOpen,
         [idKey]: adminUserID,
         [nameKey]: adminUserName,
-        [timezoneKey]: adminUserTimezone,
+        [timezoneKey]: timezoneId,
         [availableKey]: availableSlots,
         [studentKey]: students,
         [batchKey]: batches,
@@ -152,54 +164,136 @@ const Schedule = ({ componentName }) => {
         register,
         handleSubmit,
         control,
+        reset,
         formState: { errors },
-    } = useForm();
-
-    console.log('available slots', availableSlots);
+    } = useForm({
+        defaultValues: {
+            timezone_id: timezoneId ? Number(timezoneId) : timezoneID,
+        },
+    });
 
     useEffect(() => {
-        if (fromDate || !availableSlots.length > 0) {
+        if (dateSelected && (fromDate || !availableSlots.length > 0)) {
             dispatch(
                 getAvailableSlotsAction({
                     admin_user_id: adminUserID,
                     date: fromDate,
+                    timezone_name: timezoneIdToName(
+                        timezoneId ? Number(timezoneId) : timezoneID,
+                        timezones
+                    ),
                 })
-            );
+            ).then(() => {
+                setSelectedSlot(null);
+            });
         }
     }, [fromDate, dispatch, adminUserID, getAvailableSlotsAction]);
 
-    const { timezones, platforms } = useSelector(state => state.util);
+    const handleDateSubmit = () => {
+        if (fromDate) {
+            dispatch(
+                getAvailableSlotsAction({
+                    admin_user_id: adminUserID,
+                    date: fromDate,
+                    timezone_name: timezoneIdToName(
+                        timezoneId ? Number(timezoneId) : timezoneID,
+                        timezones
+                    ),
+                })
+            ).then(() => {
+                setSelectedSlot(null);
+                setDateSelected(true);
+            });
+        } else {
+            toast.error('Please Select From Date');
+            return;
+        }
+    };
 
     useEffect(() => {
         dispatch(getTimezone());
         dispatch(getPlatforms());
+        dispatch(getAllHosts());
     }, [dispatch]);
 
-    useEffect(() => {
-        console.log('AVIALABLE KEY : ', availableKey);
-        console.log('Avaialable slots : ', availableSlots);
-        if (availableSlots && availableSlots.length > 0) {
-            const transformData = availableSlots.map((item, index) => ({
-                'S. No.': index + 1,
-                'Slot Date': item.slot_date,
-                'From Time': item.from_time,
-                'To Time': item.to_time,
-                id: item.id,
-            }));
+    const convertSessions = async () => {
+        if (
+            availableSlots &&
+            availableSlots.length > 0 &&
+            timezones &&
+            timezoneId
+                ? Number(timezoneId)
+                : timezoneID
+        ) {
+            const timezonename = timezoneIdToName(
+                timezoneId ? Number(timezoneId) : timezoneID,
+                timezones
+            );
+            try {
+                const processedSlots = await Promise.all(
+                    availableSlots.map(async (slot, index) => {
+                        const localTime = await convertFromUTC({
+                            start_date: slot.slot_date,
+                            start_time: slot.from_time,
+                            end_time: slot.to_time,
+                            end_date: slot.slot_date, // Assuming end_date is the same as slot_date
+                            timezonename,
+                        });
 
-            const options = availableSlots.map(item => ({
-                label: `${item.from_time} - ${item.to_time}`,
-                value: item.id,
-            }));
+                        const startDateTime = new Date(
+                            `${localTime.start_date}T${localTime.start_time}`
+                        );
+                        const endDateTime = new Date(
+                            `${localTime.end_date}T${localTime.end_time}`
+                        );
 
-            setAvailableSlotsOptions(options);
+                        return {
+                            'S. No.': index + 1,
+                            'Slot Date': localTime.start_date,
+                            'From Time': localTime.start_time,
+                            'To Time': localTime.end_time,
+                            id: slot.id,
+                            startDate: startDateTime,
+                            endDate: endDateTime,
+                        };
+                    })
+                );
 
-            setSlotData(transformData);
+                const formatTime = time => {
+                    const [hours, minutes] = time.split(':');
+                    const hour = parseInt(hours, 10);
+                    const minute = parseInt(minutes, 10);
+                    const ampm = hour >= 12 ? 'pm' : 'am';
+                    const formattedHour = hour % 12 || 12;
+                    return `${formattedHour}:${minute < 10 ? '0' : ''}${minute} ${ampm}`;
+                };
+
+                const options = processedSlots.map((item, index) => ({
+                    label: `${formatTime(item['From Time'])} - ${formatTime(item['To Time'])}`,
+                    value: `${item.id}-${index}`, // Create a unique value by combining item.id and index
+                }));
+
+                setAvailableSlotsOptions(options);
+                setSlotData(processedSlots);
+            } catch (error) {
+                console.error('Error converting sessions:', error);
+                setAvailableSlotsOptions([]);
+                setSlotData([{}]);
+            }
         } else {
             setAvailableSlotsOptions([]);
             setSlotData([{}]);
         }
-    }, [availableSlots]);
+    };
+
+    useEffect(() => {
+        convertSessions();
+    }, [
+        availableSlots,
+        timezones,
+        timezoneId,
+        timezoneId ? Number(timezoneId) : timezoneID,
+    ]);
 
     const handleDayChange = day => {
         setSelectedDays(prev => {
@@ -212,17 +306,25 @@ const Schedule = ({ componentName }) => {
     };
 
     const handleSelectOption = e => {
-        const selectedOption = e.target.value;
-        console.log('selectedOption : ', selectedOption);
-        const selectedSlot = slotData.filter(
-            slot => slot.id === selectedOption
-        );
-        console.log('selectedSlot : ', selectedSlot);
-        setSelectedSlot(selectedSlot);
+        const selectedValue = e.target.value;
+        const [selectedId, selectedIndex] = selectedValue.split('-'); // Extract the id and index
+
+        const selectedSlots = slotData.filter(slot => slot.id == selectedId); // Find all slots by id
+
+        // Get the specific slot by index
+        const selectedSlot = selectedSlots[0];
+
+        if (selectedSlot) {
+            const slotStartTime = selectedSlot.startTime;
+            const slotEndTime = selectedSlot.endTime;
+
+            setSelectedSlot(selectedSlot); // Set the specific slot
+        } else {
+            console.error('Selected slot is not found.');
+        }
     };
 
     const handleAssignStudents = () => {
-        console.log('COMPONENT NAME  handleAssignStudents : ', componentName);
         if (componentName === 'TASCHEDULE') {
             dispatch(openEditStudent());
         } else if (componentName === 'COACHSCHEDULE') {
@@ -231,7 +333,6 @@ const Schedule = ({ componentName }) => {
     };
 
     const handleAssignBatches = () => {
-        console.log('COMPONENT NAME  handleAssignBatches : ', componentName);
         if (componentName === 'TASCHEDULE') {
             dispatch(openEditBatch());
         } else if (componentName === 'COACHSCHEDULE') {
@@ -239,57 +340,86 @@ const Schedule = ({ componentName }) => {
         }
     };
 
-    const validate = () => {
+    const validate = (formData) => {
+
+        // Ensure all required fields are filled in
+        if (!fromDate) {
+            toast.error('Please select from Date');
+            return false;
+        }
+
+        if(!selectedSlot){
+            toast.error('Please select slot');
+            return false;
+        }
+
         if (!fromTime) {
-            toast.error('Please select from time');
-            return;
+            toast.error('Please select a From Time');
+            return false;
         }
 
-        if (!toTime) {
-            toast.error('Please select to time');
-            return;
-        }
-
-        if (students.length === 0) {
-            toast.error('Please assign students');
-            return;
-        } else if (batches.length === 0) {
-            toast.error('Please assign batches');
-            return;
-        }
-
-        if (toTime) {
-            if (toTime < fromTime) {
-                toast.error('To time should be greater than from time!');
+        if(repeat==='recurring'){
+            if (!toTime) {
+                toast.error('Please select a To Time');
+                return false;
             }
         }
 
-        if (!fromDate || !fromTime || !toTime) {
-            toast.error('Please fill in all fields');
-            return;
+        // Validate "To Time" is greater than "From Time"
+        // const fromTimeInMinutes = convertTimeToMinutes(fromTime);
+        // const toTimeInMinutes = convertTimeToMinutes(toTime);
+    
+        // if (toTimeInMinutes <= fromTimeInMinutes) {
+        //     toast.error('To Time must be later than From Time');
+        //     return false;
+        // }
+    
+        // Validate that selected times are within the slot's time range
+        // const slotStartTimeInMinutes = convertTimeToMinutes(selectedSlot['From Time']);
+        // const slotEndTimeInMinutes = convertTimeToMinutes(selectedSlot['To Time']);
+    
+        // if (fromTimeInMinutes < slotStartTimeInMinutes || toTimeInMinutes > slotEndTimeInMinutes) {
+        //     toast.error(`Time must be between ${formatTime(selectedSlot['From Time'])} and ${formatTime(selectedSlot['To Time'])}`);
+        //     return false;
+        // }
+    
+        if (formData.platform_id === 1) {
+            if (!formData.host_email_id) {
+                toast.error('Please provide a valid email.');
+                return false;
+            }
+
+            if (!formData.meeting_type) {
+                toast.error('Please select Meeting Type.');
+                return false;
+            }   
         }
 
-        if (toDate < fromDate) {
-            toast.error('To Date should be greater than From Date!');
-            return;
+        // Check if 'timezone_id' is provided
+        if (!formData.timezone_id) {
+            toast.error('Please select a timezone');
+            return false;
         }
+        
+        return true;
+    };
 
-        if (toTime < fromTime) {
-            toast.error('To Time should be greater than From Time!');
-            return;
-        }
+    const formatTime = time => {
+        const [hours, minutes] = time.split(':');
+        const hour = parseInt(hours, 10);
+        const minute = parseInt(minutes, 10);
+        const ampm = hour >= 12 ? 'pm' : 'am';
+        const formattedHour = hour % 12 || 12;
+        return `${formattedHour}:${minute < 10 ? '0' : ''}${minute} ${ampm}`;
     };
 
     const onSubmit = formData => {
-        console.log('formData --> ', formData);
+        // Perform validation
+        if (!validate(formData)) return;
 
-        console.log('students :', students);
-        console.log('batches', batches);
-
+        // Prepare data for submission
         const studentId = students.map(student => student.id);
         const batchId = batches.map(batch => batch.id);
-
-        console.log('studentId : ', studentId, 'batchId : ', batchId);
 
         let weeksArray = Array(7).fill(0);
         if (repeat === 'recurring') {
@@ -302,20 +432,20 @@ const Schedule = ({ componentName }) => {
             weeksArray[index] = 1;
         }
 
-        console.log('FORM DATA : ', formData);
-
+        // Add validated fields to formData
         formData.start_time = fromTime;
         formData.end_time = toTime;
         formData.schedule_date = fromDate;
         formData.end_date = repeat === 'recurring' ? toDate : fromDate;
         formData.admin_user_id = adminUserID;
-        formData.slot_id = selectedSlot[0].id; // Assuming single slot selection
+        formData.slot_id = selectedSlot.id;
         formData.event_status = 'scheduled';
         formData.weeks = weeksArray;
         formData.studentId = studentId;
         formData.batchId = batchId;
-
-        console.log('form Data :', formData);
+        // formData.timezone_id = timezoneId ? Number(timezoneId) : timezoneID;
+    
+        // Submit data
         dispatch(createScheduleAction(formData))
             .then(() => {
                 dispatch(closeScheduleSessionAction());
@@ -324,9 +454,22 @@ const Schedule = ({ componentName }) => {
             .catch(error => {
                 console.error('Error:', error);
             });
+        reset();
     };
 
-    console.log('AvailableSlotsOptions :', availableSlotsOptions);
+    // Helper function to convert time string to minutes since midnight
+    const convertTimeToMinutes = time => {
+        const [hours, minutes] = time.split(':').map(Number);
+        return hours * 60 + minutes;
+    };
+
+    const platform_id = useWatch({
+        control,
+        name: 'platform_id',
+        defaultValue: 0, // Provide a default value if necessary
+    });
+
+    
 
     const content = (
         <Box
@@ -335,7 +478,7 @@ const Schedule = ({ componentName }) => {
             alignItems="center"
             sx={{ height: '100%', width: '100%' }}
         >
-            <Grid container spacing={3} justifyContent="center">
+            <Grid container spacing={3} justifyContent="center" mt={0}>
                 <form onSubmit={handleSubmit(onSubmit)} noValidate>
                     <Box display="flex" justifyContent="center" m={4}>
                         <Grid container spacing={3} justifyContent="center">
@@ -345,20 +488,23 @@ const Schedule = ({ componentName }) => {
                                 sm={6}
                                 display="flex"
                                 justifyContent="center"
+                                mt={0}
                             >
-                                <CustomDateField
-                                    label="From Date"
+                                {/* //TODO : NEED TO SHOW ERROR MESSAGE ERROR HERE WHEN FIELD IS NOT FILLED  */}
+                                <CustomFutureDateField
+                                    label="Date"
+                                    name="schedule_date"
+                                    placeholder="From Date"
                                     value={fromDate}
                                     onChange={setFromDate}
-                                    name="schedule_date"
                                     register={register}
                                     validation={{
                                         required: 'From Date is required',
                                     }}
-                                    sx={{ width: '100%' }}
+                                    errors={errors}
                                 />
                             </Grid>
-                            {fromDate && (
+                            {fromDate && dateSelected && (
                                 <>
                                     {availableSlotsOptions.length === 0 ? (
                                         <Grid
@@ -401,265 +547,25 @@ const Schedule = ({ componentName }) => {
                                                     errors={errors}
                                                 />
                                             </Grid>
-                                            <Grid
-                                                item
-                                                xs={12}
-                                                display="flex"
-                                                justifyContent="center"
-                                            >
-                                                <CustomTextField
-                                                    label="Meeting Name"
-                                                    name="meeting_name"
-                                                    placeholder="Enter Meeting Name"
-                                                    register={register}
-                                                    validation={{
-                                                        required:
-                                                            'Meeting Name is required',
-                                                    }}
-                                                    errors={errors}
-                                                />
-                                            </Grid>
-                                            <Grid
-                                                item
-                                                xs={12}
-                                                sm={6}
-                                                display="flex"
-                                                justifyContent="center"
-                                            >
-                                                <CustomTimeField
-                                                    label="From Time"
-                                                    name="start_time"
-                                                    value={fromTime}
-                                                    onChange={setFromTime}
-                                                    validation={{
-                                                        required:
-                                                            'From Time is required',
-                                                    }}
-                                                    errors={errors}
-                                                />
-                                            </Grid>
-                                            <Grid
-                                                item
-                                                xs={12}
-                                                sm={6}
-                                                display="flex"
-                                                justifyContent="center"
-                                            >
-                                                <CustomTimeField
-                                                    label="To Time"
-                                                    name="To_time"
-                                                    value={toTime}
-                                                    onChange={setToTime}
-                                                    validation={{
-                                                        required:
-                                                            'To Time is required',
-                                                    }}
-                                                    errors={errors}
-                                                />
-                                            </Grid>
-                                            <Grid
-                                                item
-                                                xs={12}
-                                                display="flex"
-                                                justifyContent="center"
-                                            >
-                                                <Controller
-                                                    name="timezone_id"
-                                                    control={control}
-                                                    // rules={{ required: "Time Zone is required" }}
-                                                    render={({ field }) => (
-                                                        <CustomTimeZoneForm
-                                                            label="Time Zone"
-                                                            name="timezone_id"
-                                                            value={field.value}
-                                                            onChange={
-                                                                field.onChange
-                                                            }
-                                                            errors={errors}
-                                                            options={timezones}
-                                                        />
-                                                    )}
-                                                />
-                                            </Grid>
-                                            <Grid
-                                                item
-                                                xs={12}
-                                                display="flex"
-                                                justifyContent="center"
-                                            >
-                                                <Controller
-                                                    name="platform_id"
-                                                    control={control}
-                                                    render={({ field }) => (
-                                                        <CustomPlatformForm
-                                                            label="Platform"
-                                                            name="platform_id"
-                                                            value={field.value}
-                                                            onChange={
-                                                                field.onChange
-                                                            }
-                                                            errors={errors}
-                                                            options={platforms}
-                                                        />
-                                                    )}
-                                                />
-                                            </Grid>
-                                            <Grid
-                                                item
-                                                xs={12}
-                                                display="flex"
-                                                justifyContent="center"
-                                            >
-                                                <Box
-                                                    display="flex"
-                                                    justifyContent="center"
-                                                    gap={2}
-                                                    sx={{ mb: 3 }}
-                                                >
-                                                    <Button
-                                                        variant="contained"
-                                                        onClick={
-                                                            handleAssignStudents
-                                                        }
-                                                        sx={{
-                                                            backgroundColor:
-                                                                '#F56D3B',
-                                                            color: 'white',
-                                                            height: '60px',
-                                                            width: '201px',
-                                                            borderRadius:
-                                                                '50px',
-                                                            textTransform:
-                                                                'none',
-                                                            padding:
-                                                                '18px 30px',
-                                                            fontWeight: '700',
-                                                            fontSize: '16px',
-                                                            '&:hover': {
-                                                                backgroundColor:
-                                                                    '#D4522A',
-                                                            },
-                                                        }}
-                                                    >
-                                                        Edit Students
-                                                    </Button>
-                                                    <Button
-                                                        variant="outlined"
-                                                        onClick={
-                                                            handleAssignBatches
-                                                        }
-                                                        sx={{
-                                                            backgroundColor:
-                                                                'white',
-                                                            color: '#F56D3B',
-                                                            height: '60px',
-                                                            width: '194px',
-                                                            border: '2px solid #F56D3B',
-                                                            borderRadius:
-                                                                '50px',
-                                                            textTransform:
-                                                                'none',
-                                                            fontWeight: '700',
-                                                            fontSize: '16px',
-                                                            padding:
-                                                                '18px 30px',
-                                                            '&:hover': {
-                                                                backgroundColor:
-                                                                    '#F56D3B',
-                                                                color: 'white',
-                                                            },
-                                                        }}
-                                                    >
-                                                        Edit Batches
-                                                    </Button>
-                                                </Box>
-                                            </Grid>
-                                            <Grid
-                                                container
-                                                spacing={3}
-                                                justifyContent="center"
-                                                sx={{ pt: 3 }}
-                                            >
-                                                <Grid
-                                                    item
-                                                    xs={12}
-                                                    display="flex"
-                                                    justifyContent="center"
-                                                >
-                                                    <FormControl component="fieldset">
-                                                        <RadioGroup
-                                                            row
-                                                            value={repeat}
-                                                            onChange={e =>
-                                                                setRepeat(
-                                                                    e.target
-                                                                        .value
-                                                                )
-                                                            }
-                                                            sx={{
-                                                                justifyContent:
-                                                                    'center',
-                                                            }}
-                                                        >
-                                                            <FormControlLabel
-                                                                value="onetime"
-                                                                control={
-                                                                    <Radio />
-                                                                }
-                                                                label="One-Time"
-                                                            />
-                                                            <FormControlLabel
-                                                                value="recurring"
-                                                                control={
-                                                                    <Radio />
-                                                                }
-                                                                label="Recurring"
-                                                            />
-                                                        </RadioGroup>
-                                                    </FormControl>
-                                                </Grid>
-                                            </Grid>
-                                            {repeat === 'recurring' && (
+                                            {selectedSlot && (
                                                 <>
                                                     <Grid
-                                                        container
-                                                        spacing={3}
+                                                        item
+                                                        xs={12}
+                                                        display="flex"
                                                         justifyContent="center"
-                                                        sx={{ pt: 3 }}
                                                     >
-                                                        <Grid item xs={12}>
-                                                            <FormControl component="fieldset">
-                                                                <FormGroup row>
-                                                                    {weekDays.map(
-                                                                        day => (
-                                                                            <FormControlLabel
-                                                                                key={
-                                                                                    day
-                                                                                }
-                                                                                control={
-                                                                                    <Checkbox
-                                                                                        checked={selectedDays.includes(
-                                                                                            day
-                                                                                        )}
-                                                                                        onChange={() =>
-                                                                                            handleDayChange(
-                                                                                                day
-                                                                                            )
-                                                                                        }
-                                                                                        name={
-                                                                                            day
-                                                                                        }
-                                                                                    />
-                                                                                }
-                                                                                label={
-                                                                                    day
-                                                                                }
-                                                                            />
-                                                                        )
-                                                                    )}
-                                                                </FormGroup>
-                                                            </FormControl>
-                                                        </Grid>
+                                                        <CustomTextField
+                                                            label="Meeting Name"
+                                                            name="meeting_name"
+                                                            placeholder="Enter Meeting Name"
+                                                            register={register}
+                                                            validation={{
+                                                                required:
+                                                                    'Meeting Name is required',
+                                                            }}
+                                                            errors={errors}
+                                                        />
                                                     </Grid>
                                                     <Grid
                                                         item
@@ -668,51 +574,549 @@ const Schedule = ({ componentName }) => {
                                                         display="flex"
                                                         justifyContent="center"
                                                     >
-                                                        <CustomDateField
-                                                            label="To Date"
-                                                            value={toDate}
-                                                            onChange={setToDate}
-                                                            name="end_date"
-                                                            register={register}
+                                                        <CustomTimeField
+                                                            label="From Time"
+                                                            name="start_time"
+                                                            value={fromTime}
+                                                            onChange={
+                                                                setFromTime
+                                                            }
                                                             validation={{
                                                                 required:
-                                                                    'To Date is required',
+                                                                    'From Time is required',
                                                             }}
-                                                            sx={{
-                                                                width: '100%',
-                                                            }}
+                                                            errors={errors}
                                                         />
+                                                    </Grid>
+                                                    <Grid
+                                                        item
+                                                        xs={12}
+                                                        sm={6}
+                                                        display="flex"
+                                                        justifyContent="center"
+                                                    >
+                                                        <CustomTimeField
+                                                            label="To Time"
+                                                            name="To_time"
+                                                            value={toTime}
+                                                            onChange={setToTime}
+                                                            validation={{
+                                                                required:
+                                                                    'To Time is required',
+                                                            }}
+                                                            errors={errors}
+                                                        />
+                                                    </Grid>
+                                                    <Grid
+                                                        item
+                                                        xs={12}
+                                                        display="flex"
+                                                        justifyContent="center"
+                                                    >
+                                                        <Controller
+                                                            name="timezone_id"
+                                                            control={control}
+                                                            // rules={{ required: "Time Zone is required" }}
+                                                            defaultValue={
+                                                                timezoneId
+                                                                    ? Number(
+                                                                          timezoneId
+                                                                      )
+                                                                    : timezoneID
+                                                            }
+                                                            //defaultValue={timezone_id ? Number(timezone_id) : timezoneID}
+                                                            render={({
+                                                                field,
+                                                            }) => (
+                                                                <CustomTimeZoneForm
+                                                                    label="Time Zone"
+                                                                    name="timezone_id"
+                                                                    value={
+                                                                        field.value
+                                                                    }
+                                                                    onChange={
+                                                                        field.onChange
+                                                                    }
+                                                                    disabled={
+                                                                        timezoneId
+                                                                            ? Number(
+                                                                                  timezoneId
+                                                                              )
+                                                                            : timezoneID !=
+                                                                              null
+                                                                    }
+                                                                    options={
+                                                                        timezones
+                                                                    }
+                                                                    errors={
+                                                                        errors
+                                                                    }
+                                                                />
+                                                            )}
+                                                        />
+                                                    </Grid>
+                                                    <Grid
+                                                        item
+                                                        xs={12}
+                                                        display="flex"
+                                                        justifyContent="center"
+                                                    >
+                                                        <Controller
+                                                            name="platform_id"
+                                                            control={control}
+                                                            render={({
+                                                                field,
+                                                            }) => (
+                                                                <CustomPlatformForm
+                                                                    label="Platform"
+                                                                    name="platform_id"
+                                                                    value={
+                                                                        field.value
+                                                                    }
+                                                                    onChange={
+                                                                        field.onChange
+                                                                    }
+                                                                    errors={{
+                                                                        errors,
+                                                                    }}
+                                                                    options={
+                                                                        platforms
+                                                                    }
+                                                                />
+                                                            )}
+                                                        />
+                                                    </Grid>
+                                                    {platform_id === 1 && (
+                                                        <>
+                                                            <Grid
+                                                                item
+                                                                xs={12}
+                                                                display="flex"
+                                                                justifyContent="center"
+                                                            >
+                                                                <Controller
+                                                                    name="host_email_id"
+                                                                    control={
+                                                                        control
+                                                                    }
+                                                                    render={({
+                                                                        field,
+                                                                    }) => (
+                                                                        <CustomHostNameForm
+                                                                            label="Host Name"
+                                                                            name="host_email_id"
+                                                                            value={
+                                                                                field.value
+                                                                            }
+                                                                            onChange={
+                                                                                field.onChange
+                                                                            }
+                                                                            errors={
+                                                                                errors
+                                                                            }
+                                                                            options={
+                                                                                hosts.users
+                                                                            }
+                                                                        />
+                                                                    )}
+                                                                />
+                                                            </Grid>
+                                                            <Grid
+                                                                item
+                                                                xs={12}
+                                                                display="flex"
+                                                                justifyContent="center"
+                                                            >
+                                                                <Controller
+                                                                    name="meeting_type"
+                                                                    control={
+                                                                        control
+                                                                    }
+                                                                    render={({
+                                                                        field,
+                                                                    }) => (
+                                                                        <CustomMeetingTypeField
+                                                                            label="Meeting Type"
+                                                                            name="meeting_type"
+                                                                            value={
+                                                                                field.value
+                                                                            }
+                                                                            onChange={
+                                                                                field.onChange
+                                                                            }
+                                                                            errors={
+                                                                                errors
+                                                                            }
+                                                                            options={
+                                                                                meetingTypes
+                                                                            }
+                                                                        />
+                                                                    )}
+                                                                />
+                                                            </Grid>
+                                                        </>
+                                                    )}
+
+                                                    <Grid
+                                                        item
+                                                        xs={12}
+                                                        display="flex"
+                                                        justifyContent="center"
+                                                    >
+                                                        <Box
+                                                            display="flex"
+                                                            justifyContent="center"
+                                                            gap={2}
+                                                            sx={{ mb: 3 }}
+                                                        >
+                                                            <Button
+                                                                variant="outlined"
+                                                                onClick={
+                                                                    handleAssignBatches
+                                                                }
+                                                                sx={{
+                                                                    backgroundColor:
+                                                                        '#FEEBE3',
+                                                                    color: '#F56D3B',
+
+                                                                    height: '60px',
+                                                                    width: '201px',
+
+                                                                    border: 'none',
+                                                                    borderRadius:
+                                                                        '50px',
+                                                                    textTransform:
+                                                                        'none',
+                                                                    fontWeight:
+                                                                        '400',
+                                                                    fontSize:
+                                                                        '16px',
+                                                                    fontFamily:
+                                                                        'Regular',
+                                                                    padding:
+                                                                        '18px 30px',
+                                                                    pl: '50px',
+                                                                    '&:hover': {
+                                                                        backgroundColor:
+                                                                            'unset', // Remove hover background color
+                                                                    },
+                                                                    '&::before':
+                                                                        {
+                                                                            content:
+                                                                                '""',
+                                                                            display:
+                                                                                'block',
+                                                                            backgroundImage: `url(${editButtonBackground})`,
+                                                                            backgroundSize:
+                                                                                '100% 100%',
+                                                                            width: '15px',
+                                                                            height: '15px',
+                                                                            position:
+                                                                                'absolute',
+                                                                            left: '25px',
+                                                                            top: '50%',
+                                                                            transform:
+                                                                                'translateY(-50%)',
+                                                                        },
+                                                                    '&::after':
+                                                                        {
+                                                                            content:
+                                                                                '""',
+                                                                            display:
+                                                                                'block',
+                                                                            backgroundImage: `url(${editButtonIcon})`,
+                                                                            backgroundSize:
+                                                                                '100% 100%',
+                                                                            width: '15px',
+                                                                            height: '12px',
+                                                                            position:
+                                                                                'absolute',
+                                                                            left: '27px',
+                                                                            top: '22px',
+                                                                        },
+                                                                }}
+                                                            >
+                                                                Edit Batches
+                                                            </Button>
+                                                            <Button
+                                                                variant="contained"
+                                                                onClick={
+                                                                    handleAssignStudents
+                                                                }
+                                                                sx={{
+                                                                    backgroundColor:
+                                                                        'unset',
+                                                                    color: '#F56D3B',
+                                                                    height: '60px',
+                                                                    width: '201px',
+                                                                    borderRadius:
+                                                                        '50px',
+                                                                    textTransform:
+                                                                        'none',
+                                                                    padding:
+                                                                        '18px 30px',
+
+                                                                    fontWeight:
+                                                                        '400',
+                                                                    fontSize:
+                                                                        '16px',
+                                                                    fontFamily:
+                                                                        'Regular',
+                                                                    '&:hover': {
+                                                                        backgroundColor:
+                                                                            'unset', // Remove hover background color
+                                                                    },
+                                                                    pl: '50px',
+                                                                    border: '2px solid #F56D3B',
+                                                                    '&::before':
+                                                                        {
+                                                                            content:
+                                                                                '""',
+                                                                            display:
+                                                                                'block',
+                                                                            backgroundImage: `url(${editButtonBackground})`,
+                                                                            backgroundSize:
+                                                                                '100% 100%',
+                                                                            width: '15px',
+                                                                            height: '15px',
+                                                                            position:
+                                                                                'absolute',
+                                                                            left: '25px',
+                                                                            top: '50%',
+                                                                            transform:
+                                                                                'translateY(-50%)',
+                                                                        },
+                                                                    '&::after':
+                                                                        {
+                                                                            content:
+                                                                                '""',
+                                                                            display:
+                                                                                'block',
+                                                                            backgroundImage: `url(${editButtonIcon})`,
+                                                                            backgroundSize:
+                                                                                '100% 100%',
+                                                                            width: '15px',
+                                                                            height: '12px',
+                                                                            position:
+                                                                                'absolute',
+                                                                            left: '27px',
+                                                                            top: '20px',
+                                                                        },
+                                                                }}
+                                                            >
+                                                                Edit Students
+                                                            </Button>
+                                                        </Box>
+                                                    </Grid>
+                                                    <Grid
+                                                        container
+                                                        spacing={3}
+                                                        justifyContent="center"
+                                                        sx={{ pt: 3 }}
+                                                    >
+                                                        <Grid
+                                                            item
+                                                            xs={12}
+                                                            display="flex"
+                                                            justifyContent="center"
+                                                        >
+                                                            <FormControl component="fieldset">
+                                                                <RadioGroup
+                                                                    row
+                                                                    value={
+                                                                        repeat
+                                                                    }
+                                                                    onChange={e =>
+                                                                        setRepeat(
+                                                                            e
+                                                                                .target
+                                                                                .value
+                                                                        )
+                                                                    }
+                                                                    sx={{
+                                                                        justifyContent:
+                                                                            'center',
+                                                                    }}
+                                                                >
+                                                                    <FormControlLabel
+                                                                        value="onetime"
+                                                                        control={
+                                                                            <Radio
+                                                                                sx={{
+                                                                                    '&.Mui-checked':
+                                                                                        {
+                                                                                            color: '#F56D3B',
+                                                                                        },
+                                                                                }}
+                                                                            />
+                                                                        }
+                                                                        label="One-Time"
+                                                                    />
+                                                                    <FormControlLabel
+                                                                        value="recurring"
+                                                                        control={
+                                                                            <Radio
+                                                                                sx={{
+                                                                                    '&.Mui-checked':
+                                                                                        {
+                                                                                            color: '#F56D3B',
+                                                                                        },
+                                                                                }}
+                                                                            />
+                                                                        }
+                                                                        label="Recurring"
+                                                                    />
+                                                                </RadioGroup>
+                                                            </FormControl>
+                                                        </Grid>
+                                                    </Grid>
+                                                    {repeat === 'recurring' && (
+                                                        <>
+                                                            <Grid
+                                                                container
+                                                                spacing={3}
+                                                                justifyContent="center"
+                                                                sx={{ pt: 3 }}
+                                                            >
+                                                                <Grid
+                                                                    item
+                                                                    xs={12}
+                                                                >
+                                                                    <FormControl component="fieldset">
+                                                                        <FormGroup
+                                                                            row
+                                                                            sx={{
+                                                                                display:
+                                                                                    'flex',
+                                                                                justifyContent:
+                                                                                    'center', // Center the checkboxes
+                                                                                gap: 2,
+                                                                                flexWrap:
+                                                                                    'wrap',
+                                                                                maxWidth:
+                                                                                    '65%',
+                                                                                marginLeft:
+                                                                                    'auto',
+                                                                                marginRight:
+                                                                                    'auto',
+                                                                            }}
+                                                                        >
+                                                                            {weekDays.map(
+                                                                                day => (
+                                                                                    <FormControlLabel
+                                                                                        key={
+                                                                                            day
+                                                                                        }
+                                                                                        control={
+                                                                                            <Checkbox
+                                                                                                checked={selectedDays.includes(
+                                                                                                    day
+                                                                                                )}
+                                                                                                onChange={() =>
+                                                                                                    handleDayChange(
+                                                                                                        day
+                                                                                                    )
+                                                                                                }
+                                                                                                name={
+                                                                                                    day
+                                                                                                }
+                                                                                            />
+                                                                                        }
+                                                                                        label={
+                                                                                            day
+                                                                                        }
+                                                                                    />
+                                                                                )
+                                                                            )}
+                                                                        </FormGroup>
+                                                                    </FormControl>
+                                                                </Grid>
+                                                            </Grid>
+                                                            <Grid
+                                                                item
+                                                                xs={12}
+                                                                sm={6}
+                                                                display="flex"
+                                                                justifyContent="center"
+                                                            >
+                                                                <CustomDateField
+                                                                    label="To Date"
+                                                                    value={
+                                                                        toDate
+                                                                    }
+                                                                    onChange={
+                                                                        setToDate
+                                                                    }
+                                                                    name="end_date"
+                                                                    register={
+                                                                        register
+                                                                    }
+                                                                    validation={{
+                                                                        required:
+                                                                            'To Date is required',
+                                                                    }}
+                                                                    sx={{
+                                                                        width: '100%',
+                                                                    }}
+                                                                />
+                                                            </Grid>
+                                                        </>
+                                                    )}
+                                                    <Grid
+                                                        item
+                                                        xs={12}
+                                                        display="flex"
+                                                        justifyContent="center"
+                                                    >
+                                                        <Button
+                                                            type="submit"
+                                                            variant="contained"
+                                                            style={{
+                                                                borderRadius:
+                                                                    '50px',
+                                                                padding:
+                                                                    '18px 30px',
+                                                                marginTop: 30,
+                                                                backgroundColor:
+                                                                    '#F56D3B',
+                                                                height: '60px',
+                                                                width: '121px',
+                                                                fontSize:
+                                                                    '16px',
+                                                                fontWeight:
+                                                                    '700px',
+                                                                text: '#FFFFFF',
+                                                                textTransform:
+                                                                    'none',
+                                                            }}
+                                                        >
+                                                            Submit
+                                                        </Button>
                                                     </Grid>
                                                 </>
                                             )}
-                                            <Grid
-                                                item
-                                                xs={12}
-                                                display="flex"
-                                                justifyContent="center"
-                                            >
-                                                <Button
-                                                    type="submit"
-                                                    variant="contained"
-                                                    style={{
-                                                        borderRadius: '50px',
-                                                        padding: '18px 30px',
-                                                        marginTop: 30,
-                                                        backgroundColor:
-                                                            '#F56D3B',
-                                                        height: '60px',
-                                                        width: '121px',
-                                                        fontSize: '16px',
-                                                        fontWeight: '700px',
-                                                        text: '#FFFFFF',
-                                                        textTransform: 'none',
-                                                    }}
-                                                >
-                                                    Submit
-                                                </Button>
-                                            </Grid>
                                         </>
                                     )}
+                                </>
+                            )}
+                            {!dateSelected && (
+                                <>
+                                    <Grid
+                                        item
+                                        xs={12}
+                                        display="flex"
+                                        justifyContent="center"
+                                    >
+                                        <CustomButton
+                                            onClick={handleDateSubmit}
+                                            backgroundColor="#F56D3B"
+                                            borderColor="#F56D3B"
+                                            color="#FFFFFF"
+                                            textTransform="none"
+                                        >
+                                            Submit
+                                        </CustomButton>
+                                    </Grid>
                                 </>
                             )}
                         </Grid>
@@ -728,6 +1132,7 @@ const Schedule = ({ componentName }) => {
             backgroundColor="#F56D3B"
             borderColor="#F56D3B"
             color="#FFFFFF"
+            textTransform="none"
         >
             Submit
         </CustomButton>

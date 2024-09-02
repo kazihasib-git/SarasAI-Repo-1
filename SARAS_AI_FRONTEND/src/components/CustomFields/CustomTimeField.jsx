@@ -12,10 +12,12 @@ const CustomTimeField = ({
     fullWidth,
     ...props
 }) => {
-    const momentValue = value ? moment(value, 'YYYY-MM-DDTHH:mm:ss') : null;
+    const momentValue = value ? moment(value, 'HH:mm:ss') : null;
 
     const handleTimeChange = date => {
-        onChange(date.format('HH:mm:ss'));
+        if (date) {
+            onChange(date.format('HH:mm:ss')); // Pass the formatted time back to the parent
+        }
     };
 
     return (
@@ -29,7 +31,6 @@ const CustomTimeField = ({
                 InputLabelProps={{
                     shrink: true,
                     sx: {
-                        // Center the label vertically when in placeholder position
                         position: 'absolute',
                         top: '50%',
                         transform: 'translateY(-50%)',
@@ -61,7 +62,7 @@ const CustomTimeField = ({
                             borderColor: 'rgb(245, 109, 59)',
                         },
                         '& .MuiInputBase-input': {
-                            padding: '16.5px 14px', // Adjust padding to match label's centered position
+                            padding: '16.5px 14px',
                         },
                     },
                     '& .MuiInputLabel-root': {
@@ -77,5 +78,6 @@ const CustomTimeField = ({
         </LocalizationProvider>
     );
 };
+
 
 export default CustomTimeField;

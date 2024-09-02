@@ -1,15 +1,10 @@
-/* .container {
-    position: relative;
-    padding-top: 10px;
-} */
-
 .container {
     position: relative;
     display: flex;
     flex-direction: row;
     padding-top: 10px;
-    height: 100vh; /* Ensure full viewport height */
-    overflow: hidden;
+    height: 80vh; /* Ensure full viewport height */
+    font-family: "Regular";
 }
 
 h1 {
@@ -22,20 +17,23 @@ h1 {
     top: 85px;
     height: 600px;
     background-color: #fff;
+    
 }
 
 .box1 {
-    width: 310px;
+    width: 20vw;
     left: 0;
     border-radius: 10px 0 0 10px;
-    height: 637px;
-    overflow: hidden;
+    height: 80vh;
+    overflow: hidden; 
+    margin-right: 5px; /* Adjust this value for more or less margin */
+    
 }
 
 .box2 {
-    width: 804px;
-    left: 312px;
-    height: 637px;
+    width: 55vw;
+    left: calc(20vw + 3px); /*Add margin to the left position */
+    height: 80vh;
     border-radius: 0;
     overflow: hidden;
     display: flex;
@@ -43,13 +41,14 @@ h1 {
 }
 
 .search-container {
-    width: 120%;
+    width: 100%;
     height: 88px;
-    padding: 20px 30px;
+    /* padding: 20px 30px; */
     border-bottom: 1px solid #fff;
     display: flex;
     align-items: center;
     position: relative;
+    gap: 1px;
 }
 
 .search-bar .MuiOutlinedInput-root {
@@ -62,8 +61,8 @@ h1 {
 }
 
 .search-bar {
-    width: 70%;
-    padding-left: 40px;
+    width: 60%;
+    padding-left: 0px;
 }
 
 .search-bar .MuiInputBase-input {
@@ -130,6 +129,7 @@ h1 {
     cursor: default;
 }
 
+/* Chat List and Items */
 .chat-list {
     width: 96%;
     display: flex;
@@ -139,63 +139,139 @@ h1 {
     box-sizing: border-box;
     overflow-y: auto;
     background-color: #fff;
+   
+    padding-bottom: 22px;
 }
 
-.chat-item {
+/* General chat-item styling */
+.chat-item,
+.chat-item-active {
     width: 96%;
     gap: 10px;
     display: flex;
     align-items: center;
     padding: 10px;
     cursor: pointer;
-}
-.last-seen {
-    position: absolute;
-    right: 25px; /* Adjust the distance from the right edge as needed */
-
-    transform: translateY(-50%); /* Center vertically */
-    font-size: 16px; /* Adjust font size if necessary */
-    color: #888; /* Change color if needed */
+    border-radius: 12px;
+    position: relative; 
+    
 }
 
+/* Active chat item styling */
 .chat-item-active {
     background-color: #615ef00f;
-    gap: 8px;
-    width: 96%;
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    border-radius: 12px;
-    cursor: pointer;
 }
 
+/* Profile picture styling */
 .profile-pic {
     width: 40px;
     height: 40px;
     border-radius: 50%;
     margin-right: 10px;
+    margin-left: 10px;
 }
 
+/* Chat information container */
 .chat-info {
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    margin-right: 10px;
+    max-width: 70%;
+    
 }
 
-.student-name {
-    font-weight: bold;
-}
 
+/* Last message text */
 .last-message {
     color: #a6a6a6;
 }
 
-.last-seen-container {
+
+.last-seen {
     position: absolute;
-    bottom: 20px;
-    right: 20px;
-    width: calc(100% - 40px); /* Adjust width as needed */
-    text-align: right;
-    padding: 10px;
+    font-size: 15px;
+    right: 25px; 
+    color: #888;
+}
+
+/* Media query for screens up to 1024px */
+@media (max-width: 1024px) {
+    .chat-item,
+    .chat-item-active {
+        gap: 8px;
+        padding: 8px;
+    }
+
+    .profile-pic {
+        width: 35px;
+        height: 35px;
+    }
+
+    .chat-info {
+        max-width: 65%;
+        margin-right: 8px;
+    }
+
+    .last-seen {
+        font-size: 14px;
+        right: 15px;
+    }
+}
+
+/* Media query for screens up to 768px */
+@media (max-width: 768px) {
+    .chat-item,
+    .chat-item-active {
+        gap: 6px;
+        padding: 6px;
+    }
+
+    .profile-pic {
+        width: 30px;
+        height: 30px;
+    }
+
+    .chat-info {
+        max-width: 60%;
+        margin-right: 5px;
+    }
+
+    .last-seen {
+        font-size: 12px;
+        right: 10px;
+    }
+}
+
+/* Media query for screens up to 480px */
+@media (max-width: 480px) {
+    .chat-item,
+    .chat-item-active {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 8px;
+        gap: 5px;
+    }
+
+    .profile-pic {
+        width: 35px;
+        height: 35px;
+        margin-right: 0;
+    }
+
+    .chat-info {
+        max-width: 100%;
+        margin-right: 0;
+    }
+
+    .last-seen {
+        position: static;
+        font-size: 12px;
+        text-align: left;
+        margin-left: 0;
+        padding-left: 0;
+        margin-top: 5px;
+    }
 }
 
 .chat-messages {
@@ -204,57 +280,35 @@ h1 {
     overflow-y: auto;
     background-color: #fff;
     border-radius: 10px;
-    margin-bottom: 60px;
+    margin-bottom: 40px;
     display: flex;
     flex-direction: column;
-    gap: 5px;
-}
-.last-seen {
-    margin-left: 20px; /* Adjust this value to move it further to the right */
-    /* or use padding if you prefer */
-    padding-left: 20px; /* Adjust this value as needed */
 }
 
-.message {
+.message-bubble {
     padding: 10px;
-    border-radius: 10px;
-    max-width: 40%;
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
+    border-radius: 15px;
+    display: inline-block;
     word-break: break-word;
     word-wrap: break-word;
     overflow-wrap: break-word;
+    font-family: "Regular";
+    font-size: 16px;
 }
 
-/* .status-container {
-    display: flex;
-    align-items: center;
-} */
-
-.status-indicator {
-    width: 8px; /* Adjust width as needed */
-    height: 8px; /* Adjust height as needed */
-    border-radius: 50%;
-    background-color: #68d391;
-    margin-right: 0px;
-}
-
-.message.user {
+.message-bubble.user {
     background-color: #f1f1fb;
     color: #000;
-    margin-left: auto;
 }
 
-.message.me {
+.message-bubble.me {
     background-color: #4e18a5;
     color: #fff;
-    margin-left: auto;
 }
 
-.message.other {
+.message-bubble.other {
     background-color: #f1f1f1;
-    color: #000;
+    color: #5F6383;
 }
 
 .chat-input-container {
@@ -283,7 +337,7 @@ h1 {
 
 .chat-input-icons {
     position: absolute;
-    right: 30px;
+    right: 50px;
     display: flex;
     align-items: center;
     height: 100%;
@@ -298,11 +352,99 @@ h1 {
     height: 20px;
 }
 
+.checkbox-container {
+    position: absolute;
+    bottom: -20px;
+    right: 30px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.checkbox-container label {
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+}
+
+.checkbox-container .MuiCheckbox-root {
+    margin-right: 5px;
+}
+.status-indicator {
+    width: 8px; /* Adjust size as needed */
+    height: 8px; /* Adjust size as needed */
+    border-radius: 50%;
+    background-color: #ffffff; /* Default color */
+    margin-right: 2px; /* Space between indicator and status text */
+    margin-top: 2px;
+}
+
+.status-indicator.online {
+    background-color:#68D391; /* Color when online */
+}
+
+ .audio-recorder {
+    background-color: none;
+} 
+
+
+/* Responsive Box adjustments */
 @media (max-width: 768px) {
     .box1,
     .box2 {
-        flex: 1 1 100%;
-        max-width: none;
+        width: 60vw;
+    }
+
+    .search-bar {
+        width: 100%;
+    }
+}
+
+@media (max-width: 1024px) {
+    .box1 {
+        width: 20vw;
+    }
+
+    .box2 {
+        width: 70vw;
+    }
+
+    .search-bar {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .search-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-bar {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+}
+
+/* Responsive Box adjustments */
+@media (max-width: 768px) {
+    .box1,
+    .box2 {
+        width: 60vw;
+    }
+
+    .search-bar {
+        width: 100%;
+    }
+}
+
+@media (max-width: 1024px) {
+    .box1 {
+        width: 20vw;
+    }
+
+    .box2 {
+        width: 70vw;
     }
 
     .search-bar {

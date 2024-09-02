@@ -12,7 +12,7 @@ import {
     openEditActivityPopup,
     openEditModulePopup,
     openTemplateActivityPopup,
-    updateCoachActivity,
+    updateModuleActivity,
 } from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
 import ViewActivityPopup from '../TemplateModulePopup/ViewActivity';
 
@@ -87,19 +87,22 @@ const TemplateModuleTable = ({ modulesData }) => {
     const [selectedActivity, setSelectedActivity] = useState(null);
 
     const [prerequisitesPopupOpen, setPrerequisitesPopupOpen] = useState(false);
+    const [preRequisitesModuleData, setPrerequisitesModuleData] = useState();
+    const [preRequisitesActivityData, setPrerequisitesActivityData] =
+        useState();
     const [selectedActivityId, setSelectedActivityId] = useState(null); // State for selected activity ID
     const dispatch = useDispatch();
     const { selectedCoachTemplate } = useSelector(state => state.coachTemplate);
 
     const handleToggle = (moduleId, activityId, currentStatus) => {
-        const newStatus = !currentStatus;
+        const newStatus = !currentStatus ;  
         const data = {
             activity_id: activityId,
             status: newStatus,
         };
 
-        // Dispatch the updateCoachActivity action
-        dispatch(updateCoachActivity({ data }))
+        // Dispatch the updateModuleActivity action
+        dispatch(updateModuleActivity({ data }))
             .unwrap()
             .then(() => {
                 // console.log("SLOT EVENT DATA : ", slotEventData)
@@ -116,12 +119,18 @@ const TemplateModuleTable = ({ modulesData }) => {
         setLinkActivityPopupOpen(false);
     };
 
-    const openPrerequisitesPopup = () => {
+    const openPrerequisitesPopup = (module, activity) => {
+        console.log('MOdule Data to be send :', module);
+        setPrerequisitesModuleData(module);
+        setPrerequisitesActivityData(activity);
+
         setPrerequisitesPopupOpen(true);
     };
 
     const closePrerequisitesPopup = () => {
         setPrerequisitesPopupOpen(false);
+        setPrerequisitesActivityData();
+        setPrerequisitesActivityData();
     };
 
     const handleActivity = (id, templateId) => {
@@ -164,7 +173,7 @@ const TemplateModuleTable = ({ modulesData }) => {
         'S. No.',
         'Activity Name',
         'Due Date',
-        'Activity',
+        'Link',
         'Points',
         'Prerequisites',
         'After Due Date',
@@ -172,6 +181,7 @@ const TemplateModuleTable = ({ modulesData }) => {
     ];
 
     const { typeList } = useSelector(state => state.activityType);
+
     const activityOptions = typeList.map(type => ({
         value: type.type_name,
         label: type.type_name.charAt(0).toUpperCase() + type.type_name.slice(1), // Capitalize the first letter of each type_name
@@ -228,7 +238,7 @@ const TemplateModuleTable = ({ modulesData }) => {
                                 onClick={() =>
                                     handleActivity(
                                         module.id,
-                                        module?.template[0]?.id
+                                        module.template_id
                                     )
                                 }
                             >
@@ -401,20 +411,34 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                                 '1px solid #e0e0e0',
                                                         }}
                                                     >
-                                                        <CustomButton
-                                                            style={{
-                                                                textTransform:
-                                                                    'none',
-                                                            }}
-                                                            onClick={
-                                                                openPrerequisitesPopup
-                                                            }
-                                                            backgroundColor="#FEEBE3"
-                                                        >
-                                                            <span className="buttonText">
-                                                                Prerequisite
-                                                            </span>
-                                                        </CustomButton>
+                                                        {activity.prerequisites
+                                                            .length > 0 ? (
+                                                            activity.prerequisites
+                                                                .map(
+                                                                    prereq =>
+                                                                        prereq
+                                                                            .dependencies.map((dep) => dep.dependency_activity.activity_name)
+                                                                )
+                                                                .join(', ')
+                                                        ) : (
+                                                            <CustomButton
+                                                                style={{
+                                                                    textTransform:
+                                                                        'none',
+                                                                }}
+                                                                onClick={() =>
+                                                                    openPrerequisitesPopup(
+                                                                        module,
+                                                                        activity
+                                                                    )
+                                                                }
+                                                                backgroundColor="#FEEBE3"
+                                                            >
+                                                                <span className="buttonText">
+                                                                    Prerequisite
+                                                                </span>
+                                                            </CustomButton>
+                                                        )}
                                                     </td>
                                                     <td
                                                         style={{
@@ -517,6 +541,8 @@ const TemplateModuleTable = ({ modulesData }) => {
             />
             <PrerequisitesPopup
                 open={prerequisitesPopupOpen}
+                prereqModuleData={preRequisitesModuleData}
+                prereqActivityData={preRequisitesActivityData}
                 handleClose={closePrerequisitesPopup}
             />
             {viewActivityPopup && selectedActivity && (
@@ -524,6 +550,7 @@ const TemplateModuleTable = ({ modulesData }) => {
                     open={viewActivityPopup}
                     onClose={closeViewActivityPopUp}
                     activity={selectedActivity}
+                    templateId={selectedCoachTemplate}
                 />
             )}
         </>

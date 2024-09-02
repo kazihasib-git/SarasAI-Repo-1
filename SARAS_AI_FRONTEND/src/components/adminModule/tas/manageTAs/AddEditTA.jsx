@@ -37,13 +37,11 @@ import {
     accessTaName,
 } from '../../../../redux/features/adminModule/ta/taSlice';
 import SubmitPopup from '../../SubmitPopup';
-import dayjs from 'dayjs';
 import AvatarInput from '../../../CustomFields/AvatarInput';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { getTimezone } from '../../../../redux/features/utils/utilSlice';
 import CustomTimeZoneForm from '../../../CustomFields/CustomTimeZoneForm';
-import { dateFormatter } from '../../../../utils/dateFormatter';
 import CustomDateOfBirth from '../../../CustomFields/CustomDateOfBirth';
 
 const AddEditTA = ({ data }) => {
@@ -89,13 +87,12 @@ const AddEditTA = ({ data }) => {
     }, [data]);
 
     const populateForm = data => {
-        // formattedDate = moment(data.date_of_birth).format('YYYY-MM-DD');
         dispatch(accessTaName(data));
 
         if (data.profile_picture) {
-            const blobUrl = base64ToBlobUrl(data.profile_picture);
-            console.log('url', blobUrl);
-            setSelectedImage(blobUrl);
+            // const blobUrl = base64ToBlobUrl(data.profile_picture);
+            // console.log('url', blobUrl);
+            setSelectedImage(data.profile_picture);
         }
 
         if (data.description) {
@@ -152,7 +149,7 @@ const AddEditTA = ({ data }) => {
     };
 
     const onSubmit = async formData => {
-        console.log('formData :', formData);
+        // console.log('formData :', formData);
 
         if (selectedImage && selectedImage.startsWith('data:image/')) {
             const base64Data = selectedImage.replace(
@@ -168,7 +165,6 @@ const AddEditTA = ({ data }) => {
                 const updateRes = await dispatch(
                     updateTA({ id: data.id, data: updatedFormData })
                 ).unwrap();
-                dispatch(openSuccessPopup());
                 dispatch(accessTaName(updateRes));
             } else {
                 const createRes = await dispatch(createTA(formData)).unwrap();
@@ -321,7 +317,7 @@ const AddEditTA = ({ data }) => {
                                             name="description"
                                             value={editableDescription}
                                             onChange={handleDescriptionChange}
-                                            placeholder="sort description..."
+                                            placeholder="short description..."
                                         />
                                         <Button
                                             variant="contained"
@@ -523,7 +519,6 @@ const AddEditTA = ({ data }) => {
                                 errors={errors}
                             />
                         </Grid>
-                        {/* {console.log("DATA : ", data)} */}
 
                         <Grid item xs={12} sm={6} md={4}>
                             <Controller
@@ -598,7 +593,6 @@ const AddEditTA = ({ data }) => {
                                 }}
                                 render={({ field }) => (
                                     <>
-                                        {/* {console.log("DATA highest_qualification : ", field.value)} */}
                                         <CustomFormControl
                                             label="Highest Qualification"
                                             name="highest_qualification"
@@ -617,6 +611,7 @@ const AddEditTA = ({ data }) => {
                                 label="Email Address"
                                 name="email"
                                 placeholder="Enter Email Address"
+                                disabled = {data}
                                 register={register}
                                 validation={{
                                     required: 'Email is required',
@@ -635,6 +630,7 @@ const AddEditTA = ({ data }) => {
                                 rules={{ required: 'Phone number is required' }}
                                 render={({ field }) => (
                                     <PhoneInput
+                                        disabled = {data}
                                         {...field}
                                         country={'in'}
                                         // containerStyle={{ width: "100%" }}

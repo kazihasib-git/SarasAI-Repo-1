@@ -13,7 +13,10 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { uploadSessionRecording as uploadCoachSessionRecording } from '../../redux/features/coachModule/coachmenuprofileSilce';
+import {
+    getCoachCallRecords,
+    coachUploadSessionRecording,
+} from '../../redux/features/coachModule/coachmenuprofileSilce';
 import {
     getTaCallRecords,
     uploadSessionRecording as uploadTASessionRecording,
@@ -131,11 +134,14 @@ const VideoUploadDialog = ({ open, onClose, role, selectedId }) => {
                 try {
                     if (role === 'COACH') {
                         await dispatch(
-                            uploadCoachSessionRecording({
+                            coachUploadSessionRecording({
                                 id: selectedId,
                                 session_recording_url: videoUrl,
                             })
                         ).unwrap();
+                        // .then(() => {
+                        //     dispatch(getCoachCallRecords());
+                        // });
                     } else if (role === 'TA') {
                         await dispatch(
                             uploadTASessionRecording({
@@ -150,6 +156,7 @@ const VideoUploadDialog = ({ open, onClose, role, selectedId }) => {
                     }
 
                     setUploadProgress(100);
+
                     //onClose();
                 } catch {
                     setError('Update failed. Please try again.');
@@ -198,7 +205,15 @@ const VideoUploadDialog = ({ open, onClose, role, selectedId }) => {
                         setVideoUrl('');
                         setUploadProgress(0);
                     }}
-                    color="primary"
+                    sx={{
+                        backgroundColor: '#F56D3B',
+                        color: 'white',
+                        textTransform: 'none',
+                        borderRadius: '50px',
+                        '&:hover': {
+                            backgroundColor: '#F56D3B', // Ensure the hover color remains the same
+                        },
+                    }}
                 >
                     Close
                 </Button>

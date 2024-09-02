@@ -18,6 +18,7 @@ import {
     getCoachScheduledBatches,
 } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import { getCoachAssignBatches } from '../../redux/features/adminModule/coach/coachSlice';
+import { toast } from 'react-toastify';
 
 const headers = ['S. No.', 'Batch Name', 'Branch', 'Select'];
 
@@ -109,7 +110,7 @@ const EditBatchesFromSession = ({ componentName }) => {
                 'S. No.': index + 1,
                 'Batch Name': batch.batch.name,
                 Branch: batch.batch.branch.name,
-                id: batch.id,
+                id: batch.batch.id,
             }));
 
             const filtered = transformedData.filter(batch => {
@@ -163,15 +164,33 @@ const EditBatchesFromSession = ({ componentName }) => {
         }
     };
 
+    const validate = () => {
+        if(selectedBatch.length === 0){
+            toast.error('Please Select at Least One Batch')
+            return false;
+        }
+        return true;
+    }
+
     const handleSubmit = () => {
+
+        if (!validate()) return;
+
         const Id = meetingId;
         const data = {
             admin_user_id: Number(id),
             batchId: selectedBatch.map(id => id),
         };
-        dispatch(editScheduledBatchesApi({ Id, data })).then(() => {
+        dispatch(editScheduledBatchesApi({ Id, data }))
+        .unwrap()
+        .then(() => {
             dispatch(closePopupActions());
-        });
+            toast.success("Batches Updated Successfully")
+        })
+        .catch(error =>{
+            toast.error(`${error}`);
+        })
+        
     };
 
     const content = (
@@ -231,6 +250,7 @@ const EditBatchesFromSession = ({ componentName }) => {
                 backgroundColor: '#F56D3B',
                 borderColor: '#F56D3B',
                 color: '#FFFFFF',
+                textTransform: 'none',
             }}
         >
             Submit

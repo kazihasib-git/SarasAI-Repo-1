@@ -104,8 +104,8 @@ const WOLTestConfig = () => {
         })) || [];
 
     const getNumberOfQuestionsOptions = categoryId => {
-        const category = wolCategoryData.find(cat => cat.id === categoryId);
-        const maxQuestions = category?.wol_questions_count || 0;
+        //const category = wolCategoryData.find(cat => cat.id === categoryId);
+        const maxQuestions = 10;
         return Array.from({ length: maxQuestions }, (_, i) => ({
             value: i + 1,
             label: i + 1,
@@ -117,10 +117,10 @@ const WOLTestConfig = () => {
 
         if (edit) {
             setEdit(false);
-            setFormValues(prevValues => ({
-                numberOfWolCategories: '',
-                categories: [],
-            }));
+            // setFormValues(prevValues => ({
+            //     numberOfWolCategories: '',
+            //     categories: [],
+            // }));
             return;
         }
 
@@ -178,8 +178,9 @@ const WOLTestConfig = () => {
             categories: categories,
         };
 
-        dispatch(addWOLTestConfig(data));
-        navigate('/WOLTestConfigSelectQuestions');
+        dispatch(addWOLTestConfig(data)).then(() => {
+            navigate('/WOLTestConfigSelectQuestions');
+        });
     };
 
     return (
@@ -317,6 +318,9 @@ const WOLTestConfig = () => {
                                                         ]?.category_name || ''
                                                     }
                                                     onChange={e => {
+                                                        const selectedCategory =
+                                                            e.target.value;
+
                                                         const newCategories = [
                                                             ...formValues.categories,
                                                         ];
@@ -325,8 +329,9 @@ const WOLTestConfig = () => {
                                                                 index
                                                             ],
                                                             category_name:
-                                                                e.target.value,
+                                                                selectedCategory,
                                                         };
+
                                                         setFormValues({
                                                             ...formValues,
                                                             categories:
@@ -334,10 +339,21 @@ const WOLTestConfig = () => {
                                                         });
                                                     }}
                                                     errors={errors}
-                                                    options={
-                                                        WOLCategoriesOptions
-                                                    }
+                                                    options={WOLCategoriesOptions.filter(
+                                                        option =>
+                                                            !formValues.categories.some(
+                                                                category =>
+                                                                    category.category_name ===
+                                                                    option.value
+                                                            ) ||
+                                                            option.value ===
+                                                                formValues
+                                                                    .categories[
+                                                                    index
+                                                                ]?.category_name
+                                                    )}
                                                 />
+
                                                 {errors[
                                                     `category_name_${index}`
                                                 ] && (

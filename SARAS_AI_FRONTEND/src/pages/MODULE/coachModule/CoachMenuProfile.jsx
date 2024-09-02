@@ -25,6 +25,7 @@ import {
     updateCoachmenuprofile,
 } from '../../../redux/features/coachModule/coachmenuprofileSilce';
 import { formatInTimeZone } from 'date-fns-tz';
+import { getTimezone } from '../../../redux/features/utils/utilSlice';
 
 const CoachMenuProfile = () => {
     const dispatch = useDispatch();
@@ -38,13 +39,17 @@ const CoachMenuProfile = () => {
     } = useForm({
         defaultValues: {
             gender: '',
-            time_zone: '',
+            timezone_id: null,
             highest_qualification: '',
             date_of_birth: null,
         },
     });
 
     const { coachProfileData } = useSelector(state => state.coachMenu);
+    const { timezones } = useSelector(state => state.util);
+    useEffect(() => {
+        dispatch(getTimezone());
+    }, [dispatch]);
 
     //edit button
     const [isEditing, setIsEditing] = useState(false);
@@ -106,7 +111,7 @@ const CoachMenuProfile = () => {
             return convertTimezone(
                 currentTime,
                 ipData.timezone,
-                coachProfileData.time_zone
+                coachProfileData.timezone_id
             );
         }
         return null;
@@ -117,8 +122,8 @@ const CoachMenuProfile = () => {
         setDateOfBirth(formattedDate);
 
         if (data.profile_picture) {
-            const blobUrl = base64ToBlobUrl(data.profile_picture);
-            setSelectedImage(blobUrl);
+            //const blobUrl = base64ToBlobUrl(data.profile_picture);
+            setSelectedImage(data.profile_picture);
         }
 
         const formValues = {
@@ -129,13 +134,14 @@ const CoachMenuProfile = () => {
             address: data.address,
             pincode: data.pincode,
             phone: data.phone,
-            time_zone: data.time_zone,
+            timezone_id: data.timezone_id,
             gender: data.gender,
             email: data.email,
             date_of_birth: formattedDate,
             highest_qualification: data.highest_qualification,
             about_me: data.about_me,
         };
+        console.log('data', data);
 
         Object.entries(formValues).forEach(([key, value]) =>
             setValue(key, value)
@@ -163,7 +169,7 @@ const CoachMenuProfile = () => {
 
         updatedFormData.date_of_birth = dateOfBirth;
 
-        if (selectedImage) {
+        if (selectedImage && selectedImage.startsWith('data:image/')) {
             const base64Data = selectedImage.replace(
                 /^data:image\/(png|jpeg|jpg);base64,/,
                 ''
@@ -182,7 +188,8 @@ const CoachMenuProfile = () => {
 
         // console.log('updatedFormData', updatedFormData);
         // dispatch(updateCoachmenuprofile(updatedFormData));
-        dispatch(updateCoachmenuprofile(updatedFormData));
+        // dispatch(updateCoachmenuprofile(updatedFormData));
+        console.log('data', updatedFormData);
     };
 
     return (
@@ -220,6 +227,7 @@ const CoachMenuProfile = () => {
                                 name="profile_picture"
                                 selectedImage={selectedImage}
                                 setSelectedImage={setSelectedImage}
+                                disabled={!isEditing}
                             />
 
                             {!isEditing && (
@@ -298,36 +306,6 @@ const CoachMenuProfile = () => {
                                     disabled={!isEditing}
                                 />
                             </Grid>
-                            {/*
-                            <Grid item xs={12} sm={6} md={4}>
-                                <CustomTextField
-                                    label="Password"
-                                    name="password"
-                                    type="password"
-                                    placeholder="Enter Password"
-                                    register={register}
-                                    validation={{
-                                        required: 'Password is required',
-                                        minLength: {
-                                            value: 8,
-                                            message:
-                                                'Password must be at least 8 characters long',
-                                        },
-                                        maxLength: {
-                                            value: 20,
-                                            message:
-                                                'Password cannot exceed 20 characters',
-                                        },
-                                        pattern: {
-                                            value: /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$/,
-                                            message:
-                                                'Password must include at least one uppercase letter, one lowercase letter, one number, and one special character',
-                                        },
-                                    }}
-                                    errors={errors}
-                                />
-                            </Grid>
-                            */}
 
                             <Grid item xs={12} sm={6} md={4}>
                                 <CustomTextField
@@ -356,7 +334,7 @@ const CoachMenuProfile = () => {
                                     render={({ field }) => (
                                         <PhoneInput
                                             {...field}
-                                            country={'in'}
+                                            timezone_id={'in'}
                                             // containerStyle={{ width: "100%" }}
 
                                             inputStyle={{
@@ -406,20 +384,21 @@ const CoachMenuProfile = () => {
 
                             <Grid item xs={12} sm={6} md={4}>
                                 <Controller
-                                    name="time_zone"
+                                    name="timezone_id"
                                     control={control}
                                     rules={{
                                         required: 'Time Zone is required',
                                     }}
                                     render={({ field }) => {
                                         return (
-                                            <CustomFormControl
+                                            <CustomTimeZoneForm
                                                 label="Time Zone"
-                                                name="time_zone"
+                                                name="timezone_id"
+                                                placeholder="Time Zone"
                                                 value={field.value}
                                                 onChange={field.onChange}
                                                 errors={errors}
-                                                options={transformedTimeZones}
+                                                options={timezones}
                                                 disabled={!isEditing}
                                             />
                                         );
@@ -589,8 +568,8 @@ const CoachMenuProfile = () => {
                                     padding: '15px 25px',
                                     marginTop: 20,
                                     backgroundColor: '#F56D3B',
-                                    height: '50px',
-                                    width: '110px',
+                                    height: '43px',
+                                    width: '100px',
                                     fontSize: '14px',
                                     fontWeight: '700',
                                     text: '#FFFFFF',

@@ -23,8 +23,10 @@ import {
     getTaMenuProfile,
     updateTaMenuProfile,
 } from '../../../redux/features/taModule/tamenuSlice';
+import { formatInTimeZone } from 'date-fns-tz';
 import moment from 'moment';
 import CustomDateOfBirth from '../../../components/CustomFields/CustomDateOfBirth';
+import { getTimezone } from '../../../redux/features/utils/utilSlice';
 
 const TaMenuProfile = () => {
     const dispatch = useDispatch();
@@ -38,13 +40,19 @@ const TaMenuProfile = () => {
     } = useForm({
         defaultValues: {
             gender: '',
-            time_zone: '',
+            timezone_id: null,
             highest_qualification: '',
             date_of_birth: null,
         },
     });
 
     const { taProfileData } = useSelector(state => state.taMenu);
+
+    const { timezones } = useSelector(state => state.util);
+    useEffect(() => {
+        dispatch(getTimezone());
+    }, [dispatch]);
+
     const [isEditing, setIsEditing] = useState(false);
 
     const toggleEdit = () => {
@@ -55,6 +63,10 @@ const TaMenuProfile = () => {
     const [dateOfBirth, setDateOfBirth] = useState(null);
     const [phoneNumber, setPhoneNumber] = useState('');
 
+    //const [password, setPassword] = useState('');
+
+    const [ipData, setIpData] = useState(null);
+    const [error, setError] = useState(null);
     const nameValue = watch('name', '');
     const aboutMeValue = watch('about_me', '');
 
@@ -74,13 +86,50 @@ const TaMenuProfile = () => {
         }
     }, [taProfileData]);
 
+    useEffect(() => {
+        const fetchIP = async () => {
+            try {
+                // Fetch IP data from ipapi
+                const response = await axios.get('https://ipapi.co/json/');
+                setIpData(response.data);
+            } catch (err) {
+                setError(err.message);
+            }
+        };
+
+        fetchIP();
+    }, []);
+
+    const convertTimezone = (time, fromTimeZone, toTimeZone) => {
+        const formattedTime = formatInTimeZone(
+            time,
+            fromTimeZone,
+            'yyyy-MM-dd HH:mm:ssXXX',
+            { timeZone: toTimeZone }
+        );
+        return formattedTime;
+    };
+
+    const getConvertedTime = () => {
+        if (ipData && ipData.timezone) {
+            const currentTime = new Date();
+            return convertTimezone(
+                currentTime,
+                ipData.timezone,
+                taProfileData.timezone_id
+            );
+        }
+        return null;
+    };
+
     const populateForm = data => {
         const formattedDate = moment(data.date_of_birth).format('YYYY-MM-DD');
         setDateOfBirth(formattedDate);
 
         if (data.profile_picture) {
-            const blobUrl = base64ToBlobUrl(data.profile_picture);
-            setSelectedImage(blobUrl);
+            //const blobUrl = base64ToBlobUrl(data.profile_picture);
+            setSelectedImage(data.profile_picture);
+            //setSelectedImage(blobUrl);
         }
 
         const formValues = {
@@ -91,7 +140,7 @@ const TaMenuProfile = () => {
             address: data.address,
             pincode: data.pincode,
             phone: data.phone,
-            time_zone: data.time_zone,
+            timezone_id: data.timezone_id,
             gender: data.gender,
             email: data.email,
             date_of_birth: formattedDate,
@@ -105,6 +154,7 @@ const TaMenuProfile = () => {
         Object.entries(formValues).forEach(([key, value]) =>
             setValue(key, value)
         );
+        //setPassword(data.password);
 
         // setPhoneNumber(data.phone);
     };
@@ -121,12 +171,12 @@ const TaMenuProfile = () => {
 
     const onSubmit = async formData => {
         // Handle form submission
-        const { email, time_zone, ...updatedFormData } = formData;
+        const { email, ...updatedFormData } = formData;
 
         updatedFormData.date_of_birth = dateOfBirth;
         setIsEditing(false); // Disable edit mode after submit
 
-        if (selectedImage) {
+        if (selectedImage && selectedImage.startsWith('data:image/')) {
             const base64Data = selectedImage.replace(
                 /^data:image\/(png|jpeg|jpg);base64,/,
                 ''
@@ -134,8 +184,19 @@ const TaMenuProfile = () => {
             updatedFormData.profile_picture = base64Data;
         }
 
-        console.log('updatedFormData', updatedFormData);
-        dispatch(updateTaMenuProfile(updatedFormData));
+        try {
+            await dispatch(updateTaMenuProfile(updatedFormData)).unwrap();
+
+            dispatch(getTaMenuProfile());
+            setIsEditing(false);
+        } catch (error) {
+            console.error('Update failed:', error);
+        }
+
+        // console.log('updatedFormData', updatedFormData);
+        // dispatch(updateCoachmenuprofile(updatedFormData));
+        // dispatch(updateTaMenuProfile(updatedFormData));
+        // console.log('data', updatedFormData);
     };
 
     return (
@@ -173,6 +234,7 @@ const TaMenuProfile = () => {
                                 name="profile_picture"
                                 selectedImage={selectedImage}
                                 setSelectedImage={setSelectedImage}
+                                disabled={!isEditing}
                             />
 
                             {!isEditing && (
@@ -252,8 +314,7 @@ const TaMenuProfile = () => {
                                 />
                             </Grid>
 
-                            {/*
-                            <Grid item xs={12} sm={6} md={4}>
+                            {/* <Grid item xs={12} sm={6} md={4}>
                                 <CustomTextField
                                     label="Password"
                                     name="password"
@@ -279,11 +340,12 @@ const TaMenuProfile = () => {
                                         },
                                     }}
                                     errors={errors}
+                                    disabled={!isEditing}
+                                    defaultValue={password}
                                 />
-                            </Grid>
-                            */}
+                            </Grid> */}
 
-                            <Grid item xs={12} sm={6} md={4}>
+                            {/* <Grid item xs={12} sm={6} md={4}>
                                 <CustomTextField
                                     label="Email Address"
                                     name="email"
@@ -299,9 +361,9 @@ const TaMenuProfile = () => {
                                     errors={errors}
                                     disabled={!isEditing}
                                 />
-                            </Grid>
+                            </Grid> */}
 
-                            <Grid item xs={12} sm={6} md={4}>
+                            {/* <Grid item xs={12} sm={6} md={4}>
                                 <Controller
                                     name="phone"
                                     control={control}
@@ -357,24 +419,25 @@ const TaMenuProfile = () => {
                                         {errors.phone.message}
                                     </Typography>
                                 )}
-                            </Grid>
+                            </Grid> */}
 
                             <Grid item xs={12} sm={6} md={4}>
                                 <Controller
-                                    name="time_zone"
+                                    name="timezone_id"
                                     control={control}
                                     rules={{
                                         required: 'Time Zone is required',
                                     }}
                                     render={({ field }) => {
                                         return (
-                                            <CustomFormControl
+                                            <CustomTimeZoneForm
                                                 label="Time Zone"
-                                                name="time_zone"
+                                                name="timezone_id"
+                                                placeholder="Time Zone"
                                                 value={field.value}
                                                 onChange={field.onChange}
                                                 errors={errors}
-                                                options={transformedTimeZones}
+                                                options={timezones}
                                                 disabled={!isEditing}
                                             />
                                         );
@@ -452,7 +515,7 @@ const TaMenuProfile = () => {
 
                             {/* <Grid item xs={12} sm={6} md={4}>
                                 <Controller
-                                    name="time_zone"
+                                    name="timezone_id"
                                     control={control}
                                     rules={{
                                         required: 'Time Zone is required',
@@ -461,7 +524,7 @@ const TaMenuProfile = () => {
                                         return (
                                             <CustomFormControl
                                                 label="Time Zone"
-                                                name="time_zone"
+                                                name="timezone_id"
                                                 value={field.value}
                                                 onChange={field.onChange}
                                                 errors={errors}
@@ -568,11 +631,12 @@ const TaMenuProfile = () => {
                                     padding: '15px 25px',
                                     marginTop: 20,
                                     backgroundColor: '#F56D3B',
-                                    height: '50px',
-                                    width: '110px',
+                                    height: '43px',
+                                    width: '100px',
                                     fontSize: '14px',
                                     fontWeight: '700',
                                     text: '#FFFFFF',
+                                    textTransform: 'none',
                                 }}
                             >
                                 Submit

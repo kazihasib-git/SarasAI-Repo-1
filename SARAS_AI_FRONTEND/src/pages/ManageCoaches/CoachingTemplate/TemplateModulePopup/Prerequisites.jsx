@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Dialog,
     DialogActions,
@@ -10,11 +10,21 @@ import {
     Grid,
     Typography,
 } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
 import CustomTimeField from '../../../../components/CustomFields/CustomTimeField';
 import CustomDateField from '../../../../components/CustomFields/CustomDateField';
 import { Controller, useForm } from 'react-hook-form';
-import CustomFormControl from '../../../../components/CustomFields/CustomFromControl';
 import ReusableDialog from '../../../../components/CustomFields/ReusableDialog';
+import {
+    addPrerequisites,
+    getAllCoachTemplateModules,
+    getCoachTemplateModuleId,
+    setSelectedModule,
+} from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
+import CustomModuleFormControl from '../../../../components/CustomFields/CustomModuleFormControl';
+import CustomActivityFormControl from '../../../../components/CustomFields/CustomActivityFormControl';
+import { toast } from 'react-toastify';
+import CustomFutureDateField from '../../../../components/CustomFields/CustomFutureDateField';
 
 const CustomButton = ({
     onClick,
@@ -51,24 +61,150 @@ const CustomButton = ({
     );
 };
 
-const PrerequisitesPopup = ({ open, handleClose }) => {
+const PrerequisitesPopup = ({
+    open,
+    prereqModuleData,
+    prereqActivityData,
+    handleClose,
+}) => {
+    const dispatch = useDispatch();
     const {
-        handleSubmit,
         control,
+        handleSubmit,
+        watch,
+        register,
+        reset,
         formState: { errors },
     } = useForm();
+
     const [activityDependence, setActivityDependence] = useState(false);
-    const [fromTime, setFromTime] = useState('');
+    const [moduleOptions, setModuleOptions] = useState([]);
+    const [activityOptions, setActivityOptions] = useState([]);
+    const [fromTime, setFromTime] = useState();
+
+    const { coachTemplatesId } = useSelector(state => state.coachTemplate);
+
+    useEffect(() => {
+        if (prereqModuleData && prereqModuleData.template_id) {
+            dispatch(getCoachTemplateModuleId(prereqModuleData.template_id));
+        }
+    }, [dispatch, prereqModuleData]);
+
+    useEffect(() => {
+        console.log('COACH TEMPLATE DATTA :', coachTemplatesId);
+        if (
+            coachTemplatesId &&
+            coachTemplatesId.modules &&
+            coachTemplatesId.modules.length > 0
+        ) {
+            console.log('MODULE DATA :', coachTemplatesId);
+            const options = coachTemplatesId.modules.map(module => ({
+                value: module.id,
+                label: module.module_name,
+            }));
+            setModuleOptions(options);
+        }
+    }, [coachTemplatesId]);
+
+    useEffect(() => {
+        const selectedModuleId = watch('module');
+        console.log('Selected Module Id :', selectedModuleId);
+        if (
+            selectedModuleId &&
+            coachTemplatesId &&
+            coachTemplatesId.modules &&
+            coachTemplatesId.modules.length > 0
+        ) {
+            const selectedModule = coachTemplatesId.modules.find(
+                mod => mod.id === selectedModuleId
+            );
+            
+            if (selectedModule && selectedModuleId == prereqModuleData.id) {
+                const options =
+                    selectedModule.activities?.filter(item => item.id != prereqActivityData.id)
+                    .map(activity => ({
+                        value: activity.id,
+                        label: activity.activity_name,
+                    })) || [];
+                setActivityOptions(options);
+            } else if (selectedModule) {
+                const options =
+                    selectedModule.activities?.map(activity => ({
+                        value: activity.id,
+                        label: activity.activity_name,
+                    })) || [];
+                setActivityOptions(options);
+            }
+        }
+    }, [watch('module'), coachTemplatesId]);
+
+    const validate = data => {
+        if (!data.lockUntil && !fromTime && !activityDependence) {
+            toast.error('Please select either Lock Until and Time, or Activity Dependence.');
+            return false;
+        }
+
+        if (activityDependence) {
+            if (!data.module) {
+                toast.error('Module is required when Activity Dependence is selected.');
+                return false;
+            }
+            if (!data.activity || data.activity.length === 0) {
+                toast.error('At least one activity is required when Activity Dependence is selected.');
+                return false;
+            }
+        }
+
+        if (data.lockUntil && !fromTime) {
+            toast.error('From Time is required when Lock Until Date is set.');
+            return false;
+        }
+
+        if (!data.lockUntil && fromTime) {
+            toast.error('Lock Until Date is required when From Time is set.');
+            return false;
+        }
+
+        return true;
+    };
+
     const onSubmit = data => {
-        console.log(data);
-        handleClose();
+        if (!validate(data)) {
+            return;
+        }
+
+        const prereqData = {
+            module_id: prereqModuleData.id,
+            activity_id: prereqActivityData.id,
+            template_id: prereqModuleData.template_id,
+            lock_until_date: data.lockUntil || null,
+            time: fromTime || null,
+            data: activityDependence && data.activity
+                ? data.activity.map(act => ({
+                    prerequisite_activity_id: act,
+                    prerequisite_module_id: data.module,
+                  }))
+                : null,
+        };
+        dispatch(addPrerequisites(prereqData)).then(() => {
+            dispatch(getCoachTemplateModuleId(prereqModuleData.template_id));
+        });
+        console.log('prereq formdata: -->', prereqData);
+        handleClosePopup();
     };
 
     const handleCheckboxChange = event => {
         setActivityDependence(event.target.checked);
     };
 
-    const { register } = useForm();
+    const handleClosePopup = () => {
+        reset(); // Reset form values
+        setActivityDependence(false); // Reset checkbox state
+        setFromTime(null); // Reset time state
+        setModuleOptions([]); // Clear module options
+        setActivityOptions([]); // Clear activity options
+        handleClose(); // Close the popup
+    };
 
     const content = (
         <Grid
@@ -93,7 +229,7 @@ const PrerequisitesPopup = ({ open, handleClose }) => {
                     name="lockUntil"
                     control={control}
                     render={({ field }) => (
-                        <CustomDateField
+                        <CustomFutureDateField
                             label="Lock Until"
                             fullWidth
                             {...field}
@@ -108,9 +244,6 @@ const PrerequisitesPopup = ({ open, handleClose }) => {
                     value={fromTime}
                     onChange={time => setFromTime(time)}
                     register={register}
-                    validation={{
-                        required: 'From Time is required',
-                    }}
                     errors={errors}
                 />
             </Grid>
@@ -121,7 +254,7 @@ const PrerequisitesPopup = ({ open, handleClose }) => {
                 md={6}
                 style={{ margin: '10px 0px', width: '80%' }}
             >
-                <FormControlLabel
+                <FormControlLabel   
                     control={
                         <Checkbox
                             checked={activityDependence}
@@ -148,19 +281,12 @@ const PrerequisitesPopup = ({ open, handleClose }) => {
                             name="module"
                             control={control}
                             render={({ field }) => (
-                                <CustomFormControl
+                                <CustomModuleFormControl
                                     label="Module"
-                                    name={field.name}
+                                    name="module"
                                     value={field.value}
-                                    onChange={e => {
-                                        field.onChange(e);
-                                        // handleCoachChange(e); // Uncomment if you have a handleCoachChange function
-                                    }}
-                                    options={[
-                                        { value: 'module1', label: 'Module 1' },
-                                        { value: 'module2', label: 'Module 2' },
-                                        { value: 'module3', label: 'Module 3' },
-                                    ]}
+                                    onChange={field.onChange}
+                                    options={moduleOptions}
                                     errors={errors}
                                 />
                             )}
@@ -175,29 +301,13 @@ const PrerequisitesPopup = ({ open, handleClose }) => {
                             name="activity"
                             control={control}
                             render={({ field }) => (
-                                <CustomFormControl
+                                <CustomActivityFormControl
                                     label="Activity"
-                                    name={field.name}
+                                    name="activity"
                                     value={field.value}
-                                    onChange={e => {
-                                        field.onChange(e);
-                                        // handleCoachChange(e); // Uncomment if you have a handleCoachChange function
-                                    }}
+                                    onChange={field.onChange}
                                     errors={errors}
-                                    options={[
-                                        {
-                                            value: 'activity1',
-                                            label: 'Activity 1',
-                                        },
-                                        {
-                                            value: 'activity2',
-                                            label: 'Activity 2',
-                                        },
-                                        {
-                                            value: 'activity3',
-                                            label: 'Activity 3',
-                                        },
-                                    ]}
+                                    options={activityOptions}
                                 />
                             )}
                         />
@@ -214,6 +324,9 @@ const PrerequisitesPopup = ({ open, handleClose }) => {
                 backgroundColor="#F56D3B"
                 borderColor="#F56D3B"
                 color="#FFFFFF"
+                style={{
+                    textTransform: 'none',
+                }}
             >
                 Submit
             </CustomButton>
@@ -223,12 +336,12 @@ const PrerequisitesPopup = ({ open, handleClose }) => {
     return (
         <ReusableDialog
             open={open}
-            handleClose={handleClose}
+            handleClose={handleClosePopup}
             title="Prerequisites"
             content={content}
             actions={actions}
         />
     );
-};
+}; 
 
 export default PrerequisitesPopup;

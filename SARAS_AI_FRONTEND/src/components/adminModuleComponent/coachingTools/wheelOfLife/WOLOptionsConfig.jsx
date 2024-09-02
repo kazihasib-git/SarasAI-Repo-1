@@ -28,6 +28,7 @@ import {
     getWOLOptionConfig,
 } from '../../../../redux/features/adminModule/coachingTools/wol/wolSlice';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
+import { toast } from 'react-toastify';
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
     borderRadius: '50px',
@@ -94,6 +95,7 @@ const WOLOptionsConfig = () => {
         details: [],
     });
     const [errors, setErrors] = useState({});
+    const [submissionStatus, setSubmissionStatus] = useState('idle');
 
     const [minScale, setMinScale] = useState(0);
     const [maxScale, setMaxScale] = useState(0);
@@ -106,20 +108,19 @@ const WOLOptionsConfig = () => {
         if (optionsConfigData.data && optionsConfigData.data.length > 0) {
             const { minimum_scale, maximum_scale, get_config_details } =
                 optionsConfigData.data[0];
+            setMaxScale(maximum_scale);
             setFormValues({
                 minScale: minimum_scale,
                 maxScale: maximum_scale,
                 details: get_config_details.map(detail => ({
                     point: detail.point,
                     text: detail.text,
-                    icon: detail.icon,
+                    icon: detail.icon ? `${detail.icon}` : null,
                 })),
             });
             setEdit(true);
         }
-    }, [optionsConfigData]);
-
-    ////////////////////////////////////////////////////////////////////////////////
+    }, [optionsConfigData, optionsConfigData.data]);
 
     const handleChange = e => {
         const { name, value } = e.target;
@@ -144,13 +145,13 @@ const WOLOptionsConfig = () => {
             tempErrors.scaleRange =
                 'Maximum Scale must be greater than Minimum Scale';
         formValues.details.forEach((detail, index) => {
-            if (index === 0 || index / 2 === 0) {
+            if (index === 0 || (index + 1) % maxScale === 0) {
                 // Check if the point is a multiple of 5 starting from 1
                 if (!detail.text) {
                     tempErrors[`detailText${index}`] = 'Text is required';
                 }
                 if (!detail.icon) {
-                    tempErrors[`detailIcon${index}`] = 'Icon is required';
+                    tempErrors[`detailText${index}`] = 'Icon is required';
                 }
             }
         });
@@ -161,14 +162,13 @@ const WOLOptionsConfig = () => {
     const handleSubmit = e => {
         e.preventDefault();
 
-        console.log('handleSubmit', 'edit : ', edit);
         if (edit) {
-            console.log('edit');
             setFormValues({ minScale: '', maxScale: '', details: [] });
             setEdit(false);
         } else {
             if (validate()) {
                 const details = [];
+                setMaxScale(formValues.maxScale);
                 for (
                     let i = Number(formValues.minScale);
                     i <= Number(formValues.maxScale);
@@ -186,20 +186,30 @@ const WOLOptionsConfig = () => {
         e.preventDefault();
         if (validate()) {
             const { minScale, maxScale, details } = formValues;
+
             const payload = {
                 minimum_scale: minScale,
                 maximum_scale: maxScale,
                 details: details.map((detail, index) => ({
-                    point: minScale + index,
+                    point: Number(minScale) + Number(index),
                     text: detail.text,
-                    icon: detail.icon,
+                    icon: detail.icon ? detail.icon.split(',')[1] : null,
                 })),
             };
-            dispatch(addWOLOptionConfig(payload));
+
+            setSubmissionStatus('pending');
+            dispatch(addWOLOptionConfig(payload))
+                .then(() => {
+                    setSubmissionStatus('success');
+                    
+                })
+                .catch(error => {
+                    setSubmissionStatus('error');
+                   
+                    console.error('Error saving options configuration:', error);
+                });
         }
     };
-
-    console.log('details', formValues.details.length);
 
     const handleImageChange = (e, index) => {
         const file = e.target.files[0];
@@ -339,20 +349,6 @@ const WOLOptionsConfig = () => {
                         padding: 2,
                     }}
                 >
-                    {/* <Typography
-                        variant="h4"
-                        sx={{
-                            color: '#1A1E3D',
-                            fontSize: '16px',
-                            fontWeight: 500,
-                            marginBottom: '20px',
-                        }}
-                        component="h4"
-                        gutterBottom
-                    >
-                        Options Configurations
-                    </Typography> */}
-
                     <form onSubmit={handleFormSubmit}>
                         <TableContainer component={Paper}>
                             <Table>
@@ -382,7 +378,8 @@ const WOLOptionsConfig = () => {
                                                 >
                                                     {detail.point}
                                                     {(index === 0 ||
-                                                        (index + 1) % 5 ===
+                                                        (index + 1) %
+                                                            maxScale ===
                                                             0) && (
                                                         <img
                                                             src={star}
@@ -458,7 +455,8 @@ const WOLOptionsConfig = () => {
                                                                 src={
                                                                     detail.icon
                                                                 }
-                                                                alt={`icon-${index}`}
+                                                                alt={`icon-${index}`
+                                                                }
                                                                 style={{
                                                                     height: '32px',
                                                                     width: '32px',
@@ -494,6 +492,24 @@ const WOLOptionsConfig = () => {
                         </Box>
                     </form>
                 </Box>
+            )}
+
+            {submissionStatus === 'pending' && (
+                <Typography variant="body1" align="center" mt={2}>
+                    Saving options configuration...
+                </Typography>
+            )}
+
+            {submissionStatus === 'success' && (
+                <Typography variant="body1" align="center" mt={2} color="success">
+                   
+                </Typography>
+            )}
+
+            {submissionStatus === 'error' && (
+                <Typography variant="body1" align="center" mt={2} color="error">
+                    Error saving options configuration. Please try again.
+                </Typography>
             )}
         </>
     );

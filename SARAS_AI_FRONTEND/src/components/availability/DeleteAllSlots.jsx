@@ -23,9 +23,12 @@ import {
     fetchCoachSlots,
 } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import CustomButton from '../CustomFields/CustomButton';
-
+import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 const DeleteAllSlots = ({ componentName }) => {
+
     const dispatch = useDispatch();
+    const { control , handleSubmit, formState : { errors }} =   useForm()
 
     let sliceName,
         getSlotsApi,
@@ -75,10 +78,12 @@ const DeleteAllSlots = ({ componentName }) => {
 
     const { [userIdState]: userId, [userNameState]: userName } = selectState;
 
-    const handleSubmit = async () => {
-        try {
-            console.log('TA ID : ', userId);
-            console.log('TA NAME : ', userName);
+    const validate = () => {
+
+    }
+
+    const onSubmit = async () => {
+        
             //get today date in YYYY-MM-DD format
             // const today = new Date();
             // const dd = String(today.getDate()).padStart(2, '0');
@@ -92,15 +97,18 @@ const DeleteAllSlots = ({ componentName }) => {
             // };
 
             // dispatch actions
-            dispatch(deleteFutureSlotsApi(userId)).then(() => {
-                console.log('FEtching data after deleting slots');
+            dispatch(deleteFutureSlotsApi(userId))
+            .unwrap() 
+            .then(() => {
                 dispatch(closePopupAction());
                 dispatch(getSlotsApi(userId));
                 dispatch(getSessionsApi(userId));
+                toast.success('Slot(s) have been successfully deleted.');
+            })
+            .catch(error => {
+               
+                toast.error(` ${error}`);
             });
-        } catch (error) {
-            console.log('Error : ', error);
-        }
     };
 
     useEffect(() => {
@@ -122,13 +130,24 @@ const DeleteAllSlots = ({ componentName }) => {
             </DialogContentText>
             <Grid container spacing={2}>
                 <Grid item xs={12}>
-                    <CustomTextField
-                        label="Delete All Future Slots"
-                        fullWidth
-                        placeholder="Reason for deletion"
-                        variant="outlined"
-                        multiline
-                        rows={4}
+                    <Controller 
+                        name='deleteFutureSlots'
+                        control={control}
+                        defaultValue=""
+                        rules={{  required : 'Reason For Deletion is required' }}
+                        render={({ field }) => (
+                            <CustomTextField
+                                label="Delete All Future Slots"
+                                placeholder="Reason for deletion"
+                                {...field}
+                                fullWidth
+                                variant="outlined"
+                                multiline
+                                rows={4}
+                                error={Boolean(errors.deleteFutureSlots)}
+                                helperText={errors.deleteFutureSlots?.message}
+                            />
+                        )}
                     />
                 </Grid>
             </Grid>
@@ -146,10 +165,11 @@ const DeleteAllSlots = ({ componentName }) => {
                 Back
             </CustomButton>
             <CustomButton
-                onClick={handleSubmit}
+                onClick={handleSubmit(onSubmit)}
                 backgroundColor="#F56D3B"
                 borderColor="#F56D3B"
                 color="#FFFFFF"
+                textTransform= "none"
             >
                 Submit
             </CustomButton>

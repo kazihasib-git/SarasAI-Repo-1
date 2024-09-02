@@ -25,6 +25,7 @@ import AddEditActivity from './TemplateModulePopup/EditActivity';
 import ViewActivityPopup from './TemplateModulePopup/ViewActivity';
 
 const TemplateName = () => {
+
     console.log('abc');
     const {
         openModulePopUp,
@@ -42,13 +43,13 @@ const TemplateName = () => {
     // newly created name
     const { newTemplateData } = location.state || {};
 
-    console.log('Tempete name is', template_name);
+    // console.log('Tempete name is', template_name);
 
-    console.log('coach templete', coachTemplates);
-    console.log('coachtemplate id', coachTemplatesId);
+    // console.log('coach templete', coachTemplates);
+    // console.log('coachtemplate id', coachTemplatesId);
 
     //  setTemplateEditName(template_name);
-    console.log('selcted coach templete', selectedCoachTemplate);
+    // console.log('selcted coach templete', selectedCoachTemplate);
     useEffect(() => {
         dispatch(removeSelectedModule());
     }, [dispatch]);
@@ -104,8 +105,10 @@ const TemplateName = () => {
         'After Due Date',
         'Actions',
     ];
-    console.log('coachtemplateid', coachTemplatesId);
-    console.log('Tempete name is>>>>>>>>>>>>>>>>>>', coachTemplatesId[0]?.name);
+
+    // console.log('coachtemplateid', coachTemplatesId);
+    // console.log('Tempete name is>>>>>>>>>>>>>>>>>>', coachTemplatesId[0]?.name);
+    
     const actionButtons = [
         {
             type: 'switch',

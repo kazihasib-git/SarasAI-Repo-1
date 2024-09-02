@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import {
     getAssignStudents,
-    getStudentBatchMapping,
 } from '../../redux/features/adminModule/ta/taSlice';
 import {
     closeTaEditScheduledStudents,
@@ -22,6 +21,7 @@ import {
     getCoachScheduledStudents,
 } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import { getCoachAssignStudents } from '../../redux/features/adminModule/coach/coachSlice';
+import { toast } from 'react-toastify';
 
 const headers = ['S. No.', 'Student Name', 'Program', 'Batch', 'Select'];
 
@@ -101,7 +101,8 @@ const EditStudentsFromSession = ({ componentName }) => {
     } = availabilityStateSelector;
 
     useEffect(() => {
-        dispatch(assignedStudentsApi(id)).then(() => {
+        dispatch(assignedStudentsApi(id))
+        .then(() => {
             dispatch(scheduledStudentsApi(meetingId));
         });
     }, [dispatch]);
@@ -144,7 +145,7 @@ const EditStudentsFromSession = ({ componentName }) => {
 
             setFilteredStudents(filtered);
         } else {
-            setFilteredStudents();
+            setFilteredStudents([]);
         }
     }, [assignedStudents, selectedTerm, selectedBatch, searchName]);
 
@@ -203,16 +204,32 @@ const EditStudentsFromSession = ({ componentName }) => {
         );
     };
 
+    const validate = () => {
+        if (selectedStudents.length === 0) {
+            toast.error('Please Select Atleast One Student');
+            return false; // Return false if validation fails
+        }
+        return true; // Return true if validation passes
+    };
+
     const handleSubmit = () => {
-        console.log('MeetingId', meetingId);
+
+        if (!validate()) return;
+
         const Id = meetingId;
         const data = {
             admin_user_id: Number(id),
             studentId: selectedStudents.map(id => id),
         };
-        dispatch(editScheduledStudentsApi({ Id, data })).then(() => {
+        dispatch(editScheduledStudentsApi({ Id, data }))
+        .unwrap()
+        .then(() => {
             dispatch(closePopupActions());
-        });
+            toast.success("Student Updated Successfully.")
+        })
+        .catch(error => {
+            toast.error(`${error}`);
+        })
     };
 
     const content = (
@@ -286,6 +303,7 @@ const EditStudentsFromSession = ({ componentName }) => {
                 backgroundColor: '#F56D3B',
                 borderColor: '#F56D3B',
                 color: '#FFFFFF',
+                textTransform: 'none',
             }}
         >
             Submit

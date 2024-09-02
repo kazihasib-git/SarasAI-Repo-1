@@ -22,6 +22,26 @@ const TaScheduling = () => {
         state => state.taScheduling
     );
 
+    const [searchQuery, setSearchQuery] = useState('');
+
+    const { taId } = useSelector(state => state.taScheduling);
+    const { todaysAvailableTa } = useSelector(state => state.taAvialability);
+    const [selectedTA, setSelectedTA] = useState(null);
+
+    // const findTaTimeZone = (todaysAvailableTa) => {
+    //     if (todaysAvailableTa && Number(taId)) {
+    //         const selectedTa = todaysAvailableTa.find(ta => ta.id === Number(taId));
+    //         setSelectedTA(selectedTa || null);  // Set to null if not found
+    //     } else {
+    //         setSelectedTA(null);  // Set to null if conditions are not met
+    //     }
+    // }
+    // useEffect(() => {
+    //     findTaTimeZone(todaysAvailableTa);
+    // }, [taId, todaysAvailableTa]);
+
+    //const storedTimezoneId = selectedTA ? selectedTA.timezone_id : Number(localStorage.getItem('timezone_id'));
+
     const [taScheduleData, setTaScheduleData] = useState([]);
 
     useEffect(() => {
@@ -29,7 +49,7 @@ const TaScheduling = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        console.log('TASCHEDULE : ', taMapping);
+        // console.log('TASCHEDULE : ', taMapping);
         if (taMapping && taMapping.length > 0) {
             const transformData = taMapping.map((item, index) => ({
                 id: item.id,
@@ -37,12 +57,22 @@ const TaScheduling = () => {
                 Username: item.username,
                 Active_Students: item.Active_Students,
                 Active_Batches: item.Active_Batches,
-                timezone: item.time_zone,
+                timezone: item.timezone_id,
             }));
 
             setTaScheduleData(transformData);
+        }else {
+            setTaScheduleData([])
         }
     }, [taMapping]);
+
+    const handleSearch = event => {
+        setSearchQuery(event.target.value);
+    };
+
+    const filteredData = taScheduleData.filter(item =>
+        item.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     const headers = [
         'S. No.',
@@ -66,20 +96,40 @@ const TaScheduling = () => {
                 <Header />
                 <Sidebar />
                 <Box
-                    style={{
-                        fontSize: '44px',
-                        justifyContent: 'center',
-                        marginBottom: '20px',
-                        fontFamily: 'ExtraLight',
-                    }}
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    mb={2}
                 >
-                    <p style={{ fontSize: '44px', justifyContent: 'center' }}>
-                        TA Scheduling{' '}
+                    <p style={{
+                            fontSize: '44px',
+                            justifyContent: 'center',
+                            fontFamily: 'ExtraLight',
+                        }}>
+                        TA Scheduling
                     </p>
+                    <Box display={'flex'}>
+                        <Box
+                            display={'flex'}
+                            backgroundColor="#FFF"
+                            borderRadius={'30px'}
+                            width={'20vw'}
+                            height={'5vh'}
+                            marginBottom={'15px'}
+                            marginRight={'10px'}
+                        >
+                            <InputBase
+                                sx={{ ml: 2, flex: 1 }}
+                                placeholder="Search here ..."
+                                value={searchQuery}
+                                onChange={handleSearch}
+                            />
+                        </Box>
+                    </Box>
                 </Box>
                 <DynamicTable
                     headers={headers}
-                    initialData={taScheduleData}
+                    initialData={filteredData}
                     actionButtons={actionButtons}
                     componentName={'TAMAPPING'}
                 />

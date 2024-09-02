@@ -1,170 +1,278 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { baseUrl } from '../../../../utils/baseURL';
 import axiosInstance from '../../../services/httpService';
-import { act } from 'react';
-import { actions } from 'react-table';
+import { toast } from 'react-toastify';
 
 // Get Today Available Ta
 export const getTodayTaAvailability = createAsyncThunk(
     'taAvialability/getTodayTaAvailability',
-    async () => {
-        const response = await axiosInstance.get(
-            `${baseUrl}/admin/TA-availability/get-today-available-ta`
-        );
-        return response.data;
+    async rejectWithValue => {
+        try{
+            const response = await axiosInstance.get(
+                `${baseUrl}/admin/TA-availability/get-today-available-ta`
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message)
+            }else {
+                return rejectWithValue('An Error Occurred While Fetching TA Availability')
+            }
+        }
     }
 );
 
 //get slots for ta from date to end date
 export const getSlots = createAsyncThunk(
     'taAvialability/getSlots',
-    async data => {
-        const response = await axiosInstance.post(
-            `${baseUrl}/admin/coach-slots/records`,
-            data
-        );
-        return response.data;
+    async (data , { rejectWithValue })=> {
+        try{
+            const response = await axiosInstance.post(
+                `${baseUrl}/admin/coach-slots/records`,
+                data
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message)
+            }else {
+                return rejectWithValue('An Error Occurred While Fetching Slots')
+            }
+        }
     }
 );
 
 //for fetching sessions of ta for calendar
 export const fetchTAScheduleById = createAsyncThunk(
     'taAvialability/fetchTAScheduleById',
-    async id => {
-        const response = await axiosInstance.get(
-            `${baseUrl}/admin/taschedules/${id}`
-        );
-        return response.data;
+    async (id , { rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.get(
+                `${baseUrl}/admin/taschedules/${id}`
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message)
+            }else {
+                return rejectWithValue('An Error Occurred While Fetching Schedules For TA')
+            }
+        }
     }
 );
 
 //for fetching slots of ta for calendar
 export const fetchTaSlots = createAsyncThunk(
     'taAvialability/fetchTaSlots',
-    async id => {
-        const response = await axiosInstance.get(
-            `${baseUrl}/admin/coach-slots/${id}`
-        );
-        return response.data;
+    async (id, { rejectWithValue })=> {
+        try{
+            const response = await axiosInstance.get(
+                `${baseUrl}/admin/coach-slots/${id}`
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message)
+            }else {
+                return rejectWithValue('An Error Occurred While Fetching Ta Slots')
+            }
+        }
     }
 );
 
 // Create Slots for TA
 export const createSlots = createAsyncThunk(
     'taAvialability/createSlots',
-    async data => {
-        console.log('Data being sent:', data);
-        const response = await axiosInstance.post(
-            `${baseUrl}/admin/coach-slots`,
-            data
-        );
-        return response.data;
+    async (data , { rejectWithValue })=> {
+        try{
+            const response = await axiosInstance.post(
+                `${baseUrl}/admin/coach-slots`,
+                data
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message)
+            }else {
+                return rejectWithValue('An Error Occurred While Creating Slots')
+            }
+        }
     }
 );
 
 // Get Schedule Session for TA by slots
 export const getScheduleSession = createAsyncThunk(
     'taAvialability/getScheduleSession',
-    async data => {
-        const response = await axiosInstance.post(
-            `${baseUrl}/admin/taschedules/get-schedules-records`,
-            data
-        );
-        return response.data;
+    async (data , { rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.post(
+                `${baseUrl}/admin/taschedules/get-schedules-records`,
+                data
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message)
+            }else {
+                return rejectWithValue('An Error Occurred While Fetching Session')
+            }
+        }
     }
 );
 
 // Get Available Slots
 export const fetchAvailableSlots = createAsyncThunk(
     'taAvialability/fetchAvailableSlots',
-    async data => {
-        // console.log("ID : ", id);
-        const response = await axiosInstance.post(
-            `${baseUrl}/admin/coach-slots/getTACoachSlotForADate`,
-            data
-        );
-        return response.data;
+    async ( data, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.post(
+                `${baseUrl}/admin/coach-slots/getTACoachSlotForADate`,
+                data
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message)
+            }else {
+                return rejectWithValue('An Error Occurred While Fetching Available SLots')
+            }
+        }
     }
 );
 
 // Delete Future Slots
 export const deleteTaFutureSlots = createAsyncThunk(
     'taAvialability/deleteTaFutureSlots',
-    async id => {
-        const response = await axiosInstance.delete(
-            `${baseUrl}/admin/coach-slots/${id}`
-        );
-        return response.data;
+    async (id, { rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.delete(
+                `${baseUrl}/admin/coach-slots/${id}`
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message)
+            }else {
+                return rejectWithValue('An Error Occurred While Deleting Future Slots')
+            }
+        }
     }
 );
 
 // Reason for Leave
 export const reasonForLeave = createAsyncThunk(
     'taAvialability/reasonForLeave',
-    async data => {
-        const response = await axiosInstance.post(
-            `${baseUrl}/admin/leave`,
-            data
-        );
-        return response.data;
+    async (data , { rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.post(
+                `${baseUrl}/admin/leave`,
+                data
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message)
+            }else {
+                return rejectWithValue('An Error Occurred While Providing Reason For Leave')
+            }
+        }
     }
 );
 
 export const changePlatform = createAsyncThunk(
     'taAvialability/changePlatform',
-    async ({ id, data }) => {
-        console.log('ID and Data', id, data);
-        const response = await axiosInstance.patch(
-            `${baseUrl}/admin/taschedules/change-platform/${id}`,
-            data
-        );
-        return response.data;
+    async ({ id, data }, { rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.patch(
+                `${baseUrl}/admin/taschedules/change-platform/${id}`,
+                data
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message)
+            }else {
+                return rejectWithValue('An Error Occurred While Changing Platform')
+            }
+        }
     }
 );
 
 // Get TA Schdeuled Students
 export const getTAScheduledStudents = createAsyncThunk(
     'taAvialability/getScheduledStudents',
-    async id => {
-        const response = await axiosInstance.get(
-            `${baseUrl}/admin/taschedules/students/${id}`
-        );
-        return response.data;
+    async (id, { rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.get(
+                `${baseUrl}/admin/taschedules/students/${id}`
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message)
+            }else {
+                return rejectWithValue('An Error Occurred While Fetching Students Of Session')
+            }
+        }
     }
 );
 
 // Edit TA Scheduled Students
 export const editTASchdeuledStudents = createAsyncThunk(
     'taAvialability/editTAScheduledStudents',
-    async ({ Id, data }) => {
-        const response = await axiosInstance.patch(
-            `${baseUrl}/admin/taschedules/update-students/${Id}`,
-            data
-        );
-        return response.data;
+    async ({ Id, data }, { rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.patch(
+                `${baseUrl}/admin/taschedules/update-students/${Id}`,
+                data
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message)
+            }else {
+                return rejectWithValue('An Error Occurred While Editing Students')
+            }
+        }  
     }
 );
 
 // Get Ta Schdeuled Batches
 export const getTAScheduledBatches = createAsyncThunk(
     'taAvialability/getScheduledBatches',
-    async id => {
-        const response = await axiosInstance.get(
-            `${baseUrl}/admin/taschedules/batches/${id}`
-        );
-        return response.data;
+    async (id, { rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.get(
+                `${baseUrl}/admin/taschedules/batches/${id}`
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message)
+            }else {
+                return rejectWithValue('An Error Occurred While Fetching Session Batches')
+            }
+        }
     }
 );
 
 // Edit TA Schdeuled Batches
 export const editTASchdeuledBatches = createAsyncThunk(
     'taAvialability/editScheduledBatches',
-    async ({ Id, data }) => {
-        const response = await axiosInstance.patch(
-            `${baseUrl}/admin/taschedules/update-batches/${Id}`,
-            data
-        );
-        return response.data;
+    async ({ Id, data }, { rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.patch(
+                `${baseUrl}/admin/taschedules/update-batches/${Id}`,
+                data
+            );
+            return response.data;   
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message)
+            }else {
+                return rejectWithValue('An Error Occurred While Editing Session Batches')
+            }
+        }
     }
 );
 
@@ -174,8 +282,8 @@ const initialState = {
     markLeaveData: [],
     slotData: [],
     scheduleData: [],
-    scheduledSlotsData: [], // Ensure this is correctly named and initialized
-    scheduledSessionData: [], // Ensure this is correctly named and initialized
+    scheduledSlotsData: [],
+    scheduledSessionData: [],
     availableSlotsData: [],
     reasonForLeaveData: [],
     platformData: [],
@@ -194,8 +302,8 @@ const initialState = {
     customResheduleSessionOpen: false,
     reasonForLeaveOpen: false,
 
-    slotEventData: null, // To Cancel Session
-    sessionEventData: null, // To Reschedule Session
+    slotEventData: null,
+    sessionEventData: null,
 
     loading: false,
     error: null,
@@ -257,6 +365,7 @@ export const taAvailabilitySlice = createSlice({
         },
         closeReasonForLeave(state) {
             state.reasonForLeaveOpen = false;
+            state.markLeaveData = [];
         },
         openRescheduleSession(state, action) {
             console.log('Open Action sessionEventData : ', action.payload);
@@ -351,6 +460,7 @@ export const taAvailabilitySlice = createSlice({
         builder.addCase(getTodayTaAvailability.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            state.todaysAvailableTa = []
         });
 
         // Get Slots
@@ -363,7 +473,7 @@ export const taAvailabilitySlice = createSlice({
         });
         builder.addCase(getSlots.rejected, (state, action) => {
             state.loading = false;
-            state.scheduledSlotsData = null;
+            state.scheduledSlotsData = [];
             state.error = action.error.message;
         });
 
@@ -372,13 +482,13 @@ export const taAvailabilitySlice = createSlice({
             state.loading = true;
         });
         builder.addCase(createSlots.fulfilled, (state, action) => {
-            console.log('slot data ==================> ', action.payload?.data);
             state.loading = false;
-            state.slotData = action.payload?.data;
+            // toast.success(action.payload.message || 'Slot Created Successfully')
         });
         builder.addCase(createSlots.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            // toast.error(action.payload || 'Failed To Create Slot')
         });
 
         // Get Schedule Session
@@ -401,13 +511,15 @@ export const taAvailabilitySlice = createSlice({
         });
         builder.addCase(fetchAvailableSlots.fulfilled, (state, action) => {
             state.loading = false;
-            console.log('AVIAIAIAI : ', action.payload?.data);
             state.availableSlotsData = action.payload?.data;
+            // toast.success(action.payload.message || "slot found");
+
         });
         builder.addCase(fetchAvailableSlots.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
             state.availableSlotsData = [];
+            // toast.error(action.payload || "slots not found");
         });
 
         // Delete Future Slots
@@ -416,10 +528,12 @@ export const taAvailabilitySlice = createSlice({
         });
         builder.addCase(deleteTaFutureSlots.fulfilled, (state, action) => {
             state.loading = false;
+            // toast.success(action.payload.message || 'All Future Slots Deleted Successfully')
         });
         builder.addCase(deleteTaFutureSlots.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            // toast.error(action.payload || 'Failed To Delete All Future Slots')
         });
 
         // Reason for Leave
@@ -429,10 +543,12 @@ export const taAvailabilitySlice = createSlice({
         builder.addCase(reasonForLeave.fulfilled, (state, action) => {
             state.loading = false;
             state.reasonForLeaveData = action.payload.data;
+            // toast.success(action.payload.message || 'Marked Leave Successfully')
         });
         builder.addCase(reasonForLeave.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            // toast.error(action.payload || 'Failed To Mark Leave')
         });
 
         // Change Platform
@@ -442,11 +558,13 @@ export const taAvailabilitySlice = createSlice({
         builder.addCase(changePlatform.fulfilled, (state, action) => {
             state.loading = false;
             state.platformData = action.payload;
+            toast.success(action.payload.message || 'Platform Changes Successfully')
         });
         builder.addCase(changePlatform.rejected, (state, action) => {
             state.loading = false;
             state.platformData = [];
             state.error = action.error.message;
+            toast.error(action.payload || 'Failed To Change Platform')
         });
 
         // Get Ta Scheduled Students
@@ -469,11 +587,12 @@ export const taAvailabilitySlice = createSlice({
         });
         builder.addCase(editTASchdeuledStudents.fulfilled, (state, action) => {
             state.loading = false;
-            // TODO :
+            // toast.success(action.payload.message || 'Students Updated Successfully')
         });
         builder.addCase(editTASchdeuledStudents.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            // toast.error(action.payload || 'Failed To Update Students')
         });
 
         // Get TA Scheduled Batches
@@ -496,11 +615,12 @@ export const taAvailabilitySlice = createSlice({
         });
         builder.addCase(editTASchdeuledBatches.fulfilled, (state, action) => {
             state.loading = false;
-            // TODO :
+            // toast.success(action.payload.message || 'Batches Updated Successfully')
         });
         builder.addCase(editTASchdeuledBatches.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            toast.error(action.payload || 'Failed To Update Batches')
         });
     },
 });

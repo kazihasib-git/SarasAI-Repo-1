@@ -7,7 +7,6 @@ import CalendarComponent from '../../components/Calender/BigCalendar';
 import MarkLeave from '../../components/availability/MarkLeave';
 import DeleteAllSlots from '../../components/availability/DeleteAllSlots';
 import CreateNewSlot from '../../components/availability/CreateNewSlot';
-// import ScheduleSession from '../../components/availability/ScheduleSession';
 import Slots from '../../components/availability/Slots';
 import CancelSchedule from '../../components/availability/CancelSchedule';
 import ReasonForLeave from '../../components/availability/ReasonForLeave';
@@ -31,6 +30,9 @@ import { openCreateNewSlots } from '../../redux/features/adminModule/ta/taAviala
 import ScheduleSession from '../../components/availability/ScheduleSession';
 import { timezoneIdToName } from '../../utils/timezoneIdToName';
 import { getTimezone } from '../../redux/features/utils/utilSlice';
+import { getTodayCoachAvailability } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
+import EditStudentsFromSession from '../../components/availability/EditStudentsFromSession';
+import EditBatchesFromSession from '../../components/availability/EditBatchesFromSession';
 const CustomButton = ({
     onClick,
     children,
@@ -50,7 +52,6 @@ const CustomButton = ({
                 fontWeight: '700',
                 fontSize: '16px',
                 borderRadius: '50px',
-                // padding: "18px 25px",
                 border: `1.5px solid ${borderColor}`,
                 textTransform: 'none',
                 '&:hover': {
@@ -66,12 +67,39 @@ const CustomButton = ({
         </Button>
     );
 };
-const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
-
 const CoachCalender = () => {
+    const [selectedCoach, setSelectedCoach] = useState(null);
+    const { timezones } = useSelector(state => state.util);
+
     const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(getTodayCoachAvailability());
+    }, [dispatch]);
+    const { todaysAvailableCoach } = useSelector(
+        state => state.coachAvailability
+    );
+
     const { id, name } = useParams();
 
+    const findTaTimeZone = todaysAvailableCoach => {
+        if (todaysAvailableCoach && Number(id)) {
+            const selectedcoach = todaysAvailableCoach.find(
+                ta => ta.id === Number(id)
+            );
+            setSelectedCoach(selectedcoach || null); // Set to null if not found
+        } else {
+            setSelectedCoach(null); // Set to null if conditions are not met
+        }
+    };
+    useEffect(() => {
+        findTaTimeZone(todaysAvailableCoach);
+    }, [id, todaysAvailableCoach]);
+
+    const storedTimezoneId = selectedCoach
+        ? selectedCoach.timezone_id
+        : Number(localStorage.getItem('timezone_id'));
+
+    // console.log("selected sending to schedule time zone id", storedTimezoneId) ;
     const [eventsList, setEventsList] = useState([]);
     const [slotViewData, setSlotViewData] = useState([]);
 
@@ -80,7 +108,6 @@ const CoachCalender = () => {
     const { openEditStudent, openEditBatch } = useSelector(
         state => state.taScheduling
     );
-    const { timezones } = useSelector(state => state.util);
 
     useEffect(() => {
         dispatch(getTimezone());
@@ -111,103 +138,181 @@ const CoachCalender = () => {
     useEffect(() => {
         dispatch(fetchCoachSlots(id));
         dispatch(fetchCoachScheduleById(id));
-    }, [dispatch]);
+    }, [dispatch, id]);
 
-    useEffect(() => {
-        if (timezones && storedTimezoneId) {
+    const convertEvents = async () => {
+        if (
+            scheduleCoachData &&
+            scheduleCoachData.length > 0 &&
+            storedTimezoneId &&
+            selectedCoach // Add this check
+        ) {
             const timezonename = timezoneIdToName(storedTimezoneId, timezones);
-            const convertEvents = async () => {
-                if (
-                    scheduleCoachData &&
-                    scheduleCoachData.length > 0 &&
-                    timezonename
-                ) {
-                    const transformedEvents = await Promise.all(
-                        scheduleCoachData.map(async event => {
-                            const localTime = await convertFromUTC({
-                                start_date: event.date.split(' ')[0],
-                                start_time: event.start_time,
-                                end_time: event.end_time,
-                                end_date: event.date.split(' ')[0],
-                                timezonename,
-                            });
-                            console.log(
-                                'Converted Local Schedule Time:',
-                                localTime
-                            );
-                            return {
+            if (!timezonename) {
+                // console.error('Invalid timezone name');
+                setEventsList([]);
+                return;
+            }
+            try {
+                const processedEvents = [];
+                const transformedEvents = await Promise.all(
+                    scheduleCoachData.map(async event => {
+                        const localTime = await convertFromUTC({
+                            start_date: event.date.split(' ')[0],
+                            start_time: event.start_time,
+                            end_time: event.end_time,
+                            end_date: event.end_date
+                                ? event.end_date
+                                : event.date.split(' ')[0],
+                            timezonename,
+                        });
+                        // console.log(
+                        //     'Converted Local Schedule Time:',
+                        //     localTime
+                        // );
+                        const startDateTime = new Date(
+                            `${localTime.start_date}T${localTime.start_time}`
+                        );
+                        const endDateTime = new Date(
+                            `${localTime.end_date}T${localTime.end_time}`
+                        );
+
+                        if (localTime.start_date !== localTime.end_date) {
+                            const event1 = {
+                                id: event.id,
+                                admin_user_id: event.admin_user_id,
+                                meetingName: event.meeting_name,
+                                meetingId: event.meeting_id,
+                                platformId: event.platform_id,
+                                start: startDateTime,
+                                end: new Date(
+                                    `${localTime.start_date}T23:59:59`
+                                ),
+                                platform_tools: event.platform_tool_details,
+                                platform_meet: event.platform_meeting_details,
+                            };
+
+                            const event2 = {
                                 id: event.id,
                                 admin_user_id: event.admin_user_id,
                                 meetingName: event.meeting_name,
                                 meetingId: event.meeting_id,
                                 platformId: event.platform_id,
                                 start: new Date(
-                                    localTime.start_date +
-                                        'T' +
-                                        localTime.start_time
+                                    `${localTime.end_date}T00:00:00`
                                 ),
-                                end: new Date(
-                                    localTime.end_date +
-                                        'T' +
-                                        localTime.end_time
-                                ),
+                                end: endDateTime,
                                 platform_tools: event.platform_tool_details,
                                 platform_meet: event.platform_meeting_details,
                             };
-                        })
-                    );
-                    setEventsList(transformedEvents);
-                } else {
-                    setEventsList([]);
-                }
-            };
 
-            convertEvents();
+                            // console.log('events created', event1, event2);
+                            processedEvents.push(event1, event2);
+                            return [event1, event2];
+                        } else {
+                            const newEvent = {
+                                id: event.id,
+                                admin_user_id: event.admin_user_id,
+                                meetingName: event.meeting_name,
+                                meetingId: event.meeting_id,
+                                platformId: event.platform_id,
+                                start: startDateTime,
+                                end: endDateTime,
+                                platform_tools: event.platform_tool_details,
+                                platform_meet: event.platform_meeting_details,
+                            };
+                            processedEvents.push(newEvent);
+                            return newEvent;
+                        }
+                    })
+                );
+                // console.log('transformed events', processedEvents);
+                setEventsList(processedEvents);
+            } catch (error) {
+                console.error('Error converting events:', error);
+                setEventsList([]);
+            }
+        } else {
+            setEventsList([]);
         }
-    }, [scheduleCoachData, timezones, storedTimezoneId]);
+    };
 
     useEffect(() => {
-        if (timezones && storedTimezoneId) {
+        convertEvents();
+    }, [scheduleCoachData, timezones, storedTimezoneId, selectedCoach]);
+
+    const convertSlots = async () => {
+        if (
+            slotCoachData &&
+            slotCoachData.length > 0 &&
+            timezones &&
+            storedTimezoneId
+        ) {
             const timezonename = timezoneIdToName(storedTimezoneId, timezones);
-            const convertSlots = async () => {
-                if (slotCoachData && slotCoachData.length > 0) {
-                    const transformedSlots = await Promise.all(
-                        slotCoachData.map(async slot => {
-                            const localTime = await convertFromUTC({
-                                start_date: slot.slot_date,
-                                start_time: slot.from_time,
-                                end_time: slot.to_time,
-                                end_date: slot.slot_end_date,
-                                timezonename,
-                            });
+            try {
+                const processedSlots = [];
+                const transformedSlots = await Promise.all(
+                    slotCoachData.map(async slot => {
+                        const localTime = await convertFromUTC({
+                            start_date: slot.slot_date,
+                            start_time: slot.from_time,
+                            end_time: slot.to_time,
+                            end_date: slot.slot_end_date,
+                            timezonename,
+                        });
 
-                            // Log the converted local time
-                            console.log('Converted Local Time:', localTime);
+                        const startDateTime = new Date(
+                            `${localTime.start_date}T${localTime.start_time}`
+                        );
+                        const endDateTime = new Date(
+                            `${localTime.end_date}T${localTime.end_time}`
+                        );
 
-                            return {
-                                startDate: new Date(
-                                    localTime.start_date +
-                                        'T' +
-                                        localTime.start_time
-                                ),
+                        if (localTime.start_date !== localTime.end_date) {
+                            const slot1 = {
+                                startDate: startDateTime,
                                 endDate: new Date(
-                                    localTime.end_date +
-                                        'T' +
-                                        localTime.end_time
+                                    `${localTime.start_date}T23:59:59`
                                 ),
                                 leave: slot?.leaves,
                             };
-                        })
-                    );
-                    setSlotViewData(transformedSlots);
-                } else {
-                    setSlotViewData([]);
-                }
-            };
 
-            convertSlots();
+                            const slot2 = {
+                                startDate: new Date(
+                                    `${localTime.end_date}T00:00:00`
+                                ),
+                                endDate: endDateTime,
+                                leave: slot?.leaves,
+                            };
+
+                            // console.log('slots created', slot1, slot2);
+                            processedSlots.push(slot1, slot2);
+                            return [slot1, slot2];
+                        } else {
+                            const newSlot = {
+                                startDate: startDateTime,
+                                endDate: endDateTime,
+                                leave: slot?.leaves,
+                            };
+                            processedSlots.push(newSlot);
+                            return newSlot;
+                        }
+                    })
+                );
+                // console.log('transformed slots', processedSlots);
+                setSlotViewData(processedSlots);
+            } catch (error) {
+                console.error('Error converting slots:', error);
+                setSlotViewData([]);
+            }
+        } else {
+            setSlotViewData([]);
         }
-    }, [slotCoachData, timezones, storedTimezoneId]);
+    };
+
+    useEffect(() => {
+        convertSlots();
+    }, [slotCoachData]);
 
     const handleScheduleNewSession = () => {
         dispatch(openCoachScheduleSession({ id, name }));
@@ -226,9 +331,8 @@ const CoachCalender = () => {
         dispatch(openCreateNewSlots());
     };
 
-    console.log('event Data', eventsList);
-
-    console.log('slots View', slotViewData);
+    // console.log('event Data', eventsList);
+    // console.log('slots View', slotViewData);
 
     return (
         <>
@@ -311,19 +415,29 @@ const CoachCalender = () => {
                     )} */}
 
                     {scheduleCoachSessionOpen && (
-                        <Schedule componentName={'COACHSCHEDULE'} />
+                        <Schedule
+                            componentName={'COACHSCHEDULE'}
+                            timezoneID={storedTimezoneId}
+                        />
                     )}
                     {openCoachEditBatch && (
-                        <EditBatches componentname={'COACHSCHEDULE'} />
+                        <EditBatches
+                            componentname={'COACHSCHEDULE'}
+                            timezoneID={storedTimezoneId}
+                        />
                     )}
                     {openCoachEditStudent && (
-                        <EditStudents componentname={'COACHSCHEDULE'} />
+                        <EditStudents
+                            componentname={'COACHSCHEDULE'}
+                            timezoneID={storedTimezoneId}
+                        />
                     )}
                     {coachMarkLeaveOpen && (
                         <MarkLeave
                             id={id}
                             name={name}
                             componentName={'COACHCALENDER'}
+                            timezoneID={storedTimezoneId}
                         />
                     )}
 
@@ -332,6 +446,7 @@ const CoachCalender = () => {
                             id={id}
                             name={name}
                             componentName={'COACHCALENDER'}
+                            timezoneID={storedTimezoneId}
                         />
                     )}
 
@@ -340,6 +455,7 @@ const CoachCalender = () => {
                             id={id}
                             name={name}
                             componentName={'COACHCALENDER'}
+                            timezoneID={storedTimezoneId}
                         />
                     )}
 
@@ -348,6 +464,7 @@ const CoachCalender = () => {
                             id={id}
                             name={name}
                             componentName={'COACHCALENDER'}
+                            timezoneID={storedTimezoneId}
                         />
                     )}
 
@@ -356,6 +473,7 @@ const CoachCalender = () => {
                             id={id}
                             name={name}
                             componentName={'COACHCALENDER'}
+                            timezoneID={storedTimezoneId}
                         />
                     )}
 
@@ -364,30 +482,40 @@ const CoachCalender = () => {
                             id={id}
                             name={name}
                             componentName={'COACHCALENDER'}
+                            timezoneID={storedTimezoneId}
                         />
                     )}
 
                     {deletingCoachFutureSlots && (
-                        <DeleteAllSlots componentName={'COACHCALENDER'} />
+                        <DeleteAllSlots
+                            componentName={'COACHCALENDER'}
+                            timezoneID={storedTimezoneId}
+                        />
                     )}
 
                     {createNewSlotOpen && (
                         <CreateNewSlot
                             // addEvent={addEvent}
                             componentName={'COACHCALENDER'}
+                            timezoneID={storedTimezoneId}
                         />
                     )}
                     {coachOpenEventData && (
-                        <ScheduleSession componentName={'COACHCALENDER'} />
+                        <ScheduleSession
+                            componentName={'COACHCALENDER'}
+                            timezoneID={storedTimezoneId}
+                        />
                     )}
                     {coachEditScheduledBatches && (
                         <EditBatchesFromSession
                             componentName={'COACHCALENDER'}
+                            timezoneID={storedTimezoneId}
                         />
                     )}
                     {coachEditScheduledStudents && (
                         <EditStudentsFromSession
                             componentName={'COACHCALENDER'}
+                            timezoneID={storedTimezoneId}
                         />
                     )}
                 </Box>

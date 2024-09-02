@@ -1,24 +1,26 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import moment from 'moment';
 import { Calendar, momentLocalizer, Views } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-
 import 'moment/locale/en-gb';
 import './BigCal.css';
-
-import Header from '../Header/Header';
-import Sidebar from '../Sidebar/Sidebar';
-import ScheduleSession from '../availability/ScheduleSession';
 import { useDispatch } from 'react-redux';
 import { openSessionEvent } from '../../redux/features/adminModule/ta/taAvialability';
 import { openCoachSessionEvent } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import { openSessionPopup } from '../../redux/features/commonCalender/commonCalender';
+
 moment.locale('en-GB');
 const localizer = momentLocalizer(moment);
-const allViews = Object.keys(Views).map(k => Views[k]);
+
+const formatTime = (date) => {
+    return moment(date).format('h:mma');
+};
 
 const formats = {
-    timeGutterFormat: 'h:mm A', // Time format with AM/PM
+    timeGutterFormat: (date, culture, localizer) => 
+        localizer.format(date, 'h:mm A', culture),
+    eventTimeRangeFormat: ({ start, end }, culture, localizer) =>
+        `${formatTime(start)} - ${formatTime(end)}`,
 };
 
 const CustomEvent = ({ event }) => {
@@ -71,9 +73,9 @@ const CustomEvent = ({ event }) => {
                     alignItems: 'center',
                     justifyContent: 'center',
                     padding: '2px 5px',
-                    flexShrink: 0, // Prevents shrinking of platform name
-                    minWidth: '35px', // Minimum width for platform name
-                    maxWidth: 'calc(100% - 70px)', // Ensures it doesn't exceed container width
+                    flexShrink: 0,
+                    minWidth: '35px',
+                    maxWidth: 'calc(100% - 70px)',
                 }}
             >
                 {event.platform_tools.name}
@@ -84,43 +86,29 @@ const CustomEvent = ({ event }) => {
 
 const CalendarComponent = ({ eventsList, slotData, componentName }) => {
     const dispatch = useDispatch();
-    console.log('Event List', eventsList);
 
-    console.log('Slot Data : ', slotData);
-
-    console.log('comp name', componentName);
-
-    let sliceName, openPopup;
+    let openPopup;
 
     switch (componentName) {
         case 'TACALENDER':
-            sliceName = 'taAvialability';
             openPopup = openSessionEvent;
             break;
+            
         case 'COACHCALENDER':
-            sliceName = 'coachAvailability';
             openPopup = openCoachSessionEvent;
             break;
+
         case 'TAMENU':
-            sliceName = 'taMenu';
             openPopup = openSessionPopup;
             break;
 
         case 'COACHMENU':
-            sliceName = 'coachMenu';
             openPopup = openSessionPopup;
             break;
-
         default:
-            sliceName = null;
             openPopup = null;
             break;
     }
-
-    // const showSessionPopUp = event => {
-    //     console.log('Selected Event:', event);
-    //     dispatch(openPopup(event));
-    // };
 
     const showSessionPopUp = event => {
         dispatch(
@@ -133,10 +121,9 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
     };
 
     const eventStyleGetter = event => {
-        console.log('EVENT : ', event);
         return {
             style: {
-                backgroundColor: '#28a745', // Match the green color in your design
+                backgroundColor: '#00C95C',
                 color: 'white',
                 borderRadius: '5px',
                 border: '1px solid #caffd8',
@@ -147,15 +134,31 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
         };
     };
 
+    const dayPropGetter = date => {
+        const today = moment().startOf('day');
+
+        if (moment(date).isSame(today, 'day')) {
+            return {
+                style: {
+                    backgroundColor: '#4e18a5',
+                },
+            };
+        }
+        return {};
+    };
+
     const slotPropGetter = date => {
         const dateString = moment(date).format('YYYY-MM-DD');
-        const timeString = moment(date).format('HH:mm');
+        const timeString = moment(date).format('YYYY-MM-DD HH:mm');
 
         for (let i = 0; i < slotData.length; i++) {
             const slot = slotData[i];
             const slotDate = moment(slot.startDate).format('YYYY-MM-DD');
-            const slotStartTime = moment(slot.startDate).format('HH:mm');
-            const slotEndTime = moment(slot.endDate).format('HH:mm');
+            const slotStartTime = moment(slot.startDate).format('YYYY-MM-DD HH:mm');
+            const slotEndTime = moment(slot.endDate).format('YYYY-MM-DD HH:mm');
+
+            const isOnLeave = slot.leave && slot.leave.length > 0;
+
             if (
                 dateString === slotDate &&
                 timeString >= slotStartTime &&
@@ -163,44 +166,54 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
             ) {
                 return {
                     style: {
-                        backgroundColor:
-                            slot.leave && slot.leave.length > 0
-                                ? '#FF6347' // Light red color for leave slots
-                                : '#B0FC38', // Green color for regular slots
+                        backgroundColor: isOnLeave ? '#FF00001F' : '#B0FC38',
                         opacity: 0.5,
                         border: 'none',
                     },
+                    className: isOnLeave ? 'on-leave-slot' : '',
                 };
             }
         }
+
         return {};
     };
 
+    const getScrollToTime = () => {
+        const currentTime = moment();
+      
+        if (currentTime.hour() >= 4) {
+          return currentTime.subtract(4, 'hours').toDate();
+        } else if(currentTime.hour() >= 2){
+          return currentTime.subtract(2, 'hours').toDate();
+        }else {
+            return currentTime.toDate()
+        }
+      };
+      
+
     return (
-        <>
-            {/* <Header />
-      <Sidebar /> */}
-            <div style={{ height: 700 }}>
-                <Calendar
-                    localizer={localizer}
-                    defaultDate={new Date()}
-                    startAccessor="start"
-                    endAccessor="end"
-                    events={eventsList}
-                    eventPropGetter={eventStyleGetter}
-                    slotPropGetter={slotPropGetter}
-                    onSelectEvent={showSessionPopUp}
-                    step={30}
-                    selectable
-                    views={{ week: true }} // Only show week view
-                    defaultView={Views.WEEK} // Set default view to week
-                    components={{
-                        event: CustomEvent, // Use the custom event component
-                    }}
-                    formats={formats}
-                />
-            </div>
-        </>
+        <div style={{ height: 700 }}>
+            <Calendar
+                localizer={localizer}
+                defaultDate={new Date()}
+                startAccessor="start"
+                endAccessor="end"
+                events={eventsList}
+                eventPropGetter={eventStyleGetter}
+                dayPropGetter={dayPropGetter}
+                slotPropGetter={slotPropGetter}
+                onSelectEvent={showSessionPopUp}
+                scrollToTime={getScrollToTime()}
+                step={15}
+                selectable
+                views={{ week: true }}
+                defaultView={Views.WEEK}
+                components={{
+                    event: CustomEvent,
+                }}
+                formats={formats}
+            />
+        </div>
     );
 };
 

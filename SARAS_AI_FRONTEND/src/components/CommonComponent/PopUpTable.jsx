@@ -80,8 +80,9 @@ const PopUpTable = ({
     onViewClick,
     onRescheduleClick,
     onCancelClick,
-    itemsPerPage = 4,
+    itemsPerPage = 10,
 }) => {
+    console.log("POP UP TABLE !")
     const [data, setData] = useState(initialData ?? []);
     const [openPopup, setOpenPopup] = useState(false);
     const [currentStudentNames, setCurrentStudentNames] = useState([]);
@@ -138,7 +139,7 @@ const PopUpTable = ({
             <DialogContent
                 style={{ justifyContent: 'center', display: 'flex' }}
             >
-                <Typography>No scheduled sessions.</Typography>
+                <Typography>No Assigned Students</Typography>
             </DialogContent>
         ) : (
             <PopUpTable
@@ -277,7 +278,10 @@ const PopUpTable = ({
                                                             </CustomButton>
                                                         </>
                                                     ) : header === 'S. No.' ? (
-                                                        index + 1
+                                                        (currentPage - 1) *
+                                                            itemsPerPage +
+                                                        index +
+                                                        1
                                                     ) : typeof item[header] ===
                                                       'object' ? (
                                                         JSON.stringify(

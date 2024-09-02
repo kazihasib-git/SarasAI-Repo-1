@@ -17,14 +17,19 @@ import {
 import CustomDateField from '../../../CustomFields/CustomDateField';
 import ReusableDialog from '../../../CustomFields/ReusableDialog';
 import CustomButton from '../../../CustomFields/CustomButton';
+import { timezoneIdToName } from '../../../../utils/timezoneIdToName';
+import CustomFutureDateField from '../../../CustomFields/CustomFutureDateField';
 
-const MarkLeaveDate = ({ componentName }) => {
-    console.log('Comp Name :', componentName);
+const MarkLeaveDate = ({ componentName, timezoneID }) => {
+    const { timezones } = useSelector(state => state.util);
+
     const dispatch = useDispatch();
     const [formData, setFormData] = useState({
         fromDate: null,
         toDate: null,
     });
+    const [errors, setErrors] = useState({}); // Error state
+    const timezoneName = timezoneIdToName(timezoneID, timezones);
 
     let sliceName, getSlotsByDateApi;
 
@@ -49,34 +54,47 @@ const MarkLeaveDate = ({ componentName }) => {
     const { markLeave } = useSelector(state => state.commonCalender);
 
     const validate = () => {
-        if (!formData.fromDate || !formData.toDate) {
-            return false;
+        const newErrors = {};
+        if (!formData.fromDate) newErrors.fromDate = 'From Date is required';
+        if (!formData.toDate) newErrors.toDate = 'To Date is required';
+        if (
+            formData.fromDate &&
+            formData.toDate &&
+            formData.fromDate > formData.toDate
+        ) {
+            newErrors.toDate = 'From Date should be earlier than To Date';
         }
-        if (formData.fromDate > fromDate.toDate) {
-            toast.error('fromDate should be smaller than to Date');
-            return false;
-        }
-        return true;
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
     };
 
     const handleChange = (field, value) => {
         setFormData(prev => ({ ...prev, [field]: value }));
+        setErrors(prev => ({ ...prev, [field]: null })); // Clear error on change
     };
 
     const handleSubmit = e => {
         e.preventDefault();
+
+        if (!validate()) return;
 
         const data = {
             start_date: formData.fromDate,
             end_date: formData.toDate,
             start_time: '00:00:00',
             end_time: '23:59:59',
+            timezone_name: timezoneName,
         };
 
-        dispatch(getSlotsByDateApi(data)).then(() => {
-            dispatch(closeMarkLeaveDate());
-            dispatch(openCreatedSlots());
-        });
+        dispatch(getSlotsByDateApi(data))
+            .unwrap()
+            .then(() => {
+                dispatch(closeMarkLeaveDate());
+                dispatch(openCreatedSlots());
+            })
+            .catch(error => {
+                console.error('API Error:', error);
+            });
     };
 
     const content = (
@@ -90,21 +108,37 @@ const MarkLeaveDate = ({ componentName }) => {
                 textAlign: 'center',
             }}
         >
-            <Grid item xs={12} sm={6}>
-                <CustomDateField
-                    label="From Date"
-                    name="fromDate"
-                    value={formData.fromDate}
-                    onChange={date => handleChange('fromDate', date)}
-                />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-                <CustomDateField
-                    label="To Date"
-                    name="toDate"
-                    value={formData.toDate}
-                    onChange={date => handleChange('toDate', date)}
-                />
+            <Grid
+                container
+                spacing={2} // Add spacing between grid items
+                sx={{
+                    pt: 3,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    textAlign: 'center',
+                }}
+            >
+                <Grid item xs={12} sm={6}>
+                    <CustomFutureDateField
+                        label="From Date"
+                        name="fromDate"
+                        value={formData.fromDate}
+                        onChange={date => handleChange('fromDate', date)}
+                        error={!!errors.fromDate}
+                        helperText={errors.fromDate}
+                    />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                    <CustomFutureDateField
+                        label="To Date"
+                        name="toDate"
+                        value={formData.toDate}
+                        onChange={date => handleChange('toDate', date)}
+                        error={!!errors.toDate}
+                        helperText={errors.toDate}
+                    />
+                </Grid>
             </Grid>
         </Grid>
     );

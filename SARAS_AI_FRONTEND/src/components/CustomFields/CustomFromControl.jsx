@@ -25,12 +25,12 @@ const CustomFormControl = ({
                 shrink
                 style={{ margin: 0 }}
                 sx={{
-                    color: hasError ? 'red' : '#1A1E3D',
+                    color: hasError ? '#d32f2f' : '#1A1E3D',
                     '&.Mui-focused': {
                         color: '#1A1E3D', // Change label color on focus regardless of error
                     },
                     '&.MuiFormLabel-filled': {
-                        color: hasError ? 'red' : '#1A1E3D', // Change label color when the field is filled
+                        color: hasError ? '#d32f2f' : '#1A1E3D', // Change label color when the field is filled
                     },
                     backgroundColor: 'white',
                 }}
@@ -63,16 +63,16 @@ const CustomFormControl = ({
                         borderColor: '#D0D0EC',
                     },
                     '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: hasError ? 'red' : 'rgb(245, 109, 59)', // Change border color on focus based on error
+                        borderColor: hasError ? '#d32f2f' : 'rgb(245, 109, 59)', // Change border color on focus based on error
                         color: '#1A1E3D',
                     },
                 }}
             >
                 {options.map(option => (
-                    <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                    </MenuItem>
-                ))}
+    <MenuItem key={option.value} value={option.value}>
+        {`${option.label}${option.username ? ` - ${option.username}` : ''}`}
+    </MenuItem>
+))}
             </Select>
             {hasError && (
                 <Typography

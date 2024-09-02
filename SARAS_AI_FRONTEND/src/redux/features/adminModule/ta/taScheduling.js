@@ -1,74 +1,123 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { baseUrl } from '../../../../utils/baseURL';
 import axiosInstance from '../../../services/httpService';
+import { toast } from 'react-toastify';
 
 // Show TA Schedule
 export const showTASchedule = createAsyncThunk(
     'taScheduling/showTaSchedule',
-    async () => {
-        const response = await axiosInstance.get(
-            `${baseUrl}/admin/taschedules`
-        );
-        return response.data;
+    async rejectWithValue => {
+        try{
+            const response = await axiosInstance.get(
+                `${baseUrl}/admin/taschedules`
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message);
+            }else {
+                return rejectWithValue('An Error Occurred While Fetching TA Schedule')
+            }
+        }
     }
 );
 
 // Get TA Scheduled Sessions
 export const getTAScheduledSessions = createAsyncThunk(
     'taScheduling/getTAScheduledSessions',
-    async ({ id, data }) => {
-        const response = await axiosInstance.post(
-            `${baseUrl}/admin/taschedules/${id}`,
-            data
-        );
-        return response.data;
+    async ({ id, data },{ rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.post(
+                `${baseUrl}/admin/taschedules/${id}`,
+                data
+            );
+            return response.data;
+        }catch(error){
+            if(error.response  && error.response.data){
+                return rejectWithValue(error.response.data.message);
+            }else{
+                return rejectWithValue('An Error Occurred While Fetching TA Scheduled Sessions');
+            }
+        }
     }
 );
 
 // Create TA Schedule
 export const createTASchedule = createAsyncThunk(
     'taScheduling/createTASchedule',
-    async data => {
-        const response = await axiosInstance.post(
-            `${baseUrl}/admin/taschedules`,
-            data
-        );
-        return response.data;
+    async (data, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.post(
+                `${baseUrl}/admin/taschedules`,
+                data
+            );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue('An Error Occurred While Creating the Schedule');
+            }
+        }
     }
 );
 
 // Get TA Available Slots From Date
 export const getTaAvailableSlotsFromDate = createAsyncThunk(
     'taScheduling/getTaAvailableSlotsFromDate',
-    async data => {
-        const response = await axiosInstance.post(
-            `${baseUrl}/admin/coach-slots/getTACoachSlotForADate`,
-            data
-        );
-        return response.data;
+    async (data , { rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.post(
+                `${baseUrl}/admin/coach-slots/getTACoachSlotForADate`,
+                data
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message);
+            }else{
+                return rejectWithValue('An Error Occurred While Fetching TA Available From Date')
+            }        
+        }
     }
 );
 
 // Reschedule Session
 export const rescheduleSession = createAsyncThunk(
     'taScheduling/rescheduleSession',
-    async ({ id, data }) => {
-        const response = await axiosInstance.put(
-            `${baseUrl}/admin/taschedules/${id}`,
-            data
-        );
-        return response.data;
+    async ({ id, data }, { rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.put(
+                `${baseUrl}/admin/taschedules/reschedule/${id}`,
+                data
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message);
+            }else{
+                return rejectWithValue('An Error Occurred While Rescheduling Session')
+            }
+        }
     }
 );
 
 // Cancel Scheduled Sessions
 export const cancelScheduledSession = createAsyncThunk(
     'taScheduling/cancelScheduledSession',
-    async id => {
-        const response = await axiosInstance.put(
-            `${baseUrl}/admin/taschedules/${id}/cancel`
-        );
-        return response.data;
+    async (id, { rejectWithValue }) => {
+        try{
+            const response = await axiosInstance.put(
+                `${baseUrl}/admin/taschedules/cancel/${id}`
+            );
+            return response.data;
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.message);
+            }else{
+                return rejectWithValue('An Error Occurred While Cancel Scheduled Sessions')
+            }
+        }
     }
 );
 
@@ -102,7 +151,7 @@ const taScheduling = createSlice({
                 action.payload.id !== undefined
                     ? action.payload.id
                     : action.payload.ta_id;
-            //state.taID = action.payload.id;
+
             state.taName = action.payload.name;
             state.taTimezone = action.payload.timezone;
             if (action.payload.student) {
@@ -126,6 +175,7 @@ const taScheduling = createSlice({
         openEditBatch(state, action) {
             state.openEditBatch = true;
             if (action.payload) {
+                // state.batches = action.payload.batches
             }
         },
         closeEditBatch(state, action) {
@@ -134,13 +184,15 @@ const taScheduling = createSlice({
         openEditStudent(state, action) {
             state.openEditStudent = true;
             if (action.payload) {
-                state.students = action.payload.student;
+                // state.students = action.payload.student;
+                // state.batches = action.payload.batches
             }
         },
         closeEditStudent(state, action) {
             state.openEditStudent = false;
             if (action.payload) {
                 state.students = action.payload.student;
+                state.batches = action.payload.batches;
             }
         },
         clearAvailableSlots(state) {
@@ -148,6 +200,7 @@ const taScheduling = createSlice({
         },
     },
     extraReducers: builder => {
+        
         // Show TA Schedule
         builder.addCase(showTASchedule.pending, state => {
             state.loading = true;
@@ -159,6 +212,7 @@ const taScheduling = createSlice({
         builder.addCase(showTASchedule.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            state.taSchedule = [];
         });
 
         // Get TA Scheduled Sessions
@@ -172,19 +226,27 @@ const taScheduling = createSlice({
         builder.addCase(getTAScheduledSessions.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            state.taScheduledSessions = [];
         });
 
-        // Create TA Schedule
+        // Handle TA Schedule actions in the slice
         builder.addCase(createTASchedule.pending, state => {
             state.loading = true;
         });
         builder.addCase(createTASchedule.fulfilled, (state, action) => {
             state.loading = false;
-            state.taScheduledSessions = action.payload.data;
+            // state.taScheduledSessions = action.payload.data;
+            toast.success(
+                action.payload.message || 'TA Session Created Successfully'
+            );
         });
         builder.addCase(createTASchedule.rejected, (state, action) => {
             state.loading = false;
-            state.error = action.error.message;
+            state.error = action.payload || action.error.message;
+            toast.error(
+                action.payload ||
+                    'Failed to create TA Session. Please Try Again.'
+            );
         });
 
         // Get TA Available Slots From Date
@@ -213,24 +275,28 @@ const taScheduling = createSlice({
         });
         builder.addCase(cancelScheduledSession.fulfilled, (state, action) => {
             state.loading = false;
-            state.taScheduledSessions = action.payload.data;
+            // state.taScheduledSessions = action.payload.data;
+            toast.success(action.payload.message || 'Session Cancelled Successfully')
         });
         builder.addCase(cancelScheduledSession.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            toast.error(action.payload || 'Failed To Cancel Session');
         });
 
-        // Reschedule Session // TODO : Check this
+        // Reschedule Session
         builder.addCase(rescheduleSession.pending, state => {
             state.loading = true;
         });
         builder.addCase(rescheduleSession.fulfilled, (state, action) => {
             state.loading = false;
             state.taScheduledSessions = action.payload.data;
+            toast.success(action.payload.message || 'Session Rescheduled Successfully')
         });
         builder.addCase(rescheduleSession.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            toast.error(action.payload || 'Failed To Rescheduled Session')
         });
     },
 });

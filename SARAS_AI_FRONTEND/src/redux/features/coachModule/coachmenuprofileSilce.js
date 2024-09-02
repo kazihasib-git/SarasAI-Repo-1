@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { baseUrl } from '../../../utils/baseURL';
 import axiosInstance from '../../services/httpService';
 import { toast } from 'react-toastify';
+import coachSchedule from '../adminModule/coach/coachSchedule';
 
 // Get Coach profile
 export const getCoachMenuProfile = createAsyncThunk(
@@ -15,16 +16,26 @@ export const getCoachMenuProfile = createAsyncThunk(
     }
 );
 
+
 // Update coach profile
 export const updateCoachmenuprofile = createAsyncThunk(
     'coachMenu/updateprofile',
-    async data => {
-        const response = await axiosInstance.put(
-            `${baseUrl}/coach/coach-profile`,
-            data
-        );
-        console.log(response.data, 'response.data');
-        return response.data;
+    async (data, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.put(
+                `${baseUrl}/coach/coach-profile`,
+                data
+            );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Geting TA Sessions for Leave by Slots'
+                );
+            }
+        }
     }
 );
 
@@ -35,7 +46,6 @@ export const getCoachMenuSlots = createAsyncThunk(
         const response = await axiosInstance.get(
             `${baseUrl}/coach/calendar/slots`
         );
-        console.log(response.data, 'response.data');
         return response.data;
     }
 );
@@ -55,12 +65,23 @@ export const getCoachMenuSlotsByData = createAsyncThunk(
 // Create Coach Slots (
 export const createCoachMenuSlot = createAsyncThunk(
     'coachMenu/createSlots',
-    async data => {
-        const response = await axiosInstance.post(
-            `${baseUrl}/coach/calendar/create-slots`,
-            data
-        );
-        return response.data;
+    async (data, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.post(
+                `${baseUrl}/coach/calendar/create-slots`,
+                data
+            );
+
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Creating coach slots'
+                );
+            }
+        }
     }
 );
 
@@ -71,7 +92,6 @@ export const getCoachMenuSessions = createAsyncThunk(
         const response = await axiosInstance.get(
             `${baseUrl}/coach/calendar/sessions`
         );
-        console.log(response.data, 'response.data');
         return response.data;
     }
 );
@@ -79,12 +99,22 @@ export const getCoachMenuSessions = createAsyncThunk(
 // Create Coach Sessions
 export const createCoachMenuSession = createAsyncThunk(
     'coachMenu/createSession',
-    async data => {
-        const response = await axiosInstance.post(
-            `${baseUrl}/coach/schedule-call/schedule-calls`,
-            data
-        );
-        return response.data;
+    async (data, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.post(
+                `${baseUrl}/coach/schedule-call/schedule-calls`,
+                data
+            );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While scheduling session'
+                );
+            }
+        }
     }
 );
 
@@ -99,12 +129,34 @@ export const getCoachMenuAssignedStudents = createAsyncThunk(
     }
 );
 
+//Get Selected Assigend Students
+export const getSelectedCoachMenuAssignedStudents = createAsyncThunk(
+    'coachMenu/getSelectedAssignedStudents',
+    async (id) => {
+        const response = await axiosInstance.get(
+            `${baseUrl}/coach/calendar/get-schedule-students/${id}`
+        );
+        return response.data;
+    }
+);
+
 // Get Assigned Batches
 export const getCoachMenuAssignedBatches = createAsyncThunk(
     'coachMenu/getAssignedBatches',
     async () => {
         const response = await axiosInstance.get(
             `${baseUrl}/coach/get-batches`
+        );
+        return response.data;
+    }
+);
+
+//get selected Assigned Btches 
+export const getSelectedCoachMenuAssignedBatches = createAsyncThunk(
+    'coachMenu/getSelectedAssignedBatches',
+    async (id) => {
+        const response = await axiosInstance.get(
+            `${baseUrl}/coach/calendar/get-schedule-batches/${id}`
         );
         return response.data;
     }
@@ -125,25 +177,44 @@ export const createCoachMenuLeave = createAsyncThunk(
 // Get Coach Slots for Leave
 export const getCoachMenuSlotsForLeave = createAsyncThunk(
     'coachMenu/getCoachMenuSlotsForLeave',
-    async data => {
-        const response = await axiosInstance.post(
-            `${baseUrl}/coach/calendar/slot-between-dates`,
-            data
-        );
-        return response.data;
+    async (data, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.post(
+                `${baseUrl}/coach/calendar/slot-between-dates`,
+                data
+            );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.error);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Geting Coach Sessions for Leave by Slots'
+                );
+            }
+        }
     }
 );
-
 // Get Coach Session for Leave by slots
 export const getCoachMenuSessionForLeave = createAsyncThunk(
     'coachMenu/getCoachMenuSessionForLeave',
-    async data => {
-        console.log('DATE TO BE SEND IN API', data);
-        const response = await axiosInstance.post(
-            `${baseUrl}/coach/calendar/schedule-by-slots`,
-            data
-        );
-        return response.data;
+    async (data, { rejectWithValue }) => {
+        try {
+            console.log('DATE TO BE SEND IN API', data);
+            const response = await axiosInstance.post(
+                `${baseUrl}/coach/calendar/schedule-by-slots`,
+                data
+            );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Creating TA slots'
+                );
+            }
+        }
     }
 );
 
@@ -172,13 +243,23 @@ export const reasonForCoachMenuLeave = createAsyncThunk(
 // Reschedule Session for Coach Leave
 export const rescheduleSessionForCoachLeave = createAsyncThunk(
     'coachMenu/rescheduleSession',
-    async ({ id, data }) => {
-        console.log('id & data', id, data);
-        const response = await axiosInstance.post(
-            `${baseUrl}/coach/calendar/reschedule/${id}`,
-            data
-        );
-        return response.data;
+    async ({ id, data }, { rejectWithValue }) => {
+        try {
+            console.log('id & data', id, data);
+            const response = await axiosInstance.post(
+                `${baseUrl}/coach/calendar/reschedule/${id}`,
+                data
+            );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Creating TA slots'
+                );
+            }
+        }
     }
 );
 
@@ -225,12 +306,10 @@ export const denyCallRequest = createAsyncThunk(
 //get Coach scheduled Calls
 export const getCoachScheduledCalls = createAsyncThunk(
     'coachMenu/getScheduledCalls',
-    async date => {
+    async data => {
         const response = await axiosInstance.post(
             `${baseUrl}/coach/schedule-call/get-schedule-call`,
-            {
-                date: date,
-            }
+            data
         );
         console.log(response.data, 'response.data');
         return response.data;
@@ -254,15 +333,23 @@ export const getCoachCallRecords = createAsyncThunk(
 
 //upload video
 
-export const uploadSessionRecording = createAsyncThunk(
-    'coachMenu/uploadSessionRecording',
-    async ({ id, session_recording_url }) => {
-        const response = await axiosInstance.put(
-            `${baseUrl}/coach/call-recording/upload-session-recording/${id}`,
-            { session_recording_url }
-        );
+export const coachUploadSessionRecording = createAsyncThunk(
+    'coachMenu/coachUploadSessionRecording',
+    async ({ id, session_recording_url }, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.put(
+                `${baseUrl}/coach/call-recording/upload-session-recording/${id}`,
+                { session_recording_url }
+            );
 
-        return response.data;
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue('An Error Occurred While Upload  video');
+            }
+        }
     }
 );
 
@@ -338,6 +425,83 @@ export const sentMessage = createAsyncThunk(
     }
 );
 
+export const getCoachMyStudents = createAsyncThunk(
+    'coachMenu/getCoachMyStudents',
+    async () => {
+        const response = await axiosInstance.get(`${baseUrl}/coach/my-student`);
+        console.log(response.data, 'response.data');
+        return response.data;
+    }
+);
+
+// Update Students In Coach Session
+export const updateStudentsInCoachSession = createAsyncThunk(
+    'coachMenu/updateStudentsInCoachSession',
+    async ({ id, data }, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.post(
+                `${baseUrl}/coach/calendar/update-schedule-students/${id}`,
+                data
+            );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Update Students in Session'
+                );
+            }
+        }
+    }
+);
+
+// Update Batches In Coach Session
+export const updateBatchesInCoachSession = createAsyncThunk(
+    'coachMenu/updateBatchesInCoachSession',
+    async ({ id, data }, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.post(
+                `${baseUrl}/coach/calendar/update-schedule-batches/${id}`,
+                data
+            );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Updating Batches In Session'
+                );
+            };   
+        }
+    }
+)
+
+
+export const updateCoachScheduledCall = createAsyncThunk(
+    'coachMenu/updateCoachScheduledCall',
+    async ({ id, data }, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.put(
+                `${baseUrl}/coach/schedule-call/update-schedule-calls/${id}`,
+                data
+            );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An error occurred while updating the scheduled call'
+                );
+            }
+        }
+    }
+);
+
+
+
 const initialState = {
     coachProfileData: [], // Coach Profile Data
     updateProfileData: [],
@@ -345,10 +509,12 @@ const initialState = {
     coachSlotsByDate: [], // Coach Slots By Date
     coachSessions: [], // Coach Sessions,
     assignedCoachStudents: [], // Assigned Students to Coach
+    coachScheduleStudents:[],
     assignedCoachBatches: [], // Assigned Students to Batch
+    coachScheduleBatches:[],
     selectedCoachStudents: [], // Selected Students for creating Schedules
     selectedCoachBatches: [], // Selected Batches for creating Schedules
-
+    myStudentData: [], // Coach My Students
     coachSlotsForLeave: [], // Slots For Leave
     coachSessionsForLeave: [], // Sessions for Leave
     coachLeave: [],
@@ -387,6 +553,7 @@ const initialState = {
     error: null,
     coachCallRequests: [],
     coachScheduledCalls: [],
+    updatedCoachScheduledCall: null,
 };
 
 export const coachMenuSlice = createSlice({
@@ -513,11 +680,16 @@ export const coachMenuSlice = createSlice({
         builder.addCase(updateCoachmenuprofile.fulfilled, (state, action) => {
             state.loading = false;
             state.updateProfileData = action.payload.data;
+            toast.success(
+                action.payload.message ||
+                    'Session have been successfully created'
+            );
         });
         builder.addCase(updateCoachmenuprofile.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
             state.updateProfileData = [];
+            toast.error(action.payload || 'Failed to Create TA Sessions');
         });
 
         // Get Coach Slots
@@ -555,11 +727,14 @@ export const coachMenuSlice = createSlice({
         builder.addCase(createCoachMenuSlot.fulfilled, (state, action) => {
             state.loading = false;
             state.coachSlots = action.payload.data;
+            toast.success(
+                action.payload.message || 'Coach Slots Created Successfully'
+            );
         });
         builder.addCase(createCoachMenuSlot.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
-            toast.error(action.error.message);
+            toast.error(action.payload || 'Slot time is clashing');
         });
 
         // Get Coach Sessions
@@ -574,6 +749,23 @@ export const coachMenuSlice = createSlice({
             state.loading = false;
             state.error = action.error.message;
             state.coachSessions = [];
+        });
+        // Create coach Sessions
+        builder.addCase(createCoachMenuSession.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(createCoachMenuSession.fulfilled, (state, action) => {
+            state.loading = false;
+            state.taSessions = action.payload.data;
+            toast.success(
+                action.payload.message ||
+                    'Session have been successfully created'
+            );
+        });
+        builder.addCase(createCoachMenuSession.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+            toast.error(action.payload || 'Failed to Create Coach Sessions');
         });
 
         // Get Coach Assigned Students
@@ -592,6 +784,26 @@ export const coachMenuSlice = createSlice({
             (state, action) => {
                 state.loading = false;
                 state.assignedCoachStudents = [];
+                state.error = action.error.message;
+            }
+        );
+        //get selected Assigend students
+        builder.addCase(getSelectedCoachMenuAssignedStudents.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(
+            getSelectedCoachMenuAssignedStudents.fulfilled,
+            (state, action) => {
+                state.loading = false;
+                console.log("PAYLOAD", action.payload.data)
+                state.coachScheduleStudents = action.payload.data;
+            }
+        );
+        builder.addCase(
+            getSelectedCoachMenuAssignedStudents.rejected,
+            (state, action) => {
+                state.loading = false;
+                state.coachScheduleStudents = [];
                 state.error = action.error.message;
             }
         );
@@ -615,6 +827,26 @@ export const coachMenuSlice = createSlice({
                 state.assignedCoachBatches = [];
             }
         );
+         // Get Selected Coach Assigned Batches
+         builder.addCase(getSelectedCoachMenuAssignedBatches.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(
+            getSelectedCoachMenuAssignedBatches.fulfilled,
+            (state, action) => {
+                state.loading = false;
+                state.coachScheduleBatches = action.payload.data;
+            }
+        );
+        builder.addCase(
+            getSelectedCoachMenuAssignedBatches.rejected,
+            (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+                state.coachScheduleBatches = [];
+            }
+        );
+
 
         // Get Slots for Leave
         builder.addCase(getCoachMenuSlotsForLeave.pending, state => {
@@ -625,14 +857,15 @@ export const coachMenuSlice = createSlice({
             (state, action) => {
                 state.loading = false;
                 state.coachSlotsForLeave = action.payload.data;
+                //toast.success(action.payload.message);
             }
         );
         builder.addCase(getCoachMenuSlotsForLeave.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
             state.coachSlotsForLeave = [];
+            toast.error(action.payload || 'No slots found ');
         });
-
         // Get Sessions For Leave
         builder.addCase(getCoachMenuSessionForLeave.pending, state => {
             state.loading = true;
@@ -642,6 +875,10 @@ export const coachMenuSlice = createSlice({
             (state, action) => {
                 state.loading = false;
                 state.coachSessionsForLeave = action.payload.data;
+                toast.success(
+                    action.payload.message ||
+                        'Leave request has been successfully created.'
+                );
             }
         );
         builder.addCase(
@@ -650,6 +887,7 @@ export const coachMenuSlice = createSlice({
                 state.loading = false;
                 state.error = action.error.message;
                 state.coachSessionsForLeave = [];
+                toast.error(action.payload || 'Failed To Mark Leave');
             }
         );
 
@@ -684,7 +922,20 @@ export const coachMenuSlice = createSlice({
             state.loading = false;
             state.error = action.error.message;
         });
-
+        // reason for leave
+        builder.addCase(reasonForCoachMenuLeave.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(reasonForCoachMenuLeave.fulfilled, (state, action) => {
+            state.loading = false;
+            state.coachLeave = action.payload;
+            toast.success(action.payload.message || 'Successfully created');
+        });
+        builder.addCase(reasonForCoachMenuLeave.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+            toast.error(action.payload || 'Failed To Mark Leave');
+        });
         //get coach call requests
         builder.addCase(getCoachCallRequests.pending, state => {
             state.loading = true;
@@ -760,16 +1011,27 @@ export const coachMenuSlice = createSlice({
         });
 
         //video upload call record
-        builder.addCase(uploadSessionRecording.pending, state => {
+        builder.addCase(coachUploadSessionRecording.pending, state => {
             state.loading = true;
         });
-        builder.addCase(uploadSessionRecording.fulfilled, (state, action) => {
-            // Assuming the response contains session_recording_url
-            state.sessionRecordingUrl = action.payload.session_recording_url;
-        });
-        builder.addCase(uploadSessionRecording.rejected, (state, action) => {
-            state.error = action.payload;
-        });
+        builder.addCase(
+            coachUploadSessionRecording.fulfilled,
+            (state, action) => {
+                // Assuming the response contains session_recording_url
+                state.sessionRecordingUrl =
+                    action.payload.session_recording_url;
+                toast.success(
+                    action.payload.message || 'Video upload successfully !'
+                );
+            }
+        );
+        builder.addCase(
+            coachUploadSessionRecording.rejected,
+            (state, action) => {
+                state.error = action.payload;
+                toast.error(action.payload || 'Failed to Upload video');
+            }
+        );
 
         // session notes
         builder.addCase(assignSessionNotes.pending, state => {
@@ -793,6 +1055,7 @@ export const coachMenuSlice = createSlice({
             (state, action) => {
                 state.loading = false;
                 state.rescheduledSessions = action.payload.data;
+                toast.success(action.payload.message || 'Successfully created');
             }
         );
         builder.addCase(
@@ -800,6 +1063,7 @@ export const coachMenuSlice = createSlice({
             (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
+                toast.error(action.payload || 'Failed To Reschedule');
             }
         );
 
@@ -862,6 +1126,75 @@ export const coachMenuSlice = createSlice({
             state.loading = false;
             state.error = action.error.message;
         });
+
+        // get Coach my students
+        builder.addCase(getCoachMyStudents.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(getCoachMyStudents.fulfilled, (state, action) => {
+            state.loading = false;
+            state.myStudentData = action.payload.data;
+        });
+        builder.addCase(getCoachMyStudents.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+            state.myStudentData = [];
+        });
+
+        // Update Student In Session
+        builder.addCase(updateStudentsInCoachSession.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(
+            updateStudentsInCoachSession.fulfilled,
+            (state, action) => {
+                state.loading = false;
+                // toast.success(
+                //     action.payload.message ||
+                //         'Students Updated Successfully in Session'
+                // );
+                // TODO :----->
+            }
+        );
+        builder.addCase(
+            updateStudentsInCoachSession.rejected,
+            (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+                // toast.error(
+                //     action.payload || 'Failed to Update Students in Session'
+                // );
+            }
+        );
+
+        // Update Batcches In Session
+        builder.addCase(updateBatchesInCoachSession.pending, state => {
+            state.loading = true;
+        })
+        builder.addCase(updateBatchesInCoachSession.fulfilled, (state, action) => {
+            state.loading = false;
+            // toast.success(action.payload.message || 'Batches Updated Successfully in Session')
+            // TODO :----->
+        })
+        builder.addCase(updateBatchesInCoachSession.rejected, (state, action) => {
+            state.loading = false;
+            // toast.error(action.payload || 'Failed To Update Batches in Session')
+            state.error = action.error.message;
+        })
+// update scheduled calls
+        builder.addCase(updateCoachScheduledCall.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(updateCoachScheduledCall.fulfilled, (state, action) => {
+            state.loading = false;
+            //state.updatedScheduledCall = action.payload.data;
+            toast.success(action.payload.message || 'Scheduled call updated successfully');
+        });
+        builder.addCase(updateCoachScheduledCall.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+            toast.error(action.payload || 'Failed to update scheduled call');
+        })
     },
 });
 

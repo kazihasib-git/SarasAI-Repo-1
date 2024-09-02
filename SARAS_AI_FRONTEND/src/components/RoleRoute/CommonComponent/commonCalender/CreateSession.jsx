@@ -34,83 +34,44 @@ import CustomDateField from '../../../CustomFields/CustomDateField';
 import CustomTimeField from '../../../CustomFields/CustomTimeField';
 import CustomTimeZoneForm from '../../../CustomFields/CustomTimeZoneForm';
 import {
+    getAllHosts,
     getPlatforms,
     getTimezone,
 } from '../../../../redux/features/utils/utilSlice';
 import CustomPlatformForm from '../../../CustomFields/CustomPlatformForm';
-
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                padding: '10px 20px',
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
-
-const headers = ['S. No.', 'Slot Date', 'From Time', 'To Time', 'Select'];
-
-const weekDays = [
-    'Sunday',
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-];
+import CustomHostNameForm from '../../../CustomFields/CustomHostNameField';
+import CustomMeetingTypeField from '../../../CustomFields/CustomMeetingTypeField';
+import CustomButton from '../../../CustomFields/CustomButton';
+import { toast } from 'react-toastify';
+import CustomFutureDateField from '../../../CustomFields/CustomFutureDateField';
 
 const timezone = Number(localStorage.getItem('timezone_id'));
 
-const actionButtons = [
-    {
-        type: 'button',
-    },
-];
-
 const CreateSession = ({ componentName }) => {
     const dispatch = useDispatch();
-    const [formData, setFormData] = useState({
+
+    const initialFormData = {
         sessionName: '',
         duration: null,
         message: '',
         students: [],
         batches: [],
         platform_id: null,
+        host_email_id: null,
+        meeting_type: null,
         fromDate: null,
         toDate: null,
         fromTime: null,
         toTime: null,
         timezone_id: timezone ? timezone : null,
-        repeat: 'onetime',
-        selectedDays: [],
-    });
+    };
+
+    const [formData, setFormData] = useState(initialFormData);
+    const [error, setError] = useState({});
+    const meetingTypes = ['webinars', 'meetings'];
+
+    const { timezones, platforms, hosts } = useSelector(state => state.util);
+    const { scheduleNewSessionPopup, students, batches } = useSelector((state) => state.commonCalender);
 
     let sliceName, createSessionApi, getSessionApi, getSlotApi;
 
@@ -137,19 +98,11 @@ const CreateSession = ({ componentName }) => {
             break;
     }
 
-    const { timezones, platforms } = useSelector(state => state.util);
-    const { scheduleNewSessionPopup, students, batches } = useSelector(
-        state => state.commonCalender
-    );
-
     useEffect(() => {
         dispatch(getTimezone());
         dispatch(getPlatforms());
-    }, [dispatch]);
-
-    const [selectedSlot, setSelectedSlot] = useState();
-    const [availableSlotsOptions, setAvailableSlotsOptions] = useState([]);
-    const [error, setError] = useState({});
+        dispatch(getAllHosts());
+    }, [dispatch]);    
 
     const durationOptions = [
         { label: '15 minutes', value: '00:15:00' },
@@ -167,15 +120,6 @@ const CreateSession = ({ componentName }) => {
         setFormData(prev => ({ ...prev, [field]: value }));
     };
 
-    const handleDayChange = day => {
-        setFormData(prev => {
-            const newSelectedDays = prev.selectedDays.includes(day)
-                ? prev.selectedDays.filter(d => d !== day)
-                : [...prev.selectedDays, day];
-            return { ...prev, selectedDays: newSelectedDays };
-        });
-    };
-
     const handleAssignStudents = () => {
         dispatch(openSelectStudents());
     };
@@ -184,30 +128,75 @@ const CreateSession = ({ componentName }) => {
         dispatch(openSelectBatches());
     };
 
-    const validate = () => {};
+    const validate = () => {
+
+        if (!formData.sessionName) {
+            toast.error('Please enter meeting name')
+            return false;
+        }
+
+        // Check if 'duration' is provided and in the correct format
+        if (!formData.duration) {
+            toast.error('Please select duration');
+            return false;
+        }
+
+        if (!formData.platform_id) {
+            toast.error('Please select meeting platform')
+            return false;
+        }
+
+        if (formData.platform_id === 1) {
+            // Check if 'host_email_id' is provided
+            if (!formData.host_email_id) {
+                toast.error('Please Select Host Name');
+                return false;
+            }
+
+            // Check if 'meeting_type' is provided
+            if (!formData.meeting_type) {
+                toast.error('Please Select Meeting Type');
+                return false;
+            }
+        }
+
+        // Check if 'fromDate' is provided
+        if (!formData.fromDate) {
+            toast.error('Please select  from date');
+            return false;
+        }
+
+        // Check if 'fromTime' is provided
+        if (!formData.fromTime) {
+            toast.error('Please add from time');
+            return false;
+        }
+
+        // Chech message
+        if (!formData.message) {
+            toast.error('Please enter message');
+            return false;
+        }
+
+        // Check if 'timezone_id' is provided
+        if (!formData.timezone_id) {
+            toast.error('Please select a timezone');
+            return false;
+        }
+        return true;
+    };
 
     const handleSubmit = e => {
         e.preventDefault();
 
+        if (!validate()) return;
+
         const studentId = students.map(student => student.id);
         const batchId = batches.map(batch => batch.id);
 
-        let weeksArray = Array(7).fill(0);
-        if (formData.repeat === 'recurring') {
-            selectedDays.forEach(day => {
-                const index = weekDays.indexOf(day);
-                weeksArray[index] = 1;
-            });
-        } else if (formData.repeat === 'onetime') {
-            const index = new Date(formData.fromDate).getDay();
-            weeksArray[index] = 1;
-        }
-
         const fromDateTimeString = `${formData.fromDate}T${formData.fromTime}`;
-        console.log('fromDateTimeString:', fromDateTimeString);
 
         const fromDateTime = new Date(fromDateTimeString);
-        console.log('fromDateTime:', fromDateTime);
 
         // Assuming formData.duration is in the format "HH:MM:SS"
         const [hours, minutes, seconds] = formData?.duration
@@ -215,11 +204,8 @@ const CreateSession = ({ componentName }) => {
             .map(Number);
         const durationInMs = (hours * 3600 + minutes * 60 + seconds) * 1000;
 
-        // Calculate endDateTime by adding duration to fromDateTime
         const endDateTime = new Date(fromDateTime.getTime() + durationInMs);
-        console.log('endDateTime:', endDateTime);
 
-        // Extracting time from endDateTime in HH:MM:SS format
         const endTime = endDateTime.toTimeString().split(' ')[0];
 
         const data = {
@@ -234,16 +220,24 @@ const CreateSession = ({ componentName }) => {
             event_status: 'scheduled',
             studentId: studentId,
             batchId: batchId,
-            weeks: weeksArray,
+            host_email_id: formData.host_email_id,
+            meeting_type: formData.meeting_type,
         };
-        console.log('Form Data : ', formData);
-        console.log('DATA :', data);
 
-        dispatch(createSessionApi(data)).then(() => {
-            dispatch(getSessionApi());
-            dispatch(getSlotApi());
-            dispatch(closeScheduleNewSession());
-        });
+        dispatch(createSessionApi(data))
+            .unwrap()
+            .then(() => {
+                dispatch(getSessionApi());
+                dispatch(getSlotApi());
+                // TODO NEED TO CALL GET SCHEDULE CALL API  HERE --->
+                dispatch(closeScheduleNewSession());
+
+                // Reset the form after submission
+                setFormData(initialFormData);
+            })
+            .catch(error => {
+                console.error('API Error:', error);
+            });
     };
 
     const content = (
@@ -273,6 +267,9 @@ const CreateSession = ({ componentName }) => {
                                         label="Session Name"
                                         name="sessionName"
                                         value={formData.sessionName}
+                                        validation={{
+                                            required: 'About Me is required',
+                                        }}
                                         onChange={e =>
                                             handleChange(
                                                 'sessionName',
@@ -281,7 +278,19 @@ const CreateSession = ({ componentName }) => {
                                         }
                                         errors={!!error.sessionName}
                                         helperText={error.sessionName}
-                                        sx={{ width: '100%' }}
+                                        sx={{
+                                            width: '100%',
+                                            '& .MuiOutlinedInput-root': {
+                                                '&.Mui-focused fieldset': {
+                                                    borderColor: '#F56D3B',
+                                                },
+                                            },
+                                            '& .MuiInputLabel-root': {
+                                                '&.Mui-focused': {
+                                                    color: '#000000',
+                                                },
+                                            },
+                                        }}
                                     />
                                 </Grid>
                                 <Grid
@@ -328,6 +337,50 @@ const CreateSession = ({ componentName }) => {
                                         sx={{ width: '100%' }}
                                     />
                                 </Grid>
+                                {formData.platform_id === 1 && (
+                                    <>
+                                        <Grid
+                                            item
+                                            xs={12}
+                                            display="flex"
+                                            justifyContent="center"
+                                        >
+                                            <CustomHostNameForm
+                                                label="Host Name"
+                                                name="host_email_id"
+                                                value={formData.value}
+                                                onChange={e =>
+                                                    handleChange(
+                                                        'host_email_id',
+                                                        e.target.value
+                                                    )
+                                                }
+                                                options={hosts.users}
+                                                errors={!!error.host_email_id}
+                                            />
+                                        </Grid>
+                                        <Grid
+                                            item
+                                            xs={12}
+                                            display="flex"
+                                            justifyContent="center"
+                                        >
+                                            <CustomMeetingTypeField
+                                                label="Meeting Type"
+                                                name="meeting_type"
+                                                value={formData.value}
+                                                onChange={e =>
+                                                    handleChange(
+                                                        'meeting_type',
+                                                        e.target.value
+                                                    )
+                                                }
+                                                options={meetingTypes}
+                                                errors={!!error.meeting_name}
+                                            />
+                                        </Grid>
+                                    </>
+                                )}
                             </Grid>
 
                             <Grid
@@ -343,7 +396,7 @@ const CreateSession = ({ componentName }) => {
                                     display="flex"
                                     justifyContent="center"
                                 >
-                                    <CustomDateField
+                                    <CustomFutureDateField
                                         label="From Date"
                                         name="fromDate"
                                         value={formData.fromDate}
@@ -393,32 +446,43 @@ const CreateSession = ({ componentName }) => {
                                     }
                                     errors={!!error.message}
                                     helperText={error.message}
-                                    sx={{ width: '100%' }}
+                                    sx={{
+                                        width: '100%',
+                                        '& .MuiOutlinedInput-root': {
+                                            '&.Mui-focused fieldset': {
+                                                borderColor: '#F56D3B',
+                                            },
+                                        },
+                                        '& .MuiInputLabel-root': {
+                                            '&.Mui-focused': {
+                                                color: '#000000',
+                                            },
+                                        },
+                                    }}
                                     multiline
                                     rows={4}
                                 />
                             </Grid>
 
-                            {/* <Grid
+                            <Grid
                                 item
                                 xs={12}
                                 display="flex"
                                 justifyContent="center"
                             >
                                 <CustomTimeZoneForm
-                                    label="Timezone"
-                                    name="timezone"
+
+
+                                    label="Time Zone"
+                                    name="timezone_id"
                                     value={formData.timezone_id}
-                                    onChange={e =>
-                                        handleChange('timezone_id', e.target.value)
-                                    }
-                                    options={timezones}
+                                    onChange={e => handleChange('timezone_id', e.target.value)}
                                     errors={!!error.timezone}
                                     helperText={error.timezone}
                                     sx={{ width: '100%' }}
+                                    options={timezones}
                                 />
-                            </Grid> */}
-
+                            </Grid>
                             <Grid
                                 item
                                 xs={12}
@@ -441,7 +505,7 @@ const CreateSession = ({ componentName }) => {
                                             borderRadius: '50px',
                                             textTransform: 'none',
                                             padding: '18px 30px',
-                                            fontWeight: '700',
+                                            // fontWeight: '700',
                                             fontFamily: 'Regular',
                                             fontSize: '16px',
                                             '&:hover': {
@@ -449,7 +513,7 @@ const CreateSession = ({ componentName }) => {
                                             },
                                         }}
                                     >
-                                        Edit Students
+                                        Select Students
                                     </Button>
                                     <Button
                                         variant="outlined"
@@ -462,7 +526,7 @@ const CreateSession = ({ componentName }) => {
                                             border: '2px solid #F56D3B',
                                             borderRadius: '50px',
                                             textTransform: 'none',
-                                            fontWeight: '700',
+                                            // fontWeight: '700',
                                             fontSize: '16px',
                                             fontFamily: 'Regular',
                                             padding: '18px 30px',
@@ -476,101 +540,6 @@ const CreateSession = ({ componentName }) => {
                                     </Button>
                                 </Box>
                             </Grid>
-
-                            <Grid
-                                container
-                                spacing={3}
-                                justifyContent="center"
-                                sx={{ pt: 3 }}
-                            >
-                                <Grid
-                                    item
-                                    xs={12}
-                                    display="flex"
-                                    justifyContent="center"
-                                >
-                                    <FormControl component="fieldset">
-                                        <RadioGroup
-                                            row
-                                            value={formData.repeat}
-                                            onChange={e =>
-                                                handleChange(
-                                                    'repeat',
-                                                    e.target.value
-                                                )
-                                            }
-                                            sx={{ justifyContent: 'center' }}
-                                        >
-                                            <FormControlLabel
-                                                value="onetime"
-                                                control={<Radio />}
-                                                label="One-Time"
-                                            />
-                                            <FormControlLabel
-                                                value="recurring"
-                                                control={<Radio />}
-                                                label="Recurring"
-                                            />
-                                        </RadioGroup>
-                                    </FormControl>
-                                </Grid>
-                            </Grid>
-
-                            {formData.repeat === 'recurring' && (
-                                <>
-                                    <Grid
-                                        container
-                                        spacing={3}
-                                        justifyContent="center"
-                                        sx={{ pt: 3 }}
-                                    >
-                                        <Grid item xs={12}>
-                                            <FormControl component="fieldset">
-                                                <FormGroup row>
-                                                    {weekDays.map(day => (
-                                                        <FormControlLabel
-                                                            key={day}
-                                                            control={
-                                                                <Checkbox
-                                                                    checked={formData.selectedDays.includes(
-                                                                        day
-                                                                    )}
-                                                                    onChange={() =>
-                                                                        handleDayChange(
-                                                                            day
-                                                                        )
-                                                                    }
-                                                                    name={day}
-                                                                />
-                                                            }
-                                                            label={day}
-                                                        />
-                                                    ))}
-                                                </FormGroup>
-                                            </FormControl>
-                                        </Grid>
-                                    </Grid>
-                                    <Grid
-                                        item
-                                        xs={12}
-                                        sm={6}
-                                        display="flex"
-                                        sx={{ pt: 3 }}
-                                        justifyContent="center"
-                                    >
-                                        <CustomDateField
-                                            label="To Date"
-                                            value={formData.toDate}
-                                            onChange={date =>
-                                                handleChange('toDate', date)
-                                            }
-                                            errors={!!error.toDate}
-                                            helperText={error.toDate}
-                                            sx={{ width: '100%' }}
-                                        />
-                                    </Grid>
-                                </>
-                            )}
                         </Grid>
                     </Box>
                 </form>
@@ -587,6 +556,7 @@ const CreateSession = ({ componentName }) => {
                 color: '#FFFFFF',
                 textTransform: 'none',
                 fontFamily: 'Bold',
+                textTransform: 'none',
             }}
         >
             Submit
@@ -596,7 +566,10 @@ const CreateSession = ({ componentName }) => {
     return (
         <ReusableDialog
             open={scheduleNewSessionPopup}
-            handleClose={() => dispatch(closeScheduleNewSession())}
+            handleClose={() => {
+                dispatch(closeScheduleNewSession());
+                setFormData(initialFormData);
+            }}
             title={`Create New Session`}
             content={content}
             actions={actions}

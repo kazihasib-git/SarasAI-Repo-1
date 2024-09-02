@@ -18,9 +18,10 @@ import {
 import { getCoachAssignStudents } from '../../redux/features/adminModule/coach/coachSlice';
 import { useParams } from 'react-router-dom';
 import CustomButton from '../CustomFields/CustomButton';
+import { toast } from 'react-toastify';
 
 const EditStudents = ({ componentname }) => {
-    console.log('Component Name :', componentname);
+    
     const dispatch = useDispatch();
     const { id, name } = useParams();
 
@@ -39,9 +40,10 @@ const EditStudents = ({ componentname }) => {
         getAssignStudentAction,
         editStudentKey,
         selectedStudentKey,
-        openSchedulingPopup;
+        openSchedulingPopup,
+        selectedBatches;
 
-    let schedulingState, nameKeyScheduling, idKeyScheduling;
+    let schedulingState, nameKeyScheduling, idKeyScheduling,timezoneId;
 
     switch (componentname) {
         case 'COACHSCHEDULE':
@@ -54,9 +56,11 @@ const EditStudents = ({ componentname }) => {
             closeDialogAction = closeCoachEditStudent;
             getAssignStudentAction = getCoachAssignStudents;
             schedulingState = useSelector(state => state.coachScheduling);
+            timezoneId = useSelector(state => state.coachScheduling.coachTimezone);
             nameKeyScheduling = 'coachName';
             idKeyScheduling = 'coachID';
             openSchedulingPopup = openCoachScheduleSession;
+            selectedBatches = 'batches';
             break;
 
         case 'TASCHEDULE':
@@ -69,9 +73,11 @@ const EditStudents = ({ componentname }) => {
             closeDialogAction = closeEditStudent;
             getAssignStudentAction = getAssignStudents;
             schedulingState = useSelector(state => state.taScheduling);
+            timezoneId = useSelector(state => state.taScheduling.taTimezone);
             nameKeyScheduling = 'taName';
             idKeyScheduling = 'taID';
             openSchedulingPopup = openScheduleSession;
+            selectedBatches = 'batches';
             break;
 
         default:
@@ -84,9 +90,11 @@ const EditStudents = ({ componentname }) => {
             closeDialogAction = null;
             getAssignStudentAction = null;
             schedulingState = null;
+            timezoneId = null;
             nameKeyScheduling = null;
             idKeyScheduling = null;
             openSchedulingPopup = null;
+            selectedBatches = null;
             break;
     }
 
@@ -97,6 +105,7 @@ const EditStudents = ({ componentname }) => {
         [idKeyScheduling]: assignedId,
         [assignStudentOpenKey]: assignStudentOpen,
         [selectedStudentKey]: selectedStudent,
+        [selectedBatches]: batches,
     } = schedulingState || {};
 
     const {
@@ -122,7 +131,9 @@ const EditStudents = ({ componentname }) => {
     useEffect(() => {
         if (assignedStudents) {
             // Transform and filter the data
-            const transformedData = assignedStudents.map((stu, index) => ({
+            const transformedData = assignedStudents
+            .filter(item => item.is_active === 1)
+            .map((stu, index) => ({
                 'S. No.': index + 1,
                 'Student Name': stu.student.name,
                 Program:
@@ -202,13 +213,54 @@ const EditStudents = ({ componentname }) => {
             : [];
 
     useEffect(() => {
-        console.log('Selected Student inside use Effect : ', selectedStudent);
-        if (selectedStudent) {
-            setSelectedStudents(selectedStudent.map(student => student.id));
-        }
-    }, [selectedStudent]);
+        console.log('BATCHES SSS:', batches);
+        console.log('assignedStudents SS:', assignedStudents);
 
-    console.log('already selected students: ', selectedStudent);
+        let updatedSelectedStudents = [];
+
+        if (selectedStudent && selectedStudent.length > 0) {
+            // Set selectedStudents based on selectedStudent first
+            updatedSelectedStudents = selectedStudent.map(
+                student => student.id
+            );
+        }
+
+        if (
+            batches &&
+            batches.length > 0 &&
+            assignedStudents &&
+            assignedStudents.length > 0
+        ) {
+            const assignedBatchIds = assignedStudents.flatMap(stu =>
+                stu.student.batches.map(batch => batch.batch_id)
+            );
+
+            console.log('Assigned Batch IDs:', assignedBatchIds);
+
+            const matchingBatchIds = batches
+                .filter(batch => assignedBatchIds.includes(batch.id))
+                .map(batch => batch.id);
+
+            console.log('Matched Batch Ids:', matchingBatchIds);
+
+            const matchingStudentIds = assignedStudents
+                .filter(stu =>
+                    stu.student.batches.some(batch =>
+                        matchingBatchIds.includes(batch.batch_id)
+                    )
+                )
+                .map(stu => stu.student.id);
+
+            console.log('Matching Student IDs:', matchingStudentIds);
+
+            // Merge or override based on specific logic (here we combine both lists)
+            updatedSelectedStudents = [
+                ...new Set([...updatedSelectedStudents, ...matchingStudentIds]),
+            ];
+        }
+
+        setSelectedStudents(updatedSelectedStudents);
+    }, [selectedStudent, batches, assignedStudents]);
 
     const handleSelectStudent = id => {
         setSelectedStudents(prev =>
@@ -216,9 +268,19 @@ const EditStudents = ({ componentname }) => {
         );
     };
 
-    console.log('Selected Students', selectedStudents);
+    const validate = () => {
+        if (selectedStudents.length === 0) {
+            toast.error('Please Select At Least One Student');
+            return false; // Return false if validation fails
+        }
+        return true; // Return true if validation passes
+    };
+
 
     const handleSubmit = () => {
+        
+        if (!validate()) return;
+        
         const id =
             componentname === 'ADDITCOACH'
                 ? coachID || assignedId
@@ -232,18 +294,18 @@ const EditStudents = ({ componentname }) => {
                 : [],
         };
 
-        console.log('SUBMIT DATA :', data);
         dispatch(
             openSchedulingPopup({
                 id,
                 name: assignedName,
                 student: selectedStudents.map(id => ({ id })),
+                timezone: timezoneId,
             })
         );
 
         dispatch(closeDialogAction());
     };
-
+console.log('student data ::' , filteredStudents)
     const headers = ['S. No.', 'Student Name', 'Program', 'Batch', 'Select'];
 
     const content = (
@@ -317,6 +379,7 @@ const EditStudents = ({ componentname }) => {
                 backgroundColor: '#F56D3B',
                 borderColor: '#F56D3B',
                 color: '#FFFFFF',
+                textTransform: 'none',
             }}
         >
             Submit

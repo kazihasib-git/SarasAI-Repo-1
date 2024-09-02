@@ -3,7 +3,7 @@ import ReusableDialog from '../../../CustomFields/ReusableDialog';
 import { Box, Button, Grid, styled } from '@mui/material';
 import CustomTextField from '../../../CustomFields/CustomTextField';
 import { useDispatch, useSelector } from 'react-redux';
-
+import { toast } from 'react-toastify';
 import {
     createWOLCategory,
     updateeWOLCategory,
@@ -69,6 +69,7 @@ const AddEditWOLCategory = () => {
                 backgroundColor: '#F56D3B',
                 borderColor: '#F56D3B',
                 color: '#FFFFFF',
+                textTransform: 'none' 
             }}
         >
             Update
@@ -80,6 +81,7 @@ const AddEditWOLCategory = () => {
                 backgroundColor: '#F56D3B',
                 borderColor: '#F56D3B',
                 color: '#FFFFFF',
+                textTransform: 'none',
             }}
         >
             Submit

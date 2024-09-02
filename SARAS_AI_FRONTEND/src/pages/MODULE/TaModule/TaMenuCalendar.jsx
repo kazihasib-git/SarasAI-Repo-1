@@ -2,7 +2,6 @@ import { Box, DialogActions, Grid, Typography, Button } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import CalendarComponent from '../../../components/Calender/BigCalendar';
-
 import { useDispatch, useSelector } from 'react-redux';
 import TaMenuSidebar from './TeachingAssistantSidebar';
 import Header from '../../../components/Header/Header';
@@ -22,6 +21,18 @@ import SelectBatches from '../../../components/RoleRoute/CommonComponent/commonC
 import MarkLeaveDate from '../../../components/RoleRoute/CommonComponent/commonCalender/MarkLeaveDate';
 import CreatedSlots from '../../../components/RoleRoute/CommonComponent/commonCalender/CreatedSlots';
 import SessionLink from '../../../components/RoleRoute/CommonComponent/commonCalender/SessionLink';
+import { convertFromUTC } from '../../../utils/dateAndtimeConversion';
+import { timezoneIdToName } from '../../../utils/timezoneIdToName';
+import { getTimezone } from '../../../redux/features/utils/utilSlice';
+import CancelSession from '../../../components/RoleRoute/CommonComponent/commonCalender/CancelSession';
+import RescheduleCreatedSession from '../../../components/RoleRoute/CommonComponent/commonCalender/RescheduleCreatedSession';
+import LeaveReason from '../../../components/RoleRoute/CommonComponent/commonCalender/LeaveReason';
+import CreatedSessions from '../../../components/RoleRoute/CommonComponent/commonCalender/CreatedSessions';
+import EditStudentsFromSession from '../../../components/availability/EditStudentsFromSession';
+import EditBatchesFromSession from '../../../components/availability/EditBatchesFromSession';
+import EditBatchesSessionLink from '../../../components/RoleRoute/CommonComponent/commonCalender/EditBatchesSessionLink';
+import EditStudentsSessionLink from '../../../components/RoleRoute/CommonComponent/commonCalender/EditStudentsSessionLink';
+import { ConstructionOutlined } from '@mui/icons-material';
 
 const CustomButton = ({
     onClick,
@@ -58,10 +69,17 @@ const CustomButton = ({
     );
 };
 
+const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
+
 const TAMenuCalendar = () => {
+    console.log('timezoneID' , storedTimezoneId) ; 
+    const { timezones } = useSelector(state => state.util);
     const dispatch = useDispatch();
-    const [slotEvent, setSlotEvent] = useState([]);
-    const [sessionEvent, setSessionEvent] = useState([]);
+    const [eventsList, setEventsList] = useState([]);
+    const [slotViewData, setSlotViewData] = useState([]);
+    const [platformName, setPlatformName] = useState(null);
+    const [platformUrl, setplatformUrl] = useState(null);
+    const [selectedSession, setSelectedSession] = useState(null);
 
     const {
         createNewSlotPopup,
@@ -71,37 +89,180 @@ const TAMenuCalendar = () => {
         markLeave,
         createdSlots,
         openSession,
+        sessionEventData,
+        openCreatedSessions,
+        openCancelSession,
+        openLeaveReason,
+        RescheduleSession,
+        openEditStudentsPopup,
+        openEditBatchesPopup,
     } = useSelector(state => state.commonCalender);
 
     const { taSlots, taSessions } = useSelector(state => state.taMenu);
+    console.log('taSessions', taSessions);
 
     useEffect(() => {
         dispatch(getTaMenuSlots());
         dispatch(getTaMenuSessions());
+        dispatch(getTimezone());
     }, [dispatch]);
 
     useEffect(() => {
-        if (taSessions && taSessions.length > 0) {
-            const transformedEvents = taSessions.map(event => ({
-                title: event.meeting_name,
-                start: new Date(
-                    event.date.split(' ')[0] + 'T' + event.start_time
-                ),
-                end: new Date(event.date.split(' ')[0] + 'T' + event.end_time),
-            }));
-            setSessionEvent(transformedEvents);
-        }
-    }, [taSessions]);
+        convertEvents();
+    }, [taSessions, timezones]);
 
     useEffect(() => {
-        if (taSlots && taSlots.length > 0) {
-            const transformedSlots = taSlots.map(slot => ({
-                startDate: new Date(slot.slot_date + 'T' + slot.from_time),
-                endDate: new Date(slot.slot_date + 'T' + slot.to_time),
-            }));
-            setSlotEvent(transformedSlots);
+        convertSlots();
+    }, [taSlots, timezones]);
+
+    const convertEvents = async () => {
+        if (
+            taSessions &&
+            taSessions.length > 0 &&
+            storedTimezoneId &&
+            timezones
+        ) {
+            const timezonename = timezoneIdToName(storedTimezoneId, timezones);
+            if (!timezonename) {
+                console.error('Invalid timezone name');
+                setEventsList([]);
+                return;
+            }
+            try {
+                const processedEvents = [];
+                await Promise.all(
+                    taSessions.map(async event => {
+                        const localTime = await convertFromUTC({
+                            start_date: event.date.split(' ')[0],
+                            start_time: event.start_time,
+                            end_time: event.end_time,
+                            end_date: event.end_date ? event.end_date : event.date.split(' ')[0],
+                            timezonename,
+                        });
+
+                        const startDateTime = new Date(
+                            `${localTime.start_date}T${localTime.start_time}`
+                        );
+                        const endDateTime = new Date(
+                            `${localTime.end_date}T${localTime.end_time}`
+                        );
+
+                        if (localTime.start_date !== localTime.end_date) {
+                            processedEvents.push(
+                                {
+                                    id: event.id,
+                                    start: startDateTime,
+                                    end: new Date(
+                                        `${localTime.start_date}T23:59:59`
+                                    ),
+                                    meetingName: event.meeting_name,
+                                    meetingId: event.meeting_id,
+                                    platformId: event.platform_id,
+                                    platform_tools: event.platform_tool_details,
+                                    platform_meeting:
+                                        event.platform_meeting_details,
+                                    students: event.students,
+                                    batches: event.batch,
+                                },
+                                {
+                                    id: event.id,
+                                    start: new Date(
+                                        `${localTime.end_date}T00:00:00`
+                                    ),
+                                    end: endDateTime,
+                                    meetingName: event.meeting_name,
+                                    meetingId: event.meeting_id,
+                                    platformId: event.platform_id,
+                                    platform_tools: event.platform_tool_details,
+                                    platform_meeting:
+                                        event.platform_meeting_details,
+                                    students: event.students,
+                                    batches: event.batch,
+                                }
+                            );
+                        } else {
+                            processedEvents.push({
+                                id: event.id,
+                                start: startDateTime,
+                                end: endDateTime,
+                                meetingName: event.meeting_name,
+                                meetingId: event.meeting_id,
+                                platformId: event.platform_id,
+                                platform_tools: event.platform_tool_details,
+                                platform_meeting:
+                                    event.platform_meeting_details,
+                                students: event.students,
+                                batches: event.batch,
+                            });
+                        }
+                    })
+                );
+                setEventsList(processedEvents);
+            } catch (error) {
+                console.error('Error converting events:', error);
+                setEventsList([]);
+            }
+        } else {
+            setEventsList([]);
         }
-    }, [taSlots]);
+    };
+
+    const convertSlots = async () => {
+        if (taSlots && taSlots.length > 0 && storedTimezoneId && timezones) {
+            const timezonename = timezoneIdToName(storedTimezoneId, timezones);
+            try {
+                const processedSlots = [];
+                await Promise.all(
+                    taSlots.map(async slot => {
+                        const localTime = await convertFromUTC({
+                            start_date: slot.slot_date,
+                            start_time: slot.from_time,
+                            end_time: slot.to_time,
+                            end_date: slot.slot_end_date,
+                            timezonename,
+                        });
+                        const startDateTime = new Date(
+                            `${localTime.start_date}T${localTime.start_time}`
+                        );
+                        const endDateTime = new Date(
+                            `${localTime.end_date}T${localTime.end_time}`
+                        );
+
+                        if (localTime.start_date !== localTime.end_date) {
+                            processedSlots.push(
+                                {
+                                    startDate: startDateTime,
+                                    endDate: new Date(
+                                        `${localTime.start_date}T23:59:59`
+                                    ),
+                                    leave: slot.leaves,
+                                },
+                                {
+                                    startDate: new Date(
+                                        `${localTime.end_date}T00:00:00`
+                                    ),
+                                    endDate: endDateTime,
+                                    leave: slot.leaves,
+                                }
+                            );
+                        } else {
+                            processedSlots.push({
+                                startDate: startDateTime,
+                                endDate: endDateTime,
+                                leave: slot.leaves,
+                            });
+                        }
+                    })
+                );
+                setSlotViewData(processedSlots);
+            } catch (error) {
+                console.error('Error converting slots:', error);
+                setSlotViewData([]);
+            }
+        } else {
+            setSlotViewData([]);
+        }
+    };
 
     const handleScheduleNewSession = () => {
         dispatch(openScheduleNewSession());
@@ -114,7 +275,35 @@ const TAMenuCalendar = () => {
     const handleCreateNewSlot = () => {
         dispatch(openCreateNewSlot());
     };
+    const handleSessionSelect = taSessions => {
+        setSelectedSession(taSessions.id);
+    };
 
+    const targetSessionId = sessionEventData.id;
+    console.log(targetSessionId);
+
+    useEffect(() => {
+        const targetSession = taSessions.find(
+            session => session.id === targetSessionId
+        );
+
+        if (targetSession) {
+            const platformName = targetSession.platform_tool_details?.name;
+            const platformUrl =
+                targetSession.platform_meeting_details?.host_meeting_url;
+
+            setPlatformName(platformName);
+            setplatformUrl(platformUrl);
+        } else {
+            setPlatformName('');
+            setplatformUrl('');
+        }
+
+        console.log(`Platform Name: ${platformName}`);
+        console.log(`Platform Meeting URL: ${platformUrl}`);
+    }, [taSessions, targetSessionId]);
+
+    console.log('storedtimezoneID to be sent ' , storedTimezoneId) ; 
     return (
         <>
             <Header />
@@ -161,7 +350,9 @@ const TAMenuCalendar = () => {
                                     onClick={handleCreateNewSlot}
                                     style={{ textTransform: 'none' }}
                                 >
-                                    {/* <AddCircleOutlineIcon /> */}
+                                    <AddCircleOutlineIcon
+                                        sx={{ marginRight: 1 }}
+                                    />
                                     Create New Slot
                                 </CustomButton>
                             </Box>
@@ -170,79 +361,55 @@ const TAMenuCalendar = () => {
                 </DialogActions>
 
                 <CalendarComponent
-                    eventsList={sessionEvent}
-                    slotData={slotEvent}
+                    eventsList={eventsList}
+                    slotData={slotViewData}
                     componentName={'TAMENU'}
+                    onSelectEvent={handleSessionSelect}
                 />
-                {createNewSlotPopup && <CreateSlot componentName={'TAMENU'} />}
+                {createNewSlotPopup && <CreateSlot componentName={'TAMENU'} timezoneID={storedTimezoneId}/>}
                 {scheduleNewSessionPopup && (
-                    <CreateSession componentName={'TAMENU'} />
+                    <CreateSession componentName={'TAMENU'} timezoneID={storedTimezoneId} />
                 )}
-
                 {selectStudentPopup && (
                     <SelectStudents componentName={'TAMENU'} />
                 )}
                 {selectBatchPopup && <SelectBatches componentName={'TAMENU'} />}
-
-                {markLeave && <MarkLeaveDate componentName={'TAMENU'} />}
-                {createdSlots && <CreatedSlots componentName={'TAMENU'} />}
-                {openSession && <SessionLink componentName={'TAMENU'} />}
-                {/*
+                {markLeave && <MarkLeaveDate componentName={'TAMENU'} timezoneID={storedTimezoneId}/>}
+                {createdSlots && <CreatedSlots componentName={'TAMENU'} timezoneID={storedTimezoneId}/>}
                 
-                {/*{sheduleNewSession && <ScheduleSession open={sheduleNewSession} handleClose={() => setSheduleNewSession(false)} componentName={"TACALENDER"} />} */}
-                {/* {markLeaveOpen && (
-                    <MarkLeave
-                        id={id}
-                        name={name}
-                        componentName={'TACALENDER'}
+                {openCreatedSessions && (
+                    <CreatedSessions componentName={'TAMENU'} timezoneID={storedTimezoneId} />
+                )}
+                
+                {openCancelSession && (
+                    <CancelSession componentName={'TAMENU'} />
+                )}
+                {RescheduleSession && (
+                    <RescheduleCreatedSession componentName={'TAMENU'} timezoneID={storedTimezoneId}/>
+                )}
+                {openLeaveReason && (
+                    <LeaveReason componentName={'TAMENU'} />
+                )}
+                {openSession && (
+                    <SessionLink
+                        componentName={'TAMENU'}
+                        taSessions={taSessions}
+                        platformName={platformName}
+                        platformUrl={platformUrl}
                     />
                 )}
-                {scheduledSlotsOpen && (
-                    <Slots id={id} name={name} componentName={'TACALENDER'} />
+                 {openEditStudentsPopup && (
+                    <EditStudentsSessionLink
+                        componentName={'TAMENU'}
+                        />
                 )}
-                {scheduledSessionOpen && (
-                    <ScheduledSessions
-                        id={id}
-                        name={name}
-                        componentName={'TACALENDER'}
+                {openEditBatchesPopup && (
+                    <EditBatchesSessionLink
+                        componentName={'TAMENU'}
                     />
                 )}
-                {cancelSessionOpen && (
-                    <CancelSchedule
-                        id={id}
-                        name={name}
-                        componentName={'TACALENDER'}
-                    />
-                )}
-                {reasonForLeaveOpen && (
-                    <ReasonForLeave
-                        id={id}
-                        name={name}
-                        componentName={'TACALENDER'}
-                    />
-                )}
-                {resheduleSessionOpen && (
-                    <ReschedulingSession
-                        id={id}
-                        name={name}
-                        componentName={'TACALENDER'}
-                    />
-                )} */}
-                {/* {deleteFutureSlots && (
-        <DeleteAllSlots
-          open={deleteFutureSlots}
-          handleClose={() => setDeleteFutureSlots(false)}
-          id={id}
-          name={name}
-          componentName={"TACALENDER"}
-        />
-      )} */}
-
-                {/* {assignStudentOpen && <AssignStudents componentname="ADDEDITTA" />}
-                {assignBatchOpen && <AssignBatches componentname="ADDEDITTA" />} */}
             </Box>
         </>
     );
 };
-
 export default TAMenuCalendar;

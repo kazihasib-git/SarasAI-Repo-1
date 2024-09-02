@@ -19,11 +19,21 @@ import editIcon from '../../assets/editIcon.png';
 import bin from '../../assets/bin.png';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { useDispatch } from 'react-redux';
-import { activeDeactiveWOLCategory } from '../../redux/features/adminModule/coachingTools/wol/wolSlice';
+import {
+    activeDeactiveWOLCategory,
+    toggleWOLQuestionStatus,
+    updateWOLQuestion,
+} from '../../redux/features/adminModule/coachingTools/wol/wolSlice';
 import { openScheduleSession } from '../../redux/features/adminModule/ta/taScheduling';
-
-import { updateTA } from '../../redux/features/adminModule/ta/taSlice';
-import { updateCoach } from '../../redux/features/adminModule/coach/coachSlice';
+import { openDeleteTaSlots } from '../../redux/features/adminModule/ta/taAvialability';
+import {
+    updateTA,
+    activate_deactive_TA,
+} from '../../redux/features/adminModule/ta/taSlice';
+import {
+    activate_deactivate_Coach,
+    updateCoach,
+} from '../../redux/features/adminModule/coach/coachSlice';
 import { openCoachScheduleSession } from '../../redux/features/adminModule/coach/coachSchedule';
 import AssessmentDialog from '../../pages/MODULE/coachModule/AssessmentDialog';
 import {
@@ -34,6 +44,7 @@ import {
     deleteCoachMapping,
     showCoachMapping,
 } from '../../redux/features/adminModule/coach/coachSlice';
+import DeleteConfirmation from './DeleteConfirmation';
 
 const DynamicTable = ({
     headers,
@@ -41,6 +52,8 @@ const DynamicTable = ({
     actionButtons,
     componentName,
 }) => {
+    const itemsPerPage = 10;
+
     const [data, setData] = useState(
         initialData.map(item => ({
             ...item,
@@ -53,6 +66,8 @@ const DynamicTable = ({
     const [modalOpen, setModalOpen] = useState(false);
     const [modalData, setModalData] = useState(null);
     const [assessmentData, setAssessmentData] = useState([]);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [itemIdToDelete, setItemIdToDelete] = useState(null);
 
     useEffect(() => {
         setData(
@@ -61,10 +76,16 @@ const DynamicTable = ({
                 is_active: item.is_active !== undefined ? item.is_active : 0,
             }))
         );
-        setCurrentPage(1); // Reset to first page whenever initialData changes
-    }, [initialData]);
 
-    const itemsPerPage = 10;
+        // Calculate new total pages
+        const newTotalPages = Math.ceil(initialData.length / itemsPerPage);
+
+        // Adjust current page if it's now out of bounds
+        if (currentPage > newTotalPages) {
+            setCurrentPage(Math.max(1, newTotalPages));
+        }
+    }, [initialData, currentPage]);
+
     const totalPages = Math.ceil(data.length / itemsPerPage);
     const currentData = data.slice(
         (currentPage - 1) * itemsPerPage,
@@ -74,9 +95,25 @@ const DynamicTable = ({
     const dispatch = useDispatch();
 
     const handlePageChange = (event, pageNumber) => {
-        setCurrentPage(pageNumber);
+        const maxPage = Math.ceil(data.length / itemsPerPage);
+        setCurrentPage(Math.min(Math.max(1, pageNumber), maxPage));
+    };
+    const handleOpenDialog = itemId => {
+        setItemIdToDelete(itemId);
+        setIsDialogOpen(true);
     };
 
+    const handleCloseDialog = () => {
+        console.log('handledelte');
+        setIsDialogOpen(false);
+        setItemIdToDelete(null);
+    };
+    const handleConfirmDelete = id => {
+        if (id) {
+            handleDelete(id);
+        }
+        handleCloseDialog();
+    };
     const handleDelete = id => {
         console.log('COMPONENTNAME : ', componentName);
         if (componentName === 'TAMAPPING') {
@@ -88,7 +125,6 @@ const DynamicTable = ({
                 dispatch(showCoachMapping());
             });
         }
-
         console.log('Deleting item with id:', id);
     };
 
@@ -154,11 +190,22 @@ const DynamicTable = ({
                 } else if (type === 'batches') {
                     navigate(`/active-Coach-batches/${id}`); // Append id as a parameter
                 }
+            } else if (componentName === 'COACHCOURSEMAPPING') {
+                if (type === 'courses') {
+                    console.log(id);
+                    navigate(`/active-Coach-courses/${id}`); // Append id as a parameter
+                }
+            } else if (componentName === 'TACOURSEMAPPING') {
+                if (type === 'courses') {
+                    console.log(id);
+                    navigate(`/active-Ta-courses/${id}`); // Append id as a parameter
+                }
             }
         }
     };
 
     const handlePopup = (id, name, timezone) => {
+        console.log('schedulingnn timezoneid', id);
         const data = { id, name, timezone };
         if (componentName === 'TAMAPPING') {
             dispatch(openScheduleSession(data));
@@ -173,11 +220,13 @@ const DynamicTable = ({
             event.preventDefault();
             event.stopPropagation();
         }
+        
         const updatedData = data.map(item =>
             item.id === id
                 ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
                 : item
         );
+        
         setData(updatedData);
         // const toggleButton = actionButtons.find(
         //     action => action.type === 'switch'
@@ -191,16 +240,23 @@ const DynamicTable = ({
 
         switch (componentName) {
             case 'MANAGETA':
-                // dispatch(updateTA({ id, data: requestData }));
+                dispatch(activate_deactive_TA({ id }));
+                break;
 
-                break;
             case 'MANAGECOACH':
-                // dispatch(updateCoach({ id, data: requestData }));
+                dispatch(activate_deactivate_Coach({ id }));
                 break;
+
             case 'WOLCATEGORY':
                 console.log('WOL Categories : ', id, requestData);
                 dispatch(activeDeactiveWOLCategory(id));
                 break;
+
+            case 'WOLQUESTION':
+                console.log('WOL WOLQUESTION : ', id);
+                dispatch(toggleWOLQuestionStatus(id));
+                break;
+
             default:
                 console.warn(
                     `No API call defined for component: ${componentName}`
@@ -211,9 +267,11 @@ const DynamicTable = ({
 
     const getColorForAvailability = availability => {
         switch (availability) {
-            case 'available':
+            case 'Available':
                 return '#00C808';
             case 'On leave':
+                return '#F48606';
+            case 'Leave':
                 return '#F48606';
             case 'In active':
                 return '#060FDD';
@@ -311,6 +369,27 @@ const DynamicTable = ({
                                                     onClick={() =>
                                                         handleView(
                                                             'batches',
+                                                            item.id
+                                                        )
+                                                    }
+                                                >
+                                                    View
+                                                </CustomButton>
+                                            </td>
+                                        );
+                                    } else if (key === 'Active_Courses') {
+                                        return (
+                                            <td key={idx}>
+                                                {item[key]}{' '}
+                                                <CustomButton
+                                                    variant="outlined"
+                                                    color="secondary"
+                                                    endIcon={
+                                                        <CallMadeOutlinedIcon />
+                                                    }
+                                                    onClick={() =>
+                                                        handleView(
+                                                            'courses',
                                                             item.id
                                                         )
                                                     }
@@ -427,24 +506,31 @@ const DynamicTable = ({
                                             }
                                             if (button.type === 'delete') {
                                                 return (
-                                                    <IconButton
-                                                        key={idx}
-                                                        color="primary"
-                                                        onClick={() =>
-                                                            handleDelete(
-                                                                item.id
-                                                            )
-                                                        }
-                                                    >
-                                                        <img
-                                                            src={bin}
-                                                            alt=""
-                                                            style={{
-                                                                width: '20px',
-                                                                height: '20px',
-                                                            }}
-                                                        />
-                                                    </IconButton>
+                                                    <>
+                                                        <IconButton
+                                                            key={idx}
+                                                            color="primary"
+                                                            // onClick={() =>
+                                                            //     handleDelete(
+                                                            //         item.id
+                                                            //     )
+                                                            // }
+                                                            onClick={() =>
+                                                                handleOpenDialog(
+                                                                    item.id
+                                                                )
+                                                            }
+                                                        >
+                                                            <img
+                                                                src={bin}
+                                                                alt=""
+                                                                style={{
+                                                                    width: '20px',
+                                                                    height: '20px',
+                                                                }}
+                                                            />
+                                                        </IconButton>
+                                                    </>
                                                 );
                                             }
                                             if (button.type === 'calendar') {
@@ -471,7 +557,6 @@ const DynamicTable = ({
                                             if (button.type === 'calender') {
                                                 return (
                                                     <td key={idx}>
-                                                        {/* {item[key]}{" "} */}
                                                         <CustomButton
                                                             variant="outlined"
                                                             color="secondary"
@@ -506,6 +591,13 @@ const DynamicTable = ({
                                                                 'view report',
                                                                 item.id
                                                             )
+                                                        }
+                                                        disabled={
+                                                            actionButtons.find(
+                                                                button =>
+                                                                    button.type ===
+                                                                    'view'
+                                                            ).disabled
                                                         }
                                                     >
                                                         View
@@ -565,6 +657,15 @@ const DynamicTable = ({
                     open={assessmentModalOpen}
                     onClose={() => setassessmentModalOpen(false)}
                     assessmentData={assessmentData}
+                />
+            )}
+            {isDialogOpen && (
+                <DeleteConfirmation
+                    open={isDialogOpen}
+                    handleClose={handleCloseDialog}
+                    onConfirm={() => {
+                        handleConfirmDelete(itemIdToDelete);
+                    }}
                 />
             )}
             <Modal
@@ -737,6 +838,10 @@ const CustomButton = styled(Button)(({ theme }) => ({
         backgroundColor: '#F56D3B',
         color: '#fff',
     },
+    '&.Mui-disabled': {
+        color: '#ccc', // Gray out the text color for disabled state
+        borderColor: '#ccc', // Change the border color for disabled state
+    },
 }));
 
 const CalenderButton = styled(Button)(({ theme }) => ({
@@ -801,4 +906,5 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
         boxSizing: 'border-box',
     },
 }));
+
 export default DynamicTable;

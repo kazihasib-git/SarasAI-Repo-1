@@ -11,7 +11,7 @@
 }
 .custom-override
     .rbc-time-content
-    .rbc-time-gutter
+    /* .rbc-time-gutter */
     .rbc-time-column
     .rbc-timeslot-group
     .rbc-time-slot {
@@ -33,17 +33,17 @@
     color: #ffffff;
 }
 
-/* .rbc-toolbar-label {
+.rbc-toolbar-label {
     color: #121d22;
-} */
+}
 
 .rbc-toolbar {
     display: flex;
     justify-content: flex-start; /* Align buttons to the left */
 }
-.rbc-toolbar-label {
-    display: none; /* Hide the date range text */
-}
+/* .rbc-toolbar-label {
+    display: none; 
+} */
 
 .rbc-today {
     background-color: #ecebff;
@@ -61,12 +61,25 @@
     border-left: 1px solid #eee;
 }
 
-/* .rbc-header {
-    background-color: #f1f1fb;
-    color: #5f6368;
-    border: none;
-  
-} */
+.rbc-time-header {
+    /* Example class */
+    background-color: unset !important; /* Ensure no background color is being inherited */
+}
+.on-leave-slot {
+    position: relative;
+}
+
+.on-leave-slot::before {
+    content: 'On Leave';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: rgba(0, 0, 0, 1);
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 13.02px;
+}
 
 .rbc-time-header-cell {
     padding: 0 !important; /* Removes padding inside header cells */
@@ -100,10 +113,10 @@
     border: none;
 }
 
-.rbc-header:nth-child(4) {
+/* .rbc-header:nth-child(4) {
     background-color: #4e18a5;
     color: white;
-}
+} */
 
 /* .rbc-toolbar > .rbc-btn-group {
     display: none; 
@@ -115,4 +128,16 @@
 
 .rbc-day-slot .rbc-time-slot {
     border: 0px;
+}
+
+/* Style for the current day column */
+.rbc-today {
+    background-color: #e3f2fd !important; /* Light blue for the full column */
+    color: #1976d2 !important; /* Blue text color for the full column */
+}
+
+/* Style for the header cell of the current day */
+.rbc-header.rbc-today {
+    background-color: #4e18a5 !important; /* Light blue for the header */
+    color: #feffff !important; /* Blue text color for the header */
 }

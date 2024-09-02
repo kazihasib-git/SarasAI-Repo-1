@@ -26,6 +26,8 @@ import CustomTimeField from '../../../CustomFields/CustomTimeField';
 import CustomTimeZoneForm from '../../../CustomFields/CustomTimeZoneForm';
 import ReusableDialog from '../../../CustomFields/ReusableDialog';
 import CustomButton from '../../../CustomFields/CustomButton';
+import { toast } from 'react-toastify';
+import CustomFutureDateField from '../../../CustomFields/CustomFutureDateField';
 
 const weekDays = [
     'Sunday',
@@ -37,12 +39,11 @@ const weekDays = [
     'Saturday',
 ];
 
-const timezone = Number(localStorage.getItem('timezone_id'));
+// const timezone = Number(localStorage.getItem('timezone_id'));
 
-const CreateSlot = ({ componentName }) => {
-    console.log('component Name :', componentName);
-    console.log('timezone', timezone);
-
+const CreateSlot = ({ componentName, timezoneID }) => {
+    console.log('create slot timezoneID :' ,  timezoneID) ; 
+    
     let createSlotApi, getSlotsApi;
 
     switch (componentName) {
@@ -62,15 +63,18 @@ const CreateSlot = ({ componentName }) => {
 
     const dispatch = useDispatch();
     const [errors, setErrors] = useState({});
-    const [formData, setFormData] = useState({
+
+    const initialFormData = {
         fromDate: null,
         toDate: null,
         selectedDays: [],
         repeat: 'onetime',
         fromTime: null,
         toTime: null,
-        timezone_id: timezone ? timezone : null,
-    });
+        timezone_id: timezoneID,
+    };
+
+    const [formData, setFormData] = useState(initialFormData);
 
     const { timezones } = useSelector(state => state.util);
     const { createNewSlotPopup } = useSelector(state => state.commonCalender);
@@ -96,20 +100,37 @@ const CreateSlot = ({ componentName }) => {
         });
     };
 
-    const validate = () => {
+    const validate = formData => {
         let validationErrors = {};
-        if (!formData.fromDate)
-            validationErrors.fromDate = 'Please select From Date';
-        if (!formData.fromTime)
+
+        if (!formData.fromDate) {
+            validationErrors.fromDate = '';
+            toast.error('Please select From Date');
+            return;
+        }
+        if (!formData.fromTime) {
             validationErrors.fromTime = 'Please select From Time';
-        if (!formData.toTime) validationErrors.toTime = 'Please select To Time';
-        if (formData.repeat === 'recurring' && !formData.toDate)
+            toast.error('Please select From Time');
+            return;
+        }
+        if (!formData.toTime) {
+            validationErrors.toTime = 'Please select To Time';
+            toast.error('Please select To Time');
+            return;
+        }
+        if (formData.repeat === 'recurring' && !formData.toDate) {
             validationErrors.toDate = 'Please select To Date';
+            toast.error('Please select To Date');
+            return;
+        }
         if (
             formData.repeat === 'recurring' &&
             formData.selectedDays.length === 0
-        )
+        ) {
             validationErrors.selectedDays = 'Please select at least one day';
+            toast.error('Please select at least one day');
+            return;
+        }
 
         setErrors(validationErrors);
         return Object.keys(validationErrors).length === 0;
@@ -118,7 +139,7 @@ const CreateSlot = ({ componentName }) => {
     const handleSubmit = e => {
         e.preventDefault();
 
-        if (!validate()) return;
+        if (!validate(formData)) return;
 
         let weeksArray = Array(7).fill(0);
         if (formData.repeat === 'recurring') {
@@ -143,13 +164,20 @@ const CreateSlot = ({ componentName }) => {
             weeks: weeksArray,
         };
 
-        dispatch(createSlotApi(data)).then(() => {
-            dispatch(getSlotsApi());
-            dispatch(closeCreateNewSlot());
-        });
+        dispatch(createSlotApi(data))
+            .unwrap()
+            .then(() => {
+                dispatch(getSlotsApi());
+                dispatch(closeCreateNewSlot());
+                setFormData(initialFormData);
+            })
+            .catch(error => {
+                console.error('API Error:', error);
+            });
     };
 
     console.log('formData', formData.timezone_id);
+    console.log('timezoneid comming' , timezoneID) ; 
 
     const content = (
         <Box
@@ -173,7 +201,7 @@ const CreateSlot = ({ componentName }) => {
                             display="flex"
                             justifyContent="center"
                         >
-                            <CustomDateField
+                            <CustomFutureDateField
                                 label="From Date"
                                 value={formData.fromDate}
                                 onChange={date =>
@@ -232,15 +260,13 @@ const CreateSlot = ({ componentName }) => {
                             justifyContent="center"
                         >
                             <CustomTimeZoneForm
-                                name="timezone_id"
                                 label="Time Zone"
+                                name="timezone_id"
                                 value={formData.timezone_id}
-                                onChange={e =>
-                                    handleChange('timezone_id', e.target.value)
-                                }
-                                errors={!!errors.timezone}
-                                helperText={errors.timezone}
+                                onChange={e=>handleChange('timezone_id' , e.target.value)}
+                                // disabled={timezoneID != null}
                                 options={timezones}
+                                errors={errors}
                             />
                         </Grid>
                         <Grid
@@ -252,6 +278,7 @@ const CreateSlot = ({ componentName }) => {
                             <Grid
                                 item
                                 xs={12}
+                                sm={6}
                                 display="flex"
                                 justifyContent="center"
                             >
@@ -285,13 +312,24 @@ const CreateSlot = ({ componentName }) => {
                             <>
                                 <Grid
                                     container
-                                    spacing={3}
-                                    justifyContent="center"
-                                    sx={{ pt: 3 }}
+                                    sx={{
+                                        display: 'flex',
+                                        justifyContent: 'center', // Center the checkboxes
+                                        gap: 2,
+                                        flexWrap: 'wrap',
+                                        maxWidth: '65%',
+                                        marginLeft: 'auto',
+                                        marginRight: 'auto',
+                                    }}
                                 >
                                     <Grid item xs={12}>
                                         <FormControl component="fieldset">
-                                            <FormGroup row>
+                                            <FormGroup
+                                                row
+                                                sx={{
+                                                    justifyContent: 'center',
+                                                }}
+                                            >
                                                 {weekDays.map(day => (
                                                     <FormControlLabel
                                                         key={day}
@@ -345,7 +383,10 @@ const CreateSlot = ({ componentName }) => {
     const actions = (
         <>
             <CustomButton
-                onClick={() => dispatch(closeCreateNewSlot())}
+                onClick={() => {
+                    dispatch(closeCreateNewSlot());
+                    setFormData(initialFormData);
+                }}
                 style={{
                     backgroundColor: 'white',
                     color: '#F56D3B',
@@ -375,7 +416,10 @@ const CreateSlot = ({ componentName }) => {
     return (
         <ReusableDialog
             open={createNewSlotPopup}
-            handleClose={() => dispatch(closeCreateNewSlot())}
+            handleClose={() => {
+                dispatch(closeCreateNewSlot());
+                setFormData(initialFormData);
+            }}
             title="Create New Slot"
             actions={actions}
             content={content}

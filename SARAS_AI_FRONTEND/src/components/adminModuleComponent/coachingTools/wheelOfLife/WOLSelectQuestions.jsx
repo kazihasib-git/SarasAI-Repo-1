@@ -21,7 +21,9 @@ import {
     getWolTestConfigCategoryWise,
     handleIdToSubmitSelectedQuestions,
     selectedQuestionsList,
+    handleOpenSelectCategoryQuestions
 } from '../../../../redux/features/adminModule/coachingTools/wol/wolSlice';
+import { toast } from 'react-toastify';
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
     borderRadius: '50px',
@@ -45,13 +47,17 @@ const WOLSelectQuestions = () => {
         wolQuestionCategoryWise,
         categoryIdToSubmitSelectedQuestions,
         selectedQuestionsListData,
+        categoryInfo
     } = useSelector(state => state.wol);
-
+    
     const [selectedQuestions, setSelectedQuestions] = useState([]);
     const [questions, setQuestions] = useState([]);
     const [totalQuestions, setTotalQuestions] = useState(0);
     const [selectedCategory, setSelectedCategory] = useState('');
     const [categoryId, setCategoryId] = useState();
+
+
+    console.log('categoryInfo' , categoryInfo)
 
     function stripHtml(html) {
         const tempDiv = document.createElement('div');
@@ -86,8 +92,8 @@ const WOLSelectQuestions = () => {
     }, [dispatch]);
 
     console.log('selectedQuestionsListData', selectedQuestionsListData);
-
-    useEffect(() => {
+    
+     useEffect(() => {
         if (
             selectedQuestionsListData.data &&
             selectedQuestionsListData.data.length > 0
@@ -100,19 +106,31 @@ const WOLSelectQuestions = () => {
         }
     }, [selectedQuestionsListData]);
 
-    const handleSelectQuestion = index => {
-        setSelectedQuestions(prevSelected => {
-            const updatedSelection = prevSelected.includes(index)
-                ? prevSelected.filter(i => i !== index)
-                : [...prevSelected, index];
-            return updatedSelection;
+    const handleSelectQuestion = (questionId) => {
+        setSelectedQuestions((prevSelected) => {
+            if (prevSelected.includes(questionId)) {
+                return prevSelected.filter(id => id !== questionId);
+            } else {
+                if (prevSelected.length >= categoryInfo.total_ques) {
+                    toast.error("You can only select a maximum of 5 questions.");
+                    return prevSelected;
+                }
+                return [...prevSelected, questionId];
+            }
         });
     };
+    
 
     const handleSubmit = () => {
+        const selectedQuestionsOfCategory = questions.filter(question =>
+            selectedQuestions.includes(question.id)
+        );
+
         const data = {
             wol_test_category_id: categoryIdToSubmitSelectedQuestions,
-            wol_questions_id: selectedQuestions,
+            wol_questions_id: selectedQuestionsOfCategory.map(
+                question => question.id
+            ),
         };
         dispatch(addQuestionToCategory(data)).then(() => {
             dispatch(getWolTestConfigCategoryWise());
@@ -220,7 +238,7 @@ const WOLSelectQuestions = () => {
                             gutterBottom
                         >
                             Selected Questions: {selectedQuestions.length}/
-                            {totalQuestions}
+                            {categoryInfo.total_ques}
                         </Typography>
                     </Box>
 
@@ -298,6 +316,7 @@ const WOLSelectQuestions = () => {
                             margin: '0 8px',
                             textTransform: 'none',
                             fontFamily: 'Bold',
+                            textTransform: 'none',
                         }}
                         onClick={handleSubmit}
                     >

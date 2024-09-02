@@ -18,6 +18,8 @@ import authReducer from './features/auth/authSlice';
 import commonCalenderReducer from './features/commonCalender/commonCalender';
 import utilReducer from './features/utils/utilSlice';
 import timeZoneReducer from './features/timeZone/timezone';
+import linkActivityReducer from './features/adminModule/coach/LinkActivitySlice';
+import coachingToolsReducer from './features/adminModule/coachingTools/coachingTools';
 
 const store = configureStore({
     reducer: {
@@ -32,7 +34,9 @@ const store = configureStore({
         coachAvailability: coachAvailabilityReducer,
         coachScheduling: coachSchedulingReducer,
         activityType: activityTypeReducer,
-        coachMenu: coachMenuSliceReducer,
+        linkActivity: linkActivityReducer,
+        coachingTools : coachingToolsReducer,
+        coachMenu : coachMenuSliceReducer,
         taMenu: taMenuSliceReducer,
         commonCalender: commonCalenderReducer,
         util: utilReducer,

@@ -1,4 +1,4 @@
-import { Box } from '@mui/material';
+import { Box, CircularProgress } from '@mui/material';
 import Header from '../../components/Header/Header';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import { useEffect, useState } from 'react';
@@ -11,6 +11,7 @@ import {
     openEditTa,
     closeCreateTa,
     closeEditTa,
+    updateTA,
 } from '../../redux/features/adminModule/ta/taSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { getTimezone } from '../../redux/features/utils/utilSlice';
@@ -26,27 +27,30 @@ const headers = [
 ];
 
 const ManageTA = () => {
-    const { timezones } = useSelector(state => state.util);
-
+    
     const dispatch = useDispatch();
+    const { timezones } = useSelector(state => state.util);
     const { tas, loading, error, createTAOpen, editTAOpen } = useSelector(
         state => state.taModule
     );
+
     const [tasData, setTasData] = useState([]);
     const [editData, setEditData] = useState();
     const [searchQuery, setSearchQuery] = useState('');
-    const [actionButtonToggled, setActionButtonToggled] = useState(false); // Track toggle state
+    const [actionButtonToggled, setActionButtonToggled] = useState(false);
+    const [filteredData, setFilteredData] = useState([])
 
     useEffect(() => {
         dispatch(closeCreateTa());
         dispatch(closeEditTa());
-        dispatch(getTimezone()); // Fetch timezones when the component mounts
+        dispatch(getTimezone());
 
         dispatch(getTA());
     }, [dispatch]);
 
     useEffect(() => {
         if (tas && tas.length > 0) {
+            // Transform data
             const transformData = tas.map(item => ({
                 id: item.id,
                 'TA Name': item.name,
@@ -55,28 +59,58 @@ const ManageTA = () => {
                 'Time Zone': timezoneIdToName(item.timezone_id, timezones),
                 is_active: item.is_active,
             }));
+    
+            // Filter data based on the search query
+            const filteredTasData = transformData.filter(data => {
+                const matchName = data['TA Name']?.toLowerCase().includes(searchQuery.toLowerCase());
+                const matchUsername = data.Username?.toLowerCase().includes(searchQuery.toLowerCase());
+                const matchLocation = data.Location?.toLowerCase().includes(searchQuery.toLowerCase());
+                const matchTimezone = data['Time Zone']?.toLowerCase().includes(searchQuery.toLowerCase());
+    
+                return matchName || matchUsername || matchLocation || matchTimezone;
+            });
+    
+            // Set state with transformed and filtered data
             setTasData(transformData);
+            setFilteredData(filteredTasData);
+        } else {
+            setTasData([]);
+            setFilteredData([]);
         }
-    }, [tas]);
+    }, [tas, searchQuery, timezones]);
+
+    console.log("FILTERED DATA :", filteredData)
+
     const actionButtons = [
         {
             type: 'switch',
-            onChange: event => {
+            onChange: (event, id) => {
                 if (event && event.preventDefault) {
-                    event.preventDefault(); // Prevent any default action
+                    event.preventDefault();
                 }
-                setActionButtonToggled(prev => !prev); // Toggle state
+
+                const taToUpdate = tasData.find((ta) => ta.id === id)
+                const updatedStatus = taToUpdate.is_active === 1 ? 0 : 1;
+
+                dispatch(updateTA({ id, data : { is_active : updatedStatus }}))
+                
+                setTasData((prevTasData) => 
+                    prevTasData.map((ta) => 
+                        ta.id === id ? {...ta, is_active : updatedStatus } : ta
+                    )
+                );
+                
+                setActionButtonToggled(prev => !prev);
             },
         },
         {
             type: 'edit',
             onClick: (id, event) => {
                 if (event && event.preventDefault) {
-                    event.preventDefault(); // Prevent any default action
+                    event.preventDefault();
                 }
                 handleEditTa(id);
             },
-            // disabled: actionButtonToggled, // Disable edit button based on toggle state
         },
     ];
 
@@ -95,13 +129,13 @@ const ManageTA = () => {
     };
 
     // Filter tasData based on the search query
-    const filteredTasData = tasData?.filter(
-        ta =>
-            ta['TA Name']?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            ta.Username?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            ta.Location?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            ta['Time Zone']?.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    // const filteredTasData = tasData?.filter(
+    //     ta =>
+    //         ta['TA Name']?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    //         ta.Username?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    //         ta.Location?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    //         ta['Time Zone']?.toLowerCase().includes(searchQuery.toLowerCase())
+    // );
 
     return (
         <>
@@ -145,14 +179,14 @@ const ManageTA = () => {
                                 </button>
                             </div>
                         </Box>
-                        {!filteredTasData || filteredTasData.length === 0 ? (
+                        {!filteredData || filteredData.length === 0 ? (
                             <div>
                                 <p>No Data Available</p>
                             </div>
                         ) : (
                             <DynamicTable
                                 headers={headers}
-                                initialData={filteredTasData}
+                                initialData={filteredData}
                                 actionButtons={actionButtons}
                                 componentName={'MANAGETA'}
                             />

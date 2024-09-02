@@ -29,6 +29,7 @@ import {
 } from '../../redux/features/taModule/tamenuSlice';
 import { useParams } from 'react-router-dom';
 import CustomButton from '../CustomFields/CustomButton';
+import { toast } from 'react-toastify';
 
 const EditBatches = ({ componentname }) => {
     const { id, name } = useParams();
@@ -49,7 +50,7 @@ const EditBatches = ({ componentname }) => {
         selectedBatchKey,
         openSchedulingPopup;
 
-    let schedulingState, nameKeyScheduling, idKeyScheduling;
+    let schedulingState, nameKeyScheduling, idKeyScheduling,timezoneId;
 
     switch (componentname) {
         case 'COACHSCHEDULE':
@@ -61,6 +62,7 @@ const EditBatches = ({ componentname }) => {
             closeDialogAction = closeCoachEditBatch;
             getAssignBatchesAction = getCoachAssignBatches;
             schedulingState = useSelector(state => state.coachScheduling);
+            timezoneId = useSelector(state => state.coachScheduling.coachTimezone);
             nameKeyScheduling = 'coachName';
             idKeyScheduling = 'coachID';
             openSchedulingPopup = openCoachScheduleSession;
@@ -76,6 +78,7 @@ const EditBatches = ({ componentname }) => {
             closeDialogAction = closeEditBatch;
             getAssignBatchesAction = getAssignBatches;
             schedulingState = useSelector(state => state.taScheduling);
+            timezoneId = useSelector(state => state.taScheduling.taTimezone);
             nameKeyScheduling = 'taName';
             idKeyScheduling = 'taID';
             openSchedulingPopup = openScheduleSession;
@@ -90,6 +93,7 @@ const EditBatches = ({ componentname }) => {
             closeDialogAction = null;
             getAssignBatchesAction = null;
             schedulingState = null;
+            timezoneId = null;
             nameKeyScheduling = null;
             idKeyScheduling = null;
             openSchedulingPopup = null;
@@ -130,8 +134,8 @@ const EditBatches = ({ componentname }) => {
 
     useEffect(() => {
         if (assignedBatches) {
-            console.log('BRANCH NAME : ', assignedBatches);
-            const transformedData = assignedBatches.map((batch, index) => ({
+            const transformedData = assignedBatches.filter(item => item.is_active === 1)
+            .map((batch, index) => ({
                 'S. No.': index + 1,
                 'Batch Name': batch.batch.name,
                 Branch: batch.batch.branch.name,
@@ -149,7 +153,7 @@ const EditBatches = ({ componentname }) => {
                     : true;
                 return matchesBranch && matchesQuery;
             });
-            console.log('filtered data', filtered);
+
             setFilteredBatches(filtered);
         }
     }, [assignedBatches, selectedBranch, searchQuery]);
@@ -159,7 +163,6 @@ const EditBatches = ({ componentname }) => {
         : [];
 
     useEffect(() => {
-        console.log('selected Batches', selectedBatches);
         if (selectedBatches) {
             setSelectedBatch(selectedBatches.map(batch => batch.id));
         }
@@ -188,7 +191,16 @@ const EditBatches = ({ componentname }) => {
         }
     };
 
+    const validate = () => {
+        if(selectedBatch.length === 0){
+            toast.error('Please Select at Least One Batch')
+            return false;
+        }
+        return true;
+    }
+
     const handleSubmit = () => {
+        if (!validate()) return;
         const id =
             componentname === 'COACHSCHEDULE'
                 ? coachID || assignedId
@@ -198,20 +210,19 @@ const EditBatches = ({ componentname }) => {
             name: assignedName,
             batches: selectedBatch ? selectedBatch.map(id => ({ id })) : [],
         };
-        console.log('DATA: ', data);
+
         dispatch(
             openSchedulingPopup({
                 id,
                 name: assignedName,
                 batches: selectedBatch.map(id => ({ id })),
+                timezone: timezoneId,
             })
         );
         dispatch(closeDialogAction());
     };
 
     const headers = ['S. No.', 'Batch Name', 'Branch', 'Select'];
-
-    console.log('selected batch', selectedBatch);
 
     const content = (
         <>
@@ -270,6 +281,7 @@ const EditBatches = ({ componentname }) => {
                 backgroundColor: '#F56D3B',
                 borderColor: '#F56D3B',
                 color: '#FFFFFF',
+                textTransform: 'none',
             }}
         >
             Submit

@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Grid,
-    Button,
     FormControl,
     RadioGroup,
     FormControlLabel,
@@ -12,13 +11,13 @@ import {
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import CustomDateField from '../CustomFields/CustomDateField';
-import CustomTimeField from '../CustomFields/CustomTimeField'; // Assuming you have a CustomTimeField component
+import CustomTimeField from '../CustomFields/CustomTimeField';
 import ReusableDialog from '../CustomFields/ReusableDialog';
-import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomTimeZoneForm from '../CustomFields/CustomTimeZoneForm';
 import { getTimezone } from '../../redux/features/utils/utilSlice';
 import { useParams } from 'react-router-dom';
+import { timezoneIdToName } from '../../utils/timezoneIdToName';
 import {
     createSlots,
     closeCreateNewSlots,
@@ -30,6 +29,7 @@ import {
 } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import { toast } from 'react-toastify';
 import CustomButton from '../CustomFields/CustomButton';
+import CustomFutureDateField from '../CustomFields/CustomFutureDateField';
 
 const weekDays = [
     'Sunday',
@@ -52,30 +52,28 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
     const [repeat, setRepeat] = useState('onetime');
     const [fromTime, setFromTime] = useState(null);
     const [toTime, setToTime] = useState(null);
+    const [selectedTimezone, setSelectedTimezone] = useState(timezoneID);
     useEffect(() => {
         dispatch(getTimezone());
     }, [dispatch]);
 
-    let sliceName, timezoneId, createSlotApi, getSlotsApi;
-
+    let sliceName, createSlotApi, getSlotsApi;
+    const timezoneName = timezoneIdToName(timezoneID, timezones);
     switch (componentName) {
         case 'TACALENDER':
             sliceName = 'taAvialability';
-            timezoneID = '';
             createSlotApi = createSlots;
             getSlotsApi = fetchTaSlots;
             break;
 
         case 'COACHCALENDER':
             sliceName = 'coachAvailability';
-            timezoneId = '';
             createSlotApi = createCoachSlots;
             getSlotsApi = fetchCoachSlots;
             break;
 
         default:
             sliceName = null;
-            timezoneId = null;
             createSlotApi = null;
             getSlotsApi = null;
             break;
@@ -89,7 +87,11 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
         control,
         handleSubmit,
         formState: { errors },
-    } = useForm();
+    } = useForm({
+        defaultValues: {
+            timezone_id: timezoneID,
+        },
+    });
 
     const handleDayChange = day => {
         setSelectedDays(prev => {
@@ -101,7 +103,52 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
         });
     };
 
+    function convertTo24Hour(time12h) {
+        const [time, modifier] = time12h.split(' ');
+    
+        let [hours, minutes] = time.split(':');
+    
+        if (hours === '12') {
+            hours = '00';
+        }
+    
+        if (modifier === 'PM') {
+            hours = parseInt(hours, 10) + 12;
+        }
+    
+        return [parseInt(hours, 10),minutes];
+    }
+
+    function isHourLessOrEqual(inputTime) {
+        // Get the current date and time
+        const currentTime = new Date();
+    
+        // Split the input time string into hour, minutes, and seconds
+        const [inputHour, inputMinutes, inputSeconds] = inputTime.split(':').map(Number);
+    
+        // Create a date object for the input time with today's date
+        const inputDate = new Date();
+        inputDate.setHours(inputHour, inputMinutes, inputSeconds);
+    
+        // Compare the input time with the current time
+        return inputDate <= currentTime;
+    }
+
     const validate = () => {
+
+        let currentDate = new Date();
+        let inputDate = new Date(fromDate)
+        
+
+        let sameDate = false;
+
+        if (currentDate.getFullYear() === inputDate.getFullYear() &&
+        currentDate.getMonth() === inputDate.getMonth() &&
+        currentDate.getDate() === inputDate.getDate()) {
+                console.log("Both dates are the same.");
+                sameDate = true;
+            }
+
         if (!fromDate) {
             toast.error('Please select From Date');
             return false;
@@ -114,6 +161,7 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
             toast.error('Please select To Time');
             return false;
         }
+        
         if (repeat === 'recurring' && !toDate) {
             toast.error('Please select To Date');
             return false;
@@ -122,11 +170,27 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
             toast.error('Please select at least one day');
             return false;
         }
+
+
+        
+        // if(sameDate && isHourLessOrEqual(fromTime)){
+        //     let today = new Date();
+        //     today.setDate(today.getDate() - 1)
+        //     let year = today.getFullYear();      // Gets the full year (e.g., 2024)
+        //     let month = today.getMonth() + 1;    // Gets the month (0-11, so add 1 to get 1-12)
+        //     let day = today.getDate();           // Gets the day of the month (1-31)
+
+        //     const formattedDate = `${day.toString().padStart(2, '0')}-${month.toString().padStart(2, '0')}-${year}`;
+
+        //     toast.error(`Please select date after ${formattedDate}`);
+        //     return false;
+        // }
+
         return true;
     };
 
     const onSubmit = async formData => {
-        console.log('form data', formData);
+        // console.log('form data', formData);
 
         if (!validate()) {
             console.log('NOT VALID DATA');
@@ -150,11 +214,17 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
         formData.end_date = repeat === 'recurring' ? toDate : fromDate;
         formData.weeks = weeksArray;
         formData.admin_user_id = taId.id;
-
+        
         dispatch(createSlotApi(formData)).then(() => {
             dispatch(closeCreateNewSlots());
             dispatch(getSlotsApi(taId.id));
+            toast.success('Slot has been successfully created');
+        })
+        .catch(error => {
+            console.error('Error creating slot:', error);
+            toast.error(`${error}`);
         });
+    
     };
 
     const content = (
@@ -183,7 +253,7 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
                             display="flex"
                             justifyContent="center"
                         >
-                            <CustomDateField
+                            <CustomFutureDateField
                                 label="From Date"
                                 value={fromDate}
                                 onChange={date => setFromDate(date)}
@@ -249,15 +319,15 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
                             <Controller
                                 name="timezone_id"
                                 control={control}
-                                // rules={{ required: 'Time Zone is required' }}
+                                defaultValue={timezoneID}
                                 render={({ field }) => (
                                     <CustomTimeZoneForm
                                         label="Time Zone"
                                         name="timezone_id"
                                         value={field.value}
                                         onChange={field.onChange}
-                                        errors={errors}
                                         options={timezones}
+                                        errors={errors}
                                     />
                                 )}
                             />
@@ -271,6 +341,7 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
                             <Grid
                                 item
                                 xs={12}
+                                sm={6}
                                 display="flex"
                                 justifyContent="center"
                             >
@@ -301,13 +372,24 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
                             <>
                                 <Grid
                                     container
-                                    spacing={3}
-                                    justifyContent="center"
-                                    sx={{ pt: 3 }}
+                                    sx={{
+                                        display: 'flex',
+                                        justifyContent: 'center', // Center the checkboxes
+                                        gap: 2,
+                                        flexWrap: 'wrap',
+                                        maxWidth: '65%',
+                                        marginLeft: 'auto',
+                                        marginRight: 'auto',
+                                    }}
                                 >
                                     <Grid item xs={12}>
                                         <FormControl component="fieldset">
-                                            <FormGroup row>
+                                            <FormGroup
+                                                row
+                                                sx={{
+                                                    justifyContent: 'center',
+                                                }}
+                                            >
                                                 {weekDays.map(day => (
                                                     <FormControlLabel
                                                         key={day}
@@ -375,6 +457,7 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
                 backgroundColor="#F56D3B"
                 color="white"
                 borderColor="#F56D3B"
+                textTransform="none"
             >
                 Submit
             </CustomButton>

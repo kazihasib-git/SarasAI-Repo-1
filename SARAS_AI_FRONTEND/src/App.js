@@ -25,7 +25,7 @@ import CoachMapping from './pages/ManageCoaches/CoachMapping';
 import CoachTemplate from './pages/ManageCoaches/CoachingTemplate/CoachTemplate';
 import CoachAvialability from './pages/ManageCoaches/CoachAvialability';
 import CoachScheduling from './pages/ManageCoaches/CoachScheduling';
-import ScheduledCalls from './pages/Coach/ScheduleCalls';
+// import ScheduledCalls from './pages/Coach/ScheduleCalls';
 
 import AllRoutes from './components/AllRoutes/AllRoutes';
 import TaMapping from './pages/managesTAs/TaMapping';
@@ -82,6 +82,14 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLogin } from './redux/features/auth/authSlice';
 import StudentDetails from './components/CommonComponent/studentDetails';
+import CoursePage from './pages/adminModulePages/users/courses/CoursePage.jsx';
+import CoachCourseMapping from './pages/ManageCoaches/CoachCourseMapping.jsx';
+import TaCourseMapping from './pages/managesTAs/TaCourseMapping.jsx';
+import AssignCoachCourses from './pages/ManageCoaches/AssignedCoachCourses.jsx';
+import AssignTaCourses from './pages/managesTAs/AssignedTaCourses.jsx';
+import AssignedTemplateStudents from './pages/ManageCoaches/CoachingTemplate/AssignedTemplateStudents.jsx';
+
+import ForgetPassword from './components/AUTH/ForgetPassword.jsx';
 
 const ROLES = {
     Teaching: 2001,
@@ -101,6 +109,12 @@ function App() {
     const userRole = localStorage.getItem('role');
 
     useEffect(() => {
+        if (location.pathname !== '/login') {
+            localStorage.setItem('lastRoute', location.pathname);
+        }
+    }, [location]);
+
+    useEffect(() => {
         if (access_token) {
             dispatch(
                 setLogin({
@@ -114,9 +128,11 @@ function App() {
 
     useEffect(() => {
         if (login) {
-            console.log('inside user Effect in app.js', role);
+            const lastRoute = localStorage.getItem('lastRoute');
 
-            if (role.includes(1984)) {
+            if (lastRoute) {
+                navigate(lastRoute, { replace: true });
+            } else if (role.includes(1984)) {
                 // Coach role
                 navigate('/coachmenu_profile', { replace: true });
             } else if (role.includes(2001)) {
@@ -140,10 +156,11 @@ function App() {
                 <Route path="login" element={<Login />} />
                 <Route path="linkpage" element={<LinkPage />} />
                 <Route path="unauthorized" element={<Unauthorized />} />
-
+               
                 {!login}
                 {<Route path="login" element={<Login />} />}
-
+                <Route path="Resetpassword" element={<ForgetPassword/>} />
+                
                 {/* Protected Routes */}
                 {login && role == 5150 && (
                     <Route path="/" element={<Main page="Dashboard" />}>
@@ -189,15 +206,21 @@ function App() {
                             }
                         />
                         <Route
+                            path="/active-Ta-courses/:id"
+                            element={
+                                <AssignTaCourses page="Assigned Coach Courses" />
+                            }
+                        />
+                        <Route
                             path="ta-availability"
                             element={<TAAvailability page="TA Availability" />}
                         />
-                        <Route
+                        {/* <Route
                             path="TaProfile"
                             element={
                                 <AddEditTeachingAssistant page="Ta-Profile" />
                             }
-                        />
+                        /> */}
                         <Route
                             path="ta-scheduling"
                             element={<TaScheduling page="TA Scheduling" />}
@@ -205,6 +228,18 @@ function App() {
                         <Route
                             path="ta-calendar/:name/:id"
                             element={<TaCalender page="Calendar" />}
+                        />
+                        <Route
+                            path="ta-course-mapping"
+                            element={
+                                <TaCourseMapping page="ta Course Mapping" />
+                            }
+                        />
+                        <Route
+                            path="/active-Coach-courses/:id"
+                            element={
+                                <AssignCoachCourses page="Assigned Coach Courses" />
+                            }
                         />
                         {/* <Route path='calendar' element={<Calendar page="Calendar" />} /> */}
                         <Route
@@ -237,6 +272,12 @@ function App() {
                             element={<TemplateName page="Template Name" />}
                         />
                         <Route
+                            path="coach-template/template-students/:id"
+                            element={
+                                <AssignedTemplateStudents page="Assigned Template Students" />
+                            }
+                        />
+                        <Route
                             path="coach-availability"
                             element={
                                 <CoachAvialability page="Coach Availability" />
@@ -248,8 +289,16 @@ function App() {
                                 <CoachScheduling page="Coach Scheduling" />
                             }
                         />
+                        <Route
+                            path="coach-course-mapping"
+                            element={
+                                <CoachCourseMapping page="Coach Course Mapping" />
+                            }
+                        />
+
                         <Route path="students" element={<StudentPage />} />
                         <Route path="batches" element={<BatchPage />} />
+                        <Route path="courses" element={<CoursePage />} />
                         {/* <Route path='/student-list' element={<StudentList page="Student" />} /> */}
                         <Route path="wheel-of-life" element={<WheelOfLife />} />
                         <Route
@@ -281,10 +330,10 @@ function App() {
                             path="WolselectQuestions"
                             element={<WOLSelectQuestions />}
                         />
-                        <Route
+                        {/* <Route
                             path="schedule-calls"
                             element={<ScheduledCalls page="Schedule Calls" />}
-                        />
+                        /> */}
                     </Route>
                 )}
 
@@ -297,6 +346,7 @@ function App() {
                             path="coachmenu"
                             element={<CoachMenu page="Coach Menu" />}
                         />
+                        <Route index element={<CoachMenuProfile page="Coach Menu Profile" />} />
                         <Route
                             path="coachmenu_profile"
                             element={
@@ -360,6 +410,7 @@ function App() {
                         path="/"
                         element={<Main page="Teaching Assistant Menu" />}
                     >
+                         <Route index element={<TaMenuProfile page="My Profile" />} />
                         <Route
                             path="tamenu_profile"
                             element={<TaMenuProfile page="My Profile" />}

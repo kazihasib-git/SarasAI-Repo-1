@@ -13,7 +13,6 @@ import {
 import {
     closeCoachAssignBatches,
     openCoachSuccessPopup,
-    getCoachStudentBatchMapping,
     postCoachAssignBatches,
     getCoachBatchMapping,
     getCoachAssignBatches,
@@ -24,6 +23,7 @@ import ReusableDialog from '../CustomFields/ReusableDialog';
 import PopUpTable from '../CommonComponent/PopUpTable';
 import { openScheduleSession } from '../../redux/features/adminModule/ta/taScheduling';
 import CustomButton from '../CustomFields/CustomButton';
+import { toast } from 'react-toastify';
 
 const AssignBatches = ({ componentname }) => {
     const dispatch = useDispatch();
@@ -99,7 +99,6 @@ const AssignBatches = ({ componentname }) => {
         loading,
     } = stateSelector || {};
 
-    console.log('id', taID, coachID);
 
     useEffect(() => {
         if (stateModuleKey && assignBatchOpen) {
@@ -185,7 +184,17 @@ const AssignBatches = ({ componentname }) => {
         }
     };
 
+    const validate = () => {
+        if(selectedBatch.length === 0){
+            toast.error('Please Select at Least One Batch')
+            return false;
+        }
+        return true;
+    }
+
     const handleSubmit = () => {
+        if(!validate()) return;
+        
         const id =
             componentname === 'ADDITCOACH'
                 ? coachID || assignedId
@@ -271,6 +280,7 @@ const AssignBatches = ({ componentname }) => {
                 backgroundColor: '#F56D3B',
                 borderColor: '#F56D3B',
                 color: '#FFFFFF',
+                textTransform: 'none',
             }}
         >
             Submit

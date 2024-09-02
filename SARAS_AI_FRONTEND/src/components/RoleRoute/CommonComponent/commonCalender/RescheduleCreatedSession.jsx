@@ -1,11 +1,24 @@
 import { Button, DialogContent, Grid } from '@mui/material';
-import React from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import ReusableDialog from '../../../CustomFields/ReusableDialog';
 import CustomDateField from '../../../CustomFields/CustomDateField';
 import PopUpTable from '../../../CommonComponent/PopUpTable';
 import CustomTimeField from '../../../CustomFields/CustomTimeField';
-
+import { closeReschedulePopup, openCreatedSessions } from '../../../../redux/features/commonCalender/commonCalender';
+import { getScheduleSession } from '../../../../redux/features/adminModule/ta/taAvialability';
+import { timezoneIdToName } from '../../../../utils/timezoneIdToName';
+import { getTimezone } from '../../../../redux/features/utils/utilSlice';
+import { getCoachMenuSessionForLeave, getCoachMenuSessions, getCoachMenuSlots, getCoachMenuSlotsByData, rescheduleSessionForCoachLeave } from '../../../../redux/features/coachModule/coachmenuprofileSilce';
+import { getTaMenuSessionForLeave, getTaMenuSessions, getTaMenuSlots, getTaMenuSlotsByDate, rescheduleSessionForTaLeave } from '../../../../redux/features/taModule/tamenuSlice';
+import { convertFromUTC } from '../../../../utils/dateAndtimeConversion';
+import { toast } from 'react-toastify';
+import PopTableSlot from '../../../CommonComponent/PopTableSlot';
+import CustomFutureDateField from '../../../CustomFields/CustomFutureDateField';
+import { Controller, useForm } from 'react-hook-form';
+import CustomHostNameForm from '../../../CustomFields/CustomHostNameField';
+import CustomMeetingTypeForm from '../../../CustomFields/CustomMeetingTypeField'
+ 
 const CustomButton = ({
     onClick,
     children,
@@ -43,51 +56,150 @@ const CustomButton = ({
 
 const headers = ['S. No.', 'Slots Available', 'Select'];
 
-const RescheduleCreatedSession = ({ componentName }) => {
-    const dispatch = useDispatch();
 
-    let sliceName;
+const RescheduleCreatedSession = ({ componentName , timezoneID}) => {
+console.log('reschedule session timezoneID' , timezoneID) ;
+    const dispatch = useDispatch();
+    const { RescheduleSession, slotsLeaveData, sessionDataForReschdeule, dataToFindScheduleInSlot } = useSelector((state) => state.commonCalender)
+   
+    const [selectDate, setSelectDate] = useState(null);
+    const [selectedSlots, setSelectedSlots] = useState([]);
+    const [fromTime, setFromTime] = useState(null);
+    const [email, setEmail] = useState(''); 
+    const [meetingType, setMeetingType] = useState(''); 
+    const [toTime, setToTime] = useState(null);
+    const [meetingTypes, setMeetingtypes] = useState(['webinars', 'meetings']);
+    const [transformedSlotsData, setTransformedSlotsData] = useState([]);
+    const {
+        control,
+        formState: { errors },
+    } = useForm({
+        defaultValues: {},
+    });
+    useEffect(() => {
+        dispatch(getTimezone());
+    }, [dispatch]);
+
+    const { timezones, hosts } = useSelector((state) => state.util)
+
+    let sliceName,
+        rescheduleApi,
+        getAllSlotsApi,
+        getAllSessionsApi,
+        fetchAvailableSlotsApi,
+        availableSlotState,
+        getSessionsBySlotsApi;
 
     switch (componentName) {
         case 'TAMENU':
             sliceName = 'taMenu';
+            rescheduleApi = rescheduleSessionForTaLeave;
+            getAllSlotsApi = getTaMenuSlots;
+            getAllSessionsApi = getTaMenuSessions;
+            fetchAvailableSlotsApi = getTaMenuSlotsByDate;
+            availableSlotState = 'taSlotsByDate';
+            getSessionsBySlotsApi = getTaMenuSessionForLeave;
             break;
+
         case 'COACHMENU':
             sliceName = 'coachMenu';
+            rescheduleApi = rescheduleSessionForCoachLeave
+            getAllSlotsApi = getCoachMenuSlots;
+            getAllSessionsApi = getCoachMenuSessions;
+            fetchAvailableSlotsApi = getCoachMenuSlotsByData
+            availableSlotState = 'coachSlotsByDate'
+            getSessionsBySlotsApi = getCoachMenuSessionForLeave
             break;
+
         default:
             sliceName = null;
+            rescheduleApi = null;
+            getAllSlotsApi = null;
+            getAllSessionsApi = null;
+            fetchAvailableSlotsApi = null;
+            availableSlotState = null
+            getSessionsBySlotsApi = null;
             break;
     }
 
-    useEffect(() => {
-        if (selectDate) {
-            console.log('Fetching slots for date:', selectDate);
-            const data = {
-                admin_user_id: taId.id,
-                date: selectDate,
-            };
-            dispatch(fetchAvailableSlotsAction(data));
-        }
-    }, [selectDate, taId.id, dispatch, fetchAvailableSlotsAction]);
+    const selectorState = useSelector((state) => state[sliceName])
+
+    const {
+        [availableSlotState] : availableSlotsData 
+    } = selectorState;
 
     useEffect(() => {
-        console.log('Available Slots Data:', availableSlotsData);
-        if (availableSlotsData && availableSlotsData.length > 0) {
-            const transformedData = availableSlotsData.map((slot, index) => ({
-                'S. No.': index + 1,
-                'Slots Available': `${slot.from_time} - ${slot.to_time}`,
-                id: slot.id,
-            }));
-            setTransformedSlotsData(transformedData);
+        if (selectDate) {
+            const data = {
+                date: selectDate,
+                timezone_name : timezoneIdToName(timezoneID, timezones)
+            };
+            dispatch(fetchAvailableSlotsApi(data));
+        }
+    }, [selectDate, dispatch, fetchAvailableSlotsApi]);
+
+    const formatTime = time => {
+        const [hours, minutes] = time.split(':');
+        const hour = parseInt(hours, 10);
+        const minute = parseInt(minutes, 10);
+        const ampm = hour >= 12 ? 'pm' : 'am';
+        const formattedHour = hour % 12 || 12;
+        return `${formattedHour}:${minute < 10 ? '0' : ''}${minute} ${ampm}`;
+    };
+
+    const convertavailableSlotData = async () => {
+
+        if (
+            availableSlotsData &&
+            availableSlotsData.length > 0 &&
+            timezones &&
+            timezoneID
+        ) {
+            const timezonename = timezoneIdToName(timezoneID, timezones);
+
+            try {
+                const transformedData = await Promise.all(
+                    availableSlotsData.map(async (slot, index) => {
+                        const localTime = await convertFromUTC({
+                            start_date: slot.slot_date,
+                            start_time: slot.from_time,
+                            end_time: slot.to_time,
+                            end_date: slot.slot_date,
+                            timezonename,
+                        });
+                        const startDateTime = new Date(
+                            `${localTime.start_date}T${localTime.start_time}`
+                        );
+                        const endDateTime = new Date(
+                            `${localTime.end_date}T${localTime.end_time}`
+                        );
+                        return {
+                            'S. No.': index + 1,
+                            'Slots Available': `${formatTime(localTime.start_time)} - ${formatTime(localTime.end_time)}`,
+                            id: slot.id,
+                            Date: localTime.start_date,
+                            startDate: startDateTime,
+                            endDate: endDateTime,
+                        };
+                    })
+                );
+                setTransformedSlotsData(transformedData);
+            } catch (error) {
+                console.error('Error converting available slots:', error);
+                setTransformedSlotsData([]);
+            }
         } else {
             setTransformedSlotsData([]);
         }
-    }, [availableSlotsData]);
+    };
+
+    useEffect(() => {
+        convertavailableSlotData();
+    }, [availableSlotsData, timezones, timezoneID]);
 
     const handleDateChange = date => {
         setSelectDate(date);
-        setSelectedSlots([]); // Clear selected slots when date changes
+        setSelectedSlots([]);
     };
 
     const handleSelectSlot = id => {
@@ -97,8 +209,72 @@ const RescheduleCreatedSession = ({ componentName }) => {
         );
     };
 
+    const validate = () => {
+
+
+        if (!selectDate) {
+            toast.error('Please Select The Date');
+            return false;
+        }
+        if (!selectedSlots[0]) {
+            toast.error('Please Select the Slot');
+            return false;
+        }
+        if (!fromTime) {
+            toast.error('Please Select the Start Time');
+            return false;
+        }
+        if (!toTime) {
+            toast.error('Please Select the End Time');
+            return false;
+        }
+        if (!email) {
+            toast.error('Please provide a valid Host Name');
+            return false;
+          }
+        if (!meetingType) {
+            toast.error('Please select the Meeting Type');
+            return false;
+        }
+
+        return true;
+
+
+    }
+
     const handleSubmit = () => {
-        dispatch();
+
+        if(!validate()) return;
+
+        const sessionId = sessionDataForReschdeule?.id || '';
+
+        const rescheduleData = {
+            id : sessionId,
+            data : {
+                schedule_date : selectDate,
+                slot_id : selectedSlots[0],
+                start_time : fromTime,
+                end_time : toTime,
+                timezone_id : timezoneID,
+                event_status : "rescheduled",
+                host_email_id: email,  // Use the email state
+                meeting_type: meetingType  // Use the meetingType state
+            }
+        }
+
+        dispatch(rescheduleApi(rescheduleData))
+        .unwrap()
+        .then(() => {
+            dispatch(closeReschedulePopup());
+            dispatch(getAllSlotsApi());
+            dispatch(getAllSessionsApi());
+            dispatch(getSessionsBySlotsApi(slotsLeaveData));
+            dispatch(openCreatedSessions(slotsLeaveData));
+        })
+        .catch((error) => {
+            console.error('Error rescheduling session:', error);
+            
+        });
     };
 
     const content = (
@@ -111,7 +287,7 @@ const RescheduleCreatedSession = ({ componentName }) => {
                 pt={'16px'}
                 style={{ display: 'flex', justifyContent: 'center' }}
             >
-                <CustomDateField
+                <CustomFutureDateField
                     label="Select Date"
                     value={selectDate}
                     onChange={handleDateChange}
@@ -133,23 +309,24 @@ const RescheduleCreatedSession = ({ componentName }) => {
             ) : (
                 selectDate && (
                     <>
-                        <PopUpTable
-                            headers={headers}
-                            initialData={transformedSlotsData}
-                            onRowClick={handleSelectSlot}
-                            selectedBox={selectedSlots}
-                            itemsPerPage={4}
-                        />
-                        <Grid
-                            container
-                            sx={{
-                                pt: 3,
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                textAlign: 'center',
-                            }}
-                        >
+                    <PopTableSlot
+                        headers={headers}
+                        initialData={transformedSlotsData}
+                        onRowClick={handleSelectSlot}
+                        selectedBox={selectedSlots}
+                        itemsPerPage={4}
+                    />
+                    <Grid
+                        container
+                        sx={{
+                            pt: 3,
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            textAlign: 'center',
+                        }}
+                    >
+                        <Grid container spacing={4} mb={2}>
                             <Grid item xs={12} sm={6}>
                                 <CustomTimeField
                                     label="Start Time"
@@ -165,7 +342,61 @@ const RescheduleCreatedSession = ({ componentName }) => {
                                 />
                             </Grid>
                         </Grid>
-                    </>
+                        <Grid
+                            item
+                            xs={12}
+                            display="flex"
+                            justifyContent="center"
+                            mb={2}
+                        >
+                            <Controller
+                                name="host_email_id"
+                                control={control}
+                                render={({ field }) => (
+                                    <CustomHostNameForm
+                                        label="Host Name"
+                                        name="host_email_id"
+                                        value={email}
+                                        onChange={event => setEmail(event.target.value)}                                            
+                                        errors={
+                                            errors
+                                        }
+                                        options={
+                                            hosts.users
+                                        }
+                                    />
+                                )}
+                            />
+                        </Grid>
+                        <Grid
+                            item
+                            xs={12}
+                            display="flex"
+                            justifyContent="center"
+                        >
+                            <Controller
+                                name="meeting_type"
+                                control={control}
+                                render={({
+                                    field,
+                                }) => (
+                                    <CustomMeetingTypeForm
+                                        label="Meeting Type"
+                                        name="meeting_type"
+                                        value={meetingType}
+                                        onChange={event => setMeetingType(event.target.value)}
+                                        errors={
+                                            errors
+                                        }
+                                        options={
+                                            meetingTypes
+                                        }
+                                    />
+                                )}
+                            />
+                        </Grid>
+                    </Grid>
+                </>
                 )
             )}
         </>
@@ -174,9 +405,13 @@ const RescheduleCreatedSession = ({ componentName }) => {
     const actions = (
         <CustomButton
             onClick={handleSubmit}
-            backgroundColor="#F56D3B"
-            borderColor="#F56D3B"
-            color="#FFFFFF"
+            style={{
+                backgroundColor : "#F56D3B",
+                borderColor : "#F56D3B",
+                color : "#FFFFFF",
+                textTransform : 'none',
+            }}
+           
         >
             Submit
         </CustomButton>
@@ -184,10 +419,10 @@ const RescheduleCreatedSession = ({ componentName }) => {
 
     return (
         <ReusableDialog
-            open={''}
+            open={RescheduleSession}
             handleClose={() => {
-                dispatch();
-                dispatch();
+                dispatch(closeReschedulePopup());
+                dispatch(openCreatedSessions(slotsLeaveData));
             }}
             title="Reschedule Session"
             content={content}

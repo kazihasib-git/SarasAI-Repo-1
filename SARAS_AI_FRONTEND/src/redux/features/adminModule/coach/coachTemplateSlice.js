@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { baseUrl } from '../../../../utils/baseURL';
 import axiosInstance from '../../../services/httpService';
+import { toast } from 'react-toastify';
 
 export const getAllCoachTemplates = createAsyncThunk(
     'coachTemplate/getAllCoachTemplates',
@@ -14,18 +15,29 @@ export const getAllCoachTemplates = createAsyncThunk(
 
 export const createCoachTemplate = createAsyncThunk(
     'coachTemplate/createCoachTemplate',
-    async data => {
+    async (data, { rejectWithValue }) => {
+        try{
         const response = await axiosInstance.post(
             `${baseUrl}/admin/store-template`,
             data
         );
         return response.data;
     }
+    catch (error) {
+        if (error.response && error.response.data) {
+            return rejectWithValue(error.response.data.message);
+        } else {
+            return rejectWithValue(
+                'An Error Occurred While Creating Template'
+            );
+        }
+    }
+}
 );
 
 export const getAllCoachTemplateModules = createAsyncThunk(
     'coachTemplate/getAllCoachTemplateModules',
-    async () => {
+    async templateId => {
         const response = await axiosInstance.get(
             `${baseUrl}/admin/coaching-templates/modules/${templateId}`
         );
@@ -38,12 +50,22 @@ export const getAllCoachTemplateModules = createAsyncThunk(
 
 export const createCoachTemplateModule = createAsyncThunk(
     'coachTemplate/createCoachTemplateModule',
-    async data => {
-        const response = await axiosInstance.post(
-            `${baseUrl}/admin/coaching-templates/store-modules`,
-            data
-        );
-        return response.data;
+    async (data, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.post(
+                `${baseUrl}/admin/coaching-templates/store-modules`,
+                data
+            );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Creating Module'
+                );
+            }
+        }
     }
 );
 
@@ -59,17 +81,49 @@ export const getCoachTemplateModuleId = createAsyncThunk(
 
 export const updateCoachTemplateModule = createAsyncThunk(
     'coachTemplate/updateCoachTemplateModule',
-    async data => {
+    async (data, { rejectWithValue }) => {
+        try{
         const response = await axiosInstance.post(
             `${baseUrl}/admin/coaching-templates/update-modules`,
             data
         );
         return response.data;
     }
+    catch (error) {
+        if (error.response && error.response.data) {
+            return rejectWithValue(error.response.data.message);
+        } else {
+            return rejectWithValue(
+                'An Error Occurred While Updating activity'
+            );
+        }
+    }
+}
 );
 
-export const updateCoachActivity = createAsyncThunk(
-    'coachTemplate/updateCoachActivity',
+export const updateTemplateActivity = createAsyncThunk(
+    'coachTemplate/updateTemplateActivity',
+    async ({ data }, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.post(
+                `${baseUrl}/admin/coaching-templates/template-status`,
+                data
+            );
+            console.log('API Response: ', response.data);
+            return response.data;
+        } catch (error) {
+            console.error(
+                'API Error: ',
+                error.response ? error.response.data : error.message
+            );  
+            return rejectWithValue(
+                error.response ? error.response.data : error.message
+            );
+        }
+    }
+);
+export const updateModuleActivity = createAsyncThunk(
+    'coachTemplate/updateModuleActivity',
     async ({ data }, { rejectWithValue }) => {
         try {
             const response = await axiosInstance.post(
@@ -82,7 +136,7 @@ export const updateCoachActivity = createAsyncThunk(
             console.error(
                 'API Error: ',
                 error.response ? error.response.data : error.message
-            );
+            );  
             return rejectWithValue(
                 error.response ? error.response.data : error.message
             );
@@ -92,35 +146,109 @@ export const updateCoachActivity = createAsyncThunk(
 
 export const createCoachTemplateActivity = createAsyncThunk(
     'coachTemplate/createCoachTemplateActivity',
-    async data => {
-        const response = await axiosInstance.post(
-            `${baseUrl}/admin/coaching-templates/store-activity`,
-            data
-        );
-        return response.data;
+    async (data, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.post(
+                `${baseUrl}/admin/coaching-templates/store-activity`,
+                data
+            );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While creating activity'
+                );
+            }
+        }
     }
 );
 
 export const updateEditActivity = createAsyncThunk(
     'coachTemplate/updateEditActivity',
     async ({ data }, { rejectWithValue }) => {
-        console.log('DATA : ', data);
         try {
             const response = await axiosInstance.post(
                 `${baseUrl}/admin/coaching-templates/update-activity`,
                 data
             );
-            console.log('API Response: ', response.data);
             return response.data;
         } catch (error) {
-            console.error(
-                'API Error: ',
-                error.response ? error.response.data : error.message
-            );
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Updating activity'
+                );
+            }
+        }
+    }
+);
+
+// add prerequisites to the activity
+
+export const addPrerequisites = createAsyncThunk(
+    'coachTemplate/addPrerequisites',
+    async (data, { rejectWithValue }) => {
+        try{
+        const response = await axiosInstance.post(
+            `${baseUrl}/admin/coaching-templates/activity-prerequisite`,
+            data
+        );
+        return response.data;
+    }
+    catch (error) {
+        if (error.response && error.response.data) {
+            return rejectWithValue(error.response.data.message);
+        } else {
             return rejectWithValue(
-                error.response ? error.response.data : error.message
+                'An Error Occurred While Updating activity'
             );
         }
+    }
+}
+);
+
+// assign students to template
+
+export const assignStudentsToTemplate = createAsyncThunk(
+    'coachTemplate/addPrerequisites',
+    async data => {
+        const response = await axiosInstance.post(
+            `${baseUrl}/admin/coaching-templates/template-assign`,
+            data
+        );
+        return response.data;
+    }
+);
+
+export const getStudentBatchMapping = createAsyncThunk(
+    'coachTemplate/getStudentBatchMapping',
+    async () => {
+        const response = await axiosInstance.get(
+            `${baseUrl}/admin/student-batch-mapping/getAllStudentWithBatches`
+        );
+        console.log('Response : ', response);
+        return response.data;
+    }
+);
+
+export const getBatchMapping = createAsyncThunk(
+    'coachTemplate/getBatchMapping',
+    async () => {
+        const response = await axiosInstance.get(`${baseUrl}/admin/batches`);
+        return response.data;
+    }
+);
+
+export const getStudentsWithBatch = createAsyncThunk(
+    'coachTemplate/getStudentsWithBatch',
+    async id => {
+        const response = await axiosInstance.get(
+            `${baseUrl}/admin/student-batch-mapping/students/${id}`
+        );
+        return response.data;
     }
 );
 
@@ -150,6 +278,14 @@ const initialState = {
     createCoachModule: null,
     modulesData: [],
     newlyCreateTemplate: null,
+
+    assignStudentsToTemplate: false,
+    templateIdToAssignStudents: null,
+    studentBatchMapping: [],
+    batchMapping: [],
+
+    assignBatchesToTemplate: false,
+    templateIdToAssignBatches: null,
 };
 
 export const coachTemplateSlice = createSlice({
@@ -217,6 +353,26 @@ export const coachTemplateSlice = createSlice({
         closeEditActivityPopup(state) {
             state.openEditActivityPopUp = false;
         },
+
+        // open assignstudents to coach template
+        openAssignStudentsToTemplate(state, action) {
+            (state.assignStudentsToTemplate = true),
+                (state.templateIdToAssignStudents = action.payload);
+        },
+        closeAssignStudentsToTemplate(state) {
+            (state.assignStudentsToTemplate = false),
+                (state.templateIdToAssignStudents = null);
+        },
+
+        // open assignbatches to coach template
+        openAssignBatchesToTemplate(state, action) {
+            (state.assignBatchesToTemplate = true),
+                (state.templateIdToAssignBatches = action.payload);
+        },
+        closeAssignBatchesToTemplate(state) {
+            (state.assignBatchesToTemplate = false),
+                (state.templateIdToAssignBatches = null);
+        },
     },
     extraReducers: builder => {
         // getAllCoachTemplates
@@ -245,10 +401,15 @@ export const coachTemplateSlice = createSlice({
                 state.coachTemplates.push(action.payload.data);
                 state.selectedCoachTemplate = action.payload.data.id;
                 // state.template_name = action.payload.data.name;
+                toast.success(
+                    action.payload.message ||
+                        'Coach Template has been successfully created.'
+                );
             })
             .addCase(createCoachTemplate.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
+                toast.error(action.payload || 'failed to create coach template');
             });
 
         // getAllCoachTemplateModules
@@ -275,10 +436,15 @@ export const coachTemplateSlice = createSlice({
                 console.log('ACTION CreateCoachTemplate : ', action.payload);
                 state.loading = false;
                 state.createCoachModule = action.payload.data;
+                toast.success(
+                    action.payload.message ||
+                        'Leave request has been successfully created.'
+                );
             })
             .addCase(createCoachTemplateModule.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
+                toast.error(action.payload || 'Failed To Mark Leave');
             });
 
         // getCoachTemplateModuleId
@@ -310,22 +476,41 @@ export const coachTemplateSlice = createSlice({
                 if (index !== -1) {
                     state.coachTemplates[index] = action.payload;
                 }
+                toast.success(
+                    action.payload.message ||
+                        'Leave request has been successfully created.'
+                );
             })
             .addCase(updateCoachTemplateModule.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
+                toast.error(action.payload || 'Failed To Mark Leave');
             });
 
         // Update Coach Activity
         builder
-            .addCase(updateCoachActivity.pending, state => {
+            .addCase(updateTemplateActivity.pending, state => {
                 state.loading = true;
             })
-            .addCase(updateCoachActivity.fulfilled, (state, action) => {
+            .addCase(updateTemplateActivity.fulfilled, (state, action) => {
                 state.loading = false;
                 // state.coachTemplates.push(action.payload.data);
             })
-            .addCase(updateCoachActivity.rejected, (state, action) => {
+            .addCase(updateTemplateActivity.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+            });
+
+            //update module acativity 
+        builder
+            .addCase(updateModuleActivity.pending, state => {
+                state.loading = true;
+            })
+            .addCase(updateModuleActivity.fulfilled, (state, action) => {
+                state.loading = false;
+                // state.coachTemplates.push(action.payload.data);
+            })
+            .addCase(updateModuleActivity.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
             });
@@ -336,16 +521,20 @@ export const coachTemplateSlice = createSlice({
                 state.loading = true;
             })
             .addCase(updateEditActivity.fulfilled, (state, action) => {
-                state.loading = false;
+                state.loading = false; 
                 // state.coachTemplates.push(action.payload.data);
                 state.editActivityData = action.payload?.data;
+                toast.success(
+                    action.payload.message || 'Activity Updated Succesfully'
+                );
             })
             .addCase(updateEditActivity.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
+                toast.error(action.payload || 'Failed to update Activity');
             });
 
-        // createCoachTemplateActivity
+        // createCoachTemplateActivity 
         builder
             .addCase(createCoachTemplateActivity.pending, state => {
                 state.loading = true;
@@ -353,11 +542,62 @@ export const coachTemplateSlice = createSlice({
             .addCase(createCoachTemplateActivity.fulfilled, (state, action) => {
                 state.loading = false;
                 state.coachTemplates.push(action.payload.data);
+                toast.success(
+                    action.payload.message ||
+                        'Leave request has been successfully created.'
+                );
             })
             .addCase(createCoachTemplateActivity.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
+                toast.error(action.payload || 'Failed To Mark Leave');
             });
+
+        // addPrerequisites
+        builder
+            .addCase(addPrerequisites.pending, state => {
+                state.loading = true;
+            })
+            .addCase(addPrerequisites.fulfilled, (state, action) => {
+                state.loading = false;
+                // state.coachTemplates.push(action.payload.data);
+                toast.success(
+                    action.payload.message ||
+                        'Succesfully Created '
+                );
+            })
+            .addCase(addPrerequisites.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+                toast.error(action.payload || 'Failed to Addprerequisites');
+            });
+
+        // Get Student-Batch Mapping
+        builder.addCase(getStudentBatchMapping.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(getStudentBatchMapping.fulfilled, (state, action) => {
+            state.loading = false;
+            // console.log("MAPPING PAYLOAD :", action.payload )
+            state.studentBatchMapping = action.payload;
+        });
+        builder.addCase(getStudentBatchMapping.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload || action.error.message;
+        });
+
+        // get batch mapping
+        builder.addCase(getBatchMapping.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(getBatchMapping.fulfilled, (state, action) => {
+            state.loading = false;
+            state.batchMapping = action.payload.batches;
+        });
+        builder.addCase(getBatchMapping.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload || action.error.message;
+        });
     },
 });
 
@@ -379,6 +619,10 @@ export const {
     closeEditModulePopup,
     openEditActivityPopup,
     closeEditActivityPopup,
+    openAssignStudentsToTemplate,
+    closeAssignStudentsToTemplate,
+    openAssignBatchesToTemplate,
+    closeAssignBatchesToTemplate,
 } = coachTemplateSlice.actions;
 
 export default coachTemplateSlice.reducer;

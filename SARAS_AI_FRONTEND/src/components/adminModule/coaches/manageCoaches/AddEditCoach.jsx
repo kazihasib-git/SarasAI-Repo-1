@@ -89,8 +89,8 @@ function AddEditCoach({ data }) {
         dispatch(accessCoachName(data));
 
         if (data.profile_picture) {
-            const blobUrl = base64ToBlobUrl(data.profile_picture);
-            setSelectedImage(blobUrl);
+            // const blobUrl = base64ToBlobUrl(data.profile_picture);
+            setSelectedImage(data.profile_picture);
         }
 
         if (data.description) {
@@ -159,7 +159,7 @@ function AddEditCoach({ data }) {
                 const updateRes = await dispatch(
                     updateCoach({ id: data.id, data: updatedFormData })
                 ).unwrap();
-                dispatch(openCoachSuccessPopup());
+                
                 dispatch(accessCoachName(updateRes));
             } else {
                 const createRes = await dispatch(
@@ -315,7 +315,7 @@ function AddEditCoach({ data }) {
                                             rows={2}
                                             value={editableDescription}
                                             onChange={handleDescriptionChange}
-                                            placeholder="Add a brief description..."
+                                            placeholder="short description..."
                                         />
                                         <Button
                                             variant="contained"
@@ -610,6 +610,7 @@ function AddEditCoach({ data }) {
                                     label="Email Address"
                                     name="email"
                                     placeholder="Enter Email Address"
+                                    disabled = {data}
                                     register={register}
                                     validation={{
                                         required: 'Email is required',
@@ -630,6 +631,7 @@ function AddEditCoach({ data }) {
                                     }}
                                     render={({ field }) => (
                                         <PhoneInput
+                                            disabled = {data}
                                             {...field}
                                             country={'in'}
                                             // containerStyle={{ width: "100%" }}

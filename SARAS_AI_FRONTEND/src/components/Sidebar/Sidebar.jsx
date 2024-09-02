@@ -138,6 +138,23 @@ const Sidebar = () => {
                                 </span>
                             </Link>
                         </li>
+                        <li>
+                            <Link
+                                to={'/ta-course-mapping'}
+                                className={
+                                    activeLink === '/ta-course-mapping'
+                                        ? 'active-link'
+                                        : ''
+                                }
+                                onClick={() =>
+                                    handleLinkClick('/ta-course-mapping')
+                                }
+                            >
+                                <span className="SideSubHeading">
+                                    TA Course Mapping
+                                </span>
+                            </Link>
+                        </li>
                     </ul>
                 </li>
                 <Divider
@@ -322,6 +339,19 @@ const Sidebar = () => {
                                 onClick={() => handleLinkClick('/batches')}
                             >
                                 <span className="SideSubHeading">Batches</span>
+                            </Link>
+                        </li>
+                        <li>
+                            <Link
+                                to="/courses"
+                                className={
+                                    activeLink === '/courses'
+                                        ? 'active-link'
+                                        : ''
+                                }
+                                onClick={() => handleLinkClick('/courses')}
+                            >
+                                <span className="SideSubHeading">Courses</span>
                             </Link>
                         </li>
                     </ul>

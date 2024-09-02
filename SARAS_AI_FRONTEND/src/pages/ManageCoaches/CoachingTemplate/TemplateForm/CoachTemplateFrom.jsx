@@ -4,12 +4,24 @@ import CustomTextField from '../../../../components/CustomFields/CustomTextField
 import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { createCoachTemplate } from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
+import {
+    createCoachTemplate,
+    getCoachTemplateModuleId,
+} from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
 
 const durations = [
-    { value: 30, label: '30 mins' },
-    { value: 45, label: '45 mins' },
-    { value: 60, label: '60 mins' },
+    { value: 1, label: '1 Month' },
+    { value: 2, label: '2 Months' },
+    { value: 3, label: '3 Months' },
+    { value: 4, label: '4 Months' },
+    { value: 5, label: '5 Months' },
+    { value: 6, label: '6 Months' },
+    { value: 7, label: '7 Months' },
+    { value: 8, label: '8 Months' },
+    { value: 9, label: '9 Months' },
+    { value: 10, label: '10 Months' },
+    { value: 11, label: '11 Months' },
+    { value: 12, label: '12 Months' },
 ];
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
@@ -50,7 +62,7 @@ const CoachTemplateForm = () => {
         return newErrors;
     };
 
-    const handleSubmit = e => {
+    const handleSubmit = async e => {
         e.preventDefault();
         const formErrors = validateForm();
         if (Object.keys(formErrors).length > 0) {
@@ -63,9 +75,15 @@ const CoachTemplateForm = () => {
             duration: duration,
         };
 
-        dispatch(createCoachTemplate(newTemplateData));
+        const response = await dispatch(createCoachTemplate(newTemplateData));
 
-        navigation('/template-name', { state: { newTemplateData } });
+        if (response.payload?.data?.id) {
+            await dispatch(
+                getCoachTemplateModuleId(response.payload.data.id)
+            ).then(() => {
+                navigation('/template-name', { state: { newTemplateData } });
+            });
+        }
     };
 
     const handleTemplateNameChange = e => {
@@ -125,7 +143,7 @@ const CoachTemplateForm = () => {
                     </CustomTextField>
                 </Grid>
                 <Grid item xs={12}>
-                    <CustomButton type="submit" variant="contained">
+                    <CustomButton type="submit" variant="contained" style={{ textTransform: 'none' }}>
                         Submit
                     </CustomButton>
                 </Grid>

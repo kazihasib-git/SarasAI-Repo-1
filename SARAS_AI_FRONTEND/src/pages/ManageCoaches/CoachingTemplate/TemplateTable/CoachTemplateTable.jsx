@@ -8,11 +8,12 @@ import editIcon from '../../../../assets/editIcon.png';
 import bin from '../../../../assets/bin.png';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { useDispatch } from 'react-redux';
-
+import { updateTemplateActivity } from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
 const CoachTemplateTable = ({
     headers,
     initialData,
     actionButtons,
+    onAssignedToClick,
     componentName,
 }) => {
     const [data, setData] = useState(
@@ -23,7 +24,6 @@ const CoachTemplateTable = ({
     );
 
     const [currentPage, setCurrentPage] = useState(1);
-
     useEffect(() => {
         setData(
             initialData.map(item => ({
@@ -62,7 +62,12 @@ const CoachTemplateTable = ({
         }
     };
 
-    const handleToggle = id => {
+    const handleToggle = (id ,event)=> {
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        console.log('updatedData', { id, data });
         const updatedData = data.map(item =>
             item.id === id
                 ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
@@ -71,11 +76,11 @@ const CoachTemplateTable = ({
         setData(updatedData);
 
         const toggledItem = updatedData.find(item => item.id === id);
-        const requestData = { is_active: toggledItem.is_active };
+        const requestData = { template_id: toggledItem.id, status: toggledItem.is_active };
 
         switch (componentName) {
-            case 'MANAGETA':
-                // dispatch(updateTA({ id, data: requestData }));
+            case 'COACHTEMPLATE':
+                dispatch(updateTemplateActivity({ data: requestData }));
                 break;
             default:
                 console.warn(
@@ -97,6 +102,7 @@ const CoachTemplateTable = ({
     //         return "#000000";
     //     }
     //   };
+    console.log('currunt data:::', currentData);
     return (
         <div className="tableContainer">
             <table>
@@ -131,21 +137,30 @@ const CoachTemplateTable = ({
                                 </td>
                                 {Object.keys(item).map((key, idx) => {
                                     // {console.log("KEY : ", key)}
-                                    //   if (key === "Availability") {
-                                    //     return (
-                                    //       <td
-                                    //         key={idx}
-                                    //         style={{
-                                    //           color: getColorForAvailability(item[key]),
-                                    //           fontFamily: "Regular",
-                                    //           letterSpacing: "0.8px",
-                                    //         }}
-                                    //       >
-                                    //         {item[key]}
-                                    //       </td>
-                                    //     );
-                                    //   }  else
-                                    if (
+                                    if (key === 'Assigned To') {
+                                        return (
+                                            <td
+                                                key={idx}
+                                                onClick={() =>
+                                                    onAssignedToClick(item.id)
+                                                }
+                                                style={{
+                                                    cursor: 'pointer',
+                                                    color: '#000',
+                                                }}
+                                                onMouseOver={e => {
+                                                    e.target.style.color =
+                                                        '#F56D3B';
+                                                }}
+                                                onMouseOut={e => {
+                                                    e.target.style.color =
+                                                        '#000';
+                                                }}
+                                            >
+                                                {item[key]}
+                                            </td>
+                                        );
+                                    } else if (
                                         key !== 'id' &&
                                         key !== 'is_active' &&
                                         key !== 'timezone'
@@ -183,7 +198,7 @@ const CoachTemplateTable = ({
                                                 return (
                                                     <AntSwitch
                                                         key={idx}
-                                                        checked={item.is_active}
+                                                        checked={item.is_active} 
                                                         onChange={() =>
                                                             handleToggle(
                                                                 item.id

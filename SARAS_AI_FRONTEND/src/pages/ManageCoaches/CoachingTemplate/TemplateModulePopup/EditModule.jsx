@@ -89,6 +89,7 @@ const EditModule = () => {
             module_id: editModuleData?.id,
             template_id: selectedCoachTemplate,
             is_active: data.status === 1,
+            module_name: data.moduleName,
         };
         dispatch(updateCoachTemplateModule(updatedData))
             .unwrap()
@@ -168,6 +169,7 @@ const EditModule = () => {
             backgroundColor="#F56D3B"
             borderColor="#F56D3B"
             color="#FFFFFF"
+            style={{ textTransform: 'none' }} 
         >
             Submit
         </CustomButton>

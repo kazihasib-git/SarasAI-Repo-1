@@ -121,6 +121,7 @@ const CreateTaMeeting = ({ open, onClose, onSubmit }) => {
                         color: 'white',
                         borderRadius: '50px',
                         fontSize: '16px',
+                        textTransform: 'none',
                     }}
                 >
                     Submit

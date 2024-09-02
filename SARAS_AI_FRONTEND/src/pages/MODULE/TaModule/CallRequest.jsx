@@ -9,8 +9,8 @@ import {
 } from '@mui/material';
 import Header from '../../../components/Header/Header';
 import TaMenuSidebar from './TeachingAssistantSidebar';
-import DenyDialog from './DenyDialog'; // Import the DenyDialog component
-import CreateMeetingDialog from '../coachModule/CreateMeetingDialog'; // Import the CreateMeetingDialog component
+import DenyDialog from './DenyDialog';
+import CreateMeetingDialog from '../coachModule/CreateMeetingDialog';
 
 import {
     getTaCallRequests,
@@ -19,68 +19,76 @@ import {
 } from '../../../redux/features/taModule/tamenuSlice';
 
 import { useDispatch, useSelector } from 'react-redux';
+import { timezoneIdToName } from '../../../utils/timezoneIdToName';
+import { convertFromUTC } from '../../../utils/dateAndtimeConversion';
+import { getTimezone } from '../../../redux/features/utils/utilSlice';
 
 const CallRequest = () => {
-    //const [openDenyDialog, setOpenDenyDialog] = useState(false);
     const [openCreateMeetingDialog, setOpenCreateMeetingDialog] =
         useState(false);
-
     const [open, setOpen] = useState(false);
     const { taCallRequests } = useSelector(state => state.taMenu);
     const [callRequests, setCallRequests] = useState([]);
     const [denyRequestId, setDenyRequestId] = useState(null);
     const dispatch = useDispatch();
 
+    const { timezones } = useSelector(state => state.util);
+    const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
+
     useEffect(() => {
         dispatch(getTaCallRequests());
+        dispatch(getTimezone());
     }, [dispatch]);
 
-    const processTaCallRequests = requests => {
-        const processedRequests = requests.map(request => ({
-            ...request,
-            title: `Meeting request by ${request.sender.name}`,
-            For: `${request.date} | ${request.start_time}`,
-        }));
-        setCallRequests(processedRequests);
+    const processTaCallRequests = async requests => {
+        if (requests && requests.length > 0 && timezones && storedTimezoneId) {
+            const timezonename = timezoneIdToName(storedTimezoneId, timezones);
+
+            try {
+                const processedRequests = await Promise.all(
+                    requests.map(async request => {
+                        const localTime = await convertFromUTC({
+                            start_date: request.date,
+                            start_time: request.start_time,
+                            end_time: request.end_time,
+                            end_date: request.date,
+                            timezonename,
+                        });
+
+                        return {
+                            ...request,
+                            date: localTime.start_date,
+                            start_time: localTime.start_time,
+                            end_time: localTime.end_time,
+                            title: `Session request by ${request.sender.name}`,
+                            For: `${localTime.start_date} | ${convertTo12HourFormat(localTime.start_time)}`,
+                        };
+                    })
+                );
+
+                setCallRequests(processedRequests);
+            } catch (error) {
+                console.error('Error converting call requests:', error);
+                setCallRequests([]);
+            }
+        } else {
+            setCallRequests([]);
+        }
     };
+
     useEffect(() => {
-        if (taCallRequests) {
+        if (taCallRequests && timezones && storedTimezoneId) {
             processTaCallRequests(taCallRequests);
         }
-    }, [taCallRequests]);
+    }, [taCallRequests, timezones, storedTimezoneId]);
 
-    // const [callRequests, setCallRequests] = useState([
-    //     {
-    //         id: 2,
-    //         title: 'Meeting Request By Aman',
-    //         for: '10 July, 2014 | 12:30 PM',
-    //         requestedBy: 'Aman',
-    //         messages:
-    //             'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-    //     },
-    //     {
-    //         id: 3,
-    //         title: 'Meeting Request By Aman',
-    //         for: '10 July, 2014 | 12:30 PM',
-    //         requestedBy: 'Aman',
-    //         messages:
-    //             'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-    //     },
-    //     {
-    //         id: 5,
-    //         title: 'Meeting Request By Raman',
-    //         for: '11 July, 2014 | 12:35 PM',
-    //         requestedBy: 'Raman',
-    //         messages:
-    //             'Lorem Ipsum is simply dummy text of the printing and typesetting industry Lorem Ipsum is simply dummy text of the printing and typesetting industryLorem Ipsum is simply dummy text of the printing and typesetting industry.',
-    //     },
-    // ]);
     const [showFullMessages, setShowFullMessages] = useState({});
 
     const handleClickOpen = id => {
         setDenyRequestId(id);
         setOpen(true);
     };
+
     const handleClose = () => {
         setOpen(false);
     };
@@ -119,6 +127,14 @@ const CallRequest = () => {
         setOpenCreateMeetingDialog(false);
     };
 
+    function convertTo12HourFormat(time24) {
+        const [hours, minutes] = time24.split(':').map(Number);
+        const suffix = hours >= 12 ? 'PM' : 'AM';
+        const hours12 = hours % 12 || 12;
+        const formattedMinutes = minutes.toString().padStart(2, '0');
+        return `${hours12}:${formattedMinutes} ${suffix}`;
+    }
+
     return (
         <div>
             <Header />
@@ -136,18 +152,6 @@ const CallRequest = () => {
                 >
                     Call Request
                 </Typography>
-
-                {/* <div className="inputBtnContainer">
-                    <button
-                        className="buttonContainer"
-                        variant="contained"
-                        color="warning"
-                        onClick={handleCreateMeetingOpen}
-                    >
-                        <i className="bi bi-plus-circle"></i>
-                        <span>Create New Meeting</span>
-                    </button>
-                </div> */}
             </Box>
             <Grid container spacing={2}>
                 {callRequests.map(callRequest => (
@@ -165,7 +169,7 @@ const CallRequest = () => {
                                 <Typography gutterBottom sx={{ ml: 2 }}>
                                     For:{' '}
                                     <span style={{ color: '#5F6383' }}>
-                                        {callRequest.for}
+                                        {callRequest.For}
                                     </span>
                                 </Typography>
                                 <Typography gutterBottom sx={{ ml: 2 }}>
@@ -241,13 +245,13 @@ const CallRequest = () => {
                                         <Button
                                             onClick={() =>
                                                 handleClickOpen(callRequest.id)
-                                            } // Open the Deny dialog
+                                            }
                                             sx={{
                                                 height: 43,
                                                 width: 112,
                                                 borderRadius: 40,
-                                                color: '#F56D3B', // Font color
-                                                border: '2px solid #F56D3B', // Border color
+                                                color: '#F56D3B',
+                                                border: '2px solid #F56D3B',
                                                 ml: 1,
                                                 '&:hover': {
                                                     backgroundColor: '#F56D3B',
@@ -270,11 +274,6 @@ const CallRequest = () => {
                 handleDenySubmit={handleDenySubmit}
                 denyRequestId={denyRequestId}
             />
-            {/* <CreateMeetingDialog
-                open={openCreateMeetingDialog}
-                onClose={handleCreateMeetingClose}
-                onSubmit={handleCreateMeetingSubmit}
-            /> */}
         </div>
     );
 };

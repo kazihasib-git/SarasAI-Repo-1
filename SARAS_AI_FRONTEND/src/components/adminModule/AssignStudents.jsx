@@ -20,8 +20,10 @@ import {
     getCoachAssignStudents,
 } from '../../redux/features/adminModule/coach/coachSlice';
 import CustomButton from '../CustomFields/CustomButton';
+import { toast } from 'react-toastify';
 
 const AssignStudents = ({ componentname }) => {
+    
     const dispatch = useDispatch();
     const [selectedTerm, setSelectedTerm] = useState('');
     const [selectedBatch, setSelectedBatch] = useState('');
@@ -53,6 +55,7 @@ const AssignStudents = ({ componentname }) => {
             nameKeyScheduling = 'coachName';
             idKeyScheduling = 'coachID';
             break;
+
         case 'ADDEDITTA':
             stateModuleKey = 'taModule';
             nameKey = 'ta_name';
@@ -66,6 +69,7 @@ const AssignStudents = ({ componentname }) => {
             nameKeyScheduling = 'taName';
             idKeyScheduling = 'taID';
             break;
+
         default:
             stateModuleKey = null;
             nameKey = null;
@@ -196,15 +200,28 @@ const AssignStudents = ({ componentname }) => {
         );
     };
 
+    const validate = () => {
+        if (selectedStudents.length === 0) {
+            toast.error('Please Select At Least One Student');
+            return false; // Return false if validation fails
+        }
+        return true; // Return true if validation passes
+    };
+
     const handleSubmit = () => {
+
+        if (!validate()) return;
+
         const id =
             componentname === 'ADDITCOACH'
                 ? coachID || assignedId
                 : taID || assignedId;
+                
         const data = {
             admin_user_id: id,
             students: selectedStudents.map(id => ({ id: id.toString() })),
         };
+
         dispatch(postAssignAction({ id, data })).then(() => {
             if (assignedId) {
                 dispatch(
@@ -296,6 +313,7 @@ const AssignStudents = ({ componentname }) => {
                 backgroundColor: '#F56D3B',
                 borderColor: '#F56D3B',
                 color: '#FFFFFF',
+                textTransform: 'none',
             }}
         >
             Submit

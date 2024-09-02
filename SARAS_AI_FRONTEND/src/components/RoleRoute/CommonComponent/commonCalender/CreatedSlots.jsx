@@ -11,10 +11,19 @@ import {
 } from '../../../../redux/features/commonCalender/commonCalender';
 import ReusableDialog from '../../../CustomFields/ReusableDialog';
 import CustomButton from '../../../CustomFields/CustomButton';
-
+import { convertFromUTC } from '../../../../utils/dateAndtimeConversion';
+import { timezoneIdToName } from '../../../../utils/timezoneIdToName';
+import { getTimezone } from '../../../../redux/features/utils/utilSlice';
 const headers = ['S. No.', 'Date', 'Slot Time', 'Select'];
 
-const CreatedSlots = ({ componentName }) => {
+
+const CreatedSlots = ({ componentName ,timezoneID }) => {
+
+    console.log('Created SLots timezoneID' , timezoneID)  ;
+
+
+    const { timezones } = useSelector(state => state.util);
+
     console.log('Comp Name :', componentName);
 
     const dispatch = useDispatch();
@@ -22,7 +31,9 @@ const CreatedSlots = ({ componentName }) => {
     const [slots, setSlots] = useState([]);
 
     let sliceName, getSessionFromSlotsApi, sessionBySlotsState;
-
+    useEffect(() => {
+        dispatch(getTimezone());
+    }, [dispatch]);
     switch (componentName) {
         case 'TAMENU':
             sliceName = 'taMenu';
@@ -50,18 +61,63 @@ const CreatedSlots = ({ componentName }) => {
 
     console.log('SessionData :', sessionsData);
 
-    useEffect(() => {
-        if (sessionsData && sessionsData.length > 0) {
-            const formattedData = sessionsData.map((slot, index) => ({
-                'S. No.': index + 1,
-                Date: slot.slot_date,
-                'Slot Time': `${slot.from_time} - ${slot.to_time}`,
-                Select: selectedSlots.includes(slot.id),
-                id: slot.id,
-            }));
+    const formatTime = time => {
+        const [hours, minutes] = time.split(':');
+        const hour = parseInt(hours, 10);
+        const minute = parseInt(minutes, 10);
+        const ampm = hour >= 12 ? 'pm' : 'am';
+        const formattedHour = hour % 12 || 12;
+        return `${formattedHour}:${minute < 10 ? '0' : ''}${minute} ${ampm}`;
+      };
+
+    const convertMenuSlots = async () => {
+        if (sessionsData && sessionsData.length > 0 && timezoneID && timezones) {
+          const timezonename = timezoneIdToName(timezoneID, timezones);
+          if (!timezonename) {
+            console.error('Invalid timezone name');
+            setEventsList([]);
+            return;
+          }
+          try {
+            const formattedData = await Promise.all(
+              sessionsData.map(async (slot, index) => {
+                const localTime = await convertFromUTC({
+                  start_date: slot.slot_date,
+                  start_time: slot.from_time,
+                  end_time: slot.to_time,
+                  end_date: slot.slot_date, // Assuming the end date is the same as the start date
+                  timezonename,
+                });
+      
+                const startDateTime = new Date(`${localTime.start_date}T${localTime.start_time}`);
+                const endDateTime = new Date(`${localTime.end_date}T${localTime.end_time}`);
+      
+                return {
+                  'S. No.': index + 1,
+                  Date: localTime.start_date,
+                  'Slot Time': `${formatTime(localTime.start_time)} - ${formatTime(localTime.end_time)}`,
+                  Select: selectedSlots.includes(slot.id),
+                  id: slot.id,
+                  startDate: startDateTime,
+                  endDate: endDateTime,
+                };
+              })
+            );
+      
             setSlots(formattedData);
+          } catch (error) {
+            console.error('Error converting slots:', error);
+            setSlots([]);
+          }
+        } else {
+          setSlots([]);
         }
-    }, [sessionsData]);
+      };
+      
+      useEffect(() => {
+        convertMenuSlots();
+      }, [sessionsData, timezoneID, timezones, selectedSlots]);
+
 
     const handleSelect = id => {
         setSelectedSlots(prev =>
@@ -109,6 +165,7 @@ const CreatedSlots = ({ componentName }) => {
             backgroundColor="#F56D3B"
             borderColor="#F56D3B"
             color="#FFFFFF"
+            style={{ textTransform: 'none' }}
         >
             Submit
         </CustomButton>

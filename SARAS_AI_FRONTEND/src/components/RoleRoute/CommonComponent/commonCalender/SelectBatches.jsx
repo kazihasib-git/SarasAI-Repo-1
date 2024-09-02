@@ -5,48 +5,17 @@ import { getTaMenuAssignedBatches } from '../../../../redux/features/taModule/ta
 import { getCoachMenuAssignedBatches } from '../../../../redux/features/coachModule/coachmenuprofileSilce';
 import {
     closeSelectBatches,
+    openEditSession,
     openScheduleNewSession,
 } from '../../../../redux/features/commonCalender/commonCalender';
 import CustomTextField from '../../../CustomFields/CustomTextField';
 import PopUpTable from '../../../CommonComponent/PopUpTable';
 import ReusableDialog from '../../../CustomFields/ReusableDialog';
-
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                padding: '10px 20px',
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
+import CustomButton from '../../../CustomFields/CustomButton';
 
 const headers = ['S. No.', 'Batch Name', 'Branch', 'Select'];
+
+const name = String(localStorage.getItem('name') || 'Name');
 
 const SelectBatches = ({ componentName }) => {
     const dispatch = useDispatch();
@@ -78,7 +47,8 @@ const SelectBatches = ({ componentName }) => {
     }
 
     const stateSelector = useSelector(state => state[sliceName]);
-    const { batches, selectBatchPopup } = useSelector(
+    
+    const { batches, selectBatchPopup, sessionData } = useSelector(
         state => state.commonCalender
     );
 
@@ -117,10 +87,16 @@ const SelectBatches = ({ componentName }) => {
         : [];
 
     useEffect(() => {
-        if (batches) {
+        if (batches && batches.length > 0) {
             setSelectedBatch(batches.map(prev => prev.id));
         }
     }, [batches]);
+
+    useEffect(() => {
+        if(sessionData && sessionData.batch && sessionData.batch.length > 0){
+            setSelectedBatch(sessionData.batch.map(prev => prev.id))
+        }
+    },[sessionData])
 
     const handleSelectBatch = id => {
         setSelectedBatch(prev =>
@@ -148,8 +124,18 @@ const SelectBatches = ({ componentName }) => {
         const data = {
             batchId: selectedBatch ? selectedBatch.map(id => ({ id })) : [],
         };
-
-        dispatch(openScheduleNewSession(data));
+        
+        if(sessionData){
+            const updatedSessionData = {
+                ...sessionData,
+                batch: selectedBatch ? selectedBatch.map(id => ({ id })) : [],
+              };
+              
+              dispatch(openEditSession({ sessionData: updatedSessionData }));
+              
+        }else {
+            dispatch(openScheduleNewSession(data));
+        }
         dispatch(closeSelectBatches());
     };
 
@@ -164,7 +150,7 @@ const SelectBatches = ({ componentName }) => {
                         onChange={handleBranchChange}
                         onClear={() =>
                             handleBranchChange({ target: { value: '' } })
-                        } // Clear functionality
+                        }
                     >
                         <MenuItem value="">
                             <em>All</em>
@@ -222,7 +208,7 @@ const SelectBatches = ({ componentName }) => {
         <ReusableDialog
             open={selectBatchPopup}
             handleClose={() => dispatch(closeSelectBatches())}
-            title={`Assign Batches`}
+            title={`Assign Batches to '${name}'`}
             content={content}
             actions={actions}
         />
