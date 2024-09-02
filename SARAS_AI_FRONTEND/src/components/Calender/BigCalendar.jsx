@@ -99,7 +99,7 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
             break;
 
         case 'TAMENU':
-            openPopup : openSessionPopup;
+            openPopup = openSessionPopup;
             break;
 
         case 'COACHMENU':

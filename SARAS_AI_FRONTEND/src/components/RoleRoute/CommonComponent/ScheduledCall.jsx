@@ -34,6 +34,8 @@ import SessionLink from './commonCalender/SessionLink';
 import EditSession from './commonCalender/EditSession';
 import ParticipantsDialog from '../../../pages/MODULE/coachModule/ParticipantsDialog';
 import { convertFromUTC } from '../../../utils/dateAndtimeConversion';
+import { timezoneIdToName } from '../../../utils/timezoneIdToName';
+import { getTimezone } from '../../../redux/features/utils/utilSlice';
 
 const CustomButton = ({
     onClick,
@@ -95,6 +97,10 @@ const ScheduledCall = ({ role }) => {
 
     const { timezones } = useSelector(state => state.util);
 
+    useEffect(() => {
+        dispatch(getTimezone())
+    },[dispatch])
+
     function formatDate(date) {
         const localDate = new Date(date);
         const offset = 5.5 * 60 * 60000;
@@ -119,9 +125,14 @@ const ScheduledCall = ({ role }) => {
                 timezone => timezone.id === taProfileData.timezone_id
             );
 
+
+            console.log("TIMEZONE  :0", storedTimezoneId)
+
             const data = {
                 date: formatDate(date),
-                timezone_name: taTimeZone,
+
+                timezone_name: timezoneIdToName(storedTimezoneId, timezones)
+                //taTimeZone.time_zone,
             };
 
             dispatch(getTaScheduledCalls(data))
@@ -275,7 +286,7 @@ const ScheduledCall = ({ role }) => {
         dispatch(openScheduleNewSession());
     };
 
-    const handleEditClick = data => {
+    const handleEditClick = data => {   
         console.log("EdiT DATA :", data)
         dispatch(openEditSession(data));
     };

@@ -401,11 +401,6 @@ const Schedule = ({ componentName, timezoneID }) => {
             return false;
         }
         
-        if(!toDate){
-            toast.error('Please select to Date');
-            return false;
-        }
-    
         return true;
     };
 
