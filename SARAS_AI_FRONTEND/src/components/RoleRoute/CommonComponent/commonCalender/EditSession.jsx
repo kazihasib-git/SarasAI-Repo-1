@@ -8,10 +8,12 @@ import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     getTaMenuSessions,
+    getTaScheduledCalls,
     updateTaScheduledCall
 } from '../../../../redux/features/taModule/tamenuSlice';
 import {
     getCoachMenuSessions,
+    getCoachScheduledCalls,
     updateCoachScheduledCall
 } from '../../../../redux/features/coachModule/coachmenuprofileSilce';
 import {
@@ -34,6 +36,7 @@ import CustomMeetingTypeField from '../../../CustomFields/CustomMeetingTypeField
 import CustomHostNameForm from '../../../CustomFields/CustomHostNameField';
 import CustomTimeDaysjsField from '../../../CustomFields/CustomTimeDaysjsField';
 import CustomButton from '../../../CustomFields/CustomButton';
+import { timezoneIdToName } from '../../../../utils/timezoneIdToName';
 
 const headers = ['S. No.', 'Slot Date', 'From Time', 'To Time', 'Select'];
 
@@ -101,13 +104,13 @@ const EditSession = ({ componentName }) => {
         case 'TAMENU':
             sliceName = 'taMenu';
             updateSessionApi = updateTaScheduledCall;
-            getSessionApi = getTaMenuSessions;
+            getSessionApi = getTaScheduledCalls;
             break;
 
         case 'COACHMENU':
             sliceName = 'coachMenu';
             updateSessionApi = updateCoachScheduledCall;
-            getSessionApi = getCoachMenuSessions;
+            getSessionApi = getCoachScheduledCalls;
             break;
 
         default:
@@ -286,7 +289,11 @@ const EditSession = ({ componentName }) => {
 
         dispatch(updateSessionApi({ id: sessionData.id, data }))
             .then(() => {
-                dispatch(getSessionApi());
+                const data = {
+                    date: sessionData.date, //formatDate(sessionData.date),
+                    timezone_name: timezoneIdToName(timezone, timezones)
+                };
+                dispatch(getSessionApi(data));
                 dispatch(closeEditSession());
             })
             .catch(error => {
