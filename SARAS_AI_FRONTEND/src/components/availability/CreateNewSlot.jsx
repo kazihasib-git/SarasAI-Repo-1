@@ -222,7 +222,7 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
         })
         .catch(error => {
             console.error('Error creating slot:', error);
-            toast.error(` ${error}`);
+            toast.error(`${error}`);
         });
     
     };
