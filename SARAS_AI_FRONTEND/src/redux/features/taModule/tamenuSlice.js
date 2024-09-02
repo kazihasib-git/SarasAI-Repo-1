@@ -172,23 +172,22 @@ export const reasonForTaMenuLeave = createAsyncThunk(
 // Reschedule Session for TA Leave
 export const rescheduleSessionForTaLeave = createAsyncThunk(
     'taMenu/rescheduleSession',
-    async ({ id, data}, {rejectWithValue}) => {
-        try{
-        const response = await axiosInstance.post(
-            `${baseUrl}/ta/calendar/reschedule/${id}`,
-            data
-        );
-        return response.data;
-    
-}catch (error) {
-    if (error.response && error.response.data) {
-        return rejectWithValue(error.response.data.message);
-    } else {
-        return rejectWithValue(
-            'An Error Occurred While Creating TA slots'
-        );
-    }
-}
+    async ({ id, data }, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.post(
+                `${baseUrl}/ta/calendar/reschedule/${id}`,
+                data
+            );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Creating TA slots'
+                );
+            }
+        }
     }
 );
 
@@ -289,11 +288,13 @@ export const getTaMenuAssignedStudents = createAsyncThunk(
         return response.data;
     }
 );
-//get Selected assigned students 
+//get Selected assigned students
 export const getSelectedTaMenuAssignedStudents = createAsyncThunk(
     'coachMenu/getSelectedAssignedStudents',
-    async (id) => {
-        const response = await axiosInstance.get(`${baseUrl}/ta/calendar/get-schedule-students/${id}`);
+    async id => {
+        const response = await axiosInstance.get(
+            `${baseUrl}/ta/calendar/get-schedule-students/${id}`
+        );
         return response.data;
     }
 );
@@ -310,8 +311,10 @@ export const getTaMenuAssignedBatches = createAsyncThunk(
 //get Selected Assigned Batches
 export const getSelectedTaMenuAssignedBatches = createAsyncThunk(
     'coachMenu/getSelectedAssignedBatches',
-    async (id) => {
-        const response = await axiosInstance.get(`${baseUrl}/ta/calendar/get-schedule-batches/${id}`);
+    async id => {
+        const response = await axiosInstance.get(
+            `${baseUrl}/ta/calendar/get-schedule-batches/${id}`
+        );
         return response.data;
     }
 );
@@ -319,7 +322,7 @@ export const getSelectedTaMenuAssignedBatches = createAsyncThunk(
 // Update Students In Ta Session
 export const updateStudentsInTaSession = createAsyncThunk(
     'taMenu/updateStudentsInTaSession',
-    async ({id, data }, { rejectWithValue }) => {
+    async ({ id, data }, { rejectWithValue }) => {
         try {
             const response = await axiosInstance.post(
                 `${baseUrl}/ta/calendar/update-schedule-students/${id}`,
@@ -341,38 +344,48 @@ export const updateStudentsInTaSession = createAsyncThunk(
 // Update Batches in Ta Session
 export const updateBatchesInTaSession = createAsyncThunk(
     'taMenu/updateBatchesInTaSession',
-    async ( {id, data},{ rejectWithValue }) => {
-        try{
+    async ({ id, data }, { rejectWithValue }) => {
+        try {
             const response = await axiosInstance.post(
                 `${baseUrl}/ta/calendar/update-schedule-batches/${id}`,
                 data
-            )
+            );
             return response.data;
-        }catch(error){
+        } catch (error) {
             if (error.response && error.response.data) {
                 return rejectWithValue(error.response.data.message);
             } else {
                 return rejectWithValue(
                     'An Error Occurred While Updating Batches In Session'
                 );
-            };   
+            }
         }
     }
-)
+);
 
 //upload video
 export const uploadSessionRecording = createAsyncThunk(
     'taMenu/uploadSessionRecording',
-    async ({ id, session_recording_url }) => {
-        console.log('Assigning session notes with ID:', id);
+    async ({ id, session_recording_url }, { rejectWithValue }) => {
+        try {
+            console.log('Assigning session notes with ID:', id);
 
-        const response = await axiosInstance.put(
-            `${baseUrl}/ta/call-recording/upload-session-recording/${id}`,
+            const response = await axiosInstance.put(
+                `${baseUrl}/ta/call-recording/upload-session-recording/${id}`,
 
-            { session_recording_url }
-        );
+                { session_recording_url }
+            );
 
-        return response.data;
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Uploading video'
+                );
+            }
+        }
     }
 );
 
@@ -406,8 +419,6 @@ export const assignSessionNotes = createAsyncThunk(
     }
 );
 
-
-
 export const updateTaScheduledCall = createAsyncThunk(
     'coachMenu/updateTaScheduledCall',
     async ({ id, data }, { rejectWithValue }) => {
@@ -429,7 +440,6 @@ export const updateTaScheduledCall = createAsyncThunk(
     }
 );
 
-
 const initialState = {
     taProfileData: [], // TA Profile Data
     myStudentData: [], // TA My Students
@@ -441,9 +451,9 @@ const initialState = {
     selectedTaStudents: [],
     selectedTaBatches: [],
     assignedTaStudents: [],
-    taScheduleStudents:[],
+    taScheduleStudents: [],
     assignedTaBatches: [],
-    taScheduleBatches:[],
+    taScheduleBatches: [],
     taLeave: [],
     taRescheduleSessions: [],
     taCallRecords: [], //call recording
@@ -465,7 +475,6 @@ const initialState = {
     error: null,
     sessionNotesData: [],
     updatedTaScheduledCall: null,
-
 };
 
 export const taMenuSlice = createSlice({
@@ -806,7 +815,7 @@ export const taMenuSlice = createSlice({
             state.assignedTaStudents = [];
             state.error = action.error.message;
         });
-        //get ta selected assigend students 
+        //get ta selected assigend students
         builder.addCase(getSelectedTaMenuAssignedStudents.pending, state => {
             state.loading = true;
         });
@@ -817,11 +826,14 @@ export const taMenuSlice = createSlice({
                 state.taScheduleStudents= action.payload.data;
             }
         );
-        builder.addCase(getSelectedTaMenuAssignedStudents.rejected, (state, action) => {
-            state.loading = false;
-            state.taScheduleStudents = [];
-            state.error = action.error.message;
-        });
+        builder.addCase(
+            getSelectedTaMenuAssignedStudents.rejected,
+            (state, action) => {
+                state.loading = false;
+                state.taScheduleStudents = [];
+                state.error = action.error.message;
+            }
+        );
 
         // Get ta Assigned Batches
         builder.addCase(getTaMenuAssignedBatches.pending, state => {
@@ -837,8 +849,8 @@ export const taMenuSlice = createSlice({
             state.assignedTaBatches = [];
         });
 
-           // Get ta Selected Assigned Batches
-           builder.addCase(getSelectedTaMenuAssignedBatches.pending, state => {
+        // Get ta Selected Assigned Batches
+        builder.addCase(getSelectedTaMenuAssignedBatches.pending, state => {
             state.loading = true;
         });
         builder.addCase(getSelectedTaMenuAssignedBatches.fulfilled, (state, action) => {
@@ -852,7 +864,7 @@ export const taMenuSlice = createSlice({
         });
 
         // Update Students In Session
-        builder.addCase(updateStudentsInTaSession.pending, (state) => {
+        builder.addCase(updateStudentsInTaSession.pending, state => {
             state.loading = true;
         });
         builder.addCase(updateStudentsInTaSession.fulfilled, (state, action) => {
@@ -867,14 +879,14 @@ export const taMenuSlice = createSlice({
         })
 
         //Update Batches In Session
-        builder.addCase(updateBatchesInTaSession.pending , (state) => {
+        builder.addCase(updateBatchesInTaSession.pending, state => {
             state.loading = true;
-        })
+        });
         builder.addCase(updateBatchesInTaSession.fulfilled, (state, action) => {
             state.loading = false;
             //toast.success(action.payload.message || 'Batches Updated Successfully')
             // TODO : ----->
-        })
+        });
         builder.addCase(updateBatchesInTaSession.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
@@ -888,9 +900,13 @@ export const taMenuSlice = createSlice({
         });
         builder.addCase(uploadSessionRecording.fulfilled, (state, action) => {
             state.sessionRecordingUrl = action.payload.session_recording_url;
+            toast.success(
+                action.payload.message || 'Video upload successfully !'
+            );
         });
         builder.addCase(uploadSessionRecording.rejected, (state, action) => {
             state.error = action.payload;
+            toast.error(action.payload || 'Failed to Upload video');
         });
 
         //session notes
@@ -907,8 +923,7 @@ export const taMenuSlice = createSlice({
             state.error = action.error.message;
         });
 
-
-        builder.addCase(updateTaScheduledCall.pending, (state) => {
+        builder.addCase(updateTaScheduledCall.pending, state => {
             state.loading = true;
         });
         builder.addCase(updateTaScheduledCall.fulfilled, (state, action) => {
@@ -920,7 +935,7 @@ export const taMenuSlice = createSlice({
             state.loading = false;
             state.error = action.payload;
             toast.error(action.payload || 'Failed to update scheduled call');
-        })
+        });
     },
 });
 

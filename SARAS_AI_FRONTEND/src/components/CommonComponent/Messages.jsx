@@ -684,8 +684,17 @@ const Messages = ({ role }) => {
                                                 p={1}
                                                 className={`message-bubble ${msg.sender}`}
                                                 style={{
-                                                    maxWidth: '60%',
+                                                    maxWidth: '60%', // Set a reasonable max-width for messages
                                                     borderRadius: '15px',
+                                                    marginRight:
+                                                        msg.sender === 'me'
+                                                            ? '0'
+                                                            : 'auto',
+
+                                                    marginLeft:
+                                                        msg.sender === 'me'
+                                                            ? 'auto'
+                                                            : '0',
                                                 }}
                                             >
                                                 {msg.text}
