@@ -1,25 +1,16 @@
 import {
     Box,
     Button,
-    Checkbox,
-    FormControl,
-    FormControlLabel,
-    FormGroup,
     Grid,
-    Radio,
-    RadioGroup,
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-    //updateTaMenuSession,
     getTaMenuSessions,
     updateTaScheduledCall
 } from '../../../../redux/features/taModule/tamenuSlice';
 import {
-    // updateCoachMenuSession,
-
     getCoachMenuSessions,
     updateCoachScheduledCall
 } from '../../../../redux/features/coachModule/coachmenuprofileSilce';
@@ -31,50 +22,18 @@ import {
 import ReusableDialog from '../../../CustomFields/ReusableDialog';
 import CustomTextField from '../../../CustomFields/CustomTextField';
 import CustomFormControl from '../../../CustomFields/CustomFromControl';
-import CustomDateField from '../../../CustomFields/CustomDateField';
-import CustomTimeField from '../../../CustomFields/CustomTimeField';
 import CustomTimeZoneForm from '../../../CustomFields/CustomTimeZoneForm';
 import {
+    getAllHosts,
     getPlatforms,
     getTimezone,
 } from '../../../../redux/features/utils/utilSlice';
 import CustomPlatformForm from '../../../CustomFields/CustomPlatformForm';
 import CustomFutureDateField from '../../../CustomFields/CustomFutureDateField';
-
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                padding: '10px 20px',
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
+import CustomMeetingTypeField from '../../../CustomFields/CustomMeetingTypeField';
+import CustomHostNameForm from '../../../CustomFields/CustomHostNameField';
+import CustomTimeDaysjsField from '../../../CustomFields/CustomTimeDaysjsField';
+import CustomButton from '../../../CustomFields/CustomButton';
 
 const headers = ['S. No.', 'Slot Date', 'From Time', 'To Time', 'Select'];
 
@@ -105,63 +64,49 @@ const durationOptions = [
     { label: '2 Hours', value: '02:00:00' },
 ];
 
+const timezone = Number(localStorage.getItem('timezone_id'));
+
 const EditSession = ({ componentName }) => {
 
-    console.log('componenetname', componentName)
     const dispatch = useDispatch();
-    const { timezones, platforms } = useSelector(state => state.util);
 
-    const { editSession, students, batches, sessionData } = useSelector(state => state.commonCalender);
-
-    const authToken = useSelector(state => state.auth.token); // Assuming you store the auth token in Redux
-
-    const startTime = moment(sessionData.start_time, "HH:MM:SS");
-    const endTime = moment(sessionData.end_time, "HH:MM:SS");
-    const timeDifference = moment.duration(endTime.diff(startTime));
-    const formattedDifference = [
-        String(Math.floor(timeDifference.asHours())).padStart(2, '0'),
-        String(timeDifference.minutes()).padStart(2, '0'),
-        String(timeDifference.seconds()).padStart(2, '0'),
-    ].join(':');
-
-    const [error, setError] = useState({});
-    const studentData = sessionData.students || [];
-
-    const studentIdArray = [];
-    if (studentData && studentData.length > 0) {
-        students.forEach(student => {
-            if (student && student.id) {
-                studentIdArray.push(student.id);
-            }
-        });
+    const initialFormData = {
+        sessionName: '',
+        duration: null,
+        message: '',
+        students: [],
+        batches: [],
+        platform_id: null,
+        host_email_id: null,
+        meeting_type: null,
+        fromDate: null,
+        toDate: null,
+        fromTime: null,
+        toTime: null,
+        timezone_id: timezone ? timezone : null,
     }
 
-    const [formData, setFormData] = useState({
-        sessionName: sessionData.meeting_name || '',
-        duration: formattedDifference,
-        message: sessionData.message || '',
-        students: studentIdArray || [], // sessionData.students || [];
-        batches: sessionData.batch || [],
-        platform_id: sessionData.platform_id || null,
-        fromDate: sessionData.date || '',
-        toDate: sessionData.to_date || '',
-        fromTime: moment(sessionData.start_time, "HH:MM:SS"),
-        toTime: moment(sessionData.end_time, "HH:MM:SS"),
-        timezone_id: sessionData.timezone_id || null,
-    });
+    const [formData, setFormData] = useState(initialFormData);
+    const [error, setError] = useState({});
+    const meetingTypes = ['webinars', 'meetings'];
+
+    const { timezones, platforms, hosts } = useSelector((state) => state.util);
+
+    const { editSession, students, batches, sessionData } = useSelector((state) => state.commonCalender);
 
     let sliceName, updateSessionApi, getSessionApi;
 
     switch (componentName) {
+
         case 'TAMENU':
             sliceName = 'taMenu';
-            // updateSessionApi = updateTaMenuSession;
+            updateSessionApi = updateTaScheduledCall;
             getSessionApi = getTaMenuSessions;
             break;
 
         case 'COACHMENU':
             sliceName = 'coachMenu';
-            // updateSessionApi = updateCoachMenuSession;
+            updateSessionApi = updateCoachScheduledCall;
             getSessionApi = getCoachMenuSessions;
             break;
 
@@ -175,7 +120,53 @@ const EditSession = ({ componentName }) => {
     useEffect(() => {
         dispatch(getTimezone());
         dispatch(getPlatforms());
-    }, [dispatch]);
+        dispatch(getAllHosts());
+    }, [dispatch])
+
+    useEffect(() => {
+        if (sessionData) {
+            const startTime = moment(sessionData.start_time, "HH:mm:ss");
+            const endTime = moment(sessionData.end_time, "HH:mm:ss");
+
+            const timeDifference = moment.duration(endTime.diff(startTime));
+
+            const formattedDifference = [
+                String(Math.floor(timeDifference.asHours())).padStart(2, '0'),
+                String(timeDifference.minutes()).padStart(2, '0'),
+                String(timeDifference.seconds()).padStart(2, '0'),
+            ].join(':');
+
+            setFormData({
+                sessionName: sessionData.meeting_name || '',
+                duration: formattedDifference,
+                message: sessionData.message || '',
+                students: studentIdArray || [], // sessionData.students || [];
+                batches: sessionData.batch || [],
+                platform_id: sessionData.platform_id || null,
+                fromDate: sessionData.date || '',
+                toDate: sessionData.to_date || '',
+                fromTime: sessionData.start_time,
+                meeting_type: sessionData.platform_meeting_details.meeting_type,
+                host_email_id: sessionData.platform_meeting_details.host_email_id,
+                timezone_id: sessionData.timezone_id || null
+                //moment(sessionData.start_time, "HH:MM:SS"),
+                //toTime: moment(sessionData.end_time, "HH:MM:SS"),
+
+            })
+        }
+    }, [sessionData])
+
+
+    const studentData = sessionData.students || [];
+
+    const studentIdArray = [];
+    if (studentData && studentData.length > 0) {
+        students.forEach(student => {
+            if (student && student.id) {
+                studentIdArray.push(student.id);
+            }
+        });
+    }
 
     const durationOptions = [
         { label: '15 minutes', value: '00:15:00' },
@@ -189,104 +180,119 @@ const EditSession = ({ componentName }) => {
     ];
 
     const handleChange = (field, value) => {
-        if (field === 'timezone') {
-            setFormData(prev => ({ ...prev, [field]: value.timezone_id }));
-        }
         setFormData(prev => ({ ...prev, [field]: value }));
     };
 
-    const handleDayChange = day => {
-        setFormData(prev => {
-            const newSelectedDays = prev.selectedDays.includes(day)
-                ? prev.selectedDays.filter(d => d !== day)
-                : [...prev.selectedDays, day];
-            return { ...prev, selectedDays: newSelectedDays };
-        });
-    };
-
     const handleAssignStudents = () => {
-        dispatch(openSelectStudents(sessionData.students));
+        dispatch(openSelectStudents({ sessionData }));
     };
 
     const handleAssignBatches = () => {
-        dispatch(openSelectBatches(sessionData.batch));
+        dispatch(openSelectBatches({ sessionData }));
     };
 
     const validate = () => {
+        if (!formData.sessionName) {
+            toast.error('Please enter meeting name')
+            return false;
+        }
 
+        // Check if 'duration' is provided and in the correct format
+        if (!formData.duration) {
+            toast.error('Please select duration');
+            return false;
+        }
+
+        if (!formData.platform_id) {
+            toast.error('Please select meeting platform')
+            return false;
+        }
+
+        if (formData.platform_id === 1) {
+            // Check if 'host_email_id' is provided
+            if (!formData.host_email_id) {
+                toast.error('Please Select Host Name');
+                return false;
+            }
+
+            // Check if 'meeting_type' is provided
+            if (!formData.meeting_type) {
+                toast.error('Please Select Meeting Type');
+                return false;
+            }
+        }
+
+        // Check if 'fromDate' is provided
+        if (!formData.fromDate) {
+            toast.error('Please select  from date');
+            return false;
+        }
+
+        // Check if 'fromTime' is provided
+        if (!formData.fromTime) {
+            toast.error('Please add from time');
+            return false;
+        }
+
+        // Chech message
+        if (!formData.message) {
+            toast.error('Please enter message');
+            return false;
+        }
+
+        // Check if 'timezone_id' is provided
+        if (!formData.timezone_id) {
+            toast.error('Please select a timezone');
+            return false;
+        }
+        return true;
     };
 
 
     const handleSubmit = e => {
         e.preventDefault();
 
-        const fromDateTimeString = `${formData.fromDate}T${formData.fromTime}`;
-        console.log('fromDateTimeString:', fromDateTimeString);
+        if (!validate()) return;
 
+        const studentId = sessionData.students.map(student => student.id);
+        const batchId = sessionData.batch.map(batch => batch.id);
+
+        const fromDateTimeString = `${formData.fromDate}T${formData.fromTime}`;
         const fromDateTime = new Date(fromDateTimeString);
-        console.log('fromDateTime:', fromDateTime);
 
         // Assuming formData.duration is in the format "HH:MM:SS"
         const [hours, minutes, seconds] = formData?.duration
             .split(':')
             .map(Number);
         const durationInMs = (hours * 3600 + minutes * 60 + seconds) * 1000;
-
-        // Calculate endDateTime by adding duration to fromDateTime
         const endDateTime = new Date(fromDateTime.getTime() + durationInMs);
-        // console.log('endDateTime:', endDateTime);
-
-        // Extracting time from endDateTime in HH:MM:SS format
         const endTime = endDateTime.toTimeString().split(' ')[0];
-
-        console.log("END TIME DATA ::", endTime, formData.duration)
-
-        const studentId = students.map(student => student.id);
-        const batchId = batches.map(batch => batch.id);
 
         const data = {
             meeting_name: formData.sessionName,
-            platform_id: formData.platform_id,
+            duration: formData.duration,
             schedule_date: formData.fromDate,
             start_time: formData.fromTime,
             end_time: endTime,
+            message: formData.message,
+            platform_id: formData.platform_id,
             timezone_id: formData.timezone_id,
             event_status: 'rescheduled',
-            message: formData.message,
             studentId: studentId,
             batchId: batchId,
+            host_email_id: formData.host_email_id,
+            meeting_type: formData.meeting_type,
         };
 
-        const headers = {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${authToken}`
-        };
-
-        if (componentName === 'COACHMENU') {
-            dispatch(updateCoachScheduledCall({ id: sessionData.id, data }))
-                .then(() => {
-                    dispatch(getCoachMenuSessions());
-                    dispatch(closeEditSession());
-                })
-                .catch(error => {
-                    console.error('Error updating coach scheduled call:', error);
-                    // Handle error (e.g., show error message to user)
-                });
-        } else if (componentName === 'TAMENU') {
-            dispatch(updateTaScheduledCall({ id: sessionData.id, data, headers }))
-                .then(() => {
-                    dispatch(getTaScheduledCalls());
-                    dispatch(closeEditSession());
-                })
-                .catch(error => {
-                    console.error('Error updating TA scheduled call:', error);
-                    // Handle error (e.g., show error message to user)
-                });
-        } else {
-            console.error('Invalid componentName:', componentName);
-            // Handle invalid componentName (e.g., show error message to user)
-        }
+        dispatch(updateSessionApi({ id: sessionData.id, data }))
+            .then(() => {
+                dispatch(getSessionApi());
+                dispatch(closeEditSession());
+            })
+            .catch(error => {
+                console.error('Error updating TA scheduled call:', error);
+                // Handle error (e.g., show error message to user)
+            });
     };
 
     const content = (
@@ -358,7 +364,7 @@ const EditSession = ({ componentName }) => {
                                     <CustomPlatformForm
                                         label="Platform"
                                         name="platform_id"
-                                        value={formData.platforms}
+                                        value={formData.platform_id}
                                         onChange={e =>
                                             handleChange(
                                                 'platform_id',
@@ -371,6 +377,50 @@ const EditSession = ({ componentName }) => {
                                         sx={{ width: '100%' }}
                                     />
                                 </Grid>
+                                {formData.platform_id === 1 && (
+                                    <>
+                                        <Grid
+                                            item
+                                            xs={12}
+                                            display="flex"
+                                            justifyContent="center"
+                                        >
+                                            <CustomHostNameForm
+                                                label="Host Name"
+                                                name="host_email_id"
+                                                value={formData.host_email_id}
+                                                onChange={e =>
+                                                    handleChange(
+                                                        'host_email_id',
+                                                        e.target.value
+                                                    )
+                                                }
+                                                options={hosts.users}
+                                                errors={!!error.host_email_id}
+                                            />
+                                        </Grid>
+                                        <Grid
+                                            item
+                                            xs={12}
+                                            display="flex"
+                                            justifyContent="center"
+                                        >
+                                            <CustomMeetingTypeField
+                                                label="Meeting Type"
+                                                name="meeting_type"
+                                                value={formData.meeting_type}
+                                                onChange={e =>
+                                                    handleChange(
+                                                        'meeting_type',
+                                                        e.target.value
+                                                    )
+                                                }
+                                                options={meetingTypes}
+                                                errors={!!error.meeting_name}
+                                            />
+                                        </Grid>
+                                    </>
+                                )}
                             </Grid>
 
                             <Grid
@@ -404,7 +454,7 @@ const EditSession = ({ componentName }) => {
                                     display="flex"
                                     justifyContent="center"
                                 >
-                                    <CustomTimeField
+                                    <CustomTimeDaysjsField
                                         label="From Time"
                                         name="fromTime"
                                         value={formData.fromTime}

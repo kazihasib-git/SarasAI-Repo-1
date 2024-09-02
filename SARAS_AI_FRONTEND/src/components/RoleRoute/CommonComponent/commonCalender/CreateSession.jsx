@@ -39,24 +39,15 @@ import {
     getTimezone,
 } from '../../../../redux/features/utils/utilSlice';
 import CustomPlatformForm from '../../../CustomFields/CustomPlatformForm';
-import { Controller } from 'react-hook-form';
 import CustomHostNameForm from '../../../CustomFields/CustomHostNameField';
 import CustomMeetingTypeField from '../../../CustomFields/CustomMeetingTypeField';
 import CustomButton from '../../../CustomFields/CustomButton';
 import { toast } from 'react-toastify';
 import CustomFutureDateField from '../../../CustomFields/CustomFutureDateField';
 
-const headers = ['S. No.', 'Slot Date', 'From Time', 'To Time', 'Select'];
-
 const timezone = Number(localStorage.getItem('timezone_id'));
 
-const actionButtons = [
-    {
-        type: 'button',
-    },
-];
-
-const CreateSession = ({ componentName, timezoneID }) => {
+const CreateSession = ({ componentName }) => {
     const dispatch = useDispatch();
 
     const initialFormData = {
@@ -76,6 +67,11 @@ const CreateSession = ({ componentName, timezoneID }) => {
     };
 
     const [formData, setFormData] = useState(initialFormData);
+    const [error, setError] = useState({});
+    const meetingTypes = ['webinars', 'meetings'];
+
+    const { timezones, platforms, hosts } = useSelector(state => state.util);
+    const { scheduleNewSessionPopup, students, batches } = useSelector((state) => state.commonCalender);
 
     let sliceName, createSessionApi, getSessionApi, getSlotApi;
 
@@ -102,19 +98,11 @@ const CreateSession = ({ componentName, timezoneID }) => {
             break;
     }
 
-    const { timezones, platforms, hosts } = useSelector(state => state.util);
-    const { scheduleNewSessionPopup, students, batches } = useSelector(
-        state => state.commonCalender
-    );
-
     useEffect(() => {
         dispatch(getTimezone());
         dispatch(getPlatforms());
         dispatch(getAllHosts());
-    }, [dispatch]);
-
-    const [error, setError] = useState({});
-    const meetingTypes = ['webinars', 'meetings'];
+    }, [dispatch]);    
 
     const durationOptions = [
         { label: '15 minutes', value: '00:15:00' },
@@ -207,10 +195,8 @@ const CreateSession = ({ componentName, timezoneID }) => {
         const batchId = batches.map(batch => batch.id);
 
         const fromDateTimeString = `${formData.fromDate}T${formData.fromTime}`;
-        console.log('fromDateTimeString:', fromDateTimeString);
 
         const fromDateTime = new Date(fromDateTimeString);
-        console.log('fromDateTime:', fromDateTime);
 
         // Assuming formData.duration is in the format "HH:MM:SS"
         const [hours, minutes, seconds] = formData?.duration
@@ -218,11 +204,8 @@ const CreateSession = ({ componentName, timezoneID }) => {
             .map(Number);
         const durationInMs = (hours * 3600 + minutes * 60 + seconds) * 1000;
 
-        // Calculate endDateTime by adding duration to fromDateTime
         const endDateTime = new Date(fromDateTime.getTime() + durationInMs);
-        // console.log('endDateTime:', endDateTime);
 
-        // Extracting time from endDateTime in HH:MM:SS format
         const endTime = endDateTime.toTimeString().split(' ')[0];
 
         const data = {
@@ -246,6 +229,7 @@ const CreateSession = ({ componentName, timezoneID }) => {
             .then(() => {
                 dispatch(getSessionApi());
                 dispatch(getSlotApi());
+                // TODO NEED TO CALL GET SCHEDULE CALL API  HERE --->
                 dispatch(closeScheduleNewSession());
 
                 // Reset the form after submission
@@ -255,7 +239,7 @@ const CreateSession = ({ componentName, timezoneID }) => {
                 console.error('API Error:', error);
             });
     };
-console.log('timezoneid comming' , timezoneID) ; 
+
     const content = (
         <Box
             display="flex"

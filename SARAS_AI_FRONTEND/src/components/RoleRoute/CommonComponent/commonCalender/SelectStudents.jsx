@@ -5,48 +5,16 @@ import { getTaMenuAssignedStudents } from '../../../../redux/features/taModule/t
 import { getCoachMenuAssignedStudents } from '../../../../redux/features/coachModule/coachmenuprofileSilce';
 import {
     closeSelectStudents,
+    openEditSession,
     openScheduleNewSession,
 } from '../../../../redux/features/commonCalender/commonCalender';
 import CustomTextField from '../../../CustomFields/CustomTextField';
 import ReusableDialog from '../../../CustomFields/ReusableDialog';
 import PopUpTable from '../../../CommonComponent/PopUpTable';
+import CustomButton from '../../../CustomFields/CustomButton';
 
 const name = String(localStorage.getItem('name') || 'Name');
 
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                padding: '10px 20px',
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
 
 const headers = ['S. No.', 'Student Name', 'Program', 'Batch', 'Select'];
 
@@ -88,7 +56,9 @@ const SelectStudents = ({ componentName }) => {
         batches,
         selectStudentPopup,
         preSelectedStudents,
-        preSelectedBatches,
+        editStudents,
+        editBatches,
+        sessionData,
     } = useSelector(state => state.commonCalender);
 
     const { [studentDataState]: studentsData } = stateSelector || {};
@@ -141,12 +111,14 @@ const SelectStudents = ({ componentName }) => {
         }
     }, [studentsData, selectedTerm, selectedBatch, searchName]);
 
-    useEffect(() => {
-        const transformedPreSelectedStudents = preSelectedStudents.map(
-            student => student.id
-        );
-        setSelectedStudents(transformedPreSelectedStudents);
-    }, [preSelectedStudents]);
+    // useEffect(() => {
+    //     const transformedPreSelectedStudents = preSelectedStudents.map(
+    //         student => student.id
+    //     );
+    //     setSelectedStudents(transformedPreSelectedStudents);
+    // }, [preSelectedStudents]);
+
+    console.log("SELECTED STUDENTS", selectedStudents)
 
     const batchOptions =
         studentsData && Array.isArray(studentsData)
@@ -187,14 +159,16 @@ const SelectStudents = ({ componentName }) => {
               ]
             : [];
 
-    console.log('Students : ', students, 'selectedStudents', selectedStudents);
-
     useEffect(() => {
         
         let updatedSelectedStudents = [];
 
         if (students && students.length > 0) {
             updatedSelectedStudents = students.map(student => student.id);
+        }
+
+        if(sessionData && sessionData.students && sessionData.students.length > 0){
+            updatedSelectedStudents = sessionData.students.map(student => student.id);
         }
 
         if (batches && batches.length > 0) {
@@ -218,8 +192,30 @@ const SelectStudents = ({ componentName }) => {
                 ...new Set([...updatedSelectedStudents, ...matchingStudentIds]),
             ];
         }
+
+        if(sessionData && sessionData.batch &&  sessionData.batch.length > 0){
+            const assignedBatchIds = studentsData.flatMap(stu =>
+                stu.student.batches.map(batch => batch.batch_id)
+            );
+
+            const matchingBatchIds = sessionData.batch
+                .filter(batch => assignedBatchIds.includes(batch.id))
+                .map(batch => batch.id);
+
+            const matchingStudentIds = studentsData
+                .filter(stu =>
+                    stu.student.batches.some(batch =>
+                        matchingBatchIds.includes(batch.batch_id)
+                    )
+                )
+                .map(stu => stu.student.id);
+
+            updatedSelectedStudents = [
+                ...new Set([...updatedSelectedStudents, ...matchingStudentIds]),
+            ];
+        }
         setSelectedStudents(updatedSelectedStudents);
-    }, [students]);
+    }, [students, sessionData]);
 
     const handleSelectStudents = id => {
         setSelectedStudents(prev =>
@@ -234,7 +230,15 @@ const SelectStudents = ({ componentName }) => {
                 : [],
         };
 
-        dispatch(openScheduleNewSession(data));
+        if(sessionData){
+            const updatedSessionData = {
+                ...sessionData,
+                students : selectedStudents ? selectedStudents.map(id => ({ id })) : [],
+            }
+            dispatch(openEditSession({ sessionData : updatedSessionData }))
+        }else {
+            dispatch(openScheduleNewSession(data));
+        }
         dispatch(closeSelectStudents());
     };
 
@@ -297,7 +301,7 @@ const SelectStudents = ({ componentName }) => {
     );
 
     const actions = (
-        <CustomButton
+        <CustomButton 
             onClick={handleSubmit}
             style={{
                 backgroundColor: '#F56D3B',
