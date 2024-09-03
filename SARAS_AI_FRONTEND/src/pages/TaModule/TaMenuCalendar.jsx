@@ -69,7 +69,6 @@ const CustomButton = ({
 const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
 
 const TAMenuCalendar = () => {
-
     const { timezones } = useSelector(state => state.util);
     const dispatch = useDispatch();
     const [eventsList, setEventsList] = useState([]);
@@ -132,7 +131,9 @@ const TAMenuCalendar = () => {
                             start_date: event.date.split(' ')[0],
                             start_time: event.start_time,
                             end_time: event.end_time,
-                            end_date: event.end_date ? event.end_date : event.date.split(' ')[0],
+                            end_date: event.end_date
+                                ? event.end_date
+                                : event.date.split(' ')[0],
                             timezonename,
                         });
 
@@ -293,7 +294,6 @@ const TAMenuCalendar = () => {
             setPlatformName('');
             setplatformUrl('');
         }
-
     }, [taSessions, targetSessionId]);
 
     return (
@@ -358,30 +358,52 @@ const TAMenuCalendar = () => {
                     componentName={'TAMENU'}
                     onSelectEvent={handleSessionSelect}
                 />
-                {createNewSlotPopup && <CreateSlot componentName={'TAMENU'} timezoneID={storedTimezoneId}/>}
+                {createNewSlotPopup && (
+                    <CreateSlot
+                        componentName={'TAMENU'}
+                        timezoneID={storedTimezoneId}
+                    />
+                )}
                 {scheduleNewSessionPopup && (
-                    <CreateSession componentName={'TAMENU'} timezoneID={storedTimezoneId} />
+                    <CreateSession
+                        componentName={'TAMENU'}
+                        timezoneID={storedTimezoneId}
+                    />
                 )}
                 {selectStudentPopup && (
                     <SelectStudents componentName={'TAMENU'} />
                 )}
                 {selectBatchPopup && <SelectBatches componentName={'TAMENU'} />}
-                {markLeave && <MarkLeaveDate componentName={'TAMENU'} timezoneID={storedTimezoneId}/>}
-                {createdSlots && <CreatedSlots componentName={'TAMENU'} timezoneID={storedTimezoneId}/>}
-                
-                {openCreatedSessions && (
-                    <CreatedSessions componentName={'TAMENU'} timezoneID={storedTimezoneId} />
+                {markLeave && (
+                    <MarkLeaveDate
+                        componentName={'TAMENU'}
+                        timezoneID={storedTimezoneId}
+                    />
                 )}
-                
+                {createdSlots && (
+                    <CreatedSlots
+                        componentName={'TAMENU'}
+                        timezoneID={storedTimezoneId}
+                    />
+                )}
+
+                {openCreatedSessions && (
+                    <CreatedSessions
+                        componentName={'TAMENU'}
+                        timezoneID={storedTimezoneId}
+                    />
+                )}
+
                 {openCancelSession && (
                     <CancelSession componentName={'TAMENU'} />
                 )}
                 {RescheduleSession && (
-                    <RescheduleCreatedSession componentName={'TAMENU'} timezoneID={storedTimezoneId}/>
+                    <RescheduleCreatedSession
+                        componentName={'TAMENU'}
+                        timezoneID={storedTimezoneId}
+                    />
                 )}
-                {openLeaveReason && (
-                    <LeaveReason componentName={'TAMENU'} />
-                )}
+                {openLeaveReason && <LeaveReason componentName={'TAMENU'} />}
                 {openSession && (
                     <SessionLink
                         componentName={'TAMENU'}
@@ -390,15 +412,11 @@ const TAMenuCalendar = () => {
                         platformUrl={platformUrl}
                     />
                 )}
-                 {openEditStudentsPopup && (
-                    <EditStudentsSessionLink
-                        componentName={'TAMENU'}
-                        />
+                {openEditStudentsPopup && (
+                    <EditStudentsSessionLink componentName={'TAMENU'} />
                 )}
                 {openEditBatchesPopup && (
-                    <EditBatchesSessionLink
-                        componentName={'TAMENU'}
-                    />
+                    <EditBatchesSessionLink componentName={'TAMENU'} />
                 )}
             </Box>
         </>

@@ -23,7 +23,11 @@ import { Controller, useForm } from 'react-hook-form';
 const ReasonForLeave = ({ componentName }) => {
     const dispatch = useDispatch();
     const { id, name } = useParams();
-    const { control, handleSubmit, formState: { errors } } = useForm();
+    const {
+        control,
+        handleSubmit,
+        formState: { errors },
+    } = useForm();
 
     let reasonForLeaveOpenKey,
         closeReasonForLeaveAction,
@@ -75,14 +79,13 @@ const ReasonForLeave = ({ componentName }) => {
         [slotEventKey]: slotEventDetails,
     } = useSelector(state => state[sliceName] || {});
 
-    const onSumbit = (data) => {
-
-        if(!data.reason){
-            toast.error('Enter Reason For Leave')
+    const onSumbit = data => {
+        if (!data.reason) {
+            toast.error('Enter Reason For Leave');
             return;
         }
 
-        if(markLeaveData && markLeaveData.data){
+        if (markLeaveData && markLeaveData.data) {
             const slots = markLeaveData.data;
 
             const requestBody = {
@@ -92,21 +95,20 @@ const ReasonForLeave = ({ componentName }) => {
                 approve_status: null,
                 leave_type: null,
                 reason: data.reason,
-                data: slots
+                data: slots,
             };
 
             dispatch(reasonForLeaveAction(requestBody))
-            .unwrap()
-            .then(() => {
-                dispatch(getSlotsApi(id));
-                dispatch(getSessionApi(id));
-                dispatch(closeReasonForLeaveAction());
-                toast.success("Leave has been successfully created.")
-            })
-            .catch(error => {
-               
-                toast.error(` ${error}`);
-            });
+                .unwrap()
+                .then(() => {
+                    dispatch(getSlotsApi(id));
+                    dispatch(getSessionApi(id));
+                    dispatch(closeReasonForLeaveAction());
+                    toast.success('Leave has been successfully created.');
+                })
+                .catch(error => {
+                    toast.error(` ${error}`);
+                });
         }
     };
 

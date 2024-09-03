@@ -22,7 +22,6 @@ import { convertFromUTC } from '../../utils/dateAndtimeConversion';
 import { getTimezone } from '../../redux/features/utils/utilSlice';
 
 const CallRequest = () => {
-    
     const [openCreateMeetingDialog, setOpenCreateMeetingDialog] =
         useState(false);
     const [open, setOpen] = useState(false);

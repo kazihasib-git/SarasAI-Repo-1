@@ -19,13 +19,18 @@ import {
     getCoachMenuSessions,
     getCoachMenuSlots,
 } from '../../../../redux/features/coachModule/coachmenuprofileSilce';
-import { cancelTaScheduledSessionForLeave, getTaMenuSessionForLeave, getTaMenuSessions, getTaMenuSlots } from '../../../../redux/features/taModule/tamenuSlice';
+import {
+    cancelTaScheduledSessionForLeave,
+    getTaMenuSessionForLeave,
+    getTaMenuSessions,
+    getTaMenuSlots,
+} from '../../../../redux/features/taModule/tamenuSlice';
 
 const CancelSession = ({ componentName }) => {
     const dispatch = useDispatch();
 
-    let sliceName, 
-        cancelSessionApi, 
+    let sliceName,
+        cancelSessionApi,
         getSessionsApi,
         getAllSlotsAPi,
         getAllSessionsApi;
@@ -43,8 +48,8 @@ const CancelSession = ({ componentName }) => {
             sliceName = 'coachMenu';
             cancelSessionApi = cancelScheduledSessionForLeave;
             getSessionsApi = getCoachMenuSessionForLeave;
-            getAllSlotsAPi = getCoachMenuSlots
-            getAllSessionsApi = getCoachMenuSessions
+            getAllSlotsAPi = getCoachMenuSlots;
+            getAllSessionsApi = getCoachMenuSessions;
             break;
 
         default:
@@ -61,12 +66,11 @@ const CancelSession = ({ componentName }) => {
     const { openCancelSession, sessionCancelData, slotsLeaveData } =
         useSelector(state => state.commonCalender);
 
-
     const handleCancel = () => {
         const sessionId = sessionCancelData.id;
         dispatch(cancelSessionApi(sessionId)).then(() => {
-            dispatch(getSessionsApi(slotsLeaveData))
-            dispatch(openCreatedSessions(slotsLeaveData))
+            dispatch(getSessionsApi(slotsLeaveData));
+            dispatch(openCreatedSessions(slotsLeaveData));
             dispatch(getAllSessionsApi());
             dispatch(getAllSlotsAPi());
         });
@@ -87,8 +91,8 @@ const CancelSession = ({ componentName }) => {
             </CustomButton>
             <CustomButton
                 onClick={() => {
-                    dispatch(closeCancelSessionPopup())
-                    dispatch(openCreatedSessions())
+                    dispatch(closeCancelSessionPopup());
+                    dispatch(openCreatedSessions());
                 }}
                 backgroundColor="#F56D38"
                 borderColor="#F56D38"

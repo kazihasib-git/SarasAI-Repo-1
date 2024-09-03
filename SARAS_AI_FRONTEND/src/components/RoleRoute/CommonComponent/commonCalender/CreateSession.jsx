@@ -66,8 +66,8 @@ const CreateSession = ({ componentName, timezoneID }) => {
         students: [],
         batches: [],
         platform_id: null,
-        host_email_id : null,
-        meeting_type : null,
+        host_email_id: null,
+        meeting_type: null,
         fromDate: null,
         toDate: null,
         fromTime: null,
@@ -140,30 +140,29 @@ const CreateSession = ({ componentName, timezoneID }) => {
     };
 
     const validate = () => {
-
-        if(!formData.sessionName){
-            toast.error('Please enter meeting name')
+        if (!formData.sessionName) {
+            toast.error('Please enter meeting name');
             return false;
         }
-        
+
         // Check if 'duration' is provided and in the correct format
         if (!formData.duration) {
             toast.error('Please select duration');
             return false;
         }
 
-        if(!formData.platform_id){
-            toast.error('Please select meeting platform')
+        if (!formData.platform_id) {
+            toast.error('Please select meeting platform');
             return false;
         }
 
-        if(formData.platform_id === 1 ){
+        if (formData.platform_id === 1) {
             // Check if 'host_email_id' is provided
             if (!formData.host_email_id) {
                 toast.error('Please Select Host Name');
                 return false;
             }
-        
+
             // Check if 'meeting_type' is provided
             if (!formData.meeting_type) {
                 toast.error('Please Select Meeting Type');
@@ -176,7 +175,7 @@ const CreateSession = ({ componentName, timezoneID }) => {
             toast.error('Please select  from date');
             return false;
         }
-        
+
         // Check if 'fromTime' is provided
         if (!formData.fromTime) {
             toast.error('Please add from time');
@@ -184,7 +183,7 @@ const CreateSession = ({ componentName, timezoneID }) => {
         }
 
         // Chech message
-        if(!formData.message){
+        if (!formData.message) {
             toast.error('Please enter message');
             return false;
         }
@@ -193,14 +192,14 @@ const CreateSession = ({ componentName, timezoneID }) => {
         if (!formData.timezone_id) {
             toast.error('Please select a timezone');
             return false;
-        }    
+        }
         return true;
     };
 
     const handleSubmit = e => {
         e.preventDefault();
 
-        if(!validate()) return;
+        if (!validate()) return;
 
         const studentId = students.map(student => student.id);
         const batchId = batches.map(batch => batch.id);

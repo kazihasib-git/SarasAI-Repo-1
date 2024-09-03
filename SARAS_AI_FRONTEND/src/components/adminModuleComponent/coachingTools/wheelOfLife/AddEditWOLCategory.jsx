@@ -66,7 +66,7 @@ const AddEditWOLCategory = () => {
                 backgroundColor: '#F56D3B',
                 borderColor: '#F56D3B',
                 color: '#FFFFFF',
-                textTransform: 'none' 
+                textTransform: 'none',
             }}
         >
             Update

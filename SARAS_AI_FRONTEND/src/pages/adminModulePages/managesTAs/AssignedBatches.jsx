@@ -84,7 +84,6 @@ const DynamicTable = ({
     ta_id,
     dispatch,
 }) => {
-    
     const [data, setData] = useState(
         initialData.map(item => ({
             ...item,
@@ -341,13 +340,15 @@ const DynamicTable = ({
                         },
                     }}
                 />
-                 {isDialogOpen && (
-                <DeleteConfirmation
-                open={isDialogOpen}
-                handleClose={handleCloseDialog}
-                onConfirm={()=>{handleConfirmDelete(itemIdToDelete,ta_id)}}
-             />
-            )}
+                {isDialogOpen && (
+                    <DeleteConfirmation
+                        open={isDialogOpen}
+                        handleClose={handleCloseDialog}
+                        onConfirm={() => {
+                            handleConfirmDelete(itemIdToDelete, ta_id);
+                        }}
+                    />
+                )}
             </div>
         </div>
     );
@@ -367,7 +368,7 @@ const actionButtons = [
 const AssignedBatches = () => {
     const { id } = useParams();
     const dispatch = useDispatch();
-    
+
     const { assignedBatches, loading } = useSelector(state => state.taModule);
     const [taAssignBatchesData, setTaAssignBatchesData] = useState([]);
 

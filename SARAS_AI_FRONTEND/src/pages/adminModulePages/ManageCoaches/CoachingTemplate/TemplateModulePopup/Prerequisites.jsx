@@ -66,8 +66,6 @@ const PrerequisitesPopup = ({
     prereqActivityData,
     handleClose,
 }) => {
-    
-
     const dispatch = useDispatch();
     const {
         control,
@@ -103,8 +101,8 @@ const PrerequisitesPopup = ({
                 label: module.module_name,
             }));
             setModuleOptions(options);
-        }else {
-            setModuleOptions()
+        } else {
+            setModuleOptions();
         }
     }, [coachTemplatesId]);
 
@@ -119,14 +117,15 @@ const PrerequisitesPopup = ({
             const selectedModule = coachTemplatesId.modules.find(
                 mod => mod.id === selectedModuleId
             );
-            
+
             if (selectedModule && selectedModuleId == prereqModuleData.id) {
                 const options =
-                    selectedModule.activities?.filter(item => item.id != prereqActivityData.id)
-                    .map(activity => ({
-                        value: activity.id,
-                        label: activity.activity_name,
-                    })) || [];
+                    selectedModule.activities
+                        ?.filter(item => item.id != prereqActivityData.id)
+                        .map(activity => ({
+                            value: activity.id,
+                            label: activity.activity_name,
+                        })) || [];
                 setActivityOptions(options);
             } else if (selectedModule) {
                 const options =
@@ -183,7 +182,7 @@ const PrerequisitesPopup = ({
                     prerequisite_module_id: data.module,
                 })),
         };
-        
+
         dispatch(addPrerequisites(prereqData)).then(() => {
             dispatch(getCoachTemplateModuleId(prereqModuleData.template_id));
         });
@@ -255,7 +254,7 @@ const PrerequisitesPopup = ({
                 md={6}
                 style={{ margin: '10px 0px', width: '80%' }}
             >
-                <FormControlLabel   
+                <FormControlLabel
                     control={
                         <Checkbox
                             checked={activityDependence}

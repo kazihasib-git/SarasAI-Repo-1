@@ -33,7 +33,6 @@ import { getTodayCoachAvailability } from '../../../redux/features/adminModule/c
 import EditStudentsFromSession from '../../../components/availability/EditStudentsFromSession';
 import EditBatchesFromSession from '../../../components/availability/EditBatchesFromSession';
 
-
 const CustomButton = ({
     onClick,
     children,
@@ -99,7 +98,6 @@ const CoachCalender = () => {
     const storedTimezoneId = selectedCoach
         ? selectedCoach.timezone_id
         : Number(localStorage.getItem('timezone_id'));
-
 
     const [eventsList, setEventsList] = useState([]);
     const [slotViewData, setSlotViewData] = useState([]);
@@ -167,7 +165,7 @@ const CoachCalender = () => {
                                 : event.date.split(' ')[0],
                             timezonename,
                         });
-                        
+
                         const startDateTime = new Date(
                             `${localTime.start_date}T${localTime.start_time}`
                         );

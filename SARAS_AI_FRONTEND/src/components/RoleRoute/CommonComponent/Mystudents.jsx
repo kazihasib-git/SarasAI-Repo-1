@@ -61,7 +61,6 @@ const Mystudents = ({ role }) => {
                                 count +
                                 template.modules.reduce(
                                     (moduleCount, module) => {
-                                    
                                         return (
                                             moduleCount +
                                             module.activities.length

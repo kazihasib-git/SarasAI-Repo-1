@@ -19,7 +19,6 @@ const actionButtons = [
 ];
 
 const AssignCoachStudent = () => {
-    
     const { id } = useParams();
     const dispatch = useDispatch();
     const { assignedStudents, loading } = useSelector(

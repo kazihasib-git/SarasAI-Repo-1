@@ -9,7 +9,7 @@ function NavAvator() {
     const dispatch = useDispatch();
     const navigate = useNavigate(); // Initialize navigate
     const { userData, role } = useSelector(state => state.auth);
-    const [role1, setrole1]= useState();
+    const [role1, setrole1] = useState();
     useEffect(() => {
         setrole1(role);
     }, [role]);
@@ -21,11 +21,10 @@ function NavAvator() {
         // localStorage.removeItem('role');
 
         // Dispatch logout action to clear Redux state
-        dispatch(logout())
-        .then(() => {
+        dispatch(logout()).then(() => {
             // Redirect to the login page
             navigate('/login');
-        })    
+        });
     };
 
     const getRoleText = () => {
@@ -68,7 +67,7 @@ function NavAvator() {
             <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                 <li className="dropdown-header">
                     <h6>{userData.name}</h6>
-                    
+
                     <span>{getRoleText()}</span>
                 </li>
 

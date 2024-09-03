@@ -11,9 +11,7 @@ const AssignTaCourses = () => {
         <>
             <Header />
             <Sidebar />
-            <AdminCoursesTable
-                taId={id}
-            />
+            <AdminCoursesTable taId={id} />
         </>
     );
 };

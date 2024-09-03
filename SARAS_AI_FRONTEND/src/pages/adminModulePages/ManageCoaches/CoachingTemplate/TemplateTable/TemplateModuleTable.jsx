@@ -80,7 +80,6 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
 }));
 
 const TemplateModuleTable = ({ modulesData }) => {
-   
     const [linkActivityPopupOpen, setLinkActivityPopupOpen] = useState(false);
     const [viewActivityPopup, setViewActivityPopup] = useState(false);
     const [selectedActivity, setSelectedActivity] = useState(null);
@@ -118,7 +117,6 @@ const TemplateModuleTable = ({ modulesData }) => {
     };
 
     const openPrerequisitesPopup = (module, activity) => {
-
         setPrerequisitesModuleData(module);
         setPrerequisitesActivityData(activity);
 
@@ -149,11 +147,11 @@ const TemplateModuleTable = ({ modulesData }) => {
         dispatch(openEditModulePopup(data));
         // Implement your logic for editing module
     };
-    
+
     const handleEditActivity = activity => {
         dispatch(openEditActivityPopup(activity));
     };
-    
+
     const handleActivityClick = activity => {
         setSelectedActivity(activity);
         setViewActivityPopup(true);
@@ -404,10 +402,13 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                         {activity.prerequisites
                                                             .length > 0 ? (
                                                             activity.prerequisites
-                                                                .map(
-                                                                    prereq =>
-                                                                        prereq
-                                                                            .dependencies.map((dep) => dep.dependency_activity.activity_name)
+                                                                .map(prereq =>
+                                                                    prereq.dependencies.map(
+                                                                        dep =>
+                                                                            dep
+                                                                                .dependency_activity
+                                                                                .activity_name
+                                                                    )
                                                                 )
                                                                 .join(', ')
                                                         ) : (

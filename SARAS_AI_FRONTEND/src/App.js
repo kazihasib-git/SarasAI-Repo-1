@@ -72,8 +72,7 @@ function App() {
             {login && role == 1984 && <CoachRoutes />}
             {login && role == 2001 && <TeachingAssistantRoutes />}
         </>
-    )
-
+    );
 }
 
 export default App;

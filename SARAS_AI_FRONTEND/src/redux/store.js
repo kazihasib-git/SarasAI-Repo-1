@@ -36,8 +36,8 @@ const store = configureStore({
         coachScheduling: coachSchedulingReducer,
         activityType: activityTypeReducer,
         linkActivity: linkActivityReducer,
-        coachingTools : coachingToolsReducer,
-        coachMenu : coachMenuSliceReducer,
+        coachingTools: coachingToolsReducer,
+        coachMenu: coachMenuSliceReducer,
         taMenu: taMenuSliceReducer,
         commonCalender: commonCalenderReducer,
         util: utilReducer,
@@ -52,7 +52,7 @@ const store = configureStore({
             .concat(studentsApi.middleware)
             .concat(batchesApi.middleware)
             .concat(coursesApi.middleware)
-            .concat(timezonesApi.middleware)
+            .concat(timezonesApi.middleware),
 });
 
 setupListeners(store.dispatch);

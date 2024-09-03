@@ -25,8 +25,8 @@ const Batches = () => {
                 Branch: item.branch.name,
             }));
             setBatches(transformedData);
-        }else {
-            setBatches([])
+        } else {
+            setBatches([]);
         }
     }, [data]);
 

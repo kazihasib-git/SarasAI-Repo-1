@@ -29,15 +29,18 @@ import { convertFromUTC } from '../../../../../../utils/dateAndtimeConversion';
 import CustomPlatformForm from '../../../../../../components/CustomFields/CustomPlatformForm';
 
 const VirtualGroupSession = () => {
-
     const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
-    const { handleSubmit, control, formState: { errors }, } = useForm();
+    const {
+        handleSubmit,
+        control,
+        formState: { errors },
+    } = useForm();
     const [fromDate, setFromDate] = useState(null);
     const [selectedCoachId, setSelectedCoachId] = useState(null);
     const [coachTimeZone, setCoachTimeZone] = useState(null);
     const [coachSlots, setCoachSlots] = useState(null);
     const [selectedPlatform, setSelectedPlatform] = useState(null);
-    
+
     const dispatch = useDispatch();
     const { coaches } = useSelector(state => state.coachModule);
     const { timezones, platforms } = useSelector(state => state.util);

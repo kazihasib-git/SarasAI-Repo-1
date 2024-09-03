@@ -24,7 +24,6 @@ import { useLocation } from 'react-router-dom';
 import AddEditActivity from './TemplateModulePopup/EditActivity';
 
 const TemplateName = () => {
-
     const {
         openModulePopUp,
         openActivityPopUp,
@@ -92,7 +91,7 @@ const TemplateName = () => {
         'After Due Date',
         'Actions',
     ];
-    
+
     const actionButtons = [
         {
             type: 'switch',

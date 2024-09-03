@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import {
-    getAssignStudents,
-} from '../../redux/features/adminModule/ta/taSlice';
+import { getAssignStudents } from '../../redux/features/adminModule/ta/taSlice';
 import {
     closeTaEditScheduledStudents,
     editTASchdeuledStudents,
@@ -212,7 +210,6 @@ const EditStudentsFromSession = ({ componentName }) => {
     };
 
     const handleSubmit = () => {
-
         if (!validate()) return;
 
         const Id = meetingId;
@@ -221,14 +218,14 @@ const EditStudentsFromSession = ({ componentName }) => {
             studentId: selectedStudents.map(id => id),
         };
         dispatch(editScheduledStudentsApi({ Id, data }))
-        .unwrap()
-        .then(() => {
-            dispatch(closePopupActions());
-            toast.success("Student Updated Successfully.")
-        })
-        .catch(error => {
-            toast.error(`${error}`);
-        })
+            .unwrap()
+            .then(() => {
+                dispatch(closePopupActions());
+                toast.success('Student Updated Successfully.');
+            })
+            .catch(error => {
+                toast.error(`${error}`);
+            });
     };
 
     const content = (

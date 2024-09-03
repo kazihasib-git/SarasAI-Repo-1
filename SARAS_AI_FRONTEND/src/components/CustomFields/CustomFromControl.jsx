@@ -69,10 +69,10 @@ const CustomFormControl = ({
                 }}
             >
                 {options.map(option => (
-    <MenuItem key={option.value} value={option.value}>
-        {`${option.label}${option.username ? ` - ${option.username}` : ''}`}
-    </MenuItem>
-))}
+                    <MenuItem key={option.value} value={option.value}>
+                        {`${option.label}${option.username ? ` - ${option.username}` : ''}`}
+                    </MenuItem>
+                ))}
             </Select>
             {hasError && (
                 <Typography

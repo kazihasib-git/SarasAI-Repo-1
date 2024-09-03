@@ -107,42 +107,42 @@ const DynamicTable = ({
 
     const itemsPerPage = 10;
     const totalPages = Math.ceil(data.length / itemsPerPage);
-    
+
     const currentData = data.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );
-    
+
     const navigate = useNavigate();
 
     const handlePageChange = (event, pageNumber) => {
         setCurrentPage(pageNumber);
     };
-    
+
     const handleOpenDialog = (id, ta_id) => {
         setItemIdToDelete(id);
         setIsDialogOpen(true);
     };
-    
+
     const handleCloseDialog = () => {
         setIsDialogOpen(false);
         setItemIdToDelete(null);
     };
-    
+
     const handleConfirmDelete = (id, ta_id) => {
         if (id) {
             handleDelete(id, ta_id);
         }
         handleCloseDialog();
     };
-    
+
     const handleDelete = (id, ta_id) => {
         // Implement delete functionality here
         dispatch(deleteAssignedStudent({ id })).then(() => {
             dispatch(getAssignStudents(ta_id));
         });
     };
-    
+
     const handleToggle = async id => {
         const updatedData = data.map(item =>
             item.id === id
@@ -280,7 +280,6 @@ const DynamicTable = ({
                                                         )
                                                     }
                                                 >
-                                                   
                                                     <img
                                                         src={bin}
                                                         alt=""
@@ -301,7 +300,6 @@ const DynamicTable = ({
                 </tbody>
             </table>
             <div className="pagination">
-                
                 <Pagination
                     count={totalPages}
                     page={currentPage}
@@ -337,15 +335,16 @@ const DynamicTable = ({
                             },
                         },
                     }}
-                   
                 />
-                 {isDialogOpen && (
-                <DeleteConfirmation
-                open={isDialogOpen}
-                handleClose={handleCloseDialog}
-                onConfirm={()=>{handleConfirmDelete(itemIdToDelete,ta_id)}}
-             />
-            )}
+                {isDialogOpen && (
+                    <DeleteConfirmation
+                        open={isDialogOpen}
+                        handleClose={handleCloseDialog}
+                        onConfirm={() => {
+                            handleConfirmDelete(itemIdToDelete, ta_id);
+                        }}
+                    />
+                )}
             </div>
         </div>
     );

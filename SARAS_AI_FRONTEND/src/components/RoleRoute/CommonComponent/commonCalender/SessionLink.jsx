@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { closeSessionPopup, openEditBatches, openEditStudents } from '../../../../redux/features/commonCalender/commonCalender';
+import {
+    closeSessionPopup,
+    openEditBatches,
+    openEditStudents,
+} from '../../../../redux/features/commonCalender/commonCalender';
 import {
     Avatar,
     Box,
@@ -79,20 +83,19 @@ const SessionLink = ({ componentName, platformName, platformUrl }) => {
 
     const handleEditBatches = () => {
         const data = {
-            id : sessionEventData.id,
-            batches : sessionEventData.batches
-        }
-        dispatch(openEditBatches(data))
-        
+            id: sessionEventData.id,
+            batches: sessionEventData.batches,
+        };
+        dispatch(openEditBatches(data));
     };
     const handleChangeMode = () => {};
 
     const handleEditStudents = () => {
         const data = {
             id: sessionEventData.id,
-            students : sessionEventData.students
-        }
-        dispatch(openEditStudents(data))
+            students: sessionEventData.students,
+        };
+        dispatch(openEditStudents(data));
     };
 
     const handleLinkCopy = () => {
@@ -111,7 +114,7 @@ const SessionLink = ({ componentName, platformName, platformUrl }) => {
         }
     };
 
-    const handleJoinMeeting = (data) => {
+    const handleJoinMeeting = data => {
         window.open(data.platform_meeting.host_meeting_url, '_blank');
     };
 

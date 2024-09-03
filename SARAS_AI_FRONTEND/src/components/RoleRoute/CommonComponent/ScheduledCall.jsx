@@ -244,7 +244,7 @@ const ScheduledCall = ({ role }) => {
         setNewMeetingPopUpOpen(false);
     };
     const sortedCalls = scheduledCalls.sort((a, b) => {
-        const timeA = moment(a.start_time, 'HH:mm A'); 
+        const timeA = moment(a.start_time, 'HH:mm A');
         const timeB = moment(b.start_time, 'HH:mm A');
         return timeA - timeB;
     });
@@ -367,7 +367,7 @@ const ScheduledCall = ({ role }) => {
                         <DateCalendar date={date} onChange={handleDateChange} />
                     </Popover>
                 </Box>
-            </LocalizationProvider> 
+            </LocalizationProvider>
 
             <Grid container spacing={2}>
                 {sortedCalls.map(call => (
@@ -495,9 +495,15 @@ const ScheduledCall = ({ role }) => {
             </Grid>
             {scheduleNewSessionPopup &&
                 (role == 'Coach' ? (
-                    <CreateSession componentName={'COACHMENU'} timezoneID={storedTimezoneId}/>
+                    <CreateSession
+                        componentName={'COACHMENU'}
+                        timezoneID={storedTimezoneId}
+                    />
                 ) : (
-                    <CreateSession componentName={'TAMENU'} timezoneID={storedTimezoneId}/>
+                    <CreateSession
+                        componentName={'TAMENU'}
+                        timezoneID={storedTimezoneId}
+                    />
                 ))}
 
             {editSession &&
@@ -523,7 +529,7 @@ const ScheduledCall = ({ role }) => {
 
             {openSession &&
                 (role == 'Coach' ? (
-                    <SessionLink componentName={'COACHMENU'}  />
+                    <SessionLink componentName={'COACHMENU'} />
                 ) : (
                     <SessionLink componentName={'TAMENU'} />
                 ))}

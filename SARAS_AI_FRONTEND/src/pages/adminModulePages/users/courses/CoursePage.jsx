@@ -26,8 +26,8 @@ const CoursePage = () => {
                 end_date: item.end_date,
             }));
             setCourses(transformedData);
-        }else {
-            setCourses()
+        } else {
+            setCourses();
         }
     }, [data]);
 

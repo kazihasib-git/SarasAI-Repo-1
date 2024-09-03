@@ -51,7 +51,6 @@ const CustomButton = ({
 const headers = ['S. No.', 'Student Name', 'Program', 'Batch', 'Select'];
 
 const SelectStudents = ({ componentName }) => {
-
     const dispatch = useDispatch();
     const [selectedTerm, setSelectedTerm] = useState([]);
     const [selectedBatch, setSelectedBatch] = useState('');
@@ -97,25 +96,25 @@ const SelectStudents = ({ componentName }) => {
         dispatch(getStudentsApi());
     }, [dispatch]);
 
-
     useEffect(() => {
         if (studentsData && studentsData.length > 0) {
             const transformedData = studentsData
-            // filter(item =>item.student.batches.some(batch => batch.is_active === 1)).
+                // filter(item =>item.student.batches.some(batch => batch.is_active === 1)).
                 .map((stu, index) => ({
-                'S. No.': index + 1,
-                'Student Name': stu.student.name,
-                Program:
-                    stu.student.packages.map(pack => pack.name).join(', ') ||
-                    'N/A',
-                Batch:
-                    stu.student.batches
-                        .map(batch => batch.batch_name)
-                        .join(', ') || 'N/A',
-                Select: stu.is_active ? 'Active' : 'Inactive',
-                is_active: stu.is_active,
-                id: stu.student.id,
-            }));
+                    'S. No.': index + 1,
+                    'Student Name': stu.student.name,
+                    Program:
+                        stu.student.packages
+                            .map(pack => pack.name)
+                            .join(', ') || 'N/A',
+                    Batch:
+                        stu.student.batches
+                            .map(batch => batch.batch_name)
+                            .join(', ') || 'N/A',
+                    Select: stu.is_active ? 'Active' : 'Inactive',
+                    is_active: stu.is_active,
+                    id: stu.student.id,
+                }));
 
             const filtered = transformedData.filter(student => {
                 const matchesTerm = selectedTerm
@@ -186,7 +185,6 @@ const SelectStudents = ({ componentName }) => {
             : [];
 
     useEffect(() => {
-        
         let updatedSelectedStudents = [];
 
         if (students && students.length > 0) {

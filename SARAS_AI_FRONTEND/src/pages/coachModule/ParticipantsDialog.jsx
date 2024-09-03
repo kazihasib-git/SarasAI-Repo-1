@@ -14,22 +14,19 @@ const ParticipantsDialog = ({ open, onClose, participantsData }) => {
     const [data, setData] = useState([]);
     const transformData = () => {
         const transformedData = participantsData.map((item, index) => ({
-        id: item.id,
-        name: item.name,
-        //'Enrollment Id': item.enrollment_id,
-        program:
-            item.packages.map(pack => pack.package_name).join(',') || 'N/A',
-        batch:
-            item.batches.map(batch => batch.name).join(', ') ||
-            'N/A',
+            id: item.id,
+            name: item.name,
+            //'Enrollment Id': item.enrollment_id,
+            program:
+                item.packages.map(pack => pack.package_name).join(',') || 'N/A',
+            batch: item.batches.map(batch => batch.name).join(', ') || 'N/A',
         }));
         setData(transformedData);
-    }
-    
+    };
 
-    useEffect(()=>{
+    useEffect(() => {
         transformData(participantsData);
-    },participantsData);
+    }, participantsData);
 
     return (
         <Dialog
@@ -92,20 +89,23 @@ const ParticipantsDialog = ({ open, onClose, participantsData }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {data.length>0 && data.map((participant, index) => (
-                            <tr key={participant.id}>
-                                <td style={{ padding: '8px' }}>{index + 1}</td>
-                                <td style={{ padding: '8px' }}>
-                                    {participant.name}
-                                </td>
-                                <td style={{ padding: '8px' }}>
-                                    {participant.program}
-                                </td>
-                                <td style={{ padding: '8px' }}>
-                                    {participant.batch}
-                                </td>
-                            </tr>
-                        ))}
+                        {data.length > 0 &&
+                            data.map((participant, index) => (
+                                <tr key={participant.id}>
+                                    <td style={{ padding: '8px' }}>
+                                        {index + 1}
+                                    </td>
+                                    <td style={{ padding: '8px' }}>
+                                        {participant.name}
+                                    </td>
+                                    <td style={{ padding: '8px' }}>
+                                        {participant.program}
+                                    </td>
+                                    <td style={{ padding: '8px' }}>
+                                        {participant.batch}
+                                    </td>
+                                </tr>
+                            ))}
                     </tbody>
                 </Box>
                 <Box

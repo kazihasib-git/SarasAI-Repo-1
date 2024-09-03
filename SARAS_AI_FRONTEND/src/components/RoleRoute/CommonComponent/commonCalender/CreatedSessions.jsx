@@ -26,7 +26,6 @@ const headers = [
 const studentHeader = ['S.No.', 'Student Name', 'Program', 'Batch'];
 
 const CreatedSessions = ({ componentName, timezoneID }) => {
-    
     const { timezones } = useSelector(state => state.util);
 
     const dispatch = useDispatch();

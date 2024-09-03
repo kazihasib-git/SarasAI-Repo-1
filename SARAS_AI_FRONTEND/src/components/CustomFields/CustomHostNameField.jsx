@@ -65,9 +65,8 @@ const CustomHostNameForm = ({
                 }}
             >
                 {options.map(option => (
-                    
                     <MenuItem key={option.id} value={option.email}>
-                        {`${option.display_name}`}                        
+                        {`${option.display_name}`}
                     </MenuItem>
                 ))}
             </Select>

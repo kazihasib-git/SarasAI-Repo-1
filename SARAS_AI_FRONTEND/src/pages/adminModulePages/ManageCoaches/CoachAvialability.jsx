@@ -4,7 +4,7 @@ import { getTodayCoachAvailability } from '../../../redux/features/adminModule/c
 import { useEffect, useState } from 'react';
 import Header from '../../../components/Header/Header';
 import Sidebar from '../../../components/Sidebar/Sidebar';
-import { DynamicTable } from '../managesTAs/TaAvaialablity' // TODO  NEED TO FIX THIS
+import { DynamicTable } from '../managesTAs/TaAvaialablity'; // TODO  NEED TO FIX THIS
 
 const headers = [
     'S. No.',

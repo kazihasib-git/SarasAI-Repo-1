@@ -9,7 +9,6 @@ import { timezoneIdToName } from '../../../utils/timezoneIdToName';
 import { deleteTaMapping } from '../../../redux/features/adminModule/ta/taSlice';
 import { useGetTimezonesQuery } from '../../../redux/services/timezones/timezonesApi';
 
-
 const headers = [
     'S. No.',
     'TA Name',
@@ -27,7 +26,6 @@ const actionButtons = [
 ];
 
 const TaMapping = () => {
-
     const dispatch = useDispatch();
 
     const { taMapping, loading } = useSelector(state => state.taModule);
@@ -50,11 +48,11 @@ const TaMapping = () => {
                 Active_Students: item.Active_Students,
                 Active_Batches: item.Active_Batches,
                 is_active: item.is_active,
-            }))
+            }));
 
             setTaMappingData(transformData);
-        }else {
-            setTaMappingData([])
+        } else {
+            setTaMappingData([]);
         }
     }, [taMapping]);
 

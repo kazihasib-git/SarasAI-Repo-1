@@ -64,7 +64,7 @@ const CoachTemplateTable = ({
         }
     };
 
-    const handleToggle = (id ,event)=> {
+    const handleToggle = (id, event) => {
         if (event) {
             event.preventDefault();
             event.stopPropagation();
@@ -78,7 +78,10 @@ const CoachTemplateTable = ({
         setData(updatedData);
 
         const toggledItem = updatedData.find(item => item.id === id);
-        const requestData = { activity_id: toggledItem.id, status: toggledItem.is_active };
+        const requestData = {
+            activity_id: toggledItem.id,
+            status: toggledItem.is_active,
+        };
 
         switch (componentName) {
             case 'COACHTEMPLATE':
@@ -198,7 +201,7 @@ const CoachTemplateTable = ({
                                                 return (
                                                     <AntSwitch
                                                         key={idx}
-                                                        checked={item.is_active} 
+                                                        checked={item.is_active}
                                                         onChange={() =>
                                                             handleToggle(
                                                                 item.id

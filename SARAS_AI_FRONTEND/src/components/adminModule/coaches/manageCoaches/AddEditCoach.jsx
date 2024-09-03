@@ -158,7 +158,7 @@ function AddEditCoach({ data }) {
                 const updateRes = await dispatch(
                     updateCoach({ id: data.id, data: updatedFormData })
                 ).unwrap();
-                
+
                 dispatch(accessCoachName(updateRes));
             } else {
                 const createRes = await dispatch(
@@ -590,16 +590,14 @@ function AddEditCoach({ data }) {
                                             'Highest Qualification is required',
                                     }}
                                     render={({ field }) => (
-                                        
-                                            <CustomFormControl
-                                                label="Highest Qualification"
-                                                name="highest_qualification"
-                                                value={field.value}
-                                                onChange={field.onChange}
-                                                errors={errors}
-                                                options={qualificationOptions}
-                                            />
-                                        
+                                        <CustomFormControl
+                                            label="Highest Qualification"
+                                            name="highest_qualification"
+                                            value={field.value}
+                                            onChange={field.onChange}
+                                            errors={errors}
+                                            options={qualificationOptions}
+                                        />
                                     )}
                                 />
                             </Grid>

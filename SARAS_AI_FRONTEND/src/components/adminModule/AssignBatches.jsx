@@ -182,16 +182,16 @@ const AssignBatches = ({ componentname }) => {
     };
 
     const validate = () => {
-        if(selectedBatch.length === 0){
-            toast.error('Please Select at Least One Batch')
+        if (selectedBatch.length === 0) {
+            toast.error('Please Select at Least One Batch');
             return false;
         }
         return true;
-    }
+    };
 
     const handleSubmit = () => {
-        if(!validate()) return;
-        
+        if (!validate()) return;
+
         const id =
             componentname === 'ADDITCOACH'
                 ? coachID || assignedId

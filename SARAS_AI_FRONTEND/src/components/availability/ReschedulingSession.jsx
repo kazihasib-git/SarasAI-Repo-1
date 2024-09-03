@@ -33,14 +33,13 @@ import {
 import CustomButton from '../CustomFields/CustomButton';
 import { timezoneIdToName } from '../../utils/timezoneIdToName';
 import { convertFromUTC } from '../../utils/dateAndtimeConversion';
-import { getTimezone , getAllHosts} from '../../redux/features/utils/utilSlice';
+import { getTimezone, getAllHosts } from '../../redux/features/utils/utilSlice';
 import { toast } from 'react-toastify';
 import PopTableSlot from '../CommonComponent/PopTableSlot';
 const headers = ['S. No.', 'Slots Available', 'Select'];
 
 const ReschedulingSession = ({ componentName, timezoneID }) => {
-    
-    const { timezones, platforms , hosts} = useSelector(state => state.util);
+    const { timezones, platforms, hosts } = useSelector(state => state.util);
 
     const taId = useParams();
     const { id, name } = useParams();
@@ -54,9 +53,9 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
 
     const [selectDate, setSelectDate] = useState(null);
     const [selectedSlots, setSelectedSlots] = useState([]);
-    const [fromTime, setFromTime] = useState(null); 
-    const [email, setEmail] = useState(''); 
-    const [meetingType, setMeetingType] = useState(''); 
+    const [fromTime, setFromTime] = useState(null);
+    const [email, setEmail] = useState('');
+    const [meetingType, setMeetingType] = useState('');
     const [toTime, setToTime] = useState(null);
     const [transformedSlotsData, setTransformedSlotsData] = useState([]);
     const [meetingTypes, setMeetingtypes] = useState(['webinars', 'meetings']);
@@ -218,12 +217,7 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
         );
     };
 
-
     const validate = () => {
-
-
-        
-
         if (!selectDate) {
             toast.error('Please Select The Date');
             return false;
@@ -245,21 +239,17 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
         if (!email) {
             toast.error('Please provide a valid Host Name');
             return false;
-          }
+        }
         if (!meetingType) {
             toast.error('Please select the Meeting Type');
             return false;
         }
 
         return true;
-
-
-    }
+    };
 
     const handleSubmit = () => {
-        
-        if(!validate()) return;
-        
+        if (!validate()) return;
 
         const sessionId = sessionEventData?.id || '';
 
@@ -273,8 +263,8 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
                 end_time: toTime,
                 timezone_id: timezoneID,
                 event_status: 'rescheduled',
-                host_email_id: email,  // Use the email state
-                meeting_type: meetingType  // Use the meetingType state
+                host_email_id: email, // Use the email state
+                meeting_type: meetingType, // Use the meetingType state
             },
         };
 
@@ -374,13 +364,11 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
                                             label="Host Name"
                                             name="host_email_id"
                                             value={email}
-                                            onChange={event => setEmail(event.target.value)}                                            
-                                            errors={
-                                                errors
+                                            onChange={event =>
+                                                setEmail(event.target.value)
                                             }
-                                            options={
-                                                hosts.users
-                                            }
+                                            errors={errors}
+                                            options={hosts.users}
                                         />
                                     )}
                                 />
@@ -394,20 +382,18 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
                                 <Controller
                                     name="meeting_type"
                                     control={control}
-                                    render={({
-                                        field,
-                                    }) => (
+                                    render={({ field }) => (
                                         <CustomMeetingTypeForm
                                             label="Meeting Type"
                                             name="meeting_type"
                                             value={meetingType}
-                                            onChange={event => setMeetingType(event.target.value)}
-                                            errors={
-                                                errors
+                                            onChange={event =>
+                                                setMeetingType(
+                                                    event.target.value
+                                                )
                                             }
-                                            options={
-                                                meetingTypes
-                                            }
+                                            errors={errors}
+                                            options={meetingTypes}
                                         />
                                     )}
                                 />

@@ -42,7 +42,6 @@ import { getTimezone } from '../../../redux/features/utils/utilSlice';
 import { getTodayTaAvailability } from '../../../redux/features/adminModule/ta/taAvialability';
 import { useGetTimezonesQuery } from '../../../redux/services/timezones/timezonesApi';
 
-
 const CustomButton = ({
     onClick,
     children,
@@ -88,7 +87,6 @@ const TaCalender = () => {
         dispatch(getTodayTaAvailability());
     }, [dispatch]);
 
-    
     useEffect(() => {
         findTaTimeZone(todaysAvailableTa);
     }, [id, todaysAvailableTa]);
@@ -129,13 +127,13 @@ const TaCalender = () => {
             );
             setSelectedTA(selectedTa || null);
         } else {
-            setSelectedTA(null); 
+            setSelectedTA(null);
         }
     };
 
     // const storedTimezoneId = selectedTA ? selectedTA.timezone_id : Number(localStorage.getItem('timezone_id'));
     const storedTimezoneId = selectedTA ? selectedTA.timezone_id : '';
-    
+
     useEffect(() => {
         dispatch(fetchTaSlots(id));
         dispatch(fetchTAScheduleById(id));
@@ -232,7 +230,7 @@ const TaCalender = () => {
                         }
                     })
                 );
-        
+
                 setEventsList(processedEvents);
             } catch (error) {
                 console.error('Error converting events:', error);
@@ -303,7 +301,7 @@ const TaCalender = () => {
                         }
                     })
                 );
-    
+
                 setSlotViewData(processedSlots);
             } catch (error) {
                 console.error('Error converting slots:', error);

@@ -82,7 +82,6 @@ const PopTableSlot = ({
     onCancelClick,
     itemsPerPage = 10,
 }) => {
-
     const [data, setData] = useState(initialData ?? []);
     const [openPopup, setOpenPopup] = useState(false);
     const [currentStudentNames, setCurrentStudentNames] = useState([]);

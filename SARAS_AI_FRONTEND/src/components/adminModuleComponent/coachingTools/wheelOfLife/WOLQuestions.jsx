@@ -63,8 +63,8 @@ const WOLQuestions = () => {
                 is_active: item.is_active,
             }));
             setWOLQuestions(transformData);
-        }else {
-            setWOLQuestions([])
+        } else {
+            setWOLQuestions([]);
         }
     }, [wolQuestionsData]);
 

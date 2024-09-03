@@ -103,7 +103,6 @@ const durationOptions = [
 ];
 
 const EditSession = ({ componentName }) => {
-
     const dispatch = useDispatch();
     const { timezones, platforms } = useSelector(state => state.util);
 
@@ -111,8 +110,8 @@ const EditSession = ({ componentName }) => {
         state => state.commonCalender
     );
 
-    const startTime = moment(sessionData.start_time, "HH:mm:ss");
-    const endTime = moment(sessionData.end_time, "HH:mm:ss");
+    const startTime = moment(sessionData.start_time, 'HH:mm:ss');
+    const endTime = moment(sessionData.end_time, 'HH:mm:ss');
     const timeDifference = moment.duration(endTime.diff(startTime));
     const formattedDifference = [
         String(Math.floor(timeDifference.asHours())).padStart(2, '0'),
@@ -122,7 +121,7 @@ const EditSession = ({ componentName }) => {
 
     const [error, setError] = useState({});
     const studentData = sessionData.students || [];
-    
+
     const studentIdArray = [];
     if (studentData && studentData.length > 0) {
         students.forEach(student => {
@@ -135,14 +134,14 @@ const EditSession = ({ componentName }) => {
     const [formData, setFormData] = useState({
         sessionName: sessionData.meeting_name || '',
         duration: formattedDifference,
-        message: sessionData.message || '', 
+        message: sessionData.message || '',
         students: studentIdArray || [], // sessionData.students || [];
         batches: sessionData.batch || [],
-        platform_id : sessionData.platform_id || null,
+        platform_id: sessionData.platform_id || null,
         fromDate: sessionData.date || '',
         toDate: sessionData.to_date || '',
-        fromTime: moment(sessionData.start_time, "HH:mm:ss"),
-        toTime: moment(sessionData.end_time, "HH:mm:ss"),
+        fromTime: moment(sessionData.start_time, 'HH:mm:ss'),
+        toTime: moment(sessionData.end_time, 'HH:mm:ss'),
         timezone_id: sessionData.timezone_id || null,
     });
 
@@ -208,9 +207,7 @@ const EditSession = ({ componentName }) => {
         dispatch(openSelectBatches(sessionData.batch));
     };
 
-    const validate = () => {
-        
-    };
+    const validate = () => {};
 
     const handleSubmit = e => {
         e.preventDefault();

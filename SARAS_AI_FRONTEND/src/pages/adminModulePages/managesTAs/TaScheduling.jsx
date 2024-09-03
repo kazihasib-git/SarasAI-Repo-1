@@ -7,17 +7,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import Schedule from '../../../components/availability/Schedule';
 import { showTAMapping } from '../../../redux/features/adminModule/ta/taSlice';
 import EditBatches from '../../../components/availability/EditBatches';
-import EditStudents from  '../../../components/availability/EditStudents';
+import EditStudents from '../../../components/availability/EditStudents';
 
 const TaScheduling = () => {
-
     const dispatch = useDispatch();
-    const { assignStudentOpen, taMapping, assignBatchOpen, loading } = useSelector(state => state.taModule);
-    const { scheduleSessionOpen, openEditBatch, openEditStudent } = useSelector(state => state.taScheduling);
+    const { assignStudentOpen, taMapping, assignBatchOpen, loading } =
+        useSelector(state => state.taModule);
+    const { scheduleSessionOpen, openEditBatch, openEditStudent } = useSelector(
+        state => state.taScheduling
+    );
 
     const [searchQuery, setSearchQuery] = useState('');
-    const { taId } = useSelector((state) => state.taScheduling);
-    const { todaysAvailableTa } = useSelector((state) => state.taAvialability);
+    const { taId } = useSelector(state => state.taScheduling);
+    const { todaysAvailableTa } = useSelector(state => state.taAvialability);
     const [selectedTA, setSelectedTA] = useState(null);
     const [taScheduleData, setTaScheduleData] = useState([]);
 
@@ -37,8 +39,8 @@ const TaScheduling = () => {
             }));
 
             setTaScheduleData(transformData);
-        }else {
-            setTaScheduleData([])
+        } else {
+            setTaScheduleData([]);
         }
     }, [taMapping]);
 
@@ -77,11 +79,13 @@ const TaScheduling = () => {
                     alignItems="center"
                     mb={2}
                 >
-                    <p style={{
+                    <p
+                        style={{
                             fontSize: '44px',
                             justifyContent: 'center',
                             fontFamily: 'ExtraLight',
-                        }}>
+                        }}
+                    >
                         TA Scheduling
                     </p>
                     <Box display={'flex'}>

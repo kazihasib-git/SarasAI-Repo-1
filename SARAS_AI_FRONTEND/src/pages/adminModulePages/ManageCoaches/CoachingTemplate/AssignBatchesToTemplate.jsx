@@ -108,8 +108,8 @@ const AssignBatchesToTemplate = ({ componentname, assignedStudents }) => {
             });
 
             setFilteredBatches(filtered);
-        }else {
-            setFilteredBatches()
+        } else {
+            setFilteredBatches();
         }
     }, [batchMapping, selectedBranch, searchQuery]);
 
@@ -224,7 +224,7 @@ const AssignBatchesToTemplate = ({ componentname, assignedStudents }) => {
                 backgroundColor: '#F56D3B',
                 borderColor: '#F56D3B',
                 color: '#FFFFFF',
-                textTransform: 'none' 
+                textTransform: 'none',
             }}
         >
             Submit

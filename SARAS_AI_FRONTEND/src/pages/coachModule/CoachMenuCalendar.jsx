@@ -96,14 +96,11 @@ const CoachMenuCalendar = () => {
         openEditBatchesPopup,
     } = useSelector(state => state.commonCalender);
 
-    const {
-        coachSlots,
-        coachSessions,
-    } = useSelector(state => state.coachMenu);
+    const { coachSlots, coachSessions } = useSelector(state => state.coachMenu);
 
     useEffect(() => {
-        dispatch(getTimezone())
-    },[dispatch])
+        dispatch(getTimezone());
+    }, [dispatch]);
 
     useEffect(() => {
         dispatch(getCoachMenuSlots());
@@ -139,7 +136,9 @@ const CoachMenuCalendar = () => {
                             start_date: event.date.split(' ')[0],
                             start_time: event.start_time,
                             end_time: event.end_time,
-                            end_date: event.end_date ? event.end_date : event.date.split(' ')[0],
+                            end_date: event.end_date
+                                ? event.end_date
+                                : event.date.split(' ')[0],
                             timezonename,
                         });
 
@@ -327,7 +326,6 @@ const CoachMenuCalendar = () => {
             setPlatformName('');
             setplatformUrl('');
         }
-
     }, [coachSessions, targetSessionId]);
 
     return (
@@ -389,10 +387,16 @@ const CoachMenuCalendar = () => {
                     onSelectEvent={handleSessionSelect}
                 />
                 {createNewSlotPopup && (
-                    <CreateSlot componentName={'COACHMENU'} timezoneID={storedTimezoneId} />
+                    <CreateSlot
+                        componentName={'COACHMENU'}
+                        timezoneID={storedTimezoneId}
+                    />
                 )}
                 {scheduleNewSessionPopup && (
-                    <CreateSession componentName={'COACHMENU'} timezoneID={storedTimezoneId}/>
+                    <CreateSession
+                        componentName={'COACHMENU'}
+                        timezoneID={storedTimezoneId}
+                    />
                 )}
                 {selectStudentPopup && (
                     <SelectStudents componentName={'COACHMENU'} />
@@ -401,21 +405,43 @@ const CoachMenuCalendar = () => {
                     <SelectBatches componentName={'COACHMENU'} />
                 )}
 
-                {markLeave && <MarkLeaveDate componentName={'COACHMENU'} timezoneID={storedTimezoneId}/>}
+                {markLeave && (
+                    <MarkLeaveDate
+                        componentName={'COACHMENU'}
+                        timezoneID={storedTimezoneId}
+                    />
+                )}
 
-                {createdSlots && <CreatedSlots componentName={'COACHMENU'} timezoneID={storedTimezoneId}/>}
+                {createdSlots && (
+                    <CreatedSlots
+                        componentName={'COACHMENU'}
+                        timezoneID={storedTimezoneId}
+                    />
+                )}
 
                 {openCreatedSessions && (
-                    <CreatedSessions componentName={'COACHMENU'} timezoneID={storedTimezoneId}/>
+                    <CreatedSessions
+                        componentName={'COACHMENU'}
+                        timezoneID={storedTimezoneId}
+                    />
                 )}
                 {openCancelSession && (
-                    <CancelSession componentName={'COACHMENU'} timezoneID={storedTimezoneId}/>
+                    <CancelSession
+                        componentName={'COACHMENU'}
+                        timezoneID={storedTimezoneId}
+                    />
                 )}
                 {RescheduleSession && (
-                    <RescheduleCreatedSession componentName={'COACHMENU'} timezoneID={storedTimezoneId}/>
+                    <RescheduleCreatedSession
+                        componentName={'COACHMENU'}
+                        timezoneID={storedTimezoneId}
+                    />
                 )}
                 {openLeaveReason && (
-                    <LeaveReason componentName={'COACHMENU'} timezoneID={storedTimezoneId}/>
+                    <LeaveReason
+                        componentName={'COACHMENU'}
+                        timezoneID={storedTimezoneId}
+                    />
                 )}
                 {openSession && (
                     <SessionLink
@@ -426,14 +452,10 @@ const CoachMenuCalendar = () => {
                     />
                 )}
                 {openEditStudentsPopup && (
-                    <EditStudentsSessionLink
-                        componentName={'COACHMENU'}
-                    />
+                    <EditStudentsSessionLink componentName={'COACHMENU'} />
                 )}
                 {openEditBatchesPopup && (
-                    <EditBatchesSessionLink
-                        componentName={'COACHMENU'}
-                    />
+                    <EditBatchesSessionLink componentName={'COACHMENU'} />
                 )}
             </Box>
         </>

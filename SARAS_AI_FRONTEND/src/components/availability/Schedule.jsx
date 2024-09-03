@@ -340,15 +340,14 @@ const Schedule = ({ componentName, timezoneID }) => {
         }
     };
 
-    const validate = (formData) => {
-
+    const validate = formData => {
         // Ensure all required fields are filled in
         if (!fromDate) {
             toast.error('Please select from Date');
             return false;
         }
 
-        if(!selectedSlot){
+        if (!selectedSlot) {
             toast.error('Please select slot');
             return false;
         }
@@ -366,21 +365,21 @@ const Schedule = ({ componentName, timezoneID }) => {
         // Validate "To Time" is greater than "From Time"
         // const fromTimeInMinutes = convertTimeToMinutes(fromTime);
         // const toTimeInMinutes = convertTimeToMinutes(toTime);
-    
+
         // if (toTimeInMinutes <= fromTimeInMinutes) {
         //     toast.error('To Time must be later than From Time');
         //     return false;
         // }
-    
+
         // Validate that selected times are within the slot's time range
         // const slotStartTimeInMinutes = convertTimeToMinutes(selectedSlot['From Time']);
         // const slotEndTimeInMinutes = convertTimeToMinutes(selectedSlot['To Time']);
-    
+
         // if (fromTimeInMinutes < slotStartTimeInMinutes || toTimeInMinutes > slotEndTimeInMinutes) {
         //     toast.error(`Time must be between ${formatTime(selectedSlot['From Time'])} and ${formatTime(selectedSlot['To Time'])}`);
         //     return false;
         // }
-    
+
         if (formData.platform_id === 1) {
             if (!formData.host_email_id) {
                 toast.error('Please provide a valid email.');
@@ -390,7 +389,7 @@ const Schedule = ({ componentName, timezoneID }) => {
             if (!formData.meeting_type) {
                 toast.error('Please select Meeting Type.');
                 return false;
-            }   
+            }
         }
 
         // Check if 'timezone_id' is provided
@@ -398,12 +397,12 @@ const Schedule = ({ componentName, timezoneID }) => {
             toast.error('Please select a timezone');
             return false;
         }
-        
-        if(!toDate){
+
+        if (!toDate) {
             toast.error('Please select to Date');
             return false;
         }
-    
+
         return true;
     };
 

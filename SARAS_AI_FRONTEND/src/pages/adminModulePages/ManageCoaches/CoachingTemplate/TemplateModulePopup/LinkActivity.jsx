@@ -93,7 +93,6 @@ const LinkActivityPopup = ({
     templateId,
     LinkActivitytype,
 }) => {
-
     const dispatch = useDispatch();
     const {
         register,
@@ -220,8 +219,8 @@ const LinkActivityPopup = ({
         setCoachTimeZone(null);
         setSelectedPlatform(null);
         setSelectedSessionType(null);
-        setSelectHostName(null)
-        setSelectMeetingType(null)
+        setSelectHostName(null);
+        setSelectMeetingType(null);
         handleClose();
     };
 
@@ -318,7 +317,7 @@ const LinkActivityPopup = ({
     const coachOptions = coaches.map(coach => ({
         value: coach.name,
         label: coach.name,
-        username:coach.username,
+        username: coach.username,
         id: coach.id,
     }));
 

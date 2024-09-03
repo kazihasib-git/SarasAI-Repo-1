@@ -14,7 +14,6 @@ import {
 } from '../../../redux/features/adminModule/coach/coachSchedule';
 
 const CoachScheduling = () => {
-
     const dispatch = useDispatch();
     const { assignCoachStudentOpen, assignCoachBatchOpen, loading } =
         useSelector(state => state.coachModule);
@@ -92,7 +91,7 @@ const CoachScheduling = () => {
                 <Header />
                 <Sidebar />
                 <Box
-                    display="flex"                
+                    display="flex"
                     justifyContent="space-between"
                     alignItems="center"
                     mb={2}
@@ -136,14 +135,10 @@ const CoachScheduling = () => {
                 <Schedule componentName={'COACHSCHEDULE'} />
             )}
             {openCoachEditBatch && (
-                <EditBatches
-                    componentname={'COACHSCHEDULE'}
-                />
+                <EditBatches componentname={'COACHSCHEDULE'} />
             )}
             {openCoachEditStudent && (
-                <EditStudents
-                    componentname={'COACHSCHEDULE'}
-                />
+                <EditStudents componentname={'COACHSCHEDULE'} />
             )}
         </>
     );

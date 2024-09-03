@@ -6,7 +6,6 @@ import LinkPage from '../components/AUTH/LinkPage';
 import Unauthorized from '../components/AUTH/Unauthorized';
 import ForgetPassword from '../components/AUTH/ForgetPassword';
 
-
 const PublicRoutes = () => (
     <Routes>
         <Route path="/" element={<Layout />}>

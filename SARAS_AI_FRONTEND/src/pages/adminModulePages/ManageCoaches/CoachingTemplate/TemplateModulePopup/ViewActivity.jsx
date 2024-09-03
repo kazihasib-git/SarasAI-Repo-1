@@ -246,7 +246,6 @@ const SessionActivity = ({ activity, name }) => {
     );
 };
 
-
 const TestActivity = ({ handleClose, activity, name, template_id }) => {
     const {
         handleSubmit,
@@ -372,9 +371,8 @@ const TestActivity = ({ handleClose, activity, name, template_id }) => {
 
 // Main Popup Component
 const ViewActivityPopup = ({ open, onClose, activity, templateId }) => {
-
     const activity_type = activity.activity_type;
-    
+
     const renderContent = () => {
         switch (activity.activity_type.id) {
             case 1:

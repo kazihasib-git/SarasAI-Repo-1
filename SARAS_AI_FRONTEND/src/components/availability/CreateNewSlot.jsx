@@ -105,48 +105,50 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
 
     function convertTo24Hour(time12h) {
         const [time, modifier] = time12h.split(' ');
-    
+
         let [hours, minutes] = time.split(':');
-    
+
         if (hours === '12') {
             hours = '00';
         }
-    
+
         if (modifier === 'PM') {
             hours = parseInt(hours, 10) + 12;
         }
-    
-        return [parseInt(hours, 10),minutes];
+
+        return [parseInt(hours, 10), minutes];
     }
 
     function isHourLessOrEqual(inputTime) {
         // Get the current date and time
         const currentTime = new Date();
-    
+
         // Split the input time string into hour, minutes, and seconds
-        const [inputHour, inputMinutes, inputSeconds] = inputTime.split(':').map(Number);
-    
+        const [inputHour, inputMinutes, inputSeconds] = inputTime
+            .split(':')
+            .map(Number);
+
         // Create a date object for the input time with today's date
         const inputDate = new Date();
         inputDate.setHours(inputHour, inputMinutes, inputSeconds);
-    
+
         // Compare the input time with the current time
         return inputDate <= currentTime;
     }
 
     const validate = () => {
-
         let currentDate = new Date();
-        let inputDate = new Date(fromDate)
-        
+        let inputDate = new Date(fromDate);
 
         let sameDate = false;
 
-        if (currentDate.getFullYear() === inputDate.getFullYear() &&
-        currentDate.getMonth() === inputDate.getMonth() &&
-        currentDate.getDate() === inputDate.getDate()) {
-                sameDate = true;
-            }
+        if (
+            currentDate.getFullYear() === inputDate.getFullYear() &&
+            currentDate.getMonth() === inputDate.getMonth() &&
+            currentDate.getDate() === inputDate.getDate()
+        ) {
+            sameDate = true;
+        }
 
         if (!fromDate) {
             toast.error('Please select From Date');
@@ -169,8 +171,6 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
             return false;
         }
 
-
-        
         // if(sameDate && isHourLessOrEqual(fromTime)){
         //     let today = new Date();
         //     today.setDate(today.getDate() - 1)
@@ -188,7 +188,6 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
     };
 
     const onSubmit = async formData => {
-
         if (!validate()) {
             return;
         }
@@ -212,17 +211,16 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
         formData.admin_user_id = taId.id;
         formData.timezone_id = `${timezoneID}`;
         dispatch(createSlotApi(formData))
-        .unwrap() // Ensure to unwrap the promise for direct handling
-        .then(() => {
-            dispatch(closeCreateNewSlots());
-            dispatch(getSlotsApi(taId.id));
-            toast.success('Slot has been successfully created');
-        })
-        .catch(error => {
-            console.error('Error creating slot:', error);
-            toast.error(` ${error}`);
-        });
-    
+            .unwrap() // Ensure to unwrap the promise for direct handling
+            .then(() => {
+                dispatch(closeCreateNewSlots());
+                dispatch(getSlotsApi(taId.id));
+                toast.success('Slot has been successfully created');
+            })
+            .catch(error => {
+                console.error('Error creating slot:', error);
+                toast.error(` ${error}`);
+            });
     };
 
     const content = (

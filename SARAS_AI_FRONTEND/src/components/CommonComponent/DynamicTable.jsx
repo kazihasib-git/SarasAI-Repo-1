@@ -129,7 +129,6 @@ const DynamicTable = ({
     };
 
     const handleCalender = (type, id, taName) => {
-        
         if (componentName === 'COACHAVAILABLE') {
             navigate(`/coach-calender/${taName}/${id}`);
         } else if (componentName === 'TAAVAILABLE')
@@ -137,7 +136,6 @@ const DynamicTable = ({
     };
 
     const handleView = (type, id) => {
-
         if (componentName === 'TAMAPPING') {
             if (type === 'students') {
                 navigate(`/active-students/${id}`); // Append id as a parameter
@@ -199,7 +197,6 @@ const DynamicTable = ({
     };
 
     const handlePopup = (id, name, timezone) => {
-
         const data = { id, name, timezone };
         if (componentName === 'TAMAPPING') {
             dispatch(openScheduleSession(data));
@@ -214,13 +211,13 @@ const DynamicTable = ({
             event.preventDefault();
             event.stopPropagation();
         }
-        
+
         const updatedData = data.map(item =>
             item.id === id
                 ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
                 : item
         );
-        
+
         setData(updatedData);
         // const toggleButton = actionButtons.find(
         //     action => action.type === 'switch'

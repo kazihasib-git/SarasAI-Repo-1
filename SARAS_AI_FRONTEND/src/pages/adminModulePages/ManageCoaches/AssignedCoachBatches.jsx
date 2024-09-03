@@ -17,7 +17,6 @@ const actionButtons = [
 ];
 
 const AssignCoachBatches = () => {
-    
     const { id } = useParams();
     const dispatch = useDispatch();
     const { assignedBatches, loading } = useSelector(
@@ -40,8 +39,8 @@ const AssignCoachBatches = () => {
                 is_active: item.is_active,
             }));
             setCoachAssignBatchesData(transformData);
-        }else {
-            setCoachAssignBatchesData([])
+        } else {
+            setCoachAssignBatchesData([]);
         }
     }, [assignedBatches]);
 

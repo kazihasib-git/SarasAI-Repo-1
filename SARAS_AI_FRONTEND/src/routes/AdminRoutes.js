@@ -48,30 +48,98 @@ const AdminRoutes = () => (
             {/* TA */}
             <Route path="ta-manage" element={<ManagesTAs page="Manage TA" />} />
             <Route path="AddEditTA" element={<AddEditTA page="Edit Ta" />} />
-            <Route path="ta-mapping" element={<TaMapping page="TA Mapping" />} />
-            <Route path="/active-students/:id" element={<AssignedStudent page="Assigned Students" />} />
-            <Route path="/active-batches/:id" element={<AssignedBatches page="Assigned Batches" />} />
-            <Route path="/active-Ta-courses/:id" element={<AssignTaCourses page="Assigned Coach Courses" />} />
-            <Route path="ta-availability" element={<TAAvailability page="TA Availability" />} />
-            <Route path="ta-scheduling" element={<TaScheduling page="TA Scheduling" />} />
-            <Route path="ta-calendar/:name/:id" element={<TaCalender page="Calendar" />} />
-            <Route path="ta-course-mapping" element={<TaCourseMapping page="ta Course Mapping" />} />
+            <Route
+                path="ta-mapping"
+                element={<TaMapping page="TA Mapping" />}
+            />
+            <Route
+                path="/active-students/:id"
+                element={<AssignedStudent page="Assigned Students" />}
+            />
+            <Route
+                path="/active-batches/:id"
+                element={<AssignedBatches page="Assigned Batches" />}
+            />
+            <Route
+                path="/active-Ta-courses/:id"
+                element={<AssignTaCourses page="Assigned Coach Courses" />}
+            />
+            <Route
+                path="ta-availability"
+                element={<TAAvailability page="TA Availability" />}
+            />
+            <Route
+                path="ta-scheduling"
+                element={<TaScheduling page="TA Scheduling" />}
+            />
+            <Route
+                path="ta-calendar/:name/:id"
+                element={<TaCalender page="Calendar" />}
+            />
+            <Route
+                path="ta-course-mapping"
+                element={<TaCourseMapping page="ta Course Mapping" />}
+            />
 
             {/* COACH */}
-            <Route path="coach-manage" element={<ManageCoaches page="Manage Coaches" />} />
-            <Route path="createcoach" element={<CreateCoachPage page="Create Coach" />} />
-            <Route path="coach-mapping" element={<CoachMapping page="Coach Mapping" />} />
-            <Route path="coach-calender/:name/:id" element={<CoachCalender page="Calendar" />} />
-            <Route path="coach-template" element={<CoachTemplate page="Coach Template" />} />
-            <Route path="create-template" element={<CreateTemplate page="Create Template" />} />
-            <Route path="template-name" element={<TemplateName page="Template Name" />} />
-            <Route path="coach-template/template-students/:id" element={<AssignedTemplateStudents page="Assigned Template Students" />} />
-            <Route path="coach-availability" element={<CoachAvailability page="Coach Availability" />} />
-            <Route path="coach-scheduling" element={<CoachScheduling page="Coach Scheduling" />} />
-            <Route path="/active-Coach-students/:id" element={<AssignCoachStudent page="Assigned Coach Student" />} />
-            <Route path="/active-Coach-batches/:id" element={<AssignCoachBatches page="Assigned Coach Batches" />} />
-            <Route path="/active-Coach-courses/:id" element={<AssignCoachCourses page="Assigned Coach Courses" />} />
-            <Route path="coach-course-mapping" element={<CoachCourseMapping page="Coach Course Mapping" />} />
+            <Route
+                path="coach-manage"
+                element={<ManageCoaches page="Manage Coaches" />}
+            />
+            <Route
+                path="createcoach"
+                element={<CreateCoachPage page="Create Coach" />}
+            />
+            <Route
+                path="coach-mapping"
+                element={<CoachMapping page="Coach Mapping" />}
+            />
+            <Route
+                path="coach-calender/:name/:id"
+                element={<CoachCalender page="Calendar" />}
+            />
+            <Route
+                path="coach-template"
+                element={<CoachTemplate page="Coach Template" />}
+            />
+            <Route
+                path="create-template"
+                element={<CreateTemplate page="Create Template" />}
+            />
+            <Route
+                path="template-name"
+                element={<TemplateName page="Template Name" />}
+            />
+            <Route
+                path="coach-template/template-students/:id"
+                element={
+                    <AssignedTemplateStudents page="Assigned Template Students" />
+                }
+            />
+            <Route
+                path="coach-availability"
+                element={<CoachAvailability page="Coach Availability" />}
+            />
+            <Route
+                path="coach-scheduling"
+                element={<CoachScheduling page="Coach Scheduling" />}
+            />
+            <Route
+                path="/active-Coach-students/:id"
+                element={<AssignCoachStudent page="Assigned Coach Student" />}
+            />
+            <Route
+                path="/active-Coach-batches/:id"
+                element={<AssignCoachBatches page="Assigned Coach Batches" />}
+            />
+            <Route
+                path="/active-Coach-courses/:id"
+                element={<AssignCoachCourses page="Assigned Coach Courses" />}
+            />
+            <Route
+                path="coach-course-mapping"
+                element={<CoachCourseMapping page="Coach Course Mapping" />}
+            />
 
             {/* STUDENTS */}
             <Route path="students" element={<StudentPage />} />
@@ -89,13 +157,17 @@ const AdminRoutes = () => (
             <Route path="wolInstructions" element={<WOLInstructions />} />
 
             <Route path="wolQuestions" element={<WOLQuestions />} />
-            <Route path="wolQuestions/add-Edit" element={<AddEditWOLQuestions />} />
+            <Route
+                path="wolQuestions/add-Edit"
+                element={<AddEditWOLQuestions />}
+            />
             <Route path="wolOptionsConfig" element={<WOLOptionsConfig />} />
             <Route path="wolTestConfig" element={<WOLTestConfig />} />
-            <Route path="WOLTestConfigSelectQuestions" element={<WOLTestConfigSelectQuestions />} />
+            <Route
+                path="WOLTestConfigSelectQuestions"
+                element={<WOLTestConfigSelectQuestions />}
+            />
             <Route path="WolselectQuestions" element={<WOLSelectQuestions />} />
-
-
         </Route>
     </Routes>
 );

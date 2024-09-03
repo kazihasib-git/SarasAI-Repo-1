@@ -1,4 +1,4 @@
-import { Box, InputBase, } from '@mui/material';
+import { Box, InputBase } from '@mui/material';
 import Header from '../../../components/Header/Header';
 import Sidebar from '../../../components/Sidebar/Sidebar';
 import { useState, useEffect } from 'react';
@@ -26,12 +26,11 @@ const actionButtons = [
 ];
 
 const CoachMapping = () => {
-
     const dispatch = useDispatch();
     const { coachMapping, loading } = useSelector(state => state.coachModule);
     const [caMappingData, setcaMappingData] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
-    
+
     useEffect(() => {
         dispatch(showCoachMapping());
     }, [dispatch]);
@@ -47,8 +46,8 @@ const CoachMapping = () => {
             }));
 
             setcaMappingData(transformData);
-        }else{
-            setcaMappingData([])
+        } else {
+            setcaMappingData([]);
         }
     }, [coachMapping]);
 

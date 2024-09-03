@@ -3,9 +3,8 @@ import { useNavigate, useLocation, Link } from 'react-router-dom'; // Import Lin
 import './Login.css'; // Reusing the same CSS for consistent styling
 
 const ForgetPassword = () => {
-
     const navigate = useNavigate();
-    const location = useLocation();                                  
+    const location = useLocation();
 
     const newPwdRef = useRef();
     const errRef = useRef();
@@ -29,7 +28,7 @@ const ForgetPassword = () => {
         setErrMsg('');
     }, [newPwd, confirmPwd]);
 
-    const onSubmit = async (e) => {
+    const onSubmit = async e => {
         e.preventDefault();
 
         if (newPwd !== confirmPwd) {
@@ -89,7 +88,7 @@ const ForgetPassword = () => {
                         id="newPassword"
                         ref={newPwdRef}
                         autoComplete="off"
-                        onChange={(e) => setNewPwd(e.target.value)}
+                        onChange={e => setNewPwd(e.target.value)}
                         value={newPwd}
                         required
                         style={{
@@ -105,7 +104,7 @@ const ForgetPassword = () => {
                     <input
                         type="password"
                         id="confirmPassword"
-                        onChange={(e) => setConfirmPwd(e.target.value)}
+                        onChange={e => setConfirmPwd(e.target.value)}
                         value={confirmPwd}
                         required
                         style={{

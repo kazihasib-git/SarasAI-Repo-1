@@ -4,7 +4,7 @@
     flex-direction: row;
     padding-top: 10px;
     height: 80vh; /* Ensure full viewport height */
-    font-family: "Regular";
+    font-family: 'Regular';
 }
 
 h1 {
@@ -17,7 +17,6 @@ h1 {
     top: 85px;
     height: 600px;
     background-color: #fff;
-    
 }
 
 .box1 {
@@ -25,9 +24,8 @@ h1 {
     left: 0;
     border-radius: 10px 0 0 10px;
     height: 80vh;
-    overflow: hidden; 
+    overflow: hidden;
     margin-right: 5px; /* Adjust this value for more or less margin */
-    
 }
 
 .box2 {
@@ -139,7 +137,7 @@ h1 {
     box-sizing: border-box;
     overflow-y: auto;
     background-color: #fff;
-   
+
     padding-bottom: 22px;
 }
 
@@ -153,8 +151,7 @@ h1 {
     padding: 10px;
     cursor: pointer;
     border-radius: 12px;
-    position: relative; 
-    
+    position: relative;
 }
 
 /* Active chat item styling */
@@ -178,20 +175,17 @@ h1 {
     justify-content: center;
     margin-right: 10px;
     max-width: 70%;
-    
 }
-
 
 /* Last message text */
 .last-message {
     color: #a6a6a6;
 }
 
-
 .last-seen {
     position: absolute;
     font-size: 15px;
-    right: 25px; 
+    right: 25px;
     color: #888;
 }
 
@@ -292,7 +286,7 @@ h1 {
     word-break: break-word;
     word-wrap: break-word;
     overflow-wrap: break-word;
-    font-family: "Regular";
+    font-family: 'Regular';
     font-size: 16px;
 }
 
@@ -308,7 +302,7 @@ h1 {
 
 .message-bubble.other {
     background-color: #f1f1f1;
-    color: #5F6383;
+    color: #5f6383;
 }
 
 .chat-input-container {
@@ -380,13 +374,12 @@ h1 {
 }
 
 .status-indicator.online {
-    background-color:#68D391; /* Color when online */
+    background-color: #68d391; /* Color when online */
 }
 
- .audio-recorder {
+.audio-recorder {
     background-color: none;
-} 
-
+}
 
 /* Responsive Box adjustments */
 @media (max-width: 768px) {

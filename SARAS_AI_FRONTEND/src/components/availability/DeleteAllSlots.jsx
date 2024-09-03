@@ -26,9 +26,12 @@ import CustomButton from '../CustomFields/CustomButton';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 const DeleteAllSlots = ({ componentName }) => {
-
     const dispatch = useDispatch();
-    const { control , handleSubmit, formState : { errors }} =   useForm()
+    const {
+        control,
+        handleSubmit,
+        formState: { errors },
+    } = useForm();
 
     let sliceName,
         getSlotsApi,
@@ -78,27 +81,24 @@ const DeleteAllSlots = ({ componentName }) => {
 
     const { [userIdState]: userId, [userNameState]: userName } = selectState;
 
-    const validate = () => {
-
-    }
+    const validate = () => {};
 
     const onSubmit = async () => {
-        
-            //get today date in YYYY-MM-DD format
-            // const today = new Date();
-            // const dd = String(today.getDate()).padStart(2, '0');
-            // const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-            // const yyyy = today.getFullYear();
+        //get today date in YYYY-MM-DD format
+        // const today = new Date();
+        // const dd = String(today.getDate()).padStart(2, '0');
+        // const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+        // const yyyy = today.getFullYear();
 
-            // const todayDate = yyyy + '-' + mm + '-' + dd;
+        // const todayDate = yyyy + '-' + mm + '-' + dd;
 
-            // const data = {
-            //     date: todayDate,
-            // };
+        // const data = {
+        //     date: todayDate,
+        // };
 
-            // dispatch actions
-            dispatch(deleteFutureSlotsApi(userId))
-            .unwrap() 
+        // dispatch actions
+        dispatch(deleteFutureSlotsApi(userId))
+            .unwrap()
             .then(() => {
                 dispatch(closePopupAction());
                 dispatch(getSlotsApi(userId));
@@ -106,7 +106,6 @@ const DeleteAllSlots = ({ componentName }) => {
                 toast.success('Slot(s) have been successfully deleted.');
             })
             .catch(error => {
-               
                 toast.error(` ${error}`);
             });
     };
@@ -130,11 +129,11 @@ const DeleteAllSlots = ({ componentName }) => {
             </DialogContentText>
             <Grid container spacing={2}>
                 <Grid item xs={12}>
-                    <Controller 
-                        name='deleteFutureSlots'
+                    <Controller
+                        name="deleteFutureSlots"
                         control={control}
                         defaultValue=""
-                        rules={{  required : 'Reason For Deletion is required' }}
+                        rules={{ required: 'Reason For Deletion is required' }}
                         render={({ field }) => (
                             <CustomTextField
                                 label="Delete All Future Slots"
@@ -169,7 +168,7 @@ const DeleteAllSlots = ({ componentName }) => {
                 backgroundColor="#F56D3B"
                 borderColor="#F56D3B"
                 color="#FFFFFF"
-                textTransform= "none"
+                textTransform="none"
             >
                 Submit
             </CustomButton>

@@ -165,15 +165,14 @@ const EditBatchesFromSession = ({ componentName }) => {
     };
 
     const validate = () => {
-        if(selectedBatch.length === 0){
-            toast.error('Please Select at Least One Batch')
+        if (selectedBatch.length === 0) {
+            toast.error('Please Select at Least One Batch');
             return false;
         }
         return true;
-    }
+    };
 
     const handleSubmit = () => {
-
         if (!validate()) return;
 
         const Id = meetingId;
@@ -182,15 +181,14 @@ const EditBatchesFromSession = ({ componentName }) => {
             batchId: selectedBatch.map(id => id),
         };
         dispatch(editScheduledBatchesApi({ Id, data }))
-        .unwrap()
-        .then(() => {
-            dispatch(closePopupActions());
-            toast.success("Batches Updated Successfully")
-        })
-        .catch(error =>{
-            toast.error(`${error}`);
-        })
-        
+            .unwrap()
+            .then(() => {
+                dispatch(closePopupActions());
+                toast.success('Batches Updated Successfully');
+            })
+            .catch(error => {
+                toast.error(`${error}`);
+            });
     };
 
     const content = (

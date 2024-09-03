@@ -212,11 +212,10 @@ const VideoUploadComponent = ({ onUploadComplete }) => {
             });
             if (response.ok) {
                 toast.success('Video uploaded successfully!');
-               
             } else {
                 toast.error('Failed to upload video.');
             }
-  
+
             if (!response.ok) {
                 throw new Error('Failed to upload video.');
             }

@@ -65,9 +65,8 @@ const CustomMeetingTypeField = ({
                 }}
             >
                 {options.map(option => (
-                    
                     <MenuItem key={option.id} value={option}>
-                        {`${option}`}                        
+                        {`${option}`}
                     </MenuItem>
                 ))}
             </Select>

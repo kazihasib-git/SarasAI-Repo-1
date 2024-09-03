@@ -118,7 +118,6 @@ const TemplateStudentsDataTable = ({
     };
 
     const handleToggle = id => {
-
         const updatedData = data.map(item =>
             item.id === id
                 ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }

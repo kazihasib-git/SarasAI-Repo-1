@@ -8,7 +8,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import Header from '../../../../components/Header/Header';
 import Sidebar from '../../../../components/Sidebar/Sidebar';
-import { DynamicTable } from '../../managesTAs/TaAvaialablity'; 
+import { DynamicTable } from '../../managesTAs/TaAvaialablity';
 
 const headers = [
     'S. No.',

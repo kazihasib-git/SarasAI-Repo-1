@@ -143,7 +143,11 @@ const CoachTemplateForm = () => {
                     </CustomTextField>
                 </Grid>
                 <Grid item xs={12}>
-                    <CustomButton type="submit" variant="contained" style={{ textTransform: 'none' }}>
+                    <CustomButton
+                        type="submit"
+                        variant="contained"
+                        style={{ textTransform: 'none' }}
+                    >
                         Submit
                     </CustomButton>
                 </Grid>

@@ -58,8 +58,8 @@ const AddEditWOLQuestions = () => {
                 name: item.name,
             }));
             setCategories(transformData);
-        }else {
-            setCategories([])
+        } else {
+            setCategories([]);
         }
     }, [wolCategoryData]);
 
@@ -126,7 +126,6 @@ const AddEditWOLQuestions = () => {
     const formats = ['bold', 'italic', 'underline', 'align', 'link'];
 
     const onSubmit = formData => {
-
         const data = {
             wol_category_id: Number(formData.category),
             question: questionValue,

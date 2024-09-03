@@ -4,7 +4,6 @@ import { Box, DialogContent, DialogTitle, Typography } from '@mui/material';
 import CustomButton from '../CustomFields/CustomButton';
 
 const DeleteConfirmation = ({ open, handleClose, onConfirm }) => {
-
     const handleDelete = () => {
         onConfirm(); // Call the confirmation function
     };
@@ -32,9 +31,7 @@ const DeleteConfirmation = ({ open, handleClose, onConfirm }) => {
     );
 
     const content = (
-        <DialogContent
-            style={{ display: 'flex', justifyContent: 'center' }}
-        >
+        <DialogContent style={{ display: 'flex', justifyContent: 'center' }}>
             <Typography>Are you sure you want to delete?</Typography>
         </DialogContent>
     );
@@ -43,7 +40,7 @@ const DeleteConfirmation = ({ open, handleClose, onConfirm }) => {
         <ReusableDialog
             open={open}
             handleClose={handleClose}
-            title={"Delete Confirmation"}
+            title={'Delete Confirmation'}
             content={content}
             actions={actions}
         />

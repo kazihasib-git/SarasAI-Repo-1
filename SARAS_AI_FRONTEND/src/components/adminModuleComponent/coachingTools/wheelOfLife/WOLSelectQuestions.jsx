@@ -74,11 +74,11 @@ const WOLSelectQuestions = () => {
                 wolQuestionCategoryWise.data[0].wol_category_name
             );
             setCategoryId(wolQuestionCategoryWise.data[0].id);
-        }else {
-            setQuestions()
-            setTotalQuestions()
-            setSelectedCategory()
-            setCategoryId()
+        } else {
+            setQuestions();
+            setTotalQuestions();
+            setSelectedCategory();
+            setCategoryId();
         }
     }, [wolQuestionCategoryWise.data]);
 

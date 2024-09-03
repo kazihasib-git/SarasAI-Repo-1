@@ -11,7 +11,6 @@ import DynamicTable from '../../../CommonComponent/DynamicTable';
 import { useDispatch } from 'react-redux';
 
 const Students = () => {
-    
     const dispatch = useDispatch();
     const [input, setInput] = useState('');
     const [students, setStudents] = useState([]);
@@ -37,8 +36,8 @@ const Students = () => {
                     'N/A',
             }));
             setStudents(transformedData);
-        }else {
-            setStudents([])
+        } else {
+            setStudents([]);
         }
     }, [apiData]);
 

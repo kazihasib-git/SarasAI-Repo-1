@@ -5,19 +5,17 @@ import axiosInstance from '../../services/httpService';
 
 // login api
 export const login = createAsyncThunk(
-    'login', 
-    async (data , { rejectWithValue }) => {
-        try{
-            const response = await axiosInstance.post(
-                `${baseUrl}/login`, data
-            );
-            return response.data
-        }catch(error){
-            if(error){
-                if(error.response && error.response.data){
+    'login',
+    async (data, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.post(`${baseUrl}/login`, data);
+            return response.data;
+        } catch (error) {
+            if (error) {
+                if (error.response && error.response.data) {
                     return rejectWithValue(error.response.data.message);
-                }else {
-                    return rejectWithValue('An Error Occurred While Login')
+                } else {
+                    return rejectWithValue('An Error Occurred While Login');
                 }
             }
         }
@@ -25,29 +23,24 @@ export const login = createAsyncThunk(
 );
 
 // Logout api
-export const logout = createAsyncThunk(
-    'logout', 
-    async rejectWithValue => {
-        try{
-            const response = await axiosInstance.post(
-                `${baseUrl}/logout`
-            );
-            return response.data;
-        }catch(error){
-            if(error){
-                if(error.response && error.response.data){
-                    return rejectWithValue(error.response.data.message);
-                }else {
-                    return rejectWithValue('An Error Occurred While Login')
-                }
+export const logout = createAsyncThunk('logout', async rejectWithValue => {
+    try {
+        const response = await axiosInstance.post(`${baseUrl}/logout`);
+        return response.data;
+    } catch (error) {
+        if (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue('An Error Occurred While Login');
             }
         }
     }
-);
+});
 
 const initialState = {
     userData: {},
-    loginData : {},
+    loginData: {},
     login: false,
     role: null,
     name: '',
@@ -73,7 +66,7 @@ const authSlice = createSlice({
             state.loading = true;
         });
         builder.addCase(login.fulfilled, (state, action) => {
-            toast.success(action.payload.message || 'Login Successfully')
+            toast.success(action.payload.message || 'Login Successfully');
             state.loading = false;
             state.loginData = action.payload;
             state.userData = action.payload.admin_user; // Update to use the correct user object
@@ -94,7 +87,7 @@ const authSlice = createSlice({
             ); // Store timezone_id
         });
         builder.addCase(login.rejected, (state, action) => {
-            toast.error(action.payload || 'Failed To Login')
+            toast.error(action.payload || 'Failed To Login');
             state.loading = false;
             state.error = action.error.message;
             state.userData = {};
@@ -108,18 +101,18 @@ const authSlice = createSlice({
             state.loading = true;
         });
         builder.addCase(logout.fulfilled, (state, action) => {
-            toast.success(action.payload.message || 'Logout Successfully')
+            toast.success(action.payload.message || 'Logout Successfully');
             state.loading = false;
             state.login = false;
             state.userData = [];
             state.timezone_id = null; // Clear timezone_id in state
 
-            localStorage.clear()
+            localStorage.clear();
         });
         builder.addCase(logout.rejected, (state, action) => {
-            toast.error(action.payload || 'Failed To Logout')
+            toast.error(action.payload || 'Failed To Logout');
             state.loading = false;
-        })
+        });
     },
 });
 

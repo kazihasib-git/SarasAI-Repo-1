@@ -47,10 +47,10 @@ const CustomButton = ({
 const AddModule = () => {
     const dispatch = useDispatch();
     const [moduleName, setModuleName] = useState('');
-   
+
     const [moduleNameError, setModuleNameError] = useState(false);
 
-    const handleModuleNameChange = (e) => {
+    const handleModuleNameChange = e => {
         setModuleName(e.target.value);
         if (e.target.value.trim() === '') {
             setModuleNameError(true);
@@ -73,27 +73,29 @@ const AddModule = () => {
                 textAlign: 'center',
             }}
         >
-           <Grid item xs={12} sm={6}>
-            <CustomTextField
-                label="Module Name"
-                variant="outlined"
-                value={moduleName}
-                onChange={handleModuleNameChange}
-                placeholder="Enter Module Name"
-                name="moduleName"
-                error={moduleNameError}
-                helperText={moduleNameError ? 'Module Name is required' : ''}
-            />
-        </Grid>
+            <Grid item xs={12} sm={6}>
+                <CustomTextField
+                    label="Module Name"
+                    variant="outlined"
+                    value={moduleName}
+                    onChange={handleModuleNameChange}
+                    placeholder="Enter Module Name"
+                    name="moduleName"
+                    error={moduleNameError}
+                    helperText={
+                        moduleNameError ? 'Module Name is required' : ''
+                    }
+                />
+            </Grid>
         </Grid>
     );
 
     const handleSubmit = () => {
         if (!moduleName.trim()) {
             setModuleNameError(true);
-            return; 
+            return;
         }
-    
+
         const data = {
             template_id: selectedCoachTemplate,
             module_name: moduleName,
@@ -101,13 +103,13 @@ const AddModule = () => {
             created_by: 1,
             updated_by: 1,
         };
-    
+
         dispatch(createCoachTemplateModule(data))
             .unwrap()
             .then(() => {
                 dispatch(getCoachTemplateModuleId(selectedCoachTemplate));
             });
-    
+
         dispatch(closeTemplateModulePopup());
         setModuleName(''); // Reset the input field
         setModuleNameError(false); // Reset error state after successful submission

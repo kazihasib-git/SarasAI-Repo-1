@@ -23,7 +23,6 @@ import CustomButton from '../CustomFields/CustomButton';
 import { toast } from 'react-toastify';
 
 const AssignStudents = ({ componentname }) => {
-    
     const dispatch = useDispatch();
     const [selectedTerm, setSelectedTerm] = useState('');
     const [selectedBatch, setSelectedBatch] = useState('');
@@ -209,14 +208,13 @@ const AssignStudents = ({ componentname }) => {
     };
 
     const handleSubmit = () => {
-
         if (!validate()) return;
 
         const id =
             componentname === 'ADDITCOACH'
                 ? coachID || assignedId
                 : taID || assignedId;
-                
+
         const data = {
             admin_user_id: id,
             students: selectedStudents.map(id => ({ id: id.toString() })),

@@ -5,17 +5,32 @@ import ReusableDialog from '../../../CustomFields/ReusableDialog';
 import CustomDateField from '../../../CustomFields/CustomDateField';
 import PopUpTable from '../../../CommonComponent/PopUpTable';
 import CustomTimeField from '../../../CustomFields/CustomTimeField';
-import { closeReschedulePopup, openCreatedSessions } from '../../../../redux/features/commonCalender/commonCalender';
+import {
+    closeReschedulePopup,
+    openCreatedSessions,
+} from '../../../../redux/features/commonCalender/commonCalender';
 import { getScheduleSession } from '../../../../redux/features/adminModule/ta/taAvialability';
 import { timezoneIdToName } from '../../../../utils/timezoneIdToName';
 import { getTimezone } from '../../../../redux/features/utils/utilSlice';
-import { getCoachMenuSessionForLeave, getCoachMenuSessions, getCoachMenuSlots, getCoachMenuSlotsByData, rescheduleSessionForCoachLeave } from '../../../../redux/features/coachModule/coachmenuprofileSilce';
-import { getTaMenuSessionForLeave, getTaMenuSessions, getTaMenuSlots, getTaMenuSlotsByDate, rescheduleSessionForTaLeave } from '../../../../redux/features/taModule/tamenuSlice';
+import {
+    getCoachMenuSessionForLeave,
+    getCoachMenuSessions,
+    getCoachMenuSlots,
+    getCoachMenuSlotsByData,
+    rescheduleSessionForCoachLeave,
+} from '../../../../redux/features/coachModule/coachmenuprofileSilce';
+import {
+    getTaMenuSessionForLeave,
+    getTaMenuSessions,
+    getTaMenuSlots,
+    getTaMenuSlotsByDate,
+    rescheduleSessionForTaLeave,
+} from '../../../../redux/features/taModule/tamenuSlice';
 import { convertFromUTC } from '../../../../utils/dateAndtimeConversion';
 import { toast } from 'react-toastify';
 import PopTableSlot from '../../../CommonComponent/PopTableSlot';
 import CustomFutureDateField from '../../../CustomFields/CustomFutureDateField';
- 
+
 const CustomButton = ({
     onClick,
     children,
@@ -53,11 +68,14 @@ const CustomButton = ({
 
 const headers = ['S. No.', 'Slots Available', 'Select'];
 
-
-const RescheduleCreatedSession = ({ componentName , timezoneID}) => {
-
+const RescheduleCreatedSession = ({ componentName, timezoneID }) => {
     const dispatch = useDispatch();
-    const { RescheduleSession, slotsLeaveData, sessionDataForReschdeule, dataToFindScheduleInSlot } = useSelector((state) => state.commonCalender)
+    const {
+        RescheduleSession,
+        slotsLeaveData,
+        sessionDataForReschdeule,
+        dataToFindScheduleInSlot,
+    } = useSelector(state => state.commonCalender);
 
     const [selectDate, setSelectDate] = useState(null);
     const [selectedSlots, setSelectedSlots] = useState([]);
@@ -69,7 +87,7 @@ const RescheduleCreatedSession = ({ componentName , timezoneID}) => {
         dispatch(getTimezone());
     }, [dispatch]);
 
-    const { timezones } = useSelector((state) => state.util)
+    const { timezones } = useSelector(state => state.util);
 
     let sliceName,
         rescheduleApi,
@@ -92,12 +110,12 @@ const RescheduleCreatedSession = ({ componentName , timezoneID}) => {
 
         case 'COACHMENU':
             sliceName = 'coachMenu';
-            rescheduleApi = rescheduleSessionForCoachLeave
+            rescheduleApi = rescheduleSessionForCoachLeave;
             getAllSlotsApi = getCoachMenuSlots;
             getAllSessionsApi = getCoachMenuSessions;
-            fetchAvailableSlotsApi = getCoachMenuSlotsByData
-            availableSlotState = 'coachSlotsByDate'
-            getSessionsBySlotsApi = getCoachMenuSessionForLeave
+            fetchAvailableSlotsApi = getCoachMenuSlotsByData;
+            availableSlotState = 'coachSlotsByDate';
+            getSessionsBySlotsApi = getCoachMenuSessionForLeave;
             break;
 
         default:
@@ -106,22 +124,20 @@ const RescheduleCreatedSession = ({ componentName , timezoneID}) => {
             getAllSlotsApi = null;
             getAllSessionsApi = null;
             fetchAvailableSlotsApi = null;
-            availableSlotState = null
+            availableSlotState = null;
             getSessionsBySlotsApi = null;
             break;
     }
 
-    const selectorState = useSelector((state) => state[sliceName])
+    const selectorState = useSelector(state => state[sliceName]);
 
-    const {
-        [availableSlotState] : availableSlotsData 
-    } = selectorState;
+    const { [availableSlotState]: availableSlotsData } = selectorState;
 
     useEffect(() => {
         if (selectDate) {
             const data = {
                 date: selectDate,
-                timezone_name : timezoneIdToName(timezoneID, timezones)
+                timezone_name: timezoneIdToName(timezoneID, timezones),
             };
             dispatch(fetchAvailableSlotsApi(data));
         }
@@ -137,7 +153,6 @@ const RescheduleCreatedSession = ({ componentName , timezoneID}) => {
     };
 
     const convertavailableSlotData = async () => {
-
         if (
             availableSlotsData &&
             availableSlotsData.length > 0 &&
@@ -198,8 +213,6 @@ const RescheduleCreatedSession = ({ componentName , timezoneID}) => {
     };
 
     const validate = () => {
-
-
         if (!selectDate) {
             toast.error('Please Select The Date');
             return false;
@@ -218,36 +231,32 @@ const RescheduleCreatedSession = ({ componentName , timezoneID}) => {
         }
 
         return true;
-
-
-    }
+    };
 
     const handleSubmit = () => {
-
-        if(!validate()) return;
+        if (!validate()) return;
 
         const sessionId = sessionDataForReschdeule?.id || '';
 
         const rescheduleData = {
-            id : sessionId,
-            data : {
-                schedule_date : selectDate,
-                slot_id : selectedSlots[0],
-                start_time : fromTime,
-                end_time : toTime,
-                timezone_id : timezoneID,
-                event_status : "rescheduled",
-            }
-        }
+            id: sessionId,
+            data: {
+                schedule_date: selectDate,
+                slot_id: selectedSlots[0],
+                start_time: fromTime,
+                end_time: toTime,
+                timezone_id: timezoneID,
+                event_status: 'rescheduled',
+            },
+        };
 
-        dispatch(rescheduleApi(rescheduleData))
-        .then(() => {
-            dispatch(closeReschedulePopup())
-            dispatch(getAllSlotsApi())
-            dispatch(getAllSessionsApi())
-            dispatch(getSessionsBySlotsApi(slotsLeaveData))
-            dispatch(openCreatedSessions(slotsLeaveData))
-        })
+        dispatch(rescheduleApi(rescheduleData)).then(() => {
+            dispatch(closeReschedulePopup());
+            dispatch(getAllSlotsApi());
+            dispatch(getAllSessionsApi());
+            dispatch(getSessionsBySlotsApi(slotsLeaveData));
+            dispatch(openCreatedSessions(slotsLeaveData));
+        });
     };
 
     const content = (
@@ -324,12 +333,11 @@ const RescheduleCreatedSession = ({ componentName , timezoneID}) => {
         <CustomButton
             onClick={handleSubmit}
             style={{
-                backgroundColor : "#F56D3B",
-                borderColor : "#F56D3B",
-                color : "#FFFFFF",
-                textTransform : 'none',
+                backgroundColor: '#F56D3B',
+                borderColor: '#F56D3B',
+                color: '#FFFFFF',
+                textTransform: 'none',
             }}
-           
         >
             Submit
         </CustomButton>

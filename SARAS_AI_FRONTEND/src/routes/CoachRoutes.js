@@ -11,30 +11,29 @@ import CoachMenuMessages from '../pages/coachModule/CoachMenuMessages';
 import CoachMenuAssessments from '../pages/coachModule/CoachMenuAssessments';
 import Main from '../components/Main/Main';
 
-
 const CoachRoutes = () => (
     <Routes>
         <Route path="/" element={<Main page="Coach Menu" />}>
-            <Route index element={<CoachMenuProfile page="Coach Menu Profile" />} />
+            <Route
+                index
+                element={<CoachMenuProfile page="Coach Menu Profile" />}
+            />
             <Route path="coachmenu" element={<CoachMenu page="Coach Menu" />} />
-            <Route path="coachmenu_profile" element={<CoachMenuProfile page="Coach Menu Profile" />} />
+            <Route
+                path="coachmenu_profile"
+                element={<CoachMenuProfile page="Coach Menu Profile" />}
+            />
             <Route
                 path="coachmenu_callrequest"
-                element={
-                    <CoachCallRequest page="Coach Call Request" />
-                }
+                element={<CoachCallRequest page="Coach Call Request" />}
             />
             <Route
                 path="coachmenu_callrecords"
-                element={
-                    <CoachCallRecord page="Coach Call Records" />
-                }
+                element={<CoachCallRecord page="Coach Call Records" />}
             />
             <Route
                 path="coachmenu_calendar"
-                element={
-                    <CoachMenuCalendar page="Coach Menu Calendar" />
-                }
+                element={<CoachMenuCalendar page="Coach Menu Calendar" />}
             />
             <Route
                 path="coachmenu_scheduledcall"
@@ -44,21 +43,15 @@ const CoachRoutes = () => (
             />
             <Route
                 path="coachmenu_students"
-                element={
-                    <CoachMenuStudents page="Coach Menu Students" />
-                }
+                element={<CoachMenuStudents page="Coach Menu Students" />}
             />
             <Route
                 path="coachmenu_messages"
-                element={
-                    <CoachMenuMessages page="Coach Menu Messages" />
-                }
+                element={<CoachMenuMessages page="Coach Menu Messages" />}
             />
             <Route
                 path="coachmenu_assessments"
-                element={
-                    <CoachMenuAssessments page="Coach Menu Assessemets" />
-                }
+                element={<CoachMenuAssessments page="Coach Menu Assessemets" />}
             />
         </Route>
     </Routes>

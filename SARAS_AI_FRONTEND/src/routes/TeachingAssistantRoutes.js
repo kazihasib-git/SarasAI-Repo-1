@@ -10,18 +10,21 @@ import TAMenuCalendar from '../pages/TaModule/TaMenuCalendar';
 import CreateTaMenu from '../pages/TaModule/CreateTaMenu';
 import Main from '../components/Main/Main';
 
-
 const TeachingAssistantRoutes = () => (
     <Routes>
         <Route path="/" element={<Main page="Teaching Assistant Menu" />}>
             <Route index element={<TaMenuProfile page="My Profile" />} />
-            <Route path="tamenu_profile" element={<TaMenuProfile page="My Profile" />} />
-            <Route path="tamenu_students" element={<TaMenuStudents page="My Students" />} />
+            <Route
+                path="tamenu_profile"
+                element={<TaMenuProfile page="My Profile" />}
+            />
+            <Route
+                path="tamenu_students"
+                element={<TaMenuStudents page="My Students" />}
+            />
             <Route
                 path="tamenu_scheduledcall"
-                element={
-                    <TaMenuScheduledCall page="Schedule Calls" />
-                }
+                element={<TaMenuScheduledCall page="Schedule Calls" />}
             />
             <Route
                 path="tamenu_callrequest"

@@ -16,23 +16,22 @@ export const getAllCoachTemplates = createAsyncThunk(
 export const createCoachTemplate = createAsyncThunk(
     'coachTemplate/createCoachTemplate',
     async (data, { rejectWithValue }) => {
-        try{
-        const response = await axiosInstance.post(
-            `${baseUrl}/admin/store-template`,
-            data
-        );
-        return response.data;
-    }
-    catch (error) {
-        if (error.response && error.response.data) {
-            return rejectWithValue(error.response.data.message);
-        } else {
-            return rejectWithValue(
-                'An Error Occurred While Creating Template'
+        try {
+            const response = await axiosInstance.post(
+                `${baseUrl}/admin/store-template`,
+                data
             );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Creating Template'
+                );
+            }
         }
     }
-}
 );
 
 export const getAllCoachTemplateModules = createAsyncThunk(
@@ -82,23 +81,22 @@ export const getCoachTemplateModuleId = createAsyncThunk(
 export const updateCoachTemplateModule = createAsyncThunk(
     'coachTemplate/updateCoachTemplateModule',
     async (data, { rejectWithValue }) => {
-        try{
-        const response = await axiosInstance.post(
-            `${baseUrl}/admin/coaching-templates/update-modules`,
-            data
-        );
-        return response.data;
-    }
-    catch (error) {
-        if (error.response && error.response.data) {
-            return rejectWithValue(error.response.data.message);
-        } else {
-            return rejectWithValue(
-                'An Error Occurred While Updating activity'
+        try {
+            const response = await axiosInstance.post(
+                `${baseUrl}/admin/coaching-templates/update-modules`,
+                data
             );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Updating activity'
+                );
+            }
         }
     }
-}
 );
 
 export const updateCoachActivity = createAsyncThunk(
@@ -169,23 +167,22 @@ export const updateEditActivity = createAsyncThunk(
 export const addPrerequisites = createAsyncThunk(
     'coachTemplate/addPrerequisites',
     async (data, { rejectWithValue }) => {
-        try{
-        const response = await axiosInstance.post(
-            `${baseUrl}/admin/coaching-templates/activity-prerequisite`,
-            data
-        );
-        return response.data;
-    }
-    catch (error) {
-        if (error.response && error.response.data) {
-            return rejectWithValue(error.response.data.message);
-        } else {
-            return rejectWithValue(
-                'An Error Occurred While Updating activity'
+        try {
+            const response = await axiosInstance.post(
+                `${baseUrl}/admin/coaching-templates/activity-prerequisite`,
+                data
             );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Updating activity'
+                );
+            }
         }
     }
-}
 );
 
 // assign students to template
@@ -378,7 +375,9 @@ export const coachTemplateSlice = createSlice({
             .addCase(createCoachTemplate.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
-                toast.error(action.payload || 'failed to create coach template');
+                toast.error(
+                    action.payload || 'failed to create coach template'
+                );
             });
 
         // getAllCoachTemplateModules
@@ -513,10 +512,7 @@ export const coachTemplateSlice = createSlice({
             .addCase(addPrerequisites.fulfilled, (state, action) => {
                 state.loading = false;
                 // state.coachTemplates.push(action.payload.data);
-                toast.success(
-                    action.payload.message ||
-                        'Succesfully Created '
-                );
+                toast.success(action.payload.message || 'Succesfully Created ');
             })
             .addCase(addPrerequisites.rejected, (state, action) => {
                 state.loading = false;

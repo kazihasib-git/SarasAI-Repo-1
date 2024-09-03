@@ -23,18 +23,18 @@ export const createTA = createAsyncThunk(
 );
 
 export const getTA = createAsyncThunk(
-    'taModule/getTA', 
-    async rejectWithValue  => {
-        try{
+    'taModule/getTA',
+    async rejectWithValue => {
+        try {
             const response = await axiosInstance.get(
                 `${baseUrl}/admin/manage_tas`
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else{
-                return rejectWithValue('An Error Occurred While Fetching TAs')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue('An Error Occurred While Fetching TAs');
             }
         }
     }
@@ -43,22 +43,22 @@ export const getTA = createAsyncThunk(
 export const getTaById = createAsyncThunk(
     'taModule/getTaById',
     async (id, { rejectWithValue }) => {
-        try{
+        try {
             const response = await axiosInstance.get(
                 `${baseUrl}/admin/manage_tas/${id}`
             );
             return response.data;
-        }catch (error){
-            if(error.response && error.response.data){
+        } catch (error) {
+            if (error.response && error.response.data) {
                 return rejectWithValue(error.response.data.message);
-            }else {
+            } else {
                 return rejectWithValue(
                     'An Error Occurred While Fetching Ta By Id'
-                )
+                );
             }
         }
     }
-)
+);
 
 export const updateTA = createAsyncThunk(
     'taModule/updateTA',
@@ -70,10 +70,10 @@ export const updateTA = createAsyncThunk(
             );
             return response.data;
         } catch (error) {
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else{
-                return rejectWithValue('An Error Occurred While Updating TA')
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue('An Error Occurred While Updating TA');
             }
         }
     }
@@ -83,49 +83,50 @@ export const activate_deactive_TA = createAsyncThunk(
     async ({ id }, { rejectWithValue }) => {
         try {
             const response = await axiosInstance.patch(
-                `${baseUrl}/admin/manage_tas/active-deactive/${id}`,
-               
+                `${baseUrl}/admin/manage_tas/active-deactive/${id}`
             );
             return response.data;
         } catch (error) {
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else{
-                return rejectWithValue('An Error Occurred While editing TA')
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue('An Error Occurred While editing TA');
             }
         }
     }
 );
 
 export const deleteTA = createAsyncThunk(
-    'taModule/deleteTA', 
+    'taModule/deleteTA',
     async (id, { rejectWithValue }) => {
-        try{
+        try {
             await axiosInstance.delete(`${baseUrl}/admin/manage_tas/${id}`);
             return id;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else{
-                return rejectWithValue('An Error Occurred While Deleting TA')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue('An Error Occurred While Deleting TA');
             }
         }
-    
-});
+    }
+);
 
 export const getStudentBatchMapping = createAsyncThunk(
     'taModule/getStudentBatchMapping',
     async rejectWithValue => {
-        try{
+        try {
             const response = await axiosInstance.get(
                 `${baseUrl}/admin/student-batch-mapping/getAllStudentWithBatches`
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else{
-                return rejectWithValue('An Error Occurred While Fetching Students');
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Fetching Students'
+                );
             }
         }
     }
@@ -134,33 +135,38 @@ export const getStudentBatchMapping = createAsyncThunk(
 export const getBatchMapping = createAsyncThunk(
     'taModule/getBatchMapping',
     async rejectWithValue => {
-        try{
-            const response = await axiosInstance.get(`${baseUrl}/admin/batches`);
+        try {
+            const response = await axiosInstance.get(
+                `${baseUrl}/admin/batches`
+            );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else{
-                return rejectWithValue('An Error Occurred While Fetching Batches')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Fetching Batches'
+                );
             }
-        } 
+        }
     }
 );
 
 export const showTAMapping = createAsyncThunk(
     'taModule/showTAMapping',
     async rejectWithValue => {
-        try{
+        try {
             const response = await axiosInstance.get(
                 `${baseUrl}/admin/TAMapping/TAswithActiveStudentnBatches`
             );
             return response.data;
-
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else{
-                return rejectWithValue('An Error Occurred While Fetching Ta Mapping')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Fetching Ta Mapping'
+                );
             }
         }
     }
@@ -168,17 +174,19 @@ export const showTAMapping = createAsyncThunk(
 
 export const getAssignStudents = createAsyncThunk(
     'taModule/getAssignStudents',
-    async (id ,{ rejectWithValue }) => {
-        try{
+    async (id, { rejectWithValue }) => {
+        try {
             const response = await axiosInstance.get(
                 `${baseUrl}/admin/TAMapping/${id}/AssignStudents`
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else{
-                return rejectWithValue('An Error Occurred While Fetching Assigned Students To TA')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Fetching Assigned Students To TA'
+                );
             }
         }
     }
@@ -187,13 +195,14 @@ export const getAssignStudents = createAsyncThunk(
 export const getAssignBatches = createAsyncThunk(
     'taModule/getAssignBatches',
     async (id, { rejectWithValue }) => {
-        try{
-
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else{
-                return rejectWithValue('An Error Occurred While Fetch Assigned Batches To TA')
+        try {
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Fetch Assigned Batches To TA'
+                );
             }
         }
         const response = await axiosInstance.get(
@@ -206,20 +215,19 @@ export const getAssignBatches = createAsyncThunk(
 export const toggleAssignStudentStatus = createAsyncThunk(
     'taModule/toggleAssignStudentStatus',
     async ({ id, studentId }, { rejectWithValue }) => {
-        try{
+        try {
             const response = await axiosInstance.put(
                 `${baseUrl}/admin/TAMapping/${id}/ActiveDeactiveAssignStudent`,
                 { student_id: studentId }
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else{
-                return rejectWithValue('An Error Occurred')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue('An Error Occurred');
             }
         }
-        
     }
 );
 
@@ -259,16 +267,18 @@ export const postAssignBatches = createAsyncThunk(
 export const deleteAssignedStudent = createAsyncThunk(
     'taModule/deleteAssignedStudent',
     async (id, { rejectWithValue }) => {
-        try{
+        try {
             const response = await axiosInstance.delete(
                 `${baseUrl}/admin/TAMapping/${id.id}/deleteStudent`
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else{
-                return rejectWithValue('An Error Occurred While Deleting Assigned Student')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Deleting Assigned Student'
+                );
             }
         }
     }
@@ -277,35 +287,38 @@ export const deleteAssignedStudent = createAsyncThunk(
 export const deleteAssignedBatch = createAsyncThunk(
     'taModule/deleteAssignedBatch',
     async (id, { rejectWithValue }) => {
-        try{
+        try {
             const response = await axiosInstance.delete(
                 `${baseUrl}/admin/TAMapping/${id.id}/deleteBatch`
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else{
-                return rejectWithValue('An Error Occurred While Deleting Assigned Batch To TA')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Deleting Assigned Batch To TA'
+                );
             }
         }
-        
     }
 );
 
 export const deleteTaMapping = createAsyncThunk(
     'taModule/deleteTaMapping',
-    async (id , { rejectWithValue }) => {
-        try{
+    async (id, { rejectWithValue }) => {
+        try {
             const response = await axiosInstance.delete(
                 `${baseUrl}/admin/TAMapping/${id}/deleteMapping`
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else{
-                return rejectWithValue('An Error Occurred While Deleting TA Mapping')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Deleting TA Mapping'
+                );
             }
         }
     }
@@ -314,16 +327,18 @@ export const deleteTaMapping = createAsyncThunk(
 export const showTaCourseMapping = createAsyncThunk(
     'taModule/showTaCourseMapping',
     async rejectWithValue => {
-        try{
+        try {
             const response = await axiosInstance.get(
                 `${baseUrl}/admin/ta-course/getAllTasWithCourses`
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else{
-                return rejectWithValue('An Error Occurred While Fetching Courses')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Fetching Courses'
+                );
             }
         }
     }
@@ -332,16 +347,18 @@ export const showTaCourseMapping = createAsyncThunk(
 export const getAllCoursesWithTas = createAsyncThunk(
     'taModule/getAllCoursesWithTas',
     async rejectWithValue => {
-        try{
+        try {
             const response = await axiosInstance.get(
                 `${baseUrl}/admin/ta-course/getAllCoursesWithTas`
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else{
-                return rejectWithValue('An Error Occurred While Fetching Ta Courses')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Fetching Ta Courses'
+                );
             }
         }
     }
@@ -349,18 +366,20 @@ export const getAllCoursesWithTas = createAsyncThunk(
 
 export const assignCourseToTa = createAsyncThunk(
     'taModule/assignCourseToTa',
-    async (data , { rejectWithValue }) => {
-        try{
+    async (data, { rejectWithValue }) => {
+        try {
             const response = await axiosInstance.post(
                 `${baseUrl}/admin/ta-course`,
-                data    
+                data
             );
-            return response.data;   
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else {
-                return rejectWithValue('An Error Occurred While Assigning Course')
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Assigning Course'
+                );
             }
         }
     }
@@ -368,7 +387,7 @@ export const assignCourseToTa = createAsyncThunk(
 
 const initialState = {
     tas: [],
-    taData : [],
+    taData: [],
     studentBatchMapping: [],
     batchMapping: [],
     taMapping: null,
@@ -474,12 +493,12 @@ export const taSlice = createSlice({
         builder.addCase(getTaById.fulfilled, (state, action) => {
             state.loading = false;
             state.taData = action.payload;
-        })
+        });
         builder.addCase(getTaById.rejected, (state, action) => {
             state.loading = false;
             state.taData = [];
             state.error = action.payload || action.error.message;
-        })
+        });
 
         // Update TA
         builder.addCase(updateTA.pending, state => {
@@ -498,9 +517,11 @@ export const taSlice = createSlice({
         builder.addCase(updateTA.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload || action.error.message;
-            toast.error(action.payload || 'Failed To Update TA. Please Try Again')
+            toast.error(
+                action.payload || 'Failed To Update TA. Please Try Again'
+            );
         });
-        
+
         //activate deactivate Ta
         builder.addCase(activate_deactive_TA.pending, state => {
             state.loading = true;
@@ -518,7 +539,9 @@ export const taSlice = createSlice({
         builder.addCase(activate_deactive_TA.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload || action.error.message;
-            toast.error(action.payload || 'Failed To Edit TA. Please Try Again')
+            toast.error(
+                action.payload || 'Failed To Edit TA. Please Try Again'
+            );
         });
 
         // Delete TA
@@ -528,12 +551,12 @@ export const taSlice = createSlice({
         builder.addCase(deleteTA.fulfilled, (state, action) => {
             state.loading = false;
             state.tas = state.tas.filter(ta => ta.id !== action.payload);
-            toast.success(action.payload.message || 'TA Deleted Successfully')
+            toast.success(action.payload.message || 'TA Deleted Successfully');
         });
         builder.addCase(deleteTA.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload || action.error.message;
-            toast.error(action.payload || 'Failed To Delete TA')
+            toast.error(action.payload || 'Failed To Delete TA');
         });
 
         // Get Student-Batch Mapping
@@ -617,13 +640,15 @@ export const taSlice = createSlice({
                         : student
                 );
                 state.assignedStudents = updatedStudents;
-                toast.success(action.payload.message || 'Status Updated Successfully')
+                toast.success(
+                    action.payload.message || 'Status Updated Successfully'
+                );
             }
         );
         builder.addCase(toggleAssignStudentStatus.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload || action.error.message;
-            toast.error(action.payload || 'Failed To Update Status')
+            toast.error(action.payload || 'Failed To Update Status');
         });
 
         // Toggle Assign Batch Status
@@ -638,12 +663,14 @@ export const taSlice = createSlice({
                     : batch
             );
             state.assignedBatches = updatedBatches;
-            toast.success(action.payload.message || 'Status Updated Successfully')
+            toast.success(
+                action.payload.message || 'Status Updated Successfully'
+            );
         });
         builder.addCase(toggleAssignBatchStatus.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload || action.error.message;
-            toast.error(action.payload || 'Failed To Update Status')
+            toast.error(action.payload || 'Failed To Update Status');
         });
 
         // Post Assign Students
@@ -653,12 +680,14 @@ export const taSlice = createSlice({
         builder.addCase(postAssignStudents.fulfilled, (state, action) => {
             state.loading = false;
             state.assignedStudents = action.payload;
-            toast.success(action.payload.message || 'Students Assigned To TA Successfully')
+            toast.success(
+                action.payload.message || 'Students Assigned To TA Successfully'
+            );
         });
         builder.addCase(postAssignStudents.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload || action.error.message;
-            toast.error(action.payload || 'Failed To Assign Students To TA')
+            toast.error(action.payload || 'Failed To Assign Students To TA');
         });
 
         // Post Assign Batches
@@ -668,12 +697,14 @@ export const taSlice = createSlice({
         builder.addCase(postAssignBatches.fulfilled, (state, action) => {
             state.loading = false;
             state.assignedBatches = action.payload;
-            toast.success(action.payload.message || 'Batches Assigned To TA Successfully')
+            toast.success(
+                action.payload.message || 'Batches Assigned To TA Successfully'
+            );
         });
         builder.addCase(postAssignBatches.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload || action.error.message;
-            toast.error(action.payload || 'Failed To Assign Batches To TA')
+            toast.error(action.payload || 'Failed To Assign Batches To TA');
         });
 
         // delete assigned student
@@ -683,12 +714,15 @@ export const taSlice = createSlice({
         builder.addCase(deleteAssignedStudent.fulfilled, (state, action) => {
             state.loading = false;
             // state.assignedStudents = action.payload;
-            toast.success(action.payload.message || 'Deleted Assigned Student Successfully')
+            toast.success(
+                action.payload.message ||
+                    'Deleted Assigned Student Successfully'
+            );
         });
         builder.addCase(deleteAssignedStudent.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload || action.error.message;
-            toast.error(action.payload || 'Failed To Delete Assigned Student')
+            toast.error(action.payload || 'Failed To Delete Assigned Student');
         });
 
         // delete Ta Mapping
@@ -697,12 +731,14 @@ export const taSlice = createSlice({
         });
         builder.addCase(deleteTaMapping.fulfilled, (state, action) => {
             state.loading = false;
-            toast.success(action.payload.message || 'Mapping Deleted Successfully')
+            toast.success(
+                action.payload.message || 'Mapping Deleted Successfully'
+            );
         });
         builder.addCase(deleteTaMapping.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload || action.error.message;
-            toast.error(action.payload || 'Failed To Delete Mapping')
+            toast.error(action.payload || 'Failed To Delete Mapping');
         });
 
         // delete assigned Batches
@@ -711,13 +747,15 @@ export const taSlice = createSlice({
         });
         builder.addCase(deleteAssignedBatch.fulfilled, (state, action) => {
             state.loading = false;
-            toast.success(action.payload.message || 'Assigned Batch Deleted Successfully')
+            toast.success(
+                action.payload.message || 'Assigned Batch Deleted Successfully'
+            );
             // state.assignedStudents = action.payload;
         });
         builder.addCase(deleteAssignedBatch.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload || action.error.message;
-            toast.error(action.payload || 'Failed To Delete Assigned Batch')
+            toast.error(action.payload || 'Failed To Delete Assigned Batch');
         });
         builder.addCase(showTaCourseMapping.pending, state => {
             state.loading = true;
@@ -744,22 +782,25 @@ export const taSlice = createSlice({
             state.allCoursesWithTas = [];
             state.error = action.payload || action.error.message;
         });
-        
 
         builder.addCase(assignCourseToTa.pending, state => {
             state.loading = true;
         });
         builder.addCase(assignCourseToTa.fulfilled, (state, action) => {
             state.loading = false;
-            toast.success(action.payload.message || 'Courses Assigned To Ta Successfully')
+            toast.success(
+                action.payload.message || 'Courses Assigned To Ta Successfully'
+            );
         });
         builder.addCase(assignCourseToTa.rejected, (state, action) => {
             state.loading = false;
             console.error('Error assigning course to TA:', action.error);
             state.error = action.payload || action.error.message;
-            toast.error(action.payload || 'Failed To Assign Courses To Ta. Server Error.');
+            toast.error(
+                action.payload ||
+                    'Failed To Assign Courses To Ta. Server Error.'
+            );
         });
-
     },
 });
 

@@ -42,7 +42,6 @@ const weekDays = [
 const timezone = Number(localStorage.getItem('timezone_id'));
 
 const CreateSlot = ({ componentName, timezoneID }) => {
-    
     let createSlotApi, getSlotsApi;
 
     switch (componentName) {

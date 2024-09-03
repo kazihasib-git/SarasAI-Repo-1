@@ -63,8 +63,8 @@ const WOLTestConfigSelectQuestions = () => {
                 wolTestConfigCategoryWise.data.selected_questions
             );
             setCategory(wolTestConfigCategoryWise.data.questions);
-        }else {
-            setCategory()
+        } else {
+            setCategory();
         }
     }, [wolTestConfigCategoryWise.data]);
 
@@ -76,7 +76,6 @@ const WOLTestConfigSelectQuestions = () => {
 
     const handleSubmit = e => {
         e.preventDefault();
-
     };
 
     return (

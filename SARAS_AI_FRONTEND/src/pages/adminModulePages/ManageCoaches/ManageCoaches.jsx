@@ -68,8 +68,8 @@ const ManageCoaches = () => {
     // }, [coaches, timezones]);
 
     useEffect(() => {
-        if(coaches && coaches.length > 0){
-            const transformData = coaches.map((item) => ({
+        if (coaches && coaches.length > 0) {
+            const transformData = coaches.map(item => ({
                 id: item.id,
                 'Coach Name': item.name,
                 Username: item.username,
@@ -78,24 +78,33 @@ const ManageCoaches = () => {
                 is_active: item.is_active,
             }));
 
-
             // Filter data based on the search query
             const filteredTasData = transformData.filter(data => {
-                const matchName = data['Coach Name']?.toLowerCase().includes(searchQuery.toLowerCase());
-                const matchUsername = data.Username?.toLowerCase().includes(searchQuery.toLowerCase());
-                const matchLocation = data.Location?.toLowerCase().includes(searchQuery.toLowerCase());
-                const matchTimezone = data['Time Zone']?.toLowerCase().includes(searchQuery.toLowerCase());
-    
-                return matchName || matchUsername || matchLocation || matchTimezone;
+                const matchName = data['Coach Name']
+                    ?.toLowerCase()
+                    .includes(searchQuery.toLowerCase());
+                const matchUsername = data.Username?.toLowerCase().includes(
+                    searchQuery.toLowerCase()
+                );
+                const matchLocation = data.Location?.toLowerCase().includes(
+                    searchQuery.toLowerCase()
+                );
+                const matchTimezone = data['Time Zone']
+                    ?.toLowerCase()
+                    .includes(searchQuery.toLowerCase());
+
+                return (
+                    matchName || matchUsername || matchLocation || matchTimezone
+                );
             });
 
             setCoachesData(transformData);
             setFilteredData(transformData);
-        }else {
+        } else {
             setCoachesData([]);
-            setFilteredData([])
+            setFilteredData([]);
         }
-    },[coaches, searchQuery, timezones])
+    }, [coaches, searchQuery, timezones]);
 
     const handleAddCoach = () => {
         navigate('/createcoach');

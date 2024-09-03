@@ -12,12 +12,12 @@ import { openSessionPopup } from '../../redux/features/commonCalender/commonCale
 moment.locale('en-GB');
 const localizer = momentLocalizer(moment);
 
-const formatTime = (date) => {
+const formatTime = date => {
     return moment(date).format('h:mma');
 };
 
 const formats = {
-    timeGutterFormat: (date, culture, localizer) => 
+    timeGutterFormat: (date, culture, localizer) =>
         localizer.format(date, 'h:mm A', culture),
     eventTimeRangeFormat: ({ start, end }, culture, localizer) =>
         `${formatTime(start)} - ${formatTime(end)}`,
@@ -93,13 +93,13 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
         case 'TACALENDER':
             openPopup = openSessionEvent;
             break;
-            
+
         case 'COACHCALENDER':
             openPopup = openCoachSessionEvent;
             break;
 
         case 'TAMENU':
-            openPopup : openSessionPopup;
+            openPopup: openSessionPopup;
             break;
 
         case 'COACHMENU':
@@ -154,7 +154,9 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
         for (let i = 0; i < slotData.length; i++) {
             const slot = slotData[i];
             const slotDate = moment(slot.startDate).format('YYYY-MM-DD');
-            const slotStartTime = moment(slot.startDate).format('YYYY-MM-DD HH:mm');
+            const slotStartTime = moment(slot.startDate).format(
+                'YYYY-MM-DD HH:mm'
+            );
             const slotEndTime = moment(slot.endDate).format('YYYY-MM-DD HH:mm');
 
             const isOnLeave = slot.leave && slot.leave.length > 0;
@@ -180,16 +182,15 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
 
     const getScrollToTime = () => {
         const currentTime = moment();
-      
+
         if (currentTime.hour() >= 4) {
-          return currentTime.subtract(4, 'hours').toDate();
-        } else if(currentTime.hour() >= 2){
-          return currentTime.subtract(2, 'hours').toDate();
-        }else {
-            return currentTime.toDate()
+            return currentTime.subtract(4, 'hours').toDate();
+        } else if (currentTime.hour() >= 2) {
+            return currentTime.subtract(2, 'hours').toDate();
+        } else {
+            return currentTime.toDate();
         }
-      };
-      
+    };
 
     return (
         <div style={{ height: 700 }}>

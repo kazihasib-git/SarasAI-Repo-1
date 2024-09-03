@@ -201,11 +201,10 @@ const WOLOptionsConfig = () => {
             dispatch(addWOLOptionConfig(payload))
                 .then(() => {
                     setSubmissionStatus('success');
-                    
                 })
                 .catch(error => {
                     setSubmissionStatus('error');
-                   
+
                     console.error('Error saving options configuration:', error);
                 });
         }
@@ -455,8 +454,7 @@ const WOLOptionsConfig = () => {
                                                                 src={
                                                                     detail.icon
                                                                 }
-                                                                alt={`icon-${index}`
-                                                                }
+                                                                alt={`icon-${index}`}
                                                                 style={{
                                                                     height: '32px',
                                                                     width: '32px',
@@ -501,9 +499,12 @@ const WOLOptionsConfig = () => {
             )}
 
             {submissionStatus === 'success' && (
-                <Typography variant="body1" align="center" mt={2} color="success">
-                   
-                </Typography>
+                <Typography
+                    variant="body1"
+                    align="center"
+                    mt={2}
+                    color="success"
+                ></Typography>
             )}
 
             {submissionStatus === 'error' && (

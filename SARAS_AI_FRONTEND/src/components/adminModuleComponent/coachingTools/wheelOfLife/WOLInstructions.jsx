@@ -69,8 +69,8 @@ const WOLInstructions = () => {
             // Extract points from HTML message
             const points = extractPoints(instructionData[0].message);
             setInstruction(instructionData[0].message); // Update state with the array of points
-        }else {
-            setInstruction()
+        } else {
+            setInstruction();
         }
     }, [instructionData]);
 
@@ -233,7 +233,7 @@ const WOLInstructions = () => {
                                     style={{
                                         fontSize: '14px',
                                         fontFamily: 'Bold',
-                                        textTransform: 'none' 
+                                        textTransform: 'none',
                                     }}
                                 >
                                     Update

@@ -79,7 +79,6 @@ const CallRecords = () => {
     const calls = useSelector(state => state.taMenu.taCallRecords);
     const { timezones } = useSelector(state => state.util);
     const { userData } = useSelector(state => state.auth);
-    
 
     useEffect(() => {
         dispatch(getTaCallRecords(date.format('YYYY-MM-DD')));
@@ -89,8 +88,8 @@ const CallRecords = () => {
     useEffect(() => {
         if (calls && calls.length > 0 && timezones && storedTimezoneId) {
             processCalls();
-        }else{
-            setProcessedCalls([]) ; 
+        } else {
+            setProcessedCalls([]);
         }
     }, [calls, timezones, storedTimezoneId]);
 
@@ -99,7 +98,7 @@ const CallRecords = () => {
 
         try {
             const processed = await Promise.all(
-                calls.map(async (call) => {
+                calls.map(async call => {
                     const localTime = await convertFromUTC({
                         start_date: call.date,
                         start_time: call.start_time,
@@ -127,7 +126,7 @@ const CallRecords = () => {
         setSelectedCall(call);
         setOpen(true);
     };
-    
+
     const handleClose = () => setOpen(false);
 
     const handleSaveNotes = notes => {
@@ -176,7 +175,7 @@ const CallRecords = () => {
         setIdVideo(null);
     };
     const sortedCalls = processedCalls.sort((a, b) => {
-        const timeA = moment(a.start_time, 'HH:mm A'); 
+        const timeA = moment(a.start_time, 'HH:mm A');
         const timeB = moment(b.start_time, 'HH:mm A');
         return timeA - timeB;
     });
@@ -257,7 +256,7 @@ const CallRecords = () => {
                                     justifyContent="space-between"
                                 >
                                     <Typography variant="h6">
-                                    {/* {userData.name}`session */}
+                                        {/* {userData.name}`session */}
                                         {call.meeting_name}
                                     </Typography>
                                 </Box>
@@ -272,8 +271,12 @@ const CallRecords = () => {
                                 >
                                     {moment(call.date).format('MMMM D, YYYY') ||
                                         'No Date'}{' '}
-                                    | {convertTo12HourFormat(call.start_time) || 'No Start Time'} -{' '}
-                                    {convertTo12HourFormat(call.end_time) || 'No End Time'}
+                                    |{' '}
+                                    {convertTo12HourFormat(call.start_time) ||
+                                        'No Start Time'}{' '}
+                                    -{' '}
+                                    {convertTo12HourFormat(call.end_time) ||
+                                        'No End Time'}
                                 </Typography>
 
                                 <Typography
@@ -301,7 +304,7 @@ const CallRecords = () => {
                                     justifyContent="space-between"
                                     sx={{ mt: 2 }}
                                 >
-                                   <CustomButton
+                                    <CustomButton
                                         onClick={() => handleClickOpen(call)}
                                         color="#F56D3B"
                                         backgroundColor="#FFFFFF"

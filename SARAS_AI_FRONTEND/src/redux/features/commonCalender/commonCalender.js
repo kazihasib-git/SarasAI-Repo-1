@@ -11,7 +11,7 @@ const initialState = {
     slotsLeaveData: [],
     sessionData: null, // select session data to edit
     sessionCancelData: [],
-    sessionDataForReschdeule : [],
+    sessionDataForReschdeule: [],
 
     createNewSlotPopup: false, // for new slot popup
     scheduleNewSessionPopup: false, //  for new session Popup
@@ -21,18 +21,18 @@ const initialState = {
     createdSlots: false,
     openCreatedSessions: false,
     openCancelSession: false,
-    RescheduleSession : false,
+    RescheduleSession: false,
 
     openSession: false,
     editSession: false,
 
-    editStudents : [],
-    editBatches : [],
-    meetingId : null,
-    openEditStudentsPopup : false,
-    openEditBatchesPopup : false,
+    editStudents: [],
+    editBatches: [],
+    meetingId: null,
+    openEditStudentsPopup: false,
+    openEditBatchesPopup: false,
 
-    dataToFindScheduleInSlot:null,
+    dataToFindScheduleInSlot: null,
 };
 
 const commonCalender = createSlice({
@@ -64,7 +64,7 @@ const commonCalender = createSlice({
         },
         openSelectStudents: (state, action) => {
             state.selectStudentPopup = true;
-            state.preSelectedStudents = action.payload ? action.payload: [];
+            state.preSelectedStudents = action.payload ? action.payload : [];
             // asign students
         },
         closeSelectStudents: (state, action) => {
@@ -107,19 +107,19 @@ const commonCalender = createSlice({
         closeCancelSessionPopup: (state, action) => {
             state.openCancelSession = false;
         },
-        openReasonForLeavePopup : (state, action) => {
+        openReasonForLeavePopup: (state, action) => {
             state.openLeaveReason = true;
             state.slotsLeaveData = action.payload;
         },
-        closeReasonForLeavePopup : (state, action) => {
+        closeReasonForLeavePopup: (state, action) => {
             state.openLeaveReason = false;
             state.slotsLeaveData = [];
         },
-        openReschedulePopup : (state, action) => {
+        openReschedulePopup: (state, action) => {
             state.RescheduleSession = true;
             state.sessionDataForReschdeule = action.payload;
         },
-        closeReschedulePopup : (state, action) => {
+        closeReschedulePopup: (state, action) => {
             state.RescheduleSession = false;
         },
         openSessionPopup(state, action) {
@@ -140,21 +140,21 @@ const commonCalender = createSlice({
             state.sessionData = null;
         },
 
-        openEditStudents(state, action){
+        openEditStudents(state, action) {
             state.openEditStudentsPopup = true;
             state.editStudents = action.payload.students;
             state.meetingId = action.payload.id;
         },
-        closeEditStudents(state, action){
-            state.openEditStudentsPopup = false
+        closeEditStudents(state, action) {
+            state.openEditStudentsPopup = false;
         },
-        openEditBatches(state, action){
+        openEditBatches(state, action) {
             state.openEditBatchesPopup = true;
             state.editBatches = action.payload.batches;
             state.meetingId = action.payload.id;
         },
-        closeEditBatches(state, action){
-            state.openEditBatchesPopup = false
+        closeEditBatches(state, action) {
+            state.openEditBatchesPopup = false;
         },
 
         //add data from slot in reschedule to find sessions again after rescheduling
@@ -194,7 +194,7 @@ export const {
     closeEditStudents,
     openEditBatches,
     closeEditBatches,
-    addDataToFindScheduleInSlot
+    addDataToFindScheduleInSlot,
 } = commonCalender.actions;
 
 export default commonCalender.reducer;

@@ -91,7 +91,6 @@ const AdminDataTable = ({
     dispatch,
     componentName,
 }) => {
- 
     const [data, setData] = useState(
         initialData.map(item => ({
             ...item,
@@ -156,7 +155,7 @@ const AdminDataTable = ({
                 break;
         }
     };
-    
+
     const handleToggle = id => {
         // Log the initial state of the item being toggled
 
@@ -195,8 +194,6 @@ const AdminDataTable = ({
                 break;
         }
     };
-
-    
 
     const handleNavigate = path => {
         navigate(path);
@@ -370,13 +367,15 @@ const AdminDataTable = ({
                         },
                     }}
                 />
-                 {isDialogOpen && (
-                <DeleteConfirmation
-                open={isDialogOpen}
-                handleClose={handleCloseDialog}
-                onConfirm={()=>{handleConfirmDelete(itemIdToDelete,ta_id)}}
-             />
-                 )}
+                {isDialogOpen && (
+                    <DeleteConfirmation
+                        open={isDialogOpen}
+                        handleClose={handleCloseDialog}
+                        onConfirm={() => {
+                            handleConfirmDelete(itemIdToDelete, ta_id);
+                        }}
+                    />
+                )}
             </div>
         </div>
     );

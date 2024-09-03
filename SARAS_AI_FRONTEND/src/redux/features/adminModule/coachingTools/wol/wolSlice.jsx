@@ -19,67 +19,64 @@ export const getWOLCategory = createAsyncThunk(
 export const createWOLCategory = createAsyncThunk(
     'wol/createWOLCategory',
     async (data, { rejectWithValue }) => {
-        try{
-        const response = await axiosInstance.post(
-            `${baseUrl}/admin/wol/wol-category`,
-            data
-        );
-        return response.data;
-    }
-    catch (error) {
-        if (error.response && error.response.data) {
-            return rejectWithValue(error.response.data.message);
-        } else {
-            return rejectWithValue(
-                'An Error Occurred While Creating WOL Category'
+        try {
+            const response = await axiosInstance.post(
+                `${baseUrl}/admin/wol/wol-category`,
+                data
             );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Creating WOL Category'
+                );
+            }
         }
     }
-}
 );
 
 // To Update WOL Category
 export const updateWOLCategory = createAsyncThunk(
     'wol/updateWOLCategory',
-    async ({ id, data,  rejectWithValue  }) => {
-        try{
-        const response = await axiosInstance.put(
-            `${baseUrl}/admin/wol/wol-category/${id}`,
-            data
-        );
-        return response.data;
-    }
-    catch (error) {
-        if (error.response && error.response.data) {
-            return rejectWithValue(error.response.data.message);
-        } else {
-            return rejectWithValue(
-                'An Error Occurred While Creating WOL Category'
+    async ({ id, data, rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.put(
+                `${baseUrl}/admin/wol/wol-category/${id}`,
+                data
             );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Creating WOL Category'
+                );
+            }
         }
-    }
     }
 );
 
 // To Delete WOL Category
 export const deleteWOLCategory = createAsyncThunk(
     'wol/deleteWOLCategory',
-    async ({ id,   rejectWithValue  }) => {
-        try{
-        const response = await axiosInstance.delete(
-            `${baseUrl}/admin/wol/wol-category/${id}`
-        );
-        return response.data;
-    }
-    catch (error) {
-        if (error.response && error.response.data) {
-            return rejectWithValue(error.response.data.message);
-        } else {
-            return rejectWithValue(
-                'An Error Occurred While Deleting WOL Category'
+    async ({ id, rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.delete(
+                `${baseUrl}/admin/wol/wol-category/${id}`
             );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Deleting WOL Category'
+                );
+            }
         }
-    }
     }
 );
 
@@ -109,22 +106,21 @@ export const getLifeInstruction = createAsyncThunk(
 export const editLifeInstruction = createAsyncThunk(
     'wol/editLifeInstruction',
     async (data, { rejectWithValue }) => {
-        try{
-        const response = await axiosInstance.put(
-            `${baseUrl}/admin/wol/wol-life-instruction`,
-            data
-        );
-        return response.data;
-    }
-    catch (error) {
-        if (error.response && error.response.data) {
-            return rejectWithValue(error.response.data.message);
-        } else {
-            return rejectWithValue(
-                'An Error Occurred While Creating WOL Category'
+        try {
+            const response = await axiosInstance.put(
+                `${baseUrl}/admin/wol/wol-life-instruction`,
+                data
             );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Creating WOL Category'
+                );
+            }
         }
-    }
     }
 );
 
@@ -143,45 +139,44 @@ export const getWOLQuestions = createAsyncThunk(
 export const createWOLQuestion = createAsyncThunk(
     'wol/createWOLQuestion',
     async (data, { rejectWithValue }) => {
-        try{
-        const response = await axiosInstance.post(
-            `${baseUrl}/admin/wol/wol-question`,
-            data
-        );
-        return response.data;
-    }catch (error) {
-        if (error.response && error.response.data) {
-            return rejectWithValue(error.response.data.message);
-        } else {
-            return rejectWithValue(
-                'An Error Occurred While Geting TA Sessions for Leave by Slots'
+        try {
+            const response = await axiosInstance.post(
+                `${baseUrl}/admin/wol/wol-question`,
+                data
             );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Geting TA Sessions for Leave by Slots'
+                );
+            }
         }
-    }
     }
 );
 
 // Update WOL Question
 export const updateWOLQuestion = createAsyncThunk(
     'wol/updateWOLQuestion',
-    async ({ id, data,  rejectWithValue  }) => {
-        try{
-        const response = await axiosInstance.put(
-            `${baseUrl}/admin/wol/wol-question/${id}`,
-            data
-        );
-
-        return response.data;
-    }
-    catch (error) {
-        if (error.response && error.response.data) {
-            return rejectWithValue(error.response.data.message);
-        } else {
-            return rejectWithValue(
-                'An Error Occurred While updating WOL Category'
+    async ({ id, data, rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.put(
+                `${baseUrl}/admin/wol/wol-question/${id}`,
+                data
             );
+
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While updating WOL Category'
+                );
+            }
         }
-    }
     }
 );
 
@@ -211,46 +206,44 @@ export const getWOLOptionConfig = createAsyncThunk(
 export const addWOLOptionConfig = createAsyncThunk(
     'wol/addWOLOptionConfig',
     async (data, { rejectWithValue }) => {
-        try{
-        const response = await axiosInstance.post(
-            `${baseUrl}/admin/wol/wol-option-config`,
-            data
-        );
-        return response.data;
-    }
-    catch (error) {
-        if (error.response && error.response.data) {
-            return rejectWithValue(error.response.data.message);
-        } else {
-            return rejectWithValue(
-                'An Error Occurred While Adding WOL Option Config'
+        try {
+            const response = await axiosInstance.post(
+                `${baseUrl}/admin/wol/wol-option-config`,
+                data
             );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Adding WOL Option Config'
+                );
+            }
         }
     }
-}
 );
 
 // Add WOL Test Config
 export const addWOLTestConfig = createAsyncThunk(
     'wol/addWOLTestConfig',
     async (data, { rejectWithValue }) => {
-        try{
-        const response = await axiosInstance.post(
-            `${baseUrl}/admin/wol/wol-test-config`,
-            data
-        );
-        return response.data;
-    }
-    catch (error) {
-        if (error.response && error.response.data) {
-            return rejectWithValue(error.response.data.message);
-        } else {
-            return rejectWithValue(
-                'An Error Occurred While Adding Wol Test Config'
+        try {
+            const response = await axiosInstance.post(
+                `${baseUrl}/admin/wol/wol-test-config`,
+                data
             );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Adding Wol Test Config'
+                );
+            }
         }
     }
-}
 );
 
 // Get All Wol Test Config
@@ -290,22 +283,21 @@ export const getWolTestConfigCategoryWise = createAsyncThunk(
 export const addQuestionToCategory = createAsyncThunk(
     'wol/addQuestionToCategory',
     async (data, { rejectWithValue }) => {
-        try{
-        const response = await axiosInstance.post(
-            `${baseUrl}/admin/wol/wol-test-config-add-question-to-category`,
-            data
-        );
-        return response.data;
-    }
-catch (error) {
-    if (error.response && error.response.data) {
-        return rejectWithValue(error.response.data.message);
-    } else {
-        return rejectWithValue(
-            'An Error Occurred While Adding Questions'
-        );
-    }
-}
+        try {
+            const response = await axiosInstance.post(
+                `${baseUrl}/admin/wol/wol-test-config-add-question-to-category`,
+                data
+            );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Adding Questions'
+                );
+            }
+        }
     }
 );
 
@@ -378,9 +370,7 @@ const wolSlice = createSlice({
         builder.addCase(createWOLCategory.fulfilled, (state, action) => {
             state.loading = false;
             //state.instructionData = action.payload;
-            toast.success(
-                action.payload.message || 'WOL Created Successfully'
-            );
+            toast.success(action.payload.message || 'WOL Created Successfully');
         });
         builder.addCase(createWOLCategory.rejected, (state, action) => {
             state.loading = false;
@@ -410,16 +400,12 @@ const wolSlice = createSlice({
         builder.addCase(editLifeInstruction.fulfilled, (state, action) => {
             state.loading = false;
             state.instructionData = action.payload;
-            toast.success(
-                action.payload.message || 'Successfully Edited'
-            );
+            toast.success(action.payload.message || 'Successfully Edited');
         });
         builder.addCase(editLifeInstruction.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload || action.error.message;
-            toast.error(
-                action.payload || 'Failed to Edit'
-            );
+            toast.error(action.payload || 'Failed to Edit');
         });
 
         //updateWOlcategory
@@ -429,16 +415,12 @@ const wolSlice = createSlice({
         builder.addCase(updateWOLCategory.fulfilled, (state, action) => {
             state.loading = false;
             state.instructionData = action.payload;
-            toast.success(
-                action.payload.message || 'Successfully Updated'
-            );
+            toast.success(action.payload.message || 'Successfully Updated');
         });
         builder.addCase(updateWOLCategory.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload || action.error.message;
-            toast.error(
-                action.payload || 'Failed to Update WOL Category'
-            );
+            toast.error(action.payload || 'Failed to Update WOL Category');
         });
 
         // getWOLQuestions
@@ -457,15 +439,11 @@ const wolSlice = createSlice({
         // createWOLQuestion
         builder.addCase(createWOLQuestion.pending, state => {
             state.loading = true;
-            
         });
         builder.addCase(createWOLQuestion.fulfilled, (state, action) => {
             state.loading = false;
             state.wolQuestionsData = action.payload;
-            toast.success(
-                action.payload.message ||
-                    'successfully created.'
-            );
+            toast.success(action.payload.message || 'successfully created.');
         });
         builder.addCase(createWOLQuestion.rejected, (state, action) => {
             state.loading = false;
@@ -480,10 +458,7 @@ const wolSlice = createSlice({
         builder.addCase(updateWOLQuestion.fulfilled, (state, action) => {
             state.loading = false;
             state.wolQuestionsData = action.payload;
-            toast.success(
-                action.payload.message ||
-                    'successfully created.'
-            );
+            toast.success(action.payload.message || 'successfully created.');
         });
         builder.addCase(updateWOLQuestion.rejected, (state, action) => {
             state.loading = false;
@@ -511,16 +486,12 @@ const wolSlice = createSlice({
         builder.addCase(addWOLOptionConfig.fulfilled, (state, action) => {
             state.loading = false;
             state.optionsConfigData = action.payload;
-            toast.success(
-                action.payload.message || 'Successfully created'
-            );
+            toast.success(action.payload.message || 'Successfully created');
         });
         builder.addCase(addWOLOptionConfig.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload || action.error.message;
-            toast.error(
-                action.payload || 'Failed to Create WOL Option Config'
-            );
+            toast.error(action.payload || 'Failed to Create WOL Option Config');
         });
 
         // addWOLTestConfig
@@ -537,9 +508,7 @@ const wolSlice = createSlice({
         builder.addCase(addWOLTestConfig.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload || action.error.message;
-            toast.error(
-                action.payload || 'Failed to Create WOL Test Config'
-            );
+            toast.error(action.payload || 'Failed to Create WOL Test Config');
         });
 
         // getWolTestConfig
@@ -626,9 +595,7 @@ const wolSlice = createSlice({
         builder.addCase(addQuestionToCategory.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload || action.error.message;
-            toast.error(
-                action.payload || 'Failed to ADD Questions'
-            );
+            toast.error(action.payload || 'Failed to ADD Questions');
         });
 
         // selectedQuestionsList
