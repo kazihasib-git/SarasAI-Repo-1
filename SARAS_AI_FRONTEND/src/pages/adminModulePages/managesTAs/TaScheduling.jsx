@@ -33,7 +33,7 @@ const TaScheduling = () => {
                 Username: item.username,
                 Active_Students: item.Active_Students,
                 Active_Batches: item.Active_Batches,
-                timezone: item.timezone_id,
+                timezoneId : item.timezone_id,
             }));
 
             setTaScheduleData(transformData);

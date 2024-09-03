@@ -128,12 +128,12 @@ const DynamicTable = ({
         }
     };
 
-    const handleCalender = (type, id, taName) => {
+    const handleCalender = (type, id, taName, timezoneId) => {
         
         if (componentName === 'COACHAVAILABLE') {
-            navigate(`/coach-calender/${taName}/${id}`);
+            navigate(`/coach-calender/${taName}/${id}/${timezoneId}`);
         } else if (componentName === 'TAAVAILABLE')
-            navigate(`/ta-calendar/${taName}/${id}`);
+            navigate(`/ta-calendar/${taName}/${id}/${timezoneId}`);
     };
 
     const handleView = (type, id) => {
@@ -391,7 +391,8 @@ const DynamicTable = ({
                                     } else if (
                                         key !== 'id' &&
                                         key !== 'is_active' &&
-                                        key !== 'timezone'
+                                        key !== 'timezone' &&
+                                        key !== 'timezoneId'
                                     ) {
                                         // Check if item[key] is an object, and handle accordingly
                                         if (
@@ -557,7 +558,8 @@ const DynamicTable = ({
                                                                 handleCalender(
                                                                     'Calendar',
                                                                     item.id,
-                                                                    item.taName
+                                                                    item.taName,
+                                                                    item.timezoneId
                                                                 )
                                                             }
                                                         >

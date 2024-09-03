@@ -28,78 +28,16 @@ import Schedule from '../../../components/availability/Schedule';
 import { openCreateNewSlots } from '../../../redux/features/adminModule/ta/taAvialability';
 import ScheduleSession from '../../../components/availability/ScheduleSession';
 import { timezoneIdToName } from '../../../utils/timezoneIdToName';
-import { getTimezone } from '../../../redux/features/utils/utilSlice';
-import { getTodayCoachAvailability } from '../../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import EditStudentsFromSession from '../../../components/availability/EditStudentsFromSession';
 import EditBatchesFromSession from '../../../components/availability/EditBatchesFromSession';
+import CustomButton from '../../../components/CustomFields/CustomButton';
+import { useGetTimezonesQuery } from '../../../redux/services/timezones/timezonesApi';
+import { createEvent } from '../../../utils/eventUtil';
 
-
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                border: `1.5px solid ${borderColor}`,
-                textTransform: 'none',
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
 const CoachCalender = () => {
-    const [selectedCoach, setSelectedCoach] = useState(null);
-    const { timezones } = useSelector(state => state.util);
-
     const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(getTodayCoachAvailability());
-    }, [dispatch]);
-    const { todaysAvailableCoach } = useSelector(
-        state => state.coachAvailability
-    );
-
-    const { id, name } = useParams();
-
-    const findTaTimeZone = todaysAvailableCoach => {
-        if (todaysAvailableCoach && Number(id)) {
-            const selectedcoach = todaysAvailableCoach.find(
-                ta => ta.id === Number(id)
-            );
-            setSelectedCoach(selectedcoach || null); // Set to null if not found
-        } else {
-            setSelectedCoach(null); // Set to null if conditions are not met
-        }
-    };
-    useEffect(() => {
-        findTaTimeZone(todaysAvailableCoach);
-    }, [id, todaysAvailableCoach]);
-
-    const storedTimezoneId = selectedCoach
-        ? selectedCoach.timezone_id
-        : Number(localStorage.getItem('timezone_id'));
-
+    const { id, name, timezoneId } = useParams();
+    const { data: timezones, isLoading } = useGetTimezonesQuery();
 
     const [eventsList, setEventsList] = useState([]);
     const [slotViewData, setSlotViewData] = useState([]);
@@ -109,10 +47,6 @@ const CoachCalender = () => {
     const { openEditStudent, openEditBatch } = useSelector(
         state => state.taScheduling
     );
-
-    useEffect(() => {
-        dispatch(getTimezone());
-    }, [dispatch]);
 
     const {
         coachMarkLeaveOpen,
@@ -145,12 +79,12 @@ const CoachCalender = () => {
         if (
             scheduleCoachData &&
             scheduleCoachData.length > 0 &&
-            storedTimezoneId &&
-            selectedCoach // Add this check
+            timezoneId &&
+            timezones
         ) {
-            const timezonename = timezoneIdToName(storedTimezoneId, timezones);
+            const timezonename = timezoneIdToName(Number(timezoneId), timezones);
             if (!timezonename) {
-                // console.error('Invalid timezone name');
+                console.error('Invalid timezone name');
                 setEventsList([]);
                 return;
             }
@@ -167,7 +101,7 @@ const CoachCalender = () => {
                                 : event.date.split(' ')[0],
                             timezonename,
                         });
-                        
+
                         const startDateTime = new Date(
                             `${localTime.start_date}T${localTime.start_time}`
                         );
@@ -176,48 +110,26 @@ const CoachCalender = () => {
                         );
 
                         if (localTime.start_date !== localTime.end_date) {
-                            const event1 = {
-                                id: event.id,
-                                admin_user_id: event.admin_user_id,
-                                meetingName: event.meeting_name,
-                                meetingId: event.meeting_id,
-                                platformId: event.platform_id,
-                                start: startDateTime,
-                                end: new Date(
-                                    `${localTime.start_date}T23:59:59`
-                                ),
-                                platform_tools: event.platform_tool_details,
-                                platform_meet: event.platform_meeting_details,
-                            };
+                            const event1 = createEvent(
+                                event,
+                                startDateTime,
+                                new Date(`${localTime.start_date}T23:59:59`)
+                            );
 
-                            const event2 = {
-                                id: event.id,
-                                admin_user_id: event.admin_user_id,
-                                meetingName: event.meeting_name,
-                                meetingId: event.meeting_id,
-                                platformId: event.platform_id,
-                                start: new Date(
-                                    `${localTime.end_date}T00:00:00`
-                                ),
-                                end: endDateTime,
-                                platform_tools: event.platform_tool_details,
-                                platform_meet: event.platform_meeting_details,
-                            };
+                            const event2 = createEvent(
+                                event,
+                                new Date(`${localTime.end_date}T00:00:00`),
+                                endDateTime
+                            );
 
                             processedEvents.push(event1, event2);
                             return [event1, event2];
                         } else {
-                            const newEvent = {
-                                id: event.id,
-                                admin_user_id: event.admin_user_id,
-                                meetingName: event.meeting_name,
-                                meetingId: event.meeting_id,
-                                platformId: event.platform_id,
-                                start: startDateTime,
-                                end: endDateTime,
-                                platform_tools: event.platform_tool_details,
-                                platform_meet: event.platform_meeting_details,
-                            };
+                            const newEvent = createEvent(
+                                event,
+                                startDateTime,
+                                endDateTime
+                            );
                             processedEvents.push(newEvent);
                             return newEvent;
                         }
@@ -234,18 +146,14 @@ const CoachCalender = () => {
         }
     };
 
-    useEffect(() => {
-        convertEvents();
-    }, [scheduleCoachData, timezones, storedTimezoneId, selectedCoach]);
-
     const convertSlots = async () => {
         if (
             slotCoachData &&
             slotCoachData.length > 0 &&
             timezones &&
-            storedTimezoneId
+            timezoneId
         ) {
-            const timezonename = timezoneIdToName(storedTimezoneId, timezones);
+            const timezonename = timezoneIdToName(Number(timezoneId), timezones);
             try {
                 const processedSlots = [];
                 const transformedSlots = await Promise.all(
@@ -306,11 +214,15 @@ const CoachCalender = () => {
     };
 
     useEffect(() => {
+        convertEvents();
+    }, [scheduleCoachData]);
+
+    useEffect(() => {
         convertSlots();
     }, [slotCoachData]);
 
     const handleScheduleNewSession = () => {
-        dispatch(openCoachScheduleSession({ id, name }));
+        dispatch(openCoachScheduleSession({ id, name, timezoneId }));
     };
 
     const handleMarkLeave = () => {
@@ -318,7 +230,7 @@ const CoachCalender = () => {
     };
 
     const handleDeleteFutureSlots = () => {
-        const data = { id, name };
+        const data = { id, name, timezoneId };
         dispatch(openDeleteCoachSlots(data));
     };
 
@@ -398,30 +310,22 @@ const CoachCalender = () => {
                         slotData={slotViewData}
                         componentName={'COACHCALENDER'}
                     />
-
-                    {/* {scheduledCoachSessionOpen && (
-                        <ScheduleSession
-                            open={sheduleNewSession}
-                            handleClose={() => setSheduleNewSession(false)}
-                        />
-                    )} */}
-
                     {scheduleCoachSessionOpen && (
                         <Schedule
                             componentName={'COACHSCHEDULE'}
-                            timezoneID={storedTimezoneId}
+                            timezoneID={timezoneId}
                         />
                     )}
                     {openCoachEditBatch && (
                         <EditBatches
                             componentname={'COACHSCHEDULE'}
-                            timezoneID={storedTimezoneId}
+                            timezoneID={timezoneId}
                         />
                     )}
                     {openCoachEditStudent && (
                         <EditStudents
                             componentname={'COACHSCHEDULE'}
-                            timezoneID={storedTimezoneId}
+                            timezoneID={timezoneId}
                         />
                     )}
                     {coachMarkLeaveOpen && (
@@ -429,7 +333,7 @@ const CoachCalender = () => {
                             id={id}
                             name={name}
                             componentName={'COACHCALENDER'}
-                            timezoneID={storedTimezoneId}
+                            timezoneID={timezoneId}
                         />
                     )}
 
@@ -438,7 +342,7 @@ const CoachCalender = () => {
                             id={id}
                             name={name}
                             componentName={'COACHCALENDER'}
-                            timezoneID={storedTimezoneId}
+                            timezoneID={timezoneId}
                         />
                     )}
 
@@ -447,7 +351,7 @@ const CoachCalender = () => {
                             id={id}
                             name={name}
                             componentName={'COACHCALENDER'}
-                            timezoneID={storedTimezoneId}
+                            timezoneID={timezoneId}
                         />
                     )}
 
@@ -456,7 +360,7 @@ const CoachCalender = () => {
                             id={id}
                             name={name}
                             componentName={'COACHCALENDER'}
-                            timezoneID={storedTimezoneId}
+                            timezoneID={timezoneId}
                         />
                     )}
 
@@ -465,7 +369,7 @@ const CoachCalender = () => {
                             id={id}
                             name={name}
                             componentName={'COACHCALENDER'}
-                            timezoneID={storedTimezoneId}
+                            timezoneID={timezoneId}
                         />
                     )}
 
@@ -474,14 +378,14 @@ const CoachCalender = () => {
                             id={id}
                             name={name}
                             componentName={'COACHCALENDER'}
-                            timezoneID={storedTimezoneId}
+                            timezoneID={timezoneId}
                         />
                     )}
 
                     {deletingCoachFutureSlots && (
                         <DeleteAllSlots
                             componentName={'COACHCALENDER'}
-                            timezoneID={storedTimezoneId}
+                            timezoneID={timezoneId}
                         />
                     )}
 
@@ -489,25 +393,25 @@ const CoachCalender = () => {
                         <CreateNewSlot
                             // addEvent={addEvent}
                             componentName={'COACHCALENDER'}
-                            timezoneID={storedTimezoneId}
+                            timezoneID={timezoneId}
                         />
                     )}
                     {coachOpenEventData && (
                         <ScheduleSession
                             componentName={'COACHCALENDER'}
-                            timezoneID={storedTimezoneId}
+                            timezoneID={timezoneId}
                         />
                     )}
                     {coachEditScheduledBatches && (
                         <EditBatchesFromSession
                             componentName={'COACHCALENDER'}
-                            timezoneID={storedTimezoneId}
+                            timezoneID={timezoneId}
                         />
                     )}
                     {coachEditScheduledStudents && (
                         <EditStudentsFromSession
                             componentName={'COACHCALENDER'}
-                            timezoneID={storedTimezoneId}
+                            timezoneID={timezoneId}
                         />
                     )}
                 </Box>

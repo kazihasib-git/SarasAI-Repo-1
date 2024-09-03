@@ -54,14 +54,14 @@ const AdminRoutes = () => (
             <Route path="/active-Ta-courses/:id" element={<AssignTaCourses page="Assigned Coach Courses" />} />
             <Route path="ta-availability" element={<TAAvailability page="TA Availability" />} />
             <Route path="ta-scheduling" element={<TaScheduling page="TA Scheduling" />} />
-            <Route path="ta-calendar/:name/:id" element={<TaCalender page="Calendar" />} />
+            <Route path="ta-calendar/:name/:id/:timezoneId" element={<TaCalender page="Calendar" />} />
             <Route path="ta-course-mapping" element={<TaCourseMapping page="ta Course Mapping" />} />
 
             {/* COACH */}
             <Route path="coach-manage" element={<ManageCoaches page="Manage Coaches" />} />
             <Route path="createcoach" element={<CreateCoachPage page="Create Coach" />} />
             <Route path="coach-mapping" element={<CoachMapping page="Coach Mapping" />} />
-            <Route path="coach-calender/:name/:id" element={<CoachCalender page="Calendar" />} />
+            <Route path="coach-calender/:name/:id/:timezoneId" element={<CoachCalender page="Calendar" />} />
             <Route path="coach-template" element={<CoachTemplate page="Coach Template" />} />
             <Route path="create-template" element={<CreateTemplate page="Create Template" />} />
             <Route path="template-name" element={<TemplateName page="Template Name" />} />

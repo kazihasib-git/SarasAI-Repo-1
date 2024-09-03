@@ -15,6 +15,7 @@ const headers = [
 ];
 
 const CoachAvailability = () => {
+
     const dispatch = useDispatch();
     const { todaysAvailableCoach } = useSelector(
         state => state.coachAvailability
@@ -34,6 +35,7 @@ const CoachAvailability = () => {
                 taName: item.name,
                 username: item.username,
                 Availability: item.availability_status,
+                timezoneId : item.timezone_id
                 // calendar: 'Check',
             }));
             setCoachAvailabilityData(transformData);
