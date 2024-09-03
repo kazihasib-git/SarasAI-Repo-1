@@ -15,9 +15,11 @@ const CustomTimeDaysjsField = ({
     // Convert the value to a Dayjs object if it exists, else use null
     const dayjsValue = value ? dayjs(value, 'HH:mm:ss') : null;
 
+    console.log("TIME VALUE", value);
+
     const handleTimeChange = date => {
         if (date) {
-            onChange(date.format('HH:mm:ss A')); // Pass the formatted time back to the parent
+            onChange(date.format('HH:mm:ss')); // Ensure formatted time is passed back in 24-hour format
         } else {
             onChange(''); // Handle clearing the time
         }
@@ -30,7 +32,7 @@ const CustomTimeDaysjsField = ({
                 name={name}
                 value={dayjsValue}
                 onChange={handleTimeChange}
-                format="HH:mm A"
+                format="hh:mm A"  // Display time in 12-hour format with AM/PM
                 InputLabelProps={{
                     shrink: true,
                     sx: {
