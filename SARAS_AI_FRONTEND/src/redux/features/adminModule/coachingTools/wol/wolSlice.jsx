@@ -637,6 +637,7 @@ const wolSlice = createSlice({
         builder.addCase(addQuestionToCategory.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload || action.error.message;
+            state.addQuestionToCategoryData = []
             toast.error(
                 action.payload || 'Failed to ADD Questions'
             );
