@@ -18,6 +18,7 @@ import AdminRoutes from './routes/AdminRoutes';
 import PublicRoutes from './routes/PublicRoutes';
 import CoachRoutes from './routes/CoachRoutes';
 import TeachingAssistantRoutes from './routes/TeachingAssistantRoutes';
+import Header from './components/Header/Header';
 
 function App() {
     const navigate = useNavigate();
@@ -68,11 +69,13 @@ function App() {
     return (
         <>
             <PublicRoutes />
+            <Header />
             {login && role == 5150 && <AdminRoutes />}
             {login && role == 1984 && <CoachRoutes />}
             {login && role == 2001 && <TeachingAssistantRoutes />}
         </>
     );
+
 }
 
 export default App;

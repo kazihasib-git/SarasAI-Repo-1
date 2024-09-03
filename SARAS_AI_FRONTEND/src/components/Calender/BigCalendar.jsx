@@ -8,24 +8,24 @@ import { useDispatch } from 'react-redux';
 import { openSessionEvent } from '../../redux/features/adminModule/ta/taAvialability';
 import { openCoachSessionEvent } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import { openSessionPopup } from '../../redux/features/commonCalender/commonCalender';
-
+ 
 moment.locale('en-GB');
 const localizer = momentLocalizer(moment);
-
+ 
 const formatTime = date => {
     return moment(date).format('h:mma');
 };
-
+ 
 const formats = {
     timeGutterFormat: (date, culture, localizer) =>
         localizer.format(date, 'h:mm A', culture),
     eventTimeRangeFormat: ({ start, end }, culture, localizer) =>
         `${formatTime(start)} - ${formatTime(end)}`,
 };
-
+ 
 const CustomEvent = ({ event }) => {
     let platformTools = { ...event.platform_tools };
-
+ 
     if (platformTools.name === 'Microsoft Teams') {
         platformTools.name = 'Teams';
     } else if (platformTools.name === 'Big Blue Button') {
@@ -33,9 +33,9 @@ const CustomEvent = ({ event }) => {
     } else if (platformTools.name === 'ZOOM') {
         platformTools.name = 'Zoom';
     }
-
+ 
     event.platform_tools = platformTools;
-
+ 
     return (
         <div
             style={{
@@ -83,25 +83,25 @@ const CustomEvent = ({ event }) => {
         </div>
     );
 };
-
+ 
 const CalendarComponent = ({ eventsList, slotData, componentName }) => {
     const dispatch = useDispatch();
-
+ 
     let openPopup;
-
+ 
     switch (componentName) {
         case 'TACALENDER':
             openPopup = openSessionEvent;
             break;
-
+ 
         case 'COACHCALENDER':
             openPopup = openCoachSessionEvent;
             break;
-
+ 
         case 'TAMENU':
-            openPopup: openSessionPopup;
+            openPopup = openSessionPopup;
             break;
-
+ 
         case 'COACHMENU':
             openPopup = openSessionPopup;
             break;
@@ -109,7 +109,7 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
             openPopup = null;
             break;
     }
-
+ 
     const showSessionPopUp = event => {
         dispatch(
             openPopup({
@@ -119,7 +119,7 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
             })
         );
     };
-
+ 
     const eventStyleGetter = event => {
         return {
             style: {
@@ -133,10 +133,10 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
             },
         };
     };
-
+ 
     const dayPropGetter = date => {
         const today = moment().startOf('day');
-
+ 
         if (moment(date).isSame(today, 'day')) {
             return {
                 style: {
@@ -146,11 +146,11 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
         }
         return {};
     };
-
+ 
     const slotPropGetter = date => {
         const dateString = moment(date).format('YYYY-MM-DD');
         const timeString = moment(date).format('YYYY-MM-DD HH:mm');
-
+ 
         for (let i = 0; i < slotData.length; i++) {
             const slot = slotData[i];
             const slotDate = moment(slot.startDate).format('YYYY-MM-DD');
@@ -158,31 +158,52 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
                 'YYYY-MM-DD HH:mm'
             );
             const slotEndTime = moment(slot.endDate).format('YYYY-MM-DD HH:mm');
-
+ 
             const isOnLeave = slot.leave && slot.leave.length > 0;
-
+ 
             if (
                 dateString === slotDate &&
                 timeString >= slotStartTime &&
                 timeString < slotEndTime
             ) {
-                return {
-                    style: {
-                        backgroundColor: isOnLeave ? '#FF00001F' : '#B0FC38',
-                        opacity: 0.5,
-                        border: 'none',
-                    },
-                    className: isOnLeave ? 'on-leave-slot' : '',
-                };
+                if (isOnLeave) {
+                    const slotStart = moment(slot.startDate);
+                    const slotEnd = moment(slot.endDate);
+ 
+                    const slotMidpoint = slotStart
+                        .clone()
+                        .add(slotEnd.diff(slotStart) / 2, 'milliseconds');
+ 
+                    const isMiddleSlot =
+                        Math.abs(moment(date).diff(slotMidpoint, 'minutes')) <
+                        5;
+ 
+                    return {
+                        style: {
+                            backgroundColor: '#FF00001F',
+                            opacity: 0.5,
+                            border: 'none',
+                        },
+                        className: isMiddleSlot ? 'on-leave-slot' : '',
+                    };
+                } else {
+                    return {
+                        style: {
+                            backgroundColor: '#B0FC38',
+                            opacity: 0.5,
+                            border: 'none',
+                        },
+                    };
+                }
             }
         }
-
+ 
         return {};
     };
-
+ 
     const getScrollToTime = () => {
         const currentTime = moment();
-
+ 
         if (currentTime.hour() >= 4) {
             return currentTime.subtract(4, 'hours').toDate();
         } else if (currentTime.hour() >= 2) {
@@ -191,7 +212,7 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
             return currentTime.toDate();
         }
     };
-
+ 
     return (
         <div style={{ height: 700 }}>
             <Calendar
@@ -205,7 +226,8 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
                 slotPropGetter={slotPropGetter}
                 onSelectEvent={showSessionPopUp}
                 scrollToTime={getScrollToTime()}
-                step={15}
+                step={5}
+                timeslots={12}
                 selectable
                 views={{ week: true }}
                 defaultView={Views.WEEK}
@@ -217,5 +239,6 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
         </div>
     );
 };
-
+ 
 export default CalendarComponent;
+ 

@@ -5,7 +5,7 @@ async function convertFromUTC({
     start_time,
     end_time,
     end_date,
-    timezonename,
+    timezoneName,
 }) {
     try {
         // Combine date and time for the start and end times
@@ -19,8 +19,8 @@ async function convertFromUTC({
         );
 
         // Convert from UTC to the specified timezone
-        const fromDateTimeLocal = fromDateTimeUTC.tz(timezonename);
-        const toDateTimeLocal = toDateTimeUTC.tz(timezonename);
+        const fromDateTimeLocal = fromDateTimeUTC.tz(timezoneName);
+        const toDateTimeLocal = toDateTimeUTC.tz(timezoneName);
 
         const obj = {
             start_date: fromDateTimeLocal.format('YYYY-MM-DD'),

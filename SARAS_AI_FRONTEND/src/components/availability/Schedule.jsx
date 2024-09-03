@@ -70,7 +70,9 @@ const actionButtons = [
     },
 ];
 
-const Schedule = ({ componentName, timezoneID }) => {
+const Schedule = ({ componentName, timezoneID }) => {   
+
+    const dispatch = useDispatch();
     const [fromDate, setFromDate] = useState(null);
     const [toDate, setToDate] = useState(null);
     const [fromTime, setFromTime] = useState(null);
@@ -81,7 +83,18 @@ const Schedule = ({ componentName, timezoneID }) => {
     const [selectedSlot, setSelectedSlot] = useState(null);
     const [availableSlotsOptions, setAvailableSlotsOptions] = useState([]);
     const [dateSelected, setDateSelected] = useState(false);
-    const dispatch = useDispatch();
+    const {
+        register,
+        handleSubmit,
+        control,
+        reset,
+        formState: { errors },
+    } = useForm({
+        defaultValues: {
+            timezone_id: timezoneId ? Number(timezoneId) : timezoneID,
+        },
+    });
+    
     const { timezones, platforms, hosts } = useSelector(state => state.util);
 
     const [meetingTypes, setMeetingtypes] = useState(['webinars', 'meetings']);
@@ -159,18 +172,6 @@ const Schedule = ({ componentName, timezoneID }) => {
         [studentKey]: students,
         [batchKey]: batches,
     } = schedulingState;
-
-    const {
-        register,
-        handleSubmit,
-        control,
-        reset,
-        formState: { errors },
-    } = useForm({
-        defaultValues: {
-            timezone_id: timezoneId ? Number(timezoneId) : timezoneID,
-        },
-    });
 
     useEffect(() => {
         if (dateSelected && (fromDate || !availableSlots.length > 0)) {
