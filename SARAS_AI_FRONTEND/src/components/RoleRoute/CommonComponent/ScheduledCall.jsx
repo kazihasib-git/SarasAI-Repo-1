@@ -37,27 +37,23 @@ import { convertFromUTC } from '../../../utils/dateAndtimeConversion';
 import { timezoneIdToName } from '../../../utils/timezoneIdToName';
 import { getTimezone } from '../../../redux/features/utils/utilSlice';
 import CustomButton from '../../CustomFields/CustomButton';
-
+import { openParticipantsDialog , closeParticipantsDialog , closeEditParticipantsDialog} from '../../../redux/features/commonCalender/commonCalender';
+import EditParticipantsDialog from './EditParticipantsDialog';
 const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
-
 const ScheduledCall = ({ role }) => {
-
     const dispatch = useDispatch();
+    const {participantsDialogOpen , editParticipantsDialogOpen} = useSelector(state=>state.commonCalender) ; 
     const [newMeetingPopUpOpen, setNewMeetingPopUpOpen] = useState(false);
     const [date, setDate] = useState(moment());
     const [anchorEl, setAnchorEl] = useState(null);
     const { coachScheduledCalls } = useSelector(state => state.coachMenu);
     const { taScheduledCalls } = useSelector(state => state.taMenu);
-    const [participantsDialogOpen, setParticipantsDialogOpen] = useState(false); // New state for ParticipantsDialog
     const [selectedParticipants, setSelectedParticipants] = useState([]);
     const [scheduledCalls, setScheduledCalls] = useState([]);
-
 
     let sliceName,
         getScheduledCallsApi,
         getScheduledCallsState;
-
-
     switch (role) {
         case 'TA':
             sliceName = 'taMenu';
@@ -223,12 +219,10 @@ const ScheduledCall = ({ role }) => {
         return timeA - timeB;
     });
     const onNewMeetingSubmit = props => {
-        console.log(props);
         setNewMeetingPopUpOpen(false);
     };
 
     const handleClickJoinSession = call => {
-        console.log("Call DATA :", call);
         const transformedCall = {
             // title: call.meeting_name,
             start: new Date(call.date.split(' ')[0] + 'T' + call.start_time),
@@ -254,12 +248,18 @@ const ScheduledCall = ({ role }) => {
     };
 
     const handleOpenParticipantsDialog = participants => {
-        setSelectedParticipants(participants);
-        setParticipantsDialogOpen(true);
+        setSelectedParticipants(participants) ;
+        dispatch(openParticipantsDialog(participants)) ; 
     };
     const handleCloseParticipantsDialog = () => {
-        setParticipantsDialogOpen(false);
+        setSelectedParticipants([]);
+        dispatch(closeParticipantsDialog()) ;
     };
+
+    const handleCloseEditParticipantsDialog = () => {
+        dispatch(closeEditParticipantsDialog()) ;
+    };
+
 
     return (
         <div style={{ padding: '20px' }}>
@@ -270,14 +270,25 @@ const ScheduledCall = ({ role }) => {
                     onSubmit={onNewMeetingSubmit}
                 />
             )}
-            {participantsDialogOpen && (
-                <ParticipantsDialog
-                    open={participantsDialogOpen}
-                    onClose={handleCloseParticipantsDialog}
-                    participantsData={selectedParticipants} // Pass the selected participants data
-                />
-            )}
 
+
+
+
+      {editParticipantsDialogOpen &&  (
+              <EditParticipantsDialog 
+              openEdit={editParticipantsDialogOpen}
+              onCloseEdit={handleCloseEditParticipantsDialog}
+              participantsData={selectedParticipants}
+              />
+       )}
+        {participantsDialogOpen &&  (
+                <ParticipantsDialog
+                  open={participantsDialogOpen}
+                  onClose={handleCloseParticipantsDialog}
+                  participantsData={selectedParticipants}
+                />
+              )}
+              
             <Box
                 display="flex"
                 justifyContent="space-between"

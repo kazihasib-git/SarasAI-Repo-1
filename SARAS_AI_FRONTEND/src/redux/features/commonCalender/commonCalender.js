@@ -34,6 +34,9 @@ const initialState = {
     openEditBatchesPopup : false,
 
     dataToFindScheduleInSlot:null,
+    participantsDialogOpen:false,
+    selectedParticipants:[],
+    editParticipantsDialogOpen:false,
 };
 
 const commonCalender = createSlice({
@@ -175,16 +178,40 @@ const commonCalender = createSlice({
             state.editBatches = [];
             state.editStudents = [];
         },
-
-
         //add data from slot in reschedule to find sessions again after rescheduling
         addDataToFindScheduleInSlot(state, action) {
             state.dataToFindScheduleInSlot = action.payload;
         },
+
+        openParticipantsDialog: (state, action) => {
+            console.log('openParticipantsDialog Call' , action.payload ) ; 
+            state.participantsDialogOpen = true;
+            state.selectedParticipants = action.payload;
+          },
+          closeParticipantsDialog: (state) => {
+            console.log('closeParticipantsDialog Call') ; 
+
+            state.participantsDialogOpen = false;
+            state.selectedParticipants = [];
+          },
+        openEditParticipantsDialog: (state, action) => {
+            console.log('openEditParticipantsDialog Call' , action.payload ) ; 
+            state.editParticipantsDialogOpen = true;
+            state.selectedParticipants = action.payload;
+          },
+          closeEditParticipantsDialog: (state) => {
+            console.log('closeEditParticipantsDialog') ;
+            state.editParticipantsDialogOpen = false;
+            // state.selectedEditedParticipants = [];
+          },
     },
 });
 
 export const {
+    openParticipantsDialog,
+    closeParticipantsDialog,
+    openEditParticipantsDialog,
+    closeEditParticipantsDialog,
     openCreateNewSlot,
     closeCreateNewSlot,
     openScheduleNewSession,
