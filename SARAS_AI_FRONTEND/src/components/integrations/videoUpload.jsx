@@ -150,9 +150,9 @@ const VideoUploadDialog = ({ open, onClose, role, selectedId }) => {
                             })
                         )
                             .unwrap()
-                            .then(() => {
-                                dispatch(getTaCallRecords());
-                            });
+                            // .then(() => {
+                            //     dispatch(getTaCallRecords());
+                            // });
                     }
 
                     setUploadProgress(100);
