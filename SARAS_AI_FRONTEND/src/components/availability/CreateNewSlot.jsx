@@ -218,11 +218,10 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
         dispatch(createSlotApi(formData)).then(() => {
             dispatch(closeCreateNewSlots());
             dispatch(getSlotsApi(taId.id));
-            toast.success('Slot has been successfully created');
+           
         })
         .catch(error => {
             console.error('Error creating slot:', error);
-            toast.error(`${error}`);
         });
     
     };
