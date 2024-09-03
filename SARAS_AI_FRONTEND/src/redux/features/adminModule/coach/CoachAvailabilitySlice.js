@@ -466,13 +466,13 @@ export const coachAvailabilitySlice = createSlice({
         builder.addCase(createCoachSlots.fulfilled, (state, action) => {
             state.loading = false;
             // state.slotCoachEventData = action.payload?.data;
-            // toast.success(action.payload.message || 'Slot Created Successfully')
+            toast.success(action.payload.message || 'Slot Created Successfully')
 
         });
         builder.addCase(createCoachSlots.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
-            // toast.error(action.payload || 'Failed To Create Slot')
+            toast.error(action.payload || 'Failed To Create Slot')
         });
 
         builder.addCase(getCoachScheduleSession.pending, state => {

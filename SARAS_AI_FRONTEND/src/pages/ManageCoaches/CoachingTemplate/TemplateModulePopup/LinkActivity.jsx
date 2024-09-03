@@ -50,6 +50,7 @@ import { getCoachTemplateModuleId } from '../../../../redux/features/adminModule
 import { getAllCoachingTools } from '../../../../redux/features/adminModule/coachingTools/coachingTools';
 import CustomHostNameForm from '../../../../components/CustomFields/CustomHostNameField';
 import CustomMeetingTypeField from '../../../../components/CustomFields/CustomMeetingTypeField';
+import CustomFutureDateField from '../../../../components/CustomFields/CustomFutureDateField';
 // import { uploadpdf } from '../../../../redux/features/adminModule/coach/LinkActivitySlice';
 const CustomButton = ({
     onClick,
@@ -592,7 +593,7 @@ console.log('coachOptions', coachOptions)
                                         control={control}
                                         defaultValue={null}
                                         render={({ field }) => (
-                                            <CustomDateField
+                                            <CustomFutureDateField
                                                 label="Select Date"
                                                 name="date"
                                                 value={fromDate}

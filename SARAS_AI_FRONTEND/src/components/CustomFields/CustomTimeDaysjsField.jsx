@@ -17,7 +17,7 @@ const CustomTimeDaysjsField = ({
 
     const handleTimeChange = date => {
         if (date) {
-            onChange(date.format('HH:mm:ss')); // Pass the formatted time back to the parent
+            onChange(date.format('HH:mm:ss A')); // Pass the formatted time back to the parent
         } else {
             onChange(''); // Handle clearing the time
         }
@@ -30,7 +30,7 @@ const CustomTimeDaysjsField = ({
                 name={name}
                 value={dayjsValue}
                 onChange={handleTimeChange}
-                format="HH:mm:ss"
+                format="HH:mm A"
                 InputLabelProps={{
                     shrink: true,
                     sx: {
