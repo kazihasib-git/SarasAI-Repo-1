@@ -25,7 +25,16 @@ const VideoUploadComponent = ({ onUploadComplete }) => {
 
     const handleFileChange = event => {
         setFile(event.target.files[0]);
-        
+    };
+
+    const handleDrop = event => {
+        event.preventDefault();
+        const droppedFile = event.dataTransfer.files[0];
+        setFile(droppedFile);
+    };
+
+    const handleDragOver = event => {
+        event.preventDefault();
     };
 
     const uploadVideoToVimeo = async () => {
@@ -50,12 +59,11 @@ const VideoUploadComponent = ({ onUploadComplete }) => {
                 body: JSON.stringify(requestData),
             });
             if (response.ok) {
-                toast.success('Video uploaded successfully!');
-               
+                //toast.success('Video uploaded successfully!');
             } else {
                 toast.error('Failed to upload video.');
             }
-  
+
             if (!response.ok) {
                 throw new Error('Failed to upload video.');
             }
@@ -116,9 +124,15 @@ const VideoUploadComponent = ({ onUploadComplete }) => {
         }
     }, [file]);
 
+    useEffect(() => {
+        if (uploadProgress === 100) {
+            toast.success('Video uploaded successfully!');
+        }
+    }, [uploadProgress]);
+
     return (
         <Grid item xs={12} sm={6} md={6} style={{ width: '80%' }}>
-            <UploadBox>
+            <UploadBox onDragOver={handleDragOver} onDrop={handleDrop}>
                 <Typography>Drag and Drop the file</Typography>
                 <Typography>Or</Typography>
                 <input

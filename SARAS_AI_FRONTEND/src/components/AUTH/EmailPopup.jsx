@@ -27,9 +27,20 @@ const EmailPopup = ({ handleClose, onSubmit }) => {
         }
         console.log(username);
 
-        dispatch(forgotPassword({ username, method: selectedOption }));
+        // dispatch(forgotPassword({ username, method: selectedOption }));
 
-        navigate('/resetpassword', { state: { username } });
+        // navigate('/resetpassword', { state: { username } });
+
+        dispatch(forgotPassword({ username, method: selectedOption })).then(
+            response => {
+                if (forgotPassword.fulfilled.match(response)) {
+                    if (response.payload?.message !== 'User not found') {
+                        navigate('/resetpassword', { state: { username } });
+                    }
+                }
+            }
+        );
+
         console.log('Form submitted with option:', selectedOption);
     };
 
