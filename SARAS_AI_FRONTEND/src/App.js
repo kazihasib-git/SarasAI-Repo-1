@@ -107,6 +107,7 @@ function App() {
 
     const access_token = localStorage.getItem('accessToken');
     const userRole = localStorage.getItem('role');
+    const timezoneId = localStorage.getItem('timezone_id');
 
     useEffect(() => {
         if (location.pathname !== '/login') {
@@ -121,6 +122,7 @@ function App() {
                     login: true,
                     role: userRole,
                     accessToken: access_token,
+                    timezone_id: timezoneId,
                 })
             );
         }
@@ -156,11 +158,8 @@ function App() {
                 <Route path="login" element={<Login />} />
                 <Route path="linkpage" element={<LinkPage />} />
                 <Route path="unauthorized" element={<Unauthorized />} />
-               
-                {!login}
-                {<Route path="login" element={<Login />} />}
-                <Route path="Resetpassword" element={<ForgetPassword/>} />
-                
+                <Route path="resetpassword" element={<ForgetPassword />} />
+
                 {/* Protected Routes */}
                 {login && role == 5150 && (
                     <Route path="/" element={<Main page="Dashboard" />}>
@@ -181,6 +180,7 @@ function App() {
                             path="ta-mapping"
                             element={<TaMapping page="TA Mapping" />}
                         />
+
                         <Route
                             path="/active-students/:id"
                             element={
@@ -346,7 +346,12 @@ function App() {
                             path="coachmenu"
                             element={<CoachMenu page="Coach Menu" />}
                         />
-                        <Route index element={<CoachMenuProfile page="Coach Menu Profile" />} />
+                        <Route
+                            index
+                            element={
+                                <CoachMenuProfile page="Coach Menu Profile" />
+                            }
+                        />
                         <Route
                             path="coachmenu_profile"
                             element={
@@ -410,7 +415,10 @@ function App() {
                         path="/"
                         element={<Main page="Teaching Assistant Menu" />}
                     >
-                         <Route index element={<TaMenuProfile page="My Profile" />} />
+                        <Route
+                            index
+                            element={<TaMenuProfile page="My Profile" />}
+                        />
                         <Route
                             path="tamenu_profile"
                             element={<TaMenuProfile page="My Profile" />}
