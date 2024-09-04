@@ -17,7 +17,7 @@ const CustomTimeDaysjsField = ({
 
     const handleTimeChange = date => {
         if (date) {
-            onChange(date.format('HH:mm:ss')); // Pass the formatted time back to the parent
+            onChange(date.format('HH:mm:ss A')); // Pass the formatted time back to the parent
         } else {
             onChange(''); // Handle clearing the time
         }
@@ -28,9 +28,9 @@ const CustomTimeDaysjsField = ({
             <TimePicker
                 label={label}
                 name={name}
-                value={dayjsValue}
+                value={dayjs(dayjsValue, 'hh:mm A')}
                 onChange={handleTimeChange}
-                format="HH:mm:ss"
+                format="HH:mm A"
                 InputLabelProps={{
                     shrink: true,
                     sx: {

@@ -41,40 +41,8 @@ import { timezoneIdToName } from '../../utils/timezoneIdToName';
 import { getTimezone } from '../../redux/features/utils/utilSlice';
 import { ConnectingAirportsOutlined } from '@mui/icons-material';
 import { getTodayTaAvailability } from '../../redux/features/adminModule/ta/taAvialability';
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                // padding: "18px 25px",
-                border: `1.5px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
+import CustomButton from '../../components/CustomFields/CustomButton';
+
 const TaCalender = () => {
     const [selectedTA, setSelectedTA] = useState(null);
 
