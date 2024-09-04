@@ -107,6 +107,7 @@ function App() {
 
     const access_token = localStorage.getItem('accessToken');
     const userRole = localStorage.getItem('role');
+    const timezoneId = localStorage.getItem('timezone_id');
 
     useEffect(() => {
         if (location.pathname !== '/login') {
@@ -121,6 +122,7 @@ function App() {
                     login: true,
                     role: userRole,
                     accessToken: access_token,
+                    timezone_id: timezoneId,
                 })
             );
         }

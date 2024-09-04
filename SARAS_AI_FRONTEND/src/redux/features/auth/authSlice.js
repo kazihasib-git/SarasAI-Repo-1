@@ -117,6 +117,7 @@ const authSlice = createSlice({
             state.login = action.payload.login;
             state.role = action.payload.role;
             state.accessToken = action.payload.accessToken;
+            state.timezone_id = action.payload.timezone_id;
         },
     },
     extraReducers: builder => {
