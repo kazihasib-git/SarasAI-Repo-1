@@ -8,7 +8,7 @@ import CustomTimeField from '../../../CustomFields/CustomTimeField';
 import { closeReschedulePopup, openCreatedSessions } from '../../../../redux/features/commonCalender/commonCalender';
 import { getScheduleSession } from '../../../../redux/features/adminModule/ta/taAvialability';
 import { timezoneIdToName } from '../../../../utils/timezoneIdToName';
-import { getTimezone } from '../../../../redux/features/utils/utilSlice';
+import { getTimezone, getAllHosts } from '../../../../redux/features/utils/utilSlice';
 import { getCoachMenuSessionForLeave, getCoachMenuSessions, getCoachMenuSlots, getCoachMenuSlotsByData, rescheduleSessionForCoachLeave } from '../../../../redux/features/coachModule/coachmenuprofileSilce';
 import { getTaMenuSessionForLeave, getTaMenuSessions, getTaMenuSlots, getTaMenuSlotsByDate, rescheduleSessionForTaLeave } from '../../../../redux/features/taModule/tamenuSlice';
 import { convertFromUTC } from '../../../../utils/dateAndtimeConversion';
@@ -78,6 +78,7 @@ console.log('reschedule session timezoneID' , timezoneID) ;
     });
     useEffect(() => {
         dispatch(getTimezone());
+        dispatch(getAllHosts());
     }, [dispatch]);
 
     const { timezones, hosts } = useSelector((state) => state.util)
@@ -137,6 +138,8 @@ console.log('reschedule session timezoneID' , timezoneID) ;
             dispatch(fetchAvailableSlotsApi(data));
         }
     }, [selectDate, dispatch, fetchAvailableSlotsApi]);
+
+   
 
     const formatTime = time => {
         const [hours, minutes] = time.split(':');
