@@ -34,12 +34,16 @@ import SessionLink from './commonCalender/SessionLink';
 import EditSession from './commonCalender/EditSession';
 import ParticipantsDialog from '../../../pages/MODULE/coachModule/ParticipantsDialog';
 import { convertFromUTC } from '../../../utils/dateAndtimeConversion';
-import { timezoneIdToName } from '../../../utils/timezoneIdToName';
+import { timezoneIdToName, timezoneIdToUTCOffset } from '../../../utils/timezoneIdToName';
 import { getTimezone } from '../../../redux/features/utils/utilSlice';
 import CustomButton from '../../CustomFields/CustomButton';
 import { openParticipantsDialog , closeParticipantsDialog , closeEditParticipantsDialog} from '../../../redux/features/commonCalender/commonCalender';
 import EditParticipantsDialog from './EditParticipantsDialog';
-const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
+import { convertTo12HourFormat } from '../../../utils/convertTo12HourFormat';
+import { formatDateFromLocalToTimezone } from '../../../utils/formatDateFromUTC';
+
+const timezoneId = Number(localStorage.getItem('timezone_id'));
+
 const ScheduledCall = ({ role }) => {
     const dispatch = useDispatch();
     const {participantsDialogOpen , editParticipantsDialogOpen} = useSelector(state=>state.commonCalender) ; 
@@ -88,52 +92,20 @@ const ScheduledCall = ({ role }) => {
 
     const { timezones } = useSelector(state => state.util);
 
+    const timezoneName = timezoneId ?  timezoneIdToName(timezoneId, timezones) : 0;
+    const timezoneOffset = timezoneId ? timezoneIdToUTCOffset(timezoneId, timezones) : 0;
+    
     useEffect(() => {
         dispatch(getTimezone())
     }, [dispatch])
 
-    function formatDate(date) {
-        const localDate = new Date(date);
-        const offset = 5.5 * 60 * 60000;
-        const adjustedDate = new Date(localDate.getTime() + offset);
-        return adjustedDate.toISOString().split('T')[0];
-    }
-
     useEffect(() => {
         const data = {
-            date: formatDate(date),
-            timezone_name: timezoneIdToName(storedTimezoneId, timezones)
+            date: formatDateFromLocalToTimezone(date, timezoneOffset),
+            timezone_name: timezoneName
         };
         dispatch(getScheduledCallsApi(data))
-    }, [dispatch, date, storedTimezoneId, timezones]);
-
-    function convertTo12HourFormat(time24) {
-        // Split the time into hours, minutes, and seconds
-        const [hours, minutes, seconds] = time24.split(':').map(Number);
-
-        const suffix = hours >= 12 ? 'PM' : 'AM';
-
-        const hours12 = hours % 12 || 12;
-
-        const formattedMinutes = minutes.toString().padStart(2, '0');
-
-        return `${hours12}:${formattedMinutes} ${suffix}`;
-    }
-
-    // const getCallStatus = (startTime, endTime) => {
-    //     const nowUtc = new Date();
-    //     const offset = 5.5 * 60 * 60 * 1000;
-    //     const nowIst = new Date(nowUtc.getTime() + offset);
-    //     const currentTime = nowIst.toISOString().split('T')[1].split('.')[0];
-
-    //     if (currentTime < startTime) {
-    //         return 'scheduled';
-    //     } else if (currentTime >= startTime && currentTime <= endTime) {
-    //         return 'inprogress';
-    //     } else {
-    //         return 'completed';
-    //     }
-    // };
+    }, [dispatch, date, timezoneName]);
 
     const processScheduledCalls = async requests => {
         const newRequests = requests.map(request => ({ ...request }));
@@ -144,17 +116,12 @@ const ScheduledCall = ({ role }) => {
 
         const transformedRequests = await Promise.all(
             sortedRequests.map(async request => {
-                const selectedTimeZone = timezones.find(
-                    timezone => timezone.id === request.timezone_id
-                );
-                const timezonename = selectedTimeZone.time_zone;
-
                 const localTime = await convertFromUTC({
                     start_date: request.date.split(' ')[0],
                     start_time: request.start_time,
                     end_time: request.end_time,
                     end_date: request.end_date,
-                    timezonename,
+                    timezonename : timezoneName,
                 });
 
                 const newRequest = {
@@ -218,6 +185,8 @@ const ScheduledCall = ({ role }) => {
         const timeB = moment(b.start_time, 'HH:mm A');
         return timeA - timeB;
     });
+
+
     const onNewMeetingSubmit = props => {
         setNewMeetingPopUpOpen(false);
     };
@@ -251,6 +220,7 @@ const ScheduledCall = ({ role }) => {
         setSelectedParticipants(participants) ;
         dispatch(openParticipantsDialog(participants)) ; 
     };
+    
     const handleCloseParticipantsDialog = () => {
         setSelectedParticipants([]);
         dispatch(closeParticipantsDialog()) ;

@@ -144,3 +144,16 @@
     color: #feffff !important; /* Blue text color for the header */
 }
  
+.rbc-time-gutter .on-leave-slot {
+    background-color: unset !important;
+}
+ 
+.rbc-time-gutter .on-leave-slot::before {
+    content: unset !important;
+}
+ 
+.rbc-time-gutter .rbc-time-slot {
+    background-color: transparent !important;
+    opacity: 1 !important;
+    border: none !important;
+}
