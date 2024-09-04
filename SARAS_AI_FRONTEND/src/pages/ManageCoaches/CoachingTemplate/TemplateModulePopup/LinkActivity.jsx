@@ -140,7 +140,14 @@ const LinkActivityPopup = ({
         }
     }, [coachData]);
 
-    const validateActivityData = (activityType, videoUrl, upload_pdf_url, selectedAssessmentId, selectedSessionType, data) => {
+    const validateActivityData = (
+        activityType,
+        videoUrl,
+        upload_pdf_url,
+        selectedAssessmentId,
+        selectedSessionType,
+        data
+    ) => {
         if (activityType === 'videos' && !videoUrl) {
             toast.error('Please upload a valid video.');
             return false;
@@ -157,15 +164,63 @@ const LinkActivityPopup = ({
             toast.error('Please provide a valid link.');
             return false;
         }
-    
+
+        if (
+            activityType === 'virtual meet' &&
+            selectedSessionType === 'group'
+        ) {
+            // Specific validation for 'virtual meet' and 'group'
+            if (!selectedCoachId) {
+                toast.error('Please select a coach');
+                return;
+            }
+            if (!fromDate) {
+                toast.error('Please select the date');
+                return;
+            }
+            if (!selectedSlot) {
+                toast.error('Please select a slot');
+                return;
+            }
+            if (!data.meeting_name) {
+                toast.error('Meeting Name is required');
+                return;
+            }
+            if (!selectedPlatform) {
+                toast.error('Please select a platform');
+                return;
+            }
+            if (selectedPlatform === 1 && !selectHostName) {
+                toast.error('Please select a host name');
+                return;
+            }
+            if (selectedPlatform === 1 && !selectMeetingType) {
+                toast.error('Please select a meeting type');
+                return;
+            }
+            if (!data.fromTime) {
+                toast.error('Please Select From Time');
+            }
+            if (!data.toTime) {
+                toast.error('Please Select To Time');
+            }
+        }
+
         return true; // Return true if all validations pass
     };
-    
+
     const onSubmit = async data => {
         //console.log("---------------->", data , "activityId", activityId, "activityType", activityType, "selectedAssessmentId", selectedAssessmentId, "selectedSessionType", selectedSessionType);
         setSelectedAssessmentId(data.assessment);
-        console.log(activityType,"actibjbcjecjece");
-        const isValid = validateActivityData(activityType, videoUrl, upload_pdf_url, selectedAssessmentId, selectedSessionType, data);
+        console.log(activityType, 'actibjbcjecjece');
+        const isValid = validateActivityData(
+            activityType,
+            videoUrl,
+            upload_pdf_url,
+            selectedAssessmentId,
+            selectedSessionType,
+            data
+        );
         if (!isValid) {
             return; // Exit if validation fails
         }
@@ -175,7 +230,7 @@ const LinkActivityPopup = ({
             // activityType === 'test'
             //     ? selectedAssessmentId
             //    : selectedActivityId, // Ensure this value is correctly set
-            
+
             link: videoUrl || upload_pdf_url || data.link, // Add other fields if needed
             virtual_meeting_type: selectedSessionType,
             test_type: selectedAssessmentId,
@@ -249,8 +304,8 @@ const LinkActivityPopup = ({
         setCoachTimeZone(null);
         setSelectedPlatform(null);
         setSelectedSessionType(null);
-        setSelectHostName(null)
-        setSelectMeetingType(null)
+        setSelectHostName(null);
+        setSelectMeetingType(null);
         handleClose();
     };
 
@@ -348,7 +403,7 @@ const LinkActivityPopup = ({
     const coachOptions = coaches.map(coach => ({
         value: coach.name,
         label: coach.name,
-        username:coach.username,
+        username: coach.username,
         id: coach.id,
     }));
 
@@ -402,7 +457,7 @@ const LinkActivityPopup = ({
     const handleChangeMeetingName = event => {
         setSelectMeetingType(event.target.value);
     };
-console.log('coachOptions', coachOptions)
+    console.log('coachOptions', coachOptions);
     const contentComponent = (
         <Grid
             container
