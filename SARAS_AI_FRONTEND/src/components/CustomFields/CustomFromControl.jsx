@@ -20,17 +20,25 @@ const CustomFormControl = ({
     const hasError = !!errors[name];
 
     return (
-        <FormControl variant="outlined" fullWidth>
+        <FormControl variant="outlined" fullWidth disabled={disabled}>
             <InputLabel
                 shrink
                 style={{ margin: 0 }}
                 sx={{
-                    color: hasError ? '#d32f2f' : '#1A1E3D',
+                    color: disabled
+                        ? '#A0A0A0'
+                        : hasError
+                          ? '#d32f2f'
+                          : '#1A1E3D',
                     '&.Mui-focused': {
-                        color: '#1A1E3D', // Change label color on focus regardless of error
+                        color: disabled ? '#A0A0A0' : '#1A1E3D', // Change label color on focus
                     },
                     '&.MuiFormLabel-filled': {
-                        color: hasError ? '#d32f2f' : '#1A1E3D', // Change label color when the field is filled
+                        color: disabled
+                            ? '#A0A0A0'
+                            : hasError
+                              ? '#d32f2f'
+                              : '#1A1E3D', // Change label color when the field is filled
                     },
                     backgroundColor: 'white',
                 }}

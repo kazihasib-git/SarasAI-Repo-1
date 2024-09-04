@@ -12,7 +12,7 @@ const PublicRoutes = () => (
             <Route path="login" element={<Login />} />
             <Route path="linkpage" element={<LinkPage />} />
             <Route path="unauthorized" element={<Unauthorized />} />
-            <Route path="Resetpassword" element={<ForgetPassword />} />
+            <Route path="resetpassword" element={<ForgetPassword />} />
         </Route>
     </Routes>
 );

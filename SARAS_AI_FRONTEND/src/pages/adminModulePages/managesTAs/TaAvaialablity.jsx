@@ -75,7 +75,7 @@ const headers = [
 
 const TAAvailability = () => {
     const dispatch = useDispatch();
-    const { todaysAvailableTa } = useSelector(state => state.taAvailability);
+    const { todaysAvailableTa } = useSelector(state => state.taAvialability);
     const [taAvailabilityData, setTaAvailabilityData] = useState([]);
 
     useEffect(() => {

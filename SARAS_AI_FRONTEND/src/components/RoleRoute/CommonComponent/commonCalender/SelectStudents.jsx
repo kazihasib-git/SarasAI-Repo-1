@@ -5,48 +5,16 @@ import { getTaMenuAssignedStudents } from '../../../../redux/features/taModule/t
 import { getCoachMenuAssignedStudents } from '../../../../redux/features/coachModule/coachmenuprofileSilce';
 import {
     closeSelectStudents,
+    openEditSession,
     openScheduleNewSession,
 } from '../../../../redux/features/commonCalender/commonCalender';
 import CustomTextField from '../../../CustomFields/CustomTextField';
 import ReusableDialog from '../../../CustomFields/ReusableDialog';
 import PopUpTable from '../../../CommonComponent/PopUpTable';
+import CustomButton from '../../../CustomFields/CustomButton';
 
 const name = String(localStorage.getItem('name') || 'Name');
 
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                padding: '10px 20px',
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
 
 const headers = ['S. No.', 'Student Name', 'Program', 'Batch', 'Select'];
 
@@ -87,7 +55,7 @@ const SelectStudents = ({ componentName }) => {
         batches,
         selectStudentPopup,
         preSelectedStudents,
-        preSelectedBatches,
+        sessionData,
     } = useSelector(state => state.commonCalender);
 
     const { [studentDataState]: studentsData } = stateSelector || {};
@@ -127,8 +95,8 @@ const SelectStudents = ({ componentName }) => {
 
                 const matchesName = searchName
                     ? student['Student Name']
-                          .toLowerCase()
-                          .includes(searchName.toLowerCase())
+                        .toLowerCase()
+                        .includes(searchName.toLowerCase())
                     : true;
 
                 return matchesTerm && matchesBatch && matchesName;
@@ -138,82 +106,98 @@ const SelectStudents = ({ componentName }) => {
         }
     }, [studentsData, selectedTerm, selectedBatch, searchName]);
 
-    useEffect(() => {
-        const transformedPreSelectedStudents = preSelectedStudents.map(
-            student => student.id
-        );
-        setSelectedStudents(transformedPreSelectedStudents);
-    }, [preSelectedStudents]);
+    // useEffect(() => {
+    //     const transformedPreSelectedStudents = preSelectedStudents.map(
+    //         student => student.id
+    //     );
+    //     setSelectedStudents(transformedPreSelectedStudents);
+    // }, [preSelectedStudents]);
+
+    console.log("SELECTED STUDENTS", selectedStudents)
 
     const batchOptions =
         studentsData && Array.isArray(studentsData)
             ? [
-                  ...new Set(
-                      studentsData
-                          //   .filter(
-                          //       student =>
-                          //           !selectedTerm ||
-                          //           student.student.academic_term === selectedTerm
-                          //   )
-                          .flatMap(student =>
-                              student.student.batches.map(
-                                  batch => batch.batch_name
-                              )
-                          )
-                  ),
-              ]
+                ...new Set(
+                    studentsData
+                        //   .filter(
+                        //       student =>
+                        //           !selectedTerm ||
+                        //           student.student.academic_term === selectedTerm
+                        //   )
+                        .flatMap(student =>
+                            student.student.batches.map(
+                                batch => batch.batch_name
+                            )
+                        )
+                ),
+            ]
             : [];
 
     const academicTermOptions =
         studentsData && Array.isArray(studentsData)
             ? [
-                  ...new Set(
-                      studentsData
-                          .filter(
-                              student =>
-                                  !selectedBatch ||
-                                  student.student.batches.some(
-                                      batch =>
-                                          batch.batch_name === selectedBatch
-                                  )
-                          )
-                          .flatMap(student =>
-                              student.student.packages.map(pack => pack.name)
-                          )
-                  ),
-              ]
+                ...new Set(
+                    studentsData
+                        .filter(
+                            student =>
+                                !selectedBatch ||
+                                student.student.batches.some(
+                                    batch =>
+                                        batch.batch_name === selectedBatch
+                                )
+                        )
+                        .flatMap(student =>
+                            student.student.packages.map(pack => pack.name)
+                        )
+                ),
+            ]
             : [];
 
     useEffect(() => {
-        let updatedSelectedStudents = [];
-
-        if (students && students.length > 0) {
-            updatedSelectedStudents = students.map(student => student.id);
-        }
-
-        if (batches && batches.length > 0) {
+        const getMatchingStudentIds = (batchesToMatch) => {
             const assignedBatchIds = studentsData.flatMap(stu =>
                 stu.student.batches.map(batch => batch.batch_id)
             );
 
-            const matchingBatchIds = batches
+            const matchingBatchIds = batchesToMatch
                 .filter(batch => assignedBatchIds.includes(batch.id))
                 .map(batch => batch.id);
 
-            const matchingStudentIds = studentsData
+            return studentsData
                 .filter(stu =>
                     stu.student.batches.some(batch =>
                         matchingBatchIds.includes(batch.batch_id)
                     )
                 )
                 .map(stu => stu.student.id);
+        };
 
+        let updatedSelectedStudents = [];
+
+        if (students && students.length > 0) {
+            updatedSelectedStudents = students.map(student => student.id);
+        }
+
+        if (sessionData?.students?.length > 0) {
+            updatedSelectedStudents = sessionData.students.map(student => student.id);
+        }
+
+        if (batches && batches.length > 0) {
             updatedSelectedStudents = [
-                ...new Set([...updatedSelectedStudents, ...matchingStudentIds]),
+                ...new Set([...updatedSelectedStudents, ...getMatchingStudentIds(batches)])
             ];
         }
+
+        if (sessionData?.batch?.length > 0) {
+            updatedSelectedStudents = [
+                ...new Set([...updatedSelectedStudents, ...getMatchingStudentIds(sessionData.batch)])
+            ];
+        }
+
         setSelectedStudents(updatedSelectedStudents);
-    }, [students]);
+    }, [students, batches, sessionData]);
+
 
     const handleSelectStudents = id => {
         setSelectedStudents(prev =>
@@ -228,7 +212,15 @@ const SelectStudents = ({ componentName }) => {
                 : [],
         };
 
-        dispatch(openScheduleNewSession(data));
+        if (sessionData) {
+            const updatedSessionData = {
+                ...sessionData,
+                students: selectedStudents ? selectedStudents.map(id => ({ id })) : [],
+            }
+            dispatch(openEditSession({ sessionData: updatedSessionData }))
+        } else {
+            dispatch(openScheduleNewSession(data));
+        }
         dispatch(closeSelectStudents());
     };
 

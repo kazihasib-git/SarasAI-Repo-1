@@ -84,7 +84,7 @@ const DynamicTable = ({
         if (currentPage > newTotalPages) {
             setCurrentPage(Math.max(1, newTotalPages));
         }
-    }, [initialData, currentPage]);
+    }, [initialData]);
 
     const totalPages = Math.ceil(data.length / itemsPerPage);
     const currentData = data.slice(

@@ -82,6 +82,7 @@ const CoachCallRecord = () => {
     useEffect(() => {
         dispatch(getCoachCallRecords(date.format('YYYY-MM-DD')));
         dispatch(getTimezone());
+        dispatch(getTimezone());
     }, [date, dispatch]);
 
     useEffect(() => {
@@ -175,6 +176,7 @@ const CoachCallRecord = () => {
         setVideoUrl('');
         setIdVideo(null);
         dispatch(getCoachCallRecords(date.format('YYYY-MM-DD')));
+        
     };
 
     const handlePlayVideo = url => {
@@ -360,14 +362,14 @@ const CoachCallRecord = () => {
                 open={open}
                 onClose={handleClose}
                 onSave={handleSaveNotes}
-                role="TA"
+                role="COACH"
                 selectedId={selectedCall}
             />
 
             <VideoUploadDialog
                 open={uploadDialogOpen}
                 onClose={handleCloseUploadDialog}
-                role="TA"
+                role="COACH"
                 selectedId={idVideo}
             />
 

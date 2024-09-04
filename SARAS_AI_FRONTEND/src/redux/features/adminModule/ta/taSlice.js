@@ -372,14 +372,12 @@ export const assignCourseToTa = createAsyncThunk(
                 `${baseUrl}/admin/ta-course`,
                 data
             );
-            return response.data;
-        } catch (error) {
-            if (error.response && error.response.data) {
-                return rejectWithValue(error.response.data.message);
-            } else {
-                return rejectWithValue(
-                    'An Error Occurred While Assigning Course'
-                );
+            return response.data;   
+        }catch(error){
+            if(error.response && error.response.data){
+                return rejectWithValue(error.response.data.error)
+            }else {
+                return rejectWithValue('An Error Occurred While Assigning Course')
             }
         }
     }
@@ -796,10 +794,7 @@ export const taSlice = createSlice({
             state.loading = false;
             console.error('Error assigning course to TA:', action.error);
             state.error = action.payload || action.error.message;
-            toast.error(
-                action.payload ||
-                    'Failed To Assign Courses To Ta. Server Error.'
-            );
+            toast.error(action.payload || 'Failed To Assign Courses');
         });
     },
 });

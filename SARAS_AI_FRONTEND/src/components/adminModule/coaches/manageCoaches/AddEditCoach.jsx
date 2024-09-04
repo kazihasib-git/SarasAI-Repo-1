@@ -606,6 +606,7 @@ function AddEditCoach({ data }) {
                                     label="Email Address"
                                     name="email"
                                     placeholder="Enter Email Address"
+                                    disabled = {data}
                                     register={register}
                                     validation={{
                                         required: 'Email is required',
@@ -626,6 +627,7 @@ function AddEditCoach({ data }) {
                                     }}
                                     render={({ field }) => (
                                         <PhoneInput
+                                            disabled = {data}
                                             {...field}
                                             country={'in'}
                                             // containerStyle={{ width: "100%" }}

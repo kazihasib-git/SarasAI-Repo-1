@@ -42,6 +42,7 @@ function App() {
                     login: true,
                     role: userRole,
                     accessToken: access_token,
+                    // timezone_id: timezoneId,
                 })
             );
         }

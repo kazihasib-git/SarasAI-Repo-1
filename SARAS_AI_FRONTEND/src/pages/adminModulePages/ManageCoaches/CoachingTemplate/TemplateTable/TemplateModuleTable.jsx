@@ -93,14 +93,14 @@ const TemplateModuleTable = ({ modulesData }) => {
     const { selectedCoachTemplate } = useSelector(state => state.coachTemplate);
 
     const handleToggle = (moduleId, activityId, currentStatus) => {
-        const newStatus = !currentStatus;
+        const newStatus = !currentStatus ;  
         const data = {
             activity_id: activityId,
             status: newStatus,
         };
 
-        // Dispatch the updateCoachActivity action
-        dispatch(updateCoachActivity({ data }))
+        // Dispatch the updateModuleActivity action
+        dispatch(updateModuleActivity({ data }))
             .unwrap()
             .then(() => {
                 dispatch(getCoachTemplateModuleId(selectedCoachTemplate));
@@ -413,23 +413,21 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                                 .join(', ')
                                                         ) : (
                                                             <CustomButton
-                                                                style={{
-                                                                    textTransform:
-                                                                        'none',
-                                                                }}
-                                                                onClick={() =>
-                                                                    openPrerequisitesPopup(
-                                                                        module,
-                                                                        activity
-                                                                    )
-                                                                }
-                                                                backgroundColor="#FEEBE3"
-                                                            >
-                                                                <span className="buttonText">
-                                                                    Prerequisite
-                                                                </span>
-                                                            </CustomButton>
-                                                        )}
+                                                            style={{
+                                                                textTransform: 'none',
+                                                            }}
+                                                            onClick={
+                                                                activity.activity_type_id
+                                                                    ? () => openPrerequisitesPopup(module, activity)
+                                                                    : null
+                                                            }
+                                                            backgroundColor="#FEEBE3"
+                                                            disabled={!activity.activity_type_id} // Optionally disable the button if there's no activity_type_id
+                                                        >
+                                                            <span className="buttonText">Prerequisite</span>
+                                                        </CustomButton>
+                                                          
+                                                        )}   
                                                     </td>
                                                     <td
                                                         style={{

@@ -1,27 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-    getTaMenuAssignedBatches,
-    getTaMenuAssignedStudents,
-    getTaMenuSessions,
-    updateBatchesInTaSession,
-} from '../../../../redux/features/taModule/tamenuSlice';
-import {
-    getCoachMenuAssignedBatches,
-    getCoachMenuAssignedStudents,
-    getCoachMenuSessions,
-    updateBatchesInCoachSession,
-} from '../../../../redux/features/coachModule/coachmenuprofileSilce';
-import {
-    closeEditBatches,
-    closeEditStudents,
-} from '../../../../redux/features/commonCalender/commonCalender';
-import ReusableDialog from '../../../CustomFields/ReusableDialog';
-import { Divider, Grid, MenuItem, Typography } from '@mui/material';
-import CustomTextField from '../../../CustomFields/CustomTextField';
-import PopUpTable from '../../../CommonComponent/PopUpTable';
-import { toast } from 'react-toastify';
-import CustomButton from '../../../CustomFields/CustomButton';
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { getTaMenuAssignedBatches, getSelectedTaMenuAssignedBatches, getTaMenuAssignedStudents, getTaMenuSessions, updateBatchesInTaSession } from '../../../../redux/features/taModule/tamenuSlice'
+import { getCoachMenuAssignedBatches, getSelectedCoachMenuAssignedBatches, getCoachMenuAssignedStudents, getCoachMenuSessions, updateBatchesInCoachSession } from '../../../../redux/features/coachModule/coachmenuprofileSilce'
+import { closeEditBatches, closeEditStudents } from '../../../../redux/features/commonCalender/commonCalender'
+import ReusableDialog from '../../../CustomFields/ReusableDialog'
+import { Divider, Grid, MenuItem, Typography } from '@mui/material'
+import CustomTextField from '../../../CustomFields/CustomTextField'
+import PopUpTable from '../../../CommonComponent/PopUpTable'
+import { toast } from 'react-toastify'
+import CustomButton from '../../../CustomFields/CustomButton'
 
 const headers = ['S. No.', 'Batch Name', 'Branch', 'Select'];
 
@@ -36,6 +23,8 @@ const EditBatchesSessionLink = ({ componentName }) => {
     let sliceName,
         getBatchesApi,
         batchesDataState,
+        getSelectedBatchesApi,
+        assignedBatchesState,
         updateBatchesApi,
         getSessionApi;
 
@@ -44,6 +33,8 @@ const EditBatchesSessionLink = ({ componentName }) => {
             sliceName = 'taMenu';
             getBatchesApi = getTaMenuAssignedBatches;
             batchesDataState = 'assignedTaBatches';
+            getSelectedBatchesApi = getSelectedTaMenuAssignedBatches;
+            assignedBatchesState = 'taScheduleBatches'
             updateBatchesApi = updateBatchesInTaSession;
             getSessionApi = getTaMenuSessions;
             break;
@@ -52,6 +43,8 @@ const EditBatchesSessionLink = ({ componentName }) => {
             sliceName = 'coachMenu';
             getBatchesApi = getCoachMenuAssignedBatches;
             batchesDataState = 'assignedCoachBatches';
+            getSelectedBatchesApi = getSelectedCoachMenuAssignedBatches;
+            assignedBatchesState = 'coachScheduleBatches'
             updateBatchesApi = updateBatchesInCoachSession;
             getSessionApi = getCoachMenuSessions;
             break;
@@ -59,6 +52,7 @@ const EditBatchesSessionLink = ({ componentName }) => {
         default:
             sliceName = null;
             getBatchesApi = null;
+            getSelectedBatchesApi = null;
             batchesDataState = null;
             updateBatchesApi = null;
             getSessionApi = null;
@@ -67,15 +61,21 @@ const EditBatchesSessionLink = ({ componentName }) => {
 
     const stateSelector = useSelector(state => state[sliceName]);
 
-    const { [batchesDataState]: batchesData } = stateSelector;
+    const {
+        [batchesDataState]: batchesData,
+        [assignedBatchesState]: sessionBatches,
+    } = stateSelector
 
-    const { editBatches, meetingId, openEditBatchesPopup } = useSelector(
-        state => state.commonCalender
-    );
+    const { meetingId, openEditBatchesPopup } = useSelector((state) => state.commonCalender)
 
     useEffect(() => {
-        dispatch(getBatchesApi());
-    }, [dispatch]);
+        dispatch(getBatchesApi())
+            .then(() => {
+                dispatch(getSelectedBatchesApi(meetingId))
+            })
+    }, [dispatch])
+
+    console.log("batchess :", batchesData, sessionBatches)
 
     useEffect(() => {
         if (batchesData && batchesData.length) {
@@ -103,15 +103,14 @@ const EditBatchesSessionLink = ({ componentName }) => {
         }
     }, [batchesData, selectedBatch, searchQuery]);
 
-    const batchOptions = batchesData
-        ? [...new Set(batchesData.map(batch => batch.batch.branch.name))]
-        : [];
+
+    const batchOptions = (batchesData && batchesData.length > 0) ? [...new Set(batchesData.map(batch => batch.batch.branch.name))] : [];
 
     useEffect(() => {
-        if (editBatches) {
-            setSelectedBatch(editBatches.map(batch => batch.id));
+        if (sessionBatches) {
+            setSelectedBatch(sessionBatches.map(batch => batch.batch_id));
         }
-    }, [editBatches]);
+    }, [sessionBatches])
 
     const handleSelectBatch = id => {
         setSelectedBatch(prev =>
@@ -137,7 +136,7 @@ const EditBatchesSessionLink = ({ componentName }) => {
 
     const validate = () => {
         if (selectedBatch.length === 0) {
-            toast.error('Please Select at Least One Batch');
+            toast.error('Please Select at Least One Batch')
             return false;
         }
         return true;
@@ -148,13 +147,21 @@ const EditBatchesSessionLink = ({ componentName }) => {
 
         const id = meetingId;
         const data = {
-            batchId: selectedBatch.map(id => id),
-        };
-        dispatch(updateBatchesApi({ id, data })).then(() => {
-            dispatch(closeEditBatches());
-            dispatch(getSessionApi());
-        });
-    };
+            batchId: selectedBatch.map(id => id)
+        }
+        dispatch(updateBatchesApi({ id, data }))
+            .unwrap()
+            .then(() => {
+                dispatch(closeEditBatches())
+                toast.success("Batches Updated Successfully")
+                // dispatch(getSessionApi())
+            })
+            .catch(error =>{
+                toast.error(`${error}`);
+            })
+            
+    }
+
 
     const content = (
         <>
@@ -228,7 +235,7 @@ const EditBatchesSessionLink = ({ componentName }) => {
             content={content}
             actions={actions}
         />
-    );
-};
+    )
+}
 
 export default EditBatchesSessionLink;

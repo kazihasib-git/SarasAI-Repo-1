@@ -52,7 +52,7 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
     const [repeat, setRepeat] = useState('onetime');
     const [fromTime, setFromTime] = useState(null);
     const [toTime, setToTime] = useState(null);
-
+    const [selectedTimezone, setSelectedTimezone] = useState(timezoneID);
     useEffect(() => {
         dispatch(getTimezone());
     }, [dispatch]);
@@ -162,6 +162,7 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
             toast.error('Please select To Time');
             return false;
         }
+        
         if (repeat === 'recurring' && !toDate) {
             toast.error('Please select To Date');
             return false;
@@ -209,18 +210,16 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
         formData.end_date = repeat === 'recurring' ? toDate : fromDate;
         formData.weeks = weeksArray;
         formData.admin_user_id = taId.id;
-        formData.timezone_id = `${timezoneID}`;
-        dispatch(createSlotApi(formData))
-            .unwrap() // Ensure to unwrap the promise for direct handling
-            .then(() => {
-                dispatch(closeCreateNewSlots());
-                dispatch(getSlotsApi(taId.id));
-                toast.success('Slot has been successfully created');
-            })
-            .catch(error => {
-                console.error('Error creating slot:', error);
-                toast.error(` ${error}`);
-            });
+        
+        dispatch(createSlotApi(formData)).then(() => {
+            dispatch(closeCreateNewSlots());
+            dispatch(getSlotsApi(taId.id));
+           
+        })
+        .catch(error => {
+            console.error('Error creating slot:', error);
+        });
+    
     };
 
     const content = (
@@ -320,9 +319,8 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
                                     <CustomTimeZoneForm
                                         label="Time Zone"
                                         name="timezone_id"
-                                        value={timezoneID}
+                                        value={field.value}
                                         onChange={field.onChange}
-                                        // disabled={timezoneID != null}
                                         options={timezones}
                                         errors={errors}
                                     />

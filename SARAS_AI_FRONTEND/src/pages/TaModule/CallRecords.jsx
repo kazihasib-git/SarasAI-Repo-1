@@ -167,10 +167,12 @@ const CallRecords = () => {
     const handleOpenUploadDialog = call => {
         setIdVideo(call.id);
         setUploadDialogOpen(true);
+        
     };
 
     const handleCloseUploadDialog = () => {
         setUploadDialogOpen(false);
+        dispatch(getTaCallRecords(date.format('YYYY-MM-DD')));
         setVideoUrl('');
         setIdVideo(null);
     };

@@ -26,7 +26,7 @@ const store = configureStore({
     reducer: {
         auth: authReducer,
         taModule: taReducer,
-        taAvailability: taAvailabilityReducer,
+        // taAvailability: taAvailabilityReducer,
         taScheduling: taSchedulingReducer,
         taAvialability: taAvailabilityReducer,
         coachTemplate: coachTemplateReducer,

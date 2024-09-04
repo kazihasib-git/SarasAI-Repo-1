@@ -11,6 +11,7 @@ import {
     FormControlLabel,
     FormControl,
 } from '@mui/material';
+import { toast } from 'react-toastify';
 import { Controller, useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import VideoUploadComponent from './videoUpload/VideoUploadComponent';
@@ -138,14 +139,96 @@ const LinkActivityPopup = ({
         }
     }, [coachData]);
 
+    const validateActivityData = (
+        activityType,
+        videoUrl,
+        upload_pdf_url,
+        selectedAssessmentId,
+        selectedSessionType,
+        data
+    ) => {
+        if (activityType === 'videos' && !videoUrl) {
+            toast.error('Please upload a valid video.');
+            return false;
+        } else if (activityType === 'pdf' && !upload_pdf_url) {
+            toast.error('Please upload a valid PDF.');
+            return false;
+        } else if (activityType === 'test' && !selectedAssessmentId) {
+            toast.error('Please provide a valid Assessment Type.');
+            return false;
+        } else if (activityType === 'virtual meet' && !selectedSessionType) {
+            toast.error('Please provide a valid Session.');
+            return false;
+        } else if (activityType === 'link' && !data.link) {
+            toast.error('Please provide a valid link.');
+            return false;
+        }
+
+        if (
+            activityType === 'virtual meet' &&
+            selectedSessionType === 'group'
+        ) {
+            // Specific validation for 'virtual meet' and 'group'
+            if (!selectedCoachId) {
+                toast.error('Please select a coach');
+                return;
+            }
+            if (!fromDate) {
+                toast.error('Please select the date');
+                return;
+            }
+            if (!selectedSlot) {
+                toast.error('Please select a slot');
+                return;
+            }
+            if (!data.meeting_name) {
+                toast.error('Meeting Name is required');
+                return;
+            }
+            if (!selectedPlatform) {
+                toast.error('Please select a platform');
+                return;
+            }
+            if (selectedPlatform === 1 && !selectHostName) {
+                toast.error('Please select a host name');
+                return;
+            }
+            if (selectedPlatform === 1 && !selectMeetingType) {
+                toast.error('Please select a meeting type');
+                return;
+            }
+            if (!data.fromTime) {
+                toast.error('Please Select From Time');
+            }
+            if (!data.toTime) {
+                toast.error('Please Select To Time');
+            }
+        }
+
+        return true; // Return true if all validations pass
+    };
+
     const onSubmit = async data => {
         setSelectedAssessmentId(data.assessment);
+        console.log(activityType, 'actibjbcjecjece');
+        const isValid = validateActivityData(
+            activityType,
+            videoUrl,
+            upload_pdf_url,
+            selectedAssessmentId,
+            selectedSessionType,
+            data
+        );
+        if (!isValid) {
+            return; // Exit if validation fails
+        }
         const payload = {
             activity_id: activityId, // Ensure this value is correctly set
             activity_type_id: selectedActivityId,
             // activityType === 'test'
             //     ? selectedAssessmentId
             //    : selectedActivityId, // Ensure this value is correctly set
+
             link: videoUrl || upload_pdf_url || data.link, // Add other fields if needed
             virtual_meeting_type: selectedSessionType,
             test_type: selectedAssessmentId,
@@ -560,7 +643,7 @@ const LinkActivityPopup = ({
                                         control={control}
                                         defaultValue={null}
                                         render={({ field }) => (
-                                            <CustomDateField
+                                            <CustomFutureDateField
                                                 label="Select Date"
                                                 name="date"
                                                 value={fromDate}

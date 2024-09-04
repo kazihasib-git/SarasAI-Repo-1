@@ -1,16 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-    getTaMenuAssignedStudents,
-    getTaMenuSessions,
-    updateStudentsInTaSession,
-} from '../../../../redux/features/taModule/tamenuSlice';
-import {
-    getCoachMenuAssignedStudents,
-    getCoachMenuSessions,
-    updateBatchesInCoachSession,
-    updateStudentsInCoachSession,
-} from '../../../../redux/features/coachModule/coachmenuprofileSilce';
+import { getTaMenuAssignedStudents, getSelectedTaMenuAssignedStudents , getTaMenuSessions, updateStudentsInTaSession } from '../../../../redux/features/taModule/tamenuSlice';
+import { getCoachMenuAssignedStudents, getCoachMenuSessions,getSelectedCoachMenuAssignedStudents, updateBatchesInCoachSession, updateStudentsInCoachSession } from '../../../../redux/features/coachModule/coachmenuprofileSilce';
 import { toast } from 'react-toastify';
 import { closeEditStudents } from '../../../../redux/features/commonCalender/commonCalender';
 import CustomButton from '../../../CustomFields/CustomButton';
@@ -22,7 +13,8 @@ import PopUpTable from '../../../CommonComponent/PopUpTable';
 const headers = ['S. No.', 'Student Name', 'Program', 'Batch', 'Select'];
 
 const EditStudentsSessionLink = ({ componentName }) => {
-    const dispatch = useDispatch();
+
+  const dispatch = useDispatch();
 
     const [selectedTerm, setSelectedTerm] = useState([]);
     const [selectedBatch, setSelectedBatch] = useState('');
@@ -30,55 +22,64 @@ const EditStudentsSessionLink = ({ componentName }) => {
     const [selectedStudents, setSelectedStudents] = useState([]);
     const [filteredStudents, setFilteredStudents] = useState([]);
 
-    let sliceName,
-        getAssignStudentsApi,
-        assignedStudentsState,
-        editStudentsApi,
-        getSessionApi;
+  let sliceName,
+    getAssignStudentsApi,
+    getAssignSelectedStudentsApi,
+    getAssignedSelectedStudentsState,
+    assignedStudentsState,
+    editStudentsApi,
+    getSessionApi;
 
-    switch (componentName) {
-        case 'TAMENU':
-            sliceName = 'taMenu';
-            getAssignStudentsApi = getTaMenuAssignedStudents;
-            assignedStudentsState = 'assignedTaStudents';
-            editStudentsApi = updateStudentsInTaSession;
-            getSessionApi = getTaMenuSessions;
-            break;
 
-        case 'COACHMENU':
-            sliceName = 'coachMenu';
-            getAssignStudentsApi = getCoachMenuAssignedStudents;
-            assignedStudentsState = 'assignedCoachStudents';
-            editStudentsApi = updateStudentsInCoachSession;
-            getSessionApi = getCoachMenuSessions;
-            break;
+  switch (componentName) {
+    case 'TAMENU':
+      sliceName = 'taMenu';
+      getAssignSelectedStudentsApi = getSelectedTaMenuAssignedStudents;
+      getAssignedSelectedStudentsState = 'taScheduleStudents';
+      getAssignStudentsApi = getTaMenuAssignedStudents;
+      assignedStudentsState = 'assignedTaStudents';
+      editStudentsApi = updateStudentsInTaSession
+      getSessionApi = getTaMenuSessions
+      break;
 
-        default:
-            sliceName = null;
-            getAssignStudentsApi = null;
-            assignedStudentsState = null;
-            editStudentsApi = null;
-            getSessionApi = null;
-            break;
-    }
+    case 'COACHMENU':
+      sliceName = 'coachMenu';
+      getAssignSelectedStudentsApi = getSelectedCoachMenuAssignedStudents;
+      getAssignedSelectedStudentsState = 'coachScheduleStudents';
+      getAssignStudentsApi = getCoachMenuAssignedStudents;
+      assignedStudentsState = 'assignedCoachStudents';
+      editStudentsApi = updateStudentsInCoachSession;
+      getSessionApi = getCoachMenuSessions
+      break;
+
+    default:
+      sliceName = null;
+      getAssignStudentsApi = null;
+      getAssignSelectedStudentsApi= null;
+      getAssignedSelectedStudentsState = null;
+      assignedStudentsState = null;
+      editStudentsApi = null;
+      getSessionApi = null;
+      break;
+  }
 
     const stateSelector = useSelector(state => state[sliceName]);
 
-    const { [assignedStudentsState]: students } = stateSelector;
+  const { 
+    [assignedStudentsState]: students,
+    [getAssignedSelectedStudentsState] : sessionStudents,
+   } = stateSelector
 
-    const { editStudents, meetingId, openEditStudentsPopup } = useSelector(
-        state => state.commonCalender
-    );
+  const { meetingId, openEditStudentsPopup } = useSelector((state) => state.commonCalender)
+  
+  useEffect(() => {
+    dispatch(getAssignStudentsApi())
+    .then(() => {
+      dispatch(getAssignSelectedStudentsApi(meetingId));
+    })
+  }, [dispatch])
 
-    useEffect(() => {
-        dispatch(getAssignStudentsApi());
-    }, [dispatch]);
-
-    useEffect(() => {
-        if (editStudents) {
-            setSelectedStudents(editStudents.map(student => student.id));
-        }
-    }, [editStudents]);
+  console.log("Students", students, sessionStudents)
 
     useEffect(() => {
         if (students && students.length > 0) {
@@ -163,11 +164,19 @@ const EditStudentsSessionLink = ({ componentName }) => {
               ]
             : [];
 
-    const handleSelectStudent = id => {
-        setSelectedStudents(prev =>
-            prev.includes(id) ? prev.filter(sid => sid !== id) : [...prev, id]
-        );
-    };
+      useEffect(() => {
+        if (sessionStudents && sessionStudents.length > 0) {
+          setSelectedStudents(
+            sessionStudents.map(student => student.student_id)
+          );
+        }
+      }, [sessionStudents])
+
+  const handleSelectStudent = (id) => {
+    setSelectedStudents(prev =>
+      prev.includes(id) ? prev.filter(sid => sid !== id) : [...prev, id]
+    );
+  };
 
     const validate = () => {
         if (selectedStudents.length === 0) {
@@ -180,15 +189,22 @@ const EditStudentsSessionLink = ({ componentName }) => {
     const handleSubmit = () => {
         if (!validate()) return;
 
-        const id = meetingId;
-        const data = {
-            studentId: selectedStudents.map(id => id),
-        };
-        dispatch(editStudentsApi({ id, data })).then(() => {
-            dispatch(closeEditStudents());
-            dispatch(getSessionApi());
-        });
-    };
+    const id = meetingId;
+    const data = {
+      studentId : selectedStudents.map(id => id),
+    }
+    dispatch(editStudentsApi({ id, data }))
+      .unwrap()
+      .then(() => {
+        dispatch(closeEditStudents())
+        toast.success("Student Updated Successfully.")
+        // dispatch(getSessionApi())
+      })
+      .catch(error =>{
+        toast.error(`${error}`);
+    })
+    
+  };
 
     const content = (
         <>

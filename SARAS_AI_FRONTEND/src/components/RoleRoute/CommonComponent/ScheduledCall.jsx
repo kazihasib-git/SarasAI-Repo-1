@@ -33,54 +33,55 @@ import SessionLink from './commonCalender/SessionLink';
 import EditSession from './commonCalender/EditSession';
 import ParticipantsDialog from '../../../pages/coachModule/ParticipantsDialog';
 import { convertFromUTC } from '../../../utils/dateAndtimeConversion';
-
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                // padding: "18px 25px",
-                border: `1.5px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
-
+import { timezoneIdToName } from '../../../utils/timezoneIdToName';
+import { getTimezone } from '../../../redux/features/utils/utilSlice';
+import CustomButton from '../../CustomFields/CustomButton';
+import {
+    openParticipantsDialog,
+    closeParticipantsDialog,
+    closeEditParticipantsDialog,
+} from '../../../redux/features/commonCalender/commonCalender';
+import EditParticipantsDialog from './EditParticipantsDialog';
 const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
-
 const ScheduledCall = ({ role }) => {
     const dispatch = useDispatch();
+    const { participantsDialogOpen, editParticipantsDialogOpen } = useSelector(
+        state => state.commonCalender
+    );
     const [newMeetingPopUpOpen, setNewMeetingPopUpOpen] = useState(false);
     const [date, setDate] = useState(moment());
     const [anchorEl, setAnchorEl] = useState(null);
     const { coachScheduledCalls } = useSelector(state => state.coachMenu);
     const { taScheduledCalls } = useSelector(state => state.taMenu);
-    const [participantsDialogOpen, setParticipantsDialogOpen] = useState(false); // New state for ParticipantsDialog
     const [selectedParticipants, setSelectedParticipants] = useState([]);
     const [scheduledCalls, setScheduledCalls] = useState([]);
+ 
+    let sliceName, getScheduledCallsApi, getScheduledCallsState;
+    switch (role) {
+        case 'TA':
+            sliceName = 'taMenu';
+            getScheduledCallsApi = getTaScheduledCalls;
+            getScheduledCallsState = 'taScheduledCalls';
+            break;
+ 
+        case 'Coach':
+            sliceName = 'coachMenu';
+            getScheduledCallsApi = getCoachScheduledCalls;
+            getScheduledCallsState = 'coachScheduledCalls';
+            break;
+ 
+        default:
+            sliceName = null;
+            getScheduledCallsApi = null;
+            getScheduledCallsState = null;
+            break;
+    }
+ 
+    const stateSelector = useSelector(state => state[sliceName]);
+    const { timezone_id } = useSelector(state => state.auth);
+ 
+    const { [getScheduledCallsState]: scheduledCallsData } = stateSelector;
+ 
     const {
         scheduleNewSessionPopup,
         selectStudentPopup,
@@ -88,74 +89,47 @@ const ScheduledCall = ({ role }) => {
         openSession,
         editSession,
     } = useSelector(state => state.commonCalender);
-
-    const { taProfileData } = useSelector(state => state.taMenu);
-    const { coachProfileData } = useSelector(state => state.coachMenu);
-
+ 
     const { timezones } = useSelector(state => state.util);
-
+ 
+    useEffect(() => {
+        dispatch(getTimezone());
+    }, [dispatch]);
+ 
     function formatDate(date) {
         const localDate = new Date(date);
         const offset = 5.5 * 60 * 60000;
         const adjustedDate = new Date(localDate.getTime() + offset);
         return adjustedDate.toISOString().split('T')[0];
     }
-
+ 
     useEffect(() => {
-        if (role == 'Coach' && coachProfileData && timezones) {
-            const coachTimeZone = timezones.find(
-                timezone => timezone.id === coachProfileData.timezone_id
-            );
-
-            const data = {
-                date: formatDate(date),
-                timezone_name: coachTimeZone.time_zone,
-            };
-
-            dispatch(getCoachScheduledCalls(data));
-        } else if (role == 'TA' && taProfileData && timezones) {
-            const taTimeZone = timezones.find(
-                timezone => timezone.id === taProfileData.timezone_id
-            );
-
-            const data = {
-                date: formatDate(date),
-                timezone_name: taTimeZone.time_zone,
-            };
-
-            dispatch(getTaScheduledCalls(data))
-                .then(response => console.log(response))
-                .catch(error => console.error(error));
-        }
-    }, [
-        dispatch,
-        date,
-        role,
-        scheduleNewSessionPopup,
-        taProfileData,
-        coachProfileData,
-        timezones,
-    ]);
-
+        const data = {
+            date: formatDate(date),
+            timezone_name: timezoneIdToName(storedTimezoneId, timezones),
+        };
+        dispatch(getScheduledCallsApi(data));
+    }, [dispatch, date, storedTimezoneId, timezones]);
+ 
     function convertTo12HourFormat(time24) {
         // Split the time into hours, minutes, and seconds
         const [hours, minutes, seconds] = time24.split(':').map(Number);
-
+ 
         const suffix = hours >= 12 ? 'PM' : 'AM';
-
+ 
         const hours12 = hours % 12 || 12;
-
+ 
         const formattedMinutes = minutes.toString().padStart(2, '0');
-
+ 
         return `${hours12}:${formattedMinutes} ${suffix}`;
     }
-
+ 
     // const getCallStatus = (startTime, endTime) => {
     //     const nowUtc = new Date();
     //     const offset = 5.5 * 60 * 60 * 1000;
     //     const nowIst = new Date(nowUtc.getTime() + offset);
     //     const currentTime = nowIst.toISOString().split('T')[1].split('.')[0];
-
+ 
     //     if (currentTime < startTime) {
     //         return 'scheduled';
     //     } else if (currentTime >= startTime && currentTime <= endTime) {
@@ -164,21 +138,21 @@ const ScheduledCall = ({ role }) => {
     //         return 'completed';
     //     }
     // };
-
+ 
     const processScheduledCalls = async requests => {
         const newRequests = requests.map(request => ({ ...request }));
-
+ 
         const sortedRequests = newRequests.sort((a, b) => {
             return a.start_time.localeCompare(b.start_time);
         });
-
+ 
         const transformedRequests = await Promise.all(
             sortedRequests.map(async request => {
                 const selectedTimeZone = timezones.find(
-                    timezone => timezone.id === request.timezone_id
+                    timezone => timezone.id == timezone_id
                 );
                 const timezonename = selectedTimeZone.time_zone;
-
+ 
                 const localTime = await convertFromUTC({
                     start_date: request.date.split(' ')[0],
                     start_time: request.start_time,
@@ -186,7 +160,7 @@ const ScheduledCall = ({ role }) => {
                     end_date: request.end_date,
                     timezonename,
                 });
-
+ 
                 const newRequest = {
                     ...request,
                     date: localTime.start_date,
@@ -194,52 +168,52 @@ const ScheduledCall = ({ role }) => {
                     start_time: localTime.start_time,
                     end_time: localTime.end_time,
                 };
-
+ 
                 return newRequest;
             })
         );
-
+ 
         const processedCalls = transformedRequests.map(request => ({
             ...request,
             time: `${convertTo12HourFormat(request.start_time)} - ${convertTo12HourFormat(request.end_time)}`,
         }));
         setScheduledCalls(processedCalls);
     };
-
+ 
     useEffect(() => {
-        if (role == 'Coach') {
-            processScheduledCalls(coachScheduledCalls);
-        } else if (role == 'TA') {
-            processScheduledCalls(taScheduledCalls);
+        if (scheduledCallsData && scheduledCallsData.length > 0) {
+            processScheduledCalls(scheduledCallsData);
+        } else {
+            setScheduledCalls([]);
         }
-    }, [coachScheduledCalls, taScheduledCalls]);
-
+    }, [scheduledCallsData]);
+ 
     const handleDateChange = newDate => {
         if (newDate && newDate.isValid()) {
             setDate(newDate);
             handleCalendarClose();
         }
     };
-
+ 
     const handleIncrement = () => {
         setDate(prevDate => moment(prevDate).add(1, 'days'));
     };
-
+ 
     const handleDecrement = () => {
         setDate(prevDate => moment(prevDate).subtract(1, 'days'));
     };
-
+ 
     const handleCalendarOpen = event => {
         setAnchorEl(event.currentTarget);
     };
-
+ 
     const handleCalendarClose = () => {
         setAnchorEl(null);
     };
-
+ 
     const open = Boolean(anchorEl);
     const id = open ? 'calendar-popover' : undefined;
-
+ 
     const handleClose = () => {
         setNewMeetingPopUpOpen(false);
     };
@@ -249,10 +223,9 @@ const ScheduledCall = ({ role }) => {
         return timeA - timeB;
     });
     const onNewMeetingSubmit = props => {
-        console.log(props);
         setNewMeetingPopUpOpen(false);
     };
-
+ 
     const handleClickJoinSession = call => {
         const transformedCall = {
             // title: call.meeting_name,
@@ -268,23 +241,28 @@ const ScheduledCall = ({ role }) => {
         };
         dispatch(openSessionPopup(transformedCall));
     };
-
+ 
     const handleCreateNewSession = () => {
         dispatch(openScheduleNewSession());
     };
-
-    const handleEditClick = data => {
-        dispatch(openEditSession(data));
+ 
+    const handleEditClick = sessionData => {
+        dispatch(openEditSession({ sessionData }));
     };
-
+ 
     const handleOpenParticipantsDialog = participants => {
         setSelectedParticipants(participants);
-        setParticipantsDialogOpen(true);
+        dispatch(openParticipantsDialog(participants));
     };
     const handleCloseParticipantsDialog = () => {
-        setParticipantsDialogOpen(false);
+        setSelectedParticipants([]);
+        dispatch(closeParticipantsDialog());
     };
-
+ 
+    const handleCloseEditParticipantsDialog = () => {
+        dispatch(closeEditParticipantsDialog());
+    };
+ 
     return (
         <div style={{ padding: '20px' }}>
             {newMeetingPopUpOpen && (
@@ -294,14 +272,22 @@ const ScheduledCall = ({ role }) => {
                     onSubmit={onNewMeetingSubmit}
                 />
             )}
+ 
+            {editParticipantsDialogOpen && (
+                <EditParticipantsDialog
+                    openEdit={editParticipantsDialogOpen}
+                    onCloseEdit={handleCloseEditParticipantsDialog}
+                    participantsData={selectedParticipants}
+                />
+            )}
             {participantsDialogOpen && (
                 <ParticipantsDialog
                     open={participantsDialogOpen}
                     onClose={handleCloseParticipantsDialog}
-                    participantsData={selectedParticipants} // Pass the selected participants data
+                    participantsData={selectedParticipants}
                 />
             )}
-
+ 
             <Box
                 display="flex"
                 justifyContent="space-between"
@@ -328,7 +314,7 @@ const ScheduledCall = ({ role }) => {
                     Create New Session
                 </CustomButton>
             </Box>
-
+ 
             <LocalizationProvider dateAdapter={AdapterMoment}>
                 <Box display="flex" alignItems="center" mb="20px">
                     <Typography variant="h6" mx="20px">
@@ -368,7 +354,7 @@ const ScheduledCall = ({ role }) => {
                     </Popover>
                 </Box>
             </LocalizationProvider>
-
+ 
             <Grid container spacing={2}>
                 {sortedCalls.map(call => (
                     <Grid item key={call.id} xs={12} sm={6} md={4}>
@@ -505,28 +491,28 @@ const ScheduledCall = ({ role }) => {
                         timezoneID={storedTimezoneId}
                     />
                 ))}
-
+ 
             {editSession &&
                 (role == 'Coach' ? (
                     <EditSession componentName={'COACHMENU'} />
                 ) : (
                     <EditSession componentName={'TAMENU'} />
                 ))}
-
+ 
             {selectStudentPopup &&
                 (role == 'Coach' ? (
                     <SelectStudents componentName={'COACHMENU'} />
                 ) : (
                     <SelectStudents componentName={'TAMENU'} />
                 ))}
-
+ 
             {selectBatchPopup &&
                 (role == 'Coach' ? (
                     <SelectBatches componentName={'COACHMENU'} />
                 ) : (
                     <SelectBatches componentName={'TAMENU'} />
                 ))}
-
+ 
             {openSession &&
                 (role == 'Coach' ? (
                     <SessionLink componentName={'COACHMENU'} />
@@ -536,5 +522,5 @@ const ScheduledCall = ({ role }) => {
         </div>
     );
 };
-
+ 
 export default ScheduledCall;

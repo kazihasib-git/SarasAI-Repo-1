@@ -328,6 +328,7 @@ const initialState = {
     categoryIdToSubmitSelectedQuestions: null,
     loading: false,
     error: null,
+    categoryInfo:{}
 };
 
 const wolSlice = createSlice({
@@ -346,6 +347,14 @@ const wolSlice = createSlice({
         handleIdToSubmitSelectedQuestions: (state, action) => {
             state.categoryIdToSubmitSelectedQuestions = action.payload;
         },
+
+        handleOpenSelectCategoryQuestions : (state , action)=>{
+            console.log('action.payload', action.payload)
+            state.categoryInfo = action.payload ; 
+            
+        },
+        
+        
     },
 
     extraReducers: builder => {
@@ -595,7 +604,10 @@ const wolSlice = createSlice({
         builder.addCase(addQuestionToCategory.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload || action.error.message;
-            toast.error(action.payload || 'Failed to ADD Questions');
+            state.addQuestionToCategoryData = []
+            toast.error(
+                action.payload || 'Failed to ADD Questions'
+            );
         });
 
         // selectedQuestionsList
@@ -619,6 +631,7 @@ export const {
     setEditData,
     seteditwolQuestionData,
     handleIdToSubmitSelectedQuestions,
+    handleOpenSelectCategoryQuestions
 } = wolSlice.actions;
 
 export default wolSlice.reducer;

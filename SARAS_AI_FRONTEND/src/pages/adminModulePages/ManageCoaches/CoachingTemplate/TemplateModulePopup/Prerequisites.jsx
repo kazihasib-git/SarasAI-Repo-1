@@ -77,7 +77,6 @@ const PrerequisitesPopup = ({
     } = useForm();
 
     const [activityDependence, setActivityDependence] = useState(false);
-    // const [moduleData, setModuleData] = useState([]);
     const [moduleOptions, setModuleOptions] = useState([]);
     const [activityOptions, setActivityOptions] = useState([]);
     const [fromTime, setFromTime] = useState();
@@ -117,15 +116,16 @@ const PrerequisitesPopup = ({
             const selectedModule = coachTemplatesId.modules.find(
                 mod => mod.id === selectedModuleId
             );
+            console.log(selectedModule,"fsfsfsfsfS",prereqActivityData, "njnfjf");
 
             if (selectedModule && selectedModuleId == prereqModuleData.id) {
                 const options =
-                    selectedModule.activities
-                        ?.filter(item => item.id != prereqActivityData.id)
-                        .map(activity => ({
-                            value: activity.id,
-                            label: activity.activity_name,
-                        })) || [];
+                    selectedModule.activities?.filter(item => item.due_date < prereqActivityData.due_date)
+                    .filter(item => item.id != prereqActivityData.id)
+                    .map(activity => ({
+                        value: activity.id,
+                        label: activity.activity_name,
+                    })) || [];
                 setActivityOptions(options);
             } else if (selectedModule) {
                 const options =
@@ -139,24 +139,29 @@ const PrerequisitesPopup = ({
     }, [watch('module'), coachTemplatesId]);
 
     const validate = data => {
-        if (activityDependence) {
-            if (!data.module) {
-                toast.error('Module is required.');
-                return false;
-            }
-            if (!data.activity || data.activity.length === 0) {
-                toast.error('At least one activity is required.');
-                return false;
-            }
-        }
-
-        if (!data.lockUntil) {
-            toast.error('Lock Until Date is required.');
+        if (!data.lockUntil && !fromTime && !activityDependence) {
+            toast.error('Please select either Lock Until and Time, or Activity Dependence.');
             return false;
         }
 
-        if (!fromTime) {
-            toast.error('From Time is required.');
+        if (activityDependence) {
+            if (!data.module) {
+                toast.error('Module is required when Activity Dependence is selected.');
+                return false;
+            }
+            if (!data.activity || data.activity.length === 0) {
+                toast.error('At least one activity is required when Activity Dependence is selected.');
+                return false;
+            }
+        }
+
+        if (data.lockUntil && !fromTime) {
+            toast.error('From Time is required when Lock Until Date is set.');
+            return false;
+        }
+
+        if (!data.lockUntil && fromTime) {
+            toast.error('Lock Until Date is required when From Time is set.');
             return false;
         }
 
@@ -165,22 +170,21 @@ const PrerequisitesPopup = ({
 
     const onSubmit = data => {
         if (!validate(data)) {
-            return; // Prevent further execution if validation fails
+            return;
         }
 
         const prereqData = {
             module_id: prereqModuleData.id,
             activity_id: prereqActivityData.id,
             template_id: prereqModuleData.template_id,
-            lock_until_date: data.lockUntil,
-            time: fromTime,
-            data:
-                data &&
-                data.activity &&
-                data.activity.map(act => ({
+            lock_until_date: data.lockUntil || null,
+            time: fromTime || null,
+            data: activityDependence && data.activity
+                ? data.activity.map(act => ({
                     prerequisite_activity_id: act,
                     prerequisite_module_id: data.module,
-                })),
+                  }))
+                : null,
         };
 
         dispatch(addPrerequisites(prereqData)).then(() => {
@@ -241,9 +245,6 @@ const PrerequisitesPopup = ({
                     value={fromTime}
                     onChange={time => setFromTime(time)}
                     register={register}
-                    validation={{
-                        required: 'From Time is required',
-                    }}
                     errors={errors}
                 />
             </Grid>
@@ -285,10 +286,7 @@ const PrerequisitesPopup = ({
                                     label="Module"
                                     name="module"
                                     value={field.value}
-                                    onChange={e => {
-                                        field.onChange(e);
-                                        // handleCoachChange(e); // Uncomment if you have a handleCoachChange function
-                                    }}
+                                    onChange={field.onChange}
                                     options={moduleOptions}
                                     errors={errors}
                                 />
@@ -308,10 +306,7 @@ const PrerequisitesPopup = ({
                                     label="Activity"
                                     name="activity"
                                     value={field.value}
-                                    onChange={e => {
-                                        field.onChange(e);
-                                        // handleCoachChange(e); // Uncomment if you have a handleCoachChange function
-                                    }}
+                                    onChange={field.onChange}
                                     errors={errors}
                                     options={activityOptions}
                                 />
@@ -348,6 +343,6 @@ const PrerequisitesPopup = ({
             actions={actions}
         />
     );
-};
+}; 
 
 export default PrerequisitesPopup;

@@ -65,7 +65,7 @@
     /* Example class */
     background-color: unset !important; /* Ensure no background color is being inherited */
 }
- 
+
 .on-leave-slot {
     position: relative;
 }
@@ -143,4 +143,17 @@
     background-color: #4e18a5 !important; /* Light blue for the header */
     color: #feffff !important; /* Blue text color for the header */
 }
- 
+
+.rbc-time-gutter .on-leave-slot {
+    background-color: unset !important;
+}
+
+.rbc-time-gutter .on-leave-slot::before {
+    content: unset !important;
+}
+
+.rbc-time-gutter .rbc-time-slot {
+    background-color: transparent !important;
+    opacity: 1 !important;
+    border: none !important;
+}

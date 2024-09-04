@@ -30,41 +30,7 @@ import LeaveReason from '../../components/RoleRoute/CommonComponent/commonCalend
 import CreatedSessions from '../../components/RoleRoute/CommonComponent/commonCalender/CreatedSessions';
 import EditBatchesSessionLink from '../../components/RoleRoute/CommonComponent/commonCalender/EditBatchesSessionLink';
 import EditStudentsSessionLink from '../../components/RoleRoute/CommonComponent/commonCalender/EditStudentsSessionLink';
-
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                // padding: "18px 25px",
-                border: `1.5px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
+import CustomButton from '../../components/CustomFields/CustomButton';
 
 const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
 
@@ -296,6 +262,7 @@ const TAMenuCalendar = () => {
         }
     }, [taSessions, targetSessionId]);
 
+    console.log('storedtimezoneID to be sent ' , storedTimezoneId) ; 
     return (
         <>
             <Header />

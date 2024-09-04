@@ -25,7 +25,6 @@ const CoachTemplateTable = ({
     );
 
     const [currentPage, setCurrentPage] = useState(1);
-
     useEffect(() => {
         setData(
             initialData.map(item => ({
@@ -85,7 +84,7 @@ const CoachTemplateTable = ({
 
         switch (componentName) {
             case 'COACHTEMPLATE':
-                dispatch(updateCoachActivity({ data: requestData }));
+                dispatch(updateTemplateActivity({ data: requestData }));
                 break;
             default:
                 console.warn(

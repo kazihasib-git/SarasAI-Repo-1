@@ -114,7 +114,7 @@ const AddActivity = () => {
                     control={control}
                     rules={{ required: 'Due Date is required' }}
                     render={({ field }) => (
-                        <CustomDateField
+                        <CustomFutureDateField
                             label="Due Date"
                             name="dueDate"
                             value={field.value}

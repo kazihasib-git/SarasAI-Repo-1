@@ -3,10 +3,8 @@ import { Checkbox, Box, Pagination, Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import {
-    getAllCoursesWithTas,
-    assignCourseToTa,
-} from '../../redux/features/adminModule/ta/taSlice';
+import { getAllCoursesWithTas, assignCourseToTa } from '../../redux/features/adminModule/ta/taSlice';
+import { toast } from 'react-toastify';
 import CustomButton from '../CustomFields/CustomButton';
 const CustomCheckbox = styled(Checkbox)(({ theme }) => ({
     color: '#F56D3B',
@@ -87,7 +85,16 @@ const AdminCoursesTable = ({ taId }) => {
         };
 
         // Dispatch the API call to assign/unassign the ta to/from the courses
-        dispatch(assignCourseToTa(requestData)).unwrap();
+        dispatch(assignCourseToTa(requestData))
+        .unwrap()
+        .then((response) => {
+            console.log('Course assigned successfully:', response);
+        })
+        .catch((error) => {
+            console.error('Failed to assign course:', error);
+            
+           
+        });
         navigate('/ta-course-mapping'); // Navigate to the desired page
     };
 

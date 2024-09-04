@@ -99,8 +99,29 @@ export const updateCoachTemplateModule = createAsyncThunk(
     }
 );
 
-export const updateCoachActivity = createAsyncThunk(
-    'coachTemplate/updateCoachActivity',
+export const updateTemplateActivity = createAsyncThunk(
+    'coachTemplate/updateTemplateActivity',
+    async ({ data }, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.post(
+                `${baseUrl}/admin/coaching-templates/template-status`,
+                data
+            );
+            console.log('API Response: ', response.data);
+            return response.data;
+        } catch (error) {
+            console.error(
+                'API Error: ',
+                error.response ? error.response.data : error.message
+            );  
+            return rejectWithValue(
+                error.response ? error.response.data : error.message
+            );
+        }
+    }
+);
+export const updateModuleActivity = createAsyncThunk(
+    'coachTemplate/updateModuleActivity',
     async ({ data }, { rejectWithValue }) => {
         try {
             const response = await axiosInstance.post(
@@ -112,7 +133,7 @@ export const updateCoachActivity = createAsyncThunk(
             console.error(
                 'API Error: ',
                 error.response ? error.response.data : error.message
-            );
+            );  
             return rejectWithValue(
                 error.response ? error.response.data : error.message
             );
@@ -454,14 +475,28 @@ export const coachTemplateSlice = createSlice({
 
         // Update Coach Activity
         builder
-            .addCase(updateCoachActivity.pending, state => {
+            .addCase(updateTemplateActivity.pending, state => {
                 state.loading = true;
             })
-            .addCase(updateCoachActivity.fulfilled, (state, action) => {
+            .addCase(updateTemplateActivity.fulfilled, (state, action) => {
                 state.loading = false;
                 // state.coachTemplates.push(action.payload.data);
             })
-            .addCase(updateCoachActivity.rejected, (state, action) => {
+            .addCase(updateTemplateActivity.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+            });
+
+            //update module acativity 
+        builder
+            .addCase(updateModuleActivity.pending, state => {
+                state.loading = true;
+            })
+            .addCase(updateModuleActivity.fulfilled, (state, action) => {
+                state.loading = false;
+                // state.coachTemplates.push(action.payload.data);
+            })
+            .addCase(updateModuleActivity.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
             });
@@ -472,7 +507,7 @@ export const coachTemplateSlice = createSlice({
                 state.loading = true;
             })
             .addCase(updateEditActivity.fulfilled, (state, action) => {
-                state.loading = false;
+                state.loading = false; 
                 // state.coachTemplates.push(action.payload.data);
                 state.editActivityData = action.payload?.data;
                 toast.success(
@@ -485,7 +520,7 @@ export const coachTemplateSlice = createSlice({
                 toast.error(action.payload || 'Failed to update Activity');
             });
 
-        // createCoachTemplateActivity
+        // createCoachTemplateActivity 
         builder
             .addCase(createCoachTemplateActivity.pending, state => {
                 state.loading = true;

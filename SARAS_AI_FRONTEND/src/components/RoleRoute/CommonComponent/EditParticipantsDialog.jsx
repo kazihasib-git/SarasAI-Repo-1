@@ -9,7 +9,7 @@ import {
     Box,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { closeParticipantsDialog, openEditParticipantsDialog, openSelectStudents } from '../../redux/features/commonCalender/commonCalender';
+import { closeParticipantsDialog, openEditParticipantsDialog, openSelectStudents, openSelectBatches } from '../../../redux/features/commonCalender/commonCalender';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 // const participantsData = [
@@ -19,38 +19,49 @@ import { useSelector } from 'react-redux';
 //     { id: 4, name: 'Name Here', program: 'Program 4', batch: 'Batch 4' },
 // ];
 
-const ParticipantsDialog = ({ open, onClose, participantsData }) => {
+const EditParticipantsDialog = ({ openEdit, onCloseEdit, participantsData }) => {
+
     const {selectedParticipants} = useSelector(state=>state.commonCalender) ; 
-    console.log( "participantsData",participantsData);
+
     const [data, setData] = useState([]);
     const transformData = () => {
         const transformedData = selectedParticipants.map((item, index) => ({
-        id: item.id,
-        name: item.name,
-        //'Enrollment Id': item.enrollment_id,
-        program:
-            item.packages.map(pack => pack.package_name).join(',') || 'N/A',
-        batch:
-            item.batches.map(batch => batch.name).join(', ') ||
-            'N/A',
+            id: item.id,
+            name: item.name,
+            //'Enrollment Id': item.enrollment_id,
+            program:
+                item.packages.map(pack => pack.package_name).join(',') || 'N/A',
+            batch:
+                item.batches.map(batch => batch.name).join(', ') ||
+                'N/A',
         }));
+        console.log('TransformedData', transformedData);
         setData(transformedData);
     }
-    
 
-    useEffect(()=>{
+
+    useEffect(() => {
         transformData(selectedParticipants);
-    },selectedParticipants);
-const dispatch = useDispatch() ; 
+    }, selectedParticipants);
+    const dispatch = useDispatch();
 
     const handleOpenEditParticipantsDialog = participants => {
-        console.log('handleOpenEditParticipantsDialog' , true)
-        dispatch(openEditParticipantsDialog(selectedParticipants)); 
+        console.log('handleOpenEditParticipantsDialog', true)
+        dispatch(openEditParticipantsDialog(selectedParticipants));
     };
+
+    const handleAssignStudents = () => {
+        dispatch(openSelectStudents({ selectedParticipants }));
+    };
+
+    const handleAssignBatches = () => {
+        dispatch(openSelectBatches({ selectedParticipants }));
+    };
+
     return (
         <Dialog
-            open={open}
-            onClose={onClose}
+            open={openEdit}
+            onClose={onCloseEdit}
             PaperProps={{
                 style: {
                     width: '600px',
@@ -61,10 +72,10 @@ const dispatch = useDispatch() ;
         >
             <DialogTitle>
                 <Typography variant="h6" marginTop={4}>
-                    Participants
+                    Edit Participants
                 </Typography>
                 <IconButton
-                    onClick={onClose}
+                    onClick={onCloseEdit}
                     style={{
                         position: 'absolute',
                         top: '10px',
@@ -108,23 +119,20 @@ const dispatch = useDispatch() ;
                         </tr>
                     </thead>
                     <tbody>
-                        {data.length > 0 &&
-                            data.map((participant, index) => (
-                                <tr key={participant.id}>
-                                    <td style={{ padding: '8px' }}>
-                                        {index + 1}
-                                    </td>
-                                    <td style={{ padding: '8px' }}>
-                                        {participant.name}
-                                    </td>
-                                    <td style={{ padding: '8px' }}>
-                                        {participant.program}
-                                    </td>
-                                    <td style={{ padding: '8px' }}>
-                                        {participant.batch}
-                                    </td>
-                                </tr>
-                            ))}
+                        {data.length > 0 && data.map((participant, index) => (
+                            <tr key={participant.id}>
+                                <td style={{ padding: '8px' }}>{index + 1}</td>
+                                <td style={{ padding: '8px' }}>
+                                    {participant.name}
+                                </td>
+                                <td style={{ padding: '8px' }}>
+                                    {participant.program}
+                                </td>
+                                <td style={{ padding: '8px' }}>
+                                    {participant.batch}
+                                </td>
+                            </tr>
+                        ))}
                     </tbody>
                 </Box>
                 <Box
@@ -134,7 +142,56 @@ const dispatch = useDispatch() ;
                     style={{ marginTop: 'auto', paddingTop: '20px' }}
                 >
                     <Button
-                        onClick={()=>
+                        variant="contained"
+                        onClick={handleAssignStudents}
+                        sx={{
+                            backgroundColor: '#F56D3B',
+                            color: 'white',
+                            height: '60px',
+                            width: '201px',
+                            borderRadius: '50px',
+                            textTransform: 'none',
+                            padding: '18px 30px',
+                            fontWeight: '700',
+                            fontSize: '16px',
+                            '&:hover': {
+                                backgroundColor: '#D4522A',
+                            },
+                        }}
+                    >
+                        Edit Students
+                    </Button>
+                    <Button
+                        variant="outlined"
+                        onClick={handleAssignBatches}
+                        sx={{
+                            backgroundColor: 'white',
+                            color: '#F56D3B',
+                            height: '60px',
+                            width: '194px',
+                            border: '2px solid #F56D3B',
+                            borderRadius: '50px',
+                            textTransform: 'none',
+                            fontWeight: '700',
+                            fontSize: '16px',
+                            padding: '18px 30px',
+                            '&:hover': {
+                                backgroundColor: '#F56D3B',
+                                color: 'white',
+                            },
+                        }}
+                    >
+                        Edit Batches
+                    </Button>
+                </Box>
+                <Box
+                                    display="flex"
+                                    justifyContent="center"
+                                    alignItems="center"
+                                    style={{ marginTop: 'auto', paddingTop: '20px' }}
+                >
+                <Button
+                        onClick={() =>
                             handleOpenEditParticipantsDialog(
                                 selectedParticipants // Pass participants data
                             )
@@ -156,7 +213,7 @@ const dispatch = useDispatch() ;
                             },
                         }}
                     >
-                        Edit Participants
+                        Submit
                     </Button>
                 </Box>
             </DialogContent>
@@ -164,4 +221,4 @@ const dispatch = useDispatch() ;
     );
 };
 
-export default ParticipantsDialog;
+export default EditParticipantsDialog;

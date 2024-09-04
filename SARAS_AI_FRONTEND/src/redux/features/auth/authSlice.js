@@ -38,12 +38,70 @@ export const logout = createAsyncThunk('logout', async rejectWithValue => {
     }
 });
 
+//forgot api
+export const forgotPassword = createAsyncThunk(
+    'forgotPassword',
+    async ({ username, method }, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.post(
+                `${baseUrl}/forgot-password`,
+                {
+                    username: username,
+                    method: method,
+                }
+            );
+            return response.data;
+        } catch (error) {
+            if (error) {
+                if (error.response && error.response.data) {
+                    return rejectWithValue(error.response.data.message);
+                } else {
+                    return rejectWithValue(
+                        'An error occureded while forgot password'
+                    );
+                }
+            }
+        }
+    }
+);
+
+//reset password
+export const resetPassword = createAsyncThunk(
+    'resetPassword',
+    async (
+        { username, otp, password, password_confirmation },
+        { rejectWithValue }
+    ) => {
+        try {
+            const response = await axiosInstance.post(
+                `${baseUrl}/reset-password`,
+                {
+                    username: username,
+                    otp: otp,
+                    password: password,
+                    password_confirmation: password_confirmation,
+                }
+            );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An error occureded while reset password'
+                );
+            }
+        }
+    }
+);
+
 const initialState = {
     userData: {},
     loginData: {},
     login: false,
     role: null,
     name: '',
+    username: null,
     accessToken: null,
     timezone_id: null,
     loading: false,
@@ -58,6 +116,7 @@ const authSlice = createSlice({
             state.login = action.payload.login;
             state.role = action.payload.role;
             state.accessToken = action.payload.accessToken;
+            state.timezone_id = action.payload.timezone_id;
         },
     },
     extraReducers: builder => {
@@ -111,6 +170,36 @@ const authSlice = createSlice({
         });
         builder.addCase(logout.rejected, (state, action) => {
             toast.error(action.payload || 'Failed To Logout');
+            state.loading = false;
+        });
+
+        //user forgot password
+        builder.addCase(forgotPassword.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(forgotPassword.fulfilled, (state, action) => {
+            console.log('fefefefefefefe', action.payload);
+            state.userData = action.payload.data;
+            toast.success(action.payload.message || 'Forgot Password');
+            state.loading = false;
+        });
+
+        builder.addCase(forgotPassword.rejected, (state, action) => {
+            toast.error(action.payload || 'Failed To Forgot Password');
+            state.loading = false;
+        });
+
+        //user reset password
+        builder.addCase(resetPassword.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(resetPassword.fulfilled, (state, action) => {
+            toast.success(action.payload.message || 'Reset Password');
+            state.loading = false;
+        });
+
+        builder.addCase(resetPassword.rejected, (state, action) => {
+            toast.error(action.payload || 'Failed To Reset Password');
             state.loading = false;
         });
     },

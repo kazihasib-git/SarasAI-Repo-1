@@ -39,24 +39,15 @@ import {
     getTimezone,
 } from '../../../../redux/features/utils/utilSlice';
 import CustomPlatformForm from '../../../CustomFields/CustomPlatformForm';
-import { Controller } from 'react-hook-form';
 import CustomHostNameForm from '../../../CustomFields/CustomHostNameField';
 import CustomMeetingTypeField from '../../../CustomFields/CustomMeetingTypeField';
 import CustomButton from '../../../CustomFields/CustomButton';
 import { toast } from 'react-toastify';
 import CustomFutureDateField from '../../../CustomFields/CustomFutureDateField';
 
-const headers = ['S. No.', 'Slot Date', 'From Time', 'To Time', 'Select'];
-
 const timezone = Number(localStorage.getItem('timezone_id'));
 
-const actionButtons = [
-    {
-        type: 'button',
-    },
-];
-
-const CreateSession = ({ componentName, timezoneID }) => {
+const CreateSession = ({ componentName }) => {
     const dispatch = useDispatch();
 
     const initialFormData = {
@@ -76,6 +67,11 @@ const CreateSession = ({ componentName, timezoneID }) => {
     };
 
     const [formData, setFormData] = useState(initialFormData);
+    const [error, setError] = useState({});
+    const meetingTypes = ['webinars', 'meetings'];
+
+    const { timezones, platforms, hosts } = useSelector(state => state.util);
+    const { scheduleNewSessionPopup, students, batches } = useSelector((state) => state.commonCalender);
 
     let sliceName, createSessionApi, getSessionApi, getSlotApi;
 
@@ -102,19 +98,11 @@ const CreateSession = ({ componentName, timezoneID }) => {
             break;
     }
 
-    const { timezones, platforms, hosts } = useSelector(state => state.util);
-    const { scheduleNewSessionPopup, students, batches } = useSelector(
-        state => state.commonCalender
-    );
-
     useEffect(() => {
         dispatch(getTimezone());
         dispatch(getPlatforms());
         dispatch(getAllHosts());
-    }, [dispatch]);
-
-    const [error, setError] = useState({});
-    const meetingTypes = ['webinars', 'meetings'];
+    }, [dispatch]);    
 
     const durationOptions = [
         { label: '15 minutes', value: '00:15:00' },
@@ -140,8 +128,9 @@ const CreateSession = ({ componentName, timezoneID }) => {
     };
 
     const validate = () => {
+
         if (!formData.sessionName) {
-            toast.error('Please enter meeting name');
+            toast.error('Please enter session name')
             return false;
         }
 
@@ -152,7 +141,7 @@ const CreateSession = ({ componentName, timezoneID }) => {
         }
 
         if (!formData.platform_id) {
-            toast.error('Please select meeting platform');
+            toast.error('Please select meeting platform')
             return false;
         }
 
@@ -214,10 +203,8 @@ const CreateSession = ({ componentName, timezoneID }) => {
             .map(Number);
         const durationInMs = (hours * 3600 + minutes * 60 + seconds) * 1000;
 
-        // Calculate endDateTime by adding duration to fromDateTime
         const endDateTime = new Date(fromDateTime.getTime() + durationInMs);
 
-        // Extracting time from endDateTime in HH:MM:SS format
         const endTime = endDateTime.toTimeString().split(' ')[0];
 
         const data = {
@@ -241,6 +228,7 @@ const CreateSession = ({ componentName, timezoneID }) => {
             .then(() => {
                 dispatch(getSessionApi());
                 dispatch(getSlotApi());
+                // TODO NEED TO CALL GET SCHEDULE CALL API  HERE --->
                 dispatch(closeScheduleNewSession());
 
                 // Reset the form after submission
@@ -482,18 +470,18 @@ const CreateSession = ({ componentName, timezoneID }) => {
                                 justifyContent="center"
                             >
                                 <CustomTimeZoneForm
-                                    label="Timezone"
-                                    name="timezone"
+
+
+                                    label="Time Zone"
+                                    name="timezone_id"
+                                    value={formData.timezone_id}
+                                    onChange={e => handleChange('timezone_id', e.target.value)}
                                     errors={!!error.timezone}
                                     helperText={error.timezone}
                                     sx={{ width: '100%' }}
-                                    value={timezoneID}
-                                    // onChange={field.onChange}
-                                    // disabled={timezoneID != null}
                                     options={timezones}
                                 />
                             </Grid>
-
                             <Grid
                                 item
                                 xs={12}

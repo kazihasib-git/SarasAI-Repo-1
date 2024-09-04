@@ -15,13 +15,14 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import editIcon_White from '../../../../assets/editIcon_White.png';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { set } from 'date-fns';
 import {
     addQuestionToCategory,
     getWolTestConfigCategoryWise,
     handleIdToSubmitSelectedQuestions,
     selectedQuestionsList,
+    handleOpenSelectCategoryQuestions
 } from '../../../../redux/features/adminModule/coachingTools/wol/wolSlice';
+import { toast } from 'react-toastify';
 
 const CustomButton = styled(Button)(({ theme, active }) => ({
     borderRadius: '50px',
@@ -45,8 +46,9 @@ const WOLSelectQuestions = () => {
         wolQuestionCategoryWise,
         categoryIdToSubmitSelectedQuestions,
         selectedQuestionsListData,
+        categoryInfo
     } = useSelector(state => state.wol);
-
+    
     const [selectedQuestions, setSelectedQuestions] = useState([]);
     const [questions, setQuestions] = useState([]);
     const [totalQuestions, setTotalQuestions] = useState(0);
@@ -60,53 +62,51 @@ const WOLSelectQuestions = () => {
     }
 
     useEffect(() => {
-        if (
-            wolQuestionCategoryWise.data &&
-            wolQuestionCategoryWise.data.length > 0
-        ) {
+        if (wolQuestionCategoryWise?.data?.length) {
             const transformedData = wolQuestionCategoryWise.data.map(data => ({
                 ...data,
                 question: stripHtml(data.question),
             }));
             setQuestions(transformedData);
-            setTotalQuestions(wolQuestionCategoryWise.data.length);
-            setSelectedCategory(
-                wolQuestionCategoryWise.data[0].wol_category_name
-            );
-            setCategoryId(wolQuestionCategoryWise.data[0].id);
+            setTotalQuestions(transformedData.length);
+            setSelectedCategory(transformedData[0].wol_category_name);
+            setCategoryId(transformedData[0].id);
         } else {
-            setQuestions();
-            setTotalQuestions();
-            setSelectedCategory();
-            setCategoryId();
+            setQuestions([]);
+            setTotalQuestions(0);
+            setSelectedCategory('');
+            setCategoryId(null);
         }
     }, [wolQuestionCategoryWise.data]);
 
     useEffect(() => {
-        dispatch(selectedQuestionsList(categoryIdToSubmitSelectedQuestions));
-    }, [dispatch]);
-
+        if (categoryIdToSubmitSelectedQuestions) {
+            dispatch(selectedQuestionsList(categoryIdToSubmitSelectedQuestions));
+        }
+    }, [dispatch, categoryIdToSubmitSelectedQuestions]);
+    
     useEffect(() => {
-        if (
-            selectedQuestionsListData.data &&
-            selectedQuestionsListData.data.length > 0
-        ) {
-            setSelectedQuestions(
-                selectedQuestionsListData.data.map(
-                    question => question.wol_question_id
-                )
-            );
+        if (selectedQuestionsListData?.data?.length) {
+            setSelectedQuestions(selectedQuestionsListData.data.map(question => question.wol_question_id));
+        } else {
+            setSelectedQuestions([]);
         }
     }, [selectedQuestionsListData]);
 
-    const handleSelectQuestion = index => {
-        setSelectedQuestions(prevSelected => {
-            const updatedSelection = prevSelected.includes(index)
-                ? prevSelected.filter(i => i !== index)
-                : [...prevSelected, index];
-            return updatedSelection;
+    const handleSelectQuestion = (questionId) => {
+        setSelectedQuestions((prevSelected) => {
+            if (prevSelected.includes(questionId)) {
+                return prevSelected.filter(id => id !== questionId);
+            } else {
+                if (prevSelected.length >= categoryInfo.total_ques) {
+                    toast.error("You can only select a maximum of 5 questions.");
+                    return prevSelected;
+                }
+                return [...prevSelected, questionId];
+            }
         });
     };
+    
 
     const handleSubmit = () => {
         const selectedQuestionsOfCategory = questions.filter(question =>
@@ -225,7 +225,7 @@ const WOLSelectQuestions = () => {
                             gutterBottom
                         >
                             Selected Questions: {selectedQuestions.length}/
-                            {totalQuestions}
+                            {categoryInfo.total_ques}
                         </Typography>
                     </Box>
 
@@ -251,47 +251,44 @@ const WOLSelectQuestions = () => {
                     </CustomButton>
                 </Box>
 
-                {questions.slice(0, totalQuestions).map((question, index) => (
-                    <Box
-                        key={question.id}
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="space-between"
-                        mb={2}
-                        p={2}
-                        border="1px solid #E0E0E0"
-                        borderRadius="8px"
-                    >
-                        <Box flex="1">
-                            <Typography
-                                variant="body1"
-                                sx={{
-                                    color: '#1A1E3D',
-                                    fontWeight: 500,
-                                    mb: 1,
-                                    fontFamily: 'Medium',
-                                }}
-                            >
-                                Q{index + 1}: {question.question}
-                            </Typography>
+                {questions?.length > 0 ? (
+                    questions.map((question, index) => (
+                        <Box
+                            key={question.id}
+                            display="flex"
+                            alignItems="center"
+                            justifyContent="space-between"
+                            mb={2}
+                            p={2}
+                            border="1px solid #E0E0E0"
+                            borderRadius="8px"
+                        >
+                            <Box flex="1">
+                                <Typography
+                                    variant="body1"
+                                    sx={{ color: '#1A1E3D', fontWeight: 500, mb: 1, fontFamily: 'Medium' }}
+                                >
+                                    Q{index + 1}: {question?.question}
+                                </Typography>
+                            </Box>
+                            <Box>
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            checked={selectedQuestions.includes(question.id)}
+                                            onChange={() => handleSelectQuestion(question.id)}
+                                        />
+                                    }
+                                    label=""
+                                />
+                            </Box>
                         </Box>
-                        <Box>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={selectedQuestions.includes(
-                                            question.id
-                                        )}
-                                        onChange={() =>
-                                            handleSelectQuestion(question.id)
-                                        }
-                                    />
-                                }
-                                label=""
-                            />
-                        </Box>
-                    </Box>
-                ))}
+                    ))
+                ) : (
+                    <Typography variant="h6" sx={{ color: '#1A1E3D', fontSize: '16px', fontWeight: 500, fontFamily: 'Medium' }}>
+                        No questions available.
+                    </Typography>
+                )}
 
                 <Box display="flex" mt={2}>
                     <CustomButton
