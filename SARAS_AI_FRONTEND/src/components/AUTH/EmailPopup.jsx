@@ -1,12 +1,15 @@
 import { React, useState } from 'react';
 import './EmailPopup.css';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import ForgetPassword from './ForgetPassword';
 import { useNavigate } from 'react-router-dom';
+import { forgotPassword } from '../../redux/features/auth/authSlice';
+import { useDispatch } from 'react-redux';
 
-const EmailPopup = ({ handleClose }) => {
+const EmailPopup = ({ handleClose, onSubmit }) => {
     const [selectedOption, setSelectedOption] = useState('');
+    const [username, setUsername] = useState('');
+
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
@@ -14,25 +17,30 @@ const EmailPopup = ({ handleClose }) => {
         setSelectedOption(option);
         setError('');
     };
+    const dispatch = useDispatch();
 
     const handleSubmit = e => {
         e.preventDefault();
         if (!selectedOption) {
-            toast.error('Please select either Email or Mobile Number', {
-                position: 'top-right',
-                autoClose: 3000,
-                hideProgressBar: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-            });
+            toast.error('Please select either Email or Mobile Number', {});
             return;
         }
+        console.log(username);
 
-        // Navigate to ForgetPassword component
+        // dispatch(forgotPassword({ username, method: selectedOption }));
 
-        //navigate('resetpassword');
+        // navigate('/resetpassword', { state: { username } });
+
+        dispatch(forgotPassword({ username, method: selectedOption })).then(
+            response => {
+                if (forgotPassword.fulfilled.match(response)) {
+                    if (response.payload?.message !== 'User not found') {
+                        navigate('/resetpassword', { state: { username } });
+                    }
+                }
+            }
+        );
+
         console.log('Form submitted with option:', selectedOption);
     };
 
@@ -54,6 +62,8 @@ const EmailPopup = ({ handleClose }) => {
                             padding: '0.25rem',
                             borderRadius: '0.5rem',
                         }}
+                        value={username}
+                        onChange={e => setUsername(e.target.value)}
                     />
 
                     <div style={{ marginTop: '1rem' }}>
@@ -68,8 +78,8 @@ const EmailPopup = ({ handleClose }) => {
                         <label style={{ color: '#fff' }}>
                             <input
                                 type="checkbox"
-                                checked={selectedOption === 'mobile'}
-                                onChange={() => handleCheckboxChange('mobile')}
+                                checked={selectedOption === 'sms'}
+                                onChange={() => handleCheckboxChange('sms')}
                             />
                             Mobile Number
                         </label>
