@@ -38,35 +38,6 @@ import CustomTimeDaysjsField from '../../../CustomFields/CustomTimeDaysjsField';
 import CustomButton from '../../../CustomFields/CustomButton';
 import { timezoneIdToName } from '../../../../utils/timezoneIdToName';
 
-const headers = ['S. No.', 'Slot Date', 'From Time', 'To Time', 'Select'];
-
-const weekDays = [
-    'Sunday',
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-];
-
-const actionButtons = [
-    {
-        type: 'button',
-    },
-];
-
-const durationOptions = [
-    { label: '15 minutes', value: '00:15:00' },
-    { label: '30 minutes', value: '00:30:00' },
-    { label: '45 minutes', value: '00:45:00' },
-    { label: '1 Hour', value: '01:00:00' },
-    { label: '1 Hour 15 minutes', value: '01:15:00' },
-    { label: '1 Hour 30 minutes', value: '01:30:00' },
-    { label: '1 Hour 45 minutes', value: '01:45:00' },
-    { label: '2 Hours', value: '02:00:00' },
-];
-
 const timezone = Number(localStorage.getItem('timezone_id'));
 
 const EditSession = ({ componentName }) => {
@@ -94,7 +65,6 @@ const EditSession = ({ componentName }) => {
     const meetingTypes = ['webinars', 'meetings'];
 
     const { timezones, platforms, hosts } = useSelector((state) => state.util);
-
     const { editSession, students, batches, sessionData } = useSelector((state) => state.commonCalender);
 
     let sliceName, updateSessionApi, getSessionApi;
@@ -143,7 +113,7 @@ const EditSession = ({ componentName }) => {
                 sessionName: sessionData.meeting_name || '',
                 duration: formattedDifference,
                 message: sessionData.message || '',
-                students: studentIdArray || [], // sessionData.students || [];
+                students: sessionData.students || [], // sessionData.students || [];
                 batches: sessionData.batch || [],
                 platform_id: sessionData.platform_id || null,
                 fromDate: sessionData.date || '',
@@ -152,24 +122,9 @@ const EditSession = ({ componentName }) => {
                 meeting_type: sessionData.platform_meeting_details.meeting_type,
                 host_email_id: sessionData.platform_meeting_details.host_email_id,
                 timezone_id: sessionData.timezone_id || null
-                //moment(sessionData.start_time, "HH:MM:SS"),
-                //toTime: moment(sessionData.end_time, "HH:MM:SS"),
-
             })
         }
     }, [sessionData])
-
-
-    const studentData = sessionData.students || [];
-
-    const studentIdArray = [];
-    if (studentData && studentData.length > 0) {
-        students.forEach(student => {
-            if (student && student.id) {
-                studentIdArray.push(student.id);
-            }
-        });
-    }
 
     const durationOptions = [
         { label: '15 minutes', value: '00:15:00' },
