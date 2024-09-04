@@ -3,4 +3,10 @@ function timezoneIdToName(Id, timezones) {
     return timezone ? timezone.time_zone : null;
 }
 
-export { timezoneIdToName };
+function timezoneIdToUTCOffset(Id, timezones){
+    const timezone = timezones.find(tz => tz.id === Id);
+    return timezone ? timezone.utc_offset : null;
+}
+
+export { timezoneIdToName,  timezoneIdToUTCOffset};
+
