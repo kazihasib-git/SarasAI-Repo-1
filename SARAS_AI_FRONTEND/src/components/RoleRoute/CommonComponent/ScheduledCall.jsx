@@ -49,7 +49,8 @@ import EditParticipantsDialog from './EditParticipantsDialog';
 import { convertTo12HourFormat } from '../../../utils/convertTo12HourFormat';
 import { formatDateFromLocalToTimezone } from '../../../utils/formatDateFromUTC';
 
-const timezoneId = Number(localStorage.getItem('timezone_id'));
+
+const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
 
 const ScheduledCall = ({ role }) => {
     const dispatch = useDispatch();
