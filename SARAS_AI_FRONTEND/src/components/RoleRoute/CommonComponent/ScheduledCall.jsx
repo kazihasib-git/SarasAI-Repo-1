@@ -49,12 +49,12 @@ const ScheduledCall = ({ role }) => {
     const { participantsDialogOpen, editParticipantsDialogOpen } = useSelector(
         state => state.commonCalender
     );
+    const [initialParticipantsData , setInitialParticipantsData] = useState(null) ; 
     const [newMeetingPopUpOpen, setNewMeetingPopUpOpen] = useState(false);
     const [date, setDate] = useState(moment());
     const [anchorEl, setAnchorEl] = useState(null);
     const { coachScheduledCalls } = useSelector(state => state.coachMenu);
     const { taScheduledCalls } = useSelector(state => state.taMenu);
-    const [selectedParticipants, setSelectedParticipants] = useState([]);
     const [scheduledCalls, setScheduledCalls] = useState([]);
  
     let sliceName, getScheduledCallsApi, getScheduledCallsState;
@@ -251,17 +251,16 @@ const ScheduledCall = ({ role }) => {
         dispatch(openEditSession({ sessionData }));
     };
  
-    const handleOpenParticipantsDialog = participants => {
-        setSelectedParticipants(participants);
-        dispatch(openParticipantsDialog(participants));
+    const handleOpenParticipantsDialog = participantsData => {
+        setInitialParticipantsData(participantsData) ; 
+        dispatch(openParticipantsDialog(participantsData));
     };
     const handleCloseParticipantsDialog = () => {
-        setSelectedParticipants([]);
         dispatch(closeParticipantsDialog());
     };
  
     const handleCloseEditParticipantsDialog = () => {
-        dispatch(closeEditParticipantsDialog());
+        dispatch(closeEditParticipantsDialog(initialParticipantsData)) ;
     };
  
     return (
@@ -273,19 +272,18 @@ const ScheduledCall = ({ role }) => {
                     onSubmit={onNewMeetingSubmit}
                 />
             )}
- 
-            {editParticipantsDialogOpen && (
-                <EditParticipantsDialog
-                    openEdit={editParticipantsDialogOpen}
-                    onCloseEdit={handleCloseEditParticipantsDialog}
-                    participantsData={selectedParticipants}
-                />
-            )}
-            {participantsDialogOpen && (
+      {editParticipantsDialogOpen &&  (
+              <EditParticipantsDialog 
+              openEdit={editParticipantsDialogOpen}
+              onCloseEdit={handleCloseEditParticipantsDialog}
+              role = {role}
+              />
+       )}
+        {participantsDialogOpen &&  (
                 <ParticipantsDialog
                     open={participantsDialogOpen}
                     onClose={handleCloseParticipantsDialog}
-                    participantsData={selectedParticipants}
+                    role = {role}
                 />
             )}
  
@@ -416,11 +414,7 @@ const ScheduledCall = ({ role }) => {
                                 <Typography gutterBottom>
                                     {call.students.length > 0 ? (
                                         <a
-                                            onClick={() =>
-                                                handleOpenParticipantsDialog(
-                                                    call.students // Pass participants data
-                                                )
-                                            }
+                                            onClick={() =>handleOpenParticipantsDialog(call)}
                                             style={{
                                                 textDecoration: 'underline',
                                                 color: '#F56D3B',
