@@ -10,44 +10,32 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { closeParticipantsDialog, openEditParticipantsDialog, openSelectStudents } from '../../../redux/features/commonCalender/commonCalender';
-import { useDispatch } from 'react-redux';
-import { useSelector } from 'react-redux';
-// const participantsData = [
-//     { id: 1, name: 'Name Here', program: 'Program 1', batch: 'Batch 1' },
-//     { id: 2, name: 'Name Here', program: 'Program 2', batch: 'Batch 2' },
-//     { id: 3, name: 'Name Here', program: 'Program 3', batch: 'Batch 3' },
-//     { id: 4, name: 'Name Here', program: 'Program 4', batch: 'Batch 4' },
-// ];
+import { useDispatch, useSelector } from 'react-redux';
 
-const ParticipantsDialog = ({ open, onClose, participantsData }) => {
-    const {selectedParticipants} = useSelector(state=>state.commonCalender) ; 
-    console.log( "participantsData",participantsData);
+const ParticipantsDialog = ({ open, onClose }) => {
+    const { participantsData } = useSelector(state => state.commonCalender);
     const [data, setData] = useState([]);
+    const dispatch = useDispatch();
+
     const transformData = () => {
-        const transformedData = selectedParticipants.map((item, index) => ({
-        id: item.id,
-        name: item.name,
-        //'Enrollment Id': item.enrollment_id,
-        program:
-            item.packages.map(pack => pack.package_name).join(',') || 'N/A',
-        batch:
-            item.batches.map(batch => batch.name).join(', ') ||
-            'N/A',
+        const transformedData = participantsData.students.map((item) => ({
+            id: item.id,
+            name: item.name,
+            program: item.packages.map(pack => pack.package_name).join(',') || 'N/A',
+            batch: item.batches.map(batch => batch.name).join(', ') || 'N/A',
         }));
         console.log('TransformedData', transformedData);
         setData(transformedData);
-    }
-    
-
-    useEffect(()=>{
-        transformData(selectedParticipants);
-    },selectedParticipants);
-const dispatch = useDispatch() ; 
-
-    const handleOpenEditParticipantsDialog = participants => {
-        console.log('handleOpenEditParticipantsDialog' , true)
-        dispatch(openEditParticipantsDialog(selectedParticipants)); 
     };
+
+    useEffect(() => {
+        transformData();
+    }, [participantsData.students]);
+
+    const handleOpenEditParticipantsDialog = () => {
+        dispatch(openEditParticipantsDialog(participantsData));
+    };
+
     return (
         <Dialog
             open={open}
@@ -61,7 +49,7 @@ const dispatch = useDispatch() ;
             }}
         >
             <DialogTitle>
-                <Typography variant="h6" marginTop={4}>
+                <Typography  style={{fontFamily:'SemiBold' , color:'#1A1E3D'}} variant="h6" marginTop={4}>
                     Participants
                 </Typography>
                 <IconButton
@@ -80,23 +68,45 @@ const dispatch = useDispatch() ;
                 style={{
                     display: 'flex',
                     flexDirection: 'column',
-                    height: 'calc(100% - 60px)', // Adjust height to fit within the dialog
+                    height: 'calc(100% - 60px)',
                     padding: '20px',
                 }}
             >
-                <Box
+ <Box
                     component="table"
                     sx={{
                         width: '100%',
                         borderCollapse: 'collapse',
                         '& thead': {
+                    '& tr': {
+                        '& th': {
+                        position: 'relative',
+                        paddingLeft: '8px',  // Left gap
+                        paddingRight: '8px', // Right gap
+                        '&::after': {
+                            content: '""',
+                            position: 'absolute',
+                            bottom: 0,
+                            height: '2px',
+                            backgroundColor: '#C2C2E7',
+                            left: '8px',   // Gap from the left
+                            right: '8px',  // Gap from the right
+                        },
+                        },
+                    },
+                    },
+                    '& tbody': {
+                    '& tr': {
+                        position: 'relative',
+                        '&:not(:last-child)': {
+                        '& td': {
                             borderBottom: '1px solid #C2C2E7',
+                            paddingLeft: '8px',  // Left gap for td
+                            paddingRight: '8px', // Right gap for td
                         },
-                        '& tbody': {
-                            '& tr': {
-                                borderBottom: '1px solid #C2C2E7',
-                            },
                         },
+                    },
+                    },
                         backgroundColor: '#E0E0F3',
                     }}
                 >
@@ -132,11 +142,8 @@ const dispatch = useDispatch() ;
                     style={{ marginTop: 'auto', paddingTop: '20px' }}
                 >
                     <Button
-                        onClick={()=>
-                            handleOpenEditParticipantsDialog(
-                                selectedParticipants // Pass participants data
-                            )
-                        }
+                        style={{fontFamily:'Bold' , fontSize:'16px'}}
+                        onClick={()=>handleOpenEditParticipantsDialog()}
                         variant="contained"
                         sx={{
                             backgroundColor: '#F56D3B',
@@ -154,7 +161,9 @@ const dispatch = useDispatch() ;
                             },
                         }}
                     >
-                        Edit Participants
+                        
+                        Edit
+                        
                     </Button>
                 </Box>
             </DialogContent>

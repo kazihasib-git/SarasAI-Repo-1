@@ -4,8 +4,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getTaMenuAssignedStudents } from '../../../../redux/features/taModule/tamenuSlice';
 import { getCoachMenuAssignedStudents } from '../../../../redux/features/coachModule/coachmenuprofileSilce';
 import {
+    closeEditParticipantsDialog,
     closeSelectStudents,
+    openEditParticipantsDialog,
     openEditSession,
+    openParticipantsDialog,
     openScheduleNewSession,
 } from '../../../../redux/features/commonCalender/commonCalender';
 import CustomTextField from '../../../CustomFields/CustomTextField';
@@ -19,7 +22,6 @@ const name = String(localStorage.getItem('name') || 'Name');
 const headers = ['S. No.', 'Student Name', 'Program', 'Batch', 'Select'];
 
 const SelectStudents = ({ componentName }) => {
-
     const dispatch = useDispatch();
     const [selectedTerm, setSelectedTerm] = useState([]);
     const [selectedBatch, setSelectedBatch] = useState('');
@@ -57,15 +59,17 @@ const SelectStudents = ({ componentName }) => {
         selectStudentPopup,
         preSelectedStudents,
         sessionData,
+        participantsData
     } = useSelector(state => state.commonCalender);
 
+    console.log({'sessionData':sessionData} ,{'participantsData':participantsData});
     const { [studentDataState]: studentsData } = stateSelector || {};
 
     useEffect(() => {
         dispatch(getStudentsApi());
     }, [dispatch]);
 
-    console.log('dataaa', studentsData);
+
 
 
     useEffect(() => {
@@ -116,7 +120,6 @@ const SelectStudents = ({ componentName }) => {
     //     setSelectedStudents(transformedPreSelectedStudents);
     // }, [preSelectedStudents]);
 
-    console.log("SELECTED STUDENTS", selectedStudents)
 
     const batchOptions =
         studentsData && Array.isArray(studentsData)
@@ -178,6 +181,10 @@ const SelectStudents = ({ componentName }) => {
 
         let updatedSelectedStudents = [];
 
+        if ( participantsData && participantsData?.students?.length > 0) {
+            updatedSelectedStudents = participantsData.students.map(student => student.id);
+        }
+
         if (students && students.length > 0) {
             updatedSelectedStudents = students.map(student => student.id);
         }
@@ -199,7 +206,7 @@ const SelectStudents = ({ componentName }) => {
         }
 
         setSelectedStudents(updatedSelectedStudents);
-    }, [students, batches, sessionData]);
+    }, [students, batches, sessionData, participantsData]);
 
 
     const handleSelectStudents = id => {
@@ -209,19 +216,31 @@ const SelectStudents = ({ componentName }) => {
     };
 
     const handleSubmit = () => {
+
         const data = {
             studentId: selectedStudents
                 ? selectedStudents.map(id => ({ id }))
                 : [],
         };
 
-        if (sessionData) {
+
+        if (participantsData) {
+            const updatedparticipantsData = {
+                ...participantsData,
+                students: participantsData?.students?.filter(participant =>
+                    selectedStudents.includes(participant.id)
+                )
+            };
+            dispatch(openEditParticipantsDialog(updatedparticipantsData))
+        }
+            else if (sessionData) {
+
             const updatedSessionData = {
                 ...sessionData,
                 students: selectedStudents ? selectedStudents.map(id => ({ id })) : [],
             }
             dispatch(openEditSession({ sessionData: updatedSessionData }))
-        } else {
+        }else {
             dispatch(openScheduleNewSession(data));
         }
         dispatch(closeSelectStudents());

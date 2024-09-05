@@ -5,6 +5,7 @@ import { getTaMenuAssignedBatches } from '../../../../redux/features/taModule/ta
 import { getCoachMenuAssignedBatches } from '../../../../redux/features/coachModule/coachmenuprofileSilce';
 import {
     closeSelectBatches,
+    openEditParticipantsDialog,
     openEditSession,
     openScheduleNewSession,
 } from '../../../../redux/features/commonCalender/commonCalender';
@@ -48,7 +49,7 @@ const SelectBatches = ({ componentName }) => {
 
     const stateSelector = useSelector(state => state[sliceName]);
     
-    const { batches, selectBatchPopup, sessionData } = useSelector(
+    const { batches, selectBatchPopup, sessionData , participantsData} = useSelector(
         state => state.commonCalender
     );
 
@@ -98,6 +99,12 @@ const SelectBatches = ({ componentName }) => {
         }
     },[sessionData])
 
+    useEffect(() => {
+        if(participantsData && participantsData?.batch && participantsData?.batch?.length > 0){
+            setSelectedBatch(participantsData.batch.map(prev => prev.id))
+        }
+    },[participantsData])
+
     const handleSelectBatch = id => {
         setSelectedBatch(prev =>
             prev.includes(id) ? prev.filter(sid => sid !== id) : [...prev, id]
@@ -124,8 +131,18 @@ const SelectBatches = ({ componentName }) => {
         const data = {
             batchId: selectedBatch ? selectedBatch.map(id => ({ id })) : [],
         };
-        
-        if(sessionData){
+
+        if (participantsData && participantsData?.students?.length>0) {
+            console.log('participantsData call', true) ; 
+            const updatedparticipantsData = {
+                ...participantsData,
+                batch: selectedBatch ? selectedBatch.map(id => ({ id })) : [],
+            };
+            dispatch(openEditParticipantsDialog(updatedparticipantsData));
+
+        }else if(sessionData){
+            console.log('sessionData call', true) ; 
+
             const updatedSessionData = {
                 ...sessionData,
                 batch: selectedBatch ? selectedBatch.map(id => ({ id })) : [],
