@@ -140,6 +140,7 @@ const ScheduleSession = ({ componentName }) => {
     } = selectState;
 
     const handleEditStudents = () => {
+        console.log("hi edit students");
         dispatch(openStudentsPopup({ id: sessionData.id }));
     };
 
