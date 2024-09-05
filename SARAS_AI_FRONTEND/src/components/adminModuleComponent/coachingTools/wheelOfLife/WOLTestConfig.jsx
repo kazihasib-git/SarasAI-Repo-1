@@ -204,7 +204,7 @@ const WOLTestConfig = () => {
                         onClick={() => navigate('/wheel-of-life')}
                     />
                     <p style={{ fontSize: '40px', fontWeight: 200 }}>
-                        Wheel Of Test Config
+                        Wheel of Life Test Config
                     </p>
                 </Box>
             </Box>
