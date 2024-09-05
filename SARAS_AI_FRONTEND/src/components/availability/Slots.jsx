@@ -44,7 +44,7 @@ const Slots = ({ componentName, timezoneID }) => {
 
     switch (componentName) {
         case 'TACALENDER':
-            sliceName = 'taAvailability';
+            sliceName = 'taAvialability';
             scheduleSessionOpenKey = 'scheduledSlotsOpen';
             scheduledSlotsDataKey = 'scheduledSlotsData';
             getAvailableSlotsAction = openScheduledSession;

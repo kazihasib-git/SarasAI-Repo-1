@@ -422,23 +422,21 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                                 .join(', ')
                                                         ) : (
                                                             <CustomButton
-                                                                style={{
-                                                                    textTransform:
-                                                                        'none',
-                                                                }}
-                                                                onClick={() =>
-                                                                    openPrerequisitesPopup(
-                                                                        module,
-                                                                        activity
-                                                                    )
-                                                                }
-                                                                backgroundColor="#FEEBE3"
-                                                            >
-                                                                <span className="buttonText">
-                                                                    Prerequisite
-                                                                </span>
-                                                            </CustomButton>
-                                                        )}
+                                                            style={{
+                                                                textTransform: 'none',
+                                                            }}
+                                                            onClick={
+                                                                activity.activity_type_id
+                                                                    ? () => openPrerequisitesPopup(module, activity)
+                                                                    : null
+                                                            }
+                                                            backgroundColor="#FEEBE3"
+                                                            disabled={!activity.activity_type_id} // Optionally disable the button if there's no activity_type_id
+                                                        >
+                                                            <span className="buttonText">Prerequisite</span>
+                                                        </CustomButton>
+                                                          
+                                                        )}   
                                                     </td>
                                                     <td
                                                         style={{

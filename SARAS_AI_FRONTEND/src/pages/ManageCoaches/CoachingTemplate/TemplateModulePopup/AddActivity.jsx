@@ -11,6 +11,7 @@ import {
     createCoachTemplateActivity,
     getCoachTemplateModuleId,
 } from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
+import CustomFutureDateField from '../../../../components/CustomFields/CustomFutureDateField';
 
 // Custom button component for consistent styling
 const CustomButton = ({
@@ -114,7 +115,7 @@ const AddActivity = () => {
                     control={control}
                     rules={{ required: 'Due Date is required' }}
                     render={({ field }) => (
-                        <CustomDateField
+                        <CustomFutureDateField
                             label="Due Date"
                             name="dueDate"
                             value={field.value}

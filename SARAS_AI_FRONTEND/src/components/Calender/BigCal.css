@@ -42,7 +42,7 @@
     justify-content: flex-start; /* Align buttons to the left */
 }
 /* .rbc-toolbar-label {
-    display: none; 
+    display: none;
 } */
 
 .rbc-today {
@@ -65,6 +65,7 @@
     /* Example class */
     background-color: unset !important; /* Ensure no background color is being inherited */
 }
+
 .on-leave-slot {
     position: relative;
 }
@@ -76,9 +77,10 @@
     left: 50%;
     transform: translate(-50%, -50%);
     color: rgba(0, 0, 0, 1);
-    font-size: 10px;
-    font-weight: 400;
-    line-height: 13.02px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
 }
 
 .rbc-time-header-cell {
@@ -119,11 +121,11 @@
 } */
 
 /* .rbc-toolbar > .rbc-btn-group {
-    display: none; 
+    display: none;
 } */
 
 /* .rbc-time-content {
-    border-top: 1px solid #4ec641; 
+    border-top: 1px solid #4ec641;
 } */
 
 .rbc-day-slot .rbc-time-slot {
@@ -140,4 +142,18 @@
 .rbc-header.rbc-today {
     background-color: #4e18a5 !important; /* Light blue for the header */
     color: #feffff !important; /* Blue text color for the header */
+}
+
+.rbc-time-gutter .on-leave-slot {
+    background-color: unset !important;
+}
+
+.rbc-time-gutter .on-leave-slot::before {
+    content: unset !important;
+}
+
+.rbc-time-gutter .rbc-time-slot {
+    background-color: transparent !important;
+    opacity: 1 !important;
+    border: none !important;
 }

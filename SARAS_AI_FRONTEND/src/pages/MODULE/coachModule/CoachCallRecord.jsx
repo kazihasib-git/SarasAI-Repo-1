@@ -181,6 +181,7 @@ const CoachCallRecord = () => {
         setVideoUrl('');
         setIdVideo(null);
         dispatch(getCoachCallRecords(date.format('YYYY-MM-DD')));
+        
     };
 
     const handlePlayVideo = url => {

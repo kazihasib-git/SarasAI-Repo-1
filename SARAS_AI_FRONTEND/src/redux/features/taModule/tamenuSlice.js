@@ -17,13 +17,23 @@ export const getTaMenuProfile = createAsyncThunk(
 // Update Ta Profile
 export const updateTaMenuProfile = createAsyncThunk(
     'taMenu/updateProfile',
-    async data => {
-        const response = await axiosInstance.put(
-            `${baseUrl}/ta/ta-profile`,
-            data
-        );
-        console.log(response.data, 'response.data');
-        return response.data;
+    async (data, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.put(
+                `${baseUrl}/ta/ta-profile`,
+                data
+            );
+            console.log(response.data, 'response.data');
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Geting coach Sessions for update profile'
+                );
+            }
+        }
     }
 );
 
@@ -539,10 +549,14 @@ export const taMenuSlice = createSlice({
         builder.addCase(updateTaMenuProfile.fulfilled, (state, action) => {
             state.loading = false;
             state.taProfileData = action.payload.data;
+            toast.success(
+                action.payload.message || 'profile update successfully'
+            );
         });
         builder.addCase(updateTaMenuProfile.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            toast.error(action.payload || 'Failed to Update profile');
         });
 
         // get ta's my students
@@ -807,7 +821,7 @@ export const taMenuSlice = createSlice({
             getTaMenuAssignedStudents.fulfilled,
             (state, action) => {
                 state.loading = false;
-                state.assignedTaStudents = action.payload //.data;
+                state.assignedTaStudents = action.payload; //.data;
             }
         );
         builder.addCase(getTaMenuAssignedStudents.rejected, (state, action) => {
@@ -823,7 +837,7 @@ export const taMenuSlice = createSlice({
             getSelectedTaMenuAssignedStudents.fulfilled,
             (state, action) => {
                 state.loading = false;
-                state.taScheduleStudents= action.payload.data;
+                state.taScheduleStudents = action.payload.data;
             }
         );
         builder.addCase(
@@ -841,7 +855,7 @@ export const taMenuSlice = createSlice({
         });
         builder.addCase(getTaMenuAssignedBatches.fulfilled, (state, action) => {
             state.loading = false;
-            state.assignedTaBatches = action.payload //.data;
+            state.assignedTaBatches = action.payload; //.data;
         });
         builder.addCase(getTaMenuAssignedBatches.rejected, (state, action) => {
             state.loading = false;
@@ -853,30 +867,39 @@ export const taMenuSlice = createSlice({
         builder.addCase(getSelectedTaMenuAssignedBatches.pending, state => {
             state.loading = true;
         });
-        builder.addCase(getSelectedTaMenuAssignedBatches.fulfilled, (state, action) => {
-            state.loading = false;
-            state.taScheduleBatches = action.payload.data;
-        });
-        builder.addCase(getSelectedTaMenuAssignedBatches.rejected, (state, action) => {
-            state.loading = false;
-            state.error = action.error.message;
-            state.taScheduleBatches = [];
-        });
+        builder.addCase(
+            getSelectedTaMenuAssignedBatches.fulfilled,
+            (state, action) => {
+                state.loading = false;
+                state.taScheduleBatches = action.payload.data;
+            }
+        );
+        builder.addCase(
+            getSelectedTaMenuAssignedBatches.rejected,
+            (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+                state.taScheduleBatches = [];
+            }
+        );
 
         // Update Students In Session
         builder.addCase(updateStudentsInTaSession.pending, state => {
             state.loading = true;
         });
-        builder.addCase(updateStudentsInTaSession.fulfilled, (state, action) => {
-            state.loading = false;
-            //toast.success(action.payload.message || 'Students Updated Successfully in Session')
-            // TODO : ----->
-        })
+        builder.addCase(
+            updateStudentsInTaSession.fulfilled,
+            (state, action) => {
+                state.loading = false;
+                //toast.success(action.payload.message || 'Students Updated Successfully in Session')
+                // TODO : ----->
+            }
+        );
         builder.addCase(updateStudentsInTaSession.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
             //toast.error(action.payload || 'Failed to Update Students in Session')
-        })
+        });
 
         //Update Batches In Session
         builder.addCase(updateBatchesInTaSession.pending, state => {
@@ -891,8 +914,7 @@ export const taMenuSlice = createSlice({
             state.loading = false;
             state.error = action.error.message;
             //toast.error(action.payload || 'Failed to Update Batches in Session')
-        })
-
+        });
 
         //upload video
         builder.addCase(uploadSessionRecording.pending, state => {
@@ -929,7 +951,9 @@ export const taMenuSlice = createSlice({
         builder.addCase(updateTaScheduledCall.fulfilled, (state, action) => {
             state.loading = false;
             //state.updatedScheduledCall = action.payload.data;
-            toast.success(action.payload.message || 'Scheduled call updated successfully');
+            toast.success(
+                action.payload.message || 'Scheduled call updated successfully'
+            );
         });
         builder.addCase(updateTaScheduledCall.rejected, (state, action) => {
             state.loading = false;

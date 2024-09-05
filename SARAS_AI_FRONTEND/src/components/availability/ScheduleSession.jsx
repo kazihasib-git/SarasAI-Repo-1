@@ -98,7 +98,7 @@ const ScheduleSession = ({ componentName }) => {
 
     switch (componentName) {
         case 'TACALENDER':
-            sliceName = 'taAvailability';
+            sliceName = 'taAvialability';
             sessionDataState = 'sessionEventData';
             closePopup = closeSessionEvent;
             openPopupState = 'openEventData';

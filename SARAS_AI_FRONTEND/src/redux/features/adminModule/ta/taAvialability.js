@@ -483,12 +483,12 @@ export const taAvailabilitySlice = createSlice({
         });
         builder.addCase(createSlots.fulfilled, (state, action) => {
             state.loading = false;
-            // toast.success(action.payload.message || 'Slot Created Successfully')
+            toast.success(action.payload.message || 'Slot Created Successfully X_X')
         });
         builder.addCase(createSlots.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
-            // toast.error(action.payload || 'Failed To Create Slot')
+            toast.error(action.payload || 'Failed To Create Slot')
         });
 
         // Get Schedule Session

@@ -385,7 +385,7 @@ const Schedule = ({ componentName, timezoneID }) => {
     
         if (formData.platform_id === 1) {
             if (!formData.host_email_id) {
-                toast.error('Please provide a valid email.');
+                toast.error('Please provide a valid  Host Name.');
                 return false;
             }
 
