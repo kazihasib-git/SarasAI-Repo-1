@@ -37,11 +37,19 @@ const AddEditWOLCategory = () => {
             }
         } else {
             try {
+                if(categoryName){
                 const createdWOL = await dispatch(
                     createWOLCategory({ name: categoryName })
                 ).unwrap();
+            }else{
+                
+                 toast.error('Please enter category');
+                 return;
+            }
+                // toast.success('Category created successfully');
             } catch (error) {
-                console.log(error.message); //TODO: Show toast message
+              
+                return; // Prevent further execution if API fails
             }
         }
         dispatch(getWOLCategory()).then(() => {

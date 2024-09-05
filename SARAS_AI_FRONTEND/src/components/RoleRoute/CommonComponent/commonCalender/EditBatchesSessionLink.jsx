@@ -66,12 +66,13 @@ const EditBatchesSessionLink = ({ componentName }) => {
         [assignedBatchesState]: sessionBatches,
     } = stateSelector
 
-    const { meetingId, openEditBatchesPopup } = useSelector((state) => state.commonCalender)
+    const { meetingId, sessionEventData, openEditBatchesPopup } = useSelector((state) => state.commonCalender)
 
     useEffect(() => {
         dispatch(getBatchesApi())
             .then(() => {
-                dispatch(getSelectedBatchesApi(meetingId))
+                console.log(componentName,"sssssdwcwcwc");
+                dispatch(getSelectedBatchesApi(sessionEventData.meetingId))
             })
     }, [dispatch])
 
@@ -138,7 +139,7 @@ const EditBatchesSessionLink = ({ componentName }) => {
     const handleSubmit = () => {
         if (!validate()) return;
 
-        const id = meetingId;
+        const id = sessionEventData.meetingId;
         const data = {
             batchId: selectedBatch.map(id => id)
         }
