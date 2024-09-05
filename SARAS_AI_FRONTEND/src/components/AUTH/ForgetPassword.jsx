@@ -1,10 +1,14 @@
 import { useRef, useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom'; // Import Link here
 import './Login.css'; // Reusing the same CSS for consistent styling
-
+import { resetPassword } from '../../redux/features/auth/authSlice';
+import { useDispatch } from 'react-redux';
+import { forgotPassword } from '../../redux/features/auth/authSlice';
+import EmailPopup from './EmailPopup';
 const ForgetPassword = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const dispatch = useDispatch();
 
     const newPwdRef = useRef();
     const errRef = useRef();
@@ -19,6 +23,9 @@ const ForgetPassword = () => {
     const [email, setEmail] = useState('');
     const [code, setCode] = useState('');
     const [timer, setTimer] = useState(300); // 5 minutes in seconds
+    const [selectedOption, setSelectedOption] = useState(''); // Track selected option
+
+    const username = location.state?.username || '';
 
     useEffect(() => {
         newPwdRef.current.focus();
@@ -52,25 +59,45 @@ const ForgetPassword = () => {
         }
 
         try {
-            // Call your actual API with email, code, OTP, and the new password
-            const response = {
-                status: 200, // Assuming 200 means success
-            };
+            const response = await dispatch(
+                resetPassword({
+                    username,
+                    otp,
+                    password: newPwd,
+                    password_confirmation: confirmPwd,
+                })
+            );
 
-            if (response.status === 200) {
-                setOtp('');
-                setNewPwd('');
-                setConfirmPwd('');
-                navigate('/login', { replace: true });
+            // Check if the resetPassword action was fulfilled
+            if (resetPassword.fulfilled.match(response)) {
+                if (
+                    response.payload?.message ===
+                    'Password has been reset successfully.'
+                ) {
+                    navigate('/login', { replace: true });
+                } else {
+                    setErrMsg(
+                        'Password reset was successful but navigation did not trigger'
+                    );
+                    errRef.current.focus();
+                }
             } else {
-                setErrMsg('OTP Verification Failed');
+                setErrMsg(response.payload?.message || 'An error occurred');
                 errRef.current.focus();
             }
         } catch (error) {
             console.log(error);
-            setErrMsg('OTP Verification Failed');
-            errRef.current.focus();
         }
+    };
+
+    const handleSubmit = method => {
+        dispatch(forgotPassword({ username, method }));
+        setTimer(300); // Reset the timer
+        setErrMsg('');
+    };
+
+    const resendOtp = () => {
+        handleSubmit(selectedOption); // Pass the selected method ('email' or 'mobile')
     };
 
     const formatTime = seconds => {
@@ -121,6 +148,22 @@ const ForgetPassword = () => {
                     <p style={{ color: '#fff', marginTop: '1rem' }}>
                         Time remaining: {formatTime(timer)}
                     </p>
+                    {/* <button
+                        type="button"
+                        onClick={resendOtp}
+                        disabled={timer > 0}
+                        style={{
+                            backgroundColor: 'transparent', 
+                            color: timer > 0 ? '#888' : '#FFF', 
+                            border: 'none', 
+                            cursor: timer > 0 ? 'not-allowed' : 'pointer',
+                            fontSize: '16px',
+                            textDecoration: 'underline',
+                            marginTop: '0px',
+                        }}
+                    >
+                        Resend OTP
+                    </button> */}
                     <label style={{ color: '#fff' }} htmlFor="newPassword">
                         New Password:
                     </label>
