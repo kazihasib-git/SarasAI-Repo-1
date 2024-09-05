@@ -43,6 +43,8 @@ import {
     closeEditParticipantsDialog,
 } from '../../../redux/features/commonCalender/commonCalender';
 import EditParticipantsDialog from './EditParticipantsDialog';
+import EditStudentsSessionLink from './commonCalender/EditStudentsSessionLink';
+import EditBatchesSessionLink from './commonCalender/EditBatchesSessionLink';
 const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
 const ScheduledCall = ({ role }) => {
     const dispatch = useDispatch();
@@ -56,7 +58,7 @@ const ScheduledCall = ({ role }) => {
     const { taScheduledCalls } = useSelector(state => state.taMenu);
     const [selectedParticipants, setSelectedParticipants] = useState([]);
     const [scheduledCalls, setScheduledCalls] = useState([]);
- 
+
     let sliceName, getScheduledCallsApi, getScheduledCallsState;
     switch (role) {
         case 'TA':
@@ -64,46 +66,48 @@ const ScheduledCall = ({ role }) => {
             getScheduledCallsApi = getTaScheduledCalls;
             getScheduledCallsState = 'taScheduledCalls';
             break;
- 
+
         case 'Coach':
             sliceName = 'coachMenu';
             getScheduledCallsApi = getCoachScheduledCalls;
             getScheduledCallsState = 'coachScheduledCalls';
             break;
- 
+
         default:
             sliceName = null;
             getScheduledCallsApi = null;
             getScheduledCallsState = null;
             break;
     }
- 
+
     const stateSelector = useSelector(state => state[sliceName]);
     const { timezone_id } = useSelector(state => state.auth);
- 
+
     const { [getScheduledCallsState]: scheduledCallsData } = stateSelector;
- 
+
     const {
         scheduleNewSessionPopup,
         selectStudentPopup,
         selectBatchPopup,
         openSession,
         editSession,
+        openEditStudentsPopup,
+        openEditBatchesPopup,
     } = useSelector(state => state.commonCalender);
- 
+
     const { timezones } = useSelector(state => state.util);
- 
+
     useEffect(() => {
         dispatch(getTimezone());
     }, [dispatch]);
- 
+
     function formatDate(date) {
         const localDate = new Date(date);
         const offset = 5.5 * 60 * 60000;
         const adjustedDate = new Date(localDate.getTime() + offset);
         return adjustedDate.toISOString().split('T')[0];
     }
- 
+
     useEffect(() => {
         const data = {
             date: formatDate(date),
@@ -111,26 +115,26 @@ const ScheduledCall = ({ role }) => {
         };
         dispatch(getScheduledCallsApi(data));
     }, [dispatch, date, storedTimezoneId, timezones]);
- 
+
     function convertTo12HourFormat(time24) {
         // Split the time into hours, minutes, and seconds
         const [hours, minutes, seconds] = time24.split(':').map(Number);
- 
+
         const suffix = hours >= 12 ? 'PM' : 'AM';
- 
+
         const hours12 = hours % 12 || 12;
- 
+
         const formattedMinutes = minutes.toString().padStart(2, '0');
- 
+
         return `${hours12}:${formattedMinutes} ${suffix}`;
     }
- 
+
     // const getCallStatus = (startTime, endTime) => {
     //     const nowUtc = new Date();
     //     const offset = 5.5 * 60 * 60 * 1000;
     //     const nowIst = new Date(nowUtc.getTime() + offset);
     //     const currentTime = nowIst.toISOString().split('T')[1].split('.')[0];
- 
+
     //     if (currentTime < startTime) {
     //         return 'scheduled';
     //     } else if (currentTime >= startTime && currentTime <= endTime) {
@@ -139,21 +143,21 @@ const ScheduledCall = ({ role }) => {
     //         return 'completed';
     //     }
     // };
- 
+
     const processScheduledCalls = async requests => {
         const newRequests = requests.map(request => ({ ...request }));
- 
+
         const sortedRequests = newRequests.sort((a, b) => {
             return a.start_time.localeCompare(b.start_time);
         });
- 
+
         const transformedRequests = await Promise.all(
             sortedRequests.map(async request => {
                 const selectedTimeZone = timezones.find(
                     timezone => timezone.id == timezone_id
                 );
                 const timezonename = selectedTimeZone.time_zone;
- 
+
                 const localTime = await convertFromUTC({
                     start_date: request.date.split(' ')[0],
                     start_time: request.start_time,
@@ -161,7 +165,7 @@ const ScheduledCall = ({ role }) => {
                     end_date: request.end_date,
                     timezonename,
                 });
- 
+
                 const newRequest = {
                     ...request,
                     date: localTime.start_date,
@@ -169,18 +173,18 @@ const ScheduledCall = ({ role }) => {
                     start_time: localTime.start_time,
                     end_time: localTime.end_time,
                 };
- 
+
                 return newRequest;
             })
         );
- 
+
         const processedCalls = transformedRequests.map(request => ({
             ...request,
             time: `${convertTo12HourFormat(request.start_time)} - ${convertTo12HourFormat(request.end_time)}`,
         }));
         setScheduledCalls(processedCalls);
     };
- 
+
     useEffect(() => {
         if (scheduledCallsData && scheduledCallsData.length > 0) {
             processScheduledCalls(scheduledCallsData);
@@ -188,33 +192,33 @@ const ScheduledCall = ({ role }) => {
             setScheduledCalls([]);
         }
     }, [scheduledCallsData]);
- 
+
     const handleDateChange = newDate => {
         if (newDate && newDate.isValid()) {
             setDate(newDate);
             handleCalendarClose();
         }
     };
- 
+
     const handleIncrement = () => {
         setDate(prevDate => moment(prevDate).add(1, 'days'));
     };
- 
+
     const handleDecrement = () => {
         setDate(prevDate => moment(prevDate).subtract(1, 'days'));
     };
- 
+
     const handleCalendarOpen = event => {
         setAnchorEl(event.currentTarget);
     };
- 
+
     const handleCalendarClose = () => {
         setAnchorEl(null);
     };
- 
+
     const open = Boolean(anchorEl);
     const id = open ? 'calendar-popover' : undefined;
- 
+
     const handleClose = () => {
         setNewMeetingPopUpOpen(false);
     };
@@ -226,7 +230,7 @@ const ScheduledCall = ({ role }) => {
     const onNewMeetingSubmit = props => {
         setNewMeetingPopUpOpen(false);
     };
- 
+
     const handleClickJoinSession = call => {
         const transformedCall = {
             // title: call.meeting_name,
@@ -242,15 +246,15 @@ const ScheduledCall = ({ role }) => {
         };
         dispatch(openSessionPopup(transformedCall));
     };
- 
+
     const handleCreateNewSession = () => {
         dispatch(openScheduleNewSession());
     };
- 
+
     const handleEditClick = sessionData => {
         dispatch(openEditSession({ sessionData }));
     };
- 
+
     const handleOpenParticipantsDialog = participants => {
         setSelectedParticipants(participants);
         dispatch(openParticipantsDialog(participants));
@@ -259,11 +263,11 @@ const ScheduledCall = ({ role }) => {
         setSelectedParticipants([]);
         dispatch(closeParticipantsDialog());
     };
- 
+
     const handleCloseEditParticipantsDialog = () => {
         dispatch(closeEditParticipantsDialog());
     };
- 
+
     return (
         <div style={{ padding: '20px' }}>
             {newMeetingPopUpOpen && (
@@ -273,7 +277,7 @@ const ScheduledCall = ({ role }) => {
                     onSubmit={onNewMeetingSubmit}
                 />
             )}
- 
+
             {editParticipantsDialogOpen && (
                 <EditParticipantsDialog
                     openEdit={editParticipantsDialogOpen}
@@ -288,7 +292,7 @@ const ScheduledCall = ({ role }) => {
                     participantsData={selectedParticipants}
                 />
             )}
- 
+
             <Box
                 display="flex"
                 justifyContent="space-between"
@@ -315,7 +319,7 @@ const ScheduledCall = ({ role }) => {
                     Create New Session
                 </CustomButton>
             </Box>
- 
+
             <LocalizationProvider dateAdapter={AdapterMoment}>
                 <Box display="flex" alignItems="center" mb="20px">
                     <Typography variant="h6" mx="20px">
@@ -355,7 +359,7 @@ const ScheduledCall = ({ role }) => {
                     </Popover>
                 </Box>
             </LocalizationProvider>
- 
+
             <Grid container spacing={2}>
                 {sortedCalls.map(call => (
                     <Grid item key={call.id} xs={12} sm={6} md={4}>
@@ -492,36 +496,48 @@ const ScheduledCall = ({ role }) => {
                         timezoneID={storedTimezoneId}
                     />
                 ))}
- 
+
             {editSession &&
                 (role == 'Coach' ? (
                     <EditSession componentName={'COACHMENU'} />
                 ) : (
                     <EditSession componentName={'TAMENU'} />
                 ))}
- 
+
             {selectStudentPopup &&
                 (role == 'Coach' ? (
                     <SelectStudents componentName={'COACHMENU'} />
                 ) : (
                     <SelectStudents componentName={'TAMENU'} />
                 ))}
- 
+
             {selectBatchPopup &&
                 (role == 'Coach' ? (
                     <SelectBatches componentName={'COACHMENU'} />
                 ) : (
                     <SelectBatches componentName={'TAMENU'} />
                 ))}
- 
+
             {openSession &&
                 (role == 'Coach' ? (
                     <SessionLink componentName={'COACHMENU'} />
                 ) : (
                     <SessionLink componentName={'TAMENU'} />
                 ))}
+            {openEditStudentsPopup &&
+                (role == 'Coach' ? (
+                    <EditStudentsSessionLink componentName={'COACHMENU'} />
+                ) : (
+                    <EditStudentsSessionLink componentName={'TAMENU'} />
+                ))}
+            {openEditBatchesPopup &&
+                (role == 'Coach' ? (
+                    <EditBatchesSessionLink componentName={'COACHMENU'} />
+                ) : (
+                    <EditBatchesSessionLink componentName={'TAMENU'} />
+                ))}
         </div>
     );
 };
- 
+
 export default ScheduledCall;

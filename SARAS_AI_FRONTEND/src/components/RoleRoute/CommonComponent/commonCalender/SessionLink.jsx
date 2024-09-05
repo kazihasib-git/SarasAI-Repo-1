@@ -85,6 +85,7 @@ const SessionLink = ({ componentName, platformName, platformUrl }) => {
     const handleChangeMode = () => {};
 
     const handleEditStudents = () => {
+        console.log("studentsstst");
         dispatch(openEditStudents({ id : sessionEventData.id }))
     };
 
