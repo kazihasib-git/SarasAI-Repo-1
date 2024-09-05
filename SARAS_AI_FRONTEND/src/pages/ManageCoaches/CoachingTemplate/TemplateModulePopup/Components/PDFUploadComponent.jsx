@@ -23,7 +23,10 @@ const PDFUploadComponent = () => {
     const [error, setError] = useState('');
 
     const handleFileChange = event => {
-        const file = event.target.files[0];
+        event.preventDefault();
+
+        // Extract file from either the input element or the drag event
+        let file = event.target?.files?.[0] || event.dataTransfer?.files?.[0];
 
         if (file) {
             // Validate that the file is a PDF
@@ -47,7 +50,10 @@ const PDFUploadComponent = () => {
 
     return (
         <Grid item xs={12} sm={6} md={6} style={{ width: '80%' }}>
-            <UploadBox>
+            <UploadBox
+                onDrop={handleFileChange} // Handles file drop
+                onDragOver={event => event.preventDefault()}
+            >
                 <Typography>Drag and Drop the file</Typography>
                 <Typography>Or</Typography>
                 <input
