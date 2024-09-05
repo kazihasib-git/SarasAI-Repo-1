@@ -1,131 +1,38 @@
-import React, { useState, useEffect } from 'react';
-import { Button, MenuItem, Typography, Grid, Divider } from '@mui/material';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import CustomTextField from '../CustomFields/CustomTextField';
 import ReusableDialog from '../CustomFields/ReusableDialog';
-import PopUpTable from '../CommonComponent/PopUpTable';
-import { getAssignBatches } from '../../redux/features/adminModule/ta/taSlice';
-
-import { getCoachAssignBatches } from '../../redux/features/adminModule/coach/coachSlice';
-
-import {
-    closeEditBatch,
-    openScheduleSession,
-} from '../../redux/features/adminModule/ta/taScheduling';
-
-import {
-    closeCoachEditBatch,
-    openCoachScheduleSession,
-} from '../../redux/features/adminModule/coach/coachSchedule';
-import { useParams } from 'react-router-dom';
 import CustomButton from '../CustomFields/CustomButton';
-import { toast } from 'react-toastify';
+import { Divider, Grid, MenuItem } from '@mui/material';
+import CustomTextField from '../CustomFields/CustomTextField';
+import PopUpTable from '../CommonComponent/PopUpTable';
+import { getStudentsInBatches } from '../../redux/features/commonCalender/batchesAndStudents';
 
-const EditBatches = ({ componentname }) => {
-    const { id, name } = useParams();
+const headers = ['S. No.', 'Batch Name', 'Branch', 'Select'];
+
+const SelectBatches = ({ componentName }) => {
     const dispatch = useDispatch();
-
     const [selectedBatch, setSelectedBatch] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedBranch, setSelectedBranch] = useState('');
     const [filteredBatches, setFilteredBatches] = useState([]);
 
-    let stateModuleKey,
-        nameKey,
-        assignBatchOpenKey,
-        closeDialogAction,
-        getAssignBatchesAction,
-        editBatchKey,
-        selectedBatchKey,
-        openSchedulingPopup;
+    const { name, id, batches, selectedBatches, students, selectedStudents } =
+        useSelector(state => state.batchesAndStudentsReducer);
 
-    let schedulingState, nameKeyScheduling, idKeyScheduling, timezoneId;
-
-    switch (componentname) {
-        case 'COACHSCHEDULE':
-            stateModuleKey = 'coachModule';
-            nameKey = 'coach_name';
-            assignBatchOpenKey = 'openCoachEditBatch';
-            editBatchKey = 'assignedBatches';
-            selectedBatchKey = 'batches';
-            closeDialogAction = closeCoachEditBatch;
-            getAssignBatchesAction = getCoachAssignBatches;
-            schedulingState = useSelector(state => state.coachScheduling);
-            timezoneId = useSelector(
-                state => state.coachScheduling.coachTimezone
-            );
-            nameKeyScheduling = 'coachName';
-            idKeyScheduling = 'coachID';
-            openSchedulingPopup = openCoachScheduleSession;
-
+    switch (componentName) {
+        case '':
             break;
 
-        case 'TASCHEDULE':
-            stateModuleKey = 'taModule';
-            nameKey = 'ta_name';
-            assignBatchOpenKey = 'openEditBatch';
-            editBatchKey = 'assignedBatches';
-            selectedBatchKey = 'batches';
-            closeDialogAction = closeEditBatch;
-            getAssignBatchesAction = getAssignBatches;
-            schedulingState = useSelector(state => state.taScheduling);
-            timezoneId = useSelector(state => state.taScheduling.taTimezone);
-            nameKeyScheduling = 'taName';
-            idKeyScheduling = 'taID';
-            openSchedulingPopup = openScheduleSession;
+        case '':
             break;
 
         default:
-            stateModuleKey = null;
-            assignBatchOpenKey = null;
-            nameKey = null;
-            editBatchKey = null;
-            selectedBatchKey = null;
-            closeDialogAction = null;
-            getAssignBatchesAction = null;
-            schedulingState = null;
-            timezoneId = null;
-            nameKeyScheduling = null;
-            idKeyScheduling = null;
-            openSchedulingPopup = null;
             break;
     }
 
-    const stateSelector = useSelector(state =>
-        stateModuleKey ? state[stateModuleKey] : {}
-    );
-
-    const {
-        [nameKeyScheduling]: assignedName,
-        [idKeyScheduling]: assignedId,
-        [assignBatchOpenKey]: assignBatchOpen,
-        [selectedBatchKey]: selectedBatches,
-    } = schedulingState || {};
-
-    const {
-        [nameKey]: assignedTAName,
-        taID,
-        coachID,
-        [editBatchKey]: assignedBatches,
-        loading,
-    } = stateSelector || {};
-
     useEffect(() => {
-        const userAdminId = assignedId || id;
-        if (stateModuleKey && assignBatchOpen) {
-            dispatch(getAssignBatchesAction(userAdminId));
-        }
-    }, [
-        dispatch,
-        stateModuleKey,
-        assignBatchOpen,
-        assignedId,
-        getAssignBatchesAction,
-    ]);
-
-    useEffect(() => {
-        if (assignedBatches) {
-            const transformedData = assignedBatches
+        if (batches) {
+            const transformedData = batches
                 .filter(item => item.is_active === 1)
                 .map((batch, index) => ({
                     'S. No.': index + 1,
@@ -148,10 +55,10 @@ const EditBatches = ({ componentname }) => {
 
             setFilteredBatches(filtered);
         }
-    }, [assignedBatches, selectedBranch, searchQuery]);
+    }, [batches, selectedBranch, searchQuery]);
 
-    const batchOptions = assignedBatches
-        ? [...new Set(assignedBatches.map(batch => batch.batch.branch.name))]
+    const batchOptions = batches
+        ? [...new Set(batches.map(batch => batch.batch.branch.name))]
         : [];
 
     useEffect(() => {
@@ -193,28 +100,20 @@ const EditBatches = ({ componentname }) => {
 
     const handleSubmit = () => {
         if (!validate()) return;
-        const id =
-            componentname === 'COACHSCHEDULE'
-                ? coachID || assignedId
-                : taID || assignedId;
-        const data = {
-            [componentname === 'COACHSCHEDULE' ? 'Coach_id' : 'ta_id']: id,
-            name: assignedName,
-            batches: selectedBatch ? selectedBatch.map(id => ({ id })) : [],
-        };
+
+        const batchIds = selectedBatch;
+        dispatch(getStudentsInBatches(batchIds));
 
         dispatch(
             openSchedulingPopup({
                 id,
-                name: assignedName,
+                name: name,
                 batches: selectedBatch.map(id => ({ id })),
                 timezone: timezoneId,
             })
         );
         dispatch(closeDialogAction());
     };
-
-    const headers = ['S. No.', 'Batch Name', 'Branch', 'Select'];
 
     const content = (
         <>
@@ -280,8 +179,6 @@ const EditBatches = ({ componentname }) => {
         </CustomButton>
     );
 
-    const assignedTA = assignedTAName || assignedName || name;
-
     return (
         <ReusableDialog
             open={assignBatchOpen}
@@ -293,4 +190,4 @@ const EditBatches = ({ componentname }) => {
     );
 };
 
-export default EditBatches;
+export default SelectBatches;

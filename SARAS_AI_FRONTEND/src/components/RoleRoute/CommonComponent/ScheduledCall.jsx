@@ -192,8 +192,10 @@ const ScheduledCall = ({ role }) => {
     };
 
     const handleClickJoinSession = call => {
+
+        window.open(call.platform_meeting.host_meeting_url, '_blank');
+        /*
         const transformedCall = {
-            // title: call.meeting_name,
             start: new Date(call.date.split(' ')[0] + 'T' + call.start_time),
             end: new Date(call.date.split(' ')[0] + 'T' + call.end_time),
             meetingName: call.meeting_name,
@@ -205,6 +207,7 @@ const ScheduledCall = ({ role }) => {
             batches: call.batch,
         };
         dispatch(openSessionPopup(transformedCall));
+        */
     };
 
     const handleCreateNewSession = () => {

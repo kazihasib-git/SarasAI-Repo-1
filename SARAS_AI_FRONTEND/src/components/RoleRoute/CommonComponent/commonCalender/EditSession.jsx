@@ -61,6 +61,7 @@ const EditSession = ({ componentName }) => {
     }
 
     const [formData, setFormData] = useState(initialFormData);
+    const [isEdited, setIsEdited] = useState(false);
     const [error, setError] = useState({});
     const meetingTypes = ['webinars', 'meetings'];
 
@@ -97,7 +98,7 @@ const EditSession = ({ componentName }) => {
     }, [dispatch])
 
     useEffect(() => {
-        if (sessionData) {
+        if (sessionData && !isEdited) {
             const startTime = moment(sessionData.start_time, "HH:mm:ss");
             const endTime = moment(sessionData.end_time, "HH:mm:ss");
 
@@ -124,7 +125,7 @@ const EditSession = ({ componentName }) => {
                 timezone_id: sessionData.timezone_id || null
             })
         }
-    }, [sessionData])
+    }, [])
 
     const durationOptions = [
         { label: '15 minutes', value: '00:15:00' },
@@ -138,6 +139,7 @@ const EditSession = ({ componentName }) => {
     ];
 
     const handleChange = (field, value) => {
+        setIsEdited(true);
         setFormData(prev => ({ ...prev, [field]: value }));
     };
 

@@ -64,12 +64,6 @@ const weekDays = [
     'Saturday',
 ];
 
-const actionButtons = [
-    {
-        type: 'button',
-    },
-];
-
 const Schedule = ({ componentName, timezoneID }) => {
     const [fromDate, setFromDate] = useState(null);
     const [toDate, setToDate] = useState(null);
@@ -340,15 +334,14 @@ const Schedule = ({ componentName, timezoneID }) => {
         }
     };
 
-    const validate = (formData) => {
-
+    const validate = formData => {
         // Ensure all required fields are filled in
         if (!fromDate) {
             toast.error('Please select from Date');
             return false;
         }
 
-        if(!selectedSlot){
+        if (!selectedSlot) {
             toast.error('Please select slot');
             return false;
         }
@@ -358,7 +351,7 @@ const Schedule = ({ componentName, timezoneID }) => {
             return false;
         }
 
-        if(repeat==='recurring'){
+        if (repeat === 'recurring') {
             if (!toTime) {
                 toast.error('Please select a To Time');
                 return false;
@@ -368,21 +361,21 @@ const Schedule = ({ componentName, timezoneID }) => {
         // Validate "To Time" is greater than "From Time"
         // const fromTimeInMinutes = convertTimeToMinutes(fromTime);
         // const toTimeInMinutes = convertTimeToMinutes(toTime);
-    
+
         // if (toTimeInMinutes <= fromTimeInMinutes) {
         //     toast.error('To Time must be later than From Time');
         //     return false;
         // }
-    
+
         // Validate that selected times are within the slot's time range
         // const slotStartTimeInMinutes = convertTimeToMinutes(selectedSlot['From Time']);
         // const slotEndTimeInMinutes = convertTimeToMinutes(selectedSlot['To Time']);
-    
+
         // if (fromTimeInMinutes < slotStartTimeInMinutes || toTimeInMinutes > slotEndTimeInMinutes) {
         //     toast.error(`Time must be between ${formatTime(selectedSlot['From Time'])} and ${formatTime(selectedSlot['To Time'])}`);
         //     return false;
         // }
-    
+
         if (formData.platform_id === 1) {
             if (!formData.host_email_id) {
                 toast.error('Please provide a valid  Host Name.');
@@ -392,7 +385,7 @@ const Schedule = ({ componentName, timezoneID }) => {
             if (!formData.meeting_type) {
                 toast.error('Please select Meeting Type.');
                 return false;
-            }   
+            }
         }
 
         // Check if 'timezone_id' is provided
@@ -400,7 +393,7 @@ const Schedule = ({ componentName, timezoneID }) => {
             toast.error('Please select a timezone');
             return false;
         }
-        
+
         return true;
     };
 
@@ -444,7 +437,7 @@ const Schedule = ({ componentName, timezoneID }) => {
         formData.studentId = studentId;
         formData.batchId = batchId;
         // formData.timezone_id = timezoneId ? Number(timezoneId) : timezoneID;
-    
+
         // Submit data
         dispatch(createScheduleAction(formData))
             .then(() => {
@@ -468,8 +461,6 @@ const Schedule = ({ componentName, timezoneID }) => {
         name: 'platform_id',
         defaultValue: 0, // Provide a default value if necessary
     });
-
-    
 
     const content = (
         <Box

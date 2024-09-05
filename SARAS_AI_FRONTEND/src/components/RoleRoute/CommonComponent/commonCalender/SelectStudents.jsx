@@ -65,9 +65,6 @@ const SelectStudents = ({ componentName }) => {
         dispatch(getStudentsApi());
     }, [dispatch]);
 
-    console.log('dataaa', studentsData);
-
-
     useEffect(() => {
         if (studentsData && studentsData.length > 0) {
             const transformedData = studentsData
@@ -115,8 +112,6 @@ const SelectStudents = ({ componentName }) => {
     //     );
     //     setSelectedStudents(transformedPreSelectedStudents);
     // }, [preSelectedStudents]);
-
-    console.log("SELECTED STUDENTS", selectedStudents)
 
     const batchOptions =
         studentsData && Array.isArray(studentsData)
