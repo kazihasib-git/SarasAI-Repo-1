@@ -49,17 +49,17 @@ const CoachMapping = () => {
             }));
 
             setcaMappingData(transformData);
-            console.log('transform data', transformData);
         }
     }, [coachMapping]);
+
+    const filteredData = caMappingData?.filter(item =>
+        item.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     const handleSearch = event => {
         setSearchQuery(event.target.value);
     };
 
-    const filteredData = caMappingData?.filter(item =>
-        item.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
 
     return (
         <>
