@@ -26,15 +26,11 @@ import {
     closeScheduleSession,
     createTASchedule,
     getTaAvailableSlotsFromDate,
-    openEditBatch,
-    openEditStudent,
 } from '../../redux/features/adminModule/ta/taScheduling';
 import {
     closeCoachScheduleSession,
     createCoachSchedule,
     getCoachAvailableSlotsFromDate,
-    openCoachEditBatch,
-    openCoachEditStudent,
 } from '../../redux/features/adminModule/coach/coachSchedule';
 import {
     getPlatforms,
@@ -51,17 +47,64 @@ import CustomPlatformForm from '../CustomFields/CustomPlatformForm';
 import editButtonBackground from '../../assets/editbuttonbackground.svg';
 import editButtonIcon from '../../assets/editbutton.svg';
 import CustomFutureDateField from '../CustomFields/CustomFutureDateField';
+import {
+    getAssignBatches,
+    getAssignStudents,
+} from '../../redux/features/adminModule/ta/taSlice';
+import {
+    getCoachAssignBatches,
+    getCoachAssignStudents,
+} from '../../redux/features/adminModule/coach/coachSlice';
+import {
+    clearState,
+    openBatchPopup,
+    openStudentsPopup,
+} from '../../redux/features/commonCalender/batchesAndStudents';
 import { GLOBAL_CONSTANTS } from '../../constants/globalConstants';
 
-const headers = ['S. No.', 'Slot Date', 'From Time', 'To Time', 'Select'];
-
-const actionButtons = [
-    {
-        type: 'button',
+const scheduleConfig = {
+    TASCHEDULE: {
+        sliceName: 'taModule',
+        assignedStudentsApi: getAssignStudents,
+        assignedStudentsState: 'assignedStudents',
+        assignedBatchesApi: getAssignBatches,
+        assignedBatchesState: 'assignedBatches',
+        scheduleSessionOpenKey: 'scheduleSessionOpen',
+        schedulingStateKey: 'taScheduling',
+        availableKey: 'taAvailableSlots',
+        idKey: 'taID',
+        nameKey: 'taName',
+        timezoneKey: 'taTimezone',
+        studentKey: 'students',
+        batchKey: 'batches',
+        getAvailableSlotsAction: getTaAvailableSlotsFromDate,
+        getScheduledSessionApi: fetchTAScheduleById,
+        closeScheduleSessionAction: closeScheduleSession,
+        createScheduleAction: createTASchedule,
     },
-];
+    COACHSCHEDULE: {
+        sliceName: 'coachModule',
+        assignedStudentsApi: getCoachAssignStudents,
+        assignedStudentsState: 'assignedStudents',
+        assignedBatchesApi: getCoachAssignBatches,
+        assignedBatchesState: 'assignedBatches',
+        scheduleSessionOpenKey: 'scheduleCoachSessionOpen',
+        schedulingStateKey: 'coachScheduling',
+        availableKey: 'coachAvailableSlots',
+        idKey: 'coachID',
+        nameKey: 'coachName',
+        timezoneKey: 'coachTimezone',
+        studentKey: 'students',
+        batchKey: 'batches',
+        getAvailableSlotsAction: getCoachAvailableSlotsFromDate,
+        getScheduledSessionApi: fetchCoachScheduleById,
+        closeScheduleSessionAction: closeCoachScheduleSession,
+        createScheduleAction: createCoachSchedule,
+    },
+};
 
-const Schedule = ({ componentName, timezoneID }) => {
+const CreateNewSession = ({ id, name, componentName, timezone }) => {
+    const dispatch = useDispatch();
     const [fromDate, setFromDate] = useState(null);
     const [toDate, setToDate] = useState(null);
     const [fromTime, setFromTime] = useState(null);
@@ -72,82 +115,58 @@ const Schedule = ({ componentName, timezoneID }) => {
     const [selectedSlot, setSelectedSlot] = useState(null);
     const [availableSlotsOptions, setAvailableSlotsOptions] = useState([]);
     const [dateSelected, setDateSelected] = useState(false);
-    const dispatch = useDispatch();
     const { timezones, platforms, hosts } = useSelector(state => state.util);
 
-    let scheduleSessionOpenKey,
+    const {
+        assignedStudentsApi,
+        assignedBatchesApi,
         schedulingStateKey,
         availableKey,
         idKey,
         nameKey,
         timezoneKey,
-        studentKey,
-        batchKey,
         getAvailableSlotsAction,
         closeScheduleSessionAction,
         getScheduledSessionApi,
-        createScheduleAction;
+        createScheduleAction,
+        sliceName,
+        assignedStudentsState,
+        assignedBatchesState,
+    } = scheduleConfig[componentName];
 
-    switch (componentName) {
-        case 'TASCHEDULE':
-            scheduleSessionOpenKey = 'scheduleSessionOpen';
-            schedulingStateKey = 'taScheduling';
-            availableKey = 'taAvailableSlots';
-            idKey = 'taID';
-            nameKey = 'taName';
-            timezoneKey = 'taTimezone';
-            studentKey = 'students';
-            batchKey = 'batches';
-            getAvailableSlotsAction = getTaAvailableSlotsFromDate;
-            getScheduledSessionApi = fetchTAScheduleById;
-            closeScheduleSessionAction = closeScheduleSession;
-            createScheduleAction = createTASchedule;
-            break;
+    const stateSelector = useSelector(state => state[sliceName]);
 
-        case 'COACHSCHEDULE':
-            scheduleSessionOpenKey = 'scheduleCoachSessionOpen';
-            schedulingStateKey = 'coachScheduling';
-            availableKey = 'coachAvailableSlots';
-            idKey = 'coachID';
-            nameKey = 'coachName';
-            timezoneKey = 'coachTimezone';
-            studentKey = 'students';
-            batchKey = 'batches';
-            getAvailableSlotsAction = getCoachAvailableSlotsFromDate;
-            getScheduledSessionApi = fetchCoachScheduleById;
-            closeScheduleSessionAction = closeCoachScheduleSession;
-            createScheduleAction = createCoachSchedule;
-            break;
-
-        default:
-            scheduleSessionOpenKey = null;
-            schedulingStateKey = null;
-            availableKey = null;
-            idKey = null;
-            nameKey = null;
-            timezoneKey = null;
-            studentKey = null;
-            batchKey = null;
-            getAvailableSlotsAction = null;
-            getScheduledSessionApi = null;
-            closeScheduleSessionAction = null;
-            createScheduleAction = null;
-            break;
-    }
+    const {
+        [assignedStudentsState]: assignedStudents,
+        [assignedBatchesState]: assignedBatches,
+    } = stateSelector;
 
     const schedulingState = useSelector(state =>
         schedulingStateKey ? state[schedulingStateKey] : {}
     );
 
     const {
-        [scheduleSessionOpenKey]: scheduleSessionOpen,
         [idKey]: adminUserID,
         [nameKey]: adminUserName,
         [timezoneKey]: timezoneId,
         [availableKey]: availableSlots,
-        [studentKey]: students,
-        [batchKey]: batches,
     } = schedulingState;
+
+    useEffect(() => {
+        dispatch(getTimezone());
+        dispatch(getPlatforms());
+        dispatch(getAllHosts());
+        dispatch(assignedStudentsApi(adminUserID));
+        dispatch(assignedBatchesApi(adminUserID));
+    }, [dispatch]);
+
+    const timezoneName = timezone?.time_zone
+        ? timezone.time_zone
+        : timezoneIdToName(timezoneId, timezones);
+
+    const { selectedStudents, selectedBatches } = useSelector(
+        state => state.batchesAndStudents
+    );
 
     const {
         register,
@@ -157,7 +176,7 @@ const Schedule = ({ componentName, timezoneID }) => {
         formState: { errors },
     } = useForm({
         defaultValues: {
-            timezone_id: timezoneId ? Number(timezoneId) : timezoneID,
+            timezone_id: timezone?.id ? Number(timezone.id) : timezoneId,
         },
     });
 
@@ -167,16 +186,13 @@ const Schedule = ({ componentName, timezoneID }) => {
                 getAvailableSlotsAction({
                     admin_user_id: adminUserID,
                     date: fromDate,
-                    timezone_name: timezoneIdToName(
-                        timezoneId ? Number(timezoneId) : timezoneID,
-                        timezones
-                    ),
+                    timezone_name: timezoneName,
                 })
             ).then(() => {
                 setSelectedSlot(null);
             });
         }
-    }, [fromDate, dispatch, adminUserID, getAvailableSlotsAction]);
+    }, [fromDate, dispatch, timezoneName]);
 
     const handleDateSubmit = () => {
         if (fromDate) {
@@ -184,10 +200,7 @@ const Schedule = ({ componentName, timezoneID }) => {
                 getAvailableSlotsAction({
                     admin_user_id: adminUserID,
                     date: fromDate,
-                    timezone_name: timezoneIdToName(
-                        timezoneId ? Number(timezoneId) : timezoneID,
-                        timezones
-                    ),
+                    timezone_name: timezoneName,
                 })
             ).then(() => {
                 setSelectedSlot(null);
@@ -199,25 +212,8 @@ const Schedule = ({ componentName, timezoneID }) => {
         }
     };
 
-    useEffect(() => {
-        dispatch(getTimezone());
-        dispatch(getPlatforms());
-        dispatch(getAllHosts());
-    }, [dispatch]);
-
     const convertSessions = async () => {
-        if (
-            availableSlots &&
-            availableSlots.length > 0 &&
-            timezones &&
-            timezoneId
-                ? Number(timezoneId)
-                : timezoneID
-        ) {
-            const timezonename = timezoneIdToName(
-                timezoneId ? Number(timezoneId) : timezoneID,
-                timezones
-            );
+        if (availableSlots && availableSlots.length > 0 && timezoneName) {
             try {
                 const processedSlots = await Promise.all(
                     availableSlots.map(async (slot, index) => {
@@ -226,7 +222,7 @@ const Schedule = ({ componentName, timezoneID }) => {
                             start_time: slot.from_time,
                             end_time: slot.to_time,
                             end_date: slot.slot_date, // Assuming end_date is the same as slot_date
-                            timezonename,
+                            timezonename: timezoneName,
                         });
 
                         const startDateTime = new Date(
@@ -277,12 +273,7 @@ const Schedule = ({ componentName, timezoneID }) => {
 
     useEffect(() => {
         convertSessions();
-    }, [
-        availableSlots,
-        timezones,
-        timezoneId,
-        timezoneId ? Number(timezoneId) : timezoneID,
-    ]);
+    }, [availableSlots]);
 
     const handleDayChange = day => {
         setSelectedDays(prev => {
@@ -304,9 +295,6 @@ const Schedule = ({ componentName, timezoneID }) => {
         const selectedSlot = selectedSlots[0];
 
         if (selectedSlot) {
-            const slotStartTime = selectedSlot.startTime;
-            const slotEndTime = selectedSlot.endTime;
-
             setSelectedSlot(selectedSlot); // Set the specific slot
         } else {
             console.error('Selected slot is not found.');
@@ -314,20 +302,35 @@ const Schedule = ({ componentName, timezoneID }) => {
     };
 
     const handleAssignStudents = () => {
-        if (componentName === 'TASCHEDULE') {
-            dispatch(openEditStudent());
-        } else if (componentName === 'COACHSCHEDULE') {
-            dispatch(openCoachEditStudent());
-        }
+        const data = {
+            name: adminUserName,
+            id: adminUserID,
+            batches: assignedBatches,
+            selectedBatches: selectedBatches?.length > 0 ? selectedBatches : [],
+            students: assignedStudents,
+            selectedStudents:
+                selectedStudents?.length > 0 ? selectedStudents : [],
+            timezoneId: timezoneId ? timezoneId : timezone.id,
+        };
+
+        dispatch(openStudentsPopup(data));
     };
 
     const handleAssignBatches = () => {
-        if (componentName === 'TASCHEDULE') {
-            dispatch(openEditBatch());
-        } else if (componentName === 'COACHSCHEDULE') {
-            dispatch(openCoachEditBatch());
-        }
+        const data = {
+            name: adminUserName,
+            id: adminUserID,
+            batches: assignedBatches,
+            selectedBatches: selectedBatches?.length > 0 ? selectedBatches : [],
+            students: assignedStudents,
+            selectedStudents:
+                selectedStudents?.length > 0 ? selectedStudents : [],
+            timezoneId: timezoneId ? timezoneId : timezone.id,
+        };
+        dispatch(openBatchPopup(data));
     };
+
+    // Helper function to convert time string to minutes since midnight
 
     const validate = formData => {
         // Ensure all required fields are filled in
@@ -392,27 +395,17 @@ const Schedule = ({ componentName, timezoneID }) => {
         return true;
     };
 
-    const formatTime = time => {
-        const [hours, minutes] = time.split(':');
-        const hour = parseInt(hours, 10);
-        const minute = parseInt(minutes, 10);
-        const ampm = hour >= 12 ? 'pm' : 'am';
-        const formattedHour = hour % 12 || 12;
-        return `${formattedHour}:${minute < 10 ? '0' : ''}${minute} ${ampm}`;
-    };
-
     const onSubmit = formData => {
         // Perform validation
         if (!validate(formData)) return;
 
-        // Prepare data for submission
-        const studentId = students.map(student => student.id);
-        const batchId = batches.map(batch => batch.id);
+        const studentId = selectedStudents.map(student => student);
+        const batchId = selectedBatches.map(batch => batch);
 
         let weeksArray = Array(7).fill(0);
         if (repeat === 'recurring') {
             selectedDays.forEach(day => {
-                const index = weekDays.indexOf(day);
+                const index = GLOBAL_CONSTANTS.WEEKDAYS.indexOf(day);
                 weeksArray[index] = 1;
             });
         } else if (repeat === 'onetime') {
@@ -431,11 +424,11 @@ const Schedule = ({ componentName, timezoneID }) => {
         formData.weeks = weeksArray;
         formData.studentId = studentId;
         formData.batchId = batchId;
-        // formData.timezone_id = timezoneId ? Number(timezoneId) : timezoneID;
 
         // Submit data
         dispatch(createScheduleAction(formData))
             .then(() => {
+                dispatch(clearState());
                 dispatch(closeScheduleSessionAction());
                 return dispatch(getScheduledSessionApi(adminUserID));
             })
@@ -443,12 +436,6 @@ const Schedule = ({ componentName, timezoneID }) => {
                 console.error('Error:', error);
             });
         reset();
-    };
-
-    // Helper function to convert time string to minutes since midnight
-    const convertTimeToMinutes = time => {
-        const [hours, minutes] = time.split(':').map(Number);
-        return hours * 60 + minutes;
     };
 
     const platform_id = useWatch({
@@ -608,9 +595,8 @@ const Schedule = ({ componentName, timezoneID }) => {
                                                                     ? Number(
                                                                           timezoneId
                                                                       )
-                                                                    : timezoneID
+                                                                    : timezone.id
                                                             }
-                                                            //defaultValue={timezone_id ? Number(timezone_id) : timezoneID}
                                                             render={({
                                                                 field,
                                                             }) => (
@@ -628,7 +614,7 @@ const Schedule = ({ componentName, timezoneID }) => {
                                                                             ? Number(
                                                                                   timezoneId
                                                                               )
-                                                                            : timezoneID !=
+                                                                            : timezone.id !=
                                                                               null
                                                                     }
                                                                     options={
@@ -987,7 +973,7 @@ const Schedule = ({ componentName, timezoneID }) => {
                                                                                     'auto',
                                                                             }}
                                                                         >
-                                                                            {weekDays.map(
+                                                                            {GLOBAL_CONSTANTS.WEEKDAYS.map(
                                                                                 day => (
                                                                                     <FormControlLabel
                                                                                         key={
@@ -1112,22 +1098,11 @@ const Schedule = ({ componentName, timezoneID }) => {
         </Box>
     );
 
-    const actions = (
-        <CustomButton
-            onClick={handleSubmit}
-            backgroundColor="#F56D3B"
-            borderColor="#F56D3B"
-            color="#FFFFFF"
-            textTransform="none"
-        >
-            Submit
-        </CustomButton>
-    );
-
     return (
         <ReusableDialog
             open={createScheduleAction}
             handleClose={() => {
+                dispatch(clearState());
                 dispatch(closeScheduleSessionAction());
             }}
             title={`Schedule New Session`}
@@ -1137,4 +1112,4 @@ const Schedule = ({ componentName, timezoneID }) => {
     );
 };
 
-export default Schedule;
+export default CreateNewSession;

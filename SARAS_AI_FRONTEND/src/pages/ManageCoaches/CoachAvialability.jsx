@@ -4,7 +4,7 @@ import { getTodayCoachAvailability } from '../../redux/features/adminModule/coac
 import { useEffect, useState } from 'react';
 import Header from '../../components/Header/Header';
 import Sidebar from '../../components/Sidebar/Sidebar';
-import { DynamicTable } from '../managesTAs/TaAvaialablity';
+import DynamicTable from '../../components/CommonComponent/DynamicTable';
 
 const headers = [
     'S. No.',
@@ -34,9 +34,12 @@ const CoachAvialablity = () => {
                 taName: item.name,
                 username: item.username,
                 Availability: item.availability_status,
+                timezoneId: item.timezone_id,
                 // calendar: 'Check',
             }));
             setCoachAvailabilityData(transformData);
+        } else {
+            setCoachAvailabilityData([]);
         }
     }, [todaysAvailableCoach]);
 

@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Button } from '@mui/material';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import { useDispatch, useSelector } from 'react-redux';
 import PopUpTable from '../CommonComponent/PopUpTable';
-import { useParams } from 'react-router-dom';
 
 import {
     closeScheduledSlots,
@@ -17,62 +15,46 @@ import {
     getCoachScheduleSession,
 } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import CustomButton from '../CustomFields/CustomButton';
-import { timezoneIdToName } from '../../utils/timezoneIdToName';
 import { convertFromUTC } from '../../utils/dateAndtimeConversion';
-import { getTimezone } from '../../redux/features/utils/utilSlice';
 import { addDataToFindScheduleInSlot } from '../../redux/features/commonCalender/commonCalender';
 import { toast } from 'react-toastify';
 
-const Slots = ({ componentName, timezoneID }) => {
-    const { timezones, platforms } = useSelector(state => state.util);
+const slotConfig = {
+    TACALENDER: {
+        sliceName: 'taAvialability',
+        scheduleSessionOpenKey: 'scheduledSlotsOpen',
+        scheduledSlotsDataKey: 'scheduledSlotsData',
+        getAvailableSlotsAction: openScheduledSession,
+        closeScheduleSessionAction: closeScheduledSlots,
+        getScheduleSessionAction: getScheduleSession,
+        markLeaveKey: 'markLeaveData',
+    },
+    COACHCALENDER: {
+        sliceName: 'coachAvailability',
+        scheduleSessionOpenKey: 'scheduledCoachSlotsOpen',
+        scheduledSlotsDataKey: 'scheduledCoachSlotsData',
+        getAvailableSlotsAction: openCoachScheduledSession,
+        closeScheduleSessionAction: closeCoachScheduledSlots,
+        getScheduleSessionAction: getCoachScheduleSession,
+        markLeaveKey: 'markLeaveData',
+    },
+};
 
+const Slots = ({ id, name, componentName, timezone }) => {
     const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(getTimezone());
-    }, [dispatch]);
-    const { id } = useParams();
+
     const [selectedSlots, setSelectedSlots] = useState([]);
     const [data, setData] = useState([]);
 
-    let scheduleSessionOpenKey,
+    const {
+        scheduleSessionOpenKey,
         scheduledSlotsDataKey,
         getAvailableSlotsAction,
         closeScheduleSessionAction,
         getScheduleSessionAction,
         markLeaveKey,
-        sliceName;
-
-    switch (componentName) {
-        case 'TACALENDER':
-            sliceName = 'taAvialability';
-            scheduleSessionOpenKey = 'scheduledSlotsOpen';
-            scheduledSlotsDataKey = 'scheduledSlotsData';
-            getAvailableSlotsAction = openScheduledSession;
-            closeScheduleSessionAction = closeScheduledSlots;
-            getScheduleSessionAction = getScheduleSession;
-            markLeaveKey = 'markLeaveData';
-            break;
-
-        case 'COACHCALENDER':
-            sliceName = 'coachAvailability';
-            scheduleSessionOpenKey = 'scheduledCoachSlotsOpen';
-            scheduledSlotsDataKey = 'scheduledCoachSlotsData';
-            getAvailableSlotsAction = openCoachScheduledSession;
-            closeScheduleSessionAction = closeCoachScheduledSlots;
-            getScheduleSessionAction = getCoachScheduleSession;
-            markLeaveKey = 'markLeaveData';
-            break;
-
-        default:
-            sliceName = null;
-            scheduleSessionOpenKey = null;
-            scheduledSlotsDataKey = null;
-            getAvailableSlotsAction = null;
-            closeScheduleSessionAction = null;
-            getScheduleSessionAction = null;
-            markLeaveKey = null;
-            break;
-    }
+        sliceName,
+    } = slotConfig[componentName];
 
     const schedulingState = useSelector(state => state[sliceName]);
 
@@ -95,11 +77,8 @@ const Slots = ({ componentName, timezoneID }) => {
         if (
             scheduledSlotsData &&
             scheduledSlotsData.length > 0 &&
-            timezones &&
-            timezoneID
+            timezone.time_zone
         ) {
-            const timezonename = timezoneIdToName(timezoneID, timezones);
-
             try {
                 const processedSlots = await Promise.all(
                     scheduledSlotsData.map(async (slot, index) => {
@@ -108,7 +87,7 @@ const Slots = ({ componentName, timezoneID }) => {
                             start_time: slot.from_time,
                             end_time: slot.to_time,
                             end_date: slot.slot_date,
-                            timezonename,
+                            timezonename: timezone.time_zone,
                         });
                         const startDateTime = new Date(
                             `${localTime.start_date}T${localTime.start_time}`
@@ -139,7 +118,7 @@ const Slots = ({ componentName, timezoneID }) => {
 
     useEffect(() => {
         convertSlots();
-    }, [scheduledSlotsData, timezones, timezoneID]);
+    }, [scheduledSlotsData, timezone.time_zone]);
 
     const handleSelect = id => {
         setSelectedSlots(prev =>
@@ -150,7 +129,6 @@ const Slots = ({ componentName, timezoneID }) => {
     };
 
     const handleSubmit = async () => {
-        const timezonename = timezoneIdToName(timezoneID, timezones);
         if (selectedSlots.length > 0) {
             const data = await Promise.all(
                 selectedSlots.map(async slotId => {
@@ -161,7 +139,7 @@ const Slots = ({ componentName, timezoneID }) => {
                         start_time: slot.from_time,
                         end_time: slot.to_time,
                         end_date: slot.slot_date,
-                        timezonename,
+                        timezonename: timezone.time_zone,
                     });
 
                     return {
@@ -175,7 +153,7 @@ const Slots = ({ componentName, timezoneID }) => {
             const requestData = {
                 admin_user_id: id,
                 data,
-                timezone_id: timezoneID,
+                timezone_id: timezone.id,
             };
 
             console.log('REQUEST DATA :', requestData);

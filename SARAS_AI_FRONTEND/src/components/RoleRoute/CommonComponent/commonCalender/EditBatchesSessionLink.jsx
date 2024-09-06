@@ -1,19 +1,34 @@
-import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { getTaMenuAssignedBatches, getSelectedTaMenuAssignedBatches, getTaMenuAssignedStudents, getTaMenuSessions, updateBatchesInTaSession } from '../../../../redux/features/taModule/tamenuSlice'
-import { getCoachMenuAssignedBatches, getSelectedCoachMenuAssignedBatches, getCoachMenuAssignedStudents, getCoachMenuSessions, updateBatchesInCoachSession } from '../../../../redux/features/coachModule/coachmenuprofileSilce'
-import { closeEditBatches, closeEditStudents } from '../../../../redux/features/commonCalender/commonCalender'
-import ReusableDialog from '../../../CustomFields/ReusableDialog'
-import { Divider, Grid, MenuItem, Typography } from '@mui/material'
-import CustomTextField from '../../../CustomFields/CustomTextField'
-import PopUpTable from '../../../CommonComponent/PopUpTable'
-import { toast } from 'react-toastify'
-import CustomButton from '../../../CustomFields/CustomButton'
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+    getTaMenuAssignedBatches,
+    getSelectedTaMenuAssignedBatches,
+    getTaMenuAssignedStudents,
+    getTaMenuSessions,
+    updateBatchesInTaSession,
+} from '../../../../redux/features/taModule/tamenuSlice';
+import {
+    getCoachMenuAssignedBatches,
+    getSelectedCoachMenuAssignedBatches,
+    getCoachMenuAssignedStudents,
+    getCoachMenuSessions,
+    updateBatchesInCoachSession,
+} from '../../../../redux/features/coachModule/coachmenuprofileSilce';
+import {
+    closeEditBatches,
+    closeEditStudents,
+} from '../../../../redux/features/commonCalender/commonCalender';
+import ReusableDialog from '../../../CustomFields/ReusableDialog';
+import { Divider, Grid, MenuItem, Typography } from '@mui/material';
+import CustomTextField from '../../../CustomFields/CustomTextField';
+import PopUpTable from '../../../CommonComponent/PopUpTable';
+import { toast } from 'react-toastify';
+import CustomButton from '../../../CustomFields/CustomButton';
 
 const headers = ['S. No.', 'Batch Name', 'Branch', 'Select'];
 
 const EditBatchesSessionLink = ({ componentName }) => {
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
 
     const [selectedBatch, setSelectedBatch] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
@@ -30,21 +45,21 @@ const EditBatchesSessionLink = ({ componentName }) => {
 
     switch (componentName) {
         case 'TAMENU':
-            sliceName = 'taMenu'
+            sliceName = 'taMenu';
             getBatchesApi = getTaMenuAssignedBatches;
             batchesDataState = 'assignedTaBatches';
             getSelectedBatchesApi = getSelectedTaMenuAssignedBatches;
-            assignedBatchesState = 'taScheduleBatches'
+            assignedBatchesState = 'taScheduleBatches';
             updateBatchesApi = updateBatchesInTaSession;
-            getSessionApi = getTaMenuSessions
+            getSessionApi = getTaMenuSessions;
             break;
 
         case 'COACHMENU':
-            sliceName = 'coachMenu'
+            sliceName = 'coachMenu';
             getBatchesApi = getCoachMenuAssignedBatches;
             batchesDataState = 'assignedCoachBatches';
             getSelectedBatchesApi = getSelectedCoachMenuAssignedBatches;
-            assignedBatchesState = 'coachScheduleBatches'
+            assignedBatchesState = 'coachScheduleBatches';
             updateBatchesApi = updateBatchesInCoachSession;
             getSessionApi = getCoachMenuSessions;
             break;
@@ -59,24 +74,25 @@ const EditBatchesSessionLink = ({ componentName }) => {
             break;
     }
 
-    const stateSelector = useSelector((state) => state[sliceName])
+    const stateSelector = useSelector(state => state[sliceName]);
 
     const {
         [batchesDataState]: batchesData,
         [assignedBatchesState]: sessionBatches,
-    } = stateSelector
+    } = stateSelector;
 
-    const { meetingId, sessionEventData, openEditBatchesPopup } = useSelector((state) => state.commonCalender)
+    const { meetingId, sessionEventData, openEditBatchesPopup } = useSelector(
+        state => state.commonCalender
+    );
 
     useEffect(() => {
-        dispatch(getBatchesApi())
-            .then(() => {
-                console.log(componentName,"sssssdwcwcwc");
-                dispatch(getSelectedBatchesApi(sessionEventData.meetingId))
-            })
-    }, [dispatch])
+        dispatch(getBatchesApi()).then(() => {
+            console.log(componentName, 'sssssdwcwcwc');
+            dispatch(getSelectedBatchesApi(sessionEventData.meetingId));
+        });
+    }, [dispatch]);
 
-    console.log("batchess :", batchesData, sessionBatches)
+    console.log('batchess :', batchesData, sessionBatches);
 
     useEffect(() => {
         if (batchesData && batchesData.length) {
@@ -88,8 +104,14 @@ const EditBatchesSessionLink = ({ componentName }) => {
             }));
 
             const filtered = transformedData.filter(batch => {
-                const matchesBranch = selectedBranch ? batch.Branch = selectedBranch : true;
-                const matchesQuery = searchQuery ? batch['Batch Name'].toLowerCase().includes(searchQuery.toLowerCase()) : true;
+                const matchesBranch = selectedBranch
+                    ? (batch.Branch = selectedBranch)
+                    : true;
+                const matchesQuery = searchQuery
+                    ? batch['Batch Name']
+                          .toLowerCase()
+                          .includes(searchQuery.toLowerCase())
+                    : true;
                 return matchesBranch && matchesQuery;
             });
             setFilteredBatches(filtered);
@@ -98,21 +120,25 @@ const EditBatchesSessionLink = ({ componentName }) => {
         }
     }, [batchesData, selectedBatch, searchQuery]);
 
-
-    const batchOptions = (batchesData && batchesData.length > 0) ? [...new Set(batchesData.map(batch => batch.batch.branch.name))] : [];
+    const batchOptions =
+        batchesData && batchesData.length > 0
+            ? [...new Set(batchesData.map(batch => batch.batch.branch.name))]
+            : [];
 
     useEffect(() => {
         if (sessionBatches) {
             setSelectedBatch(sessionBatches.map(batch => batch.batch_id));
         }
-    }, [sessionBatches])
+    }, [sessionBatches]);
 
     const handleSelectBatch = id => {
-        setSelectedBatch(prev => prev.includes(id) ? prev.filter(sid => sid !== id) : [...prev, id])
-    }
+        setSelectedBatch(prev =>
+            prev.includes(id) ? prev.filter(sid => sid !== id) : [...prev, id]
+        );
+    };
 
     const handleBranchChange = e => {
-        const selectedBranchValue = e.target.value
+        const selectedBranchValue = e.target.value;
         setSelectedBranch(selectedBranchValue);
 
         if (!selectedBranchValue) {
@@ -125,37 +151,34 @@ const EditBatchesSessionLink = ({ componentName }) => {
                 }))
             );
         }
-    }
+    };
 
     const validate = () => {
         if (selectedBatch.length === 0) {
-            toast.error('Please Select at Least One Batch')
+            toast.error('Please Select at Least One Batch');
             return false;
         }
         return true;
-    }
-
+    };
 
     const handleSubmit = () => {
         if (!validate()) return;
 
-        const id = sessionEventData.meetingId;
+        const id = sessionEventData.id;
         const data = {
-            batchId: selectedBatch.map(id => id)
-        }
+            batchId: selectedBatch.map(id => id),
+        };
         dispatch(updateBatchesApi({ id, data }))
             .unwrap()
             .then(() => {
-                dispatch(closeEditBatches())
-                toast.success("Batches Updated Successfully")
+                dispatch(closeEditBatches());
+                toast.success('Batches Updated Successfully');
                 // dispatch(getSessionApi())
             })
-            .catch(error =>{
+            .catch(error => {
                 toast.error(`${error}`);
-            })
-            
-    }
-
+            });
+    };
 
     const content = (
         <>
@@ -205,7 +228,7 @@ const EditBatchesSessionLink = ({ componentName }) => {
                 {selectedBatch.length} batch(es) Selected
             </Typography>
         </>
-    )
+    );
 
     const actions = (
         <CustomButton
@@ -219,7 +242,7 @@ const EditBatchesSessionLink = ({ componentName }) => {
         >
             Submit
         </CustomButton>
-    )
+    );
 
     return (
         <ReusableDialog
@@ -229,7 +252,7 @@ const EditBatchesSessionLink = ({ componentName }) => {
             content={content}
             actions={actions}
         />
-    )
-}
+    );
+};
 
-export default EditBatchesSessionLink
+export default EditBatchesSessionLink;

@@ -1,112 +1,67 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-    getTaMenuAssignedStudents,
-    getSelectedTaMenuAssignedStudents,
-    getTaMenuSessions,
-    updateStudentsInTaSession,
-} from '../../../../redux/features/taModule/tamenuSlice';
-import {
-    getCoachMenuAssignedStudents,
-    getCoachMenuSessions,
-    getSelectedCoachMenuAssignedStudents,
-    updateBatchesInCoachSession,
-    updateStudentsInCoachSession,
-} from '../../../../redux/features/coachModule/coachmenuprofileSilce';
-import { toast } from 'react-toastify';
-import { closeEditStudents } from '../../../../redux/features/commonCalender/commonCalender';
-import CustomButton from '../../../CustomFields/CustomButton';
-import ReusableDialog from '../../../CustomFields/ReusableDialog';
+import ReusableDialog from '../CustomFields/ReusableDialog';
+import CustomButton from '../CustomFields/CustomButton';
 import { Divider, Grid, MenuItem, Typography } from '@mui/material';
-import CustomTextField from '../../../CustomFields/CustomTextField';
-import PopUpTable from '../../../CommonComponent/PopUpTable';
+import PopUpTable from '../CommonComponent/PopUpTable';
+import CustomTextField from '../CustomFields/CustomTextField';
+import { closeStudentsPopup } from '../../redux/features/commonCalender/batchesAndStudents';
+import { openScheduleSession } from '../../redux/features/adminModule/ta/taScheduling';
+import { openCoachScheduleSession } from '../../redux/features/adminModule/coach/coachSchedule';
+import { toast } from 'react-toastify';
+import { MESSAGE_CONSTANTS } from '../../constants/messageConstants';
 
 const headers = ['S. No.', 'Student Name', 'Program', 'Batch', 'Select'];
 
-const EditStudentsSessionLink = ({ componentName }) => {
+const studentsConfig = {
+    TASCHEDULE: {
+        openSchedulingPopup: openScheduleSession,
+    },
+    COACHSCHEDULE: {
+        openSchedulingPopup: openCoachScheduleSession,
+    },
+};
+
+const SelectStudents = ({ id, name, componentName, timezone }) => {
     const dispatch = useDispatch();
 
     const [selectedTerm, setSelectedTerm] = useState([]);
     const [selectedBatch, setSelectedBatch] = useState('');
     const [searchName, setSearchName] = useState('');
-    const [selectedStudents, setSelectedStudents] = useState([]);
+    const [selectStudents, setSelectStudents] = useState([]);
     const [filteredStudents, setFilteredStudents] = useState([]);
 
-    let sliceName,
-        getAssignStudentsApi,
-        getAssignSelectedStudentsApi,
-        getAssignedSelectedStudentsState,
-        assignedStudentsState,
-        editStudentsApi,
-        getSessionApi;
-
-    switch (componentName) {
-        case 'TAMENU':
-            sliceName = 'taMenu';
-            getAssignSelectedStudentsApi = getSelectedTaMenuAssignedStudents;
-            getAssignedSelectedStudentsState = 'taScheduleStudents';
-            getAssignStudentsApi = getTaMenuAssignedStudents;
-            assignedStudentsState = 'assignedTaStudents';
-            editStudentsApi = updateStudentsInTaSession;
-            getSessionApi = getTaMenuSessions;
-            break;
-
-        case 'COACHMENU':
-            sliceName = 'coachMenu';
-            getAssignSelectedStudentsApi = getSelectedCoachMenuAssignedStudents;
-            getAssignedSelectedStudentsState = 'coachScheduleStudents';
-            getAssignStudentsApi = getCoachMenuAssignedStudents;
-            assignedStudentsState = 'assignedCoachStudents';
-            editStudentsApi = updateStudentsInCoachSession;
-            getSessionApi = getCoachMenuSessions;
-            break;
-
-        default:
-            sliceName = null;
-            getAssignStudentsApi = null;
-            getAssignSelectedStudentsApi = null;
-            getAssignedSelectedStudentsState = null;
-            assignedStudentsState = null;
-            editStudentsApi = null;
-            getSessionApi = null;
-            break;
-    }
-
-    const stateSelector = useSelector(state => state[sliceName]);
-
     const {
-        [assignedStudentsState]: students,
-        [getAssignedSelectedStudentsState]: sessionStudents,
-    } = stateSelector;
+        userId,
+        userName,
+        openStudents,
+        students,
+        selectedStudents,
+        timezoneId,
+    } = useSelector(state => state.batchesAndStudents);
 
-    const { meetingId, sessionEventData, openEditStudentsPopup } = useSelector(
-        state => state.commonCalender
-    );
-
-    useEffect(() => {
-        dispatch(getAssignStudentsApi()).then(() => {
-            dispatch(getAssignSelectedStudentsApi(sessionEventData.meetingId));
-        });
-    }, [dispatch]);
-
-    console.log('Students', students, sessionStudents);
+    const { openSchedulingPopup } = studentsConfig[componentName];
 
     useEffect(() => {
-        if (students && students.length > 0) {
-            const transformedData = students.map((stu, index) => ({
-                'S. No.': index + 1,
-                'Student Name': stu.student.name,
-                Program:
-                    stu.student.packages.map(pack => pack.name).join(', ') ||
-                    'N/A',
-                Batch:
-                    stu.student.batches
-                        .map(batch => batch.batch_name)
-                        .join(', ') || 'N/A',
-                Select: stu.is_active ? 'Active' : 'Inactive',
-                is_active: stu.is_active,
-                id: stu.student.id,
-            }));
+        if (students) {
+            // Transform and filter the data
+            const transformedData = students
+                .filter(item => item.is_active === 1)
+                .map((stu, index) => ({
+                    'S. No.': index + 1,
+                    'Student Name': stu.student.name,
+                    Program:
+                        stu.student.packages
+                            .map(pack => pack.name)
+                            .join(', ') || 'N/A',
+                    Batch:
+                        stu.student.batches
+                            .map(batch => batch.batch_name)
+                            .join(', ') || 'N/A',
+                    Select: stu.is_active ? 'Active' : 'Inactive',
+                    is_active: stu.is_active,
+                    id: stu.student.id,
+                }));
 
             // Filter the students based on selected package and batch
             const filtered = transformedData.filter(student => {
@@ -128,8 +83,6 @@ const EditStudentsSessionLink = ({ componentName }) => {
             });
 
             setFilteredStudents(filtered);
-        } else {
-            setFilteredStudents([]);
         }
     }, [students, selectedTerm, selectedBatch, searchName]);
 
@@ -175,44 +128,40 @@ const EditStudentsSessionLink = ({ componentName }) => {
             : [];
 
     useEffect(() => {
-        if (sessionStudents && sessionStudents.length > 0) {
-            setSelectedStudents(
-                sessionStudents.map(student => student.student_id)
-            );
+        if (selectedStudents?.length > 0) {
+            setSelectStudents(selectedStudents.map(student => student));
         }
-    }, [sessionStudents]);
+    }, [selectedStudents]);
 
     const handleSelectStudent = id => {
-        setSelectedStudents(prev =>
+        setSelectStudents(prev =>
             prev.includes(id) ? prev.filter(sid => sid !== id) : [...prev, id]
         );
     };
 
     const validate = () => {
-        if (selectedStudents.length === 0) {
-            toast.error('Please Select Atleast One Student');
-            return false;
+        if (selectStudents.length === 0) {
+            toast.error(MESSAGE_CONSTANTS.SELECT_ATLEAST_ONE_STUDENT);
+            return false; // Return false if validation fails
         }
-        return true;
+        return true; // Return true if validation passes
     };
 
     const handleSubmit = () => {
         if (!validate()) return;
 
-        const id = sessionEventData.id;
-        const data = {
-            studentId: selectedStudents.map(id => id),
-        };
-        dispatch(editStudentsApi({ id, data }))
-            .unwrap()
-            .then(() => {
-                dispatch(closeEditStudents());
-                toast.success('Student Updated Successfully.');
-                // dispatch(getSessionApi())
+        dispatch(
+            openSchedulingPopup({
+                id: userId,
+                name: userName,
+                student: selectStudents.map(id => ({ id })),
+                timezoneId: timezone ? timezone.id : timezoneId,
             })
-            .catch(error => {
-                toast.error(`${error}`);
-            });
+        );
+
+        dispatch(closeStudentsPopup({ selectedStudents: selectStudents }));
+
+        // dispatch(closeDialogAction());
     };
 
     const content = (
@@ -267,14 +216,14 @@ const EditStudentsSessionLink = ({ componentName }) => {
                 headers={headers}
                 initialData={filteredStudents}
                 onRowClick={handleSelectStudent}
-                selectedBox={selectedStudents}
+                selectedBox={selectStudents}
             />
             <Typography
                 variant="subtitle1"
                 gutterBottom
                 sx={{ mt: 2, textAlign: 'center' }}
             >
-                {selectedStudents.length} Student(s) Selected
+                {selectStudents.length} Student(s) Selected
             </Typography>
         </>
     );
@@ -295,8 +244,12 @@ const EditStudentsSessionLink = ({ componentName }) => {
 
     return (
         <ReusableDialog
-            open={openEditStudentsPopup}
-            handleClose={() => dispatch(closeEditStudents())}
+            open={openStudents}
+            handleClose={() =>
+                dispatch(
+                    closeStudentsPopup({ selectedStudents: selectStudents })
+                )
+            }
             title={`Assign Students to Session`}
             content={content}
             actions={actions}
@@ -304,4 +257,4 @@ const EditStudentsSessionLink = ({ componentName }) => {
     );
 };
 
-export default EditStudentsSessionLink;
+export default SelectStudents;
