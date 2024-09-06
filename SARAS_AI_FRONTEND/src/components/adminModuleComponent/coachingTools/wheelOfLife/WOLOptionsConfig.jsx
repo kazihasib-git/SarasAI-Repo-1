@@ -142,8 +142,12 @@ const WOLOptionsConfig = () => {
         if (!formValues.maxScale)
             tempErrors.maxScale = 'Maximum Scale is required';
         if (Number(formValues.minScale) >= Number(formValues.maxScale))
-            tempErrors.scaleRange =
-                'Maximum Scale must be greater than Minimum Scale';
+            tempErrors.scaleRange = (
+                <Typography variant="caption" color="error">
+                    Maximum Scale must be greater than Minimum Scale
+                </Typography>
+            );
+
         formValues.details.forEach((detail, index) => {
             if (index === 0 || (index + 1) % maxScale === 0) {
                 // Check if the point is a multiple of 5 starting from 1
@@ -151,7 +155,7 @@ const WOLOptionsConfig = () => {
                     tempErrors[`detailText${index}`] = 'Text is required';
                 }
                 if (!detail.icon) {
-                    tempErrors[`detailText${index}`] = 'Icon is required';
+                    tempErrors[`detailIcon${index}`] = 'Icon is required';
                 }
             }
         });
@@ -201,11 +205,10 @@ const WOLOptionsConfig = () => {
             dispatch(addWOLOptionConfig(payload))
                 .then(() => {
                     setSubmissionStatus('success');
-                    
                 })
                 .catch(error => {
                     setSubmissionStatus('error');
-                   
+
                     console.error('Error saving options configuration:', error);
                 });
         }
@@ -455,8 +458,7 @@ const WOLOptionsConfig = () => {
                                                                 src={
                                                                     detail.icon
                                                                 }
-                                                                alt={`icon-${index}`
-                                                                }
+                                                                alt={`icon-${index}`}
                                                                 style={{
                                                                     height: '32px',
                                                                     width: '32px',
@@ -467,6 +469,20 @@ const WOLOptionsConfig = () => {
                                                         </IconButton>
                                                     )}
                                                 </Box>
+                                                {errors[
+                                                    `detailIcon${index}`
+                                                ] && (
+                                                    <Typography
+                                                        color="error"
+                                                        variant="caption"
+                                                    >
+                                                        {
+                                                            errors[
+                                                                `detailIcon${index}`
+                                                            ]
+                                                        }
+                                                    </Typography>
+                                                )}
                                             </TableCell>
                                         </TableRow>
                                     ))}
@@ -501,9 +517,12 @@ const WOLOptionsConfig = () => {
             )}
 
             {submissionStatus === 'success' && (
-                <Typography variant="body1" align="center" mt={2} color="success">
-                   
-                </Typography>
+                <Typography
+                    variant="body1"
+                    align="center"
+                    mt={2}
+                    color="success"
+                ></Typography>
             )}
 
             {submissionStatus === 'error' && (

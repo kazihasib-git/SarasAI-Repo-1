@@ -20,54 +20,47 @@ import CustomButton from '../CustomFields/CustomButton';
 import { toast } from 'react-toastify';
 import { Controller, useForm } from 'react-hook-form';
 
-const ReasonForLeave = ({ componentName }) => {
-    const dispatch = useDispatch();
-    const { id, name } = useParams();
-    const { control, handleSubmit, formState: { errors } } = useForm();
+const reasonForLeaveConfig = {
+    TACALENDER: {
+        sliceName: 'taAvialability',
+        reasonForLeaveOpenKey: 'reasonForLeaveOpen',
+        closeReasonForLeaveAction: closeReasonForLeave,
+        markLeaveKey: 'markLeaveData',
+        slotEventKey: 'slotEventData',
+        reasonForLeaveAction: reasonForLeave,
+        getSlotsApi: fetchTaSlots,
+        getSessionApi: fetchTAScheduleById,
+    },
+    COACHCALENDER: {
+        sliceName: 'coachAvailability',
+        reasonForLeaveOpenKey: 'reasonForCoachLeaveOpen',
+        closeReasonForLeaveAction: closeCoachReasonForLeave,
+        markLeaveKey: 'coachMarkLeaveData',
+        slotEventKey: 'slotCoachEventData',
+        reasonForLeaveAction: reasonForCoachLeave,
+        getSlotsApi: fetchCoachSlots,
+        getSessionApi: fetchCoachScheduleById,
+    },
+};
 
-    let reasonForLeaveOpenKey,
+const ReasonForLeave = ({ id, name, componentName, timezone }) => {
+    const dispatch = useDispatch();
+    const {
+        control,
+        handleSubmit,
+        formState: { errors },
+    } = useForm();
+
+    const {
+        reasonForLeaveOpenKey,
         closeReasonForLeaveAction,
         markLeaveKey,
         slotEventKey,
         reasonForLeaveAction,
         sliceName,
         getSlotsApi,
-        getSessionApi;
-
-    switch (componentName) {
-        case 'TACALENDER':
-            sliceName = 'taAvialability';
-            reasonForLeaveOpenKey = 'reasonForLeaveOpen';
-            closeReasonForLeaveAction = closeReasonForLeave;
-            markLeaveKey = 'markLeaveData';
-            slotEventKey = 'slotEventData';
-            reasonForLeaveAction = reasonForLeave;
-            getSlotsApi = fetchTaSlots;
-            getSessionApi = fetchTAScheduleById;
-            break;
-
-        case 'COACHCALENDER':
-            sliceName = 'coachAvailability';
-            reasonForLeaveOpenKey = 'reasonForCoachLeaveOpen';
-            closeReasonForLeaveAction = closeCoachReasonForLeave;
-            markLeaveKey = 'coachMarkLeaveData';
-            slotEventKey = 'slotCoachEventData';
-            reasonForLeaveAction = reasonForCoachLeave;
-            getSlotsApi = fetchCoachSlots;
-            getSessionApi = fetchCoachScheduleById;
-            break;
-
-        default:
-            sliceName = null;
-            reasonForLeaveOpenKey = null;
-            closeReasonForLeaveAction = null;
-            markLeaveKey = null;
-            slotEventKey = null;
-            reasonForLeaveAction = null;
-            getSlotsApi = null;
-            getSessionApi = null;
-            break;
-    }
+        getSessionApi,
+    } = reasonForLeaveConfig[componentName];
 
     const {
         [reasonForLeaveOpenKey]: reasonForLeaveOpen,
@@ -75,14 +68,13 @@ const ReasonForLeave = ({ componentName }) => {
         [slotEventKey]: slotEventDetails,
     } = useSelector(state => state[sliceName] || {});
 
-    const onSumbit = (data) => {
-
-        if(!data.reason){
-            toast.error('Enter Reason For Leave')
+    const onSumbit = data => {
+        if (!data.reason) {
+            toast.error('Enter Reason For Leave');
             return;
         }
 
-        if(markLeaveData && markLeaveData.data){
+        if (markLeaveData && markLeaveData.data) {
             const slots = markLeaveData.data;
 
             const requestBody = {
@@ -92,21 +84,20 @@ const ReasonForLeave = ({ componentName }) => {
                 approve_status: null,
                 leave_type: null,
                 reason: data.reason,
-                data: slots
+                data: slots,
             };
 
             dispatch(reasonForLeaveAction(requestBody))
-            .unwrap()
-            .then(() => {
-                dispatch(getSlotsApi(id));
-                dispatch(getSessionApi(id));
-                dispatch(closeReasonForLeaveAction());
-                toast.success("Leave has been successfully created.")
-            })
-            .catch(error => {
-               
-                toast.error(` ${error}`);
-            });
+                .unwrap()
+                .then(() => {
+                    dispatch(getSlotsApi(id));
+                    dispatch(getSessionApi(id));
+                    dispatch(closeReasonForLeaveAction());
+                    toast.success('Leave has been successfully created.');
+                })
+                .catch(error => {
+                    toast.error(` ${error}`);
+                });
         }
     };
 

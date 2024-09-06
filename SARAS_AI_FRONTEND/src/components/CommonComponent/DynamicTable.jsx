@@ -128,15 +128,11 @@ const DynamicTable = ({
         console.log('Deleting item with id:', id);
     };
 
-    const handleCalender = (type, id, taName) => {
-        //         // Implement view functionality here based on type ('students' or 'batches')
-
-        //         console.log(`Viewing ${type} for item with id:`, id);
-        console.log('COMPONENTNAME : ', componentName);
+    const handleCalender = (type, id, taName, timezoneId) => {
         if (componentName === 'COACHAVAILABLE') {
-            navigate(`/coach-calender/${taName}/${id}`);
+            navigate(`/coach-calender/${taName}/${id}/${timezoneId}`);
         } else if (componentName === 'TAAVAILABLE')
-            navigate(`/ta-calendar/${taName}/${id}`);
+            navigate(`/ta-calendar/${taName}/${id}/${timezoneId}`);
     };
 
     const handleView = (type, id) => {
@@ -204,13 +200,13 @@ const DynamicTable = ({
         }
     };
 
-    const handlePopup = (id, name, timezone) => {
-        console.log('schedulingnn timezoneid', id);
-        const data = { id, name, timezone };
-        if (componentName === 'TAMAPPING') {
+    const handlePopup = (id, name, timezoneId) => {
+        const data = { id, name, timezoneId };
+        console.log('DATA A  :', data);
+        if (componentName === 'TASCHEDULE') {
             dispatch(openScheduleSession(data));
         } else {
-            if (componentName === 'COACHMAPPING')
+            if (componentName === 'COACHSCHEDULE')
                 dispatch(openCoachScheduleSession(data));
         }
     };
@@ -220,13 +216,13 @@ const DynamicTable = ({
             event.preventDefault();
             event.stopPropagation();
         }
-        
+
         const updatedData = data.map(item =>
             item.id === id
                 ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
                 : item
         );
-        
+
         setData(updatedData);
         // const toggleButton = actionButtons.find(
         //     action => action.type === 'switch'
@@ -401,7 +397,8 @@ const DynamicTable = ({
                                     } else if (
                                         key !== 'id' &&
                                         key !== 'is_active' &&
-                                        key !== 'timezone'
+                                        key !== 'timezone' &&
+                                        key !== 'timezoneId'
                                     ) {
                                         // Check if item[key] is an object, and handle accordingly
                                         if (
@@ -546,7 +543,7 @@ const DynamicTable = ({
                                                             handlePopup(
                                                                 item.id,
                                                                 item.name,
-                                                                item.timezone
+                                                                item.timezoneId
                                                             )
                                                         }
                                                     >
@@ -567,7 +564,8 @@ const DynamicTable = ({
                                                                 handleCalender(
                                                                     'Calendar',
                                                                     item.id,
-                                                                    item.taName
+                                                                    item.taName,
+                                                                    item.timezoneId
                                                                 )
                                                             }
                                                         >

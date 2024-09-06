@@ -70,12 +70,12 @@ const EditStudentsSessionLink = ({ componentName }) => {
     [getAssignedSelectedStudentsState] : sessionStudents,
    } = stateSelector
 
-  const { meetingId, openEditStudentsPopup } = useSelector((state) => state.commonCalender)
+  const { meetingId,sessionEventData, openEditStudentsPopup } = useSelector((state) => state.commonCalender)
   
   useEffect(() => {
     dispatch(getAssignStudentsApi())
     .then(() => {
-      dispatch(getAssignSelectedStudentsApi(meetingId));
+      dispatch(getAssignSelectedStudentsApi(sessionEventData.meetingId));
     })
   }, [dispatch])
 
@@ -189,7 +189,7 @@ const EditStudentsSessionLink = ({ componentName }) => {
   const handleSubmit = () => {
     if (!validate()) return;
 
-    const id = meetingId;
+    const id = sessionEventData.meetingId;
     const data = {
       studentId : selectedStudents.map(id => id),
     }

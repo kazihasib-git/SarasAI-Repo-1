@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReusableDialog from '../CustomFields/ReusableDialog';
-import { Box, Button, DialogContent, Typography } from '@mui/material';
-import DynamicTable from '../CommonComponent/DynamicTable';
+import { Box, DialogContent, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import PopUpTable from '../CommonComponent/PopUpTable';
 
@@ -22,24 +21,53 @@ import {
     openCoachReasonForLeave,
     reasonForCoachLeave,
 } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
-import { useParams } from 'react-router-dom';
 import CustomButton from '../CustomFields/CustomButton';
-import { timezoneIdToName } from '../../utils/timezoneIdToName';
 import { convertFromUTC } from '../../utils/dateAndtimeConversion';
-import { getTimezone } from '../../redux/features/utils/utilSlice';
 
-const ScheduledSessions = ({ componentName, timezoneID }) => {
-    const { timezones, platforms } = useSelector(state => state.util);
-    const [sessionData, setSessionData] = useState([]);
+const headers = [
+    'S. No.',
+    'Session Name',
+    'Date',
+    'Time',
+    'Students',
+    'Actions',
+];
+
+const scheduledConfig = {
+    TACALENDER: {
+        scheduleSessionOpenKey: 'scheduledSessionOpen',
+        scheduledSessionDataKey: 'scheduledSessionData',
+        schedulingStateKey: 'taAvialability',
+        closeSessionAction: closeScheduledSession,
+        openCancelAction: openCancelSession,
+        openRescheduleAction: openRescheduleSession,
+        openSlotsAction: openScheduledSlots,
+        slotEventKey: 'slotEventData',
+        openReasonAction: openReasonForLeave,
+        reasonForLeaveAction: reasonForLeave,
+    },
+    COACHCALENDER: {
+        scheduleSessionOpenKey: 'scheduledCoachSessionOpen',
+        scheduledSessionDataKey: 'scheduledCoachSessionData',
+        schedulingStateKey: 'coachAvailability',
+        closeSessionAction: closeCoachScheduledSession,
+        openCancelAction: openCoachCancelSession,
+        openRescheduleAction: openCoachRescheduleSession,
+        openSlotsAction: openCoachScheduledSlots,
+        slotEventKey: 'slotCoachEventData',
+        openReasonAction: openCoachReasonForLeave,
+        reasonForLeaveAction: reasonForCoachLeave,
+    },
+};
+
+const ScheduledSessions = ({ id, name, componentName, timezone }) => {
     const dispatch = useDispatch();
 
-    useEffect(() => {
-        dispatch(getTimezone());
-    }, [dispatch]);
+    const { timezones, platforms } = useSelector(state => state.util);
+    const [sessionData, setSessionData] = useState([]);
 
-    const { id } = useParams();
-
-    let scheduleSessionOpenKey,
+    const {
+        scheduleSessionOpenKey,
         scheduledSessionDataKey,
         schedulingStateKey,
         closeSessionAction,
@@ -48,48 +76,8 @@ const ScheduledSessions = ({ componentName, timezoneID }) => {
         openSlotsAction,
         slotEventKey,
         openReasonAction,
-        reasonForLeaveAction;
-
-    switch (componentName) {
-        case 'TACALENDER':
-            scheduleSessionOpenKey = 'scheduledSessionOpen';
-            scheduledSessionDataKey = 'scheduledSessionData';
-            schedulingStateKey = 'taAvialability';
-            closeSessionAction = closeScheduledSession;
-            openCancelAction = openCancelSession;
-            openRescheduleAction = openRescheduleSession;
-            openSlotsAction = openScheduledSlots;
-            slotEventKey = 'slotEventData';
-            openReasonAction = openReasonForLeave;
-            reasonForLeaveAction = reasonForLeave;
-            break;
-
-        case 'COACHCALENDER':
-            scheduleSessionOpenKey = 'scheduledCoachSessionOpen';
-            scheduledSessionDataKey = 'scheduledCoachSessionData';
-            schedulingStateKey = 'coachAvailability';
-            closeSessionAction = closeCoachScheduledSession;
-            openCancelAction = openCoachCancelSession;
-            openRescheduleAction = openCoachRescheduleSession;
-            openSlotsAction = openCoachScheduledSlots;
-            slotEventKey = 'slotCoachEventData';
-            openReasonAction = openCoachReasonForLeave;
-            reasonForLeaveAction = reasonForCoachLeave;
-            break;
-
-        default:
-            scheduleSessionOpenKey = null;
-            scheduledSessionDataKey = null;
-            schedulingStateKey = null;
-            closeSessionAction = null;
-            openCancelAction = null;
-            openRescheduleAction = null;
-            openSlotsAction = null;
-            slotEventKey = null;
-            openReasonAction = null;
-            reasonForLeaveAction = null;
-            break;
-    }
+        reasonForLeaveAction,
+    } = scheduledConfig[componentName];
 
     const schedulingState = useSelector(state =>
         schedulingStateKey ? state[schedulingStateKey] : {}
@@ -99,15 +87,6 @@ const ScheduledSessions = ({ componentName, timezoneID }) => {
         [scheduledSessionDataKey]: scheduledSessionData = [],
         [slotEventKey]: slotEventData,
     } = schedulingState;
-
-    const headers = [
-        'S. No.',
-        'Session Name',
-        'Date',
-        'Time',
-        'Students',
-        'Actions',
-    ];
 
     const formatTime = time => {
         const [hours, minutes] = time.split(':');
@@ -122,11 +101,8 @@ const ScheduledSessions = ({ componentName, timezoneID }) => {
         if (
             scheduledSessionData &&
             scheduledSessionData.length > 0 &&
-            timezones &&
-            timezoneID
+            timezone.time_zone
         ) {
-            const timezonename = timezoneIdToName(timezoneID, timezones);
-
             try {
                 const processedSessions = await Promise.all(
                     scheduledSessionData.map(async (session, index) => {
@@ -135,7 +111,7 @@ const ScheduledSessions = ({ componentName, timezoneID }) => {
                             start_time: session.start_time,
                             end_time: session.end_time,
                             end_date: session.date.split(' ')[0],
-                            timezonename,
+                            timezonename: timezone.time_zone,
                         });
 
                         const startDateTime = new Date(
@@ -169,7 +145,7 @@ const ScheduledSessions = ({ componentName, timezoneID }) => {
 
     useEffect(() => {
         convertSessions();
-    }, [scheduledSessionData, timezones, timezoneID]);
+    }, [scheduledSessionData, timezone.time_zone]);
 
     // const formattedData = scheduledSessionData.map((session, index) => ({
     //     'S. No.': index + 1,

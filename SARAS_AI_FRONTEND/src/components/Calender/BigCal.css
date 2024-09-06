@@ -11,15 +11,10 @@
 }
 .custom-override
     .rbc-time-content
-    /* .rbc-time-gutter */
     .rbc-time-column
     .rbc-timeslot-group
     .rbc-time-slot {
     background-color: #fff !important;
-}
-
-.rbc-timeslot-group {
-    min-height: 75px;
 }
 
 .rbc-event-session {
@@ -39,11 +34,8 @@
 
 .rbc-toolbar {
     display: flex;
-    justify-content: flex-start; /* Align buttons to the left */
+    justify-content: flex-start;
 }
-/* .rbc-toolbar-label {
-    display: none;
-} */
 
 .rbc-today {
     background-color: #ecebff;
@@ -62,8 +54,7 @@
 }
 
 .rbc-time-header {
-    /* Example class */
-    background-color: unset !important; /* Ensure no background color is being inherited */
+    background-color: unset !important;
 }
 
 .on-leave-slot {
@@ -84,29 +75,29 @@
 }
 
 .rbc-time-header-cell {
-    padding: 0 !important; /* Removes padding inside header cells */
+    padding: 0 !important;
 
-    margin: 0 !important; /* Removes any extra margin */
+    margin: 0 !important;
 }
 
 .rbc-time-header {
-    margin-bottom: 0px !important; /* Removes the margin below the header */
+    margin-bottom: 0px !important;
 }
 
 .rbc-time-content {
-    border-top: 0 !important; /* Removes the top border that might cause extra space */
+    border-top: 0 !important;
 }
 
 .rbc-timeslot-group {
-    min-height: 50px !important; /* Adjust this to change the height of each time slot */
+    min-height: 80px !important;
 
-    line-height: 1 !important; /* Ensures no extra space within time slots */
+    line-height: 1 !important;
 }
 
 .rbc-time-view {
-    padding: 0 !important; /* Removes padding within the entire time view */
+    padding: 0 !important;
 
-    margin: 0 !important; /* Removes margin within the entire time view */
+    margin: 0 !important;
 }
 
 .rbc-header {
@@ -115,33 +106,18 @@
     border: none;
 }
 
-/* .rbc-header:nth-child(4) {
-    background-color: #4e18a5;
-    color: white;
-} */
-
-/* .rbc-toolbar > .rbc-btn-group {
-    display: none;
-} */
-
-/* .rbc-time-content {
-    border-top: 1px solid #4ec641;
-} */
-
 .rbc-day-slot .rbc-time-slot {
     border: 0px;
 }
 
-/* Style for the current day column */
 .rbc-today {
-    background-color: #e3f2fd !important; /* Light blue for the full column */
-    color: #1976d2 !important; /* Blue text color for the full column */
+    background-color: #e3f2fd !important;
+    color: #1976d2 !important;
 }
 
-/* Style for the header cell of the current day */
 .rbc-header.rbc-today {
-    background-color: #4e18a5 !important; /* Light blue for the header */
-    color: #feffff !important; /* Blue text color for the header */
+    background-color: #4e18a5 !important;
+    color: #feffff !important;
 }
 
 .rbc-time-gutter .on-leave-slot {

@@ -44,6 +44,7 @@ import CustomMeetingTypeField from '../../../CustomFields/CustomMeetingTypeField
 import CustomButton from '../../../CustomFields/CustomButton';
 import { toast } from 'react-toastify';
 import CustomFutureDateField from '../../../CustomFields/CustomFutureDateField';
+import { GLOBAL_CONSTANTS } from '../../../../constants/globalConstants';
 
 const timezone = Number(localStorage.getItem('timezone_id'));
 
@@ -68,10 +69,11 @@ const CreateSession = ({ componentName }) => {
 
     const [formData, setFormData] = useState(initialFormData);
     const [error, setError] = useState({});
-    const meetingTypes = ['webinars', 'meetings'];
 
     const { timezones, platforms, hosts } = useSelector(state => state.util);
-    const { scheduleNewSessionPopup, students, batches } = useSelector((state) => state.commonCalender);
+    const { scheduleNewSessionPopup, students, batches } = useSelector(
+        state => state.commonCalender
+    );
 
     let sliceName, createSessionApi, getSessionApi, getSlotApi;
 
@@ -102,7 +104,7 @@ const CreateSession = ({ componentName }) => {
         dispatch(getTimezone());
         dispatch(getPlatforms());
         dispatch(getAllHosts());
-    }, [dispatch]);    
+    }, [dispatch]);
 
     const durationOptions = [
         { label: '15 minutes', value: '00:15:00' },
@@ -129,9 +131,8 @@ const CreateSession = ({ componentName }) => {
     };
 
     const validate = () => {
-
         if (!formData.sessionName) {
-            toast.error('Please enter session name')
+            toast.error('Please enter session name');
             return false;
         }
 
@@ -142,7 +143,7 @@ const CreateSession = ({ componentName }) => {
         }
 
         if (!formData.platform_id) {
-            toast.error('Please select meeting platform')
+            toast.error('Please select meeting platform');
             return false;
         }
 
@@ -375,7 +376,9 @@ const CreateSession = ({ componentName }) => {
                                                         e.target.value
                                                     )
                                                 }
-                                                options={meetingTypes}
+                                                options={
+                                                    GLOBAL_CONSTANTS.MEETING_TYPES
+                                                }
                                                 errors={!!error.meeting_name}
                                             />
                                         </Grid>
@@ -471,12 +474,15 @@ const CreateSession = ({ componentName }) => {
                                 justifyContent="center"
                             >
                                 <CustomTimeZoneForm
-
-
                                     label="Time Zone"
                                     name="timezone_id"
                                     value={formData.timezone_id}
-                                    onChange={e => handleChange('timezone_id', e.target.value)}
+                                    onChange={e =>
+                                        handleChange(
+                                            'timezone_id',
+                                            e.target.value
+                                        )
+                                    }
                                     errors={!!error.timezone}
                                     helperText={error.timezone}
                                     sx={{ width: '100%' }}

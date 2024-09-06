@@ -1,14 +1,11 @@
 import React, { useEffect } from 'react';
 import { Box } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-    getWolTestConfig,
-    setOpenWolCategories,
-} from '../../../../redux/features/adminModule/coachingTools/wol/wolSlice';
+import { getWolTestConfig } from '../../../../redux/features/adminModule/coachingTools/wol/wolSlice';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../../../components/Header/Header';
 import Sidebar from '../../../../components/Sidebar/Sidebar';
-import { DynamicTable } from '../../../managesTAs/TaAvaialablity';
+import DynamicTable from '../../../../components/CommonComponent/DynamicTable';
 
 const headers = [
     'S. No.',

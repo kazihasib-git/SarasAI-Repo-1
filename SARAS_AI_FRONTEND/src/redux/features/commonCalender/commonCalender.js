@@ -35,7 +35,7 @@ const initialState = {
 
     dataToFindScheduleInSlot:null,
     participantsDialogOpen:false,
-    selectedParticipants:[],
+    participantsData:null,
     editParticipantsDialogOpen:false,
 };
 
@@ -184,25 +184,24 @@ const commonCalender = createSlice({
         },
 
         openParticipantsDialog: (state, action) => {
-            console.log('openParticipantsDialog Call' , action.payload ) ; 
+            console.log('openParticipantsDialog' , action.payload) ; 
             state.participantsDialogOpen = true;
-            state.selectedParticipants = action.payload;
-          },
+            state.participantsData = action.payload;
+        },
           closeParticipantsDialog: (state) => {
-            console.log('closeParticipantsDialog Call') ; 
-
+            console.log('closeParticipantsDialog')
             state.participantsDialogOpen = false;
-            state.selectedParticipants = [];
+            state.participantsData = null;
           },
         openEditParticipantsDialog: (state, action) => {
-            console.log('openEditParticipantsDialog Call' , action.payload ) ; 
+            console.log('openEditParticipantsDialog' , action.payload) ; 
             state.editParticipantsDialogOpen = true;
-            state.selectedParticipants = action.payload;
+            state.participantsData = action.payload;
           },
-          closeEditParticipantsDialog: (state) => {
-            console.log('closeEditParticipantsDialog') ;
+          closeEditParticipantsDialog: (state,action) => {
+            console.log('closeEditParticipantsDialog' , action.payload) ; 
             state.editParticipantsDialogOpen = false;
-            // state.selectedEditedParticipants = [];
+            state.participantsData = action.payload;
           },
     },
 });

@@ -91,19 +91,11 @@ import AssignedTemplateStudents from './pages/ManageCoaches/CoachingTemplate/Ass
 
 import ForgetPassword from './components/AUTH/ForgetPassword.jsx';
 
-const ROLES = {
-    Teaching: 2001,
-    Coaches: 1984,
-    Admin: 5150,
-};
-
 function App() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const { userData, login, role, accessToken } = useSelector(
-        state => state.auth
-    );
+    const { login, role, accessToken } = useSelector(state => state.auth);
 
     const access_token = localStorage.getItem('accessToken');
     const userRole = localStorage.getItem('role');
@@ -226,7 +218,7 @@ function App() {
                             element={<TaScheduling page="TA Scheduling" />}
                         />
                         <Route
-                            path="ta-calendar/:name/:id"
+                            path="ta-calendar/:name/:id/:timezoneId"
                             element={<TaCalender page="Calendar" />}
                         />
                         <Route
@@ -255,7 +247,7 @@ function App() {
                             element={<CoachMapping page="Coach Mapping" />}
                         />
                         <Route
-                            path="coach-calender/:name/:id"
+                            path="coach-calender/:name/:id/:timezoneId"
                             element={<CoachCalender page="Calendar" />}
                         />
                         <Route

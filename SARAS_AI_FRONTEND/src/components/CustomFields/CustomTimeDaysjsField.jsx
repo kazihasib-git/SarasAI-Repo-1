@@ -13,11 +13,12 @@ const CustomTimeDaysjsField = ({
     ...props
 }) => {
     // Convert the value to a Dayjs object if it exists, else use null
-    const dayjsValue = value ? dayjs(value, 'hh:mm:ss') : null;
+    const dayjsValue = value ? dayjs(value, 'HH:mm:ss') : null;
 
     const handleTimeChange = date => {
         if (date) {
-            onChange(date.format('hh:mm:ss A')); // Pass the formatted time back to the parent
+            //onChange(date.format('HH:mm:ss A')); // Pass the formatted time back to the parent
+            onChange(date.format('HH:mm:ss'))
         } else {
             onChange(''); // Handle clearing the time
         }
