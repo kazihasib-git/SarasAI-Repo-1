@@ -8,7 +8,6 @@ import Header from '../../components/Header/Header';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { AssignedBatchesData } from '../../fakeData/AssignedBatchesData';
 import bin from '../../assets/bin.png';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -157,7 +156,7 @@ const AdminDataTable = ({
                 break;
         }
     };
-    
+
     const handleToggle = id => {
         // Log the initial state of the item being toggled
 
@@ -196,8 +195,6 @@ const AdminDataTable = ({
                 break;
         }
     };
-
-    
 
     const handleNavigate = path => {
         navigate(path);
@@ -371,13 +368,15 @@ const AdminDataTable = ({
                         },
                     }}
                 />
-                 {isDialogOpen && (
-                <DeleteConfirmation
-                open={isDialogOpen}
-                handleClose={handleCloseDialog}
-                onConfirm={()=>{handleConfirmDelete(itemIdToDelete,ta_id)}}
-             />
-                 )}
+                {isDialogOpen && (
+                    <DeleteConfirmation
+                        open={isDialogOpen}
+                        handleClose={handleCloseDialog}
+                        onConfirm={() => {
+                            handleConfirmDelete(itemIdToDelete, ta_id);
+                        }}
+                    />
+                )}
             </div>
         </div>
     );

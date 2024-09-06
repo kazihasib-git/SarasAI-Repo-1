@@ -3,7 +3,6 @@ import { useGetBatchesQuery } from '../../../../redux/services/batches/batchesAp
 import { Box } from '@mui/material';
 import Header from '../../../Header/Header';
 import Sidebar from '../../../Sidebar/Sidebar';
-import { batchDummyData } from '../../../../fakeData/batchesData';
 
 import DynamicTable from '../../../CommonComponent/DynamicTable';
 

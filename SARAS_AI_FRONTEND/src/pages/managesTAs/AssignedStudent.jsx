@@ -6,7 +6,7 @@ import { styled } from '@mui/material/styles';
 import './CommonComponent.css';
 import Header from '../../components/Header/Header';
 import Sidebar from '../../components/Sidebar/Sidebar';
-import { AssignedStudentData } from '../../fakeData/AssignedStudentData';
+
 import bin from '../../assets/bin.png';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
