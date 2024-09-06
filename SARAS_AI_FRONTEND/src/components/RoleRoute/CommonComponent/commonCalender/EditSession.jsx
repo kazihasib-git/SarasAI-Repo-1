@@ -1,20 +1,16 @@
-import {
-    Box,
-    Button,
-    Grid,
-} from '@mui/material';
+import { Box, Button, Grid } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     getTaMenuSessions,
     getTaScheduledCalls,
-    updateTaScheduledCall
+    updateTaScheduledCall,
 } from '../../../../redux/features/taModule/tamenuSlice';
 import {
     getCoachMenuSessions,
     getCoachScheduledCalls,
-    updateCoachScheduledCall
+    updateCoachScheduledCall,
 } from '../../../../redux/features/coachModule/coachmenuprofileSilce';
 import {
     closeEditSession,
@@ -37,11 +33,11 @@ import CustomHostNameForm from '../../../CustomFields/CustomHostNameField';
 import CustomTimeDaysjsField from '../../../CustomFields/CustomTimeDaysjsField';
 import CustomButton from '../../../CustomFields/CustomButton';
 import { timezoneIdToName } from '../../../../utils/timezoneIdToName';
+import { GLOBAL_CONSTANTS } from '../../../../constants/globalConstants';
 
 const timezone = Number(localStorage.getItem('timezone_id'));
 
 const EditSession = ({ componentName }) => {
-
     const dispatch = useDispatch();
 
     const initialFormData = {
@@ -58,20 +54,20 @@ const EditSession = ({ componentName }) => {
         fromTime: null,
         toTime: null,
         timezone_id: timezone ? timezone : null,
-    }
+    };
 
     const [formData, setFormData] = useState(initialFormData);
     const [isEdited, setIsEdited] = useState(false);
     const [error, setError] = useState({});
-    const meetingTypes = ['webinars', 'meetings'];
 
-    const { timezones, platforms, hosts } = useSelector((state) => state.util);
-    const { editSession, students, batches, sessionData } = useSelector((state) => state.commonCalender);
+    const { timezones, platforms, hosts } = useSelector(state => state.util);
+    const { editSession, students, batches, sessionData } = useSelector(
+        state => state.commonCalender
+    );
 
     let sliceName, updateSessionApi, getSessionApi;
 
     switch (componentName) {
-
         case 'TAMENU':
             sliceName = 'taMenu';
             updateSessionApi = updateTaScheduledCall;
@@ -95,12 +91,12 @@ const EditSession = ({ componentName }) => {
         dispatch(getTimezone());
         dispatch(getPlatforms());
         dispatch(getAllHosts());
-    }, [dispatch])
+    }, [dispatch]);
 
     useEffect(() => {
         if (sessionData && !isEdited) {
-            const startTime = moment(sessionData.start_time, "HH:mm:ss");
-            const endTime = moment(sessionData.end_time, "HH:mm:ss");
+            const startTime = moment(sessionData.start_time, 'HH:mm:ss');
+            const endTime = moment(sessionData.end_time, 'HH:mm:ss');
 
             const timeDifference = moment.duration(endTime.diff(startTime));
 
@@ -121,11 +117,12 @@ const EditSession = ({ componentName }) => {
                 toDate: sessionData.to_date || '',
                 fromTime: sessionData.start_time,
                 meeting_type: sessionData.platform_meeting_details.meeting_type,
-                host_email_id: sessionData.platform_meeting_details.host_email_id,
-                timezone_id: sessionData.timezone_id || null
-            })
+                host_email_id:
+                    sessionData.platform_meeting_details.host_email_id,
+                timezone_id: sessionData.timezone_id || null,
+            });
         }
-    }, [])
+    }, []);
 
     const durationOptions = [
         { label: '15 minutes', value: '00:15:00' },
@@ -153,7 +150,7 @@ const EditSession = ({ componentName }) => {
 
     const validate = () => {
         if (!formData.sessionName) {
-            toast.error('Please enter meeting name')
+            toast.error('Please enter meeting name');
             return false;
         }
 
@@ -164,7 +161,7 @@ const EditSession = ({ componentName }) => {
         }
 
         if (!formData.platform_id) {
-            toast.error('Please select meeting platform')
+            toast.error('Please select meeting platform');
             return false;
         }
 
@@ -208,7 +205,6 @@ const EditSession = ({ componentName }) => {
         return true;
     };
 
-
     const handleSubmit = e => {
         e.preventDefault();
 
@@ -248,7 +244,7 @@ const EditSession = ({ componentName }) => {
             .then(() => {
                 const data = {
                     date: sessionData.date, //formatDate(sessionData.date),
-                    timezone_name: timezoneIdToName(timezone, timezones)
+                    timezone_name: timezoneIdToName(timezone, timezones),
                 };
                 dispatch(getSessionApi(data));
                 dispatch(closeEditSession());
@@ -379,7 +375,9 @@ const EditSession = ({ componentName }) => {
                                                         e.target.value
                                                     )
                                                 }
-                                                options={meetingTypes}
+                                                options={
+                                                    GLOBAL_CONSTANTS.MEETING_TYPES
+                                                }
                                                 errors={!!error.meeting_name}
                                             />
                                         </Grid>
@@ -553,7 +551,6 @@ const EditSession = ({ componentName }) => {
             Update
         </CustomButton>
     );
-
 
     return (
         <ReusableDialog

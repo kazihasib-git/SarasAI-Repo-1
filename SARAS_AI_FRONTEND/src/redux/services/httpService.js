@@ -8,10 +8,13 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(async config => {
     const storedata = await localStorage.getItem('accessToken');
     const userData = storedata ? storedata : null;
-    console.log(userData, 'userData');
+
     if (userData) {
         config.headers['authorization'] = `Bearer ${userData}`;
     }
+    //TODO ENABLE THIS
+    //config.url = config.baseURL + config.url;
+
     return config;
 });
 

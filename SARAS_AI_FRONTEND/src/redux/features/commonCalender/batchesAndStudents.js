@@ -32,6 +32,7 @@ const initialState = {
     selectedBatches: [],
     students: [],
     selectedStudents: [],
+    timezoneId: null,
     loading: false,
     error: [],
 };
@@ -40,7 +41,7 @@ const batchesAndStudents = createSlice({
     name: 'batchesAndStudents',
     initialState,
     reducers: {
-        openBatchPopup: (state, action) => {
+        openBatchPopup(state, action) {
             state.openBatches = true;
             state.name = action.payload.name;
             state.id = action.payload.id;
@@ -48,17 +49,18 @@ const batchesAndStudents = createSlice({
             state.selectedBatches = action.payload.selectedBatches;
             state.students = action.payload.students;
             state.selectedStudents = action.payload.selectedStudents;
+            state.timezoneId = action.payload.timezoneId;
         },
-        closeBatchPopup: (state, action) => {
+        closeBatchPopup(state, action) {
             state.openBatches = false;
-            state.name = action.payload.name;
-            state.id = action.payload.id;
-            state.batches = action.payload.batches;
-            state.selectedBatches = action.payload.selectedBatches;
-            state.students = action.payload.students;
-            state.selectedStudents = action.payload.selectedStudents;
+            // state.name = action.payload.name;
+            // state.id = action.payload.id;
+            // state.batches = action.payload.batches;
+            state.selectedBatches = action.payload?.selectedBatches;
+            // state.students = action.payload.students;
+            // state.selectedStudents = action.payload.selectedStudents;
         },
-        openStudentsPopup: (state, action) => {
+        openStudentsPopup(state, action) {
             state.openStudents = true;
             state.name = action.payload.name;
             state.id = action.payload.id;
@@ -66,44 +68,52 @@ const batchesAndStudents = createSlice({
             state.selectedBatches = action.payload.selectedBatches;
             state.students = action.payload.students;
             state.selectedStudents = action.payload.selectedStudents;
+            state.timezoneId = action.payload.timezoneId;
         },
-        closeStudentsPopup: (state, action) => {
+        closeStudentsPopup(state, action) {
             state.openStudents = false;
-            state.name = action.payload.name;
-            state.id = action.payload.id;
-            state.batches = action.payload.batches;
-            state.selectedBatches = action.payload.selectedBatches;
-            state.students = action.payload.students;
+            // state.name = action.payload.name;
+            // state.id = action.payload.id;
+            // state.batches = action.payload.batches;
+            // state.selectedBatches = action.payload?.selectedBatches;
+            // state.students = action.payload.students;
             state.selectedStudents = action.payload.selectedStudents;
         },
-        clearState: (state, action) => {
+        clearState(state, action) {
             state.openBatches = false;
             state.openStudents = false;
             state.name = '';
             state.id = null;
             state.batches = [];
-            state.selectedStudents = [];
+            state.selectedBatches = [];
             state.students = [];
             state.selectedStudents = [];
+            state.timezoneId = null;
         },
     },
     extraReducers: builder => {
         builder.addCase(getStudentsInBatches.pending, state => {
             state.loading = true;
         }),
-            addCase(getStudentsInBatches.fulfilled, (state, action) => {
+            builder.addCase(getStudentsInBatches.fulfilled, (state, action) => {
                 state.loading = false;
                 state.selectedStudents = action.payload?.map(
                     student => student.student_id
                 );
             }),
-            addCase(getStudentsInBatches.rejected, (state, action) => {
+            builder.addCase(getStudentsInBatches.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
             });
     },
 });
 
-export const {} = batchesAndStudents.actions;
+export const {
+    openBatchPopup,
+    closeBatchPopup,
+    openStudentsPopup,
+    closeStudentsPopup,
+    clearState,
+} = batchesAndStudents.actions;
 
 export default batchesAndStudents.reducer;

@@ -1,34 +1,42 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import CustomButton from '../CustomFields/CustomButton';
-import { Divider, Grid, MenuItem } from '@mui/material';
+import { Divider, Grid, MenuItem, Typography } from '@mui/material';
 import CustomTextField from '../CustomFields/CustomTextField';
 import PopUpTable from '../CommonComponent/PopUpTable';
-import { getStudentsInBatches } from '../../redux/features/commonCalender/batchesAndStudents';
+import {
+    closeBatchPopup,
+    getStudentsInBatches,
+} from '../../redux/features/commonCalender/batchesAndStudents';
+import { openScheduleSession } from '../../redux/features/adminModule/ta/taScheduling';
+import { openCoachScheduleSession } from '../../redux/features/adminModule/coach/coachSchedule';
+import { toast } from 'react-toastify';
+import { MESSAGE_CONSTANTS } from '../../constants/messageConstants';
 
 const headers = ['S. No.', 'Batch Name', 'Branch', 'Select'];
 
-const SelectBatches = ({ componentName }) => {
+const batchesConfig = {
+    TASCHEDULE: {
+        openSchedulingPopup: openScheduleSession,
+    },
+    COACHSCHEDULE: {
+        openSchedulingPopup: openCoachScheduleSession,
+    },
+};
+
+const SelectBatches = ({ id, name, componentName, timezone }) => {
     const dispatch = useDispatch();
-    const [selectedBatch, setSelectedBatch] = useState([]);
+    const [selectBatch, setSelectBatch] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedBranch, setSelectedBranch] = useState('');
     const [filteredBatches, setFilteredBatches] = useState([]);
 
-    const { name, id, batches, selectedBatches, students, selectedStudents } =
-        useSelector(state => state.batchesAndStudentsReducer);
+    const { openBatches, batches, selectedBatches } = useSelector(
+        state => state.batchesAndStudents
+    );
 
-    switch (componentName) {
-        case '':
-            break;
-
-        case '':
-            break;
-
-        default:
-            break;
-    }
+    const { openSchedulingPopup } = batchesConfig[componentName];
 
     useEffect(() => {
         if (batches) {
@@ -63,12 +71,12 @@ const SelectBatches = ({ componentName }) => {
 
     useEffect(() => {
         if (selectedBatches) {
-            setSelectedBatch(selectedBatches.map(batch => batch.id));
+            setSelectBatch(selectedBatches.map(batch => batch)); //.id));
         }
     }, [selectedBatches]);
 
     const handleSelectBatch = id => {
-        setSelectedBatch(prev =>
+        setSelectBatch(prev =>
             prev.includes(id) ? prev.filter(sid => sid !== id) : [...prev, id]
         );
     };
@@ -91,8 +99,8 @@ const SelectBatches = ({ componentName }) => {
     };
 
     const validate = () => {
-        if (selectedBatch.length === 0) {
-            toast.error('Please Select at Least One Batch');
+        if (selectBatch.length === 0) {
+            toast.error(MESSAGE_CONSTANTS.SELECT_ATLEAST_ONE_BATCH);
             return false;
         }
         return true;
@@ -101,18 +109,23 @@ const SelectBatches = ({ componentName }) => {
     const handleSubmit = () => {
         if (!validate()) return;
 
-        const batchIds = selectedBatch;
-        dispatch(getStudentsInBatches(batchIds));
+        const data = {
+            batchIds: selectBatch,
+        };
+        dispatch(getStudentsInBatches(data));
 
         dispatch(
             openSchedulingPopup({
                 id,
                 name: name,
-                batches: selectedBatch.map(id => ({ id })),
-                timezone: timezoneId,
+                batches: selectBatch.map(id => ({ id })),
+                timezoneId: timezone.id,
             })
         );
-        dispatch(closeDialogAction());
+        const res = {
+            selectedBatches: selectBatch,
+        };
+        dispatch(closeBatchPopup(res));
     };
 
     const content = (
@@ -153,14 +166,14 @@ const SelectBatches = ({ componentName }) => {
                 headers={headers}
                 initialData={filteredBatches}
                 onRowClick={handleSelectBatch}
-                selectedBox={selectedBatch}
+                selectedBox={selectBatch}
             />
             <Typography
                 variant="subtitle1"
                 gutterBottom
                 sx={{ mt: 2, textAlign: 'center' }}
             >
-                {selectedBatch.length} batch(es) Selected
+                {selectBatch.length} batch(es) Selected
             </Typography>
         </>
     );
@@ -181,8 +194,10 @@ const SelectBatches = ({ componentName }) => {
 
     return (
         <ReusableDialog
-            open={assignBatchOpen}
-            handleClose={() => dispatch(closeDialogAction())}
+            open={openBatches}
+            handleClose={() =>
+                dispatch(closeBatchPopup({ selectedBatches: selectBatch }))
+            }
             title={`Assign Batches to Session`}
             content={content}
             actions={actions}

@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import { Grid, Button } from '@mui/material';
+import { Grid } from '@mui/material';
 import ReusableDialog from '../CustomFields/ReusableDialog';
-import CustomDateField from '../CustomFields/CustomDateField';
 import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
-import { useParams } from 'react-router-dom';
 import {
     openScheduledSlots,
     closeMarkLeave,
@@ -17,51 +15,40 @@ import {
     getCoachSlots,
 } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import CustomButton from '../CustomFields/CustomButton';
-import { timezoneIdToName } from '../../utils/timezoneIdToName';
 import CustomFutureDateField from '../CustomFields/CustomFutureDateField';
 
-const MarkLeave = ({ componentName, timezoneID }) => {
-    const { id: taId } = useParams(); // Ensure taId is correctly extracted
+const markLeaveConfig = {
+    TACALENDER: {
+        sliceName: 'taAvialability',
+        scheduleSessionOpenKey: 'markLeaveOpen',
+        schedulingStateKey: 'taAvialability',
+        openAvailableSlotsAction: openScheduledSlots,
+        closeMarkLeaveAction: closeMarkLeave,
+        getSlotsAction: getSlots,
+    },
+    COACHCALENDER: {
+        sliceName: 'coachAvailability',
+        scheduleSessionOpenKey: 'coachMarkLeaveOpen',
+        schedulingStateKey: 'coachAvailability',
+        openAvailableSlotsAction: openCoachScheduledSlots,
+        closeMarkLeaveAction: closeCoachMarkLeave,
+        getSlotsAction: getCoachSlots,
+    },
+};
+
+const MarkLeave = ({ id, name, componentName, timezone }) => {
     const dispatch = useDispatch();
     const [fromDate, setFromDate] = useState(null);
     const [toDate, setToDate] = useState(null);
-    const { timezones } = useSelector(state => state.util);
 
-    let scheduleSessionOpenKey,
+    const {
+        scheduleSessionOpenKey,
         schedulingStateKey,
         openAvailableSlotsAction,
         closeMarkLeaveAction,
         getSlotsAction,
-        sliceName;
-
-    switch (componentName) {
-        case 'TACALENDER':
-            sliceName = 'taAvialability';
-            scheduleSessionOpenKey = 'markLeaveOpen';
-            schedulingStateKey = 'taAvialability';
-            openAvailableSlotsAction = openScheduledSlots;
-            closeMarkLeaveAction = closeMarkLeave;
-            getSlotsAction = getSlots;
-            break;
-
-        case 'COACHCALENDER':
-            sliceName = 'coachAvailability';
-            scheduleSessionOpenKey = 'coachMarkLeaveOpen';
-            schedulingStateKey = 'coachAvailability';
-            openAvailableSlotsAction = openCoachScheduledSlots;
-            closeMarkLeaveAction = closeCoachMarkLeave;
-            getSlotsAction = getCoachSlots;
-            break;
-
-        default:
-            sliceName = null;
-            scheduleSessionOpenKey = null;
-            schedulingStateKey = null;
-            openAvailableSlotsAction = null;
-            closeMarkLeaveAction = null;
-            getSlotsAction = null;
-            break;
-    }
+        sliceName,
+    } = markLeaveConfig[componentName];
 
     const schedulingState = useSelector(state =>
         schedulingStateKey ? state[schedulingStateKey] : {}
@@ -85,7 +72,7 @@ const MarkLeave = ({ componentName, timezoneID }) => {
             const formattedToDate = moment(toDate).format('YYYY-MM-DD');
 
             const leaveData = {
-                admin_user_id: taId,
+                admin_user_id: id,
                 start_date: formattedFromDate,
                 end_date:
                     formattedFromDate === formattedToDate
@@ -93,7 +80,7 @@ const MarkLeave = ({ componentName, timezoneID }) => {
                         : formattedToDate,
                 start_time: '00:00:00',
                 end_time: '23:59:59',
-                timezone_name: timezoneIdToName(timezoneID, timezones),
+                timezone_name: timezone.time_zone,
             };
 
             dispatch(getSlotsAction(leaveData))

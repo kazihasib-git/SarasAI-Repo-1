@@ -215,6 +215,9 @@ const EditStudents = ({ componentname }) => {
             : [];
 
     useEffect(() => {
+        console.log('BATCHES SSS:', batches);
+        console.log('assignedStudents SS:', assignedStudents);
+
         let updatedSelectedStudents = [];
 
         if (selectedStudent && selectedStudent.length > 0) {

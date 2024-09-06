@@ -35,46 +35,33 @@ import {
 import editImg from '../../assets/editIcon_White.png';
 import editImage from '../../assets/editIcon.png';
 import { useNavigate } from 'react-router-dom';
-import CustomFormControl from '../CustomFields/CustomFromControl';
 import { getPlatforms } from '../../redux/features/utils/utilSlice';
 import CustomPlatformForm from '../CustomFields/CustomPlatformForm';
 
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                padding: '10px 20px',
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
+const scheduleConfig = {
+    TACALENDER: {
+        sliceName: 'taAvialability',
+        sessionDataState: 'sessionEventData',
+        closePopup: closeSessionEvent,
+        openPopupState: 'openEventData',
+        openEditBatches: openEditBatch,
+        openEditStudents: openEditStudent,
+        openStudentsPopup: openTaEditScheduledStudents,
+        openBatchesPopup: openTaEditSchduledBatches,
+    },
+    COACHCALENDER: {
+        sliceName: 'coachAvailability',
+        sessionDataState: 'coachSessionEventData', // Assuming this is correct
+        closePopup: closeCoachSessionEvent, // Assuming this is correct
+        openPopupState: 'coachOpenEventData', // Assuming this is correct
+        openEditBatches: openCoachEditBatch,
+        openEditStudents: openCoachEditStudent,
+        openStudentsPopup: openCoachEditScheduledStudents,
+        openBatchesPopup: openCoachEditSchduledBatches,
+    },
 };
 
-const ScheduleSession = ({ componentName }) => {
+const ScheduleSession = ({ id, name, componentName, timezone }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [changeMode, setChangeMode] = useState(false);
@@ -87,53 +74,21 @@ const ScheduleSession = ({ componentName }) => {
         dispatch(getPlatforms());
     }, [dispatch]);
 
-    let sliceName,
+    const {
+        sliceName,
         sessionDataState,
         closePopup,
         openPopupState,
         openEditBatches,
         openEditStudents,
         openStudentsPopup,
-        openBatchesPopup;
-
-    switch (componentName) {
-        case 'TACALENDER':
-            sliceName = 'taAvialability';
-            sessionDataState = 'sessionEventData';
-            closePopup = closeSessionEvent;
-            openPopupState = 'openEventData';
-            openEditBatches = openEditBatch;
-            openEditStudents = openEditStudent;
-            openStudentsPopup = openTaEditScheduledStudents;
-            openBatchesPopup = openTaEditSchduledBatches;
-            break;
-
-        case 'COACHCALENDER':
-            sliceName = 'coachAvailability';
-            sessionDataState = 'coachSessionEventData'; // Assuming this is correct
-            closePopup = closeCoachSessionEvent; // Assuming this is correct
-            openPopupState = 'coachOpenEventData'; // Assuming this is correct
-            openEditBatches = openCoachEditBatch;
-            openEditStudents = openCoachEditStudent;
-            openStudentsPopup = openCoachEditScheduledStudents;
-            openBatchesPopup = openCoachEditSchduledBatches;
-            break;
-
-        default:
-            sliceName = null;
-            sessionDataState = null;
-            closePopup = null;
-            openPopupState = null;
-            openEditBatches = null;
-            openEditStudents = null;
-            openStudentsPopup = null;
-            openBatchesPopup = null;
-            break;
-    }
+        openBatchesPopup,
+    } = scheduleConfig[componentName];
 
     const selectState = useSelector(state =>
         sliceName ? state[sliceName] : {}
     );
+
     const {
         [sessionDataState]: sessionData = {},
         [openPopupState]: open = false,
@@ -178,7 +133,7 @@ const ScheduleSession = ({ componentName }) => {
             admin_user_id: sessionData.admin_user_id,
             platform_id: selectedPlatform,
         };
-        console.log('data and id', data, id);
+
         dispatch(changePlatform({ id, data })).then(() => {
             dispatch(fetchTAScheduleById(sessionData.admin_user_id));
         });
@@ -188,7 +143,7 @@ const ScheduleSession = ({ componentName }) => {
 
     //     window.open(sessionData.platform_meet.host_meeting_url, '_blank');
     // };
-    
+
     const handleJoinCall = data => {
         const eventData = {
             ...sessionData,
