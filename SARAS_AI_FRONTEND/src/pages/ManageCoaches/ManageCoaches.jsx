@@ -13,6 +13,7 @@ import {
     openEditCoach,
     closeEditCoach,
     setSelectedCoach,
+    updateCoach,
 } from '../../redux/features/adminModule/coach/coachSlice';
 import { getTimezone } from '../../redux/features/utils/utilSlice';
 import { timezoneIdToName } from '../../utils/timezoneIdToName';
@@ -28,6 +29,8 @@ const ManageCoaches = () => {
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredData, setFilteredData] = useState([]);
+    const [actionButtonToggled, setActionButtonToggled] = useState(false);
+
 
     // Get coaches and timezones from Redux store
     const { coaches, createCoachOpen, editCoachOpen } = useSelector(
@@ -82,7 +85,7 @@ const ManageCoaches = () => {
 
 
             // Filter data based on the search query
-            const filteredTasData = transformData.filter(data => {
+            const filteredCoachesData = transformData.filter(data => {
                 const matchName = data['Coach Name']?.toLowerCase().includes(searchQuery.toLowerCase());
                 const matchUsername = data.Username?.toLowerCase().includes(searchQuery.toLowerCase());
                 const matchLocation = data.Location?.toLowerCase().includes(searchQuery.toLowerCase());
@@ -92,12 +95,14 @@ const ManageCoaches = () => {
             });
 
             setCoachesData(transformData);
-            setFilteredData(transformData);
+            setFilteredData(filteredCoachesData);
         }else {
             setCoachesData([]);
             setFilteredData([])
         }
-    },[coaches, searchQuery, timezones])
+    },[coaches, searchQuery, timezones]);
+
+    console.log("FILTERED DATA :", filteredData)
 
     const handleAddCoach = () => {
         navigate('/createcoach');
@@ -126,10 +131,32 @@ const ManageCoaches = () => {
     const actionButtons = [
         {
             type: 'switch',
+            onChange: (event, id) => {
+                if (event && event.preventDefault) {
+                    event.preventDefault();
+                }
+
+                const coachToUpdate = coachesData.find((coach) => coach.id === id)
+                const updatedStatus = coachToUpdate.is_active === 1 ? 0 : 1;
+
+                dispatch(updateCoach({ id, data : { is_active : updatedStatus }}))
+                
+                setCoachesData((prevCoachesData) => 
+                    prevCoachesData.map((coach) => 
+                        coach.id === id ? {...coach, is_active : updatedStatus } : coach
+                    )
+                );
+                
+                setActionButtonToggled(prev => !prev);
+            },
+
         },
         {
             type: 'edit',
-            onClick: id => {
+            onClick: (id, event) => {
+                if(event && event.preventDefault) {
+                    event.preventDefault()
+                }
                 handleEditCoaches(id);
             },
         },
