@@ -15,42 +15,9 @@ import { getCoachTemplateModuleId } from '../../../../redux/features/adminModule
 import VideoUploadComponent from './videoUpload/VideoUploadComponent';
 import { set } from 'date-fns';
 import TestActivityComponent from './Components/TestActivityComponent';
+import CustomButton from '../../../../components/CustomFields/CustomButton';
 
-// Custom button component for consistent styling
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '14px', // Reduced font size
-                borderRadius: '50px',
-                padding: '8px 16px', // Reduced padding
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
+
 
 // Component for Video/PDF/Link Activity
 const VideoPdfActivity = ({
@@ -277,71 +244,6 @@ const SessionActivity = ({ activity, name }) => {
     );
 };
 
-// component for test activity type
-// const TestActivity = ({activity,name}) =>{
-//   console.log('testactivity',activity);
-//   const {
-//     handleSubmit,
-//     control,
-//     reset,
-//     formState: { errors },
-//   } = useForm();
-
-//   return(
-//     <>
-//     <Grid
-//             container
-//             spacing={1} // Reduced spacing between items
-//             sx={{
-//                 display: 'flex',
-//                 flexDirection: 'column',
-//                 alignItems: 'center',
-//                 textAlign: 'center',
-//                 width: '100%',
-//             }}
-//         >
-//     <Grid
-//       item
-//       xs={12}
-//       sm={6}
-//       md={6}
-//       style={{ margin: '10px 0', width: '80%' }}
-//     >
-//       <CustomFormControl
-//         label="Activity Type"
-//         name="activityType"
-//         value="test"
-//         options={[
-//           { value: 'test', label: 'test' },
-//         ]}
-//         errors={errors}
-//       />
-//     </Grid>
-
-//     <Grid
-//       item
-//       xs={12}
-//       sm={6}
-//       md={6}
-//       style={{ margin: '10px 0', width: '80%' }}
-//     >
-//       <CustomFormControl
-//         label="Assessment"
-//         name="assessment"
-//         value={name}
-//         options={[
-//           { value: name, label: name },
-//         ]}
-//         errors={errors}
-//       />
-//     </Grid>
-
-//     </Grid>
-//     </>
-
-//   )
-
-// };
 
 const TestActivity = ({ handleClose, activity, name, template_id }) => {
     const {
@@ -468,12 +370,7 @@ const TestActivity = ({ handleClose, activity, name, template_id }) => {
 
 // Main Popup Component
 const ViewActivityPopup = ({ open, onClose, activity, templateId }) => {
-    console.log('............. Activity', activity);
     const activity_type = activity.activity_type;
-    console.log('activitygid', activity.id);
-    console.log('activitygid', activity.activity_type_id);
-    console.log('activityurl', activity.activity_url);
-    console.log('atcijdcidcdcdic', activity.activity_type?.type_name);
     const renderContent = () => {
         switch (activity.activity_type.id) {
             case 1:
