@@ -62,16 +62,6 @@ import {
 } from '../../redux/features/commonCalender/batchesAndStudents';
 import { GLOBAL_CONSTANTS } from '../../constants/globalConstants';
 
-const weekDays = [
-    'Sunday',
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-];
-
 const scheduleConfig = {
     TASCHEDULE: {
         sliceName: 'taModule',
@@ -115,7 +105,6 @@ const scheduleConfig = {
 
 const CreateNewSession = ({ id, name, componentName, timezone }) => {
     const dispatch = useDispatch();
-
     const [fromDate, setFromDate] = useState(null);
     const [toDate, setToDate] = useState(null);
     const [fromTime, setFromTime] = useState(null);
@@ -416,7 +405,7 @@ const CreateNewSession = ({ id, name, componentName, timezone }) => {
         let weeksArray = Array(7).fill(0);
         if (repeat === 'recurring') {
             selectedDays.forEach(day => {
-                const index = weekDays.indexOf(day);
+                const index = GLOBAL_CONSTANTS.WEEKDAYS.indexOf(day);
                 weeksArray[index] = 1;
             });
         } else if (repeat === 'onetime') {
@@ -984,7 +973,7 @@ const CreateNewSession = ({ id, name, componentName, timezone }) => {
                                                                                     'auto',
                                                                             }}
                                                                         >
-                                                                            {weekDays.map(
+                                                                            {GLOBAL_CONSTANTS.WEEKDAYS.map(
                                                                                 day => (
                                                                                     <FormControlLabel
                                                                                         key={

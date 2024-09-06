@@ -7,13 +7,10 @@ export const showTASchedule = createAsyncThunk(
     'coachScheduling/showTaSchedule',
     async rejectWithValue => {
         try {
-        try {
             const response = await axiosInstance.get(
                 `${baseUrl}/admin/taschedules`
             );
             return response.data;
-        } catch (error) {
-            if (error.response && error.response.data) {
         } catch (error) {
             if (error.response && error.response.data) {
                 return rejectWithValue(error.response.data.message);

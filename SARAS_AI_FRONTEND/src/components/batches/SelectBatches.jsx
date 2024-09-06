@@ -32,9 +32,14 @@ const SelectBatches = ({ id, name, componentName, timezone }) => {
     const [selectedBranch, setSelectedBranch] = useState('');
     const [filteredBatches, setFilteredBatches] = useState([]);
 
-    const { openBatches, batches, selectedBatches } = useSelector(
-        state => state.batchesAndStudents
-    );
+    const {
+        userId,
+        userName,
+        openBatches,
+        batches,
+        selectedBatches,
+        timezoneId,
+    } = useSelector(state => state.batchesAndStudents);
 
     const { openSchedulingPopup } = batchesConfig[componentName];
 
@@ -116,10 +121,10 @@ const SelectBatches = ({ id, name, componentName, timezone }) => {
 
         dispatch(
             openSchedulingPopup({
-                id,
-                name: name,
+                id: userId,
+                name: userName,
                 batches: selectBatch.map(id => ({ id })),
-                timezoneId: timezone.id,
+                timezoneId: timezone ? timezone.id : timezoneId,
             })
         );
         const res = {

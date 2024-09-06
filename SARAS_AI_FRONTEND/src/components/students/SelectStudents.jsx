@@ -31,9 +31,14 @@ const SelectStudents = ({ id, name, componentName, timezone }) => {
     const [selectStudents, setSelectStudents] = useState([]);
     const [filteredStudents, setFilteredStudents] = useState([]);
 
-    const { openStudents, students, selectedStudents } = useSelector(
-        state => state.batchesAndStudents
-    );
+    const {
+        userId,
+        userName,
+        openStudents,
+        students,
+        selectedStudents,
+        timezoneId,
+    } = useSelector(state => state.batchesAndStudents);
 
     const { openSchedulingPopup } = studentsConfig[componentName];
 
@@ -147,10 +152,10 @@ const SelectStudents = ({ id, name, componentName, timezone }) => {
 
         dispatch(
             openSchedulingPopup({
-                id,
-                name,
+                id: userId,
+                name: userName,
                 student: selectStudents.map(id => ({ id })),
-                timezoneId: timezone.id,
+                timezoneId: timezone ? timezone.id : timezoneId,
             })
         );
 

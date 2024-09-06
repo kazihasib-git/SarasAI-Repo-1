@@ -26,8 +26,8 @@ export const getStudentsInBatches = createAsyncThunk(
 const initialState = {
     openBatches: false,
     openStudents: false,
-    name: '',
-    id: null, // TaId / CoachId
+    userName: '',
+    userId: null, // TaId / CoachId
     batches: [],
     selectedBatches: [],
     students: [],
@@ -43,8 +43,8 @@ const batchesAndStudents = createSlice({
     reducers: {
         openBatchPopup(state, action) {
             state.openBatches = true;
-            state.name = action.payload.name;
-            state.id = action.payload.id;
+            state.userName = action.payload.name;
+            state.userId = action.payload.id;
             state.batches = action.payload.batches;
             state.selectedBatches = action.payload.selectedBatches;
             state.students = action.payload.students;
@@ -53,17 +53,12 @@ const batchesAndStudents = createSlice({
         },
         closeBatchPopup(state, action) {
             state.openBatches = false;
-            // state.name = action.payload.name;
-            // state.id = action.payload.id;
-            // state.batches = action.payload.batches;
             state.selectedBatches = action.payload?.selectedBatches;
-            // state.students = action.payload.students;
-            // state.selectedStudents = action.payload.selectedStudents;
         },
         openStudentsPopup(state, action) {
             state.openStudents = true;
-            state.name = action.payload.name;
-            state.id = action.payload.id;
+            state.userName = action.payload.name;
+            state.userId = action.payload.id;
             state.batches = action.payload.batches;
             state.selectedBatches = action.payload.selectedBatches;
             state.students = action.payload.students;
@@ -72,18 +67,13 @@ const batchesAndStudents = createSlice({
         },
         closeStudentsPopup(state, action) {
             state.openStudents = false;
-            // state.name = action.payload.name;
-            // state.id = action.payload.id;
-            // state.batches = action.payload.batches;
-            // state.selectedBatches = action.payload?.selectedBatches;
-            // state.students = action.payload.students;
             state.selectedStudents = action.payload.selectedStudents;
         },
         clearState(state, action) {
             state.openBatches = false;
             state.openStudents = false;
-            state.name = '';
-            state.id = null;
+            state.userName = '';
+            state.userId = null;
             state.batches = [];
             state.selectedBatches = [];
             state.students = [];
