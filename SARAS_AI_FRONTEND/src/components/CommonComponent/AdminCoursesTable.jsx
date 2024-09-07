@@ -34,12 +34,20 @@ const AdminCoursesTable = ({ taId }) => {
     }, [dispatch]);
 
     useEffect(() => {
-        if(allCoursesWithTas && allCoursesWithTas.length>0){
+        if (allCoursesWithTas && allCoursesWithTas.length > 0) {
             setData(allCoursesWithTas);
-        }else{
-            setData([]) ; 
+    
+            // Update selectedCourses with course IDs where taId is present in tas
+            const updatedSelectedCourses = allCoursesWithTas
+                .filter((course) => course.tas.some((ta) => ta.id === parseInt(taId, 10)))
+                .map((course) => parseInt(course.id, 10));
+    
+            setSelectedCourses(updatedSelectedCourses);
+        } else {
+            setData([]);
+            setSelectedCourses([]); // Clear selectedCourses if there are no courses
         }
-    }, [allCoursesWithTas ]);
+    }, [allCoursesWithTas, taId]);
    
     const totalPages = Math.ceil(data?.length / itemsPerPage);
     const currentData = data?.slice(
@@ -52,16 +60,21 @@ const AdminCoursesTable = ({ taId }) => {
     };
 
     const handleClick = (courseId) => {
-        const updatedData = data?.map((item) =>
-          item.id === courseId
-            ? {
-                ...item,
-                tas: item.tas.includes(taId)
-                  ? item.tas.filter((c) => c !== taId)
-                  : [...item.tas, taId],
-              }
-            : item
-        );
+        const updatedData = data.map((item) => {
+            if (item.id === courseId) {
+                const taExists = item.tas.some((ta) => parseInt(ta.id, 10) === parseInt(taId, 10)); // Compare as integers
+    
+                return {
+                    ...item,
+                    tas: taExists
+                        ? item.tas.filter((ta) => parseInt(ta.id, 10) !== parseInt(taId, 10))  // Remove TA if exists
+                        : [...item.tas, { id: parseInt(taId, 10) }]  // Add TA if it doesn't exist
+                };
+            }
+            return item;
+        });
+        console.log("updated data===>>>>",updatedData);
+        console.log("selectedCourses===>>>>",selectedCourses);
       
         setData(updatedData);
         setSelectedCourses((prev) =>
@@ -137,23 +150,17 @@ const AdminCoursesTable = ({ taId }) => {
                                 {new Date(item.end_date).toLocaleDateString()}
                             </td>
                             <td style={{ padding: '10px', borderBottom: '1px solid #ddd' }}>
-
-                           
-
-{item.tas.find(i => i.id==taId)!=null ? (
-     <CustomCheckbox
-     checked={item.tas.find(i => i.id==taId)!=null}
-     onChange={() => handleClick(item.id)}
- />
-  ) : (
-    <CustomCheckbox
-      checked={item.tas.includes(taId)}
-      onChange={() => handleClick(item.id)}
-    />
-  )}
-
-
-
+                                {item.tas.find(i => i.id==taId)!=null ? (
+                                    <CustomCheckbox
+                                    checked={item.tas.find(i => i.id==taId)!=null}
+                                    onChange={() => handleClick(item.id)}
+                                />
+                                ) : (
+                                    <CustomCheckbox
+                                    checked={item.tas.includes(taId)}
+                                    onChange={() => handleClick(item.id)}
+                                    />
+                                )}
                             </td>
                         </tr>
                     ))}
