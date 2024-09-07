@@ -1,20 +1,12 @@
 import React from 'react';
 import ReusableDialog from '../CustomFields/ReusableDialog';
-import {
-    Box,
-    Button,
-    DialogContent,
-    DialogTitle,
-    Typography,
-} from '@mui/material';
+import { Box, DialogContent, DialogTitle, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     closeCancelSession,
-    closeReasonForLeave,
     fetchTAScheduleById,
     fetchTaSlots,
     getScheduleSession,
-    openReasonForLeave,
     openScheduledSession,
 } from '../../redux/features/adminModule/ta/taAvialability';
 import {
@@ -27,13 +19,39 @@ import {
 import { cancelScheduledSession } from '../../redux/features/adminModule/ta/taScheduling';
 import { cancelCoachScheduledSession } from '../../redux/features/adminModule/coach/coachSchedule';
 import CustomButton from '../CustomFields/CustomButton';
-import { useParams } from 'react-router-dom';
 
-const CancelSchedule = ({ componentName }) => {
+const cancelScheduleConfig = {
+    TACALENDER: {
+        sliceName: 'taAvialability',
+        closeSessionAction: closeCancelSession,
+        cancelSessionAction: cancelScheduledSession,
+        getSessionAction: getScheduleSession,
+        eventSlotData: 'slotEventData',
+        cancelScheduledData: 'schduldeCancelData',
+        openSessionAction: openScheduledSession,
+        cancelSessionState: 'cancelSessionOpen',
+        fetchSlotsApi: fetchTaSlots,
+        fetchSessionsApi: fetchTAScheduleById,
+    },
+    COACHCALENDER: {
+        sliceName: 'coachAvailability',
+        closeSessionAction: closeCoachCancelSession,
+        cancelSessionAction: cancelCoachScheduledSession,
+        getSessionAction: getCoachScheduleSession,
+        eventSlotData: 'slotCoachEventData',
+        cancelScheduledData: 'schduldeCoachCancelData',
+        openSessionAction: openCoachScheduledSession,
+        cancelSessionState: 'cancelCoachSessionOpen',
+        fetchSlotsApi: fetchCoachSlots,
+        fetchSessionsApi: fetchCoachScheduleById,
+    },
+};
+
+const CancelSchedule = ({ id, name, componentName, timezone }) => {
     const dispatch = useDispatch();
-    const { id, name } = useParams();
 
-    let closeSessionAction,
+    const {
+        closeSessionAction,
         cancelSessionAction,
         getSessionAction,
         openSessionAction,
@@ -42,59 +60,14 @@ const CancelSchedule = ({ componentName }) => {
         cancelScheduledData,
         cancelSessionState,
         fetchSlotsApi,
-        fetchSessionsApi;
-
-    switch (componentName) {
-        case 'TACALENDER':
-            (sliceName = 'taAvialability'),
-                (closeSessionAction = closeCancelSession);
-            cancelSessionAction = cancelScheduledSession;
-            getSessionAction = getScheduleSession;
-            eventSlotData = 'slotEventData';
-            cancelScheduledData = 'schduldeCancelData';
-            openSessionAction = openScheduledSession;
-            cancelSessionState = 'cancelSessionOpen';
-            fetchSlotsApi = fetchTaSlots;
-            fetchSessionsApi = fetchTAScheduleById;
-            break;
-
-        case 'COACHCALENDER':
-            sliceName = 'coachAvailability';
-            closeSessionAction = closeCoachCancelSession;
-            cancelSessionAction = cancelCoachScheduledSession;
-            getSessionAction = getCoachScheduleSession;
-            eventSlotData = 'slotCoachEventData';
-            cancelScheduledData = 'schduldeCoachCancelData';
-            openSessionAction = openCoachScheduledSession;
-            cancelSessionState = 'cancelCoachSessionOpen';
-            fetchSlotsApi = fetchCoachSlots;
-            fetchSessionsApi = fetchCoachScheduleById;
-            break;
-
-        default:
-            closeSessionAction = null;
-            cancelSessionAction = null;
-            getSessionAction = null;
-            openSessionAction = null;
-            eventSlotData = null;
-            cancelScheduledData = null;
-            fetchSessionsApi = null;
-            fetchSlotsApi = null;
-            break;
-    }
+        fetchSessionsApi,
+    } = cancelScheduleConfig[componentName];
 
     const schedulingState = useSelector(state => state[sliceName]);
 
     const {
-        cancelSessionOpen,
         [cancelScheduledData]: schduldeCancelData,
         [eventSlotData]: slotEventData,
-    } = schedulingState;
-
-    const {
-        cancelCoachSessionOpen,
-        schduldeCoachCancelData,
-        slotCoachEventData,
     } = schedulingState;
 
     const handleCancel = () => {

@@ -51,6 +51,7 @@ import { getAllCoachingTools } from '../../../../redux/features/adminModule/coac
 import CustomHostNameForm from '../../../../components/CustomFields/CustomHostNameField';
 import CustomMeetingTypeField from '../../../../components/CustomFields/CustomMeetingTypeField';
 import CustomFutureDateField from '../../../../components/CustomFields/CustomFutureDateField';
+import { GLOBAL_CONSTANTS } from '../../../../constants/globalConstants';
 // import { uploadpdf } from '../../../../redux/features/adminModule/coach/LinkActivitySlice';
 const CustomButton = ({
     onClick,
@@ -122,7 +123,6 @@ const LinkActivityPopup = ({
     const { timezones, platforms, hosts } = useSelector(state => state.util);
     const { coachData } = useSelector(state => state.coachModule);
     const [selectedSlot, setSelectedSlot] = useState(null);
-    const meetingTypes = ['webinars', 'meetings'];
     const { typeList } = useSelector(state => state.activityType);
     const { coachingTools } = useSelector(state => state.coachingTools);
     const { coaches } = useSelector(state => state.coachModule);
@@ -788,7 +788,7 @@ const LinkActivityPopup = ({
                                                             // }
                                                             errors={errors}
                                                             options={
-                                                                meetingTypes
+                                                                GLOBAL_CONSTANTS.MEETING_TYPES
                                                             }
                                                         />
                                                     </Grid>

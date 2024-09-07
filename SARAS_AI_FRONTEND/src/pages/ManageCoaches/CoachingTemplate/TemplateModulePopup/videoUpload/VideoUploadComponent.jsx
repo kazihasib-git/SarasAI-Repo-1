@@ -35,7 +35,8 @@ const VideoUploadComponent = ({ onUploadComplete }) => {
     };
 
     const handleFileChange = event => {
-        setFile(event.target.files[0]);
+        const selectedFile = event.target.files[0];
+
         if (validateFile(selectedFile)) {
             setFile(selectedFile);
         }

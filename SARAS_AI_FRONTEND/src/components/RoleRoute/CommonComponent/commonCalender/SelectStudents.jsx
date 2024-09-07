@@ -18,7 +18,6 @@ import CustomButton from '../../../CustomFields/CustomButton';
 
 const name = String(localStorage.getItem('name') || 'Name');
 
-
 const headers = ['S. No.', 'Student Name', 'Program', 'Batch', 'Select'];
 
 const SelectStudents = ({ componentName }) => {
@@ -59,18 +58,18 @@ const SelectStudents = ({ componentName }) => {
         selectStudentPopup,
         preSelectedStudents,
         sessionData,
-        participantsData
+        participantsData,
     } = useSelector(state => state.commonCalender);
 
-    console.log({'sessionData':sessionData} ,{'participantsData':participantsData});
+    console.log(
+        { sessionData: sessionData },
+        { participantsData: participantsData }
+    );
     const { [studentDataState]: studentsData } = stateSelector || {};
 
     useEffect(() => {
         dispatch(getStudentsApi());
     }, [dispatch]);
-
-
-
 
     useEffect(() => {
         if (studentsData && studentsData.length > 0) {
@@ -80,8 +79,9 @@ const SelectStudents = ({ componentName }) => {
                     'S. No.': index + 1,
                     'Student Name': stu.student.name,
                     Program:
-                        stu.student.packages.map(pack => pack.name).join(', ') ||
-                        'N/A',
+                        stu.student.packages
+                            .map(pack => pack.name)
+                            .join(', ') || 'N/A',
                     Batch:
                         stu.student.batches
                             .map(batch => batch.batch_name)
@@ -102,8 +102,8 @@ const SelectStudents = ({ componentName }) => {
 
                 const matchesName = searchName
                     ? student['Student Name']
-                        .toLowerCase()
-                        .includes(searchName.toLowerCase())
+                          .toLowerCase()
+                          .includes(searchName.toLowerCase())
                     : true;
 
                 return matchesTerm && matchesBatch && matchesName;
@@ -120,48 +120,47 @@ const SelectStudents = ({ componentName }) => {
     //     setSelectedStudents(transformedPreSelectedStudents);
     // }, [preSelectedStudents]);
 
-
     const batchOptions =
         studentsData && Array.isArray(studentsData)
             ? [
-                ...new Set(
-                    studentsData
-                        //   .filter(
-                        //       student =>
-                        //           !selectedTerm ||
-                        //           student.student.academic_term === selectedTerm
-                        //   )
-                        .flatMap(student =>
-                            student.student.batches.map(
-                                batch => batch.batch_name
-                            )
-                        )
-                ),
-            ]
+                  ...new Set(
+                      studentsData
+                          //   .filter(
+                          //       student =>
+                          //           !selectedTerm ||
+                          //           student.student.academic_term === selectedTerm
+                          //   )
+                          .flatMap(student =>
+                              student.student.batches.map(
+                                  batch => batch.batch_name
+                              )
+                          )
+                  ),
+              ]
             : [];
 
     const academicTermOptions =
         studentsData && Array.isArray(studentsData)
             ? [
-                ...new Set(
-                    studentsData
-                        .filter(
-                            student =>
-                                !selectedBatch ||
-                                student.student.batches.some(
-                                    batch =>
-                                        batch.batch_name === selectedBatch
-                                )
-                        )
-                        .flatMap(student =>
-                            student.student.packages.map(pack => pack.name)
-                        )
-                ),
-            ]
+                  ...new Set(
+                      studentsData
+                          .filter(
+                              student =>
+                                  !selectedBatch ||
+                                  student.student.batches.some(
+                                      batch =>
+                                          batch.batch_name === selectedBatch
+                                  )
+                          )
+                          .flatMap(student =>
+                              student.student.packages.map(pack => pack.name)
+                          )
+                  ),
+              ]
             : [];
 
     useEffect(() => {
-        const getMatchingStudentIds = (batchesToMatch) => {
+        const getMatchingStudentIds = batchesToMatch => {
             const assignedBatchIds = studentsData.flatMap(stu =>
                 stu.student.batches.map(batch => batch.batch_id)
             );
@@ -181,8 +180,10 @@ const SelectStudents = ({ componentName }) => {
 
         let updatedSelectedStudents = [];
 
-        if ( participantsData && participantsData?.students?.length > 0) {
-            updatedSelectedStudents = participantsData.students.map(student => student.id);
+        if (participantsData && participantsData?.students?.length > 0) {
+            updatedSelectedStudents = participantsData.students.map(
+                student => student.id
+            );
         }
 
         if (students && students.length > 0) {
@@ -190,24 +191,31 @@ const SelectStudents = ({ componentName }) => {
         }
 
         if (sessionData?.students?.length > 0) {
-            updatedSelectedStudents = sessionData.students.map(student => student.id);
+            updatedSelectedStudents = sessionData.students.map(
+                student => student.id
+            );
         }
 
         if (batches && batches.length > 0) {
             updatedSelectedStudents = [
-                ...new Set([...updatedSelectedStudents, ...getMatchingStudentIds(batches)])
+                ...new Set([
+                    ...updatedSelectedStudents,
+                    ...getMatchingStudentIds(batches),
+                ]),
             ];
         }
 
         if (sessionData?.batch?.length > 0) {
             updatedSelectedStudents = [
-                ...new Set([...updatedSelectedStudents, ...getMatchingStudentIds(sessionData.batch)])
+                ...new Set([
+                    ...updatedSelectedStudents,
+                    ...getMatchingStudentIds(sessionData.batch),
+                ]),
             ];
         }
 
         setSelectedStudents(updatedSelectedStudents);
     }, [students, batches, sessionData, participantsData]);
-
 
     const handleSelectStudents = id => {
         setSelectedStudents(prev =>
@@ -216,31 +224,29 @@ const SelectStudents = ({ componentName }) => {
     };
 
     const handleSubmit = () => {
-
         const data = {
             studentId: selectedStudents
                 ? selectedStudents.map(id => ({ id }))
                 : [],
         };
 
-
         if (participantsData) {
             const updatedparticipantsData = {
                 ...participantsData,
                 students: participantsData?.students?.filter(participant =>
                     selectedStudents.includes(participant.id)
-                )
+                ),
             };
-            dispatch(openEditParticipantsDialog(updatedparticipantsData))
-        }
-            else if (sessionData) {
-
+            dispatch(openEditParticipantsDialog(updatedparticipantsData));
+        } else if (sessionData) {
             const updatedSessionData = {
                 ...sessionData,
-                students: selectedStudents ? selectedStudents.map(id => ({ id })) : [],
-            }
-            dispatch(openEditSession({ sessionData: updatedSessionData }))
-        }else {
+                students: selectedStudents
+                    ? selectedStudents.map(id => ({ id }))
+                    : [],
+            };
+            dispatch(openEditSession({ sessionData: updatedSessionData }));
+        } else {
             dispatch(openScheduleNewSession(data));
         }
         dispatch(closeSelectStudents());

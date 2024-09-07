@@ -17,16 +17,6 @@ import {
     closeCoachEditBatch,
     openCoachScheduleSession,
 } from '../../redux/features/adminModule/coach/coachSchedule';
-import {
-    closeSelectBatches,
-    getCoachMenuAssignedBatches,
-    openCreateSessionPopup,
-} from '../../redux/features/coachModule/coachmenuprofileSilce';
-import {
-    closeTaMenuSelectBatches,
-    getTaMenuAssignedBatches,
-    openTaMenuCreateSessionsPopup,
-} from '../../redux/features/taModule/tamenuSlice';
 import { useParams } from 'react-router-dom';
 import CustomButton from '../CustomFields/CustomButton';
 import { toast } from 'react-toastify';
@@ -39,7 +29,6 @@ const EditBatches = ({ componentname }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedBranch, setSelectedBranch] = useState('');
     const [filteredBatches, setFilteredBatches] = useState([]);
-    ``;
 
     let stateModuleKey,
         nameKey,
@@ -50,7 +39,7 @@ const EditBatches = ({ componentname }) => {
         selectedBatchKey,
         openSchedulingPopup;
 
-    let schedulingState, nameKeyScheduling, idKeyScheduling,timezoneId;
+    let schedulingState, nameKeyScheduling, idKeyScheduling, timezoneId;
 
     switch (componentname) {
         case 'COACHSCHEDULE':
@@ -62,7 +51,9 @@ const EditBatches = ({ componentname }) => {
             closeDialogAction = closeCoachEditBatch;
             getAssignBatchesAction = getCoachAssignBatches;
             schedulingState = useSelector(state => state.coachScheduling);
-            timezoneId = useSelector(state => state.coachScheduling.coachTimezone);
+            timezoneId = useSelector(
+                state => state.coachScheduling.coachTimezone
+            );
             nameKeyScheduling = 'coachName';
             idKeyScheduling = 'coachID';
             openSchedulingPopup = openCoachScheduleSession;
@@ -134,13 +125,14 @@ const EditBatches = ({ componentname }) => {
 
     useEffect(() => {
         if (assignedBatches) {
-            const transformedData = assignedBatches.filter(item => item.is_active === 1)
-            .map((batch, index) => ({
-                'S. No.': index + 1,
-                'Batch Name': batch.batch.name,
-                Branch: batch.batch.branch.name,
-                id: batch.batch.id,
-            }));
+            const transformedData = assignedBatches
+                .filter(item => item.is_active === 1)
+                .map((batch, index) => ({
+                    'S. No.': index + 1,
+                    'Batch Name': batch.batch.name,
+                    Branch: batch.batch.branch.name,
+                    id: batch.batch.id,
+                }));
 
             const filtered = transformedData.filter(batch => {
                 const matchesBranch = selectedBranch
@@ -192,12 +184,12 @@ const EditBatches = ({ componentname }) => {
     };
 
     const validate = () => {
-        if(selectedBatch.length === 0){
-            toast.error('Please Select at Least One Batch')
+        if (selectedBatch.length === 0) {
+            toast.error('Please Select at Least One Batch');
             return false;
         }
         return true;
-    }
+    };
 
     const handleSubmit = () => {
         if (!validate()) return;
@@ -287,10 +279,6 @@ const EditBatches = ({ componentname }) => {
             Submit
         </CustomButton>
     );
-
-    if (loading) {
-        return <div>Loading...</div>;
-    }
 
     const assignedTA = assignedTAName || assignedName || name;
 

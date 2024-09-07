@@ -47,22 +47,22 @@ export const getCoach = createAsyncThunk(
 export const getCoachById = createAsyncThunk(
     'coachModule/getCoachById',
     async (id, { rejectWithValue }) => {
-        try{
+        try {
             const response = await axiosInstance.get(
                 `${baseUrl}/admin/manage_coaches/${id}`
             );
             return response.data;
-        }catch (error){
-            if(error.response && error.response.data){
+        } catch (error) {
+            if (error.response && error.response.data) {
                 return rejectWithValue(error.response.data.message);
-            }else {
+            } else {
                 return rejectWithValue(
                     'An Error Occurred While Fetching Coaches By Id'
-                )
+                );
             }
         }
     }
-)
+);
 
 export const updateCoach = createAsyncThunk(
     'coachModule/updateCoach',
@@ -90,17 +90,14 @@ export const activate_deactivate_Coach = createAsyncThunk(
     async ({ id }, { rejectWithValue }) => {
         try {
             const response = await axiosInstance.patch(
-                `${baseUrl}/admin/manage_coaches/active-deactive/${id}`,
-                
+                `${baseUrl}/admin/manage_coaches/active-deactive/${id}`
             );
             return response.data;
         } catch (error) {
             if (error.response && error.response.data) {
                 return rejectWithValue(error.response.data.message);
             } else {
-                return rejectWithValue(
-                    'An Error Occurred While Editing Coach'
-                );
+                return rejectWithValue('An Error Occurred While Editing Coach');
             }
         }
     }
@@ -430,7 +427,7 @@ export const deleteCoachMapping = createAsyncThunk(
 
 const initialState = {
     coaches: [],
-    coachData : [],
+    coachData: [],
     coachStudentBatchMapping: [],
     coachBatchMapping: null,
     coachMapping: null,
@@ -527,22 +524,22 @@ export const coachSlice = createSlice({
         });
         builder.addCase(getCoach.rejected, (state, action) => {
             state.loading = false;
-            state.coaches =  [];
+            state.coaches = [];
             state.error = action.payload || action.error.message;
         });
 
-        builder.addCase(getCoachById.pending, (state) => {
+        builder.addCase(getCoachById.pending, state => {
             state.loading = true;
-        })
+        });
         builder.addCase(getCoachById.fulfilled, (state, action) => {
             state.loading = false;
             state.coachData = action.payload;
-        })
+        });
         builder.addCase(getCoachById.rejected, (state, action) => {
             state.loading = false;
             state.coachData = [];
-            state.error = action.payload || action.error.message
-        })
+            state.error = action.payload || action.error.message;
+        });
 
         // Update Coach
         builder.addCase(updateCoach.pending, state => {
@@ -567,24 +564,27 @@ export const coachSlice = createSlice({
                 action.payload || 'Failed To Update Coach. Please Try Again'
             );
         });
-        
+
         // activate deactive coach
 
         builder.addCase(activate_deactivate_Coach.pending, state => {
             state.loading = true;
         });
-        builder.addCase(activate_deactivate_Coach.fulfilled, (state, action) => {
-            state.loading = false;
-            const index = state.coaches.findIndex(
-                coach => coach.id === action.payload.id
-            );
-            if (index !== -1) {
-                state.coaches[index] = action.payload;
+        builder.addCase(
+            activate_deactivate_Coach.fulfilled,
+            (state, action) => {
+                state.loading = false;
+                const index = state.coaches.findIndex(
+                    coach => coach.id === action.payload.id
+                );
+                if (index !== -1) {
+                    state.coaches[index] = action.payload;
+                }
+                toast.success(
+                    action.payload.message || 'Coach edited Successfully'
+                );
             }
-            toast.success(
-                action.payload.message || 'Coach edited Successfully'
-            );
-        });
+        );
         builder.addCase(activate_deactivate_Coach.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload || action.error.message;

@@ -156,7 +156,7 @@ const coachScheduling = createSlice({
             console.log('Open Action  coach : ', action.payload);
             state.coachID = action.payload.id;
             state.coachName = action.payload.name;
-            state.coachTimezone = action.payload.timezone;
+            state.coachTimezone = action.payload.timezoneId;
             if (action.payload.student) {
                 state.students = action.payload.student;
             }

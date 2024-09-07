@@ -1,13 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import ReusableDialog from '../CustomFields/ReusableDialog';
-import CustomDateField from '../CustomFields/CustomDateField';
 import { Button, DialogContent, Grid } from '@mui/material';
 import CustomTimeField from '../CustomFields/CustomTimeField';
 import CustomHostNameForm from '../CustomFields/CustomHostNameField';
 import CustomMeetingTypeForm from '../CustomFields/CustomMeetingTypeField';
 import { useDispatch, useSelector } from 'react-redux';
-import PopUpTable from '../CommonComponent/PopUpTable';
-import { useParams } from 'react-router-dom';
 import { rescheduleSession } from '../../redux/features/adminModule/ta/taScheduling';
 import { rescheduleCoachSession } from '../../redux/features/adminModule/coach/coachSchedule';
 import { Controller, useForm } from 'react-hook-form';
@@ -31,36 +28,58 @@ import {
     fetchCoachScheduleById,
 } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import CustomButton from '../CustomFields/CustomButton';
-import { timezoneIdToName } from '../../utils/timezoneIdToName';
 import { convertFromUTC } from '../../utils/dateAndtimeConversion';
-import { getTimezone , getAllHosts} from '../../redux/features/utils/utilSlice';
+import { getAllHosts } from '../../redux/features/utils/utilSlice';
 import { toast } from 'react-toastify';
 import PopTableSlot from '../CommonComponent/PopTableSlot';
 import CustomFutureDateField from '../CustomFields/CustomFutureDateField';
+import { GLOBAL_CONSTANTS } from '../../constants/globalConstants';
+
 const headers = ['S. No.', 'Slots Available', 'Select'];
 
-const ReschedulingSession = ({ componentName, timezoneID }) => {
-    
-    const { timezones, platforms , hosts} = useSelector(state => state.util);
+const rescheduleConfig = {
+    TACALENDER: {
+        sliceName: 'taAvialability',
+        rescheduleSessionOpenKey: 'resheduleSessionOpen',
+        closeRescheduleSessionAction: closeRescheduleSession,
+        fetchAvailableSlotsAction: fetchAvailableSlots,
+        getScheduleSessionAction: getScheduleSession,
+        openScheduledSessionAction: openScheduledSession,
+        availableSlotsAction: 'availableSlotsData',
+        sessionEventAction: 'sessionEventData',
+        slotEventAction: 'slotEventData',
+        reschduleSessionAction: rescheduleSession,
+        fetchSlotsApi: fetchTaSlots,
+        fetchSessionsApi: fetchTAScheduleById,
+    },
+    COACHCALENDER: {
+        sliceName: 'coachAvailability',
+        rescheduleSessionOpenKey: 'resheduleCoachSessionOpen',
+        closeRescheduleSessionAction: closeCoachRescheduleSession,
+        fetchAvailableSlotsAction: fetchCoachAvailableSlots,
+        getScheduleSessionAction: getCoachScheduleSession,
+        openScheduledSessionAction: openCoachScheduledSession,
+        availableSlotsAction: 'availableCoachSlotsData',
+        sessionEventAction: 'sessionCoachEventData',
+        slotEventAction: 'slotCoachEventData',
+        reschduleSessionAction: rescheduleCoachSession,
+        fetchSlotsApi: fetchCoachSlots,
+        fetchSessionsApi: fetchCoachScheduleById,
+    },
+};
 
-    const taId = useParams();
-    const { id, name } = useParams();
-
+const ReschedulingSession = ({ id, name, componentName, timezone }) => {
     const dispatch = useDispatch();
-
-    useEffect(() => {
-        dispatch(getTimezone());
-        dispatch(getAllHosts());
-    }, [dispatch]);
+    const { hosts } = useSelector(state => state.util);
 
     const [selectDate, setSelectDate] = useState(null);
     const [selectedSlots, setSelectedSlots] = useState([]);
-    const [fromTime, setFromTime] = useState(null); 
-    const [email, setEmail] = useState(''); 
-    const [meetingType, setMeetingType] = useState(''); 
+    const [fromTime, setFromTime] = useState(null);
+    const [email, setEmail] = useState('');
+    const [meetingType, setMeetingType] = useState('');
     const [toTime, setToTime] = useState(null);
     const [transformedSlotsData, setTransformedSlotsData] = useState([]);
-    const [meetingTypes, setMeetingtypes] = useState(['webinars', 'meetings']);
+
     const {
         control,
         formState: { errors },
@@ -68,11 +87,8 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
         defaultValues: {},
     });
 
-    const { dataToFindScheduleInSlot } = useSelector(
-        state => state.commonCalender
-    );
-
-    let rescheduleSessionOpenKey,
+    const {
+        rescheduleSessionOpenKey,
         closeRescheduleSessionAction,
         fetchAvailableSlotsAction,
         getScheduleSessionAction,
@@ -83,54 +99,12 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
         sliceName,
         reschduleSessionAction,
         fetchSlotsApi,
-        fetchSessionsApi;
+        fetchSessionsApi,
+    } = rescheduleConfig[componentName];
 
-    switch (componentName) {
-        case 'TACALENDER':
-            sliceName = 'taAvialability';
-            rescheduleSessionOpenKey = 'resheduleSessionOpen';
-            closeRescheduleSessionAction = closeRescheduleSession;
-            fetchAvailableSlotsAction = fetchAvailableSlots;
-            getScheduleSessionAction = getScheduleSession;
-            openScheduledSessionAction = openScheduledSession;
-            availableSlotsAction = 'availableSlotsData';
-            sessionEventAction = 'sessionEventData';
-            slotEventAction = 'slotEventData';
-            reschduleSessionAction = rescheduleSession;
-            fetchSlotsApi = fetchTaSlots;
-            fetchSessionsApi = fetchTAScheduleById;
-            break;
-
-        case 'COACHCALENDER':
-            sliceName = 'coachAvailability';
-            rescheduleSessionOpenKey = 'resheduleCoachSessionOpen';
-            closeRescheduleSessionAction = closeCoachRescheduleSession;
-            fetchAvailableSlotsAction = fetchCoachAvailableSlots;
-            getScheduleSessionAction = getCoachScheduleSession;
-            openScheduledSessionAction = openCoachScheduledSession;
-            availableSlotsAction = 'availableCoachSlotsData';
-            sessionEventAction = 'sessionCoachEventData';
-            slotEventAction = 'slotCoachEventData';
-            reschduleSessionAction = rescheduleCoachSession;
-            fetchSlotsApi = fetchCoachSlots;
-            fetchSessionsApi = fetchCoachScheduleById;
-            break;
-
-        default:
-            sliceName = null;
-            rescheduleSessionOpenKey = null;
-            closeRescheduleSessionAction = null;
-            fetchAvailableSlotsAction = null;
-            getScheduleSessionAction = null;
-            openScheduledSessionAction = null;
-            availableSlotsAction = null;
-            sessionEventAction = null;
-            slotEventAction = null;
-            reschduleSessionAction = null;
-            fetchSlotsApi = null;
-            fetchSessionsApi = null;
-            break;
-    }
+    const { dataToFindScheduleInSlot } = useSelector(
+        state => state.commonCalender
+    );
 
     const {
         [rescheduleSessionOpenKey]: rescheduleSessionOpen,
@@ -140,15 +114,19 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
     } = useSelector(state => state[sliceName]);
 
     useEffect(() => {
+        dispatch(getAllHosts());
+    }, [dispatch]);
+
+    useEffect(() => {
         if (selectDate) {
             const data = {
-                admin_user_id: taId.id,
+                admin_user_id: id,
                 date: selectDate,
-                timezone_name: timezoneIdToName(timezoneID, timezones),
+                timezone_name: timezone.time_zone,
             };
             dispatch(fetchAvailableSlotsAction(data));
         }
-    }, [selectDate, taId.id, dispatch, fetchAvailableSlotsAction]);
+    }, [selectDate, id, dispatch]);
 
     const formatTime = time => {
         const [hours, minutes] = time.split(':');
@@ -163,11 +141,8 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
         if (
             availableSlotsData &&
             availableSlotsData.length > 0 &&
-            timezones &&
-            timezoneID
+            timezone.time_zone
         ) {
-            const timezonename = timezoneIdToName(timezoneID, timezones);
-
             try {
                 const transformedData = await Promise.all(
                     availableSlotsData.map(async (slot, index) => {
@@ -176,7 +151,7 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
                             start_time: slot.from_time,
                             end_time: slot.to_time,
                             end_date: slot.slot_date,
-                            timezonename,
+                            timezonename: timezone.time_zone,
                         });
                         const startDateTime = new Date(
                             `${localTime.start_date}T${localTime.start_time}`
@@ -206,7 +181,7 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
 
     useEffect(() => {
         convertavailableSlotData();
-    }, [availableSlotsData, timezones, timezoneID]);
+    }, [availableSlotsData, timezone.time_zone]);
 
     const handleDateChange = date => {
         setSelectDate(date);
@@ -219,12 +194,7 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
         );
     };
 
-
     const validate = () => {
-
-
-        
-
         if (!selectDate) {
             toast.error('Please Select The Date');
             return false;
@@ -246,36 +216,32 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
         if (!email) {
             toast.error('Please provide a valid Host Name');
             return false;
-          }
+        }
         if (!meetingType) {
             toast.error('Please select the Meeting Type');
             return false;
         }
 
         return true;
-
-
-    }
+    };
 
     const handleSubmit = () => {
-        
-        if(!validate()) return;
-        
+        if (!validate()) return;
 
         const sessionId = sessionEventData?.id || '';
 
         const rescheduleData = {
             id: sessionId,
             data: {
-                admin_user_id: taId.id,
+                admin_user_id: id,
                 schedule_date: selectDate,
                 slot_id: selectedSlots[0],
                 start_time: fromTime,
                 end_time: toTime,
-                timezone_id: timezoneID,
+                timezone_id: timezone.id,
                 event_status: 'rescheduled',
-                host_email_id: email,  // Use the email state
-                meeting_type: meetingType  // Use the meetingType state
+                host_email_id: email, // Use the email state
+                meeting_type: meetingType, // Use the meetingType state
             },
         };
 
@@ -292,8 +258,6 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
                 console.error('Error rescheduling session:', error);
             });
     };
-
-    const headers = ['S. No.', 'Slots Available', 'Select'];
 
     const content = (
         <>
@@ -375,13 +339,11 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
                                             label="Host Name"
                                             name="host_email_id"
                                             value={email}
-                                            onChange={event => setEmail(event.target.value)}                                            
-                                            errors={
-                                                errors
+                                            onChange={event =>
+                                                setEmail(event.target.value)
                                             }
-                                            options={
-                                                hosts.users
-                                            }
+                                            errors={errors}
+                                            options={hosts.users}
                                         />
                                     )}
                                 />
@@ -395,19 +357,19 @@ const ReschedulingSession = ({ componentName, timezoneID }) => {
                                 <Controller
                                     name="meeting_type"
                                     control={control}
-                                    render={({
-                                        field,
-                                    }) => (
+                                    render={({ field }) => (
                                         <CustomMeetingTypeForm
                                             label="Meeting Type"
                                             name="meeting_type"
                                             value={meetingType}
-                                            onChange={event => setMeetingType(event.target.value)}
-                                            errors={
-                                                errors
+                                            onChange={event =>
+                                                setMeetingType(
+                                                    event.target.value
+                                                )
                                             }
+                                            errors={errors}
                                             options={
-                                                meetingTypes
+                                                GLOBAL_CONSTANTS.MEETING_TYPES
                                             }
                                         />
                                     )}

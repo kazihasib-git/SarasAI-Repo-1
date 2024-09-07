@@ -1,47 +1,31 @@
 import { Box, InputBase, Button, Modal, Typography } from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
-import { mockMappingDat } from '../../fakeData/mappingData';
 import Header from '../../components/Header/Header';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import { useEffect, useState } from 'react';
-import { OnOffSwitch } from '../../components/Switch';
-import editIcon from '../../assets/editIcon.png';
-import { useNavigate } from 'react-router-dom';
 import DynamicTable from '../../components/CommonComponent/DynamicTable';
 import { useDispatch, useSelector } from 'react-redux';
 import Schedule from '../../components/availability/Schedule';
 import { showTAMapping } from '../../redux/features/adminModule/ta/taSlice';
 import EditBatches from '../../components/availability/EditBatches';
 import EditStudents from '../../components/availability/EditStudents';
+import SelectBatches from '../../components/batches/SelectBatches';
+import SelectStudents from '../../components/students/SelectStudents';
+import CreateNewSession from '../../components/availability/CreateNewSession';
 
 const TaScheduling = () => {
     const dispatch = useDispatch();
+
     const { assignStudentOpen, taMapping, assignBatchOpen, loading } =
         useSelector(state => state.taModule);
     const { scheduleSessionOpen, openEditBatch, openEditStudent } = useSelector(
         state => state.taScheduling
     );
 
+    const { openBatches, openStudents } = useSelector(
+        state => state.batchesAndStudents
+    );
+
     const [searchQuery, setSearchQuery] = useState('');
-
-    const { taId } = useSelector(state => state.taScheduling);
-    const { todaysAvailableTa } = useSelector(state => state.taAvialability);
-    const [selectedTA, setSelectedTA] = useState(null);
-
-    // const findTaTimeZone = (todaysAvailableTa) => {
-    //     if (todaysAvailableTa && Number(taId)) {
-    //         const selectedTa = todaysAvailableTa.find(ta => ta.id === Number(taId));
-    //         setSelectedTA(selectedTa || null);  // Set to null if not found
-    //     } else {
-    //         setSelectedTA(null);  // Set to null if conditions are not met
-    //     }
-    // }
-    // useEffect(() => {
-    //     findTaTimeZone(todaysAvailableTa);
-    // }, [taId, todaysAvailableTa]);
-
-    //const storedTimezoneId = selectedTA ? selectedTA.timezone_id : Number(localStorage.getItem('timezone_id'));
-
     const [taScheduleData, setTaScheduleData] = useState([]);
 
     useEffect(() => {
@@ -49,7 +33,6 @@ const TaScheduling = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        // console.log('TASCHEDULE : ', taMapping);
         if (taMapping && taMapping.length > 0) {
             const transformData = taMapping.map((item, index) => ({
                 id: item.id,
@@ -57,12 +40,12 @@ const TaScheduling = () => {
                 Username: item.username,
                 Active_Students: item.Active_Students,
                 Active_Batches: item.Active_Batches,
-                timezone: item.timezone_id,
+                timezoneId: item.timezone_id,
             }));
 
             setTaScheduleData(transformData);
-        }else {
-            setTaScheduleData([])
+        } else {
+            setTaScheduleData([]);
         }
     }, [taMapping]);
 
@@ -80,7 +63,6 @@ const TaScheduling = () => {
         'Username',
         'Active Students',
         'Active Batches',
-        'timezone',
         'Action',
     ];
 
@@ -101,11 +83,13 @@ const TaScheduling = () => {
                     alignItems="center"
                     mb={2}
                 >
-                    <p style={{
+                    <p
+                        style={{
                             fontSize: '44px',
                             justifyContent: 'center',
                             fontFamily: 'ExtraLight',
-                        }}>
+                        }}
+                    >
                         TA Scheduling
                     </p>
                     <Box display={'flex'}>
@@ -131,12 +115,16 @@ const TaScheduling = () => {
                     headers={headers}
                     initialData={filteredData}
                     actionButtons={actionButtons}
-                    componentName={'TAMAPPING'}
+                    componentName={'TASCHEDULE'}
                 />
             </Box>
-            {scheduleSessionOpen && <Schedule componentName={'TASCHEDULE'} />}
-            {openEditBatch && <EditBatches componentname={'TASCHEDULE'} />}
-            {openEditStudent && <EditStudents componentname={'TASCHEDULE'} />}
+            {scheduleSessionOpen && (
+                <CreateNewSession componentName={'TASCHEDULE'} />
+            )}
+            {openBatches && <SelectBatches componentName={'TASCHEDULE'} />}
+            {openStudents && <SelectStudents componentName={'TASCHEDULE'} />}
+            {/* {openEditBatch && <EditBatches componentname={'TASCHEDULE'} />}
+            {openEditStudent && <EditStudents componentname={'TASCHEDULE'} />} */}
         </>
     );
 };

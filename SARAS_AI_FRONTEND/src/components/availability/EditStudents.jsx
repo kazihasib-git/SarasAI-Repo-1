@@ -21,7 +21,6 @@ import CustomButton from '../CustomFields/CustomButton';
 import { toast } from 'react-toastify';
 
 const EditStudents = ({ componentname }) => {
-    
     const dispatch = useDispatch();
     const { id, name } = useParams();
 
@@ -43,7 +42,7 @@ const EditStudents = ({ componentname }) => {
         openSchedulingPopup,
         selectedBatches;
 
-    let schedulingState, nameKeyScheduling, idKeyScheduling,timezoneId;
+    let schedulingState, nameKeyScheduling, idKeyScheduling, timezoneId;
 
     switch (componentname) {
         case 'COACHSCHEDULE':
@@ -56,7 +55,9 @@ const EditStudents = ({ componentname }) => {
             closeDialogAction = closeCoachEditStudent;
             getAssignStudentAction = getCoachAssignStudents;
             schedulingState = useSelector(state => state.coachScheduling);
-            timezoneId = useSelector(state => state.coachScheduling.coachTimezone);
+            timezoneId = useSelector(
+                state => state.coachScheduling.coachTimezone
+            );
             nameKeyScheduling = 'coachName';
             idKeyScheduling = 'coachID';
             openSchedulingPopup = openCoachScheduleSession;
@@ -132,21 +133,22 @@ const EditStudents = ({ componentname }) => {
         if (assignedStudents) {
             // Transform and filter the data
             const transformedData = assignedStudents
-            .filter(item => item.is_active === 1)
-            .map((stu, index) => ({
-                'S. No.': index + 1,
-                'Student Name': stu.student.name,
-                Program:
-                    stu.student.packages.map(pack => pack.name).join(', ') ||
-                    'N/A',
-                Batch:
-                    stu.student.batches
-                        .map(batch => batch.batch_name)
-                        .join(', ') || 'N/A',
-                Select: stu.is_active ? 'Active' : 'Inactive',
-                is_active: stu.is_active,
-                id: stu.student.id,
-            }));
+                .filter(item => item.is_active === 1)
+                .map((stu, index) => ({
+                    'S. No.': index + 1,
+                    'Student Name': stu.student.name,
+                    Program:
+                        stu.student.packages
+                            .map(pack => pack.name)
+                            .join(', ') || 'N/A',
+                    Batch:
+                        stu.student.batches
+                            .map(batch => batch.batch_name)
+                            .join(', ') || 'N/A',
+                    Select: stu.is_active ? 'Active' : 'Inactive',
+                    is_active: stu.is_active,
+                    id: stu.student.id,
+                }));
 
             // Filter the students based on selected package and batch
             const filtered = transformedData.filter(student => {
@@ -276,11 +278,9 @@ const EditStudents = ({ componentname }) => {
         return true; // Return true if validation passes
     };
 
-
     const handleSubmit = () => {
-        
         if (!validate()) return;
-        
+
         const id =
             componentname === 'ADDITCOACH'
                 ? coachID || assignedId
@@ -305,7 +305,7 @@ const EditStudents = ({ componentname }) => {
 
         dispatch(closeDialogAction());
     };
-console.log('student data ::' , filteredStudents)
+    console.log('student data ::', filteredStudents);
     const headers = ['S. No.', 'Student Name', 'Program', 'Batch', 'Select'];
 
     const content = (
