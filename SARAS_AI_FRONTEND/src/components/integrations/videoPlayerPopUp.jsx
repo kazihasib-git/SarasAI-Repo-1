@@ -1,9 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Vimeo from '@u-wave/react-vimeo';
-import { Dialog, DialogContent, IconButton } from '@mui/material';
+import ReactPlayer from 'react-player';
+import { Dialog, DialogContent, IconButton, CircularProgress, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
 const VideoPopup = ({ open, videoUrl, onClose }) => {
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    const handleReady = () => {
+        setLoading(false); // Stop loading when the video is ready
+    };
+
+    const handleError = (err) => {
+        setLoading(false); // Stop loading in case of an error
+        setError('video uploading on vimeo in progress...');
+        console.error("Vimeo player error:", err); // Log the error for debugging
+    };
     return (
         <Dialog
             open={open}
@@ -52,13 +65,25 @@ const VideoPopup = ({ open, videoUrl, onClose }) => {
                     height="100%"
                     style={{ position: 'absolute', top: 0, left: 0 }}
                 /> */}
-                <Vimeo
-                    video={videoUrl}
-                    autoplay
-                    // width="50%"
-                    // height="50%"
-                    // style={{ position: 'absolute', top: 0, left: 0 }}
-                />
+                {loading && !error && (
+                    <CircularProgress sx={{ position: 'absolute' }} /> // Show loading spinner
+                )}
+                
+                {error && (
+                    <Typography color="error" variant="h6" sx={{ textAlign: 'center' }}>
+                        {error} {/* Display error message */}
+                    </Typography>
+                )}
+
+                {!error && (
+                    <Vimeo
+                        key={videoUrl}  // Forces re-render when videoUrl changes
+                        video={videoUrl}
+                        autoplay
+                        onReady={handleReady}
+                        onError={handleError}
+                    />
+                )}
             </DialogContent>
         </Dialog>
     );
