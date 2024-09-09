@@ -153,7 +153,7 @@ const EditBatchesSessionLink = ({ componentName, timezone }) => {
     const handleSubmit = () => {
         if (!validate()) return;
 
-        const id = sessionEventData.meetingId;
+        const id = sessionEventData.id;
         const data = {
             batchId: selectedBatch.map(id => id),
         };
