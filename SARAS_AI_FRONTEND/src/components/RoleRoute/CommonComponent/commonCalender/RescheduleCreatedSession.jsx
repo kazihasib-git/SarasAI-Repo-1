@@ -190,12 +190,17 @@ const RescheduleCreatedSession = ({ componentName, timezone }) => {
             toast.error('Please Select the Slot');
             return false;
         }
+        console.log('selectedSlots', selectedSlots );
         if (!fromTime) {
             toast.error('Please Select the Start Time');
             return false;
         }
         if (!toTime) {
             toast.error('Please Select the End Time');
+            return false;
+        }
+        if (fromTime >= toTime) {
+            toast.error('End Time should be greater than Start Time');
             return false;
         }
         if (!email) {

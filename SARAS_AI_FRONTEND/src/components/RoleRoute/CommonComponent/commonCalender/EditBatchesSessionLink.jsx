@@ -79,7 +79,8 @@ const EditBatchesSessionLink = ({ componentName, timezone }) => {
 
     useEffect(() => {
         dispatch(getBatchesApi()).then(() => {
-            dispatch(getSelectedBatchesApi(sessionEventData.meetingId));
+            console.log(componentName, 'sssssdwcwcwc');
+            dispatch(getSelectedBatchesApi(sessionEventData.id));
         });
     }, [dispatch]);
 
