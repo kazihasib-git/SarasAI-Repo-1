@@ -37,46 +37,32 @@ import { Controller, useForm } from 'react-hook-form';
 import CustomHostNameForm from '../../../CustomFields/CustomHostNameField';
 import CustomMeetingTypeForm from '../../../CustomFields/CustomMeetingTypeField';
 import { GLOBAL_CONSTANTS } from '../../../../constants/globalConstants';
-
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                padding: '10px 20px',
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
+import CustomButton from '../../../CustomFields/CustomButton';
 
 const headers = ['S. No.', 'Slots Available', 'Select'];
 
-const RescheduleCreatedSession = ({ componentName, timezoneID }) => {
-    console.log('reschedule session timezoneID', timezoneID);
+const rescheduleConfig = {
+    TAMENU: {
+        sliceName: 'taMenu',
+        rescheduleApi: rescheduleSessionForTaLeave,
+        getAllSlotsApi: getTaMenuSlots,
+        getAllSessionsApi: getTaMenuSessions,
+        fetchAvailableSlotsApi: getTaMenuSlotsByDate,
+        availableSlotState: 'taSlotsByDate',
+        getSessionsBySlotsApi: getTaMenuSessionForLeave,
+    },
+    COACHMENU: {
+        sliceName: 'coachMenu',
+        rescheduleApi: rescheduleSessionForCoachLeave,
+        getAllSlotsApi: getCoachMenuSlots,
+        getAllSessionsApi: getCoachMenuSessions,
+        fetchAvailableSlotsApi: getCoachMenuSlotsByData,
+        availableSlotState: 'coachSlotsByDate',
+        getSessionsBySlotsApi: getCoachMenuSessionForLeave,
+    },
+};
+
+const RescheduleCreatedSession = ({ componentName, timezone }) => {
     const dispatch = useDispatch();
     const {
         RescheduleSession,
@@ -105,45 +91,15 @@ const RescheduleCreatedSession = ({ componentName, timezoneID }) => {
 
     const { timezones, hosts } = useSelector(state => state.util);
 
-    let sliceName,
+    const {
+        sliceName,
         rescheduleApi,
         getAllSlotsApi,
         getAllSessionsApi,
         fetchAvailableSlotsApi,
         availableSlotState,
-        getSessionsBySlotsApi;
-
-    switch (componentName) {
-        case 'TAMENU':
-            sliceName = 'taMenu';
-            rescheduleApi = rescheduleSessionForTaLeave;
-            getAllSlotsApi = getTaMenuSlots;
-            getAllSessionsApi = getTaMenuSessions;
-            fetchAvailableSlotsApi = getTaMenuSlotsByDate;
-            availableSlotState = 'taSlotsByDate';
-            getSessionsBySlotsApi = getTaMenuSessionForLeave;
-            break;
-
-        case 'COACHMENU':
-            sliceName = 'coachMenu';
-            rescheduleApi = rescheduleSessionForCoachLeave;
-            getAllSlotsApi = getCoachMenuSlots;
-            getAllSessionsApi = getCoachMenuSessions;
-            fetchAvailableSlotsApi = getCoachMenuSlotsByData;
-            availableSlotState = 'coachSlotsByDate';
-            getSessionsBySlotsApi = getCoachMenuSessionForLeave;
-            break;
-
-        default:
-            sliceName = null;
-            rescheduleApi = null;
-            getAllSlotsApi = null;
-            getAllSessionsApi = null;
-            fetchAvailableSlotsApi = null;
-            availableSlotState = null;
-            getSessionsBySlotsApi = null;
-            break;
-    }
+        getSessionsBySlotsApi,
+    } = rescheduleConfig[componentName];
 
     const selectorState = useSelector(state => state[sliceName]);
 
@@ -153,11 +109,11 @@ const RescheduleCreatedSession = ({ componentName, timezoneID }) => {
         if (selectDate) {
             const data = {
                 date: selectDate,
-                timezone_name: timezoneIdToName(timezoneID, timezones),
+                timezone_name: timezone?.time_zone,
             };
             dispatch(fetchAvailableSlotsApi(data));
         }
-    }, [selectDate, dispatch, fetchAvailableSlotsApi]);
+    }, [selectDate, dispatch]);
 
     const formatTime = time => {
         const [hours, minutes] = time.split(':');
@@ -172,11 +128,8 @@ const RescheduleCreatedSession = ({ componentName, timezoneID }) => {
         if (
             availableSlotsData &&
             availableSlotsData.length > 0 &&
-            timezones &&
-            timezoneID
+            timezone.time_zone
         ) {
-            const timezonename = timezoneIdToName(timezoneID, timezones);
-
             try {
                 const transformedData = await Promise.all(
                     availableSlotsData.map(async (slot, index) => {
@@ -185,7 +138,7 @@ const RescheduleCreatedSession = ({ componentName, timezoneID }) => {
                             start_time: slot.from_time,
                             end_time: slot.to_time,
                             end_date: slot.slot_date,
-                            timezonename,
+                            timezonename: timezone.time_zone,
                         });
                         const startDateTime = new Date(
                             `${localTime.start_date}T${localTime.start_time}`
@@ -215,7 +168,7 @@ const RescheduleCreatedSession = ({ componentName, timezoneID }) => {
 
     useEffect(() => {
         convertavailableSlotData();
-    }, [availableSlotsData, timezones, timezoneID]);
+    }, [availableSlotsData, timezone?.id]);
 
     const handleDateChange = date => {
         setSelectDate(date);
@@ -223,7 +176,6 @@ const RescheduleCreatedSession = ({ componentName, timezoneID }) => {
     };
 
     const handleSelectSlot = id => {
-        console.log('Selected Slot ID:', id);
         setSelectedSlots(prev =>
             prev.includes(id) ? prev.filter(sid => sid !== id) : [...prev, id]
         );
@@ -238,12 +190,17 @@ const RescheduleCreatedSession = ({ componentName, timezoneID }) => {
             toast.error('Please Select the Slot');
             return false;
         }
+        console.log('selectedSlots', selectedSlots );
         if (!fromTime) {
             toast.error('Please Select the Start Time');
             return false;
         }
         if (!toTime) {
             toast.error('Please Select the End Time');
+            return false;
+        }
+        if (fromTime >= toTime) {
+            toast.error('End Time should be greater than Start Time');
             return false;
         }
         if (!email) {
@@ -270,7 +227,7 @@ const RescheduleCreatedSession = ({ componentName, timezoneID }) => {
                 slot_id: selectedSlots[0],
                 start_time: fromTime,
                 end_time: toTime,
-                timezone_id: timezoneID,
+                timezone_id: timezone?.id,
                 event_status: 'rescheduled',
                 host_email_id: email, // Use the email state
                 meeting_type: meetingType, // Use the meetingType state

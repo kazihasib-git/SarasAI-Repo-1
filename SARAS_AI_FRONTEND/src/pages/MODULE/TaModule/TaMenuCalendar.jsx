@@ -22,7 +22,10 @@ import MarkLeaveDate from '../../../components/RoleRoute/CommonComponent/commonC
 import CreatedSlots from '../../../components/RoleRoute/CommonComponent/commonCalender/CreatedSlots';
 import SessionLink from '../../../components/RoleRoute/CommonComponent/commonCalender/SessionLink';
 import { convertFromUTC } from '../../../utils/dateAndtimeConversion';
-import { timezoneIdToName } from '../../../utils/timezoneIdToName';
+import {
+    fetchtimezoneDetails,
+    timezoneIdToName,
+} from '../../../utils/timezoneIdToName';
 import { getTimezone } from '../../../redux/features/utils/utilSlice';
 import CancelSession from '../../../components/RoleRoute/CommonComponent/commonCalender/CancelSession';
 import RescheduleCreatedSession from '../../../components/RoleRoute/CommonComponent/commonCalender/RescheduleCreatedSession';
@@ -32,53 +35,16 @@ import EditStudentsFromSession from '../../../components/availability/EditStuden
 import EditBatchesFromSession from '../../../components/availability/EditBatchesFromSession';
 import EditBatchesSessionLink from '../../../components/RoleRoute/CommonComponent/commonCalender/EditBatchesSessionLink';
 import EditStudentsSessionLink from '../../../components/RoleRoute/CommonComponent/commonCalender/EditStudentsSessionLink';
-import { ConstructionOutlined } from '@mui/icons-material';
-
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '16px',
-                borderRadius: '50px',
-                // padding: "18px 25px",
-                border: `1.5px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
-
-const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
+import CustomButton from '../../../components/CustomFields/CustomButton';
 
 const TAMenuCalendar = () => {
-    console.log('timezoneID' , storedTimezoneId) ; 
-    const { timezones } = useSelector(state => state.util);
     const dispatch = useDispatch();
+    const { timezoneId } = useSelector(state => state.auth);
+
+    const { timezones } = useSelector(state => state.util);
     const [eventsList, setEventsList] = useState([]);
     const [slotViewData, setSlotViewData] = useState([]);
-    const [platformName, setPlatformName] = useState(null);
-    const [platformUrl, setplatformUrl] = useState(null);
+    const [timezoneDetails, setTimezoneDetails] = useState();
     const [selectedSession, setSelectedSession] = useState(null);
 
     const {
@@ -99,7 +65,9 @@ const TAMenuCalendar = () => {
     } = useSelector(state => state.commonCalender);
 
     const { taSlots, taSessions } = useSelector(state => state.taMenu);
-    console.log('taSessions', taSessions);
+    const { openBatches, openStudents } = useSelector(
+        state => state.batchesAndStudents
+    );
 
     useEffect(() => {
         dispatch(getTaMenuSlots());
@@ -108,26 +76,18 @@ const TAMenuCalendar = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        convertEvents();
-    }, [taSessions, timezones]);
-
-    useEffect(() => {
-        convertSlots();
-    }, [taSlots, timezones]);
+        if (timezoneId) {
+            const timezoneData = fetchtimezoneDetails(timezoneId, timezones);
+            setTimezoneDetails(timezoneData);
+            if (timezoneData) {
+                convertSlots();
+                convertEvents();
+            }
+        }
+    }, [timezoneId]);
 
     const convertEvents = async () => {
-        if (
-            taSessions &&
-            taSessions.length > 0 &&
-            storedTimezoneId &&
-            timezones
-        ) {
-            const timezonename = timezoneIdToName(storedTimezoneId, timezones);
-            if (!timezonename) {
-                console.error('Invalid timezone name');
-                setEventsList([]);
-                return;
-            }
+        if (taSessions && taSessions.length > 0 && timezoneDetails?.time_zone) {
             try {
                 const processedEvents = [];
                 await Promise.all(
@@ -136,8 +96,10 @@ const TAMenuCalendar = () => {
                             start_date: event.date.split(' ')[0],
                             start_time: event.start_time,
                             end_time: event.end_time,
-                            end_date: event.end_date ? event.end_date : event.date.split(' ')[0],
-                            timezonename,
+                            end_date: event.end_date
+                                ? event.end_date
+                                : event.date.split(' ')[0],
+                            timezonename: timezoneDetails.time_zone,
                         });
 
                         const startDateTime = new Date(
@@ -208,8 +170,7 @@ const TAMenuCalendar = () => {
     };
 
     const convertSlots = async () => {
-        if (taSlots && taSlots.length > 0 && storedTimezoneId && timezones) {
-            const timezonename = timezoneIdToName(storedTimezoneId, timezones);
+        if (taSlots && taSlots.length > 0 && timezoneDetails?.time_zone) {
             try {
                 const processedSlots = [];
                 await Promise.all(
@@ -219,7 +180,7 @@ const TAMenuCalendar = () => {
                             start_time: slot.from_time,
                             end_time: slot.to_time,
                             end_date: slot.slot_end_date,
-                            timezonename,
+                            timezonename: timezoneDetails.time_zone,
                         });
                         const startDateTime = new Date(
                             `${localTime.start_date}T${localTime.start_time}`
@@ -279,31 +240,6 @@ const TAMenuCalendar = () => {
         setSelectedSession(taSessions.id);
     };
 
-    const targetSessionId = sessionEventData.id;
-    console.log(targetSessionId);
-
-    useEffect(() => {
-        const targetSession = taSessions.find(
-            session => session.id === targetSessionId
-        );
-
-        if (targetSession) {
-            const platformName = targetSession.platform_tool_details?.name;
-            const platformUrl =
-                targetSession.platform_meeting_details?.host_meeting_url;
-
-            setPlatformName(platformName);
-            setplatformUrl(platformUrl);
-        } else {
-            setPlatformName('');
-            setplatformUrl('');
-        }
-
-        console.log(`Platform Name: ${platformName}`);
-        console.log(`Platform Meeting URL: ${platformUrl}`);
-    }, [taSessions, targetSessionId]);
-
-    console.log('storedtimezoneID to be sent ' , storedTimezoneId) ; 
     return (
         <>
             <Header />
@@ -366,46 +302,84 @@ const TAMenuCalendar = () => {
                     componentName={'TAMENU'}
                     onSelectEvent={handleSessionSelect}
                 />
-                {createNewSlotPopup && <CreateSlot componentName={'TAMENU'} timezoneID={storedTimezoneId}/>}
+                {createNewSlotPopup && (
+                    <CreateSlot
+                        componentName={'TAMENU'}
+                        timezone={timezoneDetails}
+                    />
+                )}
                 {scheduleNewSessionPopup && (
-                    <CreateSession componentName={'TAMENU'} timezoneID={storedTimezoneId} />
+                    <CreateSession
+                        componentName={'TAMENU'}
+                        timezone={timezoneDetails}
+                    />
                 )}
-                {selectStudentPopup && (
-                    <SelectStudents componentName={'TAMENU'} />
+                {openBatches && (
+                    <SelectBatches
+                        componentName={'TAMENU'}
+                        timezone={timezoneDetails}
+                    />
                 )}
-                {selectBatchPopup && <SelectBatches componentName={'TAMENU'} />}
-                {markLeave && <MarkLeaveDate componentName={'TAMENU'} timezoneID={storedTimezoneId}/>}
-                {createdSlots && <CreatedSlots componentName={'TAMENU'} timezoneID={storedTimezoneId}/>}
-                
+                {openStudents && (
+                    <SelectStudents
+                        componentName={'TAMENU'}
+                        timezone={timezoneDetails}
+                    />
+                )}
+                {markLeave && (
+                    <MarkLeaveDate
+                        componentName={'TAMENU'}
+                        timezone={timezoneDetails}
+                    />
+                )}
+                {createdSlots && (
+                    <CreatedSlots
+                        componentName={'TAMENU'}
+                        timezone={timezoneDetails}
+                    />
+                )}
+
                 {openCreatedSessions && (
-                    <CreatedSessions componentName={'TAMENU'} timezoneID={storedTimezoneId} />
+                    <CreatedSessions
+                        componentName={'TAMENU'}
+                        timezone={timezoneDetails}
+                    />
                 )}
-                
+
                 {openCancelSession && (
-                    <CancelSession componentName={'TAMENU'} />
+                    <CancelSession
+                        componentName={'TAMENU'}
+                        timezone={timezoneDetails}
+                    />
                 )}
                 {RescheduleSession && (
-                    <RescheduleCreatedSession componentName={'TAMENU'} timezoneID={storedTimezoneId}/>
+                    <RescheduleCreatedSession
+                        componentName={'TAMENU'}
+                        timezone={timezoneDetails}
+                    />
                 )}
                 {openLeaveReason && (
-                    <LeaveReason componentName={'TAMENU'} />
+                    <LeaveReason
+                        componentName={'TAMENU'}
+                        timezone={timezoneDetails}
+                    />
                 )}
                 {openSession && (
                     <SessionLink
                         componentName={'TAMENU'}
-                        taSessions={taSessions}
-                        platformName={platformName}
-                        platformUrl={platformUrl}
+                        timezone={timezoneDetails}
                     />
                 )}
-                 {openEditStudentsPopup && (
+                {openEditStudentsPopup && (
                     <EditStudentsSessionLink
                         componentName={'TAMENU'}
-                        />
+                        timezone={timezoneDetails}
+                    />
                 )}
                 {openEditBatchesPopup && (
                     <EditBatchesSessionLink
                         componentName={'TAMENU'}
+                        timezone={timezoneDetails}
                     />
                 )}
             </Box>

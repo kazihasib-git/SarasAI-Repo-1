@@ -67,6 +67,12 @@ const TaCalender = () => {
         state => state.batchesAndStudents
     );
 
+    useEffect(() => {
+        dispatch(fetchTaSlots(id));
+        dispatch(fetchTAScheduleById(id));
+        dispatch(getTimezone());
+    }, [dispatch]);
+
     //calendar
     const [eventsList, setEventsList] = useState([]);
     const [slotViewData, setSlotViewData] = useState([]);
@@ -76,14 +82,12 @@ const TaCalender = () => {
         if (timezoneId && timezones?.length > 0) {
             const timezone = fetchtimezoneDetails(timezoneId, timezones);
             setTimezoneDetails(timezone);
+            if (timezone) {
+                convertEvents();
+                convertSlots();
+            }
         }
     }, [timezoneId, timezones]);
-
-    useEffect(() => {
-        dispatch(fetchTaSlots(id));
-        dispatch(fetchTAScheduleById(id));
-        dispatch(getTimezone());
-    }, [dispatch]);
 
     const convertEvents = async () => {
         if (
@@ -169,10 +173,6 @@ const TaCalender = () => {
         }
     };
 
-    useEffect(() => {
-        convertEvents();
-    }, [scheduleData]);
-
     const convertSlots = async () => {
         if (slotData && slotData.length > 0 && timezoneDetails?.time_zone) {
             try {
@@ -240,10 +240,6 @@ const TaCalender = () => {
             setSlotViewData([]);
         }
     };
-
-    useEffect(() => {
-        convertSlots();
-    }, [slotData]);
 
     const handleScheduleNewSession = () => {
         dispatch(openScheduleSession({ id, name }));

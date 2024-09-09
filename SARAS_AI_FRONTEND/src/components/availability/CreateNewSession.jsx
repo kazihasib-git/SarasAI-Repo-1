@@ -356,6 +356,11 @@ const CreateNewSession = ({ id, name, componentName, timezone }) => {
             }
         }
 
+        if (!formData.platform_id) {
+            toast.error('Please select Platform');
+            return false;
+        }
+
         // Validate "To Time" is greater than "From Time"
         // const fromTimeInMinutes = convertTimeToMinutes(fromTime);
         // const toTimeInMinutes = convertTimeToMinutes(toTime);

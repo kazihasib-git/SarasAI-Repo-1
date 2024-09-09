@@ -27,7 +27,28 @@ import CustomButton from '../../../CustomFields/CustomButton';
 
 const headers = ['S. No.', 'Batch Name', 'Branch', 'Select'];
 
-const EditBatchesSessionLink = ({ componentName }) => {
+const editBatchesConfig = {
+    TAMENU: {
+        sliceName: 'taMenu',
+        getBatchesApi: getTaMenuAssignedBatches,
+        batchesDataState: 'assignedTaBatches',
+        getSelectedBatchesApi: getSelectedTaMenuAssignedBatches,
+        assignedBatchesState: 'taScheduleBatches',
+        updateBatchesApi: updateBatchesInTaSession,
+        getSessionApi: getTaMenuSessions,
+    },
+    COACHMENU: {
+        sliceName: 'coachMenu',
+        getBatchesApi: getCoachMenuAssignedBatches,
+        batchesDataState: 'assignedCoachBatches',
+        getSelectedBatchesApi: getSelectedCoachMenuAssignedBatches,
+        assignedBatchesState: 'coachScheduleBatches',
+        updateBatchesApi: updateBatchesInCoachSession,
+        getSessionApi: getCoachMenuSessions,
+    },
+};
+
+const EditBatchesSessionLink = ({ componentName, timezone }) => {
     const dispatch = useDispatch();
 
     const [selectedBatch, setSelectedBatch] = useState([]);
@@ -35,44 +56,15 @@ const EditBatchesSessionLink = ({ componentName }) => {
     const [selectedBranch, setSelectedBranch] = useState('');
     const [filteredBatches, setFilteredBatches] = useState([]);
 
-    let sliceName,
+    const {
+        sliceName,
         getBatchesApi,
         batchesDataState,
         getSelectedBatchesApi,
         assignedBatchesState,
         updateBatchesApi,
-        getSessionApi;
-
-    switch (componentName) {
-        case 'TAMENU':
-            sliceName = 'taMenu';
-            getBatchesApi = getTaMenuAssignedBatches;
-            batchesDataState = 'assignedTaBatches';
-            getSelectedBatchesApi = getSelectedTaMenuAssignedBatches;
-            assignedBatchesState = 'taScheduleBatches';
-            updateBatchesApi = updateBatchesInTaSession;
-            getSessionApi = getTaMenuSessions;
-            break;
-
-        case 'COACHMENU':
-            sliceName = 'coachMenu';
-            getBatchesApi = getCoachMenuAssignedBatches;
-            batchesDataState = 'assignedCoachBatches';
-            getSelectedBatchesApi = getSelectedCoachMenuAssignedBatches;
-            assignedBatchesState = 'coachScheduleBatches';
-            updateBatchesApi = updateBatchesInCoachSession;
-            getSessionApi = getCoachMenuSessions;
-            break;
-
-        default:
-            sliceName = null;
-            getBatchesApi = null;
-            getSelectedBatchesApi = null;
-            batchesDataState = null;
-            updateBatchesApi = null;
-            getSessionApi = null;
-            break;
-    }
+        getSessionApi,
+    } = editBatchesConfig[componentName];
 
     const stateSelector = useSelector(state => state[sliceName]);
 
@@ -88,11 +80,9 @@ const EditBatchesSessionLink = ({ componentName }) => {
     useEffect(() => {
         dispatch(getBatchesApi()).then(() => {
             console.log(componentName, 'sssssdwcwcwc');
-            dispatch(getSelectedBatchesApi(sessionEventData.meetingId));
+            dispatch(getSelectedBatchesApi(sessionEventData.id));
         });
     }, [dispatch]);
-
-    console.log('batchess :', batchesData, sessionBatches);
 
     useEffect(() => {
         if (batchesData && batchesData.length) {

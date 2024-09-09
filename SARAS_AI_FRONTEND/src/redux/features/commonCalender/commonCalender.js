@@ -11,32 +11,32 @@ const initialState = {
     slotsLeaveData: [],
     sessionData: null, // select session data to edit
     sessionCancelData: [],
-    sessionDataForReschdeule : [],
+    sessionDataForReschdeule: [],
 
     createNewSlotPopup: false, // for new slot popup
     scheduleNewSessionPopup: false, //  for new session Popup
-    editSchedulePopup : false,
+    editSchedulePopup: false,
     selectStudentPopup: false,
     selectBatchPopup: false,
     markLeave: false,
     createdSlots: false,
     openCreatedSessions: false,
     openCancelSession: false,
-    RescheduleSession : false,
+    RescheduleSession: false,
 
     openSession: false,
     editSession: false,
 
-    editStudents : [],
-    editBatches : [],
-    meetingId : null,
-    openEditStudentsPopup : false,
-    openEditBatchesPopup : false,
+    editStudents: [],
+    editBatches: [],
+    meetingId: null,
+    openEditStudentsPopup: false,
+    openEditBatchesPopup: false,
 
-    dataToFindScheduleInSlot:null,
-    participantsDialogOpen:false,
-    participantsData:null,
-    editParticipantsDialogOpen:false,
+    dataToFindScheduleInSlot: null,
+    participantsDialogOpen: false,
+    participantsData: null,
+    editParticipantsDialogOpen: false,
 };
 
 const commonCalender = createSlice({
@@ -53,7 +53,6 @@ const commonCalender = createSlice({
 
         // For New Session
         openScheduleNewSession: (state, action) => {
-            console.log('PAYLOAD DATA :', action.payload);
             state.scheduleNewSessionPopup = true;
             if (action.payload?.studentId) {
                 state.students = action.payload.studentId;
@@ -69,8 +68,8 @@ const commonCalender = createSlice({
         },
         openSelectStudents: (state, action) => {
             state.selectStudentPopup = true;
-            state.preSelectedStudents = action.payload ? action.payload: [];
-            if(action.payload?.editStudents){
+            state.preSelectedStudents = action.payload ? action.payload : [];
+            if (action.payload?.editStudents) {
                 state.editStudents = action.payload.editStudents;
             }
             // asign students
@@ -79,14 +78,12 @@ const commonCalender = createSlice({
             state.selectStudentPopup = false;
             state.preSelectedStudents = [];
             // state.editStudents = [];
-            
         },
         openSelectBatches: (state, action) => {
-            console.log("action payload", action.payload)
             state.selectBatchPopup = true;
             state.preSelectedBatches = action.payload || [];
-            if(action.payload?.editBatches){
-                state.editBatches = action.payload.editBatches
+            if (action.payload?.editBatches) {
+                state.editBatches = action.payload.editBatches;
             }
         },
         closeSelectBatches: (state, action) => {
@@ -109,7 +106,6 @@ const commonCalender = createSlice({
             state.createdSlots = false;
         },
         openCreatedSessions: (state, action) => {
-            console.log('PAYLOAD ', action.payload);
             state.openCreatedSessions = true;
             state.slotsLeaveData = action.payload;
         },
@@ -123,19 +119,19 @@ const commonCalender = createSlice({
         closeCancelSessionPopup: (state, action) => {
             state.openCancelSession = false;
         },
-        openReasonForLeavePopup : (state, action) => {
+        openReasonForLeavePopup: (state, action) => {
             state.openLeaveReason = true;
             state.slotsLeaveData = action.payload;
         },
-        closeReasonForLeavePopup : (state, action) => {
+        closeReasonForLeavePopup: (state, action) => {
             state.openLeaveReason = false;
             state.slotsLeaveData = [];
         },
-        openReschedulePopup : (state, action) => {
+        openReschedulePopup: (state, action) => {
             state.RescheduleSession = true;
             state.sessionDataForReschdeule = action.payload;
         },
-        closeReschedulePopup : (state, action) => {
+        closeReschedulePopup: (state, action) => {
             state.RescheduleSession = false;
         },
         openSessionPopup(state, action) {
@@ -146,31 +142,33 @@ const commonCalender = createSlice({
             state.sessionEventData = [];
             state.openSession = false;
         },
-        openEditStudents(state, action){
+        openEditStudents(state, action) {
             state.openEditStudentsPopup = true;
             state.meetingId = action.payload.id;
         },
-        closeEditStudents(state, action){
-            state.openEditStudentsPopup = false
+        closeEditStudents(state, action) {
+            state.openEditStudentsPopup = false;
         },
-        openEditBatches(state, action){
+        openEditBatches(state, action) {
             state.openEditBatchesPopup = true;
             state.meetingId = action.payload.id;
         },
-        closeEditBatches(state, action){
-            state.openEditBatchesPopup = false
+        closeEditBatches(state, action) {
+            state.openEditBatchesPopup = false;
         },
 
         openEditSession(state, action) {
-            console.log("ACTION PAYLOAD", action.payload)
             state.editSession = true;
             state.sessionData = action.payload.sessionData;
-            if(action.payload.studentId){
+            if (action.payload.studentId) {
                 state.editStudents = action.payload.studentId;
             }
-            if(action.payload.batchId){
+            if (action.payload.batchId) {
                 state.editBatches = action.payload.batchId;
             }
+        },
+        retainEditSession(state, action) {
+            state.editSession = true;
         },
         closeEditSession(state, action) {
             state.editSession = false;
@@ -184,25 +182,21 @@ const commonCalender = createSlice({
         },
 
         openParticipantsDialog: (state, action) => {
-            console.log('openParticipantsDialog' , action.payload) ; 
             state.participantsDialogOpen = true;
             state.participantsData = action.payload;
         },
-          closeParticipantsDialog: (state) => {
-            console.log('closeParticipantsDialog')
+        closeParticipantsDialog: state => {
             state.participantsDialogOpen = false;
             state.participantsData = null;
-          },
+        },
         openEditParticipantsDialog: (state, action) => {
-            console.log('openEditParticipantsDialog' , action.payload) ; 
             state.editParticipantsDialogOpen = true;
             state.participantsData = action.payload;
-          },
-          closeEditParticipantsDialog: (state,action) => {
-            console.log('closeEditParticipantsDialog' , action.payload) ; 
+        },
+        closeEditParticipantsDialog: (state, action) => {
             state.editParticipantsDialogOpen = false;
             state.participantsData = action.payload;
-          },
+        },
     },
 });
 
@@ -235,12 +229,13 @@ export const {
     openSessionPopup,
     closeSessionPopup,
     openEditSession,
+    retainEditSession,
     closeEditSession,
     openEditStudents,
     closeEditStudents,
     openEditBatches,
     closeEditBatches,
-    addDataToFindScheduleInSlot
+    addDataToFindScheduleInSlot,
 } = commonCalender.actions;
 
 export default commonCalender.reducer;

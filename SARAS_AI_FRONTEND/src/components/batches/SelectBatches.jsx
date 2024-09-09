@@ -13,6 +13,10 @@ import { openScheduleSession } from '../../redux/features/adminModule/ta/taSched
 import { openCoachScheduleSession } from '../../redux/features/adminModule/coach/coachSchedule';
 import { toast } from 'react-toastify';
 import { MESSAGE_CONSTANTS } from '../../constants/messageConstants';
+import {
+    openEditSession,
+    openScheduleNewSession,
+} from '../../redux/features/commonCalender/commonCalender';
 
 const headers = ['S. No.', 'Batch Name', 'Branch', 'Select'];
 
@@ -23,9 +27,21 @@ const batchesConfig = {
     COACHSCHEDULE: {
         openSchedulingPopup: openCoachScheduleSession,
     },
+    TAMENU: {
+        openSchedulingPopup: openScheduleNewSession,
+    },
+    COACHMENU: {
+        openSchedulingPopup: openScheduleNewSession,
+    },
 };
 
-const SelectBatches = ({ id, name, componentName, timezone }) => {
+const SelectBatches = ({
+    id,
+    name,
+    componentName,
+    timezone,
+    onClose = () => {},
+}) => {
     const dispatch = useDispatch();
     const [selectBatch, setSelectBatch] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
@@ -119,14 +135,22 @@ const SelectBatches = ({ id, name, componentName, timezone }) => {
         };
         dispatch(getStudentsInBatches(data));
 
-        dispatch(
-            openSchedulingPopup({
-                id: userId,
-                name: userName,
-                batches: selectBatch.map(id => ({ id })),
-                timezoneId: timezone ? timezone.id : timezoneId,
-            })
-        );
+        // dispatch(
+        //     openSchedulingPopup({
+        //         id: userId,
+        //         name: userName,
+        //         batches: selectBatch.map(id => ({ id })),
+        //         timezoneId: timezone ? timezone.id : timezoneId,
+        //     })
+        // );
+
+        onClose({
+            id: userId,
+            name: userName,
+            batches: selectBatch.map(id => ({ id })),
+            timezoneId: timezone ? timezone.id : timezoneId,
+        });
+
         const res = {
             selectedBatches: selectBatch,
         };

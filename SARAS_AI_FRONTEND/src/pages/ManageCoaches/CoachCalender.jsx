@@ -47,14 +47,9 @@ const CoachCalender = () => {
 
     useEffect(() => {
         dispatch(getTimezone());
+        dispatch(fetchCoachSlots(id));
+        dispatch(fetchCoachScheduleById(id));
     }, [dispatch]);
-
-    useEffect(() => {
-        if (timezoneId && timezones?.length > 0) {
-            const timezone = fetchtimezoneDetails(timezoneId, timezones);
-            setTimezoneDetails(timezone);
-        }
-    }, [timezoneId, timezones]);
 
     const {
         coachMarkLeaveOpen,
@@ -81,9 +76,15 @@ const CoachCalender = () => {
     );
 
     useEffect(() => {
-        dispatch(fetchCoachSlots(id));
-        dispatch(fetchCoachScheduleById(id));
-    }, [dispatch, id]);
+        if (timezoneId && timezones?.length > 0) {
+            const timezone = fetchtimezoneDetails(timezoneId, timezones);
+            setTimezoneDetails(timezone);
+            if (timezone) {
+                convertEvents();
+                convertSlots();
+            }
+        }
+    }, [timezoneId, timezones]);
 
     const convertEvents = async () => {
         if (
@@ -171,10 +172,6 @@ const CoachCalender = () => {
         }
     };
 
-    useEffect(() => {
-        convertEvents();
-    }, [scheduleCoachData]);
-
     const convertSlots = async () => {
         if (
             slotCoachData &&
@@ -240,10 +237,6 @@ const CoachCalender = () => {
             setSlotViewData([]);
         }
     };
-
-    useEffect(() => {
-        convertSlots();
-    }, [slotCoachData]);
 
     const handleScheduleNewSession = () => {
         dispatch(openCoachScheduleSession({ id, name }));

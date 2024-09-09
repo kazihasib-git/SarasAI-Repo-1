@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { closeSessionPopup, openEditBatches, openEditStudents } from '../../../../redux/features/commonCalender/commonCalender';
+import {
+    closeSessionPopup,
+    openEditBatches,
+    openEditStudents,
+} from '../../../../redux/features/commonCalender/commonCalender';
 import {
     Avatar,
     Box,
@@ -16,43 +20,34 @@ import editImg from '../../../../assets/editIcon.png';
 import editImgWhite from '../../../../assets/editIcon_White.png';
 import CustomButton from '../../../CustomFields/CustomButton';
 
+const sessionLinkConfig = {
+    TAMENU: {
+        sliceName: 'taMenu',
+        sessionDataState: 'taSessionEventData',
+    },
+    COACHMENU: {
+        sliceName: 'coachMenu',
+        sessionDataState: 'coachSessionEventData',
+    },
+};
 
-const SessionLink = ({ componentName, platformName, platformUrl }) => {
-
+const SessionLink = ({ componentName, timezone }) => {
     const dispatch = useDispatch();
     const { sessionEventData, openSession } = useSelector(
         state => state.commonCalender
     );
     const [copySuccess, setCopySuccess] = useState(false);
 
-    let sliceName, sessionDataState;
-
-    switch (componentName) {
-        case 'TAMENU':
-            sliceName = 'taMenu';
-            sessionDataState = 'taSessionEventData';
-            break;
-
-        case 'COACHMENU':
-            sliceName = 'coachMenu';
-            sessionDataState = 'coachSessionEventData';
-            break;
-
-        default:
-            sliceName = null;
-            sessionDataState = null;
-            break;
-    }
+    const { sliceName, sessionDataState } = sessionLinkConfig[componentName];
 
     const handleEditBatches = () => {
-        dispatch(openEditBatches({ id : sessionEventData.id }))
+        dispatch(openEditBatches({ id: sessionEventData.id }));
     };
 
     const handleChangeMode = () => {};
 
     const handleEditStudents = () => {
-        console.log("studentsstst");
-        dispatch(openEditStudents({ id : sessionEventData.id }))
+        dispatch(openEditStudents({ id: sessionEventData.id }));
     };
 
     const handleLinkCopy = () => {
@@ -71,7 +66,7 @@ const SessionLink = ({ componentName, platformName, platformUrl }) => {
         }
     };
 
-    const handleJoinMeeting = (data) => {
+    const handleJoinMeeting = data => {
         window.open(data.platform_meeting.host_meeting_url, '_blank');
     };
 

@@ -23,7 +23,28 @@ import PopUpTable from '../../../CommonComponent/PopUpTable';
 
 const headers = ['S. No.', 'Student Name', 'Program', 'Batch', 'Select'];
 
-const EditStudentsSessionLink = ({ componentName }) => {
+const editStudentsConfig = {
+    TAMENU: {
+        sliceName: 'taMenu',
+        getAssignSelectedStudentsApi: getSelectedTaMenuAssignedStudents,
+        getAssignedSelectedStudentsState: 'taScheduleStudents',
+        getAssignStudentsApi: getTaMenuAssignedStudents,
+        assignedStudentsState: 'assignedTaStudents',
+        editStudentsApi: updateStudentsInTaSession,
+        getSessionApi: getTaMenuSessions,
+    },
+    COACHMENU: {
+        sliceName: 'coachMenu',
+        getAssignSelectedStudentsApi: getSelectedCoachMenuAssignedStudents,
+        getAssignedSelectedStudentsState: 'coachScheduleStudents',
+        getAssignStudentsApi: getCoachMenuAssignedStudents,
+        assignedStudentsState: 'assignedCoachStudents',
+        editStudentsApi: updateStudentsInCoachSession,
+        getSessionApi: getCoachMenuSessions,
+    },
+};
+
+const EditStudentsSessionLink = ({ componentName, timezone }) => {
     const dispatch = useDispatch();
 
     const [selectedTerm, setSelectedTerm] = useState([]);
@@ -32,45 +53,15 @@ const EditStudentsSessionLink = ({ componentName }) => {
     const [selectedStudents, setSelectedStudents] = useState([]);
     const [filteredStudents, setFilteredStudents] = useState([]);
 
-    let sliceName,
+    const {
+        sliceName,
         getAssignStudentsApi,
         getAssignSelectedStudentsApi,
         getAssignedSelectedStudentsState,
         assignedStudentsState,
         editStudentsApi,
-        getSessionApi;
-
-    switch (componentName) {
-        case 'TAMENU':
-            sliceName = 'taMenu';
-            getAssignSelectedStudentsApi = getSelectedTaMenuAssignedStudents;
-            getAssignedSelectedStudentsState = 'taScheduleStudents';
-            getAssignStudentsApi = getTaMenuAssignedStudents;
-            assignedStudentsState = 'assignedTaStudents';
-            editStudentsApi = updateStudentsInTaSession;
-            getSessionApi = getTaMenuSessions;
-            break;
-
-        case 'COACHMENU':
-            sliceName = 'coachMenu';
-            getAssignSelectedStudentsApi = getSelectedCoachMenuAssignedStudents;
-            getAssignedSelectedStudentsState = 'coachScheduleStudents';
-            getAssignStudentsApi = getCoachMenuAssignedStudents;
-            assignedStudentsState = 'assignedCoachStudents';
-            editStudentsApi = updateStudentsInCoachSession;
-            getSessionApi = getCoachMenuSessions;
-            break;
-
-        default:
-            sliceName = null;
-            getAssignStudentsApi = null;
-            getAssignSelectedStudentsApi = null;
-            getAssignedSelectedStudentsState = null;
-            assignedStudentsState = null;
-            editStudentsApi = null;
-            getSessionApi = null;
-            break;
-    }
+        getSessionApi,
+    } = editStudentsConfig[componentName];
 
     const stateSelector = useSelector(state => state[sliceName]);
 
@@ -85,11 +76,9 @@ const EditStudentsSessionLink = ({ componentName }) => {
 
     useEffect(() => {
         dispatch(getAssignStudentsApi()).then(() => {
-            dispatch(getAssignSelectedStudentsApi(sessionEventData.meetingId));
+            dispatch(getAssignSelectedStudentsApi(sessionEventData.id));
         });
     }, [dispatch]);
-
-    console.log('Students', students, sessionStudents);
 
     useEffect(() => {
         if (students && students.length > 0) {
@@ -199,7 +188,7 @@ const EditStudentsSessionLink = ({ componentName }) => {
     const handleSubmit = () => {
         if (!validate()) return;
 
-        const id = sessionEventData.id;
+        const id = sessionEventData.meetingId;
         const data = {
             studentId: selectedStudents.map(id => id),
         };
