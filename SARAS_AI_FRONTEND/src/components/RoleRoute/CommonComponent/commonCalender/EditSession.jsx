@@ -49,6 +49,7 @@ import {
 } from '../../../../redux/features/commonCalender/batchesAndStudents';
 import SelectBatches from '../../../batches/SelectBatches';
 import SelectStudents from '../../../students/SelectStudents';
+import { toast } from 'react-toastify';
 
 const editSessionConfig = {
     TAMENU: {
@@ -179,7 +180,7 @@ const EditSession = ({ role, componentName }) => {
 
     const handleAssignStudents = () => {
         const data = {
-            students: assignedStudents,
+            batches: assignedBatches,
             selectedBatches: selectedBatches?.length > 0 ? selectedBatches : [],
             students: assignedStudents,
             selectedStudents:
@@ -247,7 +248,7 @@ const EditSession = ({ role, componentName }) => {
         }
 
         // Chech message
-        if (!formData.message) {
+        if (!formData.message || formData.message.trim() === '') {
             toast.error('Please enter message');
             return false;
         }
@@ -301,12 +302,12 @@ const EditSession = ({ role, componentName }) => {
         dispatch(updateSessionApi({ id: sessionData.id, data }))
             .then(() => {
                 dispatch(closeEditSession());
-                dispatch(clearState());
                 const data = {
                     date: sessionData.date, //formatDate(sessionData.date),
                     timezone_name: timezoneIdToName(timezoneId, timezones),
                 };
                 dispatch(getSessionApi(data));
+                dispatch(clearState());
             })
             .catch(error => {
                 console.error('Error updating TA scheduled call:', error);

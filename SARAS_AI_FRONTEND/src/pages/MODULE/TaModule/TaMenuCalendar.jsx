@@ -79,16 +79,12 @@ const TAMenuCalendar = () => {
         if (timezoneId) {
             const timezoneData = fetchtimezoneDetails(timezoneId, timezones);
             setTimezoneDetails(timezoneData);
+            if (timezoneData) {
+                convertSlots();
+                convertEvents();
+            }
         }
     }, [timezoneId]);
-
-    useEffect(() => {
-        convertEvents();
-    }, [taSessions, timezoneDetails]);
-
-    useEffect(() => {
-        convertSlots();
-    }, [taSlots, timezoneDetails]);
 
     const convertEvents = async () => {
         if (taSessions && taSessions.length > 0 && timezoneDetails?.time_zone) {

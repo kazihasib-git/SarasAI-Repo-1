@@ -464,6 +464,7 @@ const ScheduledCall = ({ role }) => {
                 <EditParticipantsDialog
                     openEdit={editParticipantsDialogOpen}
                     onCloseEdit={handleCloseEditParticipantsDialog}
+                    timezone={timezoneId}
                     role={role}
                 />
             )}
@@ -479,7 +480,7 @@ const ScheduledCall = ({ role }) => {
                     <CreateSession
                         role={role}
                         componentName={'COACHMENU'}
-                        timezoneID={timezoneId}
+                        timezone={timezoneId}
                     />
                 ) : (
                     <CreateSession

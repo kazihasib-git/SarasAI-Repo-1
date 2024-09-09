@@ -143,10 +143,9 @@ const Mystudents = ({ role }) => {
         },
     ];
     // Filter students based on the search input
-    const filteredStudents = students;
-    // .filter(student =>
-    //     student.Name.toLowerCase().includes(input.toLowerCase())
-    // );
+    const filteredStudents = students.filter(student =>
+        student.Name.toLowerCase().includes(input.toLowerCase())
+    );
 
     return (
         <>

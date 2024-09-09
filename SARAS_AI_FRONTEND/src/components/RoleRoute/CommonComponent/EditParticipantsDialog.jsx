@@ -18,19 +18,81 @@ import {
     closeEditParticipantsDialog,
 } from '../../../redux/features/commonCalender/commonCalender';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateCoachScheduledCall } from '../../../redux/features/coachModule/coachmenuprofileSilce';
-import { updateTaScheduledCall } from '../../../redux/features/taModule/tamenuSlice';
-import SelectStudents from './commonCalender/SelectStudents';
-import SelectBatches from './commonCalender/SelectBatches';
+import {
+    getCoachMenuAssignedBatches,
+    getCoachMenuAssignedStudents,
+    getCoachScheduledCalls,
+    updateCoachScheduledCall,
+} from '../../../redux/features/coachModule/coachmenuprofileSilce';
+import {
+    getTaMenuAssignedBatches,
+    getTaMenuAssignedStudents,
+    getTaScheduledCalls,
+    updateTaScheduledCall,
+} from '../../../redux/features/taModule/tamenuSlice';
+import { getTimezone } from '../../../redux/features/utils/utilSlice';
+import {
+    openBatchPopup,
+    openStudentsPopup,
+    updateSelectedBatches,
+    updateSelectedStudents,
+} from '../../../redux/features/commonCalender/batchesAndStudents';
+import SelectBatches from '../../batches/SelectBatches';
+import SelectStudents from '../../students/SelectStudents';
+import { timezoneIdToName } from '../../../utils/timezoneIdToName';
 
-const EditParticipantsDialog = ({ openEdit, onCloseEdit, role }) => {
+const editParticipantsConfig = {
+    TA: {
+        sliceName: 'taMenu',
+        updateSessionApi: updateTaScheduledCall,
+        getSessionApi: getTaScheduledCalls,
+        getStudentsApi: getTaMenuAssignedStudents,
+        getStudentsState: 'assignedTaStudents',
+        getBatchesApi: getTaMenuAssignedBatches,
+        getBatchesState: 'assignedTaBatches',
+    },
+    Coach: {
+        sliceName: 'coachMenu',
+        updateSessionApi: updateCoachScheduledCall,
+        getSessionApi: getCoachScheduledCalls,
+        getStudentsApi: getCoachMenuAssignedStudents,
+        getStudentsState: 'assignedCoachStudents',
+        getBatchesApi: getCoachMenuAssignedBatches,
+        getBatchesState: 'assignedCoachBatches',
+    },
+};
+
+const EditParticipantsDialog = ({ openEdit, onCloseEdit, role, timezone }) => {
+    const dispatch = useDispatch();
+    const {
+        sliceName,
+        updateSessionApi,
+        getSessionApi,
+        getStudentsApi,
+        getStudentsState,
+        getBatchesApi,
+        getBatchesState,
+    } = editParticipantsConfig[role];
     const { timezones } = useSelector(state => state.util);
+    const stateSelector = useSelector(state => state[sliceName]);
+    const {
+        [getStudentsState]: assignedStudents,
+        [getBatchesState]: assignedBatches,
+    } = stateSelector;
 
-    const { participantsData, selectStudentPopup, selectBatchPopup } =
-        useSelector(state => state.commonCalender);
+    const { selectedStudents, selectedBatches, openBatches, openStudents } =
+        useSelector(state => state.batchesAndStudents);
+
+    const { participantsData } = useSelector(state => state.commonCalender);
+
     const [data, setData] = useState([]);
 
-    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(getTimezone());
+        dispatch(getStudentsApi());
+        dispatch(getBatchesApi());
+    }, [dispatch]);
+
     const transformData = () => {
         const transformedData = participantsData.students.map(item => ({
             id: item.id,
@@ -39,51 +101,61 @@ const EditParticipantsDialog = ({ openEdit, onCloseEdit, role }) => {
                 item.packages.map(pack => pack.package_name).join(',') || 'N/A',
             batch: item.batches.map(batch => batch.name).join(', ') || 'N/A',
         }));
-        console.log('TransformedData', transformedData);
         setData(transformedData);
+
+        dispatch(
+            updateSelectedStudents({
+                selectedStudents: participantsData.students.map(
+                    student => student.id
+                ),
+            })
+        );
+
+        dispatch(
+            updateSelectedBatches({
+                selectedBatches: participantsData.batch.map(batch => batch.id),
+            })
+        );
     };
 
     useEffect(() => {
-        transformData();
-    }, [participantsData.students]);
-
-    // const handleOpenEditParticipantsDialog = () => {
-    //     console.log('handleOpenEditParticipantsDialog', true)
-    //     dispatch(openEditParticipantsDialog());
-    // };
+        if (participantsData?.students.length > 0) {
+            transformData();
+        } else {
+            console.log('no data found !');
+            setData([]);
+        }
+    }, [participantsData?.students]);
 
     const handleAssignStudents = () => {
-        dispatch(openSelectStudents({ participantsData }));
+        const data = {
+            batches: assignedBatches,
+            selectedBatches: selectedBatches?.length > 0 ? selectedBatches : [],
+            students: assignedStudents,
+            selectedStudents:
+                selectedStudents?.length > 0 ? selectedStudents : [],
+            timezoneId: timezone,
+        };
+        dispatch(openStudentsPopup(data));
+        //dispatch(openSelectStudents({ participantsData }));
     };
 
     const handleAssignBatches = () => {
-        dispatch(openSelectBatches({ participantsData }));
+        const data = {
+            batches: assignedBatches,
+            selectedBatches: selectedBatches?.length > 0 ? selectedBatches : [],
+            students: assignedStudents,
+            selectedStudents:
+                selectedStudents?.length > 0 ? selectedStudents : [],
+            timezoneId: timezone,
+        };
+        dispatch(openBatchPopup(data));
+        //dispatch(openSelectBatches({ participantsData }));
     };
 
-    let sliceName, updateSessionApi, getSessionApi;
-
-    switch (role) {
-        case 'TA':
-            sliceName = 'taMenu';
-            updateSessionApi = updateTaScheduledCall;
-            break;
-
-        case 'Coach':
-            sliceName = 'coachMenu';
-            updateSessionApi = updateCoachScheduledCall;
-            break;
-
-        default:
-            sliceName = null;
-            updateSessionApi = null;
-            break;
-    }
-
     const handleSubmit = () => {
-        console.log('participantsData', participantsData);
-
-        const studentId = participantsData.students.map(student => student.id);
-        const batchId = participantsData.batch.map(batch => batch.id);
+        const studentId = selectedStudents.map(student => student);
+        const batchId = selectedBatches.map(batch => batch);
 
         const data = {
             meeting_name: participantsData.meeting_name,
@@ -93,29 +165,34 @@ const EditParticipantsDialog = ({ openEdit, onCloseEdit, role }) => {
             end_time: participantsData.end_time,
             message: participantsData.message,
             platform_id: participantsData.platform_id,
-            timezone_id: participantsData.timezone_id,
+            timezone_id: timezone, //participantsData.timezone,
             event_status: 'scheduled',
             studentId: studentId,
-            students: participantsData.students,
             batchId: batchId,
             host_email_id: participantsData.host_email_id,
             meeting_type: participantsData.meeting_type,
         };
 
         dispatch(updateSessionApi({ id: participantsData.id, data }))
+            .unwrap() // Ensures the promise is unwrapped for proper chaining
             .then(() => {
-                // const data = {
-                //     date: sessionData.date, //formatDate(sessionData.date),
-                //     timezone_name: timezoneIdToName(timezone, timezones)
-                // };
-                // dispatch(getSessionApi(data));
+                const sessionData = {
+                    date: participantsData.date, //formatDate(participantsData.date), (if needed to format)
+                    timezone_name: timezoneIdToName(timezone, timezones),
+                };
+                return dispatch(getSessionApi(sessionData)); // Ensure this dispatch runs after updateSessionApi resolves
+            })
+            .then(() => {
+                // Close the edit participants dialog after both API calls succeed
                 dispatch(closeEditParticipantsDialog(participantsData));
+                dispatch(closeParticipantsDialog());
             })
             .catch(error => {
                 console.error('Error updating TA scheduled call:', error);
-                // Handle error (e.g., show error message to user)
+                // Handle the error here (e.g., show error message to the user)
             });
     };
+
     return (
         <Dialog
             open={openEdit}
@@ -286,7 +363,7 @@ const EditParticipantsDialog = ({ openEdit, onCloseEdit, role }) => {
                 >
                     <Button
                         style={{ fontFamily: 'Bold' }}
-                        onClick={() => handleSubmit()}
+                        onClick={handleSubmit}
                         variant="contained"
                         sx={{
                             backgroundColor: '#F56D3B',
@@ -308,14 +385,14 @@ const EditParticipantsDialog = ({ openEdit, onCloseEdit, role }) => {
                     </Button>
                 </Box>
             </DialogContent>
-            {selectStudentPopup &&
+            {openStudents &&
                 (role == 'Coach' ? (
                     <SelectStudents componentName={'COACHMENU'} />
                 ) : (
                     <SelectStudents componentName={'TAMENU'} />
                 ))}
 
-            {selectBatchPopup &&
+            {openBatches &&
                 (role == 'Coach' ? (
                     <SelectBatches componentName={'COACHMENU'} />
                 ) : (

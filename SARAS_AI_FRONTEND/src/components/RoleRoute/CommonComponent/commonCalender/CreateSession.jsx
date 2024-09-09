@@ -197,7 +197,7 @@ const CreateSession = ({ role, componentName }) => {
         }
 
         // Chech message
-        if (!formData.message) {
+        if (!formData.message || formData.message.trim() === '') {
             toast.error('Please enter message');
             return false;
         }

@@ -80,7 +80,6 @@ const commonCalender = createSlice({
             // state.editStudents = [];
         },
         openSelectBatches: (state, action) => {
-            console.log('action payload', action.payload);
             state.selectBatchPopup = true;
             state.preSelectedBatches = action.payload || [];
             if (action.payload?.editBatches) {
@@ -107,7 +106,6 @@ const commonCalender = createSlice({
             state.createdSlots = false;
         },
         openCreatedSessions: (state, action) => {
-            console.log('PAYLOAD ', action.payload);
             state.openCreatedSessions = true;
             state.slotsLeaveData = action.payload;
         },
@@ -160,7 +158,6 @@ const commonCalender = createSlice({
         },
 
         openEditSession(state, action) {
-            console.log('ACTION PAYLOAD', action.payload);
             state.editSession = true;
             state.sessionData = action.payload.sessionData;
             if (action.payload.studentId) {
@@ -185,22 +182,18 @@ const commonCalender = createSlice({
         },
 
         openParticipantsDialog: (state, action) => {
-            console.log('openParticipantsDialog', action.payload);
             state.participantsDialogOpen = true;
             state.participantsData = action.payload;
         },
         closeParticipantsDialog: state => {
-            console.log('closeParticipantsDialog');
             state.participantsDialogOpen = false;
             state.participantsData = null;
         },
         openEditParticipantsDialog: (state, action) => {
-            console.log('openEditParticipantsDialog', action.payload);
             state.editParticipantsDialogOpen = true;
             state.participantsData = action.payload;
         },
         closeEditParticipantsDialog: (state, action) => {
-            console.log('closeEditParticipantsDialog', action.payload);
             state.editParticipantsDialogOpen = false;
             state.participantsData = action.payload;
         },

@@ -79,16 +79,12 @@ const CoachMenuCalendar = () => {
         if (timezoneId) {
             const timezoneData = fetchtimezoneDetails(timezoneId, timezones);
             setTimezoneDetails(timezoneData);
+            if (timezoneData) {
+                convertEvents();
+                convertSlots();
+            }
         }
     }, [timezoneId]);
-
-    useEffect(() => {
-        convertEvents();
-    }, [coachSessions, timezoneDetails]);
-
-    useEffect(() => {
-        convertSlots();
-    }, [coachSlots, timezoneDetails]);
 
     const convertEvents = async () => {
         if (
