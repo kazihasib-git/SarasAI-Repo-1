@@ -85,7 +85,7 @@ const EditStudentsSessionLink = ({ componentName }) => {
 
     useEffect(() => {
         dispatch(getAssignStudentsApi()).then(() => {
-            dispatch(getAssignSelectedStudentsApi(sessionEventData.meetingId));
+            dispatch(getAssignSelectedStudentsApi(sessionEventData.id));
         });
     }, [dispatch]);
 

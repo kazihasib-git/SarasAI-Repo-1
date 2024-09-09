@@ -219,9 +219,9 @@ const coachScheduling = createSlice({
         builder.addCase(createCoachSchedule.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
-            // toast.error(
-            //     action.payload || 'Failed to create Coach Session. Please Try Again'
-            // )
+            toast.error(
+                action.payload || 'Failed to create Coach Session. Please Try Again'
+            )
         });
 
         // Get TA Available Slots From Date

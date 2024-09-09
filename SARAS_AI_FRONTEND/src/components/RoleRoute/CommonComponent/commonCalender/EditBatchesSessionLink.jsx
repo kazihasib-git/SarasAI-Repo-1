@@ -88,7 +88,7 @@ const EditBatchesSessionLink = ({ componentName }) => {
     useEffect(() => {
         dispatch(getBatchesApi()).then(() => {
             console.log(componentName, 'sssssdwcwcwc');
-            dispatch(getSelectedBatchesApi(sessionEventData.meetingId));
+            dispatch(getSelectedBatchesApi(sessionEventData.id));
         });
     }, [dispatch]);
 
