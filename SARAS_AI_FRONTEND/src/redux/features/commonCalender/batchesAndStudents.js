@@ -67,7 +67,13 @@ const batchesAndStudents = createSlice({
         },
         closeStudentsPopup(state, action) {
             state.openStudents = false;
+            state.selectedStudents = action.payload?.selectedStudents;
+        },
+        updateSelectedStudents(state, action) {
             state.selectedStudents = action.payload.selectedStudents;
+        },
+        updateSelectedBatches(state, action) {
+            state.selectedBatches = action.payload.selectedBatches;
         },
         clearState(state, action) {
             state.openBatches = false;
@@ -103,6 +109,8 @@ export const {
     closeBatchPopup,
     openStudentsPopup,
     closeStudentsPopup,
+    updateSelectedStudents,
+    updateSelectedBatches,
     clearState,
 } = batchesAndStudents.actions;
 

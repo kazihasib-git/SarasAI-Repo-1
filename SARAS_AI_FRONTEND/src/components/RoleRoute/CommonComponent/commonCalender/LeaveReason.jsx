@@ -6,74 +6,68 @@ import { useDispatch, useSelector } from 'react-redux';
 import CustomButton from '../../../CustomFields/CustomButton';
 import { closeReasonForLeavePopup } from '../../../../redux/features/commonCalender/commonCalender';
 import { toast } from 'react-toastify';
-import { getCoachMenuSessions, getCoachMenuSlots, reasonForCoachMenuLeave } from '../../../../redux/features/coachModule/coachmenuprofileSilce';
-import { getTaMenuSessions, getTaMenuSlots, reasonForTaMenuLeave } from '../../../../redux/features/taModule/tamenuSlice';
+import {
+    getCoachMenuSessions,
+    getCoachMenuSlots,
+    reasonForCoachMenuLeave,
+} from '../../../../redux/features/coachModule/coachmenuprofileSilce';
+import {
+    getTaMenuSessions,
+    getTaMenuSlots,
+    reasonForTaMenuLeave,
+} from '../../../../redux/features/taModule/tamenuSlice';
 
-const LeaveReason = ({ componentName }) => {
+const leaveConfig = {
+    TAMENU: {
+        sliceName: 'taMenu',
+        reasonForLeaveApi: reasonForTaMenuLeave,
+        getSlotsApi: getTaMenuSlots,
+        getSessionApi: getTaMenuSessions,
+    },
+    COACHMENU: {
+        sliceName: 'coachMenu',
+        reasonForLeaveApi: reasonForCoachMenuLeave,
+        getSlotsApi: getCoachMenuSlots,
+        getSessionApi: getCoachMenuSessions,
+    },
+};
 
+const LeaveReason = ({ componentName, timezone }) => {
     const dispatch = useDispatch();
-    const [reasonOfLeave,setReasonOfLeave] = useState('')
-    const { slotsLeaveData, openLeaveReason } = useSelector((state) => state.commonCalender)
+    const [reasonOfLeave, setReasonOfLeave] = useState('');
+    const { slotsLeaveData, openLeaveReason } = useSelector(
+        state => state.commonCalender
+    );
 
-    let sliceName,
-        reasonForLeaveApi,
-        getSlotsApi,
-        getSessionApi;
-
-    switch (componentName) {
-
-        case 'TAMENU':
-            sliceName = 'taMenu';
-            reasonForLeaveApi = reasonForTaMenuLeave;
-            getSlotsApi = getTaMenuSlots;
-            getSessionApi = getTaMenuSessions;
-            break;
-
-        case 'COACHMENU':
-            sliceName = 'coachMenu';
-            reasonForLeaveApi = reasonForCoachMenuLeave;
-            getSlotsApi = getCoachMenuSlots
-            getSessionApi = getCoachMenuSessions
-            break;
-
-        default:
-            sliceName = null;
-            reasonForLeaveApi = null;
-            getSlotsApi = null;
-            getSessionApi = null;
-            break;
-    }
+    const { sliceName, reasonForLeaveApi, getSlotsApi, getSessionApi } =
+        leaveConfig[componentName];
 
     const selectState = useSelector(state => state[sliceName]);
 
     const handleSubmit = () => {
-        if(!reasonOfLeave){
-            toast.error('Enter Reason For Leave')
+        if (!reasonOfLeave) {
+            toast.error('Enter Reason For Leave');
             return;
         }
 
-        console.log("slotsLeaveData :", slotsLeaveData)
-
-        if(slotsLeaveData && slotsLeaveData.data){
+        if (slotsLeaveData && slotsLeaveData.data) {
             const slots = slotsLeaveData.data;
 
             const reqBody = {
-                approve_status : null,
-                leave_type : null,
-                reason : null,
-                approve_status : null,
-                leave_type : null,
-                reason : reasonOfLeave,
-                data : slots
-            }
+                approve_status: null,
+                leave_type: null,
+                reason: null,
+                approve_status: null,
+                leave_type: null,
+                reason: reasonOfLeave,
+                data: slots,
+            };
 
-            dispatch(reasonForLeaveApi(reqBody))
-            .then(() => {
-                dispatch(getSlotsApi())
-                dispatch(getSessionApi())
-                dispatch(closeReasonForLeavePopup())
-            })
-
+            dispatch(reasonForLeaveApi(reqBody)).then(() => {
+                dispatch(getSlotsApi());
+                dispatch(getSessionApi());
+                dispatch(closeReasonForLeavePopup());
+            });
         }
     };
 

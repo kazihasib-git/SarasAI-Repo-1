@@ -9,44 +9,40 @@ import {
     Box,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { 
-    closeParticipantsDialog, 
-    openEditParticipantsDialog, 
-    openSelectStudents, 
-    openSelectBatches, 
+import {
+    closeParticipantsDialog,
+    openEditParticipantsDialog,
+    openSelectStudents,
+    openSelectBatches,
     openParticipantsDialog,
-    closeEditParticipantsDialog
+    closeEditParticipantsDialog,
 } from '../../../redux/features/commonCalender/commonCalender';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateCoachScheduledCall } from '../../../redux/features/coachModule/coachmenuprofileSilce';
 import { updateTaScheduledCall } from '../../../redux/features/taModule/tamenuSlice';
-import { timezoneIdToName } from '../../../utils/timezoneIdToName';
-import { batch } from 'react-redux';
-const EditParticipantsDialog = ({ openEdit, onCloseEdit , role }) => {
-    const {timezones} = useSelector(state => state.util) ; 
-    console.log('componentName::' , role) ; 
-    const { participantsData } = useSelector(state => state.commonCalender);
-    console.log('participantsData.students' , participantsData.students) ; 
-    const [data, setData] = useState([]);
+import SelectStudents from './commonCalender/SelectStudents';
+import SelectBatches from './commonCalender/SelectBatches';
 
+const EditParticipantsDialog = ({ openEdit, onCloseEdit, role }) => {
+    const { timezones } = useSelector(state => state.util);
+
+    const { participantsData, selectStudentPopup, selectBatchPopup } =
+        useSelector(state => state.commonCalender);
+    const [data, setData] = useState([]);
 
     const dispatch = useDispatch();
     const transformData = () => {
-        const transformedData = participantsData.students.map((item) => ({
+        const transformedData = participantsData.students.map(item => ({
             id: item.id,
             name: item.name,
-            program: item.packages.map(pack => pack.package_name).join(',') || 'N/A',
+            program:
+                item.packages.map(pack => pack.package_name).join(',') || 'N/A',
             batch: item.batches.map(batch => batch.name).join(', ') || 'N/A',
         }));
         console.log('TransformedData', transformedData);
         setData(transformedData);
-    }
+    };
 
-
-
-
-
-    
     useEffect(() => {
         transformData();
     }, [participantsData.students]);
@@ -64,11 +60,9 @@ const EditParticipantsDialog = ({ openEdit, onCloseEdit , role }) => {
         dispatch(openSelectBatches({ participantsData }));
     };
 
-
     let sliceName, updateSessionApi, getSessionApi;
 
     switch (role) {
-
         case 'TA':
             sliceName = 'taMenu';
             updateSessionApi = updateTaScheduledCall;
@@ -86,12 +80,10 @@ const EditParticipantsDialog = ({ openEdit, onCloseEdit , role }) => {
     }
 
     const handleSubmit = () => {
-console.log('participantsData' , participantsData) ; 
+        console.log('participantsData', participantsData);
 
-
-
-           const studentId = participantsData.students.map(student => student.id);
-           const batchId = participantsData.batch.map(batch => batch.id);
+        const studentId = participantsData.students.map(student => student.id);
+        const batchId = participantsData.batch.map(batch => batch.id);
 
         const data = {
             meeting_name: participantsData.meeting_name,
@@ -104,7 +96,7 @@ console.log('participantsData' , participantsData) ;
             timezone_id: participantsData.timezone_id,
             event_status: 'scheduled',
             studentId: studentId,
-            students:participantsData.students , 
+            students: participantsData.students,
             batchId: batchId,
             host_email_id: participantsData.host_email_id,
             meeting_type: participantsData.meeting_type,
@@ -137,7 +129,15 @@ console.log('participantsData' , participantsData) ;
             }}
         >
             <DialogTitle>
-                <Typography style={{fontFamily:'SemiBold' , color:'#1A1E3D' , fontSize:'24px'}}  variant="h6" marginTop={4}>
+                <Typography
+                    style={{
+                        fontFamily: 'SemiBold',
+                        color: '#1A1E3D',
+                        fontSize: '24px',
+                    }}
+                    variant="h6"
+                    marginTop={4}
+                >
                     Edit Participants
                 </Typography>
                 <IconButton
@@ -160,41 +160,41 @@ console.log('participantsData' , participantsData) ;
                     padding: '20px',
                 }}
             >
-                     <Box
+                <Box
                     component="table"
                     sx={{
                         width: '100%',
                         borderCollapse: 'collapse',
                         '& thead': {
-                    '& tr': {
-                        '& th': {
-                        position: 'relative',
-                        paddingLeft: '8px',  // Left gap
-                        paddingRight: '8px', // Right gap
-                        '&::after': {
-                            content: '""',
-                            position: 'absolute',
-                            bottom: 0,
-                            height: '2px',
-                            backgroundColor: '#C2C2E7',
-                            left: '8px',   // Gap from the left
-                            right: '8px',  // Gap from the right
+                            '& tr': {
+                                '& th': {
+                                    position: 'relative',
+                                    paddingLeft: '8px', // Left gap
+                                    paddingRight: '8px', // Right gap
+                                    '&::after': {
+                                        content: '""',
+                                        position: 'absolute',
+                                        bottom: 0,
+                                        height: '2px',
+                                        backgroundColor: '#C2C2E7',
+                                        left: '8px', // Gap from the left
+                                        right: '8px', // Gap from the right
+                                    },
+                                },
+                            },
                         },
+                        '& tbody': {
+                            '& tr': {
+                                position: 'relative',
+                                '&:not(:last-child)': {
+                                    '& td': {
+                                        borderBottom: '1px solid #C2C2E7',
+                                        paddingLeft: '8px', // Left gap for td
+                                        paddingRight: '8px', // Right gap for td
+                                    },
+                                },
+                            },
                         },
-                    },
-                    },
-                    '& tbody': {
-                    '& tr': {
-                        position: 'relative',
-                        '&:not(:last-child)': {
-                        '& td': {
-                            borderBottom: '1px solid #C2C2E7',
-                            paddingLeft: '8px',  // Left gap for td
-                            paddingRight: '8px', // Right gap for td
-                        },
-                        },
-                    },
-                    },
                         backgroundColor: '#E0E0F3',
                     }}
                 >
@@ -207,31 +207,34 @@ console.log('participantsData' , participantsData) ;
                         </tr>
                     </thead>
                     <tbody>
-                        {data.length>0 && data.map((participant, index) => (
-                            <tr key={participant.id}>
-                                <td style={{ padding: '8px' }}>{index + 1}</td>
-                                <td style={{ padding: '8px' }}>
-                                    {participant.name}
-                                </td>
-                                <td style={{ padding: '8px' }}>
-                                    {participant.program}
-                                </td>
-                                <td style={{ padding: '8px' }}>
-                                    {participant.batch}
-                                </td>
-                            </tr>
-                        ))}
+                        {data.length > 0 &&
+                            data.map((participant, index) => (
+                                <tr key={participant.id}>
+                                    <td style={{ padding: '8px' }}>
+                                        {index + 1}
+                                    </td>
+                                    <td style={{ padding: '8px' }}>
+                                        {participant.name}
+                                    </td>
+                                    <td style={{ padding: '8px' }}>
+                                        {participant.program}
+                                    </td>
+                                    <td style={{ padding: '8px' }}>
+                                        {participant.batch}
+                                    </td>
+                                </tr>
+                            ))}
                     </tbody>
                 </Box>
                 <Box
-                    sx = {{gap:'10px'}}
+                    sx={{ gap: '10px' }}
                     display="flex"
                     justifyContent="center"
                     alignItems="center"
                     style={{ marginTop: 'auto', paddingTop: '20px' }}
                 >
                     <Button
-                        style={{fontFamily:'Bold'}}
+                        style={{ fontFamily: 'Bold' }}
                         variant="contained"
                         onClick={handleAssignStudents}
                         sx={{
@@ -252,7 +255,7 @@ console.log('participantsData' , participantsData) ;
                         Assign Students
                     </Button>
                     <Button
-                       style={{fontFamily:'Bold'}}
+                        style={{ fontFamily: 'Bold' }}
                         variant="outlined"
                         onClick={handleAssignBatches}
                         sx={{
@@ -272,10 +275,8 @@ console.log('participantsData' , participantsData) ;
                             },
                         }}
                     >
-                        
                         Assign Batches
-                         
-                        </Button>
+                    </Button>
                 </Box>
                 <Box
                     display="flex"
@@ -284,8 +285,8 @@ console.log('participantsData' , participantsData) ;
                     style={{ marginTop: 'auto', paddingTop: '20px' }}
                 >
                     <Button
-                        style={{fontFamily:'Bold'}}
-                        onClick={()=>handleSubmit()}
+                        style={{ fontFamily: 'Bold' }}
+                        onClick={() => handleSubmit()}
                         variant="contained"
                         sx={{
                             backgroundColor: '#F56D3B',
@@ -303,12 +304,23 @@ console.log('participantsData' , participantsData) ;
                             },
                         }}
                     >
-        
                         Update
-                    
-                        </Button>
+                    </Button>
                 </Box>
             </DialogContent>
+            {selectStudentPopup &&
+                (role == 'Coach' ? (
+                    <SelectStudents componentName={'COACHMENU'} />
+                ) : (
+                    <SelectStudents componentName={'TAMENU'} />
+                ))}
+
+            {selectBatchPopup &&
+                (role == 'Coach' ? (
+                    <SelectBatches componentName={'COACHMENU'} />
+                ) : (
+                    <SelectBatches componentName={'TAMENU'} />
+                ))}
         </Dialog>
     );
 };

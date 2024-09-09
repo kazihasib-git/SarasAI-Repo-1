@@ -9,7 +9,11 @@ import {
     Box,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { closeParticipantsDialog, openEditParticipantsDialog, openSelectStudents } from '../../../redux/features/commonCalender/commonCalender';
+import {
+    closeParticipantsDialog,
+    openEditParticipantsDialog,
+    openSelectStudents,
+} from '../../../redux/features/commonCalender/commonCalender';
 import { useDispatch, useSelector } from 'react-redux';
 
 const ParticipantsDialog = ({ open, onClose }) => {
@@ -18,10 +22,11 @@ const ParticipantsDialog = ({ open, onClose }) => {
     const dispatch = useDispatch();
 
     const transformData = () => {
-        const transformedData = participantsData.students.map((item) => ({
+        const transformedData = participantsData.students.map(item => ({
             id: item.id,
             name: item.name,
-            program: item.packages.map(pack => pack.package_name).join(',') || 'N/A',
+            program:
+                item.packages.map(pack => pack.package_name).join(',') || 'N/A',
             batch: item.batches.map(batch => batch.name).join(', ') || 'N/A',
         }));
         console.log('TransformedData', transformedData);
@@ -49,7 +54,11 @@ const ParticipantsDialog = ({ open, onClose }) => {
             }}
         >
             <DialogTitle>
-                <Typography  style={{fontFamily:'SemiBold' , color:'#1A1E3D'}} variant="h6" marginTop={4}>
+                <Typography
+                    style={{ fontFamily: 'SemiBold', color: '#1A1E3D' }}
+                    variant="h6"
+                    marginTop={4}
+                >
                     Participants
                 </Typography>
                 <IconButton
@@ -72,41 +81,41 @@ const ParticipantsDialog = ({ open, onClose }) => {
                     padding: '20px',
                 }}
             >
- <Box
+                <Box
                     component="table"
                     sx={{
                         width: '100%',
                         borderCollapse: 'collapse',
                         '& thead': {
-                    '& tr': {
-                        '& th': {
-                        position: 'relative',
-                        paddingLeft: '8px',  // Left gap
-                        paddingRight: '8px', // Right gap
-                        '&::after': {
-                            content: '""',
-                            position: 'absolute',
-                            bottom: 0,
-                            height: '2px',
-                            backgroundColor: '#C2C2E7',
-                            left: '8px',   // Gap from the left
-                            right: '8px',  // Gap from the right
+                            '& tr': {
+                                '& th': {
+                                    position: 'relative',
+                                    paddingLeft: '8px', // Left gap
+                                    paddingRight: '8px', // Right gap
+                                    '&::after': {
+                                        content: '""',
+                                        position: 'absolute',
+                                        bottom: 0,
+                                        height: '2px',
+                                        backgroundColor: '#C2C2E7',
+                                        left: '8px', // Gap from the left
+                                        right: '8px', // Gap from the right
+                                    },
+                                },
+                            },
                         },
+                        '& tbody': {
+                            '& tr': {
+                                position: 'relative',
+                                '&:not(:last-child)': {
+                                    '& td': {
+                                        borderBottom: '1px solid #C2C2E7',
+                                        paddingLeft: '8px', // Left gap for td
+                                        paddingRight: '8px', // Right gap for td
+                                    },
+                                },
+                            },
                         },
-                    },
-                    },
-                    '& tbody': {
-                    '& tr': {
-                        position: 'relative',
-                        '&:not(:last-child)': {
-                        '& td': {
-                            borderBottom: '1px solid #C2C2E7',
-                            paddingLeft: '8px',  // Left gap for td
-                            paddingRight: '8px', // Right gap for td
-                        },
-                        },
-                    },
-                    },
                         backgroundColor: '#E0E0F3',
                     }}
                 >
@@ -119,20 +128,23 @@ const ParticipantsDialog = ({ open, onClose }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {data.length>0 && data.map((participant, index) => (
-                            <tr key={participant.id}>
-                                <td style={{ padding: '8px' }}>{index + 1}</td>
-                                <td style={{ padding: '8px' }}>
-                                    {participant.name}
-                                </td>
-                                <td style={{ padding: '8px' }}>
-                                    {participant.program}
-                                </td>
-                                <td style={{ padding: '8px' }}>
-                                    {participant.batch}
-                                </td>
-                            </tr>
-                        ))}
+                        {data.length > 0 &&
+                            data.map((participant, index) => (
+                                <tr key={participant.id}>
+                                    <td style={{ padding: '8px' }}>
+                                        {index + 1}
+                                    </td>
+                                    <td style={{ padding: '8px' }}>
+                                        {participant.name}
+                                    </td>
+                                    <td style={{ padding: '8px' }}>
+                                        {participant.program}
+                                    </td>
+                                    <td style={{ padding: '8px' }}>
+                                        {participant.batch}
+                                    </td>
+                                </tr>
+                            ))}
                     </tbody>
                 </Box>
                 <Box
@@ -142,8 +154,8 @@ const ParticipantsDialog = ({ open, onClose }) => {
                     style={{ marginTop: 'auto', paddingTop: '20px' }}
                 >
                     <Button
-                        style={{fontFamily:'Bold' , fontSize:'16px'}}
-                        onClick={()=>handleOpenEditParticipantsDialog()}
+                        style={{ fontFamily: 'Bold', fontSize: '16px' }}
+                        onClick={() => handleOpenEditParticipantsDialog()}
                         variant="contained"
                         sx={{
                             backgroundColor: '#F56D3B',
@@ -161,9 +173,7 @@ const ParticipantsDialog = ({ open, onClose }) => {
                             },
                         }}
                     >
-                        
                         Edit
-                        
                     </Button>
                 </Box>
             </DialogContent>

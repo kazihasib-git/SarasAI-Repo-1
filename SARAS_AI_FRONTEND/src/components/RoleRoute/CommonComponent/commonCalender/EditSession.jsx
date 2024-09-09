@@ -3,19 +3,25 @@ import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+    getTaMenuAssignedBatches,
+    getTaMenuAssignedStudents,
     getTaMenuSessions,
     getTaScheduledCalls,
     updateTaScheduledCall,
 } from '../../../../redux/features/taModule/tamenuSlice';
 import {
+    getCoachMenuAssignedBatches,
+    getCoachMenuAssignedStudents,
     getCoachMenuSessions,
     getCoachScheduledCalls,
     updateCoachScheduledCall,
 } from '../../../../redux/features/coachModule/coachmenuprofileSilce';
 import {
     closeEditSession,
+    openEditSession,
     openSelectBatches,
     openSelectStudents,
+    retainEditSession,
 } from '../../../../redux/features/commonCalender/commonCalender';
 import ReusableDialog from '../../../CustomFields/ReusableDialog';
 import CustomTextField from '../../../CustomFields/CustomTextField';
@@ -34,11 +40,58 @@ import CustomTimeDaysjsField from '../../../CustomFields/CustomTimeDaysjsField';
 import CustomButton from '../../../CustomFields/CustomButton';
 import { timezoneIdToName } from '../../../../utils/timezoneIdToName';
 import { GLOBAL_CONSTANTS } from '../../../../constants/globalConstants';
+import {
+    clearState,
+    openBatchPopup,
+    openStudentsPopup,
+    updateSelectedBatches,
+    updateSelectedStudents,
+} from '../../../../redux/features/commonCalender/batchesAndStudents';
+import SelectBatches from '../../../batches/SelectBatches';
+import SelectStudents from '../../../students/SelectStudents';
 
-const timezone = Number(localStorage.getItem('timezone_id'));
+const editSessionConfig = {
+    TAMENU: {
+        sliceName: 'taMenu',
+        updateSessionApi: updateTaScheduledCall,
+        getSessionApi: getTaScheduledCalls,
+        getStudentsApi: getTaMenuAssignedStudents,
+        getStudentsState: 'assignedTaStudents',
+        getBatchesApi: getTaMenuAssignedBatches,
+        getBatchesState: 'assignedTaBatches',
+    },
+    COACHMENU: {
+        sliceName: 'coachMenu',
+        updateSessionApi: updateCoachScheduledCall,
+        getSessionApi: getCoachScheduledCalls,
+        getStudentsApi: getCoachMenuAssignedStudents,
+        getStudentsState: 'assignedCoachStudents',
+        getBatchesApi: getCoachMenuAssignedBatches,
+        getBatchesState: 'assignedCoachBatches',
+    },
+};
 
-const EditSession = ({ componentName }) => {
+const EditSession = ({ role, componentName }) => {
     const dispatch = useDispatch();
+    const { timezoneId } = useSelector(state => state.auth);
+
+    const {
+        sliceName,
+        updateSessionApi,
+        getSessionApi,
+        getStudentsApi,
+        getStudentsState,
+        getBatchesApi,
+        getBatchesState,
+    } = editSessionConfig[componentName];
+
+    useEffect(() => {
+        dispatch(getTimezone());
+        dispatch(getPlatforms());
+        dispatch(getAllHosts());
+        dispatch(getStudentsApi());
+        dispatch(getBatchesApi());
+    }, [dispatch]);
 
     const initialFormData = {
         sessionName: '',
@@ -53,7 +106,7 @@ const EditSession = ({ componentName }) => {
         toDate: null,
         fromTime: null,
         toTime: null,
-        timezone_id: timezone ? timezone : null,
+        timezone_id: Number(timezoneId),
     };
 
     const [formData, setFormData] = useState(initialFormData);
@@ -61,37 +114,19 @@ const EditSession = ({ componentName }) => {
     const [error, setError] = useState({});
 
     const { timezones, platforms, hosts } = useSelector(state => state.util);
-    const { editSession, students, batches, sessionData } = useSelector(
+    const { editSession, sessionData } = useSelector(
         state => state.commonCalender
     );
 
-    let sliceName, updateSessionApi, getSessionApi;
+    const stateSelector = useSelector(state => state[sliceName]);
 
-    switch (componentName) {
-        case 'TAMENU':
-            sliceName = 'taMenu';
-            updateSessionApi = updateTaScheduledCall;
-            getSessionApi = getTaScheduledCalls;
-            break;
+    const {
+        [getStudentsState]: assignedStudents,
+        [getBatchesState]: assignedBatches,
+    } = stateSelector;
 
-        case 'COACHMENU':
-            sliceName = 'coachMenu';
-            updateSessionApi = updateCoachScheduledCall;
-            getSessionApi = getCoachScheduledCalls;
-            break;
-
-        default:
-            sliceName = null;
-            updateSessionApi = null;
-            getSessionApi = null;
-            break;
-    }
-
-    useEffect(() => {
-        dispatch(getTimezone());
-        dispatch(getPlatforms());
-        dispatch(getAllHosts());
-    }, [dispatch]);
+    const { selectedStudents, selectedBatches, openBatches, openStudents } =
+        useSelector(state => state.batchesAndStudents);
 
     useEffect(() => {
         if (sessionData && !isEdited) {
@@ -105,6 +140,19 @@ const EditSession = ({ componentName }) => {
                 String(timeDifference.minutes()).padStart(2, '0'),
                 String(timeDifference.seconds()).padStart(2, '0'),
             ].join(':');
+
+            dispatch(
+                updateSelectedStudents({
+                    selectedStudents: sessionData?.students.map(
+                        student => student.id
+                    ),
+                })
+            );
+            dispatch(
+                updateSelectedBatches({
+                    selectedBatches: sessionData?.batch.map(batch => batch.id),
+                })
+            );
 
             setFormData({
                 sessionName: sessionData.meeting_name || '',
@@ -124,28 +172,35 @@ const EditSession = ({ componentName }) => {
         }
     }, []);
 
-    const durationOptions = [
-        { label: '15 minutes', value: '00:15:00' },
-        { label: '30 minutes', value: '00:30:00' },
-        { label: '45 minutes', value: '00:45:00' },
-        { label: '1 Hour', value: '01:00:00' },
-        { label: '1 Hour 15 minutes', value: '01:15:00' },
-        { label: '1 Hour 30 minutes', value: '01:30:00' },
-        { label: '1 Hour 45 minutes', value: '01:45:00' },
-        { label: '2 Hours', value: '02:00:00' },
-    ];
-
     const handleChange = (field, value) => {
         setIsEdited(true);
         setFormData(prev => ({ ...prev, [field]: value }));
     };
 
     const handleAssignStudents = () => {
-        dispatch(openSelectStudents({ sessionData }));
+        const data = {
+            students: assignedStudents,
+            selectedBatches: selectedBatches?.length > 0 ? selectedBatches : [],
+            students: assignedStudents,
+            selectedStudents:
+                selectedStudents?.length > 0 ? selectedStudents : [],
+            timezoneId: timezoneId,
+        };
+        dispatch(openStudentsPopup(data));
+        // dispatch(openSelectStudents({ sessionData }));
     };
 
     const handleAssignBatches = () => {
-        dispatch(openSelectBatches({ sessionData }));
+        const data = {
+            batches: assignedBatches,
+            selectedBatches: selectedBatches?.length > 0 ? selectedBatches : [],
+            students: assignedStudents,
+            selectedStudents:
+                selectedStudents?.length > 0 ? selectedStudents : [],
+            timezoneId: timezoneId,
+        };
+        dispatch(openBatchPopup(data));
+        //dispatch(openSelectBatches({ sessionData }));
     };
 
     const validate = () => {
@@ -210,8 +265,11 @@ const EditSession = ({ componentName }) => {
 
         if (!validate()) return;
 
-        const studentId = sessionData.students.map(student => student.id);
-        const batchId = sessionData.batch.map(batch => batch.id);
+        // const studentId = sessionData.students.map(student => student.id);
+        // const batchId = sessionData.batch.map(batch => batch.id);
+
+        const studentId = selectedStudents.map(student => student);
+        const batchId = selectedBatches.map(batch => batch);
 
         const fromDateTimeString = `${formData.fromDate}T${formData.fromTime}`;
         const fromDateTime = new Date(fromDateTimeString);
@@ -242,12 +300,13 @@ const EditSession = ({ componentName }) => {
 
         dispatch(updateSessionApi({ id: sessionData.id, data }))
             .then(() => {
+                dispatch(closeEditSession());
+                dispatch(clearState());
                 const data = {
                     date: sessionData.date, //formatDate(sessionData.date),
-                    timezone_name: timezoneIdToName(timezone, timezones),
+                    timezone_name: timezoneIdToName(timezoneId, timezones),
                 };
                 dispatch(getSessionApi(data));
-                dispatch(closeEditSession());
             })
             .catch(error => {
                 console.error('Error updating TA scheduled call:', error);
@@ -309,7 +368,9 @@ const EditSession = ({ componentName }) => {
                                                 e.target.value
                                             )
                                         }
-                                        options={durationOptions}
+                                        options={
+                                            GLOBAL_CONSTANTS.DURATIONOPTIONS
+                                        }
                                         errors={!!error.duration}
                                         helperText={error.duration}
                                         sx={{ width: '100%' }}
@@ -553,13 +614,55 @@ const EditSession = ({ componentName }) => {
     );
 
     return (
-        <ReusableDialog
-            open={editSession}
-            handleClose={() => dispatch(closeEditSession())}
-            title={`Edit ${componentName === 'COACHMENU' ? 'Coach' : 'TA'} Session`}
-            content={content}
-            actions={actions}
-        />
+        <>
+            <ReusableDialog
+                open={editSession}
+                handleClose={() => {
+                    dispatch(closeEditSession());
+                    dispatch(clearState());
+                }}
+                title={`Edit ${componentName === 'COACHMENU' ? 'Coach' : 'TA'} Session`}
+                content={content}
+                actions={actions}
+            />
+            {openBatches &&
+                (role == 'Coach' ? (
+                    <SelectBatches
+                        componentName={'COACHMENU'}
+                        timezone={timezoneId}
+                        onClose={data => {
+                            dispatch(retainEditSession(data));
+                        }}
+                    />
+                ) : (
+                    <SelectBatches
+                        componentName={'TAMENU'}
+                        timezone={timezoneId}
+                        onClose={data => {
+                            dispatch(retainEditSession(data));
+                        }}
+                    />
+                ))}
+
+            {openStudents &&
+                (role == 'Coach' ? (
+                    <SelectStudents
+                        componentName={'COACHMENU'}
+                        timezone={timezoneId}
+                        onClose={data => {
+                            dispatch(retainEditSession(data));
+                        }}
+                    />
+                ) : (
+                    <SelectStudents
+                        componentName={'TAMENU'}
+                        timezone={timezoneId}
+                        onClose={data => {
+                            dispatch(retainEditSession(data));
+                        }}
+                    />
+                ))}
+        </>
     );
 };
 

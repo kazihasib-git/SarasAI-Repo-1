@@ -10,6 +10,7 @@ import { openScheduleSession } from '../../redux/features/adminModule/ta/taSched
 import { openCoachScheduleSession } from '../../redux/features/adminModule/coach/coachSchedule';
 import { toast } from 'react-toastify';
 import { MESSAGE_CONSTANTS } from '../../constants/messageConstants';
+import { openScheduleNewSession } from '../../redux/features/commonCalender/commonCalender';
 
 const headers = ['S. No.', 'Student Name', 'Program', 'Batch', 'Select'];
 
@@ -20,9 +21,21 @@ const studentsConfig = {
     COACHSCHEDULE: {
         openSchedulingPopup: openCoachScheduleSession,
     },
+    TAMENU: {
+        openSchedulingPopup: openScheduleNewSession,
+    },
+    COACHMENU: {
+        openSchedulingPopup: openScheduleNewSession,
+    },
 };
 
-const SelectStudents = ({ id, name, componentName, timezone }) => {
+const SelectStudents = ({
+    id,
+    name,
+    componentName,
+    timezone,
+    onClose = () => {},
+}) => {
     const dispatch = useDispatch();
 
     const [selectedTerm, setSelectedTerm] = useState([]);
@@ -150,14 +163,21 @@ const SelectStudents = ({ id, name, componentName, timezone }) => {
     const handleSubmit = () => {
         if (!validate()) return;
 
-        dispatch(
-            openSchedulingPopup({
-                id: userId,
-                name: userName,
-                student: selectStudents.map(id => ({ id })),
-                timezoneId: timezone ? timezone.id : timezoneId,
-            })
-        );
+        // dispatch(
+        //     openSchedulingPopup({
+        //         id: userId,
+        //         name: userName,
+        //         student: selectStudents.map(id => ({ id })),
+        //         timezoneId: timezone ? timezone.id : timezoneId,
+        //     })
+        // );
+
+        onClose({
+            id: userId,
+            name: userName,
+            student: selectStudents.map(id => ({ id })),
+            timezoneId: timezone ? timezone.id : timezoneId,
+        });
 
         dispatch(closeStudentsPopup({ selectedStudents: selectStudents }));
 

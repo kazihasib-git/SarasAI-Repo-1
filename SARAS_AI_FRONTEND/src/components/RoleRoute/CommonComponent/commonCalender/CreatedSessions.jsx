@@ -25,41 +25,27 @@ const headers = [
 
 const studentHeader = ['S.No.', 'Student Name', 'Program', 'Batch'];
 
-const CreatedSessions = ({ componentName, timezoneID }) => {
-    console.log('created sessions timezoneID', timezoneID);
-    const { timezones } = useSelector(state => state.util);
+const sessionConfig = {
+    TAMENU: {
+        sliceName: 'taMenu',
+        scheduledSessionState: 'sessionBySlots',
+    },
+    COACHMENU: {
+        sliceName: 'coachMenu',
+        scheduledSessionState: 'coachSessionsForLeave',
+    },
+};
 
+const CreatedSessions = ({ componentName, timezone }) => {
     const dispatch = useDispatch();
 
-    useEffect(() => {
-        dispatch(getTimezone());
-    }, [dispatch]);
-
-    let sliceName, scheduledSessionState;
-
-    switch (componentName) {
-        case 'TAMENU':
-            sliceName = 'taMenu';
-            scheduledSessionState = 'sessionBySlots';
-            break;
-
-        case 'COACHMENU':
-            sliceName = 'coachMenu';
-            scheduledSessionState = 'coachSessionsForLeave';
-            break;
-
-        default:
-            sliceName = null;
-            scheduledSessionState = null;
-            break;
-    }
+    const { sliceName, scheduledSessionState } = sessionConfig[componentName];
 
     const selectState = useSelector(state => state[sliceName]);
     const { openCreatedSessions } = useSelector(state => state.commonCalender);
 
     const { [scheduledSessionState]: sessionsData } = selectState;
     const [scheduledSessions, setScheduledSessions] = useState([]);
-    const [students, setStudent] = useState([]);
 
     const { slotsLeaveData } = useSelector(state => state.commonCalender);
 
@@ -73,18 +59,7 @@ const CreatedSessions = ({ componentName, timezoneID }) => {
     };
 
     const convertMenuSessions = async () => {
-        if (
-            sessionsData &&
-            sessionsData.length > 0 &&
-            timezoneID &&
-            timezones
-        ) {
-            const timezonename = timezoneIdToName(timezoneID, timezones);
-            if (!timezonename) {
-                console.error('Invalid timezone name');
-                setScheduledSessions([]);
-                return;
-            }
+        if (sessionsData && sessionsData.length > 0 && timezone?.time_zone) {
             try {
                 const formattedData = await Promise.all(
                     sessionsData.map(async (session, index) => {
@@ -93,7 +68,7 @@ const CreatedSessions = ({ componentName, timezoneID }) => {
                             start_time: session.start_time,
                             end_time: session.end_time,
                             end_date: session.date.split(' ')[0], // Assuming the end date is the same as the start date
-                            timezonename,
+                            timezonename: timezone?.time_zone,
                         });
                         const startDateTime = new Date(
                             `${localTime.start_date}T${localTime.start_time}`
@@ -126,7 +101,7 @@ const CreatedSessions = ({ componentName, timezoneID }) => {
 
     useEffect(() => {
         convertMenuSessions();
-    }, [sessionsData, timezoneID, timezones]);
+    }, [sessionsData, timezone?.time_zone]);
 
     const handleViewClick = students => {
         console.log('View clicked!', students);

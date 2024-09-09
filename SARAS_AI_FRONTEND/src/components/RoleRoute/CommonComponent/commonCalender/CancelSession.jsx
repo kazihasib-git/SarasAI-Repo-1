@@ -19,55 +19,51 @@ import {
     getCoachMenuSessions,
     getCoachMenuSlots,
 } from '../../../../redux/features/coachModule/coachmenuprofileSilce';
-import { cancelTaScheduledSessionForLeave, getTaMenuSessionForLeave, getTaMenuSessions, getTaMenuSlots } from '../../../../redux/features/taModule/tamenuSlice';
+import {
+    cancelTaScheduledSessionForLeave,
+    getTaMenuSessionForLeave,
+    getTaMenuSessions,
+    getTaMenuSlots,
+} from '../../../../redux/features/taModule/tamenuSlice';
 
-const CancelSession = ({ componentName }) => {
+const cancelSessionConfig = {
+    TAMENU: {
+        sliceName: 'taMenu',
+        cancelSessionApi: cancelTaScheduledSessionForLeave,
+        getSessionsApi: getTaMenuSessionForLeave,
+        getAllSlotsAPi: getTaMenuSlots,
+        getAllSessionsApi: getTaMenuSessions,
+    },
+    COACHMENU: {
+        sliceName: 'coachMenu',
+        cancelSessionApi: cancelScheduledSessionForLeave,
+        getSessionsApi: getCoachMenuSessionForLeave,
+        getAllSlotsAPi: getCoachMenuSlots,
+        getAllSessionsApi: getCoachMenuSessions,
+    },
+};
+
+const CancelSession = ({ componentName, timezone }) => {
     const dispatch = useDispatch();
 
-    let sliceName, 
-        cancelSessionApi, 
+    const {
+        sliceName,
+        cancelSessionApi,
         getSessionsApi,
         getAllSlotsAPi,
-        getAllSessionsApi;
-
-    switch (componentName) {
-        case 'TAMENU':
-            sliceName = 'taMenu';
-            cancelSessionApi = cancelTaScheduledSessionForLeave;
-            getSessionsApi = getTaMenuSessionForLeave;
-            getAllSlotsAPi = getTaMenuSlots;
-            getAllSessionsApi = getTaMenuSessions;
-            break;
-
-        case 'COACHMENU':
-            sliceName = 'coachMenu';
-            cancelSessionApi = cancelScheduledSessionForLeave;
-            getSessionsApi = getCoachMenuSessionForLeave;
-            getAllSlotsAPi = getCoachMenuSlots
-            getAllSessionsApi = getCoachMenuSessions
-            break;
-
-        default:
-            sliceName = null;
-            cancelSessionApi = null;
-            getSessionsApi = null;
-            getAllSessionsApi = null;
-            getAllSessionsApi = null;
-            break;
-    }
+        getAllSessionsApi,
+    } = cancelSessionConfig[componentName];
 
     const selectState = useSelector(state => state[sliceName]);
 
     const { openCancelSession, sessionCancelData, slotsLeaveData } =
         useSelector(state => state.commonCalender);
 
-    console.log('slot Leave Data', slotsLeaveData);
-
     const handleCancel = () => {
         const sessionId = sessionCancelData.id;
         dispatch(cancelSessionApi(sessionId)).then(() => {
-            dispatch(getSessionsApi(slotsLeaveData))
-            dispatch(openCreatedSessions(slotsLeaveData))
+            dispatch(getSessionsApi(slotsLeaveData));
+            dispatch(openCreatedSessions(slotsLeaveData));
             dispatch(getAllSessionsApi());
             dispatch(getAllSlotsAPi());
         });
@@ -88,8 +84,8 @@ const CancelSession = ({ componentName }) => {
             </CustomButton>
             <CustomButton
                 onClick={() => {
-                    dispatch(closeCancelSessionPopup())
-                    dispatch(openCreatedSessions())
+                    dispatch(closeCancelSessionPopup());
+                    dispatch(openCreatedSessions());
                 }}
                 backgroundColor="#F56D38"
                 borderColor="#F56D38"
