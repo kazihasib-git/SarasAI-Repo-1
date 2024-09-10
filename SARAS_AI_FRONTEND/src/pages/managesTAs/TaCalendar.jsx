@@ -23,37 +23,35 @@ import CancelSchedule from '../../components/availability/CancelSchedule';
 import ReasonForLeave from '../../components/availability/ReasonForLeave';
 import ReschedulingSession from '../../components/availability/ReschedulingSession';
 import { useParams } from 'react-router-dom';
-import {
-    getTAScheduledSessions,
-    openScheduleSession,
-} from '../../redux/features/adminModule/ta/taScheduling';
-import Schedule from '../../components/availability/Schedule';
-import EditBatches from '../../components/availability/EditBatches';
-import EditStudents from '../../components/availability/EditStudents';
+import { openScheduleSession } from '../../redux/features/adminModule/ta/taScheduling';
 import Header from '../../components/Header/Header';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import ScheduleSession from '../../components/availability/ScheduleSession';
 import EditStudentsFromSession from '../../components/availability/EditStudentsFromSession';
 import EditBatchesFromSession from '../../components/availability/EditBatchesFromSession';
-
 import { convertFromUTC } from '../../utils/dateAndtimeConversion';
-import { timezoneIdToName } from '../../utils/timezoneIdToName';
-import { getTimezone } from '../../redux/features/utils/utilSlice';
-import { ConnectingAirportsOutlined } from '@mui/icons-material';
-import { getTodayTaAvailability } from '../../redux/features/adminModule/ta/taAvialability';
+import {
+    fetchtimezoneDetails,
+    timezoneIdToName,
+} from '../../utils/timezoneIdToName';
 import CustomButton from '../../components/CustomFields/CustomButton';
+import CreateNewSession from '../../components/availability/CreateNewSession';
+import SelectBatches from '../../components/batches/SelectBatches';
+import SelectStudents from '../../components/students/SelectStudents';
+import { useGetTimezonesQuery } from '../../redux/services/timezones/timezonesApi';
 
 const TaCalender = () => {
-    const [selectedTA, setSelectedTA] = useState(null);
-
-    const { timezones } = useSelector(state => state.util);
-
     const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(getTodayTaAvailability());
-    }, [dispatch]);
+    const { id, name, timezoneId } = useParams();
+    const { data : timezones, error, isLoading } = useGetTimezonesQuery();
 
-    const { id, name } = useParams();
+    useEffect(() => {
+        if(id){
+        dispatch(fetchTaSlots(id));
+        dispatch(fetchTAScheduleById(id));
+        }
+    }, [dispatch, id]);
+
     const {
         slotData,
         scheduleData,
@@ -64,70 +62,50 @@ const TaCalender = () => {
         reasonForLeaveOpen,
         resheduleSessionOpen,
         createNewSlotOpen,
-        scheduledSlotsData,
         deletingCoachFutureSlots,
         openEventData,
         taEditScheduledStudents,
         taEditScheduledBatches,
-        todaysAvailableTa,
     } = useSelector(state => state.taAvialability);
 
-    const {
-        taScheduledSessions,
-        scheduleSessionOpen,
-        openEditBatch,
-        openEditStudent,
-    } = useSelector(state => state.taScheduling);
+    const { scheduleSessionOpen } = useSelector(state => state.taScheduling);
+
+    const { openBatches, openStudents } = useSelector(
+        state => state.batchesAndStudents
+    );
 
     //calendar
     const [eventsList, setEventsList] = useState([]);
     const [slotViewData, setSlotViewData] = useState([]);
+    const [timezoneDetails, setTimezoneDetails] = useState();
 
-    const findTaTimeZone = todaysAvailableTa => {
-        if (todaysAvailableTa && Number(id)) {
-            const selectedTa = todaysAvailableTa.find(
-                ta => ta.id === Number(id)
-            );
-            setSelectedTA(selectedTa || null); // Set to null if not found
-        } else {
-            setSelectedTA(null); // Set to null if conditions are not met
+    useEffect(() => {
+        if (timezoneId && timezones?.length > 0) {
+            const timezone = fetchtimezoneDetails(timezoneId, timezones);
+            if (timezone){
+                setTimezoneDetails(timezone);
+                if(scheduleData?.length > 0) {
+                    convertEvents();
+                }
+                if(slotData?.length > 0){
+                    convertSlots();
+                }
+            }else {
+                setSlotViewData([])
+                setEventsList([])
+            }
+        }else {
+            setSlotViewData([])
+            setEventsList([])
         }
-    };
-    useEffect(() => {
-        findTaTimeZone(todaysAvailableTa);
-    }, [id, todaysAvailableTa]);
-
-    // const storedTimezoneId = selectedTA ? selectedTA.timezone_id : Number(localStorage.getItem('timezone_id'));
-    const storedTimezoneId = selectedTA ? selectedTA.timezone_id : '';
-    console.log('tacalander timezone id ', storedTimezoneId);
-    useEffect(() => {
-        dispatch(fetchTaSlots(id));
-        dispatch(fetchTAScheduleById(id));
-        dispatch(getTimezone());
-    }, [dispatch, id, resheduleSessionOpen]);
-
-    const formatTime = time => {
-        const [hours, minutes] = time.split(':');
-        const hour = parseInt(hours, 10);
-        const minute = parseInt(minutes, 10);
-        const ampm = hour >= 12 ? 'pm' : 'am';
-        const formattedHour = hour % 12 || 12;
-        return `${formattedHour}:${minute < 10 ? '0' : ''}${minute} ${ampm}`;
-    };
+    }, [timezoneId, timezones, scheduleData, slotData]);
 
     const convertEvents = async () => {
         if (
             scheduleData &&
             scheduleData.length > 0 &&
-            storedTimezoneId &&
-            selectedTA
+            timezoneDetails?.time_zone
         ) {
-            const timezonename = timezoneIdToName(storedTimezoneId, timezones);
-            if (!timezonename) {
-                console.error('Invalid timezone name');
-                setEventsList([]);
-                return;
-            }
             try {
                 const processedEvents = [];
                 const transformedEvents = await Promise.all(
@@ -139,12 +117,8 @@ const TaCalender = () => {
                             end_date: event.end_date
                                 ? event.end_date
                                 : event.date.split(' ')[0],
-                            timezonename,
+                            timezonename: timezoneDetails?.time_zone,
                         });
-                        // console.log(
-                        //     'Converted Local Schedule Time:',
-                        //     localTime
-                        // );
                         const startDateTime = new Date(
                             `${localTime.start_date}T${localTime.start_time}`
                         );
@@ -181,7 +155,6 @@ const TaCalender = () => {
                                 platform_meet: event.platform_meeting_details,
                             };
 
-                            // console.log('events created', event1, event2);
                             processedEvents.push(event1, event2);
                             return [event1, event2];
                         } else {
@@ -201,7 +174,6 @@ const TaCalender = () => {
                         }
                     })
                 );
-                // console.log('transformed events', processedEvents);
                 setEventsList(processedEvents);
             } catch (error) {
                 console.error('Error converting events:', error);
@@ -211,13 +183,9 @@ const TaCalender = () => {
             setEventsList([]);
         }
     };
-    useEffect(() => {
-        convertEvents();
-    }, [scheduleData, timezones, storedTimezoneId, selectedTA]);
 
     const convertSlots = async () => {
-        if (slotData && slotData.length > 0 && timezones && storedTimezoneId) {
-            const timezonename = timezoneIdToName(storedTimezoneId, timezones);
+        if (slotData && slotData.length > 0 && timezoneDetails?.time_zone) {
             try {
                 const processedSlots = [];
 
@@ -228,7 +196,7 @@ const TaCalender = () => {
                             start_time: slot.from_time,
                             end_time: slot.to_time,
                             end_date: slot.slot_end_date,
-                            timezonename,
+                            timezonename: timezoneDetails?.time_zone,
                         });
 
                         const startDateTime = new Date(
@@ -274,9 +242,6 @@ const TaCalender = () => {
                         }
                     })
                 );
-                // console.log('transformed slots', processedSlots);
-                setSlotViewData(processedSlots);
-                // console.log('transformed slots', processedSlots);
                 setSlotViewData(processedSlots);
             } catch (error) {
                 console.error('Error converting slots:', error);
@@ -286,12 +251,6 @@ const TaCalender = () => {
             setSlotViewData([]);
         }
     };
-
-    useEffect(() => {
-        convertSlots();
-    }, [slotData]);
-
-    // console.log('transformedSlots :', slotViewData);
 
     const handleScheduleNewSession = () => {
         dispatch(openScheduleSession({ id, name }));
@@ -309,8 +268,6 @@ const TaCalender = () => {
     const handleCreateNewSlot = () => {
         dispatch(openCreateNewSlots());
     };
-
-    // console.log('SlotViewData', slotViewData);
 
     return (
         <>
@@ -386,23 +343,36 @@ const TaCalender = () => {
                         componentName={'TACALENDER'}
                     />
                     {scheduleSessionOpen && (
-                        <Schedule
+                        //<Schedule
+                        <CreateNewSession
+                            id={id}
+                            name={name}
                             componentName={'TASCHEDULE'}
-                            timezoneID={storedTimezoneId}
+                            timezone={timezoneDetails}
                         />
                     )}
-                    {openEditBatch && (
-                        <EditBatches componentname={'TASCHEDULE'} />
+                    {openBatches && (
+                        <SelectBatches
+                            id={id}
+                            name={name}
+                            componentName={'TASCHEDULE'}
+                            timezone={timezoneDetails}
+                        />
                     )}
-                    {openEditStudent && (
-                        <EditStudents componentname={'TASCHEDULE'} />
+                    {openStudents && (
+                        <SelectStudents
+                            id={id}
+                            name={name}
+                            componentName={'TASCHEDULE'}
+                            timezone={timezoneDetails}
+                        />
                     )}
                     {markLeaveOpen && (
                         <MarkLeave
                             id={id}
                             name={name}
                             componentName={'TACALENDER'}
-                            timezoneID={storedTimezoneId}
+                            timezone={timezoneDetails}
                         />
                     )}
                     {scheduledSlotsOpen && (
@@ -410,7 +380,7 @@ const TaCalender = () => {
                             id={id}
                             name={name}
                             componentName={'TACALENDER'}
-                            timezoneID={storedTimezoneId}
+                            timezone={timezoneDetails}
                         />
                     )}
                     {scheduledSessionOpen && (
@@ -418,7 +388,7 @@ const TaCalender = () => {
                             id={id}
                             name={name}
                             componentName={'TACALENDER'}
-                            timezoneID={storedTimezoneId}
+                            timezone={timezoneDetails}
                         />
                     )}
                     {cancelSessionOpen && (
@@ -426,7 +396,7 @@ const TaCalender = () => {
                             id={id}
                             name={name}
                             componentName={'TACALENDER'}
-                            timezoneID={storedTimezoneId}
+                            timezone={timezoneDetails}
                         />
                     )}
                     {reasonForLeaveOpen && (
@@ -434,7 +404,7 @@ const TaCalender = () => {
                             id={id}
                             name={name}
                             componentName={'TACALENDER'}
-                            timezoneID={storedTimezoneId}
+                            timezone={timezoneDetails}
                         />
                     )}
                     {resheduleSessionOpen && (
@@ -442,32 +412,48 @@ const TaCalender = () => {
                             id={id}
                             name={name}
                             componentName={'TACALENDER'}
-                            timezoneID={storedTimezoneId}
+                            timezone={timezoneDetails}
                         />
                     )}
                     {deletingCoachFutureSlots && (
                         <DeleteAllSlots
+                            id={id}
+                            name={name}
                             componentName={'TACALENDER'}
-                            timezoneID={storedTimezoneId}
+                            timezone={timezoneDetails}
                         />
                     )}
                     {createNewSlotOpen && (
                         <CreateNewSlot
+                            id={id}
+                            name={name}
                             componentName={'TACALENDER'}
-                            timezoneID={storedTimezoneId}
+                            timezone={timezoneDetails}
                         />
                     )}
                     {openEventData && (
                         <ScheduleSession
+                            id={id}
+                            name={name}
                             componentName={'TACALENDER'}
-                            timezoneID={storedTimezoneId}
+                            timezone={timezoneDetails}
                         />
                     )}
                     {taEditScheduledStudents && (
-                        <EditStudentsFromSession componentName={'TACALENDER'} />
+                        <EditStudentsFromSession
+                            id={id}
+                            name={name}
+                            componentName={'TACALENDER'}
+                            timezone={timezoneDetails}
+                        />
                     )}
                     {taEditScheduledBatches && (
-                        <EditBatchesFromSession componentName={'TACALENDER'} />
+                        <EditBatchesFromSession
+                            id={id}
+                            name={name}
+                            componentName={'TACALENDER'}
+                            timezone={timezoneDetails}
+                        />
                     )}
                 </Box>
             </Box>

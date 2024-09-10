@@ -99,7 +99,7 @@ const WOLSelectQuestions = () => {
                 return prevSelected.filter(id => id !== questionId);
             } else {
                 if (prevSelected.length >= categoryInfo.total_ques) {
-                    toast.error("You can only select a maximum of 5 questions.");
+                    toast.error("you already selected " + categoryInfo.total_ques + " questions");
                     return prevSelected;
                 }
                 return [...prevSelected, questionId];
@@ -154,7 +154,7 @@ const WOLSelectQuestions = () => {
                             fontFamily: 'ExtraLight',
                         }}
                     >
-                        Wheel Of Life Test Config
+                        Wheel Of Life Test  Config
                     </p>
                 </Box>
             </Box>

@@ -40,12 +40,12 @@ import SubmitPopup from '../../SubmitPopup';
 import AvatarInput from '../../../CustomFields/AvatarInput';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
-import { getTimezone } from '../../../../redux/features/utils/utilSlice';
 import CustomTimeZoneForm from '../../../CustomFields/CustomTimeZoneForm';
 import CustomDateOfBirth from '../../../CustomFields/CustomDateOfBirth';
+import { useGetTimezonesQuery } from '../../../../redux/services/timezones/timezonesApi';
 
 const AddEditTA = ({ data }) => {
-    console.log('DATA :', data);
+
     const {
         register,
         handleSubmit,
@@ -66,6 +66,7 @@ const AddEditTA = ({ data }) => {
     const [isEditingDescription, setIsEditingDescription] = useState(false);
     const [editableDescription, setEditableDescription] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const { data : timezones, error, isLoading } = useGetTimezonesQuery();
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -74,11 +75,6 @@ const AddEditTA = ({ data }) => {
     const { successPopup, assignStudentOpen, assignBatchOpen } = useSelector(
         state => state.taModule
     );
-    const { timezones } = useSelector(state => state.util);
-
-    useEffect(() => {
-        dispatch(getTimezone());
-    }, [dispatch]);
 
     useEffect(() => {
         if (data) {

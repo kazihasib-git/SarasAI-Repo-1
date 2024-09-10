@@ -345,13 +345,15 @@ const DynamicTable = ({
                         },
                     }}
                 />
-                 {isDialogOpen && (
-                <DeleteConfirmation
-                open={isDialogOpen}
-                handleClose={handleCloseDialog}
-                onConfirm={()=>{handleConfirmDelete(itemIdToDelete,ta_id)}}
-             />
-            )}
+                {isDialogOpen && (
+                    <DeleteConfirmation
+                        open={isDialogOpen}
+                        handleClose={handleCloseDialog}
+                        onConfirm={() => {
+                            handleConfirmDelete(itemIdToDelete, ta_id);
+                        }}
+                    />
+                )}
             </div>
         </div>
     );
@@ -368,7 +370,7 @@ const actionButtons = [
     },
 ];
 
-const AssignBatches = () => {
+const AssignedBatches = () => {
     const { id } = useParams();
     const dispatch = useDispatch();
     const { assignedBatches, loading } = useSelector(state => state.taModule);
@@ -415,4 +417,4 @@ const AssignBatches = () => {
     );
 };
 
-export default AssignBatches;
+export default AssignedBatches;

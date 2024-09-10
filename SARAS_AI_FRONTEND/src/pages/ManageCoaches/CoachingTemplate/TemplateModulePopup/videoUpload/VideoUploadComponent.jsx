@@ -23,14 +23,31 @@ const VideoUploadComponent = ({ onUploadComplete }) => {
     const [uploadProgress, setUploadProgress] = useState(0);
     const [error, setError] = useState('');
 
+    const validateFile = file => {
+        if (file && file.type.startsWith('video/')) {
+            setError('');
+            return true;
+        } else {
+            setError('Please upload a valid video file.');
+            setFile(null); // Reset the file if it's not valid
+            return false;
+        }
+    };
+
     const handleFileChange = event => {
-        setFile(event.target.files[0]);
+        const selectedFile = event.target.files[0];
+
+        if (validateFile(selectedFile)) {
+            setFile(selectedFile);
+        }
     };
 
     const handleDrop = event => {
         event.preventDefault();
         const droppedFile = event.dataTransfer.files[0];
-        setFile(droppedFile);
+        if (validateFile(droppedFile)) {
+            setFile(droppedFile);
+        }
     };
 
     const handleDragOver = event => {

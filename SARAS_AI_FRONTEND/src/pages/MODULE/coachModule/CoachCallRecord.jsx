@@ -24,46 +24,10 @@ import {
 import calender from '../../../assets/calender.svg';
 import VideoUploadDialog from '../../../components/integrations/videoUpload';
 import VideoPopup from '../../../components/integrations/videoPlayerPopUp';
-import { getTimezone } from '../../../redux/features/utils/utilSlice';
 import { timezoneIdToName } from '../../../utils/timezoneIdToName';
 import { convertFromUTC } from '../../../utils/dateAndtimeConversion';
-
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#F56D3B',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '500',
-                fontSize: '13px',
-
-                borderRadius: '40px',
-                gap: '10px',
-                padding: '16px, 20px, 16px, 20px',
-                border: `1.5px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
+import CustomButton from '../../../components/CustomFields/CustomButton';
+import { useGetTimezonesQuery } from '../../../redux/services/timezones/timezonesApi';
 
 const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
 
@@ -79,12 +43,11 @@ const CoachCallRecord = () => {
 
     const dispatch = useDispatch();
     const calls = useSelector(state => state.coachMenu.coachCallRecords);
-    const { timezones } = useSelector(state => state.util);
+    const { data : timezones, error, isLoading } = useGetTimezonesQuery();
     const { userData } = useSelector(state => state.auth);
 
     useEffect(() => {
         dispatch(getCoachCallRecords(date.format('YYYY-MM-DD')));
-        dispatch(getTimezone());
     }, [date, dispatch]);
 
     useEffect(() => {

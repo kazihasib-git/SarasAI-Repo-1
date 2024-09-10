@@ -31,66 +31,6 @@ const Login = () => {
         setErrMsg('');
     }, [user, pwd]);
 
-    /*
-    // using context api
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        // console.log(user, pwd)
-        // setUser('')
-        // setPwd('')
-        // setSuccess(true)
-        try {
-            // const response = await axios.post(LOGIN_URL,
-            //     JSON.stringify({ user, pwd }),
-            //     {
-            //         headers: { 'Content-Type': 'application/json' },
-            //         withCredentials: true
-            //     }
-            // );
-
-            const response = {
-                data: {
-                    roles: [1984],
-                    accessToken: 'Heeloo_there_123',
-                },
-            };
-
-            const accessToken = response?.data?.accessToken;
-            const roles = response?.data?.roles;
-
-            setAuth({ user, pwd, roles, accessToken });
-
-            setUser('');
-            setPwd('');
-
-            // Redirect
-            if (roles.includes(1984)) {
-                // Coach role
-                navigate('/coachmenu_profile', { replace: true });
-            } else if (roles.includes(2001)) {
-                // Teaching role
-                navigate('/tamenu_profile', { replace: true });
-            } else if (roles.includes(5150)) {
-                // Admin role
-                navigate('/', { replace: true });
-            } else {
-                navigate(from, { replace: true });
-            }
-        } catch (err) {
-            if (!err?.response) {
-                setErrMsg('No Server Response');
-            } else if (err.response?.status === 400) {
-                setErrMsg('Missing Username or Password');
-            } else if (err.response?.status === 401) {
-                setErrMsg('Unauthorized');
-            } else {
-                setErrMsg('Login Failed');
-            }
-            errRef.current.focus();
-        }
-    };
-    */
-
     // using redux toolkit
     const onSubmit = async e => {
         e.preventDefault();
@@ -101,7 +41,6 @@ const Login = () => {
             };
 
             dispatch(login(requestBody));
-        
         } catch (error) {
             console.log(error);
         }

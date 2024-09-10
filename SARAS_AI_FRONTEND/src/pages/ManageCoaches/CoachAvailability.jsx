@@ -4,7 +4,7 @@ import { getTodayCoachAvailability } from '../../redux/features/adminModule/coac
 import { useEffect, useState } from 'react';
 import Header from '../../components/Header/Header';
 import Sidebar from '../../components/Sidebar/Sidebar';
-import { DynamicTable } from '../managesTAs/TaAvaialablity';
+import DynamicTable from '../../components/CommonComponent/DynamicTable';
 
 const headers = [
     'S. No.',
@@ -14,7 +14,7 @@ const headers = [
     'Calendar',
 ];
 
-const CoachAvialablity = () => {
+const CoachAvailability = () => {
     const dispatch = useDispatch();
     const { todaysAvailableCoach } = useSelector(
         state => state.coachAvailability
@@ -34,9 +34,12 @@ const CoachAvialablity = () => {
                 taName: item.name,
                 username: item.username,
                 Availability: item.availability_status,
+                timezoneId: item.timezone_id,
                 // calendar: 'Check',
             }));
             setCoachAvailabilityData(transformData);
+        } else {
+            setCoachAvailabilityData([]);
         }
     }, [todaysAvailableCoach]);
 
@@ -100,4 +103,4 @@ const CoachAvialablity = () => {
     );
 };
 
-export default CoachAvialablity;
+export default CoachAvailability;

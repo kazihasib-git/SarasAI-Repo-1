@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getTimezone } from '../../../../redux/features/utils/utilSlice';
 import {
     createCoachMenuSlot,
     getCoachMenuSlots,
@@ -12,7 +11,6 @@ import {
 import { closeCreateNewSlot } from '../../../../redux/features/commonCalender/commonCalender';
 import {
     Box,
-    Button,
     Checkbox,
     FormControl,
     FormControlLabel,
@@ -28,42 +26,25 @@ import ReusableDialog from '../../../CustomFields/ReusableDialog';
 import CustomButton from '../../../CustomFields/CustomButton';
 import { toast } from 'react-toastify';
 import CustomFutureDateField from '../../../CustomFields/CustomFutureDateField';
+import { GLOBAL_CONSTANTS } from '../../../../constants/globalConstants';
+import { useGetTimezonesQuery } from '../../../../redux/services/timezones/timezonesApi';
 
-const weekDays = [
-    'Sunday',
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-];
+const slotConfig = {
+    TAMENU: {
+        createSlotApi: createTaMenuSlots,
+        getSlotsApi: getTaMenuSlots,
+    },
+    COACHMENU: {
+        createSlotApi: createCoachMenuSlot,
+        getSlotsApi: getCoachMenuSlots,
+    },
+};
 
-// const timezone = Number(localStorage.getItem('timezone_id'));
-
-const CreateSlot = ({ componentName, timezoneID }) => {
-    console.log('create slot timezoneID :' ,  timezoneID) ; 
-    
-    let createSlotApi, getSlotsApi;
-
-    switch (componentName) {
-        case 'TAMENU':
-            createSlotApi = createTaMenuSlots;
-            getSlotsApi = getTaMenuSlots;
-            break;
-        case 'COACHMENU':
-            createSlotApi = createCoachMenuSlot;
-            getSlotsApi = getCoachMenuSlots;
-            break;
-        default:
-            createSlotApi = null;
-            getSlotsApi = null;
-            break;
-    }
+const CreateSlot = ({ componentName, timezone }) => {
+    const { createSlotApi, getSlotsApi } = slotConfig[componentName];
 
     const dispatch = useDispatch();
     const [errors, setErrors] = useState({});
-
     const initialFormData = {
         fromDate: null,
         toDate: null,
@@ -71,20 +52,14 @@ const CreateSlot = ({ componentName, timezoneID }) => {
         repeat: 'onetime',
         fromTime: null,
         toTime: null,
-        timezone_id: timezoneID,
+        timezone_id: timezone?.id,
     };
-
     const [formData, setFormData] = useState(initialFormData);
 
-    const { timezones } = useSelector(state => state.util);
+    const { data : timezones, error, isLoading } = useGetTimezonesQuery();
     const { createNewSlotPopup } = useSelector(state => state.commonCalender);
 
-    useEffect(() => {
-        dispatch(getTimezone());
-    }, [dispatch]);
-
     const handleChange = (field, value) => {
-        console.log('field', field, ':', value);
         if (field === 'timezone_id') {
             setFormData(prev => ({ ...prev, [field]: value }));
         }
@@ -144,7 +119,7 @@ const CreateSlot = ({ componentName, timezoneID }) => {
         let weeksArray = Array(7).fill(0);
         if (formData.repeat === 'recurring') {
             formData.selectedDays.forEach(day => {
-                const index = weekDays.indexOf(day);
+                const index = GLOBAL_CONSTANTS.WEEKDAYS.indexOf(day);
                 weeksArray[index] = 1;
             });
         } else if (formData.repeat === 'onetime') {
@@ -175,9 +150,6 @@ const CreateSlot = ({ componentName, timezoneID }) => {
                 console.error('API Error:', error);
             });
     };
-
-    console.log('formData', formData.timezone_id);
-    console.log('timezoneid comming' , timezoneID) ; 
 
     const content = (
         <Box
@@ -263,8 +235,9 @@ const CreateSlot = ({ componentName, timezoneID }) => {
                                 label="Time Zone"
                                 name="timezone_id"
                                 value={formData.timezone_id}
-                                onChange={e=>handleChange('timezone_id' , e.target.value)}
-                                // disabled={timezoneID != null}
+                                onChange={e =>
+                                    handleChange('timezone_id', e.target.value)
+                                }
                                 options={timezones}
                                 errors={errors}
                             />
@@ -330,25 +303,27 @@ const CreateSlot = ({ componentName, timezoneID }) => {
                                                     justifyContent: 'center',
                                                 }}
                                             >
-                                                {weekDays.map(day => (
-                                                    <FormControlLabel
-                                                        key={day}
-                                                        control={
-                                                            <Checkbox
-                                                                checked={formData.selectedDays.includes(
-                                                                    day
-                                                                )}
-                                                                onChange={() =>
-                                                                    handleDayChange(
+                                                {GLOBAL_CONSTANTS.WEEKDAYS.map(
+                                                    day => (
+                                                        <FormControlLabel
+                                                            key={day}
+                                                            control={
+                                                                <Checkbox
+                                                                    checked={formData.selectedDays.includes(
                                                                         day
-                                                                    )
-                                                                }
-                                                                name={day}
-                                                            />
-                                                        }
-                                                        label={day}
-                                                    />
-                                                ))}
+                                                                    )}
+                                                                    onChange={() =>
+                                                                        handleDayChange(
+                                                                            day
+                                                                        )
+                                                                    }
+                                                                    name={day}
+                                                                />
+                                                            }
+                                                            label={day}
+                                                        />
+                                                    )
+                                                )}
                                             </FormGroup>
                                         </FormControl>
                                     </Grid>

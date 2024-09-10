@@ -1,54 +1,36 @@
 import { Button, Grid } from '@mui/material';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-    getTaMenuSlotsForLeave,
-    getTaSlotsForLeave,
-} from '../../../../redux/features/taModule/tamenuSlice';
-import {
-    getCoachMenuSlotsForLeave,
-    getSlotsForLeave,
-} from '../../../../redux/features/coachModule/coachmenuprofileSilce';
-import { toast } from 'react-toastify';
+import { getTaMenuSlotsForLeave } from '../../../../redux/features/taModule/tamenuSlice';
+import { getCoachMenuSlotsForLeave } from '../../../../redux/features/coachModule/coachmenuprofileSilce';
 import {
     closeMarkLeaveDate,
     openCreatedSlots,
 } from '../../../../redux/features/commonCalender/commonCalender';
-import CustomDateField from '../../../CustomFields/CustomDateField';
 import ReusableDialog from '../../../CustomFields/ReusableDialog';
 import CustomButton from '../../../CustomFields/CustomButton';
-import { timezoneIdToName } from '../../../../utils/timezoneIdToName';
 import CustomFutureDateField from '../../../CustomFields/CustomFutureDateField';
 
-const MarkLeaveDate = ({ componentName, timezoneID }) => {
-    const { timezones } = useSelector(state => state.util);
+const markLeaveConfig = {
+    TAMENU: {
+        sliceName: 'taMenu',
+        getSlotsByDateApi: getTaMenuSlotsForLeave,
+    },
+    COACHMENU: {
+        sliceName: 'coachMenu',
+        getSlotsByDateApi: getCoachMenuSlotsForLeave,
+    },
+};
 
+const MarkLeaveDate = ({ componentName, timezone }) => {
     const dispatch = useDispatch();
     const [formData, setFormData] = useState({
         fromDate: null,
         toDate: null,
     });
     const [errors, setErrors] = useState({}); // Error state
-    const timezoneName = timezoneIdToName(timezoneID, timezones);
 
-    let sliceName, getSlotsByDateApi;
-
-    switch (componentName) {
-        case 'TAMENU':
-            sliceName = 'taMenu';
-            getSlotsByDateApi = getTaMenuSlotsForLeave;
-            break;
-
-        case 'COACHMENU':
-            sliceName = 'coachMenu';
-            getSlotsByDateApi = getCoachMenuSlotsForLeave;
-            break;
-
-        default:
-            sliceName = null;
-            getSlotsByDateApi = null;
-            break;
-    }
+    const { sliceName, getSlotsByDateApi } = markLeaveConfig[componentName];
 
     const stateSelector = useSelector(state => state[sliceName]);
     const { markLeave } = useSelector(state => state.commonCalender);
@@ -83,7 +65,7 @@ const MarkLeaveDate = ({ componentName, timezoneID }) => {
             end_date: formData.toDate,
             start_time: '00:00:00',
             end_time: '23:59:59',
-            timezone_name: timezoneName,
+            timezone_name: timezone.time_zone,
         };
 
         dispatch(getSlotsByDateApi(data))

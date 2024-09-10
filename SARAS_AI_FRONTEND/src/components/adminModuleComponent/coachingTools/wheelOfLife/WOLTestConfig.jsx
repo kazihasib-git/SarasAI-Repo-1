@@ -97,8 +97,10 @@ const WOLTestConfig = () => {
     }, [wolCategoryData]);
 
     // Generate options based on the wol_questions_count for each category
-    const WOLCategoriesOptions =
-        wolCategoryData.map(item => ({
+    const WOLCategoriesOptions = 
+    wolCategoryData
+        .filter(item => item.is_active === 1)
+        .map(item => ({
             value: item.id,
             label: item.name,
         })) || [];
@@ -204,7 +206,7 @@ const WOLTestConfig = () => {
                         onClick={() => navigate('/wheel-of-life')}
                     />
                     <p style={{ fontSize: '40px', fontWeight: 200 }}>
-                        Wheel Of Test Config
+                        Wheel of Life Test Config
                     </p>
                 </Box>
             </Box>

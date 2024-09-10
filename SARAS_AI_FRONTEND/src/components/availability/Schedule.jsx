@@ -36,11 +36,6 @@ import {
     openCoachEditBatch,
     openCoachEditStudent,
 } from '../../redux/features/adminModule/coach/coachSchedule';
-import {
-    getPlatforms,
-    getTimezone,
-    getAllHosts,
-} from '../../redux/features/utils/utilSlice';
 import CustomTimeZoneForm from '../CustomFields/CustomTimeZoneForm';
 import { fetchTAScheduleById } from '../../redux/features/adminModule/ta/taAvialability';
 import { toast } from 'react-toastify';
@@ -51,18 +46,12 @@ import CustomPlatformForm from '../CustomFields/CustomPlatformForm';
 import editButtonBackground from '../../assets/editbuttonbackground.svg';
 import editButtonIcon from '../../assets/editbutton.svg';
 import CustomFutureDateField from '../CustomFields/CustomFutureDateField';
+import { GLOBAL_CONSTANTS } from '../../constants/globalConstants';
+import { useGetTimezonesQuery } from '../../redux/services/timezones/timezonesApi';
+import { useGetPlatformsQuery } from '../../redux/services/platforms/platformsApi';
+import { useGetHostsQuery } from '../../redux/services/hosts/hostsApi';
 
 const headers = ['S. No.', 'Slot Date', 'From Time', 'To Time', 'Select'];
-
-const weekDays = [
-    'Sunday',
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-];
 
 const actionButtons = [
     {
@@ -82,9 +71,11 @@ const Schedule = ({ componentName, timezoneID }) => {
     const [availableSlotsOptions, setAvailableSlotsOptions] = useState([]);
     const [dateSelected, setDateSelected] = useState(false);
     const dispatch = useDispatch();
-    const { timezones, platforms, hosts } = useSelector(state => state.util);
 
-    const [meetingTypes, setMeetingtypes] = useState(['webinars', 'meetings']);
+    const { data : timezones, error : timezoneError , isLoading : timezonesLoading } = useGetTimezonesQuery()
+    const { data : platforms, error : platformError, isLoading : platformLoading } = useGetPlatformsQuery()
+    const { data : hosts, error : hostsError, isLoading : hostsLoading} = useGetHostsQuery()
+
 
     let scheduleSessionOpenKey,
         schedulingStateKey,
@@ -210,12 +201,6 @@ const Schedule = ({ componentName, timezoneID }) => {
         }
     };
 
-    useEffect(() => {
-        dispatch(getTimezone());
-        dispatch(getPlatforms());
-        dispatch(getAllHosts());
-    }, [dispatch]);
-
     const convertSessions = async () => {
         if (
             availableSlots &&
@@ -340,15 +325,14 @@ const Schedule = ({ componentName, timezoneID }) => {
         }
     };
 
-    const validate = (formData) => {
-
+    const validate = formData => {
         // Ensure all required fields are filled in
         if (!fromDate) {
             toast.error('Please select from Date');
             return false;
         }
 
-        if(!selectedSlot){
+        if (!selectedSlot) {
             toast.error('Please select slot');
             return false;
         }
@@ -358,7 +342,7 @@ const Schedule = ({ componentName, timezoneID }) => {
             return false;
         }
 
-        if(repeat==='recurring'){
+        if (repeat === 'recurring') {
             if (!toTime) {
                 toast.error('Please select a To Time');
                 return false;
@@ -368,21 +352,21 @@ const Schedule = ({ componentName, timezoneID }) => {
         // Validate "To Time" is greater than "From Time"
         // const fromTimeInMinutes = convertTimeToMinutes(fromTime);
         // const toTimeInMinutes = convertTimeToMinutes(toTime);
-    
+
         // if (toTimeInMinutes <= fromTimeInMinutes) {
         //     toast.error('To Time must be later than From Time');
         //     return false;
         // }
-    
+
         // Validate that selected times are within the slot's time range
         // const slotStartTimeInMinutes = convertTimeToMinutes(selectedSlot['From Time']);
         // const slotEndTimeInMinutes = convertTimeToMinutes(selectedSlot['To Time']);
-    
+
         // if (fromTimeInMinutes < slotStartTimeInMinutes || toTimeInMinutes > slotEndTimeInMinutes) {
         //     toast.error(`Time must be between ${formatTime(selectedSlot['From Time'])} and ${formatTime(selectedSlot['To Time'])}`);
         //     return false;
         // }
-    
+
         if (formData.platform_id === 1) {
             if (!formData.host_email_id) {
                 toast.error('Please provide a valid  Host Name.');
@@ -392,7 +376,7 @@ const Schedule = ({ componentName, timezoneID }) => {
             if (!formData.meeting_type) {
                 toast.error('Please select Meeting Type.');
                 return false;
-            }   
+            }
         }
 
         // Check if 'timezone_id' is provided
@@ -400,7 +384,7 @@ const Schedule = ({ componentName, timezoneID }) => {
             toast.error('Please select a timezone');
             return false;
         }
-        
+
         return true;
     };
 
@@ -444,7 +428,7 @@ const Schedule = ({ componentName, timezoneID }) => {
         formData.studentId = studentId;
         formData.batchId = batchId;
         // formData.timezone_id = timezoneId ? Number(timezoneId) : timezoneID;
-    
+
         // Submit data
         dispatch(createScheduleAction(formData))
             .then(() => {
@@ -468,8 +452,6 @@ const Schedule = ({ componentName, timezoneID }) => {
         name: 'platform_id',
         defaultValue: 0, // Provide a default value if necessary
     });
-
-    
 
     const content = (
         <Box
@@ -748,7 +730,7 @@ const Schedule = ({ componentName, timezoneID }) => {
                                                                                 errors
                                                                             }
                                                                             options={
-                                                                                meetingTypes
+                                                                                GLOBAL_CONSTANTS.MEETING_TYPES
                                                                             }
                                                                         />
                                                                     )}

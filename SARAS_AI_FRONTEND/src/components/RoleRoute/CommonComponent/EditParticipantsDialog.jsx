@@ -9,53 +9,188 @@ import {
     Box,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { closeParticipantsDialog, openEditParticipantsDialog, openSelectStudents, openSelectBatches } from '../../../redux/features/commonCalender/commonCalender';
-import { useDispatch } from 'react-redux';
-import { useSelector } from 'react-redux';
-// const participantsData = [
-//     { id: 1, name: 'Name Here', program: 'Program 1', batch: 'Batch 1' },
-//     { id: 2, name: 'Name Here', program: 'Program 2', batch: 'Batch 2' },
-//     { id: 3, name: 'Name Here', program: 'Program 3', batch: 'Batch 3' },
-//     { id: 4, name: 'Name Here', program: 'Program 4', batch: 'Batch 4' },
-// ];
+import {
+    closeParticipantsDialog,
+    openEditParticipantsDialog,
+    openSelectStudents,
+    openSelectBatches,
+    openParticipantsDialog,
+    closeEditParticipantsDialog,
+} from '../../../redux/features/commonCalender/commonCalender';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+    getCoachMenuAssignedBatches,
+    getCoachMenuAssignedStudents,
+    getCoachScheduledCalls,
+    updateCoachScheduledCall,
+} from '../../../redux/features/coachModule/coachmenuprofileSilce';
+import {
+    getTaMenuAssignedBatches,
+    getTaMenuAssignedStudents,
+    getTaScheduledCalls,
+    updateTaScheduledCall,
+} from '../../../redux/features/taModule/tamenuSlice';
+import {
+    openBatchPopup,
+    openStudentsPopup,
+    updateSelectedBatches,
+    updateSelectedStudents,
+} from '../../../redux/features/commonCalender/batchesAndStudents';
+import SelectBatches from '../../batches/SelectBatches';
+import SelectStudents from '../../students/SelectStudents';
+import { timezoneIdToName } from '../../../utils/timezoneIdToName';
+import { useGetTimezonesQuery } from '../../../redux/services/timezones/timezonesApi';
 
-const EditParticipantsDialog = ({ openEdit, onCloseEdit, participantsData }) => {
+const editParticipantsConfig = {
+    TA: {
+        sliceName: 'taMenu',
+        updateSessionApi: updateTaScheduledCall,
+        getSessionApi: getTaScheduledCalls,
+        getStudentsApi: getTaMenuAssignedStudents,
+        getStudentsState: 'assignedTaStudents',
+        getBatchesApi: getTaMenuAssignedBatches,
+        getBatchesState: 'assignedTaBatches',
+    },
+    Coach: {
+        sliceName: 'coachMenu',
+        updateSessionApi: updateCoachScheduledCall,
+        getSessionApi: getCoachScheduledCalls,
+        getStudentsApi: getCoachMenuAssignedStudents,
+        getStudentsState: 'assignedCoachStudents',
+        getBatchesApi: getCoachMenuAssignedBatches,
+        getBatchesState: 'assignedCoachBatches',
+    },
+};
 
-    const {selectedParticipants} = useSelector(state=>state.commonCalender) ; 
+const EditParticipantsDialog = ({ openEdit, onCloseEdit, role, timezone }) => {
+    const dispatch = useDispatch();
+    const {
+        sliceName,
+        updateSessionApi,
+        getSessionApi,
+        getStudentsApi,
+        getStudentsState,
+        getBatchesApi,
+        getBatchesState,
+    } = editParticipantsConfig[role];
+
+    const { data : timezones, error, isLoading } = useGetTimezonesQuery();
+    const stateSelector = useSelector(state => state[sliceName]);
+    const {
+        [getStudentsState]: assignedStudents,
+        [getBatchesState]: assignedBatches,
+    } = stateSelector;
+
+    const { selectedStudents, selectedBatches, openBatches, openStudents } =
+        useSelector(state => state.batchesAndStudents);
+
+    const { participantsData } = useSelector(state => state.commonCalender);
 
     const [data, setData] = useState([]);
-    const transformData = () => {
-        const transformedData = selectedParticipants.map((item, index) => ({
-            id: item.id,
-            name: item.name,
-            //'Enrollment Id': item.enrollment_id,
-            program:
-                item.packages.map(pack => pack.package_name).join(',') || 'N/A',
-            batch:
-                item.batches.map(batch => batch.name).join(', ') ||
-                'N/A',
-        }));
-        console.log('TransformedData', transformedData);
-        setData(transformedData);
-    }
-
 
     useEffect(() => {
-        transformData(selectedParticipants);
-    }, selectedParticipants);
-    const dispatch = useDispatch();
+        dispatch(getStudentsApi());
+        dispatch(getBatchesApi());
+    }, [dispatch]);
 
-    const handleOpenEditParticipantsDialog = participants => {
-        console.log('handleOpenEditParticipantsDialog', true)
-        dispatch(openEditParticipantsDialog(selectedParticipants));
+    const transformData = () => {
+        const transformedData = participantsData.students.map(item => ({
+            id: item.id,
+            name: item.name,
+            program:
+                item.packages.map(pack => pack.package_name).join(',') || 'N/A',
+            batch: item.batches.map(batch => batch.name).join(', ') || 'N/A',
+        }));
+        setData(transformedData);
+
+        dispatch(
+            updateSelectedStudents({
+                selectedStudents: participantsData.students.map(
+                    student => student.id
+                ),
+            })
+        );
+
+        dispatch(
+            updateSelectedBatches({
+                selectedBatches: participantsData.batch.map(batch => batch.id),
+            })
+        );
     };
 
+    useEffect(() => {
+        if (participantsData?.students.length > 0) {
+            transformData();
+        } else {
+            console.log('no data found !');
+            setData([]);
+        }
+    }, [participantsData?.students]);
+
     const handleAssignStudents = () => {
-        dispatch(openSelectStudents({ selectedParticipants }));
+        const data = {
+            batches: assignedBatches,
+            selectedBatches: selectedBatches?.length > 0 ? selectedBatches : [],
+            students: assignedStudents,
+            selectedStudents:
+                selectedStudents?.length > 0 ? selectedStudents : [],
+            timezoneId: timezone,
+        };
+        dispatch(openStudentsPopup(data));
+        //dispatch(openSelectStudents({ participantsData }));
     };
 
     const handleAssignBatches = () => {
-        dispatch(openSelectBatches({ selectedParticipants }));
+        const data = {
+            batches: assignedBatches,
+            selectedBatches: selectedBatches?.length > 0 ? selectedBatches : [],
+            students: assignedStudents,
+            selectedStudents:
+                selectedStudents?.length > 0 ? selectedStudents : [],
+            timezoneId: timezone,
+        };
+        dispatch(openBatchPopup(data));
+        //dispatch(openSelectBatches({ participantsData }));
+    };
+
+    const handleSubmit = () => {
+        const studentId = selectedStudents.map(student => student);
+        const batchId = selectedBatches.map(batch => batch);
+
+        const data = {
+            meeting_name: participantsData.meeting_name,
+            duration: participantsData.duration,
+            schedule_date: participantsData.date,
+            start_time: participantsData.start_time,
+            end_time: participantsData.end_time,
+            message: participantsData.message,
+            platform_id: participantsData.platform_id,
+            timezone_id: timezone, //participantsData.timezone,
+            event_status: 'scheduled',
+            studentId: studentId,
+            batchId: batchId,
+            host_email_id: participantsData.host_email_id,
+            meeting_type: participantsData.meeting_type,
+        };
+
+        dispatch(updateSessionApi({ id: participantsData.id, data }))
+            .unwrap() // Ensures the promise is unwrapped for proper chaining
+            .then(() => {
+                const sessionData = {
+                    date: participantsData.date, //formatDate(participantsData.date), (if needed to format)
+                    timezone_name: timezoneIdToName(timezone, timezones),
+                };
+                return dispatch(getSessionApi(sessionData)); // Ensure this dispatch runs after updateSessionApi resolves
+            })
+            .then(() => {
+                // Close the edit participants dialog after both API calls succeed
+                dispatch(closeEditParticipantsDialog(participantsData));
+                dispatch(closeParticipantsDialog());
+            })
+            .catch(error => {
+                console.error('Error updating TA scheduled call:', error);
+                // Handle the error here (e.g., show error message to the user)
+            });
     };
 
     return (
@@ -71,7 +206,15 @@ const EditParticipantsDialog = ({ openEdit, onCloseEdit, participantsData }) => 
             }}
         >
             <DialogTitle>
-                <Typography variant="h6" marginTop={4}>
+                <Typography
+                    style={{
+                        fontFamily: 'SemiBold',
+                        color: '#1A1E3D',
+                        fontSize: '24px',
+                    }}
+                    variant="h6"
+                    marginTop={4}
+                >
                     Edit Participants
                 </Typography>
                 <IconButton
@@ -90,7 +233,7 @@ const EditParticipantsDialog = ({ openEdit, onCloseEdit, participantsData }) => 
                 style={{
                     display: 'flex',
                     flexDirection: 'column',
-                    height: 'calc(100% - 60px)', // Adjust height to fit within the dialog
+                    height: 'calc(100% - 60px)',
                     padding: '20px',
                 }}
             >
@@ -100,11 +243,33 @@ const EditParticipantsDialog = ({ openEdit, onCloseEdit, participantsData }) => 
                         width: '100%',
                         borderCollapse: 'collapse',
                         '& thead': {
-                            borderBottom: '1px solid #C2C2E7',
+                            '& tr': {
+                                '& th': {
+                                    position: 'relative',
+                                    paddingLeft: '8px', // Left gap
+                                    paddingRight: '8px', // Right gap
+                                    '&::after': {
+                                        content: '""',
+                                        position: 'absolute',
+                                        bottom: 0,
+                                        height: '2px',
+                                        backgroundColor: '#C2C2E7',
+                                        left: '8px', // Gap from the left
+                                        right: '8px', // Gap from the right
+                                    },
+                                },
+                            },
                         },
                         '& tbody': {
                             '& tr': {
-                                borderBottom: '1px solid #C2C2E7',
+                                position: 'relative',
+                                '&:not(:last-child)': {
+                                    '& td': {
+                                        borderBottom: '1px solid #C2C2E7',
+                                        paddingLeft: '8px', // Left gap for td
+                                        paddingRight: '8px', // Right gap for td
+                                    },
+                                },
                             },
                         },
                         backgroundColor: '#E0E0F3',
@@ -119,29 +284,34 @@ const EditParticipantsDialog = ({ openEdit, onCloseEdit, participantsData }) => 
                         </tr>
                     </thead>
                     <tbody>
-                        {data.length > 0 && data.map((participant, index) => (
-                            <tr key={participant.id}>
-                                <td style={{ padding: '8px' }}>{index + 1}</td>
-                                <td style={{ padding: '8px' }}>
-                                    {participant.name}
-                                </td>
-                                <td style={{ padding: '8px' }}>
-                                    {participant.program}
-                                </td>
-                                <td style={{ padding: '8px' }}>
-                                    {participant.batch}
-                                </td>
-                            </tr>
-                        ))}
+                        {data.length > 0 &&
+                            data.map((participant, index) => (
+                                <tr key={participant.id}>
+                                    <td style={{ padding: '8px' }}>
+                                        {index + 1}
+                                    </td>
+                                    <td style={{ padding: '8px' }}>
+                                        {participant.name}
+                                    </td>
+                                    <td style={{ padding: '8px' }}>
+                                        {participant.program}
+                                    </td>
+                                    <td style={{ padding: '8px' }}>
+                                        {participant.batch}
+                                    </td>
+                                </tr>
+                            ))}
                     </tbody>
                 </Box>
                 <Box
+                    sx={{ gap: '10px' }}
                     display="flex"
                     justifyContent="center"
                     alignItems="center"
                     style={{ marginTop: 'auto', paddingTop: '20px' }}
                 >
                     <Button
+                        style={{ fontFamily: 'Bold' }}
                         variant="contained"
                         onClick={handleAssignStudents}
                         sx={{
@@ -159,9 +329,10 @@ const EditParticipantsDialog = ({ openEdit, onCloseEdit, participantsData }) => 
                             },
                         }}
                     >
-                        Edit Students
+                        Assign Students
                     </Button>
                     <Button
+                        style={{ fontFamily: 'Bold' }}
                         variant="outlined"
                         onClick={handleAssignBatches}
                         sx={{
@@ -181,21 +352,18 @@ const EditParticipantsDialog = ({ openEdit, onCloseEdit, participantsData }) => 
                             },
                         }}
                     >
-                        Edit Batches
+                        Assign Batches
                     </Button>
                 </Box>
                 <Box
-                                    display="flex"
-                                    justifyContent="center"
-                                    alignItems="center"
-                                    style={{ marginTop: 'auto', paddingTop: '20px' }}
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    style={{ marginTop: 'auto', paddingTop: '20px' }}
                 >
-                <Button
-                        onClick={() =>
-                            handleOpenEditParticipantsDialog(
-                                selectedParticipants // Pass participants data
-                            )
-                        }
+                    <Button
+                        style={{ fontFamily: 'Bold' }}
+                        onClick={handleSubmit}
                         variant="contained"
                         sx={{
                             backgroundColor: '#F56D3B',
@@ -213,10 +381,23 @@ const EditParticipantsDialog = ({ openEdit, onCloseEdit, participantsData }) => 
                             },
                         }}
                     >
-                        Submit
+                        Update
                     </Button>
                 </Box>
             </DialogContent>
+            {openStudents &&
+                (role == 'Coach' ? (
+                    <SelectStudents componentName={'COACHMENU'} />
+                ) : (
+                    <SelectStudents componentName={'TAMENU'} />
+                ))}
+
+            {openBatches &&
+                (role == 'Coach' ? (
+                    <SelectBatches componentName={'COACHMENU'} />
+                ) : (
+                    <SelectBatches componentName={'TAMENU'} />
+                ))}
         </Dialog>
     );
 };

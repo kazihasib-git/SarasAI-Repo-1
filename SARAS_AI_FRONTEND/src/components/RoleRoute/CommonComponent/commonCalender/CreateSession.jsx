@@ -1,54 +1,85 @@
-import {
-    Box,
-    Button,
-    Checkbox,
-    FormControl,
-    FormControlLabel,
-    FormGroup,
-    Grid,
-    Radio,
-    RadioGroup,
-} from '@mui/material';
-import { duration } from 'moment';
+import { Box, Button, Grid } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     createTaMenuSessions,
+    getTaMenuAssignedBatches,
+    getTaMenuAssignedStudents,
     getTaMenuSessions,
     getTaMenuSlots,
 } from '../../../../redux/features/taModule/tamenuSlice';
 import {
     createCoachMenuSession,
+    getCoachMenuAssignedBatches,
+    getCoachMenuAssignedStudents,
     getCoachMenuSessions,
     getCoachMenuSlots,
 } from '../../../../redux/features/coachModule/coachmenuprofileSilce';
 import {
     closeScheduleNewSession,
-    openSelectBatches,
-    openSelectStudents,
+    openScheduleNewSession,
 } from '../../../../redux/features/commonCalender/commonCalender';
 import ReusableDialog from '../../../CustomFields/ReusableDialog';
 import CustomTextField from '../../../CustomFields/CustomTextField';
 import CustomFormControl from '../../../CustomFields/CustomFromControl';
-import CustomDateField from '../../../CustomFields/CustomDateField';
 import CustomTimeField from '../../../CustomFields/CustomTimeField';
 import CustomTimeZoneForm from '../../../CustomFields/CustomTimeZoneForm';
-import {
-    getAllHosts,
-    getPlatforms,
-    getTimezone,
-} from '../../../../redux/features/utils/utilSlice';
 import CustomPlatformForm from '../../../CustomFields/CustomPlatformForm';
 import CustomHostNameForm from '../../../CustomFields/CustomHostNameField';
 import CustomMeetingTypeField from '../../../CustomFields/CustomMeetingTypeField';
 import CustomButton from '../../../CustomFields/CustomButton';
 import { toast } from 'react-toastify';
 import CustomFutureDateField from '../../../CustomFields/CustomFutureDateField';
+import { GLOBAL_CONSTANTS } from '../../../../constants/globalConstants';
+import {
+    clearState,
+    openBatchPopup,
+    openStudentsPopup,
+} from '../../../../redux/features/commonCalender/batchesAndStudents';
+import SelectBatches from '../../../batches/SelectBatches';
+import SelectStudents from '../../../students/SelectStudents';
+import { useGetHostsQuery } from '../../../../redux/services/hosts/hostsApi';
+import { useGetPlatformsQuery } from '../../../../redux/services/platforms/platformsApi';
+import { useGetTimezonesQuery } from '../../../../redux/services/timezones/timezonesApi';
 
-const timezone = Number(localStorage.getItem('timezone_id'));
+const sessionConfig = {
+    TAMENU: {
+        sliceName: 'taMenu',
+        createSessionApi: createTaMenuSessions,
+        getSessionApi: getTaMenuSessions,
+        getSlotApi: getTaMenuSlots,
+        getStudentsApi: getTaMenuAssignedStudents,
+        getStudentsState: 'assignedTaStudents',
+        getBatchesApi: getTaMenuAssignedBatches,
+        getBatchesState: 'assignedTaBatches',
+    },
+    COACHMENU: {
+        sliceName: 'coachMenu',
+        createSessionApi: createCoachMenuSession,
+        getSessionApi: getCoachMenuSessions,
+        getSlotApi: getCoachMenuSlots,
+        getStudentsApi: getCoachMenuAssignedStudents,
+        getStudentsState: 'assignedCoachStudents',
+        getBatchesApi: getCoachMenuAssignedBatches,
+        getBatchesState: 'assignedCoachBatches',
+    },
+};
 
-const CreateSession = ({ componentName }) => {
+const CreateSession = ({ role, componentName }) => {
     const dispatch = useDispatch();
+
+    const {
+        sliceName,
+        createSessionApi,
+        getSessionApi,
+        getSlotApi,
+        getStudentsApi,
+        getStudentsState,
+        getBatchesApi,
+        getBatchesState,
+    } = sessionConfig[componentName];
+
+    const { timezoneId, name } = useSelector(state => state.auth);
 
     const initialFormData = {
         sessionName: '',
@@ -63,75 +94,66 @@ const CreateSession = ({ componentName }) => {
         toDate: null,
         fromTime: null,
         toTime: null,
-        timezone_id: timezone ? timezone : null,
+        timezone_id: Number(timezoneId),
     };
 
     const [formData, setFormData] = useState(initialFormData);
     const [error, setError] = useState({});
-    const meetingTypes = ['webinars', 'meetings'];
 
-    const { timezones, platforms, hosts } = useSelector(state => state.util);
-    const { scheduleNewSessionPopup, students, batches } = useSelector((state) => state.commonCalender);
+    const { data : timezones, error : timezoneError , isLoading : timezonesLoading } = useGetTimezonesQuery();
+    const { data : platforms, error : platformError, isLoading : platformLoading } = useGetPlatformsQuery()
+    const { data : hosts, error : hostsError, isLoading : hostsLoading} = useGetHostsQuery()
 
-    let sliceName, createSessionApi, getSessionApi, getSlotApi;
+    const { scheduleNewSessionPopup } = useSelector(
+        state => state.commonCalender
+    );
 
-    switch (componentName) {
-        case 'TAMENU':
-            sliceName = 'taMenu';
-            createSessionApi = createTaMenuSessions;
-            getSessionApi = getTaMenuSessions;
-            getSlotApi = getTaMenuSlots;
-            break;
+    const stateSelector = useSelector(state => state[sliceName]);
 
-        case 'COACHMENU':
-            sliceName = 'coachMenu';
-            createSessionApi = createCoachMenuSession;
-            getSessionApi = getCoachMenuSessions;
-            getSlotApi = getCoachMenuSlots;
-            break;
+    const {
+        [getStudentsState]: assignedStudents,
+        [getBatchesState]: assignedBatches,
+    } = stateSelector;
 
-        default:
-            sliceName = null;
-            createSessionApi = null;
-            getSessionApi = null;
-            getSlotApi = null;
-            break;
-    }
+    const { selectedStudents, selectedBatches, openBatches, openStudents } =
+        useSelector(state => state.batchesAndStudents);
 
     useEffect(() => {
-        dispatch(getTimezone());
-        dispatch(getPlatforms());
-        dispatch(getAllHosts());
-    }, [dispatch]);    
-
-    const durationOptions = [
-        { label: '15 minutes', value: '00:15:00' },
-        { label: '30 minutes', value: '00:30:00' },
-        { label: '45 minutes', value: '00:45:00' },
-        { label: '1 Hour', value: '01:00:00' },
-        { label: '1 Hour 15 minutes', value: '01:15:00' },
-        { label: '1 Hour 30 minutes', value: '01:30:00' },
-        { label: '1 Hour 45 minutes', value: '01:45:00' },
-        { label: '2 Hours', value: '02:00:00' },
-    ];
+        dispatch(getStudentsApi());
+        dispatch(getBatchesApi());
+    }, [dispatch]);
 
     const handleChange = (field, value) => {
-        console.log('field', field, ':', value);
         setFormData(prev => ({ ...prev, [field]: value }));
     };
 
     const handleAssignStudents = () => {
-        dispatch(openSelectStudents());
+        const data = {
+            batches: assignedBatches,
+            selectedBatches: selectedBatches?.length > 0 ? selectedBatches : [],
+            students: assignedStudents,
+            selectedStudents:
+                selectedStudents?.length > 0 ? selectedStudents : [],
+            timezoneId: timezoneId,
+        };
+        dispatch(openStudentsPopup(data));
     };
 
     const handleAssignBatches = () => {
-        dispatch(openSelectBatches());
+        const data = {
+            batches: assignedBatches,
+            selectedBatches: selectedBatches?.length > 0 ? selectedBatches : [],
+            students: assignedStudents,
+            selectedStudents:
+                selectedStudents?.length > 0 ? selectedStudents : [],
+            timezoneId: timezoneId,
+        };
+        dispatch(openBatchPopup(data));
     };
 
     const validate = () => {
-
         if (!formData.sessionName) {
-            toast.error('Please enter session name')
+            toast.error('Please enter session name');
             return false;
         }
 
@@ -142,7 +164,7 @@ const CreateSession = ({ componentName }) => {
         }
 
         if (!formData.platform_id) {
-            toast.error('Please select meeting platform')
+            toast.error('Please select meeting platform');
             return false;
         }
 
@@ -173,7 +195,7 @@ const CreateSession = ({ componentName }) => {
         }
 
         // Chech message
-        if (!formData.message) {
+        if (!formData.message || formData.message.trim() === '') {
             toast.error('Please enter message');
             return false;
         }
@@ -191,8 +213,8 @@ const CreateSession = ({ componentName }) => {
 
         if (!validate()) return;
 
-        const studentId = students.map(student => student.id);
-        const batchId = batches.map(batch => batch.id);
+        const studentId = selectedStudents.map(student => student);
+        const batchId = selectedBatches.map(batch => batch);
 
         const fromDateTimeString = `${formData.fromDate}T${formData.fromTime}`;
 
@@ -227,6 +249,7 @@ const CreateSession = ({ componentName }) => {
         dispatch(createSessionApi(data))
             .unwrap()
             .then(() => {
+                dispatch(clearState());
                 dispatch(getSessionApi());
                 dispatch(getSlotApi());
                 // TODO NEED TO CALL GET SCHEDULE CALL API  HERE --->
@@ -309,7 +332,9 @@ const CreateSession = ({ componentName }) => {
                                                 e.target.value
                                             )
                                         }
-                                        options={durationOptions}
+                                        options={
+                                            GLOBAL_CONSTANTS.DURATIONOPTIONS
+                                        }
                                         errors={!!error.duration}
                                         helperText={error.duration}
                                         sx={{ width: '100%' }}
@@ -375,7 +400,9 @@ const CreateSession = ({ componentName }) => {
                                                         e.target.value
                                                     )
                                                 }
-                                                options={meetingTypes}
+                                                options={
+                                                    GLOBAL_CONSTANTS.MEETING_TYPES
+                                                }
                                                 errors={!!error.meeting_name}
                                             />
                                         </Grid>
@@ -471,12 +498,15 @@ const CreateSession = ({ componentName }) => {
                                 justifyContent="center"
                             >
                                 <CustomTimeZoneForm
-
-
                                     label="Time Zone"
                                     name="timezone_id"
                                     value={formData.timezone_id}
-                                    onChange={e => handleChange('timezone_id', e.target.value)}
+                                    onChange={e =>
+                                        handleChange(
+                                            'timezone_id',
+                                            e.target.value
+                                        )
+                                    }
                                     errors={!!error.timezone}
                                     helperText={error.timezone}
                                     sx={{ width: '100%' }}
@@ -564,16 +594,56 @@ const CreateSession = ({ componentName }) => {
     );
 
     return (
-        <ReusableDialog
-            open={scheduleNewSessionPopup}
-            handleClose={() => {
-                dispatch(closeScheduleNewSession());
-                setFormData(initialFormData);
-            }}
-            title={`Create New Session`}
-            content={content}
-            actions={actions}
-        />
+        <>
+            <ReusableDialog
+                open={scheduleNewSessionPopup}
+                handleClose={() => {
+                    dispatch(clearState());
+                    dispatch(closeScheduleNewSession());
+                    setFormData(initialFormData);
+                }}
+                title={`Create New Session`}
+                content={content}
+                actions={actions}
+            />
+            {openBatches &&
+                (role == 'Coach' ? (
+                    <SelectBatches
+                        componentName={'COACHMENU'}
+                        timezone={timezoneId}
+                        onClose={data => {
+                            dispatch(openScheduleNewSession(data));
+                        }}
+                    />
+                ) : (
+                    <SelectBatches
+                        componentName={'TAMENU'}
+                        timezone={timezoneId}
+                        onClose={data => {
+                            dispatch(openScheduleNewSession(data));
+                        }}
+                    />
+                ))}
+
+            {openStudents &&
+                (role == 'Coach' ? (
+                    <SelectStudents
+                        componentName={'COACHMENU'}
+                        timezone={timezoneId}
+                        onClose={data => {
+                            dispatch(openScheduleNewSession(data));
+                        }}
+                    />
+                ) : (
+                    <SelectStudents
+                        componentName={'TAMENU'}
+                        timezone={timezoneId}
+                        onClose={data => {
+                            dispatch(openScheduleNewSession(data));
+                        }}
+                    />
+                ))}
+        </>
     );
 };
 

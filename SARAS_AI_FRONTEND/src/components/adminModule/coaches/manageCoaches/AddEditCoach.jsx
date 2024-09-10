@@ -3,7 +3,6 @@ import { IconButton, InputAdornment } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useForm, Controller } from 'react-hook-form';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import moment from 'moment-timezone';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     Box,
@@ -28,7 +27,6 @@ import 'react-phone-input-2/lib/style.css';
 import SubmitPopup from '../../SubmitPopup';
 import CustomTextField from '../../../CustomFields/CustomTextField';
 import CustomFormControl from '../../../CustomFields/CustomFromControl';
-import CustomDateField from '../../../CustomFields/CustomDateField';
 import AvatarInput from '../../../CustomFields/AvatarInput';
 import {
     genders,
@@ -37,14 +35,14 @@ import {
 } from '../../../CustomFields/FormOptions';
 import Header from '../../../Header/Header';
 import Sidebar from '../../../Sidebar/Sidebar';
-import { getTimezone } from '../../../../redux/features/utils/utilSlice';
 import CustomTimeZoneForm from '../../../CustomFields/CustomTimeZoneForm';
 import AssignBatches from '../../AssignBatches';
 import CustomDateOfBirth from '../../../CustomFields/CustomDateOfBirth';
 import EditIcon from '@mui/icons-material/Edit';
+import { useGetTimezonesQuery } from '../../../../redux/services/timezones/timezonesApi';
 
 function AddEditCoach({ data }) {
-    console.log('coach Data', data);
+
     const {
         register,
         handleSubmit,
@@ -65,7 +63,8 @@ function AddEditCoach({ data }) {
     const [editableDescription, setEditableDescription] = useState('');
     const [isEditingDescription, setIsEditingDescription] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
-
+    const { data : timezones, error, isLoading } = useGetTimezonesQuery();
+    
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
@@ -73,11 +72,6 @@ function AddEditCoach({ data }) {
     const dispatch = useDispatch();
     const { coachSuccessPopup, assignCoachStudentOpen, assignCoachBatchOpen } =
         useSelector(state => state.coachModule);
-    const { timezones } = useSelector(state => state.util);
-
-    useEffect(() => {
-        dispatch(getTimezone());
-    }, [dispatch]);
 
     useEffect(() => {
         if (data) {

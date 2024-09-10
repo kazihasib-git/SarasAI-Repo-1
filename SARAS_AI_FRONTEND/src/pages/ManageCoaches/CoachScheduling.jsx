@@ -12,15 +12,21 @@ import {
     openCoachEditBatch,
     openCoachEditStudent,
 } from '../../redux/features/adminModule/coach/coachSchedule';
+import SelectBatches from '../../components/batches/SelectBatches';
+import SelectStudents from '../../components/students/SelectStudents';
+import CreateNewSession from '../../components/availability/CreateNewSession';
 
-const CoachSheduling = () => {
-
+const CoachScheduling = () => {
     const dispatch = useDispatch();
     const { assignCoachStudentOpen, assignCoachBatchOpen, loading } =
         useSelector(state => state.coachModule);
 
     const { scheduleCoachSessionOpen } = useSelector(
         state => state.coachScheduling
+    );
+
+    const { openBatches, openStudents } = useSelector(
+        state => state.batchesAndStudents
     );
 
     const { coachMapping } = useSelector(state => state.coachModule);
@@ -31,21 +37,6 @@ const CoachSheduling = () => {
         dispatch(showCoachMapping());
     }, [dispatch]);
 
-    // const { coachID } = useSelector(state => state.coachScheduling);handleDateSubmit
-    // const findTaTimeZone = (todaysAvailableCoach) => {
-    //     if (todaysAvailableCoach && Number(coachID)) {
-    //         const selectedCoach = todaysAvailableCoach.find(coach => coach.id === Number(coachID));
-    //         setSelectedCoach(selectedCoach || null);  // Set to null if not found
-    //     } else {
-    //         setSelectedCoach(null);  // Set to null if conditions are not met
-    //     }
-    // }
-    // useEffect(() => {
-    //     findTaTimeZone(todaysAvailableCoach);
-    // }, [coachID, todaysAvailableCoach]);
-
-    // const storedTimezoneId = selectedCoach ? selectedCoach.timezone_id : Number(localStorage.getItem('timezone_id'));
-
     useEffect(() => {
         if (coachMapping && coachMapping.length > 0) {
             const transformData = coachMapping.map((item, index) => ({
@@ -54,7 +45,7 @@ const CoachSheduling = () => {
                 Username: item.username,
                 Active_Students: item.Active_Students,
                 Active_Batches: item.Active_Batches,
-                timezone: item.timezone_id,
+                timezoneId: item.timezone_id,
             }));
 
             setCoachScheduleData(transformData);
@@ -92,7 +83,7 @@ const CoachSheduling = () => {
                 <Header />
                 <Sidebar />
                 <Box
-                    display="flex"                
+                    display="flex"
                     justifyContent="space-between"
                     alignItems="center"
                     mb={2}
@@ -129,24 +120,22 @@ const CoachSheduling = () => {
                     headers={headers}
                     initialData={filteredData}
                     actionButtons={actionButtons}
-                    componentName={'COACHMAPPING'}
+                    componentName={'COACHSCHEDULE'}
                 />
             </Box>
             {scheduleCoachSessionOpen && (
-                <Schedule componentName={'COACHSCHEDULE'} />
+                <CreateNewSession componentName={'COACHSCHEDULE'} />
             )}
-            {openCoachEditBatch && (
-                <EditBatches
-                    componentname={'COACHSCHEDULE'}
-                />
+            {openBatches && <SelectBatches componentName={'COACHSCHEDULE'} />}
+            {openStudents && <SelectStudents componentName={'COACHSCHEDULE'} />}
+            {/* {openCoachEditBatch && (
+                <EditBatches componentname={'COACHSCHEDULE'} />
             )}
             {openCoachEditStudent && (
-                <EditStudents
-                    componentname={'COACHSCHEDULE'}
-                />
-            )}
+                <EditStudents componentname={'COACHSCHEDULE'} />
+            )} */}
         </>
     );
 };
 
-export default CoachSheduling;
+export default CoachScheduling;

@@ -15,9 +15,6 @@ import CustomTimeField from '../CustomFields/CustomTimeField';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomTimeZoneForm from '../CustomFields/CustomTimeZoneForm';
-import { getTimezone } from '../../redux/features/utils/utilSlice';
-import { useParams } from 'react-router-dom';
-import { timezoneIdToName } from '../../utils/timezoneIdToName';
 import {
     createSlots,
     closeCreateNewSlots,
@@ -30,20 +27,23 @@ import {
 import { toast } from 'react-toastify';
 import CustomButton from '../CustomFields/CustomButton';
 import CustomFutureDateField from '../CustomFields/CustomFutureDateField';
+import { GLOBAL_CONSTANTS } from '../../constants/globalConstants';
+import { useGetTimezonesQuery } from '../../redux/services/timezones/timezonesApi';
 
-const weekDays = [
-    'Sunday',
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-];
+const slotConfig = {
+    TACALENDER: {
+        sliceName: 'taAvialability',
+        createSlotApi: createSlots,
+        getSlotsApi: fetchTaSlots,
+    },
+    COACHCALENDER: {
+        sliceName: 'coachAvailability',
+        createSlotApi: createCoachSlots,
+        getSlotsApi: fetchCoachSlots,
+    },
+};
 
-const CreateNewSlot = ({ componentName, timezoneID }) => {
-    const { timezones } = useSelector(state => state.util);
-    const taId = useParams();
+const CreateNewSlot = ({ id, name, componentName, timezone }) => {
     const dispatch = useDispatch();
 
     const [fromDate, setFromDate] = useState(null);
@@ -52,34 +52,13 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
     const [repeat, setRepeat] = useState('onetime');
     const [fromTime, setFromTime] = useState(null);
     const [toTime, setToTime] = useState(null);
-    const [selectedTimezone, setSelectedTimezone] = useState(timezoneID);
-    useEffect(() => {
-        dispatch(getTimezone());
-    }, [dispatch]);
 
-    let sliceName, createSlotApi, getSlotsApi;
-    const timezoneName = timezoneIdToName(timezoneID, timezones);
-    switch (componentName) {
-        case 'TACALENDER':
-            sliceName = 'taAvialability';
-            createSlotApi = createSlots;
-            getSlotsApi = fetchTaSlots;
-            break;
+    const { data : timezones, error, isLoading } = useGetTimezonesQuery();
 
-        case 'COACHCALENDER':
-            sliceName = 'coachAvailability';
-            createSlotApi = createCoachSlots;
-            getSlotsApi = fetchCoachSlots;
-            break;
-
-        default:
-            sliceName = null;
-            createSlotApi = null;
-            getSlotsApi = null;
-            break;
-    }
+    const { sliceName, createSlotApi, getSlotsApi } = slotConfig[componentName];
 
     const schedulingState = useSelector(state => state[sliceName]);
+
     const { createNewSlotOpen } = useSelector(state => state.taAvialability);
 
     const {
@@ -89,7 +68,7 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
         formState: { errors },
     } = useForm({
         defaultValues: {
-            timezone_id: timezoneID,
+            timezone_id: timezone.id,
         },
     });
 
@@ -103,51 +82,37 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
         });
     };
 
-    function convertTo24Hour(time12h) {
-        const [time, modifier] = time12h.split(' ');
-    
-        let [hours, minutes] = time.split(':');
-    
-        if (hours === '12') {
-            hours = '00';
-        }
-    
-        if (modifier === 'PM') {
-            hours = parseInt(hours, 10) + 12;
-        }
-    
-        return [parseInt(hours, 10),minutes];
-    }
-
     function isHourLessOrEqual(inputTime) {
         // Get the current date and time
         const currentTime = new Date();
-    
+
         // Split the input time string into hour, minutes, and seconds
-        const [inputHour, inputMinutes, inputSeconds] = inputTime.split(':').map(Number);
-    
+        const [inputHour, inputMinutes, inputSeconds] = inputTime
+            .split(':')
+            .map(Number);
+
         // Create a date object for the input time with today's date
         const inputDate = new Date();
         inputDate.setHours(inputHour, inputMinutes, inputSeconds);
-    
+
         // Compare the input time with the current time
         return inputDate <= currentTime;
     }
 
     const validate = () => {
-
         let currentDate = new Date();
-        let inputDate = new Date(fromDate)
-        
+        let inputDate = new Date(fromDate);
 
         let sameDate = false;
 
-        if (currentDate.getFullYear() === inputDate.getFullYear() &&
-        currentDate.getMonth() === inputDate.getMonth() &&
-        currentDate.getDate() === inputDate.getDate()) {
-                console.log("Both dates are the same.");
-                sameDate = true;
-            }
+        if (
+            currentDate.getFullYear() === inputDate.getFullYear() &&
+            currentDate.getMonth() === inputDate.getMonth() &&
+            currentDate.getDate() === inputDate.getDate()
+        ) {
+            console.log('Both dates are the same.');
+            sameDate = true;
+        }
 
         if (!fromDate) {
             toast.error('Please select From Date');
@@ -161,7 +126,7 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
             toast.error('Please select To Time');
             return false;
         }
-        
+
         if (repeat === 'recurring' && !toDate) {
             toast.error('Please select To Date');
             return false;
@@ -171,8 +136,6 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
             return false;
         }
 
-
-        
         // if(sameDate && isHourLessOrEqual(fromTime)){
         //     let today = new Date();
         //     today.setDate(today.getDate() - 1)
@@ -190,8 +153,6 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
     };
 
     const onSubmit = async formData => {
-        // console.log('form data', formData);
-
         if (!validate()) {
             console.log('NOT VALID DATA');
             return;
@@ -200,7 +161,7 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
         let weeksArray = Array(7).fill(0);
         if (repeat === 'recurring') {
             selectedDays.forEach(day => {
-                const index = weekDays.indexOf(day);
+                const index = GLOBAL_CONSTANTS.WEEKDAYS.indexOf(day);
                 weeksArray[index] = 1;
             });
         } else if (repeat === 'onetime') {
@@ -213,17 +174,16 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
         formData.to_time = toTime;
         formData.end_date = repeat === 'recurring' ? toDate : fromDate;
         formData.weeks = weeksArray;
-        formData.admin_user_id = taId.id;
-        
-        dispatch(createSlotApi(formData)).then(() => {
-            dispatch(closeCreateNewSlots());
-            dispatch(getSlotsApi(taId.id));
-           
-        })
-        .catch(error => {
-            console.error('Error creating slot:', error);
-        });
-    
+        formData.admin_user_id = id;
+
+        dispatch(createSlotApi(formData))
+            .then(() => {
+                dispatch(closeCreateNewSlots());
+                dispatch(getSlotsApi(id));
+            })
+            .catch(error => {
+                console.error('Error creating slot:', error);
+            });
     };
 
     const content = (
@@ -318,7 +278,7 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
                             <Controller
                                 name="timezone_id"
                                 control={control}
-                                defaultValue={timezoneID}
+                                defaultValue={timezone.id}
                                 render={({ field }) => (
                                     <CustomTimeZoneForm
                                         label="Time Zone"
@@ -389,25 +349,27 @@ const CreateNewSlot = ({ componentName, timezoneID }) => {
                                                     justifyContent: 'center',
                                                 }}
                                             >
-                                                {weekDays.map(day => (
-                                                    <FormControlLabel
-                                                        key={day}
-                                                        control={
-                                                            <Checkbox
-                                                                checked={selectedDays.includes(
-                                                                    day
-                                                                )}
-                                                                onChange={() =>
-                                                                    handleDayChange(
+                                                {GLOBAL_CONSTANTS.WEEKDAYS.map(
+                                                    day => (
+                                                        <FormControlLabel
+                                                            key={day}
+                                                            control={
+                                                                <Checkbox
+                                                                    checked={selectedDays.includes(
                                                                         day
-                                                                    )
-                                                                }
-                                                                name={day}
-                                                            />
-                                                        }
-                                                        label={day}
-                                                    />
-                                                ))}
+                                                                    )}
+                                                                    onChange={() =>
+                                                                        handleDayChange(
+                                                                            day
+                                                                        )
+                                                                    }
+                                                                    name={day}
+                                                                />
+                                                            }
+                                                            label={day}
+                                                        />
+                                                    )
+                                                )}
                                             </FormGroup>
                                         </FormControl>
                                     </Grid>

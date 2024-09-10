@@ -3,7 +3,7 @@ import { Box } from '@mui/material';
 import Header from '../../../../components/Header/Header';
 import Sidebar from '../../../../components/Sidebar/Sidebar';
 import { useGetCoursesQuery } from '../../../../redux/services/courses/coursesApi';
-import { DynamicTable } from '../../../managesTAs/TaAvaialablity';
+import DynamicTable from '../../../../components/CommonComponent/DynamicTable';
 
 const CoursePage = () => {
     const [input, setInput] = useState('');

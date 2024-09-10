@@ -103,7 +103,7 @@ const initialState = {
     name: '',
     username: null,
     accessToken: null,
-    timezone_id: null,
+    timezoneId: null,
     loading: false,
     error: [],
 };
@@ -117,7 +117,7 @@ const authSlice = createSlice({
             state.login = action.payload.login;
             state.role = action.payload.role;
             state.accessToken = action.payload.accessToken;
-            state.timezone_id = action.payload.timezone_id;
+            state.timezoneId = action.payload.timezone_id;
         },
     },
     extraReducers: builder => {
@@ -135,7 +135,7 @@ const authSlice = createSlice({
             state.role = action.payload.role;
 
             state.accessToken = action.payload.access_token;
-            state.timezone_id = action.payload.admin_user.timezone_id;
+            state.timezoneId = action.payload.admin_user.timezone_id;
 
             localStorage.setItem('name', action.payload.admin_user.name);
             localStorage.setItem('login', true);
@@ -144,7 +144,7 @@ const authSlice = createSlice({
             localStorage.setItem(
                 'timezone_id',
                 action.payload.admin_user.timezone_id
-            ); // Store timezone_id
+            );
         });
         builder.addCase(login.rejected, (state, action) => {
             toast.error(action.payload || 'Failed To Login');
@@ -165,7 +165,7 @@ const authSlice = createSlice({
             state.loading = false;
             state.login = false;
             state.userData = [];
-            state.timezone_id = null; // Clear timezone_id in state
+            state.timezoneId = null;
 
             localStorage.clear();
         });

@@ -20,6 +20,10 @@ import utilReducer from './features/utils/utilSlice';
 import timeZoneReducer from './features/timeZone/timezone';
 import linkActivityReducer from './features/adminModule/coach/LinkActivitySlice';
 import coachingToolsReducer from './features/adminModule/coachingTools/coachingTools';
+import batchesAndStudentsReducer from './features/commonCalender/batchesAndStudents';
+import { timezonesApi } from './services/timezones/timezonesApi';
+import { hostsApi } from './services/hosts/hostsApi';
+import { platformsApi } from './services/platforms/platformsApi';
 
 const store = configureStore({
     reducer: {
@@ -35,21 +39,28 @@ const store = configureStore({
         coachScheduling: coachSchedulingReducer,
         activityType: activityTypeReducer,
         linkActivity: linkActivityReducer,
-        coachingTools : coachingToolsReducer,
-        coachMenu : coachMenuSliceReducer,
+        coachingTools: coachingToolsReducer,
+        coachMenu: coachMenuSliceReducer,
         taMenu: taMenuSliceReducer,
         commonCalender: commonCalenderReducer,
+        batchesAndStudents: batchesAndStudentsReducer,
         util: utilReducer,
         timeZone: timeZoneReducer,
         [studentsApi.reducerPath]: studentsApi.reducer,
         [batchesApi.reducerPath]: batchesApi.reducer,
         [coursesApi.reducerPath]: coursesApi.reducer,
+        [timezonesApi.reducerPath]: timezonesApi.reducer,
+        [platformsApi.reducerPath] : platformsApi.reducer,
+        [hostsApi.reducerPath] : hostsApi.reducer,
     },
     middleware: getDefaultMiddleware =>
         getDefaultMiddleware()
             .concat(studentsApi.middleware)
             .concat(batchesApi.middleware)
-            .concat(coursesApi.middleware),
+            .concat(coursesApi.middleware)
+            .concat(timezonesApi.middleware)
+            .concat(platformsApi.middleware)
+            .concat(hostsApi.middleware),
 });
 
 setupListeners(store.dispatch);

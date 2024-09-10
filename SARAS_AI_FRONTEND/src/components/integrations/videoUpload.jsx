@@ -33,8 +33,21 @@ const VideoUploadDialog = ({ open, onClose, role, selectedId }) => {
     const dispatch = useDispatch();
     //const selectedCallId = useSelector(state => state.taMenu.selectedCall);
 
+    // const handleFileChange = event => {
+    //     setFile(event.target.files[0]);
+    // };
+
     const handleFileChange = event => {
-        setFile(event.target.files[0]);
+        const selectedFile = event.target.files[0];
+        const validVideoTypes = ['video/mp4', 'video/webm', 'video/ogg'];
+
+        if (selectedFile && validVideoTypes.includes(selectedFile.type)) {
+            setFile(selectedFile);
+            setError(''); // Clear any previous error messages
+        } else {
+            setError('Please upload a valid video file (mp4, webm).');
+            setFile(null); // Reset file state
+        }
     };
 
     const uploadVideoToVimeo = async () => {
@@ -148,11 +161,10 @@ const VideoUploadDialog = ({ open, onClose, role, selectedId }) => {
                                 id: selectedId,
                                 session_recording_url: videoUrl,
                             })
-                        )
-                            .unwrap()
-                            // .then(() => {
-                            //     dispatch(getTaCallRecords());
-                            // });
+                        ).unwrap();
+                        // .then(() => {
+                        //     dispatch(getTaCallRecords());
+                        // });
                     }
 
                     setUploadProgress(100);
@@ -173,6 +185,7 @@ const VideoUploadDialog = ({ open, onClose, role, selectedId }) => {
             <IconButton
                 onClick={() => {
                     onClose();
+                    setError('');
 
                     //setFile(null);
                     setVideoUrl('');
@@ -189,7 +202,11 @@ const VideoUploadDialog = ({ open, onClose, role, selectedId }) => {
             </IconButton>
             <DialogContent>
                 {error && <Typography color="error">{error}</Typography>}
-                <input type="file" onChange={handleFileChange} />
+                <input
+                    type="file"
+                    accept="video/*"
+                    onChange={handleFileChange}
+                />
                 {uploadProgress > 0 && uploadProgress < 100 && (
                     <LinearProgress
                         variant="determinate"
@@ -201,6 +218,7 @@ const VideoUploadDialog = ({ open, onClose, role, selectedId }) => {
                 <Button
                     onClick={() => {
                         onClose();
+                        setError('');
                         setFile(null);
                         setVideoUrl('');
                         setUploadProgress(0);
