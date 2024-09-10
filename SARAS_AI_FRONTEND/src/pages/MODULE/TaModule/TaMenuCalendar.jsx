@@ -83,12 +83,12 @@ const TAMenuCalendar = () => {
                     convertSlots();
                 }
             }else {
-                slotViewData([])
-                sessionEventData([])
+                setSlotViewData([]);
+                setEventsList([]);
             }
         }else{
-            slotViewData([])
-            sessionEventData([])
+            setSlotViewData([]);
+            setEventsList([]);
         }
     }, [timezoneId, timezones, taSessions, taSlots]);
 

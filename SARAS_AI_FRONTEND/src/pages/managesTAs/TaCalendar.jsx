@@ -91,12 +91,12 @@ const TaCalender = () => {
                     convertSlots();
                 }
             }else {
-                slotViewData([])
-                eventsList([])
+                setSlotViewData([])
+                setEventsList([])
             }
         }else {
-            slotViewData([])
-            eventsList([])
+            setSlotViewData([])
+            setEventsList([])
         }
     }, [timezoneId, timezones, scheduleData, slotData]);
 

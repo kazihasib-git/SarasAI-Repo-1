@@ -37,11 +37,11 @@ import {
 } from '../../../CustomFields/FormOptions';
 import Header from '../../../Header/Header';
 import Sidebar from '../../../Sidebar/Sidebar';
-import { getTimezone } from '../../../../redux/features/utils/utilSlice';
 import CustomTimeZoneForm from '../../../CustomFields/CustomTimeZoneForm';
 import AssignBatches from '../../AssignBatches';
 import CustomDateOfBirth from '../../../CustomFields/CustomDateOfBirth';
 import EditIcon from '@mui/icons-material/Edit';
+import { useGetTimezonesQuery } from '../../../../redux/services/timezones/timezonesApi';
 
 function AddEditCoach({ data }) {
 
@@ -65,7 +65,8 @@ function AddEditCoach({ data }) {
     const [editableDescription, setEditableDescription] = useState('');
     const [isEditingDescription, setIsEditingDescription] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
-
+    const { data : timezones, error, isLoading } = useGetTimezonesQuery();
+    
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
@@ -73,11 +74,6 @@ function AddEditCoach({ data }) {
     const dispatch = useDispatch();
     const { coachSuccessPopup, assignCoachStudentOpen, assignCoachBatchOpen } =
         useSelector(state => state.coachModule);
-    const { timezones } = useSelector(state => state.util);
-
-    useEffect(() => {
-        dispatch(getTimezone());
-    }, [dispatch]);
 
     useEffect(() => {
         if (data) {
