@@ -26,7 +26,6 @@ import {
     fetchtimezoneDetails,
     timezoneIdToName,
 } from '../../../utils/timezoneIdToName';
-import { getTimezone } from '../../../redux/features/utils/utilSlice';
 import LeaveReason from '../../../components/RoleRoute/CommonComponent/commonCalender/LeaveReason';
 import RescheduleCreatedSession from '../../../components/RoleRoute/CommonComponent/commonCalender/RescheduleCreatedSession';
 import EditStudentsFromSession from '../../../components/availability/EditStudentsFromSession';
@@ -36,15 +35,21 @@ import EditStudentsSessionLink from '../../../components/RoleRoute/CommonCompone
 import CustomButton from '../../../components/CustomFields/CustomButton';
 import SelectStudents from '../../../components/students/SelectStudents';
 import SelectBatches from '../../../components/batches/SelectBatches';
+import { useGetTimezonesQuery } from '../../../redux/services/timezones/timezonesApi';
 
 const CoachMenuCalendar = () => {
     const dispatch = useDispatch();
-    const { timezones } = useSelector(state => state.util);
     const { timezoneId } = useSelector(state => state.auth);
+    const { data : timezones, error, isLoading } = useGetTimezonesQuery();
 
     const [eventsList, setEventsList] = useState([]);
     const [slotViewData, setSlotViewData] = useState([]);
     const [timezoneDetails, setTimezoneDetails] = useState();
+
+    useEffect(() => {
+        dispatch(getCoachMenuSlots());
+        dispatch(getCoachMenuSessions());
+    }, [dispatch]);
 
     const {
         createNewSlotPopup,
@@ -63,28 +68,32 @@ const CoachMenuCalendar = () => {
         openEditBatchesPopup,
     } = useSelector(state => state.commonCalender);
 
-    const { coachSlots, coachSessions } = useSelector(state => state.coachMenu);
+    const { coachSlots, coachSessions } = useSelector((state) => state.coachMenu);
 
     const { openBatches, openStudents } = useSelector(
         state => state.batchesAndStudents
     );
 
     useEffect(() => {
-        dispatch(getTimezone());
-        dispatch(getCoachMenuSlots());
-        dispatch(getCoachMenuSessions());
-    }, [dispatch]);
-
-    useEffect(() => {
-        if (timezoneId) {
+        if (timezoneId && timezones?.length > 0) {
             const timezoneData = fetchtimezoneDetails(timezoneId, timezones);
-            setTimezoneDetails(timezoneData);
-            if (timezoneData) {
-                convertEvents();
-                convertSlots();
+            if (timezoneData){
+                setTimezoneDetails(timezoneData);
+                if(coachSessions?.length > 0) {
+                    convertEvents();
+                }
+                if(coachSlots?.length > 0){
+                    convertSlots();
+                }
+            }else{
+                slotViewData([])
+                sessionEventData([])
             }
+        }else {
+            slotViewData([])
+            sessionEventData([])
         }
-    }, [timezoneId]);
+    }, [timezoneId, timezones, coachSlots, coachSessions])  ;
 
     const convertEvents = async () => {
         if (

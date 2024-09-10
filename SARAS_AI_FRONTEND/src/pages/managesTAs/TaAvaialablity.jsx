@@ -15,7 +15,7 @@ const headers = [
     'Calendar',
 ];
 
-const TaAvialability = () => {
+const TaAvailability = () => {
     const dispatch = useDispatch();
     const { todaysAvailableTa } = useSelector(state => state.taAvialability);
     const [taAvailabilityData, setTaAvailabilityData] = useState([]);
@@ -73,4 +73,4 @@ const TaAvialability = () => {
     );
 };
 
-export default TaAvialability;
+export default TaAvailability;

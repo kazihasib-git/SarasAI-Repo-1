@@ -24,24 +24,21 @@ import SessionLink from '../../../components/RoleRoute/CommonComponent/commonCal
 import { convertFromUTC } from '../../../utils/dateAndtimeConversion';
 import {
     fetchtimezoneDetails,
-    timezoneIdToName,
 } from '../../../utils/timezoneIdToName';
-import { getTimezone } from '../../../redux/features/utils/utilSlice';
 import CancelSession from '../../../components/RoleRoute/CommonComponent/commonCalender/CancelSession';
 import RescheduleCreatedSession from '../../../components/RoleRoute/CommonComponent/commonCalender/RescheduleCreatedSession';
 import LeaveReason from '../../../components/RoleRoute/CommonComponent/commonCalender/LeaveReason';
 import CreatedSessions from '../../../components/RoleRoute/CommonComponent/commonCalender/CreatedSessions';
-import EditStudentsFromSession from '../../../components/availability/EditStudentsFromSession';
-import EditBatchesFromSession from '../../../components/availability/EditBatchesFromSession';
 import EditBatchesSessionLink from '../../../components/RoleRoute/CommonComponent/commonCalender/EditBatchesSessionLink';
 import EditStudentsSessionLink from '../../../components/RoleRoute/CommonComponent/commonCalender/EditStudentsSessionLink';
 import CustomButton from '../../../components/CustomFields/CustomButton';
+import { useGetTimezonesQuery } from '../../../redux/services/timezones/timezonesApi';
 
 const TAMenuCalendar = () => {
     const dispatch = useDispatch();
     const { timezoneId } = useSelector(state => state.auth);
+    const { data : timezones, error, isLoading } = useGetTimezonesQuery();
 
-    const { timezones } = useSelector(state => state.util);
     const [eventsList, setEventsList] = useState([]);
     const [slotViewData, setSlotViewData] = useState([]);
     const [timezoneDetails, setTimezoneDetails] = useState();
@@ -62,7 +59,7 @@ const TAMenuCalendar = () => {
         RescheduleSession,
         openEditStudentsPopup,
         openEditBatchesPopup,
-    } = useSelector(state => state.commonCalender);
+    } = useSelector((state) => state.commonCalender);
 
     const { taSlots, taSessions } = useSelector(state => state.taMenu);
     const { openBatches, openStudents } = useSelector(
@@ -72,19 +69,28 @@ const TAMenuCalendar = () => {
     useEffect(() => {
         dispatch(getTaMenuSlots());
         dispatch(getTaMenuSessions());
-        dispatch(getTimezone());
     }, [dispatch]);
 
     useEffect(() => {
-        if (timezoneId) {
+        if (timezoneId && timezones?.length > 0) {
             const timezoneData = fetchtimezoneDetails(timezoneId, timezones);
             setTimezoneDetails(timezoneData);
             if (timezoneData) {
-                convertSlots();
-                convertEvents();
+                if(taSessions?.length > 0){
+                    convertEvents();
+                }
+                if(taSlots?.length > 0){
+                    convertSlots();
+                }
+            }else {
+                slotViewData([])
+                sessionEventData([])
             }
+        }else{
+            slotViewData([])
+            sessionEventData([])
         }
-    }, [timezoneId]);
+    }, [timezoneId, timezones, taSessions, taSlots]);
 
     const convertEvents = async () => {
         if (taSessions && taSessions.length > 0 && timezoneDetails?.time_zone) {

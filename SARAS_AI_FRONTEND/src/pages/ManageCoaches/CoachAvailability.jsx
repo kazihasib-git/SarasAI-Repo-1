@@ -14,7 +14,7 @@ const headers = [
     'Calendar',
 ];
 
-const CoachAvialablity = () => {
+const CoachAvailability = () => {
     const dispatch = useDispatch();
     const { todaysAvailableCoach } = useSelector(
         state => state.coachAvailability
@@ -103,4 +103,4 @@ const CoachAvialablity = () => {
     );
 };
 
-export default CoachAvialablity;
+export default CoachAvailability;

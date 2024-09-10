@@ -34,9 +34,7 @@ import ParticipantsDialog from '../../../pages/MODULE/coachModule/ParticipantsDi
 import { convertFromUTC } from '../../../utils/dateAndtimeConversion';
 import {
     fetchtimezoneDetails,
-    timezoneIdToName,
 } from '../../../utils/timezoneIdToName';
-import { getTimezone } from '../../../redux/features/utils/utilSlice';
 import CustomButton from '../../CustomFields/CustomButton';
 import {
     openParticipantsDialog,
@@ -46,8 +44,7 @@ import {
 import EditParticipantsDialog from './EditParticipantsDialog';
 import EditStudentsSessionLink from './commonCalender/EditStudentsSessionLink';
 import EditBatchesSessionLink from './commonCalender/EditBatchesSessionLink';
-import SelectBatches from '../../batches/SelectBatches';
-import SelectStudents from '../../students/SelectStudents';
+import { useGetTimezonesQuery } from '../../../redux/services/timezones/timezonesApi';
 
 const scheduleCallConfig = {
     TA: {
@@ -67,8 +64,8 @@ const ScheduledCall = ({ role }) => {
     const { participantsDialogOpen, editParticipantsDialogOpen } = useSelector(
         state => state.commonCalender
     );
+    const { data : timezones, error, isLoading } = useGetTimezonesQuery();
     const { timezoneId } = useSelector(state => state.auth);
-    const { timezones } = useSelector(state => state.util);
     const [timezoneDetails, setTimezoneDetails] = useState();
 
     const [initialParticipantsData, setInitialParticipantsData] =
@@ -85,15 +82,16 @@ const ScheduledCall = ({ role }) => {
     const { [getScheduledCallsState]: scheduledCallsData } = stateSelector;
 
     useEffect(() => {
-        dispatch(getTimezone());
-    }, [dispatch]);
-
-    useEffect(() => {
         if (timezoneId && timezones?.length > 0) {
             const timezone = fetchtimezoneDetails(timezoneId, timezones);
             setTimezoneDetails(timezone);
+            if(timezone && scheduledCallsData?.length > 0){
+                processScheduledCalls(scheduledCallsData);
+            }else {
+                setScheduledCalls([]);
+            }
         }
-    }, [timezoneId, timezones]);
+    }, [timezoneId, timezones, scheduledCallsData]);
 
     const {
         scheduleNewSessionPopup,
@@ -151,7 +149,7 @@ const ScheduledCall = ({ role }) => {
                     start_time: request.start_time,
                     end_time: request.end_time,
                     end_date: request.end_date,
-                    timezonename: timezoneDetails.time_zone,
+                    timezonename: timezoneDetails?.time_zone,
                 });
 
                 const newRequest = {
@@ -172,18 +170,6 @@ const ScheduledCall = ({ role }) => {
         }));
         setScheduledCalls(processedCalls);
     };
-
-    useEffect(() => {
-        if (
-            scheduledCallsData &&
-            scheduledCallsData.length > 0 &&
-            timezoneDetails?.time_zone
-        ) {
-            processScheduledCalls(scheduledCallsData);
-        } else {
-            setScheduledCalls([]);
-        }
-    }, [scheduledCallsData]);
 
     const handleDateChange = newDate => {
         if (newDate && newDate.isValid()) {
@@ -227,6 +213,7 @@ const ScheduledCall = ({ role }) => {
         //window.open(call.platform_meeting.host_meeting_url, '_blank');
 
         const transformedCall = {
+            id: call.id,
             start: new Date(call.date.split(' ')[0] + 'T' + call.start_time),
             end: new Date(call.date.split(' ')[0] + 'T' + call.end_time),
             meetingName: call.meeting_name,
