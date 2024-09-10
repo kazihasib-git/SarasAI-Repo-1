@@ -32,11 +32,6 @@ import {
     createCoachSchedule,
     getCoachAvailableSlotsFromDate,
 } from '../../redux/features/adminModule/coach/coachSchedule';
-import {
-    getPlatforms,
-    getTimezone,
-    getAllHosts,
-} from '../../redux/features/utils/utilSlice';
 import CustomTimeZoneForm from '../CustomFields/CustomTimeZoneForm';
 import { fetchTAScheduleById } from '../../redux/features/adminModule/ta/taAvialability';
 import { toast } from 'react-toastify';
@@ -61,6 +56,9 @@ import {
     openStudentsPopup,
 } from '../../redux/features/commonCalender/batchesAndStudents';
 import { GLOBAL_CONSTANTS } from '../../constants/globalConstants';
+import { useGetTimezonesQuery } from '../../redux/services/timezones/timezonesApi';
+import { useGetPlatformsQuery } from '../../redux/services/platforms/platformsApi';
+import { useGetHostsQuery } from '../../redux/services/hosts/hostsApi';
 
 const scheduleConfig = {
     TASCHEDULE: {
@@ -115,7 +113,10 @@ const CreateNewSession = ({ id, name, componentName, timezone }) => {
     const [selectedSlot, setSelectedSlot] = useState(null);
     const [availableSlotsOptions, setAvailableSlotsOptions] = useState([]);
     const [dateSelected, setDateSelected] = useState(false);
-    const { timezones, platforms, hosts } = useSelector(state => state.util);
+
+    const { data : timezones, error : timezoneError , isLoading : timezonesLoading } = useGetTimezonesQuery();
+    const { data : platforms, error : platformError, isLoading : platformLoading } = useGetPlatformsQuery();
+    const { data : hosts, error : hostsError, isLoading : hostsLoading} = useGetHostsQuery();
 
     const {
         assignedStudentsApi,
@@ -153,9 +154,6 @@ const CreateNewSession = ({ id, name, componentName, timezone }) => {
     } = schedulingState;
 
     useEffect(() => {
-        dispatch(getTimezone());
-        dispatch(getPlatforms());
-        dispatch(getAllHosts());
         dispatch(assignedStudentsApi(adminUserID));
         dispatch(assignedBatchesApi(adminUserID));
     }, [dispatch]);

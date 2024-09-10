@@ -27,11 +27,6 @@ import ReusableDialog from '../../../CustomFields/ReusableDialog';
 import CustomTextField from '../../../CustomFields/CustomTextField';
 import CustomFormControl from '../../../CustomFields/CustomFromControl';
 import CustomTimeZoneForm from '../../../CustomFields/CustomTimeZoneForm';
-import {
-    getAllHosts,
-    getPlatforms,
-    getTimezone,
-} from '../../../../redux/features/utils/utilSlice';
 import CustomPlatformForm from '../../../CustomFields/CustomPlatformForm';
 import CustomFutureDateField from '../../../CustomFields/CustomFutureDateField';
 import CustomMeetingTypeField from '../../../CustomFields/CustomMeetingTypeField';
@@ -50,6 +45,9 @@ import {
 import SelectBatches from '../../../batches/SelectBatches';
 import SelectStudents from '../../../students/SelectStudents';
 import { toast } from 'react-toastify';
+import { useGetHostsQuery } from '../../../../redux/services/hosts/hostsApi';
+import { useGetPlatformsQuery } from '../../../../redux/services/platforms/platformsApi';
+import { useGetTimezonesQuery } from '../../../../redux/services/timezones/timezonesApi';
 
 const editSessionConfig = {
     TAMENU: {
@@ -87,9 +85,6 @@ const EditSession = ({ role, componentName }) => {
     } = editSessionConfig[componentName];
 
     useEffect(() => {
-        dispatch(getTimezone());
-        dispatch(getPlatforms());
-        dispatch(getAllHosts());
         dispatch(getStudentsApi());
         dispatch(getBatchesApi());
     }, [dispatch]);
@@ -114,7 +109,10 @@ const EditSession = ({ role, componentName }) => {
     const [isEdited, setIsEdited] = useState(false);
     const [error, setError] = useState({});
 
-    const { timezones, platforms, hosts } = useSelector(state => state.util);
+    const { data : timezones, error : timezoneError , isLoading : timezonesLoading } = useGetTimezonesQuery();
+    const { data : platforms, error : platformError, isLoading : platformLoading } = useGetPlatformsQuery()
+    const { data : hosts, error : hostsError, isLoading : hostsLoading} = useGetHostsQuery()
+
     const { editSession, sessionData } = useSelector(
         state => state.commonCalender
     );

@@ -28,12 +28,6 @@ import {
     linkActivity,
     uploadpdf,
 } from '../../../../redux/features/adminModule/coach/LinkActivitySlice';
-import VirtualGroupSession from './LinkActivityPopup/VirtualGroupSession';
-import {
-    getAllHosts,
-    getPlatforms,
-    getTimezone,
-} from '../../../../redux/features/utils/utilSlice';
 import { timezoneIdToName } from '../../../../utils/timezoneIdToName';
 import { convertFromUTC } from '../../../../utils/dateAndtimeConversion';
 import CustomPlatformForm from '../../../../components/CustomFields/CustomPlatformForm';
@@ -52,41 +46,12 @@ import CustomHostNameForm from '../../../../components/CustomFields/CustomHostNa
 import CustomMeetingTypeField from '../../../../components/CustomFields/CustomMeetingTypeField';
 import CustomFutureDateField from '../../../../components/CustomFields/CustomFutureDateField';
 import { GLOBAL_CONSTANTS } from '../../../../constants/globalConstants';
+import CustomButton from '../../../../components/CustomFields/CustomButton';
+import { useGetHostsQuery } from '../../../../redux/services/hosts/hostsApi';
+import { useGetPlatformsQuery } from '../../../../redux/services/platforms/platformsApi';
+import { useGetTimezonesQuery } from '../../../../redux/services/timezones/timezonesApi';
 // import { uploadpdf } from '../../../../redux/features/adminModule/coach/LinkActivitySlice';
-const CustomButton = ({
-    onClick,
-    children,
-    color = '#FFFFFF',
-    backgroundColor = '#4E18A5',
-    borderColor = '#FFFFFF',
-    sx,
-    ...props
-}) => {
-    return (
-        <Button
-            variant="contained"
-            onClick={onClick}
-            sx={{
-                backgroundColor: backgroundColor,
-                color: color,
-                fontWeight: '700',
-                fontSize: '14px', // Reduced font size
-                borderRadius: '50px',
-                padding: '8px 16px', // Reduced padding
-                border: `2px solid ${borderColor}`,
-                '&:hover': {
-                    backgroundColor: color,
-                    color: backgroundColor,
-                    borderColor: color,
-                },
-                ...sx,
-            }}
-            {...props}
-        >
-            {children}
-        </Button>
-    );
-};
+
 
 const LinkActivityPopup = ({
     open,
@@ -120,13 +85,16 @@ const LinkActivityPopup = ({
     const [selectHostName, setSelectHostName] = useState(null);
     const [selectMeetingType, setSelectMeetingType] = useState(null);
 
-    const { timezones, platforms, hosts } = useSelector(state => state.util);
     const { coachData } = useSelector(state => state.coachModule);
     const [selectedSlot, setSelectedSlot] = useState(null);
     const { typeList } = useSelector(state => state.activityType);
     const { coachingTools } = useSelector(state => state.coachingTools);
     const { coaches } = useSelector(state => state.coachModule);
     const { coachAvailableSlots } = useSelector(state => state.coachScheduling);
+
+    const { data : timezones, error : timezoneError , isLoading : timezonesLoading } = useGetTimezonesQuery();
+    const { data : platforms, error : platformError, isLoading : platformLoading } = useGetPlatformsQuery()
+    const { data : hosts, error : hostsError, isLoading : hostsLoading} = useGetHostsQuery()
 
     useEffect(() => {
         if (selectedCoachId) {
@@ -136,7 +104,6 @@ const LinkActivityPopup = ({
 
     useEffect(() => {
         if (coachData) {
-            // console.log("COACH DATA :::", coachData)
             setCoachTimeZone(coachData.timezone_id);
         }
     }, [coachData]);
@@ -394,12 +361,6 @@ const LinkActivityPopup = ({
     useEffect(() => {
         tranformSlots(coachAvailableSlots);
     }, [coachAvailableSlots]);
-
-    useEffect(() => {
-        dispatch(getTimezone());
-        dispatch(getPlatforms());
-        dispatch(getAllHosts());
-    }, [dispatch]);
 
     const coachOptions = coaches.map(coach => ({
         value: coach.name,

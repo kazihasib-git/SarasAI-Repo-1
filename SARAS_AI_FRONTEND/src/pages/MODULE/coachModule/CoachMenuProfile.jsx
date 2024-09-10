@@ -25,7 +25,7 @@ import {
     updateCoachmenuprofile,
 } from '../../../redux/features/coachModule/coachmenuprofileSilce';
 import { formatInTimeZone } from 'date-fns-tz';
-import { getTimezone } from '../../../redux/features/utils/utilSlice';
+import { useGetTimezonesQuery } from '../../../redux/services/timezones/timezonesApi';
 
 const CoachMenuProfile = () => {
     const dispatch = useDispatch();
@@ -46,11 +46,8 @@ const CoachMenuProfile = () => {
     });
 
     const { coachProfileData } = useSelector(state => state.coachMenu);
-    const { timezones } = useSelector(state => state.util);
-    useEffect(() => {
-        dispatch(getTimezone());
-    }, [dispatch]);
-
+    const { data : timezones, error : timezoneError, isLoading } = useGetTimezonesQuery();
+    
     //edit button
     const [isEditing, setIsEditing] = useState(false);
     const toggleEdit = () => {

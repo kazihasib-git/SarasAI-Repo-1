@@ -22,13 +22,12 @@ import {
     createCoachSchedule,
 } from '../../../../../redux/features/adminModule/coach/coachSchedule';
 import { getTaAvailableSlotsFromDate } from '../../../../../redux/features/adminModule/ta/taScheduling';
-import {
-    getPlatforms,
-    getTimezone,
-} from '../../../../../redux/features/utils/utilSlice';
 import { timezoneIdToName } from '../../../../../utils/timezoneIdToName';
 import { convertFromUTC } from '../../../../../utils/dateAndtimeConversion';
 import CustomPlatformForm from '../../../../../components/CustomFields/CustomPlatformForm';
+import { useGetHostsQuery } from '../../../../../redux/services/hosts/hostsApi';
+import { useGetPlatformsQuery } from '../../../../../redux/services/platforms/platformsApi';
+import { useGetTimezonesQuery } from '../../../../../redux/services/timezones/timezonesApi';
 
 const VirtualGroupSession = () => {
 
@@ -42,7 +41,9 @@ const VirtualGroupSession = () => {
     
     const dispatch = useDispatch();
     const { coaches } = useSelector(state => state.coachModule);
-    const { timezones, platforms } = useSelector(state => state.util);
+    const { data : timezones, error : timezoneError , isLoading : timezonesLoading } = useGetTimezonesQuery();
+    const { data : platforms, error : platformError, isLoading : platformLoading } = useGetPlatformsQuery()
+    const { data : hosts, error : hostsError, isLoading : hostsLoading} = useGetHostsQuery()
     const [selectedSlot, setSelectedSlot] = useState('');
 
     const handleSlotChange = event => {
@@ -94,11 +95,6 @@ const VirtualGroupSession = () => {
     useEffect(() => {
         tranformSlots(coachAvailableSlots);
     }, [coachAvailableSlots]);
-
-    useEffect(() => {
-        dispatch(getTimezone());
-        dispatch(getPlatforms());
-    }, [dispatch]);
 
     const coachOptions = coaches.map(coach => ({
         value: coach.name,

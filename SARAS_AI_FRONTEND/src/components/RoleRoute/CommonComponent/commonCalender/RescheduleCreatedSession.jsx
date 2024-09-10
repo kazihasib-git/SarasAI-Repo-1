@@ -2,19 +2,11 @@ import { Button, DialogContent, Grid } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ReusableDialog from '../../../CustomFields/ReusableDialog';
-import CustomDateField from '../../../CustomFields/CustomDateField';
-import PopUpTable from '../../../CommonComponent/PopUpTable';
 import CustomTimeField from '../../../CustomFields/CustomTimeField';
 import {
     closeReschedulePopup,
     openCreatedSessions,
 } from '../../../../redux/features/commonCalender/commonCalender';
-import { getScheduleSession } from '../../../../redux/features/adminModule/ta/taAvialability';
-import { timezoneIdToName } from '../../../../utils/timezoneIdToName';
-import {
-    getTimezone,
-    getAllHosts,
-} from '../../../../redux/features/utils/utilSlice';
 import {
     getCoachMenuSessionForLeave,
     getCoachMenuSessions,
@@ -38,6 +30,9 @@ import CustomHostNameForm from '../../../CustomFields/CustomHostNameField';
 import CustomMeetingTypeForm from '../../../CustomFields/CustomMeetingTypeField';
 import { GLOBAL_CONSTANTS } from '../../../../constants/globalConstants';
 import CustomButton from '../../../CustomFields/CustomButton';
+import { useGetHostsQuery } from '../../../../redux/services/hosts/hostsApi';
+import { useGetPlatformsQuery } from '../../../../redux/services/platforms/platformsApi';
+import { useGetTimezonesQuery } from '../../../../redux/services/timezones/timezonesApi';
 
 const headers = ['S. No.', 'Slots Available', 'Select'];
 
@@ -84,12 +79,11 @@ const RescheduleCreatedSession = ({ componentName, timezone }) => {
     } = useForm({
         defaultValues: {},
     });
-    useEffect(() => {
-        dispatch(getTimezone());
-        dispatch(getAllHosts());
-    }, [dispatch]);
 
-    const { timezones, hosts } = useSelector(state => state.util);
+    const { data : timezones, error : timezoneError , isLoading : timezonesLoading } = useGetTimezonesQuery();
+    const { data : platforms, error : platformError, isLoading : platformLoading } = useGetPlatformsQuery()
+    const { data : hosts, error : hostsError, isLoading : hostsLoading} = useGetHostsQuery()
+
 
     const {
         sliceName,

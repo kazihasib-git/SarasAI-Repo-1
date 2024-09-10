@@ -3,7 +3,6 @@ import { IconButton, InputAdornment } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useForm, Controller } from 'react-hook-form';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import moment from 'moment-timezone';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     Box,
@@ -28,7 +27,6 @@ import 'react-phone-input-2/lib/style.css';
 import SubmitPopup from '../../SubmitPopup';
 import CustomTextField from '../../../CustomFields/CustomTextField';
 import CustomFormControl from '../../../CustomFields/CustomFromControl';
-import CustomDateField from '../../../CustomFields/CustomDateField';
 import AvatarInput from '../../../CustomFields/AvatarInput';
 import {
     genders,

@@ -24,11 +24,6 @@ import CustomTextField from '../../../CustomFields/CustomTextField';
 import CustomFormControl from '../../../CustomFields/CustomFromControl';
 import CustomTimeField from '../../../CustomFields/CustomTimeField';
 import CustomTimeZoneForm from '../../../CustomFields/CustomTimeZoneForm';
-import {
-    getAllHosts,
-    getPlatforms,
-    getTimezone,
-} from '../../../../redux/features/utils/utilSlice';
 import CustomPlatformForm from '../../../CustomFields/CustomPlatformForm';
 import CustomHostNameForm from '../../../CustomFields/CustomHostNameField';
 import CustomMeetingTypeField from '../../../CustomFields/CustomMeetingTypeField';
@@ -43,6 +38,9 @@ import {
 } from '../../../../redux/features/commonCalender/batchesAndStudents';
 import SelectBatches from '../../../batches/SelectBatches';
 import SelectStudents from '../../../students/SelectStudents';
+import { useGetHostsQuery } from '../../../../redux/services/hosts/hostsApi';
+import { useGetPlatformsQuery } from '../../../../redux/services/platforms/platformsApi';
+import { useGetTimezonesQuery } from '../../../../redux/services/timezones/timezonesApi';
 
 const sessionConfig = {
     TAMENU: {
@@ -102,7 +100,10 @@ const CreateSession = ({ role, componentName }) => {
     const [formData, setFormData] = useState(initialFormData);
     const [error, setError] = useState({});
 
-    const { timezones, platforms, hosts } = useSelector(state => state.util);
+    const { data : timezones, error : timezoneError , isLoading : timezonesLoading } = useGetTimezonesQuery();
+    const { data : platforms, error : platformError, isLoading : platformLoading } = useGetPlatformsQuery()
+    const { data : hosts, error : hostsError, isLoading : hostsLoading} = useGetHostsQuery()
+
     const { scheduleNewSessionPopup } = useSelector(
         state => state.commonCalender
     );
@@ -118,9 +119,6 @@ const CreateSession = ({ role, componentName }) => {
         useSelector(state => state.batchesAndStudents);
 
     useEffect(() => {
-        dispatch(getTimezone());
-        dispatch(getPlatforms());
-        dispatch(getAllHosts());
         dispatch(getStudentsApi());
         dispatch(getBatchesApi());
     }, [dispatch]);

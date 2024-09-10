@@ -37,6 +37,7 @@ import editImage from '../../assets/editIcon.png';
 import { useNavigate } from 'react-router-dom';
 import { getPlatforms } from '../../redux/features/utils/utilSlice';
 import CustomPlatformForm from '../CustomFields/CustomPlatformForm';
+import CustomButton from '../CustomFields/CustomButton';
 
 const scheduleConfig = {
     TACALENDER: {

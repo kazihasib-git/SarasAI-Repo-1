@@ -6,8 +6,7 @@ import Header from '../../components/Header/Header';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import DynamicTable from '../../components/CommonComponent/DynamicTable';
 import { timezoneIdToName } from '../../utils/timezoneIdToName';
-import { deleteTaMapping } from '../../redux/features/adminModule/ta/taSlice';
-import { getTimezone } from '../../redux/features/utils/utilSlice';
+import { useGetTimezonesQuery } from '../../redux/services/timezones/timezonesApi';
 //import ConfirmationDialog from '../../components/RoleRoute/CommonComponent/ConfirmationDialog';
 const headers = [
     'S. No.',
@@ -30,13 +29,12 @@ const TaMapping = () => {
     const { taMapping, loading } = useSelector(state => state.taModule);
     const [taMappingData, setTaMappingData] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
-    const { timezones } = useSelector(state => state.util);
     // const [openDialog, setOpenDialog] = useState(false);
     // const [itemToDelete, setItemToDelete] = useState(null);
+    const { data : timezones, error, isLoading } = useGetTimezonesQuery();
 
     useEffect(() => {
         dispatch(showTAMapping());
-        dispatch(getTimezone());
     }, [dispatch]);
 
     useEffect(() => {

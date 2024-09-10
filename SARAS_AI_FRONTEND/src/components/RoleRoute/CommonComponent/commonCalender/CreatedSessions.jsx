@@ -12,8 +12,7 @@ import {
     openReschedulePopup,
 } from '../../../../redux/features/commonCalender/commonCalender';
 import { convertFromUTC } from '../../../../utils/dateAndtimeConversion';
-import { timezoneIdToName } from '../../../../utils/timezoneIdToName';
-import { getTimezone } from '../../../../redux/features/utils/utilSlice';
+
 const headers = [
     'S. No.',
     'Session Name',
