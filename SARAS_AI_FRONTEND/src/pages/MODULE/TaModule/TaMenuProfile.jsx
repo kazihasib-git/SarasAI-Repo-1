@@ -26,7 +26,7 @@ import {
 import { formatInTimeZone } from 'date-fns-tz';
 import moment from 'moment';
 import CustomDateOfBirth from '../../../components/CustomFields/CustomDateOfBirth';
-import { getTimezone } from '../../../redux/features/utils/utilSlice';
+import { useGetTimezonesQuery } from '../../../redux/services/timezones/timezonesApi';
 
 const TaMenuProfile = () => {
     const dispatch = useDispatch();
@@ -47,11 +47,7 @@ const TaMenuProfile = () => {
     });
 
     const { taProfileData } = useSelector(state => state.taMenu);
-
-    const { timezones } = useSelector(state => state.util);
-    useEffect(() => {
-        dispatch(getTimezone());
-    }, [dispatch]);
+    const { data : timezones, error : timezoneError, isLoading } = useGetTimezonesQuery();
 
     const [isEditing, setIsEditing] = useState(false);
 

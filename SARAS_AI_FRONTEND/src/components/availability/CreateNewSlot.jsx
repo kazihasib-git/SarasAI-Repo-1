@@ -15,9 +15,6 @@ import CustomTimeField from '../CustomFields/CustomTimeField';
 import ReusableDialog from '../CustomFields/ReusableDialog';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomTimeZoneForm from '../CustomFields/CustomTimeZoneForm';
-import { getTimezone } from '../../redux/features/utils/utilSlice';
-import { useParams } from 'react-router-dom';
-import { timezoneIdToName } from '../../utils/timezoneIdToName';
 import {
     createSlots,
     closeCreateNewSlots,
@@ -31,6 +28,7 @@ import { toast } from 'react-toastify';
 import CustomButton from '../CustomFields/CustomButton';
 import CustomFutureDateField from '../CustomFields/CustomFutureDateField';
 import { GLOBAL_CONSTANTS } from '../../constants/globalConstants';
+import { useGetTimezonesQuery } from '../../redux/services/timezones/timezonesApi';
 
 const slotConfig = {
     TACALENDER: {
@@ -55,11 +53,7 @@ const CreateNewSlot = ({ id, name, componentName, timezone }) => {
     const [fromTime, setFromTime] = useState(null);
     const [toTime, setToTime] = useState(null);
 
-    const { timezones } = useSelector(state => state.util);
-
-    useEffect(() => {
-        dispatch(getTimezone());
-    }, [dispatch]);
+    const { data : timezones, error, isLoading } = useGetTimezonesQuery();
 
     const { sliceName, createSlotApi, getSlotsApi } = slotConfig[componentName];
 

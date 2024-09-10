@@ -21,7 +21,6 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { timezoneIdToName } from '../../../utils/timezoneIdToName';
 import { convertFromUTC } from '../../../utils/dateAndtimeConversion';
-import { getTimezone } from '../../../redux/features/utils/utilSlice';
 
 const CallRequest = () => {
     const [openCreateMeetingDialog, setOpenCreateMeetingDialog] =
@@ -32,12 +31,11 @@ const CallRequest = () => {
     const [denyRequestId, setDenyRequestId] = useState(null);
     const dispatch = useDispatch();
 
-    const { timezones } = useSelector(state => state.util);
+    const { data : timezones, error, isLoading } = useGetTimezonesQuery();
     const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
 
     useEffect(() => {
         dispatch(getTaCallRequests());
-        dispatch(getTimezone());
     }, [dispatch]);
 
     const processTaCallRequests = async requests => {

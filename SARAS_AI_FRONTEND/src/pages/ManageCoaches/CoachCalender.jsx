@@ -89,12 +89,12 @@ const CoachCalender = () => {
                     convertSlots();
                 }
             }else {
-                slotViewData([])
-                slotCoachData([])
+                setEventsList([]);
+                setSlotViewData([]);
             }
         }else {
-            slotViewData([])
-            slotCoachData([])
+            setEventsList([]);
+            setSlotViewData([]);
         }
     }, [timezoneId, timezones, scheduleCoachData, slotCoachData]);
 
