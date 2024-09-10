@@ -41,7 +41,7 @@ const CustomTimeZoneForm = ({
                 {label}
             </InputLabel>
             <Autocomplete
-                value={options.find(option => option.id === value) || null}
+                value={options && options.find(option => option.id === value) || null}
                 onChange={(event, newValue) => {
                     onChange({
                         target: {

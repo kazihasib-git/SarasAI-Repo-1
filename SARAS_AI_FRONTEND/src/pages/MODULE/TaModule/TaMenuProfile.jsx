@@ -30,6 +30,7 @@ import { useGetTimezonesQuery } from '../../../redux/services/timezones/timezone
 
 const TaMenuProfile = () => {
     const dispatch = useDispatch();
+    const { data : timezones, error : timezoneError, isLoading } = useGetTimezonesQuery();
     const {
         register,
         handleSubmit,
@@ -47,8 +48,6 @@ const TaMenuProfile = () => {
     });
 
     const { taProfileData } = useSelector(state => state.taMenu);
-    const { data : timezones, error : timezoneError, isLoading } = useGetTimezonesQuery();
-
     const [isEditing, setIsEditing] = useState(false);
 
     const toggleEdit = () => {

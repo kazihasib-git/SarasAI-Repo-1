@@ -107,19 +107,21 @@ const ScheduledCall = ({ role }) => {
         state => state.batchesAndStudents
     );
 
-    function formatDate(date) {
+    function formatDate(date, offset) {
         const localDate = new Date(date);
-        const offset = 5.5 * 60 * 60000;
-        const adjustedDate = new Date(localDate.getTime() + offset);
+        const offsetInMilliseconds = offset * 60 * 60 * 1000; // Convert hours to milliseconds
+        const adjustedDate = new Date(localDate.getTime() + offsetInMilliseconds);
         return adjustedDate.toISOString().split('T')[0];
     }
 
     useEffect(() => {
-        const data = {
-            date: formatDate(date),
-            timezone_name: timezoneDetails?.time_zone,
-        };
-        dispatch(getScheduledCallsApi(data));
+        if(timezoneDetails){
+            const data = {
+                date: formatDate(date, timezoneDetails.utc_offset),
+                timezone_name: timezoneDetails?.time_zone,
+            };
+            dispatch(getScheduledCallsApi(data));
+        }
     }, [dispatch, date, timezoneDetails]);
 
     function convertTo12HourFormat(time24) {
