@@ -81,18 +81,6 @@ const ScheduledCall = ({ role }) => {
     const stateSelector = useSelector(state => state[sliceName]);
     const { [getScheduledCallsState]: scheduledCallsData } = stateSelector;
 
-    useEffect(() => {
-        if (timezoneId && timezones?.length > 0) {
-            const timezone = fetchtimezoneDetails(timezoneId, timezones);
-            setTimezoneDetails(timezone);
-            if(timezone && scheduledCallsData?.length > 0){
-                processScheduledCalls(scheduledCallsData);
-            }else {
-                setScheduledCalls([]);
-            }
-        }
-    }, [timezoneId, timezones, scheduledCallsData]);
-
     const {
         scheduleNewSessionPopup,
         selectStudentPopup,
@@ -106,6 +94,21 @@ const ScheduledCall = ({ role }) => {
     const { openBatches, openStudents } = useSelector(
         state => state.batchesAndStudents
     );
+
+    useEffect(() => {
+        if (timezoneId && timezones?.length > 0) {
+            const timezone = fetchtimezoneDetails(timezoneId, timezones);
+            setTimezoneDetails(timezone);
+        }
+    }, [timezoneId, timezones]);
+    
+    useEffect(() => {
+        if (timezoneDetails && scheduledCallsData?.length > 0) {
+            processScheduledCalls(scheduledCallsData);
+        } else {
+            setScheduledCalls([]);
+        }
+    }, [timezoneDetails, scheduledCallsData]);
 
     function formatDate(date, offset) {
         const localDate = new Date(date);
