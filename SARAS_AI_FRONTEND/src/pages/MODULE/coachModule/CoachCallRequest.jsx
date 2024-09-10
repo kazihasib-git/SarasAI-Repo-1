@@ -18,25 +18,45 @@ import { useDispatch, useSelector } from 'react-redux';
 import { timezoneIdToName } from '../../../utils/timezoneIdToName';
 import { convertFromUTC } from '../../../utils/dateAndtimeConversion';
 import { useGetTimezonesQuery } from '../../../redux/services/timezones/timezonesApi';
+import { useGetHostsQuery } from '../../../redux/services/hosts/hostsApi';
+import { useGetPlatformsQuery } from '../../../redux/services/platforms/platformsApi';
+import CustomHostNameForm from '../../../components/CustomFields/CustomHostNameField';
 
 const CoachCallRequest = () => {
-    const [open, setOpen] = useState(false);
+    const dispatch = useDispatch();
     const { coachCallRequests } = useSelector(state => state.coachMenu);
+    const { timezoneId } = useSelector(state => state.auth);
+
+    const [open, setOpen] = useState(false);
     const [callRequests, setCallRequests] = useState([]);
     const [showFullMessages, setShowFullMessages] = useState({});
     const [denyRequestId, setDenyRequestId] = useState(null);
-    const dispatch = useDispatch();
+    const [hostEmail, setHostEmail] = useState();
+    const [error, setError] = useState({});
 
-    const { data : timezones, error, isLoading } = useGetTimezonesQuery();
-    const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
+    const {
+        data: timezones,
+        error: timezoneError,
+        isLoading: timezonesLoading,
+    } = useGetTimezonesQuery();
+    const {
+        data: hosts,
+        error: hostsError,
+        isLoading: hostsLoading,
+    } = useGetHostsQuery();
+    const {
+        data: platforms,
+        error: platformError,
+        isLoading: platformLoading,
+    } = useGetPlatformsQuery();
 
     useEffect(() => {
         dispatch(getCoachCallRequests());
     }, [dispatch]);
 
     const processCoachCallRequests = async requests => {
-        if (requests && requests.length > 0 && timezones && storedTimezoneId) {
-            const timezonename = timezoneIdToName(storedTimezoneId, timezones);
+        if (requests && requests.length > 0 && timezones && timezoneId) {
+            const timezonename = timezoneIdToName(timezoneId, timezones);
 
             try {
                 const processedRequests = await Promise.all(
@@ -71,10 +91,10 @@ const CoachCallRequest = () => {
     };
 
     useEffect(() => {
-        if (coachCallRequests && timezones && storedTimezoneId) {
+        if (coachCallRequests && timezones && timezoneId) {
             processCoachCallRequests(coachCallRequests);
         }
-    }, [coachCallRequests, timezones, storedTimezoneId]);
+    }, [coachCallRequests, timezones, timezoneId]);
 
     const handleClickOpen = id => {
         setDenyRequestId(id);
@@ -91,7 +111,10 @@ const CoachCallRequest = () => {
     };
 
     const handleApprove = id => {
-        dispatch(approveCallRequest(id));
+        // const data = {
+        //     host_email_id: hostEmail,
+        // };
+        dispatch(approveCallRequest({ id, hostEmail }));
     };
 
     const toggleShowFullMessage = id => {
@@ -113,6 +136,11 @@ const CoachCallRequest = () => {
         const formattedMinutes = minutes.toString().padStart(2, '0');
         return `${hours12}:${formattedMinutes} ${suffix}`;
     }
+
+    const handleChange = (field, value) => {
+        setHostEmail(prev => ({ ...prev, [field]: value }));
+    };
+
 
     return (
         <div>
@@ -207,44 +235,76 @@ const CoachCallRequest = () => {
                                         Approved
                                     </Button>
                                 ) : (
-                                    <Box display="flex" mt={2} ml={6}>
-                                        <Button
-                                            onClick={() =>
-                                                handleApprove(callRequest.id)
-                                            }
-                                            sx={{
-                                                height: 43,
-                                                width: 112,
-                                                borderRadius: 40,
-                                                backgroundColor: '#F56D3B',
-                                                color: 'white',
-                                                '&:hover': {
-                                                    backgroundColor: '#F56D3B',
-                                                },
-                                            }}
-                                        >
-                                            Approve
-                                        </Button>
-                                        <Button
-                                            onClick={() =>
-                                                handleClickOpen(callRequest.id)
-                                            }
-                                            sx={{
-                                                height: 43,
-                                                width: 112,
-                                                borderRadius: 40,
-                                                color: '#F56D3B',
-                                                border: '2px solid #F56D3B',
-                                                ml: 1,
-                                                '&:hover': {
+                                    <>
+                                        <Typography gutterBottom sx={{ ml: 2 }}>
+                                            <Grid
+                                                item
+                                                xs={12}
+                                                display="flex"
+                                                justifyContent="center"
+                                            >
+                                                <CustomHostNameForm
+                                                    label="Host Name"
+                                                    name="host_email_id"
+                                                    value={hostEmail}
+                                                    onChange={e =>
+                                                        handleChange(
+                                                            'host_email_id',
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                    options={hosts?.users}
+                                                    errors={
+                                                        !!error.host_email_id
+                                                    }
+                                                />
+                                            </Grid>
+                                        </Typography>
+                                        <Box display="flex" mt={2} ml={6}>
+                                            <Button
+                                                onClick={() =>
+                                                    handleApprove(
+                                                        callRequest.id
+                                                    )
+                                                }
+                                                sx={{
+                                                    height: 43,
+                                                    width: 112,
+                                                    borderRadius: 40,
                                                     backgroundColor: '#F56D3B',
                                                     color: 'white',
-                                                },
-                                            }}
-                                        >
-                                            Deny
-                                        </Button>
-                                    </Box>
+                                                    '&:hover': {
+                                                        backgroundColor:
+                                                            '#F56D3B',
+                                                    },
+                                                }}
+                                            >
+                                                Approve
+                                            </Button>
+                                            <Button
+                                                onClick={() =>
+                                                    handleClickOpen(
+                                                        callRequest.id
+                                                    )
+                                                }
+                                                sx={{
+                                                    height: 43,
+                                                    width: 112,
+                                                    borderRadius: 40,
+                                                    color: '#F56D3B',
+                                                    border: '2px solid #F56D3B',
+                                                    ml: 1,
+                                                    '&:hover': {
+                                                        backgroundColor:
+                                                            '#F56D3B',
+                                                        color: 'white',
+                                                    },
+                                                }}
+                                            >
+                                                Deny
+                                            </Button>
+                                        </Box>
+                                    </>
                                 )}
                             </CardContent>
                         </Card>

@@ -278,11 +278,10 @@ export const getCoachCallRequests = createAsyncThunk(
 // approve call request
 export const approveCallRequest = createAsyncThunk(
     'coachMenu/approveCallRequest',
-    async id => {
-        const response = await axiosInstance.get(
-            `${baseUrl}/coach/call-request/approve-call-request/${id}`
+    async ({ id, data}) => {
+        const response = await axiosInstance.post(
+            `${baseUrl}/coach/call-request/approve-call-request/${id}` , data
         );
-        console.log(response.data, 'response.data');
         return response.data;
     }
 );
