@@ -216,9 +216,9 @@ export const getTaCallRequests = createAsyncThunk(
 // ta approve call request
 export const approveCallRequest = createAsyncThunk(
     'taMenu/approveCallRequest',
-    async ({id, data }) => {
+    async ({id, hostEmail }) => {
         const response = await axiosInstance.post(
-            `${baseUrl}/ta/call-request/approve-call-request/${id}` , data
+            `${baseUrl}/ta/call-request/approve-call-request/${id}` , hostEmail
         );
         return response.data;
     }
