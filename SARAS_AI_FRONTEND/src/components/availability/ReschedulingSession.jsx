@@ -29,11 +29,13 @@ import {
 } from '../../redux/features/adminModule/coach/CoachAvailabilitySlice';
 import CustomButton from '../CustomFields/CustomButton';
 import { convertFromUTC } from '../../utils/dateAndtimeConversion';
-import { getAllHosts } from '../../redux/features/utils/utilSlice';
 import { toast } from 'react-toastify';
 import PopTableSlot from '../CommonComponent/PopTableSlot';
 import CustomFutureDateField from '../CustomFields/CustomFutureDateField';
 import { GLOBAL_CONSTANTS } from '../../constants/globalConstants';
+import { useGetHostsQuery } from '../../redux/services/hosts/hostsApi';
+import { useGetPlatformsQuery } from '../../redux/services/platforms/platformsApi';
+import { useGetTimezonesQuery } from '../../redux/services/timezones/timezonesApi';
 
 const headers = ['S. No.', 'Slots Available', 'Select'];
 
@@ -70,7 +72,6 @@ const rescheduleConfig = {
 
 const ReschedulingSession = ({ id, name, componentName, timezone }) => {
     const dispatch = useDispatch();
-    const { hosts } = useSelector(state => state.util);
 
     const [selectDate, setSelectDate] = useState(null);
     const [selectedSlots, setSelectedSlots] = useState([]);
@@ -106,6 +107,10 @@ const ReschedulingSession = ({ id, name, componentName, timezone }) => {
         state => state.commonCalender
     );
 
+    const { data : timezones, error : timezoneError , isLoading : timezonesLoading } = useGetTimezonesQuery();
+    const { data : platforms, error : platformError, isLoading : platformLoading } = useGetPlatformsQuery();
+    const { data : hosts, error : hostsError, isLoading : hostsLoading} = useGetHostsQuery();
+
     const {
         [rescheduleSessionOpenKey]: rescheduleSessionOpen,
         [availableSlotsAction]: availableSlotsData,
@@ -113,9 +118,7 @@ const ReschedulingSession = ({ id, name, componentName, timezone }) => {
         [slotEventAction]: slotEventData,
     } = useSelector(state => state[sliceName]);
 
-    useEffect(() => {
-        dispatch(getAllHosts());
-    }, [dispatch]);
+    console.log("SESSION EVENT DATA :", sessionEventData)
 
     useEffect(() => {
         if (selectDate) {
@@ -334,6 +337,7 @@ const ReschedulingSession = ({ id, name, componentName, timezone }) => {
                                 <Controller
                                     name="host_email_id"
                                     control={control}
+                                    defaultValue={sessionEventData.host_email_id}
                                     render={({ field }) => (
                                         <CustomHostNameForm
                                             label="Host Name"
@@ -357,6 +361,7 @@ const ReschedulingSession = ({ id, name, componentName, timezone }) => {
                                 <Controller
                                     name="meeting_type"
                                     control={control}
+                                    defaultValue={sessionEventData.meetingType}
                                     render={({ field }) => (
                                         <CustomMeetingTypeForm
                                             label="Meeting Type"

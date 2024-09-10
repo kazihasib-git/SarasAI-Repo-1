@@ -62,8 +62,7 @@ const scheduledConfig = {
 
 const ScheduledSessions = ({ id, name, componentName, timezone }) => {
     const dispatch = useDispatch();
-
-    const { timezones, platforms } = useSelector(state => state.util);
+    
     const [sessionData, setSessionData] = useState([]);
 
     const {
@@ -128,6 +127,9 @@ const ScheduledSessions = ({ id, name, componentName, timezone }) => {
                             Students: session.Students.length,
                             StudentList: session.Students,
                             id: session.id,
+                            platformId : session.platform_id,
+                            meetingType : session.platform_meeting_details.meeting_type,
+                            hostEmailId : session.platform_meeting_details.host_email_id,
                             // startDateTime,
                             // endDateTime
                         };

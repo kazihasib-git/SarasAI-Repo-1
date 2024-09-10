@@ -21,6 +21,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { timezoneIdToName } from '../../../utils/timezoneIdToName';
 import { convertFromUTC } from '../../../utils/dateAndtimeConversion';
+import { useGetTimezonesQuery } from '../../../redux/services/timezones/timezonesApi';
 
 const CallRequest = () => {
     const [openCreateMeetingDialog, setOpenCreateMeetingDialog] =

@@ -1,7 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { baseUrl } from '../../../utils/baseURL';
 
-// Create the API slice for timezones
 export const timezonesApi = createApi({
     reducerPath: 'timezonesApi',
     baseQuery: fetchBaseQuery({ baseUrl }),

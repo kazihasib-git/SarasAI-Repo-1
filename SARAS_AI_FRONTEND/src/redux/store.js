@@ -22,6 +22,8 @@ import linkActivityReducer from './features/adminModule/coach/LinkActivitySlice'
 import coachingToolsReducer from './features/adminModule/coachingTools/coachingTools';
 import batchesAndStudentsReducer from './features/commonCalender/batchesAndStudents';
 import { timezonesApi } from './services/timezones/timezonesApi';
+import { hostsApi } from './services/hosts/hostsApi';
+import { platformsApi } from './services/platforms/platformsApi';
 
 const store = configureStore({
     reducer: {
@@ -48,13 +50,17 @@ const store = configureStore({
         [batchesApi.reducerPath]: batchesApi.reducer,
         [coursesApi.reducerPath]: coursesApi.reducer,
         [timezonesApi.reducerPath]: timezonesApi.reducer,
+        [platformsApi.reducerPath] : platformsApi.reducer,
+        [hostsApi.reducerPath] : hostsApi.reducer,
     },
     middleware: getDefaultMiddleware =>
         getDefaultMiddleware()
             .concat(studentsApi.middleware)
             .concat(batchesApi.middleware)
             .concat(coursesApi.middleware)
-            .concat(timezonesApi.middleware),
+            .concat(timezonesApi.middleware)
+            .concat(platformsApi.middleware)
+            .concat(hostsApi.middleware),
 });
 
 setupListeners(store.dispatch);

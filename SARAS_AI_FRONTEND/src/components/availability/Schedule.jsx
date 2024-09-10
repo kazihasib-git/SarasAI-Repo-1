@@ -36,11 +36,6 @@ import {
     openCoachEditBatch,
     openCoachEditStudent,
 } from '../../redux/features/adminModule/coach/coachSchedule';
-import {
-    getPlatforms,
-    getTimezone,
-    getAllHosts,
-} from '../../redux/features/utils/utilSlice';
 import CustomTimeZoneForm from '../CustomFields/CustomTimeZoneForm';
 import { fetchTAScheduleById } from '../../redux/features/adminModule/ta/taAvialability';
 import { toast } from 'react-toastify';
@@ -52,6 +47,9 @@ import editButtonBackground from '../../assets/editbuttonbackground.svg';
 import editButtonIcon from '../../assets/editbutton.svg';
 import CustomFutureDateField from '../CustomFields/CustomFutureDateField';
 import { GLOBAL_CONSTANTS } from '../../constants/globalConstants';
+import { useGetTimezonesQuery } from '../../redux/services/timezones/timezonesApi';
+import { useGetPlatformsQuery } from '../../redux/services/platforms/platformsApi';
+import { useGetHostsQuery } from '../../redux/services/hosts/hostsApi';
 
 const headers = ['S. No.', 'Slot Date', 'From Time', 'To Time', 'Select'];
 
@@ -73,7 +71,11 @@ const Schedule = ({ componentName, timezoneID }) => {
     const [availableSlotsOptions, setAvailableSlotsOptions] = useState([]);
     const [dateSelected, setDateSelected] = useState(false);
     const dispatch = useDispatch();
-    const { timezones, platforms, hosts } = useSelector(state => state.util);
+
+    const { data : timezones, error : timezoneError , isLoading : timezonesLoading } = useGetTimezonesQuery()
+    const { data : platforms, error : platformError, isLoading : platformLoading } = useGetPlatformsQuery()
+    const { data : hosts, error : hostsError, isLoading : hostsLoading} = useGetHostsQuery()
+
 
     let scheduleSessionOpenKey,
         schedulingStateKey,
@@ -198,12 +200,6 @@ const Schedule = ({ componentName, timezoneID }) => {
             return;
         }
     };
-
-    useEffect(() => {
-        dispatch(getTimezone());
-        dispatch(getPlatforms());
-        dispatch(getAllHosts());
-    }, [dispatch]);
 
     const convertSessions = async () => {
         if (

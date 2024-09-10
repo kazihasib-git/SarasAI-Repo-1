@@ -15,8 +15,8 @@ import {
     setSelectedCoach,
     updateCoach,
 } from '../../redux/features/adminModule/coach/coachSlice';
-import { getTimezone } from '../../redux/features/utils/utilSlice';
 import { timezoneIdToName } from '../../utils/timezoneIdToName';
+import { useGetTimezonesQuery } from '../../redux/services/timezones/timezonesApi';
 
 const ManageCoaches = () => {
     const dispatch = useDispatch();
@@ -36,41 +36,13 @@ const ManageCoaches = () => {
     const { coaches, createCoachOpen, editCoachOpen } = useSelector(
         state => state.coachModule
     );
-    const { timezones } = useSelector(state => state.util);
+    const { data : timezones, error, isLoading } = useGetTimezonesQuery();
 
     useEffect(() => {
         dispatch(closeCreateCoach());
         dispatch(closeEditCoach());
         dispatch(getCoach());
-        dispatch(getTimezone()); // Fetch timezones when the component mounts
     }, [dispatch]);
-
-    // useEffect(() => {
-    //     const transformData = async () => {
-    //         if (coaches.length > 0 && timezones.length > 0) {
-    //             const transformed = await Promise.all(
-    //                 coaches.map(async item => {
-    //                     const timezonename = await timezoneIdToName(
-    //                         item.timezone_id,
-    //                         timezones
-    //                     );
-    //                     console.log('timezonename: ', timezonename);
-    //                     return {
-    //                         id: item.id,
-    //                         'Coach Name': item.name,
-    //                         Username: item.username,
-    //                         Location: item.location,
-    //                         'Time Zone': timezonename,
-    //                         is_active: item.is_active,
-    //                     };
-    //                 })
-    //             );
-    //             setCoachesData(transformed);
-    //         }
-    //     };
-
-    //     transformData();
-    // }, [coaches, timezones]);
 
     useEffect(() => {
         if(coaches && coaches.length > 0){

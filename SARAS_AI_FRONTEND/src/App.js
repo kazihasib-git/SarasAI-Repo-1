@@ -80,12 +80,18 @@ import AssignedTemplateStudents from './pages/ManageCoaches/CoachingTemplate/Ass
 import ForgetPassword from './components/AUTH/ForgetPassword.jsx';
 import ManageTA from './pages/managesTAs/ManageTA.jsx';
 import CoachAvailability from './pages/ManageCoaches/CoachAvailability.jsx';
+import { useGetTimezonesQuery } from './redux/services/timezones/timezonesApi.js';
+import { useGetPlatformsQuery } from './redux/services/platforms/platformsApi.js';
+import { useGetHostsQuery } from './redux/services/hosts/hostsApi.js';
 
 function App() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const { login, role, accessToken } = useSelector(state => state.auth);
+    const { login, role, accessToken } = useSelector((state) => state.auth);
+    const { data : timezones, error : timezoneError , isLoading : timezonesLoading } = useGetTimezonesQuery();
+    const { data : platforms, error : platformError, isLoading : platformLoading } = useGetPlatformsQuery();
+    const { data : hosts, error : hostsError, isLoading : hostsLoading} = useGetHostsQuery();
 
     const access_token = localStorage.getItem('accessToken');
     const userRole = localStorage.getItem('role');

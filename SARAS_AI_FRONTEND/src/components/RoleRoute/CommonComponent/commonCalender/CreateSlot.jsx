@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getTimezone } from '../../../../redux/features/utils/utilSlice';
 import {
     createCoachMenuSlot,
     getCoachMenuSlots,
@@ -28,6 +27,7 @@ import CustomButton from '../../../CustomFields/CustomButton';
 import { toast } from 'react-toastify';
 import CustomFutureDateField from '../../../CustomFields/CustomFutureDateField';
 import { GLOBAL_CONSTANTS } from '../../../../constants/globalConstants';
+import { useGetTimezonesQuery } from '../../../../redux/services/timezones/timezonesApi';
 
 const slotConfig = {
     TAMENU: {
@@ -56,12 +56,8 @@ const CreateSlot = ({ componentName, timezone }) => {
     };
     const [formData, setFormData] = useState(initialFormData);
 
-    const { timezones } = useSelector(state => state.util);
+    const { data : timezones, error, isLoading } = useGetTimezonesQuery();
     const { createNewSlotPopup } = useSelector(state => state.commonCalender);
-
-    useEffect(() => {
-        dispatch(getTimezone());
-    }, [dispatch]);
 
     const handleChange = (field, value) => {
         if (field === 'timezone_id') {

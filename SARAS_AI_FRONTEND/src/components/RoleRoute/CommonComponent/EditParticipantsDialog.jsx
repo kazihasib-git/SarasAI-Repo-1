@@ -30,7 +30,6 @@ import {
     getTaScheduledCalls,
     updateTaScheduledCall,
 } from '../../../redux/features/taModule/tamenuSlice';
-import { getTimezone } from '../../../redux/features/utils/utilSlice';
 import {
     openBatchPopup,
     openStudentsPopup,
@@ -40,6 +39,7 @@ import {
 import SelectBatches from '../../batches/SelectBatches';
 import SelectStudents from '../../students/SelectStudents';
 import { timezoneIdToName } from '../../../utils/timezoneIdToName';
+import { useGetTimezonesQuery } from '../../../redux/services/timezones/timezonesApi';
 
 const editParticipantsConfig = {
     TA: {
@@ -73,7 +73,8 @@ const EditParticipantsDialog = ({ openEdit, onCloseEdit, role, timezone }) => {
         getBatchesApi,
         getBatchesState,
     } = editParticipantsConfig[role];
-    const { timezones } = useSelector(state => state.util);
+
+    const { data : timezones, error, isLoading } = useGetTimezonesQuery();
     const stateSelector = useSelector(state => state[sliceName]);
     const {
         [getStudentsState]: assignedStudents,
@@ -88,7 +89,6 @@ const EditParticipantsDialog = ({ openEdit, onCloseEdit, role, timezone }) => {
     const [data, setData] = useState([]);
 
     useEffect(() => {
-        dispatch(getTimezone());
         dispatch(getStudentsApi());
         dispatch(getBatchesApi());
     }, [dispatch]);

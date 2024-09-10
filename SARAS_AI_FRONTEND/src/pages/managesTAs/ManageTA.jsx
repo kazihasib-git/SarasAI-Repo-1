@@ -14,8 +14,8 @@ import {
     updateTA,
 } from '../../redux/features/adminModule/ta/taSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { getTimezone } from '../../redux/features/utils/utilSlice';
 import { timezoneIdToName } from '../../utils/timezoneIdToName';
+import { useGetTimezonesQuery } from '../../redux/services/timezones/timezonesApi';
 
 const headers = [
     'S. No.',
@@ -29,10 +29,10 @@ const headers = [
 const ManageTA = () => {
     
     const dispatch = useDispatch();
-    const { timezones } = useSelector(state => state.util);
     const { tas, loading, error, createTAOpen, editTAOpen } = useSelector(
         state => state.taModule
     );
+    const { data : timezones, error : timezoneError, isLoading } = useGetTimezonesQuery();
 
     const [tasData, setTasData] = useState([]);
     const [editData, setEditData] = useState();
@@ -43,8 +43,6 @@ const ManageTA = () => {
     useEffect(() => {
         dispatch(closeCreateTa());
         dispatch(closeEditTa());
-        dispatch(getTimezone());
-
         dispatch(getTA());
     }, [dispatch]);
 
