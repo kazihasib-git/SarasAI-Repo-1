@@ -3,8 +3,6 @@ import { useGetBatchesQuery } from '../../../../redux/services/batches/batchesAp
 import { Box } from '@mui/material';
 import Header from '../../../Header/Header';
 import Sidebar from '../../../Sidebar/Sidebar';
-import { batchDummyData } from '../../../../fakeData/batchesData';
-
 import DynamicTable from '../../../CommonComponent/DynamicTable';
 
 const Batches = () => {
@@ -19,7 +17,6 @@ const Batches = () => {
 
     useEffect(() => {
         if (data && data.batches && data.batches.length > 0) {
-            console.log('DATA Batch : ', data.batches);
             const transformedData = data?.batches?.map(item => ({
                 id: item.id,
                 'Batch Name': item.name,

@@ -34,16 +34,23 @@ import {
     fetchtimezoneDetails,
     timezoneIdToName,
 } from '../../utils/timezoneIdToName';
-import { getTimezone } from '../../redux/features/utils/utilSlice';
 import CustomButton from '../../components/CustomFields/CustomButton';
 import CreateNewSession from '../../components/availability/CreateNewSession';
 import SelectBatches from '../../components/batches/SelectBatches';
 import SelectStudents from '../../components/students/SelectStudents';
+import { useGetTimezonesQuery } from '../../redux/services/timezones/timezonesApi';
 
 const TaCalender = () => {
     const dispatch = useDispatch();
     const { id, name, timezoneId } = useParams();
-    const { timezones } = useSelector(state => state.util);
+    const { data : timezones, error, isLoading } = useGetTimezonesQuery();
+
+    useEffect(() => {
+        if(id){
+        dispatch(fetchTaSlots(id));
+        dispatch(fetchTAScheduleById(id));
+        }
+    }, [dispatch, id]);
 
     const {
         slotData,
@@ -67,12 +74,6 @@ const TaCalender = () => {
         state => state.batchesAndStudents
     );
 
-    useEffect(() => {
-        dispatch(fetchTaSlots(id));
-        dispatch(fetchTAScheduleById(id));
-        dispatch(getTimezone());
-    }, [dispatch]);
-
     //calendar
     const [eventsList, setEventsList] = useState([]);
     const [slotViewData, setSlotViewData] = useState([]);
@@ -81,13 +82,23 @@ const TaCalender = () => {
     useEffect(() => {
         if (timezoneId && timezones?.length > 0) {
             const timezone = fetchtimezoneDetails(timezoneId, timezones);
-            setTimezoneDetails(timezone);
-            if (timezone) {
-                convertEvents();
-                convertSlots();
+            if (timezone){
+                setTimezoneDetails(timezone);
+                if(scheduleData?.length > 0) {
+                    convertEvents();
+                }
+                if(slotData?.length > 0){
+                    convertSlots();
+                }
+            }else {
+                slotViewData([])
+                eventsList([])
             }
+        }else {
+            slotViewData([])
+            eventsList([])
         }
-    }, [timezoneId, timezones]);
+    }, [timezoneId, timezones, scheduleData, slotData]);
 
     const convertEvents = async () => {
         if (

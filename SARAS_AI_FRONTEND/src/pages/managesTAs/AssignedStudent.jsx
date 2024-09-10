@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Button, IconButton, Switch, Pagination, Box } from '@mui/material';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import { styled } from '@mui/material/styles';
 import './CommonComponent.css';
 import Header from '../../components/Header/Header';
 import Sidebar from '../../components/Sidebar/Sidebar';
-import { AssignedStudentData } from '../../fakeData/AssignedStudentData';
 import bin from '../../assets/bin.png';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import {
     getAssignStudents,
@@ -279,7 +277,6 @@ const DynamicTable = ({
                                                         )
                                                     }
                                                 >
-                                                   
                                                     <img
                                                         src={bin}
                                                         alt=""
@@ -300,7 +297,6 @@ const DynamicTable = ({
                 </tbody>
             </table>
             <div className="pagination">
-                
                 <Pagination
                     count={totalPages}
                     page={currentPage}
@@ -336,15 +332,16 @@ const DynamicTable = ({
                             },
                         },
                     }}
-                   
                 />
-                 {isDialogOpen && (
-                <DeleteConfirmation
-                open={isDialogOpen}
-                handleClose={handleCloseDialog}
-                onConfirm={()=>{handleConfirmDelete(itemIdToDelete,ta_id)}}
-             />
-            )}
+                {isDialogOpen && (
+                    <DeleteConfirmation
+                        open={isDialogOpen}
+                        handleClose={handleCloseDialog}
+                        onConfirm={() => {
+                            handleConfirmDelete(itemIdToDelete, ta_id);
+                        }}
+                    />
+                )}
             </div>
         </div>
     );

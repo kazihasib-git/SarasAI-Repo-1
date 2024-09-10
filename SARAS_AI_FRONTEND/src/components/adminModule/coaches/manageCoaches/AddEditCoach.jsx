@@ -44,7 +44,7 @@ import CustomDateOfBirth from '../../../CustomFields/CustomDateOfBirth';
 import EditIcon from '@mui/icons-material/Edit';
 
 function AddEditCoach({ data }) {
-    console.log('coach Data', data);
+
     const {
         register,
         handleSubmit,

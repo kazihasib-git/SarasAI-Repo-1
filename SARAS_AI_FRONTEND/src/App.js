@@ -18,26 +18,18 @@ import LinkPage from './components/AUTH/LinkPage';
 import Unauthorized from './components/AUTH/Unauthorized';
 import RequireAuth from './components/Hooks/RequireAuth';
 import Dashboard from './components/adminModuleComponent/dashboard/Dashboard.jsx';
-import ManagesTAs from './pages/managesTAs/ManagesTAs';
 import TAAvailability from './pages/managesTAs/TaAvaialablity';
 import ManageCoaches from './pages/ManageCoaches/ManageCoaches';
 import CoachMapping from './pages/ManageCoaches/CoachMapping';
 import CoachTemplate from './pages/ManageCoaches/CoachingTemplate/CoachTemplate';
-import CoachAvialability from './pages/ManageCoaches/CoachAvialability';
 import CoachScheduling from './pages/ManageCoaches/CoachScheduling';
-// import ScheduledCalls from './pages/Coach/ScheduleCalls';
 
 import AllRoutes from './components/AllRoutes/AllRoutes';
 import TaMapping from './pages/managesTAs/TaMapping';
 import TaScheduling from './pages/managesTAs/TaScheduling';
-import Calendar from './components/Calender/indexCalender';
 import StudentPage from './pages/adminModulePages/users/students/StudentPage';
-import MyProfile from './components/RoleRoute/CommonComponent/MyProfile';
 import CallRecords from './pages/MODULE/TaModule/CallRecords';
-import Messages from './components/RoleRoute/CommonComponent/Messages';
 import CallRequest from './pages/MODULE/TaModule/CallRequest';
-import MyCalender from './components/RoleRoute/CommonComponent/MyCalender';
-import Mystudents from './components/RoleRoute/CommonComponent/Mystudents';
 import AssignedStudent from './pages/managesTAs/AssignedStudent';
 import AddEditTA from './components/adminModule/tas/manageTAs/AddEditTA';
 import AssignCoachBatches from './pages/ManageCoaches/AssignedCoachBatches';
@@ -58,11 +50,8 @@ import WOLOptionsConfig from './components/adminModuleComponent/coachingTools/wh
 import WOLTestConfig from './components/adminModuleComponent/coachingTools/wheelOfLife/WOLTestConfig';
 import WOLSelectQuestions from './components/adminModuleComponent/coachingTools/wheelOfLife/WOLSelectQuestions';
 import AddEditWOLQuestions from './components/adminModuleComponent/coachingTools/wheelOfLife/AddEditWOLQuestions';
-import AddEditTeachingAssistant from './pages/MODULE/TaModule/TeachingAssistant';
 import CreateTaMenu from './pages/MODULE/TaModule/CreateTaMenu';
-
 import CoachMenu from './pages/MODULE/coachModule/CoachMenu';
-
 import CoachMenuProfile from './pages/MODULE/coachModule/CoachMenuProfile';
 import CoachCallRequest from './pages/MODULE/coachModule/CoachCallRequest';
 
@@ -81,7 +70,6 @@ import TaMenuMessage from './pages/MODULE/TaModule/TaMenuMessage';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLogin } from './redux/features/auth/authSlice';
-import StudentDetails from './components/CommonComponent/studentDetails';
 import CoursePage from './pages/adminModulePages/users/courses/CoursePage.jsx';
 import CoachCourseMapping from './pages/ManageCoaches/CoachCourseMapping.jsx';
 import TaCourseMapping from './pages/managesTAs/TaCourseMapping.jsx';
@@ -90,6 +78,8 @@ import AssignTaCourses from './pages/managesTAs/AssignedTaCourses.jsx';
 import AssignedTemplateStudents from './pages/ManageCoaches/CoachingTemplate/AssignedTemplateStudents.jsx';
 
 import ForgetPassword from './components/AUTH/ForgetPassword.jsx';
+import ManageTA from './pages/managesTAs/ManageTA.jsx';
+import CoachAvailability from './pages/ManageCoaches/CoachAvailability.jsx';
 
 function App() {
     const navigate = useNavigate();
@@ -160,7 +150,7 @@ function App() {
 
                         <Route
                             path="ta-manage"
-                            element={<ManagesTAs page="Manage TA" />}
+                            element={<ManageTA page="Manage TA" />}
                         />
 
                         <Route
@@ -272,7 +262,7 @@ function App() {
                         <Route
                             path="coach-availability"
                             element={
-                                <CoachAvialability page="Coach Availability" />
+                                <CoachAvailability page="Coach Availability" />
                             }
                         />
                         <Route

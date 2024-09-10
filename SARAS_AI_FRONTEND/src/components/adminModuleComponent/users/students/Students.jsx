@@ -6,7 +6,6 @@ import {
 import { Box } from '@mui/material';
 import Header from '../../../Header/Header';
 import Sidebar from '../../../Sidebar/Sidebar';
-import { studentDummyDatadata } from '../../../../fakeData/studentData';
 import DynamicTable from '../../../CommonComponent/DynamicTable';
 import { useDispatch } from 'react-redux';
 
@@ -19,13 +18,9 @@ const Students = () => {
         setInput(value);
     };
 
-    const useDummyData = false;
-
     const { data: apiData, error, isLoading } = useGetStudentsQuery();
 
     useEffect(() => {
-        //const dataToUse = useDummyData ? studentDummyDatadata : apiData;
-        console.log('apiData ', apiData);
         if (apiData) {
             const transformedData = apiData.map((item, index) => ({
                 id: item.student_id,
@@ -37,14 +32,9 @@ const Students = () => {
                     item.batches.map(batch => batch.batch_name).join(', ') ||
                     'N/A',
             }));
-            console.log('TransformedData', transformedData);
             setStudents(transformedData);
         }
     }, [apiData]);
-
-    // if (isLoading) {
-    //     return <div>Loading....</div>;
-    // }
 
     const headers = [
         'S. No.',

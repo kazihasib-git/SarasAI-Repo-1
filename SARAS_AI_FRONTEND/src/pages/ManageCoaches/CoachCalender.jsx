@@ -26,30 +26,32 @@ import Sidebar from '../../components/Sidebar/Sidebar';
 import { openCreateNewSlots } from '../../redux/features/adminModule/ta/taAvialability';
 import ScheduleSession from '../../components/availability/ScheduleSession';
 import { fetchtimezoneDetails } from '../../utils/timezoneIdToName';
-import { getTimezone } from '../../redux/features/utils/utilSlice';
 import EditStudentsFromSession from '../../components/availability/EditStudentsFromSession';
 import EditBatchesFromSession from '../../components/availability/EditBatchesFromSession';
 import CreateNewSession from '../../components/availability/CreateNewSession';
 import SelectStudents from '../../components/students/SelectStudents';
 import SelectBatches from '../../components/batches/SelectBatches';
 import CustomButton from '../../components/CustomFields/CustomButton';
+import { useGetTimezonesQuery } from '../../redux/services/timezones/timezonesApi';
 
 const CoachCalender = () => {
     const dispatch = useDispatch();
     const { id, name, timezoneId } = useParams();
-    const { timezones } = useSelector(state => state.util);
+    const { data : timezones, error, isLoading } = useGetTimezonesQuery();
+
 
     const [timezoneDetails, setTimezoneDetails] = useState();
     const [eventsList, setEventsList] = useState([]);
     const [slotViewData, setSlotViewData] = useState([]);
 
-    const { createNewSlotOpen } = useSelector(state => state.taAvialability);
-
     useEffect(() => {
-        dispatch(getTimezone());
-        dispatch(fetchCoachSlots(id));
-        dispatch(fetchCoachScheduleById(id));
-    }, [dispatch]);
+        if(id){
+            dispatch(fetchCoachSlots(id));
+            dispatch(fetchCoachScheduleById(id));
+        }
+    }, [dispatch, id]);
+
+    const { createNewSlotOpen } = useSelector(state => state.taAvialability);
 
     const {
         coachMarkLeaveOpen,
@@ -73,18 +75,28 @@ const CoachCalender = () => {
 
     const { openBatches, openStudents } = useSelector(
         state => state.batchesAndStudents
-    );
+    );  
 
     useEffect(() => {
         if (timezoneId && timezones?.length > 0) {
             const timezone = fetchtimezoneDetails(timezoneId, timezones);
-            setTimezoneDetails(timezone);
             if (timezone) {
-                convertEvents();
-                convertSlots();
+                setTimezoneDetails(timezone);
+                if(scheduleCoachData?.length > 0){
+                    convertEvents();
+                }
+                if(slotCoachData?.length > 0){
+                    convertSlots();
+                }
+            }else {
+                slotViewData([])
+                slotCoachData([])
             }
+        }else {
+            slotViewData([])
+            slotCoachData([])
         }
-    }, [timezoneId, timezones]);
+    }, [timezoneId, timezones, scheduleCoachData, slotCoachData]);
 
     const convertEvents = async () => {
         if (

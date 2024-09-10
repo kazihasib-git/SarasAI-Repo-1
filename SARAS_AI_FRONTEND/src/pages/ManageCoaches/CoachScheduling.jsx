@@ -16,7 +16,7 @@ import SelectBatches from '../../components/batches/SelectBatches';
 import SelectStudents from '../../components/students/SelectStudents';
 import CreateNewSession from '../../components/availability/CreateNewSession';
 
-const CoachSheduling = () => {
+const CoachScheduling = () => {
     const dispatch = useDispatch();
     const { assignCoachStudentOpen, assignCoachBatchOpen, loading } =
         useSelector(state => state.coachModule);
@@ -138,4 +138,4 @@ const CoachSheduling = () => {
     );
 };
 
-export default CoachSheduling;
+export default CoachScheduling;
