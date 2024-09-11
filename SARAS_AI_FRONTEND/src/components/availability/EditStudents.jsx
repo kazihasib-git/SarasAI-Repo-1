@@ -215,9 +215,6 @@ const EditStudents = ({ componentname }) => {
             : [];
 
     useEffect(() => {
-        console.log('BATCHES SSS:', batches);
-        console.log('assignedStudents SS:', assignedStudents);
-
         let updatedSelectedStudents = [];
 
         if (selectedStudent && selectedStudent.length > 0) {
@@ -237,13 +234,9 @@ const EditStudents = ({ componentname }) => {
                 stu.student.batches.map(batch => batch.batch_id)
             );
 
-            console.log('Assigned Batch IDs:', assignedBatchIds);
-
             const matchingBatchIds = batches
                 .filter(batch => assignedBatchIds.includes(batch.id))
                 .map(batch => batch.id);
-
-            console.log('Matched Batch Ids:', matchingBatchIds);
 
             const matchingStudentIds = assignedStudents
                 .filter(stu =>
@@ -252,8 +245,6 @@ const EditStudents = ({ componentname }) => {
                     )
                 )
                 .map(stu => stu.student.id);
-
-            console.log('Matching Student IDs:', matchingStudentIds);
 
             // Merge or override based on specific logic (here we combine both lists)
             updatedSelectedStudents = [
@@ -305,7 +296,7 @@ const EditStudents = ({ componentname }) => {
 
         dispatch(closeDialogAction());
     };
-    console.log('student data ::', filteredStudents);
+
     const headers = ['S. No.', 'Student Name', 'Program', 'Batch', 'Select'];
 
     const content = (

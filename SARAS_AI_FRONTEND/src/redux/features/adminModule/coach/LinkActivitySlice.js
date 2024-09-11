@@ -29,7 +29,6 @@ export const uploadpdf = createAsyncThunk(
     'linkActivity/uploadpdf',
     async (activityData, { rejectWithValue }) => {
         try {
-            console.log('actictyData', activityData);
             const response = await axiosInstance.post(
                 `${baseUrl}/admin/upload-pdf`,
                 activityData,

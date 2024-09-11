@@ -18,13 +18,12 @@ const actionButtons = [
 
 const AssignCoachBatches = () => {
     const { id } = useParams();
-    console.log('ID : ', id);
     const dispatch = useDispatch();
     const { assignedBatches, loading } = useSelector(
         state => state.coachModule
     );
     const [CoachAssignBatchesData, setCoachAssignBatchesData] = useState([]);
-    console.log('Assigned BAtches', assignedBatches);
+
     useEffect(() => {
         if (id) {
             dispatch(getCoachAssignBatches(id));
@@ -39,8 +38,9 @@ const AssignCoachBatches = () => {
                 branch: item.batch.branch.name,
                 is_active: item.is_active,
             }));
-            console.log('TRANSFORM DATA : ', transformData);
             setCoachAssignBatchesData(transformData);
+        } else {
+            setCoachAssignBatchesData([]);
         }
     }, [assignedBatches]);
 

@@ -20,8 +20,14 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { DateCalendar, LocalizationProvider } from '@mui/x-date-pickers';
 import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
-import { getCoachScheduledCalls } from '../../../redux/features/coachModule/coachmenuprofileSilce';
-import { getTaScheduledCalls } from '../../../redux/features/taModule/tamenuSlice';
+import {
+    cancelScheduledSessionForLeave,
+    getCoachScheduledCalls,
+} from '../../../redux/features/coachModule/coachmenuprofileSilce';
+import {
+    cancelTaScheduledSessionForLeave,
+    getTaScheduledCalls,
+} from '../../../redux/features/taModule/tamenuSlice';
 import CreateSession from './commonCalender/CreateSession';
 import {
     openScheduleNewSession,
@@ -32,9 +38,7 @@ import SessionLink from './commonCalender/SessionLink';
 import EditSession from './commonCalender/EditSession';
 import ParticipantsDialog from '../../../pages/MODULE/coachModule/ParticipantsDialog';
 import { convertFromUTC } from '../../../utils/dateAndtimeConversion';
-import {
-    fetchtimezoneDetails,
-} from '../../../utils/timezoneIdToName';
+import { fetchtimezoneDetails } from '../../../utils/timezoneIdToName';
 import CustomButton from '../../CustomFields/CustomButton';
 import {
     openParticipantsDialog,
@@ -51,11 +55,13 @@ const scheduleCallConfig = {
         sliceName: 'taMenu',
         getScheduledCallsApi: getTaScheduledCalls,
         getScheduledCallsState: 'taScheduledCalls',
+        cancelSessionApi: cancelTaScheduledSessionForLeave,
     },
     Coach: {
         sliceName: 'coachMenu',
         getScheduledCallsApi: getCoachScheduledCalls,
         getScheduledCallsState: 'coachScheduledCalls',
+        cancelSessionApi: cancelScheduledSessionForLeave,
     },
 };
 
@@ -64,7 +70,7 @@ const ScheduledCall = ({ role }) => {
     const { participantsDialogOpen, editParticipantsDialogOpen } = useSelector(
         state => state.commonCalender
     );
-    const { data : timezones, error, isLoading } = useGetTimezonesQuery();
+    const { data: timezones, error, isLoading } = useGetTimezonesQuery();
     const { timezoneId } = useSelector(state => state.auth);
     const [timezoneDetails, setTimezoneDetails] = useState();
 
@@ -75,8 +81,12 @@ const ScheduledCall = ({ role }) => {
     const [anchorEl, setAnchorEl] = useState(null);
     const [scheduledCalls, setScheduledCalls] = useState([]);
 
-    const { sliceName, getScheduledCallsApi, getScheduledCallsState } =
-        scheduleCallConfig[role];
+    const {
+        sliceName,
+        getScheduledCallsApi,
+        getScheduledCallsState,
+        cancelSessionApi,
+    } = scheduleCallConfig[role];
 
     const stateSelector = useSelector(state => state[sliceName]);
     const { [getScheduledCallsState]: scheduledCallsData } = stateSelector;
@@ -101,7 +111,7 @@ const ScheduledCall = ({ role }) => {
             setTimezoneDetails(timezone);
         }
     }, [timezoneId, timezones]);
-    
+
     useEffect(() => {
         if (timezoneDetails && scheduledCallsData?.length > 0) {
             processScheduledCalls(scheduledCallsData);
@@ -113,12 +123,14 @@ const ScheduledCall = ({ role }) => {
     function formatDate(date, offset) {
         const localDate = new Date(date);
         const offsetInMilliseconds = offset * 60 * 60 * 1000; // Convert hours to milliseconds
-        const adjustedDate = new Date(localDate.getTime() + offsetInMilliseconds);
+        const adjustedDate = new Date(
+            localDate.getTime() + offsetInMilliseconds
+        );
         return adjustedDate.toISOString().split('T')[0];
     }
 
     useEffect(() => {
-        if(timezoneDetails){
+        if (timezoneDetails) {
             const data = {
                 date: formatDate(date, timezoneDetails.utc_offset),
                 timezone_name: timezoneDetails?.time_zone,
@@ -250,6 +262,16 @@ const ScheduledCall = ({ role }) => {
 
     const handleCloseEditParticipantsDialog = () => {
         dispatch(closeEditParticipantsDialog(initialParticipantsData));
+    };
+
+    const handleCancelSession = call => {
+        dispatch(cancelSessionApi(call.id)).then(() => {
+            const data = {
+                date: formatDate(date, timezoneDetails.utc_offset),
+                timezone_name: timezoneDetails?.time_zone,
+            };
+            dispatch(getScheduledCallsApi(data));
+        });
     };
 
     return (
@@ -420,14 +442,32 @@ const ScheduledCall = ({ role }) => {
                                         </CustomButton>
                                     ) : call.event_status ===
                                       'call schedule' ? (
-                                        <CustomButton
-                                            color="#FFFFFF"
-                                            backgroundColor="#F56D3B"
-                                            borderColor="#F56D3B"
-                                            style={{ textTransform: 'none' }}
-                                        >
-                                            Scheduled
-                                        </CustomButton>
+                                        <>
+                                            <CustomButton
+                                                color="#F56D3B"
+                                                backgroundColor="#FFFFFF"
+                                                borderColor="#FFFFFF"
+                                                style={{
+                                                    textTransform: 'none',
+                                                    marginRight: '10px',
+                                                }}
+                                                onClick={() =>
+                                                    handleCancelSession(call)
+                                                }
+                                            >
+                                                Cancel Session
+                                            </CustomButton>
+                                            <CustomButton
+                                                color="#FFFFFF"
+                                                backgroundColor="#F56D3B"
+                                                borderColor="#F56D3B"
+                                                style={{
+                                                    textTransform: 'none',
+                                                }}
+                                            >
+                                                Scheduled
+                                            </CustomButton>
+                                        </>
                                     ) : (
                                         <span
                                             style={{

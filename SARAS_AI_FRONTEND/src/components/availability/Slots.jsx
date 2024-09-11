@@ -155,8 +155,6 @@ const Slots = ({ id, name, componentName, timezone }) => {
                 data,
                 timezone_id: timezone.id,
             };
-
-            console.log('REQUEST DATA :', requestData);
             dispatch(addDataToFindScheduleInSlot(requestData));
             dispatch(getScheduleSessionAction(requestData))
                 .then(() => {

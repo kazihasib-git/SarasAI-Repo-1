@@ -121,8 +121,8 @@ const CoachCallRecord = () => {
     const handleClickOpen = call => {
         setSelectedCall(call);
         setOpen(true);
-        //console.log('data', call);
     };
+
     const handleClose = () => setOpen(false);
 
     const handleSaveNotes = notes => {

@@ -91,13 +91,11 @@ const PrerequisitesPopup = ({
     }, [dispatch, prereqModuleData]);
 
     useEffect(() => {
-        console.log('COACH TEMPLATE DATTA :', coachTemplatesId);
         if (
             coachTemplatesId &&
             coachTemplatesId.modules &&
             coachTemplatesId.modules.length > 0
         ) {
-            console.log('MODULE DATA :', coachTemplatesId);
             const options = coachTemplatesId.modules.map(module => ({
                 value: module.id,
                 label: module.module_name,
@@ -108,7 +106,6 @@ const PrerequisitesPopup = ({
 
     useEffect(() => {
         const selectedModuleId = watch('module');
-        console.log('Selected Module Id :', selectedModuleId);
         if (
             selectedModuleId &&
             coachTemplatesId &&
@@ -118,16 +115,18 @@ const PrerequisitesPopup = ({
             const selectedModule = coachTemplatesId.modules.find(
                 mod => mod.id === selectedModuleId
             );
-            console.log(selectedModule,"fsfsfsfsfS",prereqActivityData, "njnfjf");
 
             if (selectedModule && selectedModuleId == prereqModuleData.id) {
                 const options =
-                    selectedModule.activities?.filter(item => item.due_date < prereqActivityData.due_date)
-                    .filter(item => item.id != prereqActivityData.id)
-                    .map(activity => ({
-                        value: activity.id,
-                        label: activity.activity_name,
-                    })) || [];
+                    selectedModule.activities
+                        ?.filter(
+                            item => item.due_date < prereqActivityData.due_date
+                        )
+                        .filter(item => item.id != prereqActivityData.id)
+                        .map(activity => ({
+                            value: activity.id,
+                            label: activity.activity_name,
+                        })) || [];
                 setActivityOptions(options);
             } else if (selectedModule) {
                 const options =
@@ -142,17 +141,23 @@ const PrerequisitesPopup = ({
 
     const validate = data => {
         if (!data.lockUntil && !fromTime && !activityDependence) {
-            toast.error('Please select either Lock Until and Time, or Activity Dependence.');
+            toast.error(
+                'Please select either Lock Until and Time, or Activity Dependence.'
+            );
             return false;
         }
 
         if (activityDependence) {
             if (!data.module) {
-                toast.error('Module is required when Activity Dependence is selected.');
+                toast.error(
+                    'Module is required when Activity Dependence is selected.'
+                );
                 return false;
             }
             if (!data.activity || data.activity.length === 0) {
-                toast.error('At least one activity is required when Activity Dependence is selected.');
+                toast.error(
+                    'At least one activity is required when Activity Dependence is selected.'
+                );
                 return false;
             }
         }
@@ -181,17 +186,17 @@ const PrerequisitesPopup = ({
             template_id: prereqModuleData.template_id,
             lock_until_date: data.lockUntil || null,
             time: fromTime || null,
-            data: activityDependence && data.activity
-                ? data.activity.map(act => ({
-                    prerequisite_activity_id: act,
-                    prerequisite_module_id: data.module,
-                  }))
-                : null,
+            data:
+                activityDependence && data.activity
+                    ? data.activity.map(act => ({
+                          prerequisite_activity_id: act,
+                          prerequisite_module_id: data.module,
+                      }))
+                    : null,
         };
         dispatch(addPrerequisites(prereqData)).then(() => {
             dispatch(getCoachTemplateModuleId(prereqModuleData.template_id));
         });
-        console.log('prereq formdata: -->', prereqData);
         handleClosePopup();
     };
 
@@ -256,7 +261,7 @@ const PrerequisitesPopup = ({
                 md={6}
                 style={{ margin: '10px 0px', width: '80%' }}
             >
-                <FormControlLabel   
+                <FormControlLabel
                     control={
                         <Checkbox
                             checked={activityDependence}
@@ -344,6 +349,6 @@ const PrerequisitesPopup = ({
             actions={actions}
         />
     );
-}; 
+};
 
 export default PrerequisitesPopup;

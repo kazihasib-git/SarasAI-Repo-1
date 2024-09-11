@@ -5,51 +5,34 @@ import {
     DialogContent,
     Button,
     IconButton,
+    Typography,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // Import Quill styles
 import { styled } from '@mui/material/styles';
-import { baseUrl } from '../../../utils/baseURL';
 
 // Styled components
-const QuillContainer = styled('div')(({ theme }) => ({
+const QuillContainer = styled('div')(() => ({
     position: 'relative',
-    height: 'calc(100% - 80px)', // Reduce height to show the border
-    // overflow: 'hidden',
+    height: 'calc(100% - 80px)',
     '& .ql-container': {
         height: '100%',
         border: '1.95px solid #D0D0EC',
         borderBottomLeftRadius: '30px',
         borderBottomRightRadius: '30px',
-        overflow: 'auto', // Allow scrolling within Quill editor
-        '&.ql-container.ql-snow.ql-focused': {
-            borderColor: '#FF6D3B', // Change border color on focus
+        overflow: 'auto',
+        '&.ql-snow.ql-focused': {
+            borderColor: '#FF6D3B',
         },
     },
     '& .ql-toolbar': {
         borderColor: '#D0D0EC',
         borderTopLeftRadius: '30px',
         borderTopRightRadius: '30px',
-        color: '#D0D0EC',
         '&:hover': {
-            borderColor: '#FF6D3B', // Change border color on hover
+            borderColor: '#FF6D3B',
         },
-        '& .ql-formats button': {
-            color: '#D0D0EC',
-        },
-        '& .ql-picker': {
-            color: '#D0D0EC',
-        },
-        '&::after': {
-            content: '""',
-            display: 'block',
-            borderBottom: '2px solid #E1E1F4',
-            marginTop: '5px', // Space between toolbar and border
-        },
-    },
-    '& .ql-toolbar.ql-snow': {
-        borderBottom: 'none',
     },
 }));
 
@@ -75,47 +58,57 @@ const formats = [
 
 const SessionNotes = ({ open, onClose, onSave, selectedId }) => {
     const [editorContent, setEditorContent] = useState('');
-
-    const handleSave = () => {
-        onSave(editorContent);
-        onClose();
-    };
+    const [isEditMode, setIsEditMode] = useState(false);
 
     useEffect(() => {
         if (selectedId && selectedId.session_meeting_notes) {
-            console.log('note', selectedId.session_meeting_notes);
             setEditorContent(selectedId.session_meeting_notes);
         } else {
             setEditorContent('');
         }
     }, [selectedId]);
 
+    const handleSave = () => {
+        onSave(editorContent); // Pass the richtext format content
+        setIsEditMode(false); // Switch back to view mode after saving
+        onClose();
+    };
+
+    const handleEdit = () => {
+        setIsEditMode(true);
+    };
+
     return (
         <Dialog
             open={open}
-            onClose={onClose}
+            onClose={() => {
+                onClose();
+                setIsEditMode(false); // Reset edit mode on close
+            }}
             PaperProps={{
-                style: {
-                    width: '500px',
-                    height: '366px',
-                    padding: '20px 30px 20px 30px', // Adjust padding to avoid clipping
-                    borderRadius: '10px',
+                sx: {
+                    width: { xs: '90%', sm: '500px' }, // Dynamic width based on screen size
+                    height: isEditMode
+                        ? { xs: '80vh', sm: '500px' }
+                        : { xs: '70vh', sm: '400px' }, // Dynamic height
+                    padding: '20px',
+                    borderRadius: '20px',
                     position: 'absolute',
-                    top: '20%',
+                    top: { xs: '10%', sm: '20%' }, // Top positioning for small and large screens
                     left: '50%',
-                    transform: 'translate(-50%, 0)', // Center the dialog horizontally
-                    '@media (max-width: 600px)': {
-                        width: '90%',
-                        left: '5%',
-                        transform: 'translate(0, 0)', // Adjust the position for smaller screens
-                    },
+                    transform: 'translate(-50%, 0)',
+                    overflowY: 'auto', // Add overflow to handle smaller screens
+                    transition: 'height 0.3s ease',
                 },
             }}
         >
-            <DialogTitle>
-                <h4>Session Notes</h4>
+            <DialogTitle style={{ position: 'relative', textAlign: 'center' }}>
+                <Typography variant="h6">Session Notes</Typography>
                 <IconButton
-                    onClick={onClose}
+                    onClick={() => {
+                        onClose();
+                        setIsEditMode(false);
+                    }}
                     style={{
                         position: 'absolute',
                         top: '10px',
@@ -126,44 +119,69 @@ const SessionNotes = ({ open, onClose, onSave, selectedId }) => {
                     <CloseIcon />
                 </IconButton>
             </DialogTitle>
+
             <DialogContent
                 style={{
                     display: 'flex',
                     flexDirection: 'column',
-                    height: '100%', // Full height of the dialog
                     padding: 0,
+                    height: '100%',
                 }}
             >
-                <QuillContainer
-                    style={{
-                        marginBottom: '20px', // Space between text field and button
-                    }}
-                >
-                    <ReactQuill
-                        modules={modules}
-                        formats={formats}
-                        value={editorContent}
-                        onChange={setEditorContent}
-                        placeholder="Enter your notes here..."
+                {isEditMode ? (
+                    <QuillContainer>
+                        <ReactQuill
+                            modules={modules}
+                            formats={formats}
+                            value={editorContent}
+                            onChange={setEditorContent}
+                            placeholder="Edit your notes..."
+                            style={{
+                                height: 'calc(100% - 20px)',
+                                width: '100%',
+                            }}
+                        />
+                    </QuillContainer>
+                ) : (
+                    <div
                         style={{
-                            height: 'calc(100% - 20px)', // Reduce height to show border
-                            width: '100%',
+                            padding: '10px',
+                            border: '1.95px solid #D0D0EC',
+                            borderRadius: '15px',
+                            minHeight: '150px',
+                            overflowY: 'auto',
+                            marginBottom: '20px',
                         }}
-                    />
-                </QuillContainer>
+                    >
+                        <Typography
+                            variant="body1"
+                            style={{ whiteSpace: 'pre-wrap' }}
+                        >
+                            {/* Render richtext with dangerouslySetInnerHTML */}
+                            <div
+                                dangerouslySetInnerHTML={{
+                                    __html:
+                                        editorContent || 'No notes available.',
+                                }}
+                            />
+                        </Typography>
+                    </div>
+                )}
+
                 <Button
-                    onClick={handleSave}
+                    onClick={isEditMode ? handleSave : handleEdit}
+                    variant="contained"
                     style={{
                         backgroundColor: '#F56D3B',
                         color: '#fff',
                         textTransform: 'none',
                         borderRadius: '50px',
-                        border: '2px solid #F56D3B',
-                        alignSelf: 'center', // Center the button
-                        marginTop: '30px', // Space between text field and button
+                        alignSelf: 'center',
+                        padding: '10px 30px',
+                        marginTop: '20px',
                     }}
                 >
-                    Save
+                    {isEditMode ? 'Save' : 'Edit'}
                 </Button>
             </DialogContent>
         </Dialog>

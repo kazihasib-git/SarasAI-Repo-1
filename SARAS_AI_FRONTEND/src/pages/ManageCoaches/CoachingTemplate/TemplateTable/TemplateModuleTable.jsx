@@ -81,7 +81,6 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
 }));
 
 const TemplateModuleTable = ({ modulesData }) => {
-    console.log('moduledata', modulesData);
     const [linkActivityPopupOpen, setLinkActivityPopupOpen] = useState(false);
     const [viewActivityPopup, setViewActivityPopup] = useState(false);
     const [selectedActivity, setSelectedActivity] = useState(null);
@@ -95,7 +94,7 @@ const TemplateModuleTable = ({ modulesData }) => {
     const { selectedCoachTemplate } = useSelector(state => state.coachTemplate);
 
     const handleToggle = (moduleId, activityId, currentStatus) => {
-        const newStatus = !currentStatus ;  
+        const newStatus = !currentStatus;
         const data = {
             activity_id: activityId,
             status: newStatus,
@@ -105,7 +104,6 @@ const TemplateModuleTable = ({ modulesData }) => {
         dispatch(updateModuleActivity({ data }))
             .unwrap()
             .then(() => {
-                // console.log("SLOT EVENT DATA : ", slotEventData)
                 dispatch(getCoachTemplateModuleId(selectedCoachTemplate));
             });
     };
@@ -120,7 +118,6 @@ const TemplateModuleTable = ({ modulesData }) => {
     };
 
     const openPrerequisitesPopup = (module, activity) => {
-        console.log('MOdule Data to be send :', module);
         setPrerequisitesModuleData(module);
         setPrerequisitesActivityData(activity);
 
@@ -134,7 +131,6 @@ const TemplateModuleTable = ({ modulesData }) => {
     };
 
     const handleActivity = (id, templateId) => {
-        console.log('Add Activity clicked for module:', id, templateId);
         const data = {
             id,
             templateId,
@@ -144,22 +140,18 @@ const TemplateModuleTable = ({ modulesData }) => {
     };
 
     const handleEditModule = (id, name, is_active) => {
-        console.log('Edit Module clicked', id);
         const data = {
             id,
             name,
             is_active,
         };
-        console.log('DATA : ', data);
         dispatch(openEditModulePopup(data));
         // Implement your logic for editing module
     };
     const handleEditActivity = activity => {
-        console.log('Clicked Activity !');
         dispatch(openEditActivityPopup(activity));
     };
     const handleActivityClick = activity => {
-        console.log(activity.activity_type);
         setSelectedActivity(activity);
         setViewActivityPopup(true);
     };
@@ -195,7 +187,6 @@ const TemplateModuleTable = ({ modulesData }) => {
 
     return (
         <>
-            {console.log('MODULE DATA : ', modulesData)}
             {modulesData?.modules.map(module => (
                 <Box key={module.id}>
                     <Box
@@ -379,10 +370,6 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                                         'none',
                                                                 }}
                                                                 onClick={() => {
-                                                                    console.log(
-                                                                        'selectedcoachtemplate',
-                                                                        selectedCoachTemplate
-                                                                    );
                                                                     openLinkActivityPopup(
                                                                         activity.id
                                                                     );
@@ -414,10 +401,13 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                         {activity.prerequisites
                                                             .length > 0 ? (
                                                             activity.prerequisites
-                                                                .map(
-                                                                    prereq =>
-                                                                        prereq
-                                                                            .dependencies.map((dep) => dep.dependency_activity.activity_name)
+                                                                .map(prereq =>
+                                                                    prereq.dependencies.map(
+                                                                        dep =>
+                                                                            dep
+                                                                                .dependency_activity
+                                                                                .activity_name
+                                                                    )
                                                                 )
                                                                 .join(', ')
                                                         ) : (
@@ -438,8 +428,7 @@ const TemplateModuleTable = ({ modulesData }) => {
                                                                     Prerequisite
                                                                 </span>
                                                             </CustomButton>
-                                                          
-                                                        )}   
+                                                        )}
                                                     </td>
                                                     <td
                                                         style={{

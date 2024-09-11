@@ -39,7 +39,6 @@ const PDFUploadComponent = () => {
             // Clear error if the file is valid
             setError('');
             setFileName(file.name);
-            console.log('File selected:', file);
 
             const formData = new FormData();
             formData.append('pdf_file', file);

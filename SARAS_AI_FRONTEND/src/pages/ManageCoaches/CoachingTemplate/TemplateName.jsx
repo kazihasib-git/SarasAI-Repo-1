@@ -25,8 +25,6 @@ import AddEditActivity from './TemplateModulePopup/EditActivity';
 import ViewActivityPopup from './TemplateModulePopup/ViewActivity';
 
 const TemplateName = () => {
-
-    console.log('abc');
     const {
         openModulePopUp,
         openActivityPopUp,
@@ -43,13 +41,6 @@ const TemplateName = () => {
     // newly created name
     const { newTemplateData } = location.state || {};
 
-    // console.log('Tempete name is', template_name);
-
-    // console.log('coach templete', coachTemplates);
-    // console.log('coachtemplate id', coachTemplatesId);
-
-    //  setTemplateEditName(template_name);
-    // console.log('selcted coach templete', selectedCoachTemplate);
     useEffect(() => {
         dispatch(removeSelectedModule());
     }, [dispatch]);
@@ -59,8 +50,6 @@ const TemplateName = () => {
     };
 
     const handleActivity = () => {
-        console.log('Activity module');
-
         dispatch(openTemplateActivityPopup());
     };
 
@@ -82,7 +71,6 @@ const TemplateName = () => {
     };
 
     const closeLinkActivityPopup = () => {
-        console.log('Closing Link Activity Popup');
         setLinkActivityPopupOpen(false);
     };
 
@@ -91,7 +79,6 @@ const TemplateName = () => {
     };
 
     const closePrerequisitesPopup = () => {
-        console.log('Closing Prerequisites Popup');
         setPrerequisitesPopupOpen(false);
     };
 
@@ -106,9 +93,6 @@ const TemplateName = () => {
         'Actions',
     ];
 
-    // console.log('coachtemplateid', coachTemplatesId);
-    // console.log('Tempete name is>>>>>>>>>>>>>>>>>>', coachTemplatesId[0]?.name);
-    
     const actionButtons = [
         {
             type: 'switch',

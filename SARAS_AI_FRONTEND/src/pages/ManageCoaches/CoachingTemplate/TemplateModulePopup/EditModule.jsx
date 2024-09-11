@@ -97,8 +97,6 @@ const EditModule = () => {
                 dispatch(getCoachTemplateModuleId(selectedCoachTemplate));
                 dispatch(closeEditModulePopup());
             });
-
-        console.log(updatedData);
     };
 
     const content = (
@@ -169,7 +167,7 @@ const EditModule = () => {
             backgroundColor="#F56D3B"
             borderColor="#F56D3B"
             color="#FFFFFF"
-            style={{ textTransform: 'none' }} 
+            style={{ textTransform: 'none' }}
         >
             Submit
         </CustomButton>

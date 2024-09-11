@@ -82,7 +82,6 @@ const Video = ({
             const uploadLink = vimeoResultData?.upload?.upload_link;
             const videoUri = vimeoResultData?.uri; // Capture the video URI
 
-            console.log(uploadLink);
             // Step 2: If upload to Vimeo is successful, initiate tus upload
             if (uploadLink) {
                 const upload = new tus.Upload(file, {
@@ -124,7 +123,6 @@ const Video = ({
                             }
                         );
 
-                        console.log(moveResponse, 'moveResponse');
                         callBack(vimeoResultData?.link);
                         setUploadStarted(false);
                         setLoading(false);
@@ -156,8 +154,8 @@ const Video = ({
             callBack(data.url);
         }
         setLoading(false);
-        console.log(response);
     };
+
     useEffect(() => {
         handleSubmit();
     }, [selectedFile?.path]);
@@ -170,7 +168,7 @@ const Video = ({
             video && (await uploadToVimeo(selectedFile));
             !video && (await uploadCv(selectedFile));
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     };
     return (

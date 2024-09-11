@@ -85,7 +85,6 @@ const DynamicTable = ({
     ta_id,
     dispatch,
 }) => {
-    // console.log("INITAL DATA : ", initialData);
     const [data, setData] = useState(
         initialData.map(item => ({
             ...item,
@@ -122,7 +121,6 @@ const DynamicTable = ({
         setIsDialogOpen(true);
     };
     const handleCloseDialog = () => {
-        console.log('handledelte');
         setIsDialogOpen(false);
         setItemIdToDelete(null);
     };
@@ -133,14 +131,11 @@ const DynamicTable = ({
         handleCloseDialog();
     };
     const handleDelete = (id, ta_id) => {
-        // Implement delete functionality here
-        console.log('Deleting item with id:', id);
         dispatch(deleteAssignedStudent({ id })).then(() => {
             dispatch(getAssignStudents(ta_id));
         });
     };
     const handleToggle = async id => {
-        console.log('id : ', id);
         const updatedData = data.map(item =>
             item.id === id
                 ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
@@ -364,8 +359,6 @@ const AssignedStudent = () => {
     const dispatch = useDispatch();
     const { assignedStudents, loading } = useSelector(state => state.taModule);
     const [taAssignStudentData, setTaAssignStudentData] = useState([]);
-
-    console.log('ID :', id);
 
     useEffect(() => {
         if (id) {

@@ -25,7 +25,6 @@ const WOLQuestions = () => {
             type: 'switch',
             onChange: id => {
                 {
-                    console.log('toggled');
                     dispatch(toggleWOLQuestionStatus(id));
                 }
             },
@@ -33,7 +32,6 @@ const WOLQuestions = () => {
         {
             type: 'edit',
             onClick: id => {
-                console.log('Edit', id);
                 dispatch(
                     seteditwolQuestionData(
                         wolQuestionsData.data.find(item => item.id === id)
@@ -56,7 +54,6 @@ const WOLQuestions = () => {
 
     useEffect(() => {
         if (wolQuestionsData.data && wolQuestionsData.data.length > 0) {
-            console.log(wolQuestionsData.message);
             const transformData = wolQuestionsData.data.map(item => ({
                 id: item.id,
                 Question: stripHtml(item.question),
@@ -70,7 +67,6 @@ const WOLQuestions = () => {
     }, [wolQuestionsData]);
 
     const handleAddQuestion = () => {
-        console.log('Add Question');
         dispatch(seteditwolQuestionData(null));
         navigate('add-Edit');
     };
