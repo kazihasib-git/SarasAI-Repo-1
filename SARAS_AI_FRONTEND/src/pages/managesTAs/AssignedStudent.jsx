@@ -365,6 +365,8 @@ const AssignedStudent = () => {
     const { assignedStudents, loading } = useSelector(state => state.taModule);
     const [taAssignStudentData, setTaAssignStudentData] = useState([]);
 
+    console.log('ID :', id);
+
     useEffect(() => {
         if (id) {
             dispatch(getAssignStudents(id));
@@ -398,6 +400,8 @@ const AssignedStudent = () => {
             });
 
             setTaAssignStudentData(transformData);
+        } else {
+            setTaAssignStudentData([]);
         }
     }, [assignedStudents]);
 
