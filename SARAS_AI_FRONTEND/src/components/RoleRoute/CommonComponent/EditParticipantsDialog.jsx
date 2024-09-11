@@ -74,7 +74,7 @@ const EditParticipantsDialog = ({ openEdit, onCloseEdit, role, timezone }) => {
         getBatchesState,
     } = editParticipantsConfig[role];
 
-    const { data : timezones, error, isLoading } = useGetTimezonesQuery();
+    const { data: timezones, error, isLoading } = useGetTimezonesQuery();
     const stateSelector = useSelector(state => state[sliceName]);
     const {
         [getStudentsState]: assignedStudents,
@@ -122,7 +122,6 @@ const EditParticipantsDialog = ({ openEdit, onCloseEdit, role, timezone }) => {
         if (participantsData?.students.length > 0) {
             transformData();
         } else {
-            console.log('no data found !');
             setData([]);
         }
     }, [participantsData?.students]);

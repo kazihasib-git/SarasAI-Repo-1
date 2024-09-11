@@ -107,9 +107,21 @@ const ReschedulingSession = ({ id, name, componentName, timezone }) => {
         state => state.commonCalender
     );
 
-    const { data : timezones, error : timezoneError , isLoading : timezonesLoading } = useGetTimezonesQuery();
-    const { data : platforms, error : platformError, isLoading : platformLoading } = useGetPlatformsQuery();
-    const { data : hosts, error : hostsError, isLoading : hostsLoading} = useGetHostsQuery();
+    const {
+        data: timezones,
+        error: timezoneError,
+        isLoading: timezonesLoading,
+    } = useGetTimezonesQuery();
+    const {
+        data: platforms,
+        error: platformError,
+        isLoading: platformLoading,
+    } = useGetPlatformsQuery();
+    const {
+        data: hosts,
+        error: hostsError,
+        isLoading: hostsLoading,
+    } = useGetHostsQuery();
 
     const {
         [rescheduleSessionOpenKey]: rescheduleSessionOpen,
@@ -117,8 +129,6 @@ const ReschedulingSession = ({ id, name, componentName, timezone }) => {
         [sessionEventAction]: sessionEventData,
         [slotEventAction]: slotEventData,
     } = useSelector(state => state[sliceName]);
-
-    console.log("SESSION EVENT DATA :", sessionEventData)
 
     useEffect(() => {
         if (selectDate) {
@@ -130,6 +140,16 @@ const ReschedulingSession = ({ id, name, componentName, timezone }) => {
             dispatch(fetchAvailableSlotsAction(data));
         }
     }, [selectDate, id, dispatch]);
+
+    useEffect(() => {
+        // Set default values when sessionEventData is available
+        if (sessionEventData) {
+            // setFromTime(sessionEventData.startTime || '');
+            // setToTime(sessionEventData.endTime || '');
+            setEmail(sessionEventData.hostEmailId || '');
+            setMeetingType(sessionEventData.meetingType || '');
+        }
+    }, [sessionEventData]);
 
     const formatTime = time => {
         const [hours, minutes] = time.split(':');
@@ -327,59 +347,65 @@ const ReschedulingSession = ({ id, name, componentName, timezone }) => {
                                     />
                                 </Grid>
                             </Grid>
-                            <Grid
-                                item
-                                xs={12}
-                                display="flex"
-                                justifyContent="center"
-                                mb={2}
-                            >
-                                <Controller
-                                    name="host_email_id"
-                                    control={control}
-                                    defaultValue={sessionEventData.host_email_id}
-                                    render={({ field }) => (
-                                        <CustomHostNameForm
-                                            label="Host Name"
+                            {sessionEventData.platformId === 1 && (
+                                <>
+                                    <Grid
+                                        item
+                                        xs={12}
+                                        display="flex"
+                                        justifyContent="center"
+                                        mb={2}
+                                    >
+                                        <Controller
                                             name="host_email_id"
-                                            value={email}
-                                            onChange={event =>
-                                                setEmail(event.target.value)
-                                            }
-                                            errors={errors}
-                                            options={hosts.users}
+                                            control={control}
+                                            render={({ field }) => (
+                                                <CustomHostNameForm
+                                                    label="Host Name"
+                                                    name="host_email_id"
+                                                    value={email}
+                                                    onChange={event =>
+                                                        setEmail(
+                                                            event.target.value
+                                                        )
+                                                    }
+                                                    errors={errors}
+                                                    options={hosts.users}
+                                                    disabled
+                                                />
+                                            )}
                                         />
-                                    )}
-                                />
-                            </Grid>
-                            <Grid
-                                item
-                                xs={12}
-                                display="flex"
-                                justifyContent="center"
-                            >
-                                <Controller
-                                    name="meeting_type"
-                                    control={control}
-                                    defaultValue={sessionEventData.meetingType}
-                                    render={({ field }) => (
-                                        <CustomMeetingTypeForm
-                                            label="Meeting Type"
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        xs={12}
+                                        display="flex"
+                                        justifyContent="center"
+                                    >
+                                        <Controller
                                             name="meeting_type"
-                                            value={meetingType}
-                                            onChange={event =>
-                                                setMeetingType(
-                                                    event.target.value
-                                                )
-                                            }
-                                            errors={errors}
-                                            options={
-                                                GLOBAL_CONSTANTS.MEETING_TYPES
-                                            }
+                                            control={control}
+                                            render={({ field }) => (
+                                                <CustomMeetingTypeForm
+                                                    label="Meeting Type"
+                                                    name="meeting_type"
+                                                    value={meetingType}
+                                                    onChange={event =>
+                                                        setMeetingType(
+                                                            event.target.value
+                                                        )
+                                                    }
+                                                    errors={errors}
+                                                    options={
+                                                        GLOBAL_CONSTANTS.MEETING_TYPES
+                                                    }
+                                                    disabled
+                                                />
+                                            )}
                                         />
-                                    )}
-                                />
-                            </Grid>
+                                    </Grid>
+                                </>
+                            )}
                         </Grid>
                     </>
                 )

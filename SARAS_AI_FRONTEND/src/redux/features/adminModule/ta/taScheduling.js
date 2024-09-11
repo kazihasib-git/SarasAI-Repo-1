@@ -158,7 +158,6 @@ const taScheduling = createSlice({
     initialState,
     reducers: {
         openScheduleSession(state, action) {
-            console.log('Open Action : ', action.payload);
             state.taID =
                 action.payload.id !== undefined
                     ? action.payload.id
@@ -175,7 +174,6 @@ const taScheduling = createSlice({
             state.scheduleSessionOpen = true;
         },
         closeScheduleSession(state, action) {
-            console.log('Close Action : ', action.payload);
             state.taID = null;
             state.taName = null;
             state.taTimezone = null;

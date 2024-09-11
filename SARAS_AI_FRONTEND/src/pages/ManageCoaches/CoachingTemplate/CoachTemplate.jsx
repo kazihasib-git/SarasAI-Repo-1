@@ -65,7 +65,6 @@ const CoachTemplate = () => {
                 dispatch(setSelectedCoachTemplate(id));
                 dispatch(getCoachTemplateModuleId(id));
                 navigation('/template-name');
-                console.log('CLICKED : ', id);
             },
         },
     ];

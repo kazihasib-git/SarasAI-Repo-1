@@ -84,7 +84,6 @@ const AdminDataTable = ({
     dispatch,
     componentName,
 }) => {
-    console.log('initial data', initialData);
     const [data, setData] = useState(
         initialData.map(item => ({
             ...item,
@@ -127,7 +126,6 @@ const AdminDataTable = ({
         handleCloseDialog();
     };
     const handleCloseDialog = () => {
-        console.log('handledelte');
         setIsDialogOpen(false);
         setItemIdToDelete(null);
     };

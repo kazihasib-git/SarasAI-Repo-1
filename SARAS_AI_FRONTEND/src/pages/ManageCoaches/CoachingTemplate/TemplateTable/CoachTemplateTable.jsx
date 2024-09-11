@@ -62,12 +62,12 @@ const CoachTemplateTable = ({
         }
     };
 
-    const handleToggle = (id ,event)=> {
+    const handleToggle = (id, event) => {
         if (event) {
             event.preventDefault();
             event.stopPropagation();
         }
-        console.log('updatedData', { id, data });
+
         const updatedData = data.map(item =>
             item.id === id
                 ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
@@ -76,7 +76,10 @@ const CoachTemplateTable = ({
         setData(updatedData);
 
         const toggledItem = updatedData.find(item => item.id === id);
-        const requestData = { template_id: toggledItem.id, status: toggledItem.is_active };
+        const requestData = {
+            template_id: toggledItem.id,
+            status: toggledItem.is_active,
+        };
 
         switch (componentName) {
             case 'COACHTEMPLATE':
@@ -102,7 +105,7 @@ const CoachTemplateTable = ({
     //         return "#000000";
     //     }
     //   };
-    console.log('currunt data:::', currentData);
+
     return (
         <div className="tableContainer">
             <table>
@@ -129,14 +132,12 @@ const CoachTemplateTable = ({
                     ) : (
                         currentData.map((item, index) => (
                             <tr key={item.id} id="tableRow">
-                                {/* {console.log("CUURENT : ", item)} */}
                                 <td>
                                     {(currentPage - 1) * itemsPerPage +
                                         index +
                                         1}
                                 </td>
                                 {Object.keys(item).map((key, idx) => {
-                                    // {console.log("KEY : ", key)}
                                     if (key === 'Assigned To') {
                                         return (
                                             <td
@@ -198,7 +199,7 @@ const CoachTemplateTable = ({
                                                 return (
                                                     <AntSwitch
                                                         key={idx}
-                                                        checked={item.is_active} 
+                                                        checked={item.is_active}
                                                         onChange={() =>
                                                             handleToggle(
                                                                 item.id

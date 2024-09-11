@@ -52,7 +52,6 @@ import { useGetPlatformsQuery } from '../../../../redux/services/platforms/platf
 import { useGetTimezonesQuery } from '../../../../redux/services/timezones/timezonesApi';
 // import { uploadpdf } from '../../../../redux/features/adminModule/coach/LinkActivitySlice';
 
-
 const LinkActivityPopup = ({
     open,
     handleClose,
@@ -61,7 +60,6 @@ const LinkActivityPopup = ({
     LinkActivitytype,
 }) => {
     const dispatch = useDispatch();
-    console.log('template id', templateId);
     const {
         register,
         handleSubmit,
@@ -92,9 +90,21 @@ const LinkActivityPopup = ({
     const { coaches } = useSelector(state => state.coachModule);
     const { coachAvailableSlots } = useSelector(state => state.coachScheduling);
 
-    const { data : timezones, error : timezoneError , isLoading : timezonesLoading } = useGetTimezonesQuery();
-    const { data : platforms, error : platformError, isLoading : platformLoading } = useGetPlatformsQuery()
-    const { data : hosts, error : hostsError, isLoading : hostsLoading} = useGetHostsQuery()
+    const {
+        data: timezones,
+        error: timezoneError,
+        isLoading: timezonesLoading,
+    } = useGetTimezonesQuery();
+    const {
+        data: platforms,
+        error: platformError,
+        isLoading: platformLoading,
+    } = useGetPlatformsQuery();
+    const {
+        data: hosts,
+        error: hostsError,
+        isLoading: hostsLoading,
+    } = useGetHostsQuery();
 
     useEffect(() => {
         if (selectedCoachId) {
@@ -112,7 +122,6 @@ const LinkActivityPopup = ({
         activityType,
         videoUrl,
         upload_pdf_url,
-        selectedAssessmentId,
         selectedSessionType,
         data
     ) => {
@@ -122,7 +131,7 @@ const LinkActivityPopup = ({
         } else if (activityType === 'pdf' && !upload_pdf_url) {
             toast.error('Please upload a valid PDF.');
             return false;
-        } else if (activityType === 'test' && !selectedAssessmentId) {
+        } else if (activityType === 'test' && !data.assessment) {
             toast.error('Please provide a valid Assessment Type.');
             return false;
         } else if (activityType === 'virtual meet' && !selectedSessionType) {
@@ -178,14 +187,11 @@ const LinkActivityPopup = ({
     };
 
     const onSubmit = async data => {
-        //console.log("---------------->", data , "activityId", activityId, "activityType", activityType, "selectedAssessmentId", selectedAssessmentId, "selectedSessionType", selectedSessionType);
         setSelectedAssessmentId(data.assessment);
-        console.log(activityType, 'actibjbcjecjece');
         const isValid = validateActivityData(
             activityType,
             videoUrl,
             upload_pdf_url,
-            selectedAssessmentId,
             selectedSessionType,
             data
         );
@@ -201,12 +207,12 @@ const LinkActivityPopup = ({
 
             link: videoUrl || upload_pdf_url || data.link, // Add other fields if needed
             virtual_meeting_type: selectedSessionType,
-            test_type: selectedAssessmentId,
+            test_type: data.assessment,
         };
         try {
             if (
                 payload.link ||
-                (activityType === 'test' && selectedAssessmentId) ||
+                (activityType === 'test' && data.assessment) ||
                 (activityType === 'virtual meet' && selectedSessionType)
             ) {
                 if (
@@ -316,7 +322,6 @@ const LinkActivityPopup = ({
     }, [activityType]);
 
     const handleSlotChange = event => {
-        console.log(event.target.value);
         setSelectedSlot(event.target.value);
     };
 
@@ -333,8 +338,6 @@ const LinkActivityPopup = ({
         const formattedHour = hour % 12 || 12;
         return `${formattedHour}:${minute < 10 ? '0' : ''}${minute} ${ampm}`;
     };
-
-    // const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
 
     const tranformSlots = async coachAvailableSlots => {
         const timezonename = timezoneIdToName(coachTimeZone, timezones);
@@ -376,7 +379,6 @@ const LinkActivityPopup = ({
 
         if (selected) {
             setSelectedCoachId(selected.id);
-            // console.log('Selected Coach ID:', selected.id); // Log the selected coach ID
         }
     };
 
@@ -419,7 +421,7 @@ const LinkActivityPopup = ({
     const handleChangeMeetingName = event => {
         setSelectMeetingType(event.target.value);
     };
-    console.log('coachOptions', coachOptions);
+
     const contentComponent = (
         <Grid
             container

@@ -29,7 +29,6 @@ const ParticipantsDialog = ({ open, onClose }) => {
                 item.packages.map(pack => pack.package_name).join(',') || 'N/A',
             batch: item.batches.map(batch => batch.name).join(', ') || 'N/A',
         }));
-        console.log('TransformedData', transformedData);
         setData(transformedData);
     };
 

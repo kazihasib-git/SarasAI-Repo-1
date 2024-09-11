@@ -6,15 +6,13 @@ import DynamicTable from '../../components/CommonComponent/DynamicTable';
 import { showTaCourseMapping } from '../../redux/features/adminModule/ta/taSlice';
 import { useDispatch, useSelector } from 'react-redux';
 
-const headers = [
-    'S. No.',
-    'Ta Name',
-    'Active Courses',
-];
+const headers = ['S. No.', 'Ta Name', 'Active Courses'];
 
 const TaCourseMapping = () => {
     const dispatch = useDispatch();
-    const { taCourseMappingData, loading, error } = useSelector(state => state.taModule);
+    const { taCourseMappingData, loading, error } = useSelector(
+        state => state.taModule
+    );
     const [taMappingData, settaMappingData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
@@ -24,49 +22,17 @@ const TaCourseMapping = () => {
         dispatch(showTaCourseMapping());
     }, [dispatch]);
 
-    // useEffect(() => {
-    //     console.log("taCourseMappingData:", taCourseMappingData); // Log the data for debugging
-
-    //     if (Array.isArray(taCourseMappingData) && taCourseMappingData.length > 0) {
-    //         try {
-    //             const transformData = taCourseMappingData.map((item, index) => {
-    //                 if (!item || typeof item !== 'object') {
-    //                     console.error(`Invalid item at index ${index}:`, item);
-    //                     return null;
-    //                 }
-    //                 return {
-    //                     id: item.id,
-    //                     name: item.name,
-    //                     Active_Courses: Array.isArray(item.courses) ? item.courses.length : 0,
-    //                 };
-    //             }).filter(Boolean);
-
-    //             settaMappingData(transformData);
-    //             setFilteredData(transformData);
-    //         } catch (error) {
-    //             console.error("Error transforming taCourseMappingData:", error);
-    //         }
-    //     } else {
-    //         settaMappingData([]);
-    //         setFilteredData([]);
-    //     }
-    // }, [taCourseMappingData]);
-   console.log("tacoursemappingdata:::" , taCourseMappingData) ; 
-
     useEffect(() => {
         if (taCourseMappingData && taCourseMappingData.length > 0) {
-            const transformData = taCourseMappingData.map((item) => ({
+            const transformData = taCourseMappingData.map(item => ({
                 id: item.id,
                 name: item.name,
                 Active_Courses: item.courses_for_ta.length,
-                
             }));
-            console.log('length of active courses :' ,  transformData.Active_Courses) ; 
             settaMappingData(transformData);
             setFilteredData(transformData);
         }
     }, [taCourseMappingData]);
-
 
     const handleSearch = event => {
         const query = event.target.value.toLowerCase();
@@ -105,7 +71,7 @@ const TaCourseMapping = () => {
                             fontFamily: 'ExtraLight',
                         }}
                     >
-                        Ta Course Mapping   
+                        Ta Course Mapping
                     </p>
                     <Box display={'flex'}>
                         <Box

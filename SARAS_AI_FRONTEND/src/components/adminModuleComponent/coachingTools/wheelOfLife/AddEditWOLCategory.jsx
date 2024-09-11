@@ -23,8 +23,6 @@ const AddEditWOLCategory = () => {
 
     const handleSubmit = async () => {
         if (editData) {
-            //setCategoryName(editData.name);
-            console.log('Edit');
             try {
                 const updatedWOL = await dispatch(
                     updateWOLCategory({
@@ -33,22 +31,20 @@ const AddEditWOLCategory = () => {
                     })
                 ).unwrap();
             } catch (error) {
-                console.log(error.message); //TODO: Show toast message
+                console.error(error.message);
             }
         } else {
             try {
-                if(categoryName){
-                const createdWOL = await dispatch(
-                    createWOLCategory({ name: categoryName })
-                ).unwrap();
-            }else{
-                
-                 toast.error('Please enter category');
-                 return;
-            }
+                if (categoryName) {
+                    const createdWOL = await dispatch(
+                        createWOLCategory({ name: categoryName })
+                    ).unwrap();
+                } else {
+                    toast.error('Please enter category');
+                    return;
+                }
                 // toast.success('Category created successfully');
             } catch (error) {
-              
                 return; // Prevent further execution if API fails
             }
         }
@@ -64,7 +60,6 @@ const AddEditWOLCategory = () => {
     };
 
     useEffect(() => {
-        console.log(editData);
         if (editData) {
             setCategoryName(editData.name);
         }
@@ -77,7 +72,7 @@ const AddEditWOLCategory = () => {
                 backgroundColor: '#F56D3B',
                 borderColor: '#F56D3B',
                 color: '#FFFFFF',
-                textTransform: 'none' 
+                textTransform: 'none',
             }}
         >
             Update

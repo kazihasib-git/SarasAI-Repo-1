@@ -43,7 +43,6 @@ const WOLInstructions = () => {
     const [instruction, setInstruction] = useState([]);
 
     const handleEditWOLInstructions = () => {
-        console.log('INSTRUC', instruction);
         setValue(instructionData[0].message); // Join the points into a single string
         setEditData(true);
     };
@@ -57,7 +56,7 @@ const WOLInstructions = () => {
                 });
             setEditData(false);
         } catch (error) {
-            console.log(error.message); // TODO: Show toast message
+            console.error(error.message); // TODO: Show toast message
         }
     };
 
@@ -67,7 +66,6 @@ const WOLInstructions = () => {
 
     useEffect(() => {
         if (instructionData && instructionData.length > 0) {
-            console.log('INSTRUCTION DATA : ', instructionData[0].message);
             // Extract points from HTML message
             const points = extractPoints(instructionData[0].message);
             setInstruction(instructionData[0].message); // Update state with the array of points
@@ -233,7 +231,7 @@ const WOLInstructions = () => {
                                     style={{
                                         fontSize: '14px',
                                         fontFamily: 'Bold',
-                                        textTransform: 'none' 
+                                        textTransform: 'none',
                                     }}
                                 >
                                     Update

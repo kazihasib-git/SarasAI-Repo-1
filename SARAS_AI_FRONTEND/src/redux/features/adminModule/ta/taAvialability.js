@@ -7,16 +7,18 @@ import { toast } from 'react-toastify';
 export const getTodayTaAvailability = createAsyncThunk(
     'taAvialability/getTodayTaAvailability',
     async rejectWithValue => {
-        try{
+        try {
             const response = await axiosInstance.get(
                 `${baseUrl}/admin/TA-availability/get-today-available-ta`
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else {
-                return rejectWithValue('An Error Occurred While Fetching TA Availability')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Fetching TA Availability'
+                );
             }
         }
     }
@@ -25,18 +27,20 @@ export const getTodayTaAvailability = createAsyncThunk(
 //get slots for ta from date to end date
 export const getSlots = createAsyncThunk(
     'taAvialability/getSlots',
-    async (data , { rejectWithValue })=> {
-        try{
+    async (data, { rejectWithValue }) => {
+        try {
             const response = await axiosInstance.post(
                 `${baseUrl}/admin/coach-slots/records`,
                 data
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else {
-                return rejectWithValue('An Error Occurred While Fetching Slots')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Fetching Slots'
+                );
             }
         }
     }
@@ -45,17 +49,19 @@ export const getSlots = createAsyncThunk(
 //for fetching sessions of ta for calendar
 export const fetchTAScheduleById = createAsyncThunk(
     'taAvialability/fetchTAScheduleById',
-    async (id , { rejectWithValue }) => {
-        try{
+    async (id, { rejectWithValue }) => {
+        try {
             const response = await axiosInstance.get(
                 `${baseUrl}/admin/taschedules/${id}`
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else {
-                return rejectWithValue('An Error Occurred While Fetching Schedules For TA')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Fetching Schedules For TA'
+                );
             }
         }
     }
@@ -64,17 +70,19 @@ export const fetchTAScheduleById = createAsyncThunk(
 //for fetching slots of ta for calendar
 export const fetchTaSlots = createAsyncThunk(
     'taAvialability/fetchTaSlots',
-    async (id, { rejectWithValue })=> {
-        try{
+    async (id, { rejectWithValue }) => {
+        try {
             const response = await axiosInstance.get(
                 `${baseUrl}/admin/coach-slots/${id}`
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else {
-                return rejectWithValue('An Error Occurred While Fetching Ta Slots')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Fetching Ta Slots'
+                );
             }
         }
     }
@@ -83,18 +91,20 @@ export const fetchTaSlots = createAsyncThunk(
 // Create Slots for TA
 export const createSlots = createAsyncThunk(
     'taAvialability/createSlots',
-    async (data , { rejectWithValue })=> {
-        try{
+    async (data, { rejectWithValue }) => {
+        try {
             const response = await axiosInstance.post(
                 `${baseUrl}/admin/coach-slots`,
                 data
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else {
-                return rejectWithValue('An Error Occurred While Creating Slots')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Creating Slots'
+                );
             }
         }
     }
@@ -103,18 +113,20 @@ export const createSlots = createAsyncThunk(
 // Get Schedule Session for TA by slots
 export const getScheduleSession = createAsyncThunk(
     'taAvialability/getScheduleSession',
-    async (data , { rejectWithValue }) => {
-        try{
+    async (data, { rejectWithValue }) => {
+        try {
             const response = await axiosInstance.post(
                 `${baseUrl}/admin/taschedules/get-schedules-records`,
                 data
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else {
-                return rejectWithValue('An Error Occurred While Fetching Session')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Fetching Session'
+                );
             }
         }
     }
@@ -123,18 +135,20 @@ export const getScheduleSession = createAsyncThunk(
 // Get Available Slots
 export const fetchAvailableSlots = createAsyncThunk(
     'taAvialability/fetchAvailableSlots',
-    async ( data, { rejectWithValue }) => {
+    async (data, { rejectWithValue }) => {
         try {
             const response = await axiosInstance.post(
                 `${baseUrl}/admin/coach-slots/getTACoachSlotForADate`,
                 data
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else {
-                return rejectWithValue('An Error Occurred While Fetching Available SLots')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Fetching Available SLots'
+                );
             }
         }
     }
@@ -144,16 +158,18 @@ export const fetchAvailableSlots = createAsyncThunk(
 export const deleteTaFutureSlots = createAsyncThunk(
     'taAvialability/deleteTaFutureSlots',
     async (id, { rejectWithValue }) => {
-        try{
+        try {
             const response = await axiosInstance.delete(
                 `${baseUrl}/admin/coach-slots/${id}`
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else {
-                return rejectWithValue('An Error Occurred While Deleting Future Slots')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Deleting Future Slots'
+                );
             }
         }
     }
@@ -162,18 +178,20 @@ export const deleteTaFutureSlots = createAsyncThunk(
 // Reason for Leave
 export const reasonForLeave = createAsyncThunk(
     'taAvialability/reasonForLeave',
-    async (data , { rejectWithValue }) => {
-        try{
+    async (data, { rejectWithValue }) => {
+        try {
             const response = await axiosInstance.post(
                 `${baseUrl}/admin/leave`,
                 data
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else {
-                return rejectWithValue('An Error Occurred While Providing Reason For Leave')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Providing Reason For Leave'
+                );
             }
         }
     }
@@ -182,17 +200,19 @@ export const reasonForLeave = createAsyncThunk(
 export const changePlatform = createAsyncThunk(
     'taAvialability/changePlatform',
     async ({ id, data }, { rejectWithValue }) => {
-        try{
+        try {
             const response = await axiosInstance.patch(
                 `${baseUrl}/admin/taschedules/change-platform/${id}`,
                 data
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else {
-                return rejectWithValue('An Error Occurred While Changing Platform')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Changing Platform'
+                );
             }
         }
     }
@@ -202,16 +222,18 @@ export const changePlatform = createAsyncThunk(
 export const getTAScheduledStudents = createAsyncThunk(
     'taAvialability/getScheduledStudents',
     async (id, { rejectWithValue }) => {
-        try{
+        try {
             const response = await axiosInstance.get(
                 `${baseUrl}/admin/taschedules/students/${id}`
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else {
-                return rejectWithValue('An Error Occurred While Fetching Students Of Session')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Fetching Students Of Session'
+                );
             }
         }
     }
@@ -221,19 +243,21 @@ export const getTAScheduledStudents = createAsyncThunk(
 export const editTASchdeuledStudents = createAsyncThunk(
     'taAvialability/editTAScheduledStudents',
     async ({ Id, data }, { rejectWithValue }) => {
-        try{
+        try {
             const response = await axiosInstance.patch(
                 `${baseUrl}/admin/taschedules/update-students/${Id}`,
                 data
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else {
-                return rejectWithValue('An Error Occurred While Editing Students')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Editing Students'
+                );
             }
-        }  
+        }
     }
 );
 
@@ -241,16 +265,18 @@ export const editTASchdeuledStudents = createAsyncThunk(
 export const getTAScheduledBatches = createAsyncThunk(
     'taAvialability/getScheduledBatches',
     async (id, { rejectWithValue }) => {
-        try{
+        try {
             const response = await axiosInstance.get(
                 `${baseUrl}/admin/taschedules/batches/${id}`
             );
             return response.data;
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else {
-                return rejectWithValue('An Error Occurred While Fetching Session Batches')
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Fetching Session Batches'
+                );
             }
         }
     }
@@ -260,17 +286,19 @@ export const getTAScheduledBatches = createAsyncThunk(
 export const editTASchdeuledBatches = createAsyncThunk(
     'taAvialability/editScheduledBatches',
     async ({ Id, data }, { rejectWithValue }) => {
-        try{
+        try {
             const response = await axiosInstance.patch(
                 `${baseUrl}/admin/taschedules/update-batches/${Id}`,
                 data
             );
-            return response.data;   
-        }catch(error){
-            if(error.response && error.response.data){
-                return rejectWithValue(error.response.data.message)
-            }else {
-                return rejectWithValue('An Error Occurred While Editing Session Batches')
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue(
+                    'An Error Occurred While Editing Session Batches'
+                );
             }
         }
     }
@@ -335,7 +363,6 @@ export const taAvailabilitySlice = createSlice({
             state.markLeaveOpen = false;
         },
         openScheduledSlots(state, action) {
-            console.log('OPENSCHEDULE SLOTS : ', action.payload);
             state.scheduledSlotsOpen = true;
             state.markLeaveData = action.payload;
         },
@@ -344,7 +371,6 @@ export const taAvailabilitySlice = createSlice({
             state.markLeaveData = [];
         },
         openScheduledSession(state, action) {
-            // console.log("Open Action slotEventData : ", action.payload)
             state.scheduledSessionOpen = true;
             state.slotEventData = action.payload;
         },
@@ -353,7 +379,6 @@ export const taAvailabilitySlice = createSlice({
         },
         openCancelSession(state, action) {
             state.cancelSessionOpen = true;
-            console.log('ACTION : ', action.payload);
             state.schduldeCancelData = action.payload;
         },
         closeCancelSession(state) {
@@ -368,7 +393,6 @@ export const taAvailabilitySlice = createSlice({
             state.markLeaveData = [];
         },
         openRescheduleSession(state, action) {
-            console.log('Open Action sessionEventData : ', action.payload);
             state.resheduleSessionOpen = true;
             state.sessionEventData = action.payload;
         },
@@ -384,7 +408,6 @@ export const taAvailabilitySlice = createSlice({
         },
 
         openDeleteTaSlots(state, action) {
-            console.log('Payload :', action.payload);
             state.deletingCoachFutureSlots = true;
             state.taId = action.payload.id;
             state.taName = action.payload.name;
@@ -403,7 +426,6 @@ export const taAvailabilitySlice = createSlice({
             state.openEventData = false;
         },
         openTaEditScheduledStudents(state, action) {
-            console.log('Action :', action.payload);
             state.taEditScheduledStudents = true;
             state.meetingId = action.payload.id;
         },
@@ -460,7 +482,7 @@ export const taAvailabilitySlice = createSlice({
         builder.addCase(getTodayTaAvailability.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
-            state.todaysAvailableTa = []
+            state.todaysAvailableTa = [];
         });
 
         // Get Slots
@@ -483,12 +505,14 @@ export const taAvailabilitySlice = createSlice({
         });
         builder.addCase(createSlots.fulfilled, (state, action) => {
             state.loading = false;
-            toast.success(action.payload.message || 'Slot Created Successfully X_X')
+            toast.success(
+                action.payload.message || 'Slot Created Successfully X_X'
+            );
         });
         builder.addCase(createSlots.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
-            toast.error(action.payload || 'Failed To Create Slot')
+            toast.error(action.payload || 'Failed To Create Slot');
         });
 
         // Get Schedule Session
@@ -513,7 +537,6 @@ export const taAvailabilitySlice = createSlice({
             state.loading = false;
             state.availableSlotsData = action.payload?.data;
             // toast.success(action.payload.message || "slot found");
-
         });
         builder.addCase(fetchAvailableSlots.rejected, (state, action) => {
             state.loading = false;
@@ -558,13 +581,15 @@ export const taAvailabilitySlice = createSlice({
         builder.addCase(changePlatform.fulfilled, (state, action) => {
             state.loading = false;
             state.platformData = action.payload;
-            toast.success(action.payload.message || 'Platform Changes Successfully')
+            toast.success(
+                action.payload.message || 'Platform Changes Successfully'
+            );
         });
         builder.addCase(changePlatform.rejected, (state, action) => {
             state.loading = false;
             state.platformData = [];
             state.error = action.error.message;
-            toast.error(action.payload || 'Failed To Change Platform')
+            toast.error(action.payload || 'Failed To Change Platform');
         });
 
         // Get Ta Scheduled Students
@@ -620,7 +645,7 @@ export const taAvailabilitySlice = createSlice({
         builder.addCase(editTASchdeuledBatches.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
-            toast.error(action.payload || 'Failed To Update Batches')
+            toast.error(action.payload || 'Failed To Update Batches');
         });
     },
 });

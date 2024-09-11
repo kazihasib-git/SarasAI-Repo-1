@@ -23,7 +23,6 @@ export const updateTaMenuProfile = createAsyncThunk(
                 `${baseUrl}/ta/ta-profile`,
                 data
             );
-            console.log(response.data, 'response.data');
             return response.data;
         } catch (error) {
             if (error.response && error.response.data) {
@@ -44,7 +43,6 @@ export const getMyStudents = createAsyncThunk(
         const response = await axiosInstance.get(
             `${baseUrl}/ta/my-student/get-all-student`
         );
-        console.log(response.data, 'response.data');
         return response.data;
     }
 );
@@ -52,7 +50,6 @@ export const getMyStudents = createAsyncThunk(
 // Get Ta Slots
 export const getTaMenuSlots = createAsyncThunk('taMenu/getSlots', async () => {
     const response = await axiosInstance.get(`${baseUrl}/ta/calendar/slots`);
-    console.log(response.data, 'response.data');
     return response.data;
 });
 
@@ -208,7 +205,6 @@ export const getTaCallRequests = createAsyncThunk(
         const response = await axiosInstance.get(
             `${baseUrl}/ta/call-request/get-call-request`
         );
-        console.log(response.data, 'response.data');
         return response.data;
     }
 );
@@ -216,9 +212,10 @@ export const getTaCallRequests = createAsyncThunk(
 // ta approve call request
 export const approveCallRequest = createAsyncThunk(
     'taMenu/approveCallRequest',
-    async ({id, hostEmail }) => {
+    async ({ id, hostEmail }) => {
         const response = await axiosInstance.post(
-            `${baseUrl}/ta/call-request/approve-call-request/${id}` , hostEmail
+            `${baseUrl}/ta/call-request/approve-call-request/${id}`,
+            hostEmail
         );
         return response.data;
     }
@@ -234,7 +231,6 @@ export const denyCallRequest = createAsyncThunk(
                 'reject-reason': reason,
             }
         );
-        console.log(response.data, 'response.data');
         return response.data;
     }
 );
@@ -247,7 +243,6 @@ export const getTaScheduledCalls = createAsyncThunk(
             `${baseUrl}/ta/schedule-call/get-schedule-call`,
             data
         );
-        console.log(response.data, 'response.data');
         return response.data;
     }
 );
@@ -258,11 +253,8 @@ export const getTaCallRecords = createAsyncThunk(
     async date => {
         const response = await axiosInstance.post(
             `${baseUrl}/ta/call-recording/get-call-recording`,
-            {
-                date: date,
-            }
+            date
         );
-        console.log(response.data, 'response.data');
         return response.data;
     }
 );
@@ -377,8 +369,6 @@ export const uploadSessionRecording = createAsyncThunk(
     'taMenu/uploadSessionRecording',
     async ({ id, session_recording_url }, { rejectWithValue }) => {
         try {
-            console.log('Assigning session notes with ID:', id);
-
             const response = await axiosInstance.put(
                 `${baseUrl}/ta/call-recording/upload-session-recording/${id}`,
 
@@ -403,11 +393,9 @@ export const assignSessionNotes = createAsyncThunk(
     'calls/assignSessionNotes',
     async ({ id, data }, { rejectWithValue }) => {
         try {
-            console.log('Assigning session notes with ID:', id);
             if (!id) {
                 throw new Error('ID is required');
             }
-
             const response = await axios.put(
                 `${baseUrl}/ta/call-recording/assign-session-notes/${id}`,
                 data,

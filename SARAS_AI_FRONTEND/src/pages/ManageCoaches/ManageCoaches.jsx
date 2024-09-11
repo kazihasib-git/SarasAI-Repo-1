@@ -31,12 +31,11 @@ const ManageCoaches = () => {
     const [filteredData, setFilteredData] = useState([]);
     const [actionButtonToggled, setActionButtonToggled] = useState(false);
 
-
     // Get coaches and timezones from Redux store
     const { coaches, createCoachOpen, editCoachOpen } = useSelector(
         state => state.coachModule
     );
-    const { data : timezones, error, isLoading } = useGetTimezonesQuery();
+    const { data: timezones, error, isLoading } = useGetTimezonesQuery();
 
     useEffect(() => {
         dispatch(closeCreateCoach());
@@ -45,8 +44,8 @@ const ManageCoaches = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        if(coaches && coaches.length > 0){
-            const transformData = coaches.map((item) => ({
+        if (coaches && coaches.length > 0) {
+            const transformData = coaches.map(item => ({
                 id: item.id,
                 'Coach Name': item.name,
                 Username: item.username,
@@ -55,26 +54,33 @@ const ManageCoaches = () => {
                 is_active: item.is_active,
             }));
 
-
             // Filter data based on the search query
             const filteredCoachesData = transformData.filter(data => {
-                const matchName = data['Coach Name']?.toLowerCase().includes(searchQuery.toLowerCase());
-                const matchUsername = data.Username?.toLowerCase().includes(searchQuery.toLowerCase());
-                const matchLocation = data.Location?.toLowerCase().includes(searchQuery.toLowerCase());
-                const matchTimezone = data['Time Zone']?.toLowerCase().includes(searchQuery.toLowerCase());
-    
-                return matchName || matchUsername || matchLocation || matchTimezone;
+                const matchName = data['Coach Name']
+                    ?.toLowerCase()
+                    .includes(searchQuery.toLowerCase());
+                const matchUsername = data.Username?.toLowerCase().includes(
+                    searchQuery.toLowerCase()
+                );
+                const matchLocation = data.Location?.toLowerCase().includes(
+                    searchQuery.toLowerCase()
+                );
+                const matchTimezone = data['Time Zone']
+                    ?.toLowerCase()
+                    .includes(searchQuery.toLowerCase());
+
+                return (
+                    matchName || matchUsername || matchLocation || matchTimezone
+                );
             });
 
             setCoachesData(transformData);
             setFilteredData(filteredCoachesData);
-        }else {
+        } else {
             setCoachesData([]);
-            setFilteredData([])
+            setFilteredData([]);
         }
-    },[coaches, searchQuery, timezones]);
-
-    console.log("FILTERED DATA :", filteredData)
+    }, [coaches, searchQuery, timezones]);
 
     const handleAddCoach = () => {
         navigate('/createcoach');
@@ -108,26 +114,31 @@ const ManageCoaches = () => {
                     event.preventDefault();
                 }
 
-                const coachToUpdate = coachesData.find((coach) => coach.id === id)
+                const coachToUpdate = coachesData.find(
+                    coach => coach.id === id
+                );
                 const updatedStatus = coachToUpdate.is_active === 1 ? 0 : 1;
 
-                dispatch(updateCoach({ id, data : { is_active : updatedStatus }}))
-                
-                setCoachesData((prevCoachesData) => 
-                    prevCoachesData.map((coach) => 
-                        coach.id === id ? {...coach, is_active : updatedStatus } : coach
+                dispatch(
+                    updateCoach({ id, data: { is_active: updatedStatus } })
+                );
+
+                setCoachesData(prevCoachesData =>
+                    prevCoachesData.map(coach =>
+                        coach.id === id
+                            ? { ...coach, is_active: updatedStatus }
+                            : coach
                     )
                 );
-                
+
                 setActionButtonToggled(prev => !prev);
             },
-
         },
         {
             type: 'edit',
             onClick: (id, event) => {
-                if(event && event.preventDefault) {
-                    event.preventDefault()
+                if (event && event.preventDefault) {
+                    event.preventDefault();
                 }
                 handleEditCoaches(id);
             },

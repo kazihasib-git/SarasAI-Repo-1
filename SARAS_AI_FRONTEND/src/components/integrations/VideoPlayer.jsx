@@ -19,8 +19,6 @@ const VideoUploadAndPlayer = ({
         setOpen(false);
     };
 
-    console.log(videoUrl);
-
     const uploadVideoToVimeo = async () => {
         const requestData = {
             upload: {

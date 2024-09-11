@@ -21,14 +21,9 @@ const Mystudents = ({ role }) => {
         role === 'TA' ? state.taMenu : state.coachMenu
     );
 
-    // useEffect(() => {
-    //     dispatch(getMyStudents());
-    // }, []);
-
     useEffect(() => {
         if (role === 'TA') {
             if (myStudentData) {
-                console.log('myStudentData', myStudentData);
                 const transformedData = Object.values(myStudentData).map(
                     item => ({
                         id: item.Student_Id,
@@ -43,7 +38,6 @@ const Mystudents = ({ role }) => {
             }
         } else if (role === 'Coach') {
             if (myStudentData) {
-                console.log('myStudentData', myStudentData);
                 const transformedData = myStudentData.map(student => {
                     // Extract package names
                     const packageNames = student.packages
@@ -63,9 +57,6 @@ const Mystudents = ({ role }) => {
                                 count +
                                 template.modules.reduce(
                                     (moduleCount, module) => {
-                                        console.log(
-                                            `Module ${module.module_name} has ${module.activities.length} activities.`
-                                        );
                                         return (
                                             moduleCount +
                                             module.activities.length
@@ -76,9 +67,6 @@ const Mystudents = ({ role }) => {
                             );
                         },
                         0
-                    );
-                    console.log(
-                        `Total activities scheduled: ${activitiesScheduled}`
                     );
 
                     // Set default values for Activities Completed and Due Dates Missed

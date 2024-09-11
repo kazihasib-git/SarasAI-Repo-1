@@ -61,10 +61,6 @@ const SelectStudents = ({ componentName }) => {
         participantsData,
     } = useSelector(state => state.commonCalender);
 
-    console.log(
-        { sessionData: sessionData },
-        { participantsData: participantsData }
-    );
     const { [studentDataState]: studentsData } = stateSelector || {};
 
     useEffect(() => {

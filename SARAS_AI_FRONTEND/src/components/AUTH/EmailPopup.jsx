@@ -25,7 +25,6 @@ const EmailPopup = ({ handleClose, onSubmit }) => {
             toast.error('Please select either Email or Mobile Number', {});
             return;
         }
-        console.log(username);
 
         // dispatch(forgotPassword({ username, method: selectedOption }));
 
@@ -40,8 +39,6 @@ const EmailPopup = ({ handleClose, onSubmit }) => {
                 }
             }
         );
-
-        console.log('Form submitted with option:', selectedOption);
     };
 
     return (

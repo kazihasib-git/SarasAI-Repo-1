@@ -30,24 +30,38 @@ import { useGetPlatformsQuery } from '../../../../../redux/services/platforms/pl
 import { useGetTimezonesQuery } from '../../../../../redux/services/timezones/timezonesApi';
 
 const VirtualGroupSession = () => {
-
     const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
-    const { handleSubmit, control, formState: { errors }, } = useForm();
+    const {
+        handleSubmit,
+        control,
+        formState: { errors },
+    } = useForm();
     const [fromDate, setFromDate] = useState(null);
     const [selectedCoachId, setSelectedCoachId] = useState(null);
     const [coachTimeZone, setCoachTimeZone] = useState(null);
     const [coachSlots, setCoachSlots] = useState(null);
     const [selectedPlatform, setSelectedPlatform] = useState(null);
-    
+
     const dispatch = useDispatch();
     const { coaches } = useSelector(state => state.coachModule);
-    const { data : timezones, error : timezoneError , isLoading : timezonesLoading } = useGetTimezonesQuery();
-    const { data : platforms, error : platformError, isLoading : platformLoading } = useGetPlatformsQuery()
-    const { data : hosts, error : hostsError, isLoading : hostsLoading} = useGetHostsQuery()
+    const {
+        data: timezones,
+        error: timezoneError,
+        isLoading: timezonesLoading,
+    } = useGetTimezonesQuery();
+    const {
+        data: platforms,
+        error: platformError,
+        isLoading: platformLoading,
+    } = useGetPlatformsQuery();
+    const {
+        data: hosts,
+        error: hostsError,
+        isLoading: hostsLoading,
+    } = useGetHostsQuery();
     const [selectedSlot, setSelectedSlot] = useState('');
 
     const handleSlotChange = event => {
-        console.log(event.target.value);
         setSelectedSlot(event.target.value);
     };
 
@@ -71,7 +85,6 @@ const VirtualGroupSession = () => {
         const timezonename = timezoneIdToName(storedTimezoneId, timezones);
         const transformedSlots = await Promise.all(
             coachAvailableSlots.map(async slot => {
-                console.log(slot);
                 const localTime = await convertFromUTC({
                     start_date: slot.slot_date.split(' ')[0],
                     start_time: slot.from_time,
@@ -79,7 +92,7 @@ const VirtualGroupSession = () => {
                     end_date: slot.slot_end_date.split(' ')[0],
                     timezonename,
                 });
-                console.log('Converted Local Schedule Time:', localTime);
+
                 const newSlot = {
                     from_time: localTime.start_time,
                     to_time: localTime.end_time,
@@ -88,7 +101,6 @@ const VirtualGroupSession = () => {
                 return newSlot;
             })
         );
-        console.log('transformed slots', transformedSlots);
         setCoachSlots(transformedSlots);
     };
 
@@ -108,7 +120,6 @@ const VirtualGroupSession = () => {
 
         if (selected) {
             setSelectedCoachId(selected.id);
-            console.log('Selected Coach ID:', selected.id); // Log the selected coach ID
         }
     };
 
@@ -123,7 +134,6 @@ const VirtualGroupSession = () => {
                 date: fromDate,
                 timezone_name: selectedCoachTimeZone.time_zone,
             };
-            console.log('data', data);
             if (fromDate && selectedCoachId) {
                 dispatch(getTaAvailableSlotsFromDate(data));
                 dispatch(getCoachAvailableSlotsFromDate(data));

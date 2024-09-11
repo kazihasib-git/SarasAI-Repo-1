@@ -56,33 +56,6 @@ for (let i = 1; i <= 20; i++) {
 
 const headers = ['Point', 'Text', 'Icon'];
 
-const feedbackIcons = [
-    { value: '😀', label: '😀' },
-    { value: '😃', label: '😃' },
-    { value: '😄', label: '😄' },
-    { value: '😁', label: '😁' },
-    { value: '😅', label: '😅' },
-    { value: '😂', label: '😂' },
-    { value: '😊', label: '😊' },
-    { value: '😇', label: '😇' },
-    { value: '🙂', label: '🙂' },
-    { value: '😌', label: '😌' },
-    { value: '😍', label: '😍' },
-    { value: '😋', label: '😋' },
-    { value: '🤨', label: '🤨' },
-    { value: '🧐', label: '🧐' },
-    { value: '🤓', label: '🤓' },
-    { value: '😎', label: '😎' },
-    { value: '🤩', label: '🤩' },
-    { value: '🥳', label: '🥳' },
-    { value: '😒', label: '😒' },
-    { value: '😞', label: '😞' },
-    { value: '😔', label: '😔' },
-    { value: '😟', label: '😟' },
-    { value: '😕', label: '😕' },
-    { value: '🙁', label: '🙁' },
-];
-
 const WOLOptionsConfig = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();

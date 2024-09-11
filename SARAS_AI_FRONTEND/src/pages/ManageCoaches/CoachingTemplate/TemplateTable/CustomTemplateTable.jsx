@@ -128,7 +128,6 @@ const CustomTemplateTable = ({
                 dispatch(updateCoach({ id, data: requestData }));
                 break;
             case 'WOLCATEGORY':
-                console.log('WOL Categories : ', id, requestData);
                 dispatch(activeDeactiveWOLCategory(id));
                 break;
             default:

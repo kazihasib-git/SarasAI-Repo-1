@@ -231,7 +231,7 @@ const AddEditActivity = () => {
             // Create new activity
             dispatch(createCoachTemplateActivity(data));
         }
-        console.log('Selectedcoachtemplate', selectedCoachTemplate);
+
         dispatch(getAllCoachTemplateModules(selectedCoachTemplate));
         dispatch(getAllCoachTemplates());
         dispatch(closeEditActivityPopup());
@@ -243,7 +243,7 @@ const AddEditActivity = () => {
             backgroundColor="#F56D3B"
             borderColor="#F56D3B"
             color="#FFFFFF"
-            style={{ textTransform: 'none' }} 
+            style={{ textTransform: 'none' }}
         >
             Update
         </CustomButton>

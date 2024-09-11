@@ -45,7 +45,6 @@ import CustomDateOfBirth from '../../../CustomFields/CustomDateOfBirth';
 import { useGetTimezonesQuery } from '../../../../redux/services/timezones/timezonesApi';
 
 const AddEditTA = ({ data }) => {
-
     const {
         register,
         handleSubmit,
@@ -66,7 +65,7 @@ const AddEditTA = ({ data }) => {
     const [isEditingDescription, setIsEditingDescription] = useState(false);
     const [editableDescription, setEditableDescription] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const { data : timezones, error, isLoading } = useGetTimezonesQuery();
+    const { data: timezones, error, isLoading } = useGetTimezonesQuery();
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -86,8 +85,6 @@ const AddEditTA = ({ data }) => {
         dispatch(accessTaName(data));
 
         if (data.profile_picture) {
-            // const blobUrl = base64ToBlobUrl(data.profile_picture);
-            // console.log('url', blobUrl);
             setSelectedImage(data.profile_picture);
         }
 
@@ -145,8 +142,6 @@ const AddEditTA = ({ data }) => {
     };
 
     const onSubmit = async formData => {
-        // console.log('formData :', formData);
-
         if (selectedImage && selectedImage.startsWith('data:image/')) {
             const base64Data = selectedImage.replace(
                 /^data:image\/(png|jpeg|jpg);base64,/,
@@ -607,7 +602,7 @@ const AddEditTA = ({ data }) => {
                                 label="Email Address"
                                 name="email"
                                 placeholder="Enter Email Address"
-                                disabled = {data}
+                                disabled={data}
                                 register={register}
                                 validation={{
                                     required: 'Email is required',
@@ -626,7 +621,7 @@ const AddEditTA = ({ data }) => {
                                 rules={{ required: 'Phone number is required' }}
                                 render={({ field }) => (
                                     <PhoneInput
-                                        disabled = {data}
+                                        disabled={data}
                                         {...field}
                                         country={'in'}
                                         // containerStyle={{ width: "100%" }}

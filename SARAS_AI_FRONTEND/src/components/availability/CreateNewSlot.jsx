@@ -53,7 +53,7 @@ const CreateNewSlot = ({ id, name, componentName, timezone }) => {
     const [fromTime, setFromTime] = useState(null);
     const [toTime, setToTime] = useState(null);
 
-    const { data : timezones, error, isLoading } = useGetTimezonesQuery();
+    const { data: timezones, error, isLoading } = useGetTimezonesQuery();
 
     const { sliceName, createSlotApi, getSlotsApi } = slotConfig[componentName];
 
@@ -110,7 +110,6 @@ const CreateNewSlot = ({ id, name, componentName, timezone }) => {
             currentDate.getMonth() === inputDate.getMonth() &&
             currentDate.getDate() === inputDate.getDate()
         ) {
-            console.log('Both dates are the same.');
             sameDate = true;
         }
 
@@ -154,7 +153,6 @@ const CreateNewSlot = ({ id, name, componentName, timezone }) => {
 
     const onSubmit = async formData => {
         if (!validate()) {
-            console.log('NOT VALID DATA');
             return;
         }
 

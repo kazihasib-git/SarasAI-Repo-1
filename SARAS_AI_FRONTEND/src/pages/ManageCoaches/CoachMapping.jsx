@@ -33,7 +33,7 @@ const CoachMapping = () => {
     const { coachMapping, loading } = useSelector(state => state.coachModule);
     const [caMappingData, setcaMappingData] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
-    // console.log("camapping" , coachMapping);
+
     useEffect(() => {
         dispatch(showCoachMapping());
     }, [dispatch]);
@@ -59,7 +59,6 @@ const CoachMapping = () => {
     const handleSearch = event => {
         setSearchQuery(event.target.value);
     };
-
 
     return (
         <>
