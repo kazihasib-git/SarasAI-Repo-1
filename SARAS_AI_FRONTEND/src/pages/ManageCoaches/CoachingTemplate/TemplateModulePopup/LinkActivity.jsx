@@ -122,7 +122,6 @@ const LinkActivityPopup = ({
         activityType,
         videoUrl,
         upload_pdf_url,
-        selectedAssessmentId,
         selectedSessionType,
         data
     ) => {
@@ -132,7 +131,7 @@ const LinkActivityPopup = ({
         } else if (activityType === 'pdf' && !upload_pdf_url) {
             toast.error('Please upload a valid PDF.');
             return false;
-        } else if (activityType === 'test' && !selectedAssessmentId) {
+        } else if (activityType === 'test' && !data.assessment) {
             toast.error('Please provide a valid Assessment Type.');
             return false;
         } else if (activityType === 'virtual meet' && !selectedSessionType) {
@@ -193,7 +192,6 @@ const LinkActivityPopup = ({
             activityType,
             videoUrl,
             upload_pdf_url,
-            selectedAssessmentId,
             selectedSessionType,
             data
         );
@@ -209,12 +207,12 @@ const LinkActivityPopup = ({
 
             link: videoUrl || upload_pdf_url || data.link, // Add other fields if needed
             virtual_meeting_type: selectedSessionType,
-            test_type: selectedAssessmentId,
+            test_type: data.assessment,
         };
         try {
             if (
                 payload.link ||
-                (activityType === 'test' && selectedAssessmentId) ||
+                (activityType === 'test' && data.assessment) ||
                 (activityType === 'virtual meet' && selectedSessionType)
             ) {
                 if (
