@@ -24,14 +24,16 @@ import {
 import calender from '../../../assets/calender.svg';
 import VideoUploadDialog from '../../../components/integrations/videoUpload';
 import VideoPopup from '../../../components/integrations/videoPlayerPopUp';
-import { timezoneIdToName } from '../../../utils/timezoneIdToName';
+import {
+    fetchtimezoneDetails,
+    timezoneIdToName,
+} from '../../../utils/timezoneIdToName';
 import { convertFromUTC } from '../../../utils/dateAndtimeConversion';
 import CustomButton from '../../../components/CustomFields/CustomButton';
 import { useGetTimezonesQuery } from '../../../redux/services/timezones/timezonesApi';
 
-const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
-
 const CoachCallRecord = () => {
+    const dispatch = useDispatch();
     const [open, setOpen] = useState(false);
     const [selectedCall, setSelectedCall] = useState(null);
     const [date, setDate] = useState(moment());
@@ -40,29 +42,48 @@ const CoachCallRecord = () => {
     const [videoUrl, setVideoUrl] = useState('');
     const [idVideo, setIdVideo] = useState(null);
     const [processedCalls, setProcessedCalls] = useState([]);
+    const [timezoneDetails, setTimezoneDetails] = useState();
 
-    const dispatch = useDispatch();
+    const { timezoneId } = useSelector(state => state.auth);
     const calls = useSelector(state => state.coachMenu.coachCallRecords);
-    const { data : timezones, error, isLoading } = useGetTimezonesQuery();
+    const { data: timezones, error, isLoading } = useGetTimezonesQuery();
     const { userData } = useSelector(state => state.auth);
 
-    useEffect(() => {
-        dispatch(getCoachCallRecords(date.format('YYYY-MM-DD')));
-    }, [date, dispatch]);
+    function formatDate(date, offset) {
+        const localDate = new Date(date);
+        const offsetInMilliseconds = offset * 60 * 60 * 1000; // Convert hours to milliseconds
+        const adjustedDate = new Date(
+            localDate.getTime() + offsetInMilliseconds
+        );
+        return adjustedDate.toISOString().split('T')[0];
+    }
 
     useEffect(() => {
-        if (calls && calls.length > 0 && timezones && storedTimezoneId) {
-            console.log('BEFORE PROCESSING DATA');
+        if (timezoneId && timezones?.length > 0) {
+            const timezone = fetchtimezoneDetails(timezoneId, timezones);
+            setTimezoneDetails(timezone);
+        }
+    }, [timezoneId, timezones]);
+
+    useEffect(() => {
+        if (timezoneDetails) {
+            const data = {
+                date: formatDate(date, timezoneDetails.utc_offset),
+                timezone_name: timezoneDetails?.time_zone,
+            };
+            dispatch(getCoachCallRecords(data));
+        }
+    }, [dispatch, date, timezoneDetails]);
+
+    useEffect(() => {
+        if (timezoneDetails && calls && calls.length > 0) {
             processCalls();
-            console.log('AFTERR PROCESSING DATA');
         } else {
             setProcessedCalls([]);
         }
-    }, [calls, timezones, storedTimezoneId]);
+    }, [calls, timezoneDetails]);
 
     const processCalls = async () => {
-        const timezonename = timezoneIdToName(storedTimezoneId, timezones);
-        console.log('TIMEZONE NAME :', timezonename, calls);
         try {
             const processed = await Promise.all(
                 calls.map(async call => {
@@ -71,7 +92,7 @@ const CoachCallRecord = () => {
                         start_time: call.start_time,
                         end_time: call.end_time,
                         end_date: call.date,
-                        timezonename,
+                        timezonename: timezoneDetails.time_zone,
                     });
 
                     return {
@@ -144,7 +165,6 @@ const CoachCallRecord = () => {
         setVideoUrl('');
         setIdVideo(null);
         dispatch(getCoachCallRecords(date.format('YYYY-MM-DD')));
-        
     };
 
     const handlePlayVideo = url => {

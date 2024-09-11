@@ -334,8 +334,6 @@ const LinkActivityPopup = ({
         return `${formattedHour}:${minute < 10 ? '0' : ''}${minute} ${ampm}`;
     };
 
-    // const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
-
     const tranformSlots = async coachAvailableSlots => {
         const timezonename = timezoneIdToName(coachTimeZone, timezones);
         const transformedSlots = await Promise.all(

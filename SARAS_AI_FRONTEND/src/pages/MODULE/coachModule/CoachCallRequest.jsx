@@ -15,7 +15,10 @@ import {
     getCoachCallRequests,
 } from '../../../redux/features/coachModule/coachmenuprofileSilce';
 import { useDispatch, useSelector } from 'react-redux';
-import { timezoneIdToName } from '../../../utils/timezoneIdToName';
+import {
+    fetchtimezoneDetails,
+    timezoneIdToName,
+} from '../../../utils/timezoneIdToName';
 import { convertFromUTC } from '../../../utils/dateAndtimeConversion';
 import { useGetTimezonesQuery } from '../../../redux/services/timezones/timezonesApi';
 import { useGetHostsQuery } from '../../../redux/services/hosts/hostsApi';
@@ -30,6 +33,7 @@ const CoachCallRequest = () => {
     const [open, setOpen] = useState(false);
     const [callRequests, setCallRequests] = useState([]);
     const [showFullMessages, setShowFullMessages] = useState({});
+    const [timezoneDetails, setTimezoneDetails] = useState();
     const [denyRequestId, setDenyRequestId] = useState(null);
     const [hostEmail, setHostEmail] = useState();
     const [error, setError] = useState({});
@@ -54,47 +58,50 @@ const CoachCallRequest = () => {
         dispatch(getCoachCallRequests());
     }, [dispatch]);
 
-    const processCoachCallRequests = async requests => {
-        if (requests && requests.length > 0 && timezones && timezoneId) {
-            const timezonename = timezoneIdToName(timezoneId, timezones);
+    useEffect(() => {
+        if (timezoneId && timezones?.length > 0) {
+            const timezone = fetchtimezoneDetails(timezoneId, timezones);
+            setTimezoneDetails(timezone);
+        }
+    }, [timezoneId, timezones]);
 
-            try {
-                const processedRequests = await Promise.all(
-                    requests.map(async request => {
-                        const localTime = await convertFromUTC({
-                            start_date: request.date,
-                            start_time: request.start_time,
-                            end_time: request.end_time,
-                            end_date: request.date,
-                            timezonename,
-                        });
-
-                        return {
-                            ...request,
-                            date: localTime.start_date,
-                            start_time: localTime.start_time,
-                            end_time: localTime.end_time,
-                            title: `Session request by ${request.sender.name}`,
-                            For: `${localTime.start_date} | ${convertTo12HourFormat(localTime.start_time)}`,
-                        };
-                    })
-                );
-
-                setCallRequests(processedRequests);
-            } catch (error) {
-                console.error('Error converting call requests:', error);
-                setCallRequests([]);
-            }
+    useEffect(() => {
+        if (coachCallRequests && coachCallRequests.length && timezoneDetails) {
+            processCoachCallRequests(coachCallRequests);
         } else {
             setCallRequests([]);
         }
-    };
+    }, [coachCallRequests, timezoneDetails]);
 
-    useEffect(() => {
-        if (coachCallRequests && timezones && timezoneId) {
-            processCoachCallRequests(coachCallRequests);
+    const processCoachCallRequests = async requests => {
+        try {
+            const processedRequests = await Promise.all(
+                requests.map(async request => {
+                    const localTime = await convertFromUTC({
+                        start_date: request.date,
+                        start_time: request.start_time,
+                        end_time: request.end_time,
+                        end_date: request.date,
+                        timezonename: timezoneDetails.time_zone,
+                    });
+
+                    return {
+                        ...request,
+                        date: localTime.start_date,
+                        start_time: localTime.start_time,
+                        end_time: localTime.end_time,
+                        title: `Session request by ${request.sender.name}`,
+                        For: `${localTime.start_date} | ${convertTo12HourFormat(localTime.start_time)}`,
+                    };
+                })
+            );
+
+            setCallRequests(processedRequests);
+        } catch (error) {
+            console.error('Error converting call requests:', error);
+            setCallRequests([]);
         }
-    }, [coachCallRequests, timezones, timezoneId]);
+    };
 
     const handleClickOpen = id => {
         setDenyRequestId(id);
@@ -140,7 +147,6 @@ const CoachCallRequest = () => {
     const handleChange = (field, value) => {
         setHostEmail(prev => ({ ...prev, [field]: value }));
     };
-
 
     return (
         <div>

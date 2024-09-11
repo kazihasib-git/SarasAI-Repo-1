@@ -52,6 +52,8 @@ const DynamicTable = ({
     actionButtons,
     componentName,
 }) => {
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
     const itemsPerPage = 10;
 
     const [data, setData] = useState(
@@ -91,8 +93,6 @@ const DynamicTable = ({
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
 
     const handlePageChange = (event, pageNumber) => {
         const maxPage = Math.ceil(data.length / itemsPerPage);
@@ -137,8 +137,8 @@ const DynamicTable = ({
 
     const handleView = (type, id) => {
         // console.log("ID handleview : ", id);
-        console.log('component name is', componentName);
-        if (componentName === 'TAMAPPING') {
+        console.log('component name is', componentName, type, id);
+        if (componentName === 'TAMAPPING' || componentName === 'TASCHEDULE') {
             if (type === 'students') {
                 navigate(`/active-students/${id}`); // Append id as a parameter
             } else if (type === 'batches') {
@@ -180,7 +180,10 @@ const DynamicTable = ({
                 setassessmentModalOpen(true);
             }
         } else {
-            if (componentName === 'COACHMAPPING') {
+            if (
+                componentName === 'COACHMAPPING' ||
+                componentName === 'COACHSCHEDULE'
+            ) {
                 if (type === 'students') {
                     navigate(`/active-Coach-students/${id}`); // Append id as a parameter
                 } else if (type === 'batches') {
