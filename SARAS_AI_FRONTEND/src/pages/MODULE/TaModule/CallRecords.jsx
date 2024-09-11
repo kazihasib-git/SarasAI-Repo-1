@@ -27,13 +27,15 @@ import VideoPopup from '../../../components/integrations/videoPlayerPopUp';
 import VideoUploadDialog from '../../../components/integrations/videoUpload';
 import SessionNotes from '../coachModule/SessionNotes';
 import { convertFromUTC } from '../../../utils/dateAndtimeConversion';
-import { timezoneIdToName } from '../../../utils/timezoneIdToName';
+import {
+    fetchtimezoneDetails,
+    timezoneIdToName,
+} from '../../../utils/timezoneIdToName';
 import CustomButton from '../../../components/CustomFields/CustomButton';
 import { useGetTimezonesQuery } from '../../../redux/services/timezones/timezonesApi';
 
-const storedTimezoneId = Number(localStorage.getItem('timezone_id'));
-
 const CallRecords = () => {
+    const dispatch = useDispatch();
     const [open, setOpen] = useState(false);
     const [selectedCall, setSelectedCall] = useState(null);
     const [date, setDate] = useState(moment());
@@ -42,37 +44,57 @@ const CallRecords = () => {
     const [videoUrl, setVideoUrl] = useState('');
     const [idVideo, setIdVideo] = useState(null);
     const [processedCalls, setProcessedCalls] = useState([]);
+    const [timezoneDetails, setTimezoneDetails] = useState();
 
-    const dispatch = useDispatch();
     const calls = useSelector(state => state.taMenu.taCallRecords);
-    const { data : timezones, error, isLoading } = useGetTimezonesQuery();
+    const { timezoneId } = useSelector(state => state.auth);
+    const { data: timezones, error, isLoading } = useGetTimezonesQuery();
     const { userData } = useSelector(state => state.auth);
-    
+
+    function formatDate(date, offset) {
+        const localDate = new Date(date);
+        const offsetInMilliseconds = offset * 60 * 60 * 1000; // Convert hours to milliseconds
+        const adjustedDate = new Date(
+            localDate.getTime() + offsetInMilliseconds
+        );
+        return adjustedDate.toISOString().split('T')[0];
+    }
 
     useEffect(() => {
-        dispatch(getTaCallRecords(date.format('YYYY-MM-DD')));
-    }, [date, dispatch]);
-
-    useEffect(() => {
-        if (calls && calls.length > 0 && timezones && storedTimezoneId) {
-            processCalls();
-        }else{
-            setProcessedCalls([]) ; 
+        if (timezoneId && timezones?.length > 0) {
+            const timezone = fetchtimezoneDetails(timezoneId, timezones);
+            setTimezoneDetails(timezone);
         }
-    }, [calls, timezones, storedTimezoneId]);
+    }, [timezoneId, timezones]);
+
+    useEffect(() => {
+        if (timezoneDetails) {
+            const data = {
+                date: formatDate(date, timezoneDetails.utc_offset),
+                timezone_name: timezoneDetails?.time_zone,
+            };
+            dispatch(getTaCallRecords(data));
+        }
+    }, [dispatch, date, timezoneDetails]);
+
+    useEffect(() => {
+        if (timezoneDetails && calls && calls.length > 0) {
+            processCalls();
+        } else {
+            setProcessedCalls([]);
+        }
+    }, [calls, timezoneDetails]);
 
     const processCalls = async () => {
-        const timezonename = timezoneIdToName(storedTimezoneId, timezones);
-
         try {
             const processed = await Promise.all(
-                calls.map(async (call) => {
+                calls.map(async call => {
                     const localTime = await convertFromUTC({
                         start_date: call.date,
                         start_time: call.start_time,
                         end_time: call.end_time,
                         end_date: call.date,
-                        timezonename,
+                        timezonename: timezoneDetails.time_zone,
                     });
 
                     return {
@@ -94,7 +116,7 @@ const CallRecords = () => {
         setSelectedCall(call);
         setOpen(true);
     };
-    
+
     const handleClose = () => setOpen(false);
 
     const handleSaveNotes = notes => {
@@ -135,7 +157,6 @@ const CallRecords = () => {
     const handleOpenUploadDialog = call => {
         setIdVideo(call.id);
         setUploadDialogOpen(true);
-        
     };
 
     const handleCloseUploadDialog = () => {
@@ -145,7 +166,7 @@ const CallRecords = () => {
         setIdVideo(null);
     };
     const sortedCalls = processedCalls.sort((a, b) => {
-        const timeA = moment(a.start_time, 'HH:mm A'); 
+        const timeA = moment(a.start_time, 'HH:mm A');
         const timeB = moment(b.start_time, 'HH:mm A');
         return timeA - timeB;
     });
@@ -226,7 +247,7 @@ const CallRecords = () => {
                                     justifyContent="space-between"
                                 >
                                     <Typography variant="h6">
-                                    {/* {userData.name}`session */}
+                                        {/* {userData.name}`session */}
                                         {call.meeting_name}
                                     </Typography>
                                 </Box>
@@ -241,8 +262,12 @@ const CallRecords = () => {
                                 >
                                     {moment(call.date).format('MMMM D, YYYY') ||
                                         'No Date'}{' '}
-                                    | {convertTo12HourFormat(call.start_time) || 'No Start Time'} -{' '}
-                                    {convertTo12HourFormat(call.end_time) || 'No End Time'}
+                                    |{' '}
+                                    {convertTo12HourFormat(call.start_time) ||
+                                        'No Start Time'}{' '}
+                                    -{' '}
+                                    {convertTo12HourFormat(call.end_time) ||
+                                        'No End Time'}
                                 </Typography>
 
                                 <Typography
@@ -270,7 +295,7 @@ const CallRecords = () => {
                                     justifyContent="space-between"
                                     sx={{ mt: 2 }}
                                 >
-                                   <CustomButton
+                                    <CustomButton
                                         onClick={() => handleClickOpen(call)}
                                         color="#F56D3B"
                                         backgroundColor="#FFFFFF"

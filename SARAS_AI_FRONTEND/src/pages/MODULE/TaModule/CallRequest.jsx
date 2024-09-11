@@ -19,7 +19,10 @@ import {
 } from '../../../redux/features/taModule/tamenuSlice';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { timezoneIdToName } from '../../../utils/timezoneIdToName';
+import {
+    fetchtimezoneDetails,
+    timezoneIdToName,
+} from '../../../utils/timezoneIdToName';
 import { convertFromUTC } from '../../../utils/dateAndtimeConversion';
 import CustomHostNameForm from '../../../components/CustomFields/CustomHostNameField';
 import { useGetTimezonesQuery } from '../../../redux/services/timezones/timezonesApi';
@@ -53,6 +56,7 @@ const CallRequest = () => {
     const [hostEmail, setHostEmail] = useState();
     const [error, setError] = useState({});
     const [showFullMessages, setShowFullMessages] = useState({});
+    const [timezoneDetails, setTimezoneDetails] = useState();
     const [openCreateMeetingDialog, setOpenCreateMeetingDialog] =
         useState(false);
 
@@ -60,47 +64,49 @@ const CallRequest = () => {
         dispatch(getTaCallRequests());
     }, [dispatch]);
 
-    const processTaCallRequests = async requests => {
-        if (requests && requests.length > 0 && timezones && timezoneId) {
-            const timezonename = timezoneIdToName(timezoneId, timezones);
+    useEffect(() => {
+        if (timezoneId && timezones?.length > 0) {
+            const timezone = fetchtimezoneDetails(timezoneId, timezones);
+            setTimezoneDetails(timezone);
+        }
+    }, [timezoneId, timezones]);
 
-            try {
-                const processedRequests = await Promise.all(
-                    requests.map(async request => {
-                        const localTime = await convertFromUTC({
-                            start_date: request.date,
-                            start_time: request.start_time,
-                            end_time: request.end_time,
-                            end_date: request.date,
-                            timezonename,
-                        });
-
-                        return {
-                            ...request,
-                            date: localTime.start_date,
-                            start_time: localTime.start_time,
-                            end_time: localTime.end_time,
-                            title: `Session request by ${request.sender.name}`,
-                            For: `${localTime.start_date} | ${convertTo12HourFormat(localTime.start_time)}`,
-                        };
-                    })
-                );
-
-                setCallRequests(processedRequests);
-            } catch (error) {
-                console.error('Error converting call requests:', error);
-                setCallRequests([]);
-            }
+    useEffect(() => {
+        if (timezoneDetails && taCallRequests?.length > 0) {
+            processTaCallRequests(taCallRequests);
         } else {
             setCallRequests([]);
         }
-    };
+    }, [timezoneDetails, taCallRequests]);
 
-    useEffect(() => {
-        if (taCallRequests && timezones && timezoneId) {
-            processTaCallRequests(taCallRequests);
+    const processTaCallRequests = async requests => {
+        try {
+            const processedRequests = await Promise.all(
+                requests.map(async request => {
+                    const localTime = await convertFromUTC({
+                        start_date: request.date,
+                        start_time: request.start_time,
+                        end_time: request.end_time,
+                        end_date: request.date,
+                        timezonename: timezoneDetails.time_zone,
+                    });
+
+                    return {
+                        ...request,
+                        date: localTime.start_date,
+                        start_time: localTime.start_time,
+                        end_time: localTime.end_time,
+                        title: `Session request by ${request.sender.name}`,
+                        For: `${localTime.start_date} | ${convertTo12HourFormat(localTime.start_time)}`,
+                    };
+                })
+            );
+            setCallRequests(processedRequests);
+        } catch (error) {
+            console.error('Error converting call requests:', error);
+            setCallRequests([]);
         }
-    }, [taCallRequests, timezones, timezoneId]);
+    };
 
     const handleClickOpen = id => {
         setDenyRequestId(id);

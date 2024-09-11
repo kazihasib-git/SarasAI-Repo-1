@@ -40,7 +40,7 @@ import { useGetTimezonesQuery } from '../../../redux/services/timezones/timezone
 const CoachMenuCalendar = () => {
     const dispatch = useDispatch();
     const { timezoneId } = useSelector(state => state.auth);
-    const { data : timezones, error, isLoading } = useGetTimezonesQuery();
+    const { data: timezones, error, isLoading } = useGetTimezonesQuery();
 
     const [eventsList, setEventsList] = useState([]);
     const [slotViewData, setSlotViewData] = useState([]);
@@ -68,7 +68,7 @@ const CoachMenuCalendar = () => {
         openEditBatchesPopup,
     } = useSelector(state => state.commonCalender);
 
-    const { coachSlots, coachSessions } = useSelector((state) => state.coachMenu);
+    const { coachSlots, coachSessions } = useSelector(state => state.coachMenu);
 
     const { openBatches, openStudents } = useSelector(
         state => state.batchesAndStudents
@@ -76,89 +76,67 @@ const CoachMenuCalendar = () => {
 
     useEffect(() => {
         if (timezoneId && timezones?.length > 0) {
-            const timezoneData = fetchtimezoneDetails(timezoneId, timezones);
-            if (timezoneData){
-                setTimezoneDetails(timezoneData);
-                if(coachSessions?.length > 0) {
-                    convertEvents();
-                }
-                if(coachSlots?.length > 0){
-                    convertSlots();
-                }
-            }else{
-                setSlotViewData([]);
-                setEventsList([]);
-            }
-        }else {
-            setSlotViewData([]);
-            setEventsList([]);
+            const timezone = fetchtimezoneDetails(timezoneId, timezones);
+            setTimezoneDetails(timezone);
         }
-    }, [timezoneId, timezones, coachSlots, coachSessions])  ;
+    }, [timezoneId, timezones]);
+
+    useEffect(() => {
+        if (timezoneDetails) {
+            coachSessions?.length > 0 ? convertEvents() : setEventsList([]);
+        }
+    }, [timezoneDetails, coachSessions]);
+
+    useEffect(() => {
+        if (timezoneDetails) {
+            coachSlots?.length > 0 ? convertSlots() : setSlotViewData([]);
+        }
+    }, [timezoneDetails, coachSlots]);
 
     const convertEvents = async () => {
-        if (
-            coachSessions &&
-            coachSessions.length > 0 &&
-            timezoneDetails?.time_zone
-        ) {
-            try {
-                const processedEvents = [];
-                await Promise.all(
-                    coachSessions.map(async event => {
-                        const localTime = await convertFromUTC({
-                            start_date: event.date.split(' ')[0],
-                            start_time: event.start_time,
-                            end_time: event.end_time,
-                            end_date: event.end_date
-                                ? event.end_date
-                                : event.date.split(' ')[0],
-                            timezonename: timezoneDetails.time_zone,
-                        });
+        try {
+            const processedEvents = [];
+            await Promise.all(
+                coachSessions.map(async event => {
+                    const localTime = await convertFromUTC({
+                        start_date: event.date.split(' ')[0],
+                        start_time: event.start_time,
+                        end_time: event.end_time,
+                        end_date: event.end_date
+                            ? event.end_date
+                            : event.date.split(' ')[0],
+                        timezonename: timezoneDetails.time_zone,
+                    });
 
-                        const startDateTime = new Date(
-                            `${localTime.start_date}T${localTime.start_time}`
-                        );
-                        const endDateTime = new Date(
-                            `${localTime.end_date}T${localTime.end_time}`
-                        );
+                    const startDateTime = new Date(
+                        `${localTime.start_date}T${localTime.start_time}`
+                    );
+                    const endDateTime = new Date(
+                        `${localTime.end_date}T${localTime.end_time}`
+                    );
 
-                        if (localTime.start_date !== localTime.end_date) {
-                            processedEvents.push(
-                                {
-                                    id: event.id,
-                                    start: startDateTime,
-                                    end: new Date(
-                                        `${localTime.start_date}T23:59:59`
-                                    ),
-                                    meetingName: event.meeting_name,
-                                    meetingId: event.meeting_id,
-                                    platformId: event.platform_id,
-                                    platform_tools: event.platform_tool_details,
-                                    platform_meeting:
-                                        event.platform_meeting_details,
-                                    students: event.students,
-                                    batches: event.batch,
-                                },
-                                {
-                                    id: event.id,
-                                    start: new Date(
-                                        `${localTime.end_date}T00:00:00`
-                                    ),
-                                    end: endDateTime,
-                                    meetingName: event.meeting_name,
-                                    meetingId: event.meeting_id,
-                                    platformId: event.platform_id,
-                                    platform_tools: event.platform_tool_details,
-                                    platform_meeting:
-                                        event.platform_meeting_details,
-                                    students: event.students,
-                                    batches: event.batch,
-                                }
-                            );
-                        } else {
-                            processedEvents.push({
+                    if (localTime.start_date !== localTime.end_date) {
+                        processedEvents.push(
+                            {
                                 id: event.id,
                                 start: startDateTime,
+                                end: new Date(
+                                    `${localTime.start_date}T23:59:59`
+                                ),
+                                meetingName: event.meeting_name,
+                                meetingId: event.meeting_id,
+                                platformId: event.platform_id,
+                                platform_tools: event.platform_tool_details,
+                                platform_meeting:
+                                    event.platform_meeting_details,
+                                students: event.students,
+                                batches: event.batch,
+                            },
+                            {
+                                id: event.id,
+                                start: new Date(
+                                    `${localTime.end_date}T00:00:00`
+                                ),
                                 end: endDateTime,
                                 meetingName: event.meeting_name,
                                 meetingId: event.meeting_id,
@@ -168,72 +146,79 @@ const CoachMenuCalendar = () => {
                                     event.platform_meeting_details,
                                 students: event.students,
                                 batches: event.batch,
-                            });
-                        }
-                    })
-                );
-                setEventsList(processedEvents);
-            } catch (error) {
-                console.error('Error converting events:', error);
-                setEventsList([]);
-            }
-        } else {
+                            }
+                        );
+                    } else {
+                        processedEvents.push({
+                            id: event.id,
+                            start: startDateTime,
+                            end: endDateTime,
+                            meetingName: event.meeting_name,
+                            meetingId: event.meeting_id,
+                            platformId: event.platform_id,
+                            platform_tools: event.platform_tool_details,
+                            platform_meeting: event.platform_meeting_details,
+                            students: event.students,
+                            batches: event.batch,
+                        });
+                    }
+                })
+            );
+            setEventsList(processedEvents);
+        } catch (error) {
+            console.error('Error converting events:', error);
             setEventsList([]);
         }
     };
 
     const convertSlots = async () => {
-        if (coachSlots && coachSlots.length > 0 && timezoneDetails?.time_zone) {
-            try {
-                const processedSlots = [];
-                await Promise.all(
-                    coachSlots.map(async slot => {
-                        const localTime = await convertFromUTC({
-                            start_date: slot.slot_date,
-                            start_time: slot.from_time,
-                            end_time: slot.to_time,
-                            end_date: slot.slot_end_date,
-                            timezonename: timezoneDetails.time_zone,
-                        });
-                        const startDateTime = new Date(
-                            `${localTime.start_date}T${localTime.start_time}`
-                        );
-                        const endDateTime = new Date(
-                            `${localTime.end_date}T${localTime.end_time}`
-                        );
+        try {
+            const processedSlots = [];
+            await Promise.all(
+                coachSlots.map(async slot => {
+                    const localTime = await convertFromUTC({
+                        start_date: slot.slot_date,
+                        start_time: slot.from_time,
+                        end_time: slot.to_time,
+                        end_date: slot.slot_end_date,
+                        timezonename: timezoneDetails.time_zone,
+                    });
+                    const startDateTime = new Date(
+                        `${localTime.start_date}T${localTime.start_time}`
+                    );
+                    const endDateTime = new Date(
+                        `${localTime.end_date}T${localTime.end_time}`
+                    );
 
-                        if (localTime.start_date !== localTime.end_date) {
-                            processedSlots.push(
-                                {
-                                    startDate: startDateTime,
-                                    endDate: new Date(
-                                        `${localTime.start_date}T23:59:59`
-                                    ),
-                                    leave: slot.leaves,
-                                },
-                                {
-                                    startDate: new Date(
-                                        `${localTime.end_date}T00:00:00`
-                                    ),
-                                    endDate: endDateTime,
-                                    leave: slot.leaves,
-                                }
-                            );
-                        } else {
-                            processedSlots.push({
+                    if (localTime.start_date !== localTime.end_date) {
+                        processedSlots.push(
+                            {
                                 startDate: startDateTime,
+                                endDate: new Date(
+                                    `${localTime.start_date}T23:59:59`
+                                ),
+                                leave: slot.leaves,
+                            },
+                            {
+                                startDate: new Date(
+                                    `${localTime.end_date}T00:00:00`
+                                ),
                                 endDate: endDateTime,
                                 leave: slot.leaves,
-                            });
-                        }
-                    })
-                );
-                setSlotViewData(processedSlots);
-            } catch (error) {
-                console.error('Error converting slots:', error);
-                setSlotViewData([]);
-            }
-        } else {
+                            }
+                        );
+                    } else {
+                        processedSlots.push({
+                            startDate: startDateTime,
+                            endDate: endDateTime,
+                            leave: slot.leaves,
+                        });
+                    }
+                })
+            );
+            setSlotViewData(processedSlots);
+        } catch (error) {
+            console.error('Error converting slots:', error);
             setSlotViewData([]);
         }
     };

@@ -13,17 +13,17 @@ import store from './redux/store';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
-    <React.StrictMode>
-        <Provider store={store}>
-            <BrowserRouter>
-                <Routes>
-                    {/* <App />  */}
-                    <Route path="/*" element={<App />} />
-                </Routes>
-                <ToastContainer />
-            </BrowserRouter>
-        </Provider>
-    </React.StrictMode>
+    // <React.StrictMode>
+    <Provider store={store}>
+        <BrowserRouter>
+            <Routes>
+                {/* <App />  */}
+                <Route path="/*" element={<App />} />
+            </Routes>
+            <ToastContainer />
+        </BrowserRouter>
+    </Provider>
+    // </React.StrictMode>
 );
 
 reportWebVitals();
