@@ -53,7 +53,6 @@ const AddEditWOLQuestions = () => {
 
     useEffect(() => {
         if (wolCategoryData && wolCategoryData.length > 0) {
-            console.log(wolCategoryData.message);
             const transformData = wolCategoryData.map(item => ({
                 id: item.id,
                 name: item.name,
@@ -125,39 +124,37 @@ const AddEditWOLQuestions = () => {
     const formats = ['bold', 'italic', 'underline', 'align', 'link'];
 
     const onSubmit = async formData => {
-        console.log('formData', formData.category);
-        console.log('questionValue', questionValue);
-    
         const data = {
             wol_category_id: Number(formData.category),
             question: questionValue,
         };
-    
+
         if (editwolQuestionData) {
             const id = editwolQuestionData.id;
             try {
                 // Wait for the API call to complete
                 await dispatch(updateWOLQuestion({ id, data })).unwrap();
-                console.log('WOL question updated successfully');
                 navigate('/wolQuestions'); // Navigate only after the API call is successful
             } catch (error) {
-                console.log(`Error dispatching updateWOLQuestion: ${error.message || 'Something went wrong'}`);
+                console.error(
+                    `Error dispatching updateWOLQuestion: ${error.message || 'Something went wrong'}`
+                );
             }
         } else {
             try {
                 await dispatch(createWOLQuestion(data)).unwrap();
-                console.log('WOL question created successfully');
                 navigate('/wolQuestions'); // Navigate only after the API call is successful
             } catch (error) {
-                console.log(`Error dispatching createWOLQuestion: ${error.message || 'Something went wrong'}`);
+                console.error(
+                    `Error dispatching createWOLQuestion: ${error.message || 'Something went wrong'}`
+                );
             }
         }
-    
+
         // Fetch updated questions and reset the form state if the API call succeeded
-         dispatch(getWOLQuestions());
+        dispatch(getWOLQuestions());
         dispatch(seteditwolQuestionData(null));
     };
-    
 
     useEffect(() => {
         if (editwolQuestionData) {

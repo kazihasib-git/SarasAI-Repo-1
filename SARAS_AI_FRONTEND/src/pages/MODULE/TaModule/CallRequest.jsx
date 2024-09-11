@@ -150,7 +150,6 @@ const CallRequest = () => {
     };
 
     const handleCreateMeetingSubmit = data => {
-        console.log('Create meeting data:', data);
         setOpenCreateMeetingDialog(false);
     };
 

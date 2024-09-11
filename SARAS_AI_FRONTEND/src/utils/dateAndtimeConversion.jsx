@@ -18,13 +18,9 @@ async function convertFromUTC({
             'YYYY-MM-DD HH:mm:ss'
         );
 
-        //console.log('..............................>>>>>>>>>>>>>>>>>>', fromDateTimeUTC, toDateTimeUTC);
-
         // Convert from UTC to the specified timezone
         const fromDateTimeLocal = fromDateTimeUTC.tz(timezonename);
         const toDateTimeLocal = toDateTimeUTC.tz(timezonename);
-
-        // console.log('..............................>>>>>>>>>>>>>>>>>>', fromDateTimeLocal, toDateTimeLocal);
 
         const obj = {
             start_date: fromDateTimeLocal.format('YYYY-MM-DD'),

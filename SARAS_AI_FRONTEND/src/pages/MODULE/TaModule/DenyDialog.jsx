@@ -81,7 +81,6 @@ const DenyDialog = ({ open, handleClose, handleDenySubmit, denyRequestId }) => {
             />
         </>
     );
-    console.log('message', message);
 
     const actions = (
         <>
@@ -100,7 +99,7 @@ const DenyDialog = ({ open, handleClose, handleDenySubmit, denyRequestId }) => {
                 backgroundColor="#F56D3B"
                 borderColor="#F56D3B"
                 color="#FFFFFF"
-                style={{ textTransform: 'none' }} 
+                style={{ textTransform: 'none' }}
             >
                 Submit
             </CustomButton>

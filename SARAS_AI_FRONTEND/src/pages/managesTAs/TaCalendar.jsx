@@ -208,8 +208,6 @@ const TaCalender = () => {
                             leave: slot?.leaves,
                         };
 
-                        // console.log('slots created', slot1, slot2);
-
                         processedSlots.push(slot1, slot2);
                         return [slot1, slot2];
                     } else {

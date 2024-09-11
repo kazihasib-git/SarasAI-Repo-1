@@ -27,18 +27,21 @@ const headers = [
 ];
 
 const ManageTA = () => {
-    
     const dispatch = useDispatch();
     const { tas, loading, error, createTAOpen, editTAOpen } = useSelector(
         state => state.taModule
     );
-    const { data : timezones, error : timezoneError, isLoading } = useGetTimezonesQuery();
+    const {
+        data: timezones,
+        error: timezoneError,
+        isLoading,
+    } = useGetTimezonesQuery();
 
     const [tasData, setTasData] = useState([]);
     const [editData, setEditData] = useState();
     const [searchQuery, setSearchQuery] = useState('');
     const [actionButtonToggled, setActionButtonToggled] = useState(false);
-    const [filteredData, setFilteredData] = useState([])
+    const [filteredData, setFilteredData] = useState([]);
 
     useEffect(() => {
         dispatch(closeCreateTa());
@@ -57,17 +60,27 @@ const ManageTA = () => {
                 'Time Zone': timezoneIdToName(item.timezone_id, timezones),
                 is_active: item.is_active,
             }));
-    
+
             // Filter data based on the search query
             const filteredTasData = transformData.filter(data => {
-                const matchName = data['TA Name']?.toLowerCase().includes(searchQuery.toLowerCase());
-                const matchUsername = data.Username?.toLowerCase().includes(searchQuery.toLowerCase());
-                const matchLocation = data.Location?.toLowerCase().includes(searchQuery.toLowerCase());
-                const matchTimezone = data['Time Zone']?.toLowerCase().includes(searchQuery.toLowerCase());
-    
-                return matchName || matchUsername || matchLocation || matchTimezone;
+                const matchName = data['TA Name']
+                    ?.toLowerCase()
+                    .includes(searchQuery.toLowerCase());
+                const matchUsername = data.Username?.toLowerCase().includes(
+                    searchQuery.toLowerCase()
+                );
+                const matchLocation = data.Location?.toLowerCase().includes(
+                    searchQuery.toLowerCase()
+                );
+                const matchTimezone = data['Time Zone']
+                    ?.toLowerCase()
+                    .includes(searchQuery.toLowerCase());
+
+                return (
+                    matchName || matchUsername || matchLocation || matchTimezone
+                );
             });
-    
+
             // Set state with transformed and filtered data
             setTasData(transformData);
             setFilteredData(filteredTasData);
@@ -77,8 +90,6 @@ const ManageTA = () => {
         }
     }, [tas, searchQuery, timezones]);
 
-    console.log("FILTERED DATA :", filteredData)
-
     const actionButtons = [
         {
             type: 'switch',
@@ -87,17 +98,17 @@ const ManageTA = () => {
                     event.preventDefault();
                 }
 
-                const taToUpdate = tasData.find((ta) => ta.id === id)
+                const taToUpdate = tasData.find(ta => ta.id === id);
                 const updatedStatus = taToUpdate.is_active === 1 ? 0 : 1;
 
-                dispatch(updateTA({ id, data : { is_active : updatedStatus }}))
-                
-                setTasData((prevTasData) => 
-                    prevTasData.map((ta) => 
-                        ta.id === id ? {...ta, is_active : updatedStatus } : ta
+                dispatch(updateTA({ id, data: { is_active: updatedStatus } }));
+
+                setTasData(prevTasData =>
+                    prevTasData.map(ta =>
+                        ta.id === id ? { ...ta, is_active: updatedStatus } : ta
                     )
                 );
-                
+
                 setActionButtonToggled(prev => !prev);
             },
         },

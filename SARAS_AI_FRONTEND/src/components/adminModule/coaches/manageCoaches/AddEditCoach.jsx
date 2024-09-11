@@ -42,7 +42,6 @@ import EditIcon from '@mui/icons-material/Edit';
 import { useGetTimezonesQuery } from '../../../../redux/services/timezones/timezonesApi';
 
 function AddEditCoach({ data }) {
-
     const {
         register,
         handleSubmit,
@@ -63,8 +62,8 @@ function AddEditCoach({ data }) {
     const [editableDescription, setEditableDescription] = useState('');
     const [isEditingDescription, setIsEditingDescription] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
-    const { data : timezones, error, isLoading } = useGetTimezonesQuery();
-    
+    const { data: timezones, error, isLoading } = useGetTimezonesQuery();
+
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
@@ -153,7 +152,7 @@ function AddEditCoach({ data }) {
                 const updateRes = await dispatch(
                     updateCoach({ id: data.id, data: updatedFormData })
                 ).unwrap();
-                
+
                 dispatch(accessCoachName(updateRes));
             } else {
                 const createRes = await dispatch(
@@ -586,7 +585,6 @@ function AddEditCoach({ data }) {
                                     }}
                                     render={({ field }) => (
                                         <>
-                                            {/* {console.log("DATA highest_qualification : ", field.value)} */}
                                             <CustomFormControl
                                                 label="Highest Qualification"
                                                 name="highest_qualification"
@@ -604,7 +602,7 @@ function AddEditCoach({ data }) {
                                     label="Email Address"
                                     name="email"
                                     placeholder="Enter Email Address"
-                                    disabled = {data}
+                                    disabled={data}
                                     register={register}
                                     validation={{
                                         required: 'Email is required',
@@ -625,7 +623,7 @@ function AddEditCoach({ data }) {
                                     }}
                                     render={({ field }) => (
                                         <PhoneInput
-                                            disabled = {data}
+                                            disabled={data}
                                             {...field}
                                             country={'in'}
                                             // containerStyle={{ width: "100%" }}

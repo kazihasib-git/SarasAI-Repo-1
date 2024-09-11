@@ -17,7 +17,6 @@ const CoursePage = () => {
 
     useEffect(() => {
         if (data && data.length > 0) {
-            console.log('DATA course: ', data);
             const transformedData = data?.map(item => ({
                 id: item.id,
                 'Course Name': item.name,

@@ -52,7 +52,6 @@ import { useGetPlatformsQuery } from '../../../../redux/services/platforms/platf
 import { useGetTimezonesQuery } from '../../../../redux/services/timezones/timezonesApi';
 // import { uploadpdf } from '../../../../redux/features/adminModule/coach/LinkActivitySlice';
 
-
 const LinkActivityPopup = ({
     open,
     handleClose,
@@ -61,7 +60,6 @@ const LinkActivityPopup = ({
     LinkActivitytype,
 }) => {
     const dispatch = useDispatch();
-    console.log('template id', templateId);
     const {
         register,
         handleSubmit,
@@ -92,9 +90,21 @@ const LinkActivityPopup = ({
     const { coaches } = useSelector(state => state.coachModule);
     const { coachAvailableSlots } = useSelector(state => state.coachScheduling);
 
-    const { data : timezones, error : timezoneError , isLoading : timezonesLoading } = useGetTimezonesQuery();
-    const { data : platforms, error : platformError, isLoading : platformLoading } = useGetPlatformsQuery()
-    const { data : hosts, error : hostsError, isLoading : hostsLoading} = useGetHostsQuery()
+    const {
+        data: timezones,
+        error: timezoneError,
+        isLoading: timezonesLoading,
+    } = useGetTimezonesQuery();
+    const {
+        data: platforms,
+        error: platformError,
+        isLoading: platformLoading,
+    } = useGetPlatformsQuery();
+    const {
+        data: hosts,
+        error: hostsError,
+        isLoading: hostsLoading,
+    } = useGetHostsQuery();
 
     useEffect(() => {
         if (selectedCoachId) {
@@ -178,9 +188,7 @@ const LinkActivityPopup = ({
     };
 
     const onSubmit = async data => {
-        //console.log("---------------->", data , "activityId", activityId, "activityType", activityType, "selectedAssessmentId", selectedAssessmentId, "selectedSessionType", selectedSessionType);
         setSelectedAssessmentId(data.assessment);
-        console.log(activityType, 'actibjbcjecjece');
         const isValid = validateActivityData(
             activityType,
             videoUrl,
@@ -316,7 +324,6 @@ const LinkActivityPopup = ({
     }, [activityType]);
 
     const handleSlotChange = event => {
-        console.log(event.target.value);
         setSelectedSlot(event.target.value);
     };
 
@@ -374,7 +381,6 @@ const LinkActivityPopup = ({
 
         if (selected) {
             setSelectedCoachId(selected.id);
-            // console.log('Selected Coach ID:', selected.id); // Log the selected coach ID
         }
     };
 
@@ -417,7 +423,7 @@ const LinkActivityPopup = ({
     const handleChangeMeetingName = event => {
         setSelectMeetingType(event.target.value);
     };
-    console.log('coachOptions', coachOptions);
+
     const contentComponent = (
         <Grid
             container

@@ -48,10 +48,9 @@ const SelectBatches = ({ componentName }) => {
     }
 
     const stateSelector = useSelector(state => state[sliceName]);
-    
-    const { batches, selectBatchPopup, sessionData , participantsData} = useSelector(
-        state => state.commonCalender
-    );
+
+    const { batches, selectBatchPopup, sessionData, participantsData } =
+        useSelector(state => state.commonCalender);
 
     const { [batchDataState]: batchesData } = stateSelector || {};
 
@@ -94,16 +93,20 @@ const SelectBatches = ({ componentName }) => {
     }, [batches]);
 
     useEffect(() => {
-        if(sessionData && sessionData.batch && sessionData.batch.length > 0){
-            setSelectedBatch(sessionData.batch.map(prev => prev.id))
+        if (sessionData && sessionData.batch && sessionData.batch.length > 0) {
+            setSelectedBatch(sessionData.batch.map(prev => prev.id));
         }
-    },[sessionData])
+    }, [sessionData]);
 
     useEffect(() => {
-        if(participantsData && participantsData?.batch && participantsData?.batch?.length > 0){
-            setSelectedBatch(participantsData.batch.map(prev => prev.id))
+        if (
+            participantsData &&
+            participantsData?.batch &&
+            participantsData?.batch?.length > 0
+        ) {
+            setSelectedBatch(participantsData.batch.map(prev => prev.id));
         }
-    },[participantsData])
+    }, [participantsData]);
 
     const handleSelectBatch = id => {
         setSelectedBatch(prev =>
@@ -132,25 +135,20 @@ const SelectBatches = ({ componentName }) => {
             batchId: selectedBatch ? selectedBatch.map(id => ({ id })) : [],
         };
 
-        if (participantsData && participantsData?.students?.length>0) {
-            console.log('participantsData call', true) ; 
+        if (participantsData && participantsData?.students?.length > 0) {
             const updatedparticipantsData = {
                 ...participantsData,
                 batch: selectedBatch ? selectedBatch.map(id => ({ id })) : [],
             };
             dispatch(openEditParticipantsDialog(updatedparticipantsData));
-
-        }else if(sessionData){
-            console.log('sessionData call', true) ; 
-
+        } else if (sessionData) {
             const updatedSessionData = {
                 ...sessionData,
                 batch: selectedBatch ? selectedBatch.map(id => ({ id })) : [],
-              };
-              
-              dispatch(openEditSession({ sessionData: updatedSessionData }));
-              
-        }else {
+            };
+
+            dispatch(openEditSession({ sessionData: updatedSessionData }));
+        } else {
             dispatch(openScheduleNewSession(data));
         }
         dispatch(closeSelectBatches());

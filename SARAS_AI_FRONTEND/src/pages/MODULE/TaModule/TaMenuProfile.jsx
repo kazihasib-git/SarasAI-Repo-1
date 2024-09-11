@@ -30,7 +30,11 @@ import { useGetTimezonesQuery } from '../../../redux/services/timezones/timezone
 
 const TaMenuProfile = () => {
     const dispatch = useDispatch();
-    const { data : timezones, error : timezoneError, isLoading } = useGetTimezonesQuery();
+    const {
+        data: timezones,
+        error: timezoneError,
+        isLoading,
+    } = useGetTimezonesQuery();
     const {
         register,
         handleSubmit,
@@ -187,11 +191,6 @@ const TaMenuProfile = () => {
         } catch (error) {
             console.error('Update failed:', error);
         }
-
-        // console.log('updatedFormData', updatedFormData);
-        // dispatch(updateCoachmenuprofile(updatedFormData));
-        // dispatch(updateTaMenuProfile(updatedFormData));
-        // console.log('data', updatedFormData);
     };
 
     return (

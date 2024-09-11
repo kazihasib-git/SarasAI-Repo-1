@@ -87,7 +87,6 @@ const AssignBatchesToTemplate = ({ componentname, assignedStudents }) => {
 
     useEffect(() => {
         if (batchMapping && batchMapping.length > 0) {
-            console.log('BATCHMAPPING : ', batchMapping);
             const transformedData = batchMapping.map((batch, index) => ({
                 'S. No.': index + 1,
                 'Batch Name': batch.name,
@@ -223,7 +222,7 @@ const AssignBatchesToTemplate = ({ componentname, assignedStudents }) => {
                 backgroundColor: '#F56D3B',
                 borderColor: '#F56D3B',
                 color: '#FFFFFF',
-                textTransform: 'none' 
+                textTransform: 'none',
             }}
         >
             Submit

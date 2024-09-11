@@ -141,7 +141,6 @@ const CoachCalender = () => {
                             platform_meet: event.platform_meeting_details,
                         };
 
-                        // console.log('events created', event1, event2);
                         processedEvents.push(event1, event2);
                         return [event1, event2];
                     } else {
@@ -161,7 +160,7 @@ const CoachCalender = () => {
                     }
                 })
             );
-            // console.log('transformed events', processedEvents);
+
             setEventsList(processedEvents);
         } catch (error) {
             console.error('Error converting events:', error);
@@ -206,7 +205,6 @@ const CoachCalender = () => {
                             leave: slot?.leaves,
                         };
 
-                        // console.log('slots created', slot1, slot2);
                         processedSlots.push(slot1, slot2);
                         return [slot1, slot2];
                     } else {

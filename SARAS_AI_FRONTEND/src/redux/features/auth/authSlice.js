@@ -113,7 +113,6 @@ const authSlice = createSlice({
     initialState,
     reducers: {
         setLogin: (state, action) => {
-            // console.log('action.payload :', action.payload);
             state.login = action.payload.login;
             state.role = action.payload.role;
             state.accessToken = action.payload.accessToken;
@@ -179,7 +178,6 @@ const authSlice = createSlice({
             state.loading = true;
         });
         builder.addCase(forgotPassword.fulfilled, (state, action) => {
-            console.log('fefefefefefefe', action.payload);
             state.userData = action.payload.data;
             toast.success(action.payload.message || 'Forgot Password');
             state.loading = false;

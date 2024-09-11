@@ -130,8 +130,6 @@ const ReschedulingSession = ({ id, name, componentName, timezone }) => {
         [slotEventAction]: slotEventData,
     } = useSelector(state => state[sliceName]);
 
-    console.log('SESSION EVENT DATA :', sessionEventData);
-
     useEffect(() => {
         if (selectDate) {
             const data = {
@@ -373,6 +371,7 @@ const ReschedulingSession = ({ id, name, componentName, timezone }) => {
                                                     }
                                                     errors={errors}
                                                     options={hosts.users}
+                                                    disabled
                                                 />
                                             )}
                                         />
@@ -400,6 +399,7 @@ const ReschedulingSession = ({ id, name, componentName, timezone }) => {
                                                     options={
                                                         GLOBAL_CONSTANTS.MEETING_TYPES
                                                     }
+                                                    disabled
                                                 />
                                             )}
                                         />

@@ -18,8 +18,6 @@ const TaMenuSidebar = () => {
     }, [location.pathname]);
 
     const handleLinkClick = path => {
-        console.log(path);
-        console.log(activeLink);
         setActiveLink(path);
     };
 

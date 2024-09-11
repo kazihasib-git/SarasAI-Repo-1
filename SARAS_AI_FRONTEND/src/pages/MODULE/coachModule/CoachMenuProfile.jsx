@@ -46,8 +46,12 @@ const CoachMenuProfile = () => {
     });
 
     const { coachProfileData } = useSelector(state => state.coachMenu);
-    const { data : timezones, error : timezoneError, isLoading } = useGetTimezonesQuery();
-    
+    const {
+        data: timezones,
+        error: timezoneError,
+        isLoading,
+    } = useGetTimezonesQuery();
+
     //edit button
     const [isEditing, setIsEditing] = useState(false);
     const toggleEdit = () => {
@@ -138,7 +142,6 @@ const CoachMenuProfile = () => {
             highest_qualification: data.highest_qualification,
             about_me: data.about_me,
         };
-        console.log('data', data);
 
         Object.entries(formValues).forEach(([key, value]) =>
             setValue(key, value)
@@ -182,11 +185,6 @@ const CoachMenuProfile = () => {
         } catch (error) {
             console.error('Update failed:', error);
         }
-
-        // console.log('updatedFormData', updatedFormData);
-        // dispatch(updateCoachmenuprofile(updatedFormData));
-        // dispatch(updateCoachmenuprofile(updatedFormData));
-        console.log('data', updatedFormData);
     };
 
     return (

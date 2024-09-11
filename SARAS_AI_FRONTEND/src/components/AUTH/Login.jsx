@@ -42,7 +42,7 @@ const Login = () => {
 
             dispatch(login(requestBody));
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     };
 

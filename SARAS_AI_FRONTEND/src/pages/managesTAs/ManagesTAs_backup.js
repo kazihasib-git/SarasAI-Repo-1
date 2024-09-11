@@ -144,7 +144,6 @@ const TAtable = () => {
 
     //CREATE action
     const handleCreateUser = async ({ values, table }) => {
-        console.log('in handleCreateUser -- ', values);
         const newValidationErrors = validateUser(values);
         if (Object.values(newValidationErrors).some(error => error)) {
             setValidationErrors(newValidationErrors);
@@ -383,7 +382,6 @@ function useGetUsers() {
 //UPDATE hook (put user in api)
 function useUpdateUser() {
     const queryClient = useQueryClient();
-    console.log('in useCreateUser --', queryClient.getQueryData['users']);
     return useMutation({
         mutationFn: async user => {
             //send api update request here
@@ -392,7 +390,6 @@ function useUpdateUser() {
         },
         //client side optimistic update
         onMutate: newUserInfo => {
-            console.log(' update INFO : ', newUserInfo);
             queryClient.setQueryData(['users'], prevUsers =>
                 prevUsers?.map(prevUser =>
                     prevUser.username === newUserInfo.username

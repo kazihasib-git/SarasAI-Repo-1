@@ -417,7 +417,6 @@ const Messages = ({ role }) => {
             }
         }
         setMessages(reformedChatData);
-        console.log(reformedChatData);
     }, [chatRecordsbychatId]);
 
     useEffect(() => {
@@ -647,7 +646,6 @@ const Messages = ({ role }) => {
 
                         <Box className="chat-messages">
                             {messages.map((msg, index) => {
-                                console.log('====>', msg);
                                 const isFirstMessageFromSameSender =
                                     index === 0 ||
                                     messages[index - 1].sender !== msg.sender;

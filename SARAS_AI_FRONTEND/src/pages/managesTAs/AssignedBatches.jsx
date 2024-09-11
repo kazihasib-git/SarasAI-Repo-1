@@ -119,7 +119,6 @@ const DynamicTable = ({
     };
 
     const handleToggle = async (id, ta_id) => {
-        console.log('id : ', id);
         const updatedData = data.map(item =>
             item.id === id
                 ? { ...item, is_active: item.is_active === 1 ? 0 : 1 }
@@ -148,7 +147,6 @@ const DynamicTable = ({
         setIsDialogOpen(true);
     };
     const handleCloseDialog = () => {
-        console.log('handledelte');
         setIsDialogOpen(false);
         setItemIdToDelete(null);
     };
@@ -159,8 +157,6 @@ const DynamicTable = ({
         handleCloseDialog();
     };
     const handleDelete = (id, ta_id) => {
-        // Implement delete functionality here
-        console.log('Deleting item with id:', id);
         dispatch(deleteAssignedBatch({ id })).then(() => {
             dispatch(getAssignBatches(ta_id));
         });
@@ -382,11 +378,8 @@ const AssignedBatches = () => {
         }
     }, [dispatch, id]);
 
-    console.log('assigned Batches');
-
     useEffect(() => {
         if (assignedBatches && assignedBatches.length > 0) {
-            // console.log('assigned batches', assignedBatches);
             const transformData = assignedBatches.map((item, index) => ({
                 id: item.id,
                 //ta_name: item.ta.name,
@@ -396,6 +389,8 @@ const AssignedBatches = () => {
             }));
 
             setTaAssignBatchesData(transformData);
+        } else {
+            setTaAssignBatchesData([]);
         }
     }, [assignedBatches]);
 

@@ -104,7 +104,6 @@ const DynamicTable = ({
     };
 
     const handleCloseDialog = () => {
-        console.log('handledelte');
         setIsDialogOpen(false);
         setItemIdToDelete(null);
     };
@@ -115,7 +114,6 @@ const DynamicTable = ({
         handleCloseDialog();
     };
     const handleDelete = id => {
-        console.log('COMPONENTNAME : ', componentName);
         if (componentName === 'TAMAPPING') {
             dispatch(deleteTaMapping(id)).then(() => {
                 dispatch(showTAMapping());
@@ -125,7 +123,6 @@ const DynamicTable = ({
                 dispatch(showCoachMapping());
             });
         }
-        console.log('Deleting item with id:', id);
     };
 
     const handleCalender = (type, id, taName, timezoneId) => {
@@ -136,8 +133,6 @@ const DynamicTable = ({
     };
 
     const handleView = (type, id) => {
-        // console.log("ID handleview : ", id);
-        console.log('component name is', componentName, type, id);
         if (componentName === 'TAMAPPING' || componentName === 'TASCHEDULE') {
             if (type === 'students') {
                 navigate(`/active-students/${id}`); // Append id as a parameter
@@ -191,12 +186,10 @@ const DynamicTable = ({
                 }
             } else if (componentName === 'COACHCOURSEMAPPING') {
                 if (type === 'courses') {
-                    console.log(id);
                     navigate(`/active-Coach-courses/${id}`); // Append id as a parameter
                 }
             } else if (componentName === 'TACOURSEMAPPING') {
                 if (type === 'courses') {
-                    console.log(id);
                     navigate(`/active-Ta-courses/${id}`); // Append id as a parameter
                 }
             }
@@ -205,7 +198,6 @@ const DynamicTable = ({
 
     const handlePopup = (id, name, timezoneId) => {
         const data = { id, name, timezoneId };
-        console.log('DATA A  :', data);
         if (componentName === 'TASCHEDULE') {
             dispatch(openScheduleSession(data));
         } else {
@@ -247,12 +239,10 @@ const DynamicTable = ({
                 break;
 
             case 'WOLCATEGORY':
-                console.log('WOL Categories : ', id, requestData);
                 dispatch(activeDeactiveWOLCategory(id));
                 break;
 
             case 'WOLQUESTION':
-                console.log('WOL WOLQUESTION : ', id);
                 dispatch(toggleWOLQuestionStatus(id));
                 break;
 
@@ -311,14 +301,12 @@ const DynamicTable = ({
                     ) : (
                         currentData.map((item, index) => (
                             <tr key={item.id} id="tableRow">
-                                {/* {console.log("CUURENT : ", item)} */}
                                 <td>
                                     {(currentPage - 1) * itemsPerPage +
                                         index +
                                         1}
                                 </td>
                                 {Object.keys(item).map((key, idx) => {
-                                    // {console.log("KEY : ", key)}
                                     if (key === 'Availability') {
                                         return (
                                             <td

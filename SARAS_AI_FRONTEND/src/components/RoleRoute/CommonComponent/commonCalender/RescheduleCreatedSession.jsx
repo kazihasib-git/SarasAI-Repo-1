@@ -120,8 +120,6 @@ const RescheduleCreatedSession = ({ componentName, timezone }) => {
         }
     }, [selectDate, dispatch]);
 
-    console.log('sessionDataForReschdeule', sessionDataForReschdeule);
-
     useEffect(() => {
         if (sessionDataForReschdeule) {
             // setFromTime(sessionEventData.startTime || '');
@@ -206,7 +204,6 @@ const RescheduleCreatedSession = ({ componentName, timezone }) => {
             toast.error('Please Select the Slot');
             return false;
         }
-        console.log('selectedSlots', selectedSlots);
         if (!fromTime) {
             toast.error('Please Select the Start Time');
             return false;
@@ -353,6 +350,7 @@ const RescheduleCreatedSession = ({ componentName, timezone }) => {
                                                     }
                                                     errors={errors}
                                                     options={hosts.users}
+                                                    disabled
                                                 />
                                             )}
                                         />
@@ -380,6 +378,7 @@ const RescheduleCreatedSession = ({ componentName, timezone }) => {
                                                     options={
                                                         GLOBAL_CONSTANTS.MEETING_TYPES
                                                     }
+                                                    disabled
                                                 />
                                             )}
                                         />
