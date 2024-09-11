@@ -20,7 +20,7 @@ import {
     getWolTestConfigCategoryWise,
     handleIdToSubmitSelectedQuestions,
     selectedQuestionsList,
-    handleOpenSelectCategoryQuestions
+    handleOpenSelectCategoryQuestions,
 } from '../../../../redux/features/adminModule/coachingTools/wol/wolSlice';
 import { toast } from 'react-toastify';
 
@@ -46,9 +46,9 @@ const WOLSelectQuestions = () => {
         wolQuestionCategoryWise,
         categoryIdToSubmitSelectedQuestions,
         selectedQuestionsListData,
-        categoryInfo
+        categoryInfo,
     } = useSelector(state => state.wol);
-    
+
     const [selectedQuestions, setSelectedQuestions] = useState([]);
     const [questions, setQuestions] = useState([]);
     const [totalQuestions, setTotalQuestions] = useState(0);
@@ -81,32 +81,41 @@ const WOLSelectQuestions = () => {
 
     useEffect(() => {
         if (categoryIdToSubmitSelectedQuestions) {
-            dispatch(selectedQuestionsList(categoryIdToSubmitSelectedQuestions));
+            dispatch(
+                selectedQuestionsList(categoryIdToSubmitSelectedQuestions)
+            );
         }
     }, [dispatch, categoryIdToSubmitSelectedQuestions]);
-    
+
     useEffect(() => {
         if (selectedQuestionsListData?.data?.length) {
-            setSelectedQuestions(selectedQuestionsListData.data.map(question => question.wol_question_id));
+            setSelectedQuestions(
+                selectedQuestionsListData.data.map(
+                    question => question.wol_question_id
+                )
+            );
         } else {
             setSelectedQuestions([]);
         }
     }, [selectedQuestionsListData]);
 
-    const handleSelectQuestion = (questionId) => {
-        setSelectedQuestions((prevSelected) => {
+    const handleSelectQuestion = questionId => {
+        setSelectedQuestions(prevSelected => {
             if (prevSelected.includes(questionId)) {
                 return prevSelected.filter(id => id !== questionId);
             } else {
                 if (prevSelected.length >= categoryInfo.total_ques) {
-                    toast.error("you already selected " + categoryInfo.total_ques + " questions");
+                    toast.error(
+                        'you already selected ' +
+                            categoryInfo.total_ques +
+                            ' questions'
+                    );
                     return prevSelected;
                 }
                 return [...prevSelected, questionId];
             }
         });
     };
-    
 
     const handleSubmit = () => {
         const selectedQuestionsOfCategory = questions.filter(question =>
@@ -154,7 +163,7 @@ const WOLSelectQuestions = () => {
                             fontFamily: 'ExtraLight',
                         }}
                     >
-                        Wheel Of Life Test  Config
+                        Wheel Of Life Test Config
                     </p>
                 </Box>
             </Box>
@@ -252,40 +261,61 @@ const WOLSelectQuestions = () => {
                 </Box>
 
                 {questions?.length > 0 ? (
-                    questions.map((question, index) => (
-                        <Box
-                            key={question.id}
-                            display="flex"
-                            alignItems="center"
-                            justifyContent="space-between"
-                            mb={2}
-                            p={2}
-                            border="1px solid #E0E0E0"
-                            borderRadius="8px"
-                        >
-                            <Box flex="1">
-                                <Typography
-                                    variant="body1"
-                                    sx={{ color: '#1A1E3D', fontWeight: 500, mb: 1, fontFamily: 'Medium' }}
-                                >
-                                    Q{index + 1}: {question?.question}
-                                </Typography>
+                    questions
+                        .filter(question => question.is_active === 1)
+                        .map((question, index) => (
+                            <Box
+                                key={question.id}
+                                display="flex"
+                                alignItems="center"
+                                justifyContent="space-between"
+                                mb={2}
+                                p={2}
+                                border="1px solid #E0E0E0"
+                                borderRadius="8px"
+                            >
+                                <Box flex="1">
+                                    <Typography
+                                        variant="body1"
+                                        sx={{
+                                            color: '#1A1E3D',
+                                            fontWeight: 500,
+                                            mb: 1,
+                                            fontFamily: 'Medium',
+                                        }}
+                                    >
+                                        Q{index + 1}: {question?.question}
+                                    </Typography>
+                                </Box>
+                                <Box>
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                checked={selectedQuestions.includes(
+                                                    question.id
+                                                )}
+                                                onChange={() =>
+                                                    handleSelectQuestion(
+                                                        question.id
+                                                    )
+                                                }
+                                            />
+                                        }
+                                        label=""
+                                    />
+                                </Box>
                             </Box>
-                            <Box>
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            checked={selectedQuestions.includes(question.id)}
-                                            onChange={() => handleSelectQuestion(question.id)}
-                                        />
-                                    }
-                                    label=""
-                                />
-                            </Box>
-                        </Box>
-                    ))
+                        ))
                 ) : (
-                    <Typography variant="h6" sx={{ color: '#1A1E3D', fontSize: '16px', fontWeight: 500, fontFamily: 'Medium' }}>
+                    <Typography
+                        variant="h6"
+                        sx={{
+                            color: '#1A1E3D',
+                            fontSize: '16px',
+                            fontWeight: 500,
+                            fontFamily: 'Medium',
+                        }}
+                    >
                         No questions available.
                     </Typography>
                 )}
