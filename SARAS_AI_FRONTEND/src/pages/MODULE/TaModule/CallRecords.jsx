@@ -290,60 +290,77 @@ const CallRecords = () => {
                                         ?.map(student => student.name)
                                         .join(', ') || 'No Participants'}
                                 </Typography>
-                                <Box
-                                    display="flex"
-                                    justifyContent="space-between"
-                                    sx={{ mt: 2 }}
-                                >
-                                    <CustomButton
-                                        onClick={() => handleClickOpen(call)}
-                                        color="#F56D3B"
-                                        backgroundColor="#FFFFFF"
-                                        borderColor="#F56D3B"
+                                {call.is_active === 1 ? (
+                                    <Box
+                                        display="flex"
+                                        justifyContent="space-between"
+                                        sx={{ mt: 2 }}
+                                    >
+                                        <CustomButton
+                                            onClick={() =>
+                                                handleClickOpen(call)
+                                            }
+                                            color="#F56D3B"
+                                            backgroundColor="#FFFFFF"
+                                            borderColor="#F56D3B"
+                                            style={{
+                                                textTransform: 'none',
+                                                fontFamily: 'Medium',
+                                                textAlign: 'left',
+                                            }}
+                                        >
+                                            Session Notes
+                                        </CustomButton>
+                                        {call.session_recording_url ? (
+                                            <CustomButton
+                                                onClick={() =>
+                                                    handlePlayVideo(
+                                                        call.session_recording_url
+                                                    )
+                                                }
+                                                color="#F56D3B"
+                                                backgroundColor="#FFFFFF"
+                                                borderColor="#F56D3B"
+                                                style={{
+                                                    textTransform: 'none',
+                                                    fontFamily: 'Medium',
+                                                    textAlign: 'left',
+                                                }}
+                                            >
+                                                Call Recordings
+                                            </CustomButton>
+                                        ) : (
+                                            <CustomButton
+                                                color="#F56D3B"
+                                                backgroundColor="#FFFFFF"
+                                                borderColor="#F56D3B"
+                                                style={{
+                                                    textTransform: 'none',
+                                                    fontFamily: 'Medium',
+                                                    textAlign: 'left',
+                                                }}
+                                                onClick={() =>
+                                                    handleOpenUploadDialog(call)
+                                                }
+                                            >
+                                                Upload Recordings
+                                            </CustomButton>
+                                        )}
+                                    </Box>
+                                ) : (
+                                    <span
                                         style={{
+                                            color: '#FF0000',
                                             textTransform: 'none',
-                                            fontFamily: 'Medium',
-                                            textAlign: 'left',
+                                            display: 'flex',
+                                            justifyContent: 'flex-end',
+                                            padding: '10px',
+                                            marginTop: 2,
                                         }}
                                     >
-                                        Session Notes
-                                    </CustomButton>
-                                    {call.session_recording_url ? (
-                                        <CustomButton
-                                            onClick={() =>
-                                                handlePlayVideo(
-                                                    call.session_recording_url
-                                                )
-                                            }
-                                            color="#F56D3B"
-                                            backgroundColor="#FFFFFF"
-                                            borderColor="#F56D3B"
-                                            style={{
-                                                textTransform: 'none',
-                                                fontFamily: 'Medium',
-                                                textAlign: 'left',
-                                            }}
-                                        >
-                                            Call Recordings
-                                        </CustomButton>
-                                    ) : (
-                                        <CustomButton
-                                            color="#F56D3B"
-                                            backgroundColor="#FFFFFF"
-                                            borderColor="#F56D3B"
-                                            style={{
-                                                textTransform: 'none',
-                                                fontFamily: 'Medium',
-                                                textAlign: 'left',
-                                            }}
-                                            onClick={() =>
-                                                handleOpenUploadDialog(call)
-                                            }
-                                        >
-                                            Upload Recordings
-                                        </CustomButton>
-                                    )}
-                                </Box>
+                                        Cancelled
+                                    </span>
+                                )}
                             </CardContent>
                         </Card>
                     ))}
