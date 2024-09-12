@@ -299,6 +299,7 @@ const TaMenuProfile = () => {
                                                 'Username cannot exceed 20 characters',
                                         },
                                         pattern: {
+                                            value: /^[A-Za-z\s]+$/,
                                             message:
                                                 'Username can only contain letters, numbers, and underscores',
                                         },
