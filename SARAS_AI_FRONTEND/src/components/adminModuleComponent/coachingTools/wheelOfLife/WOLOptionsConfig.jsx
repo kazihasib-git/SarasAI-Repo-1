@@ -324,11 +324,6 @@ const WOLOptionsConfig = () => {
                             </CustomButton>
                         </Grid>
                     </Grid>
-                    {errors.scaleRange && (
-                        <Typography color="error">
-                            {errors.scaleRange}
-                        </Typography>
-                    )}
                 </form>
             </Box>
             {edit && (
