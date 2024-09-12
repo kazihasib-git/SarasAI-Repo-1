@@ -136,6 +136,23 @@ const WOLOptionsConfig = () => {
         return Object.keys(tempErrors).length === 0;
     };
 
+    const validateOptionConfig = () => {
+        if (!formValues.minScale || formValues.minScale === '') {
+            toast.error('Minimum Scale is required');
+            return false;
+        }
+        if (!formValues.maxScale || formValues.maxScale === '') {
+            toast.error('Maximum Scale is required');
+            return false;
+        }
+        if (Number(formValues.minScale) >= Number(formValues.maxScale)) {
+            toast.error('Maximum Scale must be greater than Minimum Scale');
+            return false;
+        }
+
+        return true;
+    };
+
     const handleSubmit = e => {
         e.preventDefault();
 
@@ -143,7 +160,7 @@ const WOLOptionsConfig = () => {
             setFormValues({ minScale: '', maxScale: '', details: [] });
             setEdit(false);
         } else {
-            if (validate()) {
+            if (validateOptionConfig()) {
                 const details = [];
                 setMaxScale(formValues.maxScale);
                 for (
@@ -307,11 +324,6 @@ const WOLOptionsConfig = () => {
                             </CustomButton>
                         </Grid>
                     </Grid>
-                    {errors.scaleRange && (
-                        <Typography color="error">
-                            {errors.scaleRange}
-                        </Typography>
-                    )}
                 </form>
             </Box>
             {edit && (

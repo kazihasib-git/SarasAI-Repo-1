@@ -385,7 +385,7 @@ const AddEditTA = ({ data }) => {
                                             'Username cannot exceed 20 characters',
                                     },
                                     pattern: {
-                                        // value: /^[A-Za-z0-9_]+$/,
+                                        value: /^[A-Za-z0-9_]+$/,
                                         message:
                                             'Username can only contain letters, numbers, and underscores',
                                     },
