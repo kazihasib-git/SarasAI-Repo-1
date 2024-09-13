@@ -423,63 +423,89 @@ const ScheduledCall = ({ role }) => {
                                 <Typography gutterBottom>
                                     {call.time}
                                 </Typography>
-                                <Box
-                                    display="flex"
-                                    justifyContent="flex-end"
-                                    mt={2}
-                                >
-                                    {call.event_status === 'join meeting' ? (
-                                        <CustomButton
-                                            color="#FFFFFF"
-                                            backgroundColor="#19B420"
-                                            borderColor="#19B420"
-                                            style={{ textTransform: 'none' }}
-                                            onClick={() =>
-                                                handleClickJoinSession(call)
-                                            }
-                                        >
-                                            Join Session
-                                        </CustomButton>
-                                    ) : call.event_status ===
-                                      'call schedule' ? (
-                                        <>
-                                            <CustomButton
-                                                color="#F56D3B"
-                                                backgroundColor="#FFFFFF"
-                                                borderColor="#FFFFFF"
-                                                style={{
-                                                    textTransform: 'none',
-                                                    marginRight: '10px',
-                                                }}
-                                                onClick={() =>
-                                                    handleCancelSession(call)
-                                                }
-                                            >
-                                                Cancel Session
-                                            </CustomButton>
+                                {call.is_active === 1 ? (
+                                    <Box
+                                        display="flex"
+                                        justifyContent="flex-end"
+                                        mt={2}
+                                    >
+                                        {call.event_status ===
+                                        'join meeting' ? (
                                             <CustomButton
                                                 color="#FFFFFF"
-                                                backgroundColor="#F56D3B"
-                                                borderColor="#F56D3B"
+                                                backgroundColor="#19B420"
+                                                borderColor="#19B420"
                                                 style={{
                                                     textTransform: 'none',
                                                 }}
+                                                onClick={() =>
+                                                    handleClickJoinSession(call)
+                                                }
                                             >
-                                                Scheduled
+                                                Join Session
                                             </CustomButton>
-                                        </>
-                                    ) : (
+                                        ) : call.event_status ===
+                                          'call schedule' ? (
+                                            <>
+                                                <CustomButton
+                                                    color="#F56D3B"
+                                                    backgroundColor="#FFFFFF"
+                                                    borderColor="#FFFFFF"
+                                                    style={{
+                                                        textTransform: 'none',
+                                                        marginRight: '10px',
+                                                    }}
+                                                    onClick={() =>
+                                                        handleCancelSession(
+                                                            call
+                                                        )
+                                                    }
+                                                >
+                                                    Cancel Session
+                                                </CustomButton>
+                                                <CustomButton
+                                                    color="#FFFFFF"
+                                                    backgroundColor="#F56D3B"
+                                                    borderColor="#F56D3B"
+                                                    style={{
+                                                        textTransform: 'none',
+                                                    }}
+                                                >
+                                                    Scheduled
+                                                </CustomButton>
+                                            </>
+                                        ) : (
+                                            <span
+                                                style={{
+                                                    color: '#19B420',
+                                                    textTransform: 'none',
+                                                    padding: '10px',
+                                                }}
+                                            >
+                                                Completed
+                                            </span>
+                                        )}
+                                    </Box>
+                                ) : (
+                                    <Box
+                                        display="flex"
+                                        justifyContent="flex-end"
+                                        mt={2}
+                                    >
                                         <span
                                             style={{
-                                                color: '#19B420',
+                                                color: '#FF0000',
                                                 textTransform: 'none',
+                                                display: 'flex',
+                                                justifyContent: 'flex-end',
                                                 padding: '10px',
+                                                marginTop: 2,
                                             }}
                                         >
-                                            Completed
+                                            Cancelled
                                         </span>
-                                    )}
-                                </Box>
+                                    </Box>
+                                )}
                             </CardContent>
                         </Card>
                     </Grid>
