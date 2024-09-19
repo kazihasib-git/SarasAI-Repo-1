@@ -7,6 +7,7 @@ import taReducer from './features/adminModule/ta/taSlice';
 import taSchedulingReducer from './features/adminModule/ta/taScheduling';
 import taAvailabilityReducer from './features/adminModule/ta/taAvialability';
 import coachTemplateReducer from './features/adminModule/coach/coachTemplateSlice';
+import adminNotificationReducer from './features/adminModule/notification/AdminNotification';
 import wolSliceReducer from './features/adminModule/coachingTools/wol/wolSlice';
 import coachReducer from './features/adminModule/coach/coachSlice';
 import coachAvailabilityReducer from './features/adminModule/coach/CoachAvailabilitySlice';
@@ -28,6 +29,7 @@ import { platformsApi } from './services/platforms/platformsApi';
 const store = configureStore({
     reducer: {
         auth: authReducer,
+        adminNotification: adminNotificationReducer,
         taModule: taReducer,
         // taAvailability: taAvailabilityReducer,
         taScheduling: taSchedulingReducer,

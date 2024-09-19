@@ -1,8 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Header from '../../Header/Header';
 import Sidebar from '../../Sidebar/Sidebar';
+import { useDispatch } from 'react-redux';
+import {getAdminNotification} from '../../../redux/features/adminModule/notification/AdminNotification';
 
 function Dashboard() {
+    const dispatch = useDispatch();
+
+
+    useEffect(() => {
+        dispatch(getAdminNotification());
+    }, [dispatch]);
+
+
     return (
         <>
             <Header />

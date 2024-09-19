@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Profile from '../../../assets/profile.png';
+import Profile from '../../../assets/userimg.png';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../../redux/features/auth/authSlice';
 import { useNavigate } from 'react-router-dom'; 
@@ -11,11 +11,11 @@ function NavAvator() {
     const { userData, role } = useSelector(state => state.auth);
     const { taProfileData } = useSelector(state => state.taMenu);
     const { coachProfileData } = useSelector(state => state.coachMenu);
-    const [role1, setrole1]= useState();
+    const [userRole, setUserRole]= useState();
     
     
     useEffect(() => {
-        setrole1(role);
+        setUserRole(role);
     }, [role]);
 
     
@@ -37,15 +37,15 @@ function NavAvator() {
     
 
     const getRoleText = () => {
-        if (role1 === '2001') return 'TA Teacher';
-        if (role1 === '1984') return 'Coach Teacher';
-        if (role1 === '5150') return 'Admin';
+        if (userRole === '2001') return 'TA Teacher';
+        if (userRole === '1984') return 'Coach Teacher';
+        if (userRole === '5150') return 'Admin';
         return 'Unknown Role'; // Fallback for undefined or other roles
     };
 
     let image = Profile;
-    if (role1 === '2001') image = taProfileData.profile_picture;
-    if (role1 === '1984') image = coachProfileData.profile_picture;
+    if (userRole === '2001') image = taProfileData.profile_picture || Profile;
+    if (userRole === '1984') image = coachProfileData.profile_picture || Profile;
 
 
     return (
@@ -94,23 +94,10 @@ function NavAvator() {
                     <a
                         href="#"
                         className="dropdown-item d-flex align-items-center"
+                        onClick={() => userRole === '2001' ? navigate('/tamenu_profile') : userRole === '1984' ? navigate('/coachmenu_profile') : navigate('/')}
                     >
                         <i className="bi bi-person"></i>
                         <span>My Profile</span>
-                    </a>
-                </li>
-
-                <li>
-                    <hr className="dropdown-divider"></hr>
-                </li>
-
-                <li>
-                    <a
-                        href="#"
-                        className="dropdown-item d-flex align-items-center"
-                    >
-                        <i className="bi bi-gear"></i>
-                        <span>Account Settings</span>
                     </a>
                 </li>
 
