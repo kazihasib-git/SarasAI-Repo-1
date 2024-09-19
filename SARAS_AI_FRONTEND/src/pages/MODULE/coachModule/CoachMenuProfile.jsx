@@ -23,6 +23,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
     getCoachMenuProfile,
     updateCoachmenuprofile,
+    getCoachNotification,
 } from '../../../redux/features/coachModule/coachmenuprofileSilce';
 import { formatInTimeZone } from 'date-fns-tz';
 import { useGetTimezonesQuery } from '../../../redux/services/timezones/timezonesApi';
@@ -74,6 +75,7 @@ const CoachMenuProfile = () => {
 
     useEffect(() => {
         dispatch(getCoachMenuProfile());
+        dispatch(getCoachNotification());
     }, [dispatch]);
 
     useEffect(() => {

@@ -14,6 +14,22 @@ export const getTaMenuProfile = createAsyncThunk(
     }
 );
 
+//get ta notification
+export const getTaNotification = createAsyncThunk(
+    'taMenu/getTaNotification',
+    async () => {
+        try {
+            const response = await axiosInstance.get(
+                `${baseUrl}/ta/notification`
+            );
+            return response.data;
+        } catch (error) {
+            console.error('Error getting TA notification:', error);
+            return error.response ? error.response.data : error.message;
+        }
+    }
+);
+
 // Update Ta Profile
 export const updateTaMenuProfile = createAsyncThunk(
     'taMenu/updateProfile',
@@ -439,6 +455,7 @@ export const updateTaScheduledCall = createAsyncThunk(
 
 const initialState = {
     taProfileData: [], // TA Profile Data
+    taNotification: [], // TA Notification
     myStudentData: [], // TA My Students
     taSlots: [], // TA Slots
     taSlotsByDate: [], // TA Slots by Date
@@ -527,6 +544,20 @@ export const taMenuSlice = createSlice({
             state.loading = false;
             state.error = action.error.message;
             state.taProfileData = [];
+        });
+
+        // get ta notification
+        builder.addCase(getTaNotification.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(getTaNotification.fulfilled, (state, action) => {
+            state.loading = false;
+            state.taNotification = action.payload.data;
+        });
+        builder.addCase(getTaNotification.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+            state.taNotification = [];
         });
 
         // update Ta Profile Data

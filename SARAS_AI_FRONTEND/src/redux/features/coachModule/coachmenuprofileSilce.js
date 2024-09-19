@@ -15,6 +15,23 @@ export const getCoachMenuProfile = createAsyncThunk(
     }
 );
 
+
+//get coach notification
+export const getCoachNotification = createAsyncThunk(
+    'coachMenu/getCoachNotification',
+    async () => {
+        try {
+            const response = await axiosInstance.get(
+                `${baseUrl}/coach/notification`
+            );
+            return response.data;
+        } catch (error) {
+            console.error('Error getting Coach notification:', error);
+            return error.response ? error.response.data : error.message;
+        }
+    }
+);
+
 // Update coach profile
 export const updateCoachmenuprofile = createAsyncThunk(
     'coachMenu/updateprofile',
@@ -490,6 +507,7 @@ export const updateCoachScheduledCall = createAsyncThunk(
 
 const initialState = {
     coachProfileData: [], // Coach Profile Data
+    coachNotification: [], // Coach Notification
     updateProfileData: [],
     coachSlots: [], // Coach Slots
     coachSlotsByDate: [], // Coach Slots By Date
@@ -647,6 +665,20 @@ export const coachMenuSlice = createSlice({
             state.loading = false;
             state.error = action.error.message;
             state.coachProfileData = [];
+        });
+
+        // Get Coach Notification
+        builder.addCase(getCoachNotification.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(getCoachNotification.fulfilled, (state, action) => {
+            state.loading = false;
+            state.coachNotification = action.payload.data;
+        });
+        builder.addCase(getCoachNotification.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+            state.coachNotification = [];
         });
 
         // Update Coach Profile
