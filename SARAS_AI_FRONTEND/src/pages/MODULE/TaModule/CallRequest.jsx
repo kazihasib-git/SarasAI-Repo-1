@@ -11,7 +11,7 @@ import Header from '../../../components/Header/Header';
 import TaMenuSidebar from './TeachingAssistantSidebar';
 import DenyDialog from './DenyDialog';
 import CreateMeetingDialog from '../coachModule/CreateMeetingDialog';
-
+import { toast } from 'react-toastify';
 import {
     getTaCallRequests,
     approveCallRequest,
@@ -123,10 +123,11 @@ const CallRequest = () => {
     };
 
     const handleApprove = id => {
-        // const data = {
-        //     host_email_id : hostEmail,
-        // }
-        dispatch(approveCallRequest({ id, hostEmail }));
+        if (hostEmail) {
+            dispatch(approveCallRequest({ id, hostEmail }));
+        }else{
+            toast.error('Please select a host');
+        }
     };
 
     const toggleShowFullMessage = id => {

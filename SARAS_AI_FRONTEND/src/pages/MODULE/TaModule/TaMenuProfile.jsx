@@ -22,6 +22,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
     getTaMenuProfile,
     updateTaMenuProfile,
+    getTaNotification,
 } from '../../../redux/features/taModule/tamenuSlice';
 import { formatInTimeZone } from 'date-fns-tz';
 import moment from 'moment';
@@ -77,6 +78,7 @@ const TaMenuProfile = () => {
 
     useEffect(() => {
         dispatch(getTaMenuProfile());
+        dispatch(getTaNotification());
     }, [dispatch]);
 
     useEffect(() => {

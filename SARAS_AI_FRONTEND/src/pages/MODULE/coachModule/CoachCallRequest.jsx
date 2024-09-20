@@ -19,6 +19,7 @@ import {
     fetchtimezoneDetails,
     timezoneIdToName,
 } from '../../../utils/timezoneIdToName';
+import { toast } from 'react-toastify';
 import { convertFromUTC } from '../../../utils/dateAndtimeConversion';
 import { useGetTimezonesQuery } from '../../../redux/services/timezones/timezonesApi';
 import { useGetHostsQuery } from '../../../redux/services/hosts/hostsApi';
@@ -118,10 +119,11 @@ const CoachCallRequest = () => {
     };
 
     const handleApprove = id => {
-        // const data = {
-        //     host_email_id: hostEmail,
-        // };
-        dispatch(approveCallRequest({ id, hostEmail }));
+        if (hostEmail) {
+            dispatch(approveCallRequest({ id, hostEmail }));
+        }else{
+            toast.error('Please select a host');
+        }
     };
 
     const toggleShowFullMessage = id => {
