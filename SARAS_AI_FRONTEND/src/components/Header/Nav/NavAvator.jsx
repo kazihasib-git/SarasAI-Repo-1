@@ -12,11 +12,26 @@ function NavAvator() {
     const { taProfileData } = useSelector(state => state.taMenu);
     const { coachProfileData } = useSelector(state => state.coachMenu);
     const [userRole, setUserRole]= useState();
+    const [userName, setUserName] = useState("");
     
     
     useEffect(() => {
         setUserRole(role);
     }, [role]);
+
+
+    useEffect(() => {
+       if (userRole === '2001') {
+           setUserName(taProfileData.name);
+       }
+       if (userRole === '1984') {
+              setUserName(coachProfileData.name);
+        }
+        if (userRole === '5150') {
+            setUserName("Admin");
+        }
+
+    }, [taProfileData,coachProfileData,userData,role,userRole]);
 
     
 
@@ -37,15 +52,19 @@ function NavAvator() {
     
 
     const getRoleText = () => {
-        if (userRole === '2001') return 'TA Teacher';
-        if (userRole === '1984') return 'Coach Teacher';
+        if (userRole === '2001') return 'Teaching Assistant';
+        if (userRole === '1984') return 'Coach';
         if (userRole === '5150') return 'Admin';
         return 'Unknown Role'; // Fallback for undefined or other roles
     };
 
     let image = Profile;
-    if (userRole === '2001') image = taProfileData.profile_picture || Profile;
-    if (userRole === '1984') image = coachProfileData.profile_picture || Profile;
+    if (userRole === '2001'){
+         image = taProfileData.profile_picture || Profile;
+    }
+    if (userRole === '1984') {
+        image = coachProfileData.profile_picture || Profile;
+    }
 
 
     return (
@@ -68,7 +87,7 @@ function NavAvator() {
                 </div>
                 <div className="profile-info">
                     <span className="d-none d-md-block dropdown-toggle ps-2 profileName">
-                        {userData.name}
+                        {userName}
                     </span>
                     <span
                         className="status-text"
@@ -81,7 +100,7 @@ function NavAvator() {
 
             <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                 <li className="dropdown-header">
-                    <h6>{userData.name}</h6>
+                    <h6>{userName}</h6>
                     
                     <span>{getRoleText()}</span>
                 </li>

@@ -65,7 +65,7 @@ const NavNotice = () => {
                         <div>
                             <h4>{notification.title || "new notification"}</h4>
                             <p>
-                                {notification.message}.{' '}
+                                {notification.message}
                             </p>
                             <p>{notification.time_elapsed}</p>
                         </div>
