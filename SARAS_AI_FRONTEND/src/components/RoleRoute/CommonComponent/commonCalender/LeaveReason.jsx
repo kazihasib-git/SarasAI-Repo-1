@@ -4,7 +4,9 @@ import { Grid } from '@mui/material';
 import CustomTextField from '../../../CustomFields/CustomTextField';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomButton from '../../../CustomFields/CustomButton';
-import { closeReasonForLeavePopup } from '../../../../redux/features/commonCalender/commonCalender';
+import { closeReasonForLeavePopup,
+    setTotalSessionsForMarkLeave,
+ } from '../../../../redux/features/commonCalender/commonCalender';
 import { toast } from 'react-toastify';
 import {
     getCoachMenuSessions,
@@ -43,6 +45,7 @@ const LeaveReason = ({ componentName, timezone }) => {
         leaveConfig[componentName];
 
     const selectState = useSelector(state => state[sliceName]);
+    const { totalSessionsForMarkLeave } = useSelector(state => state.commonCalender);
 
     const handleSubmit = () => {
         if (!reasonOfLeave) {
@@ -60,6 +63,7 @@ const LeaveReason = ({ componentName, timezone }) => {
                 approve_status: null,
                 leave_type: null,
                 reason: reasonOfLeave,
+                total_sessions: totalSessionsForMarkLeave,
                 data: slots,
             };
 

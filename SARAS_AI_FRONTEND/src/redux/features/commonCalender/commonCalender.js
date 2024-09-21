@@ -99,6 +99,9 @@ const commonCalender = createSlice({
         closeMarkLeaveDate: (state, action) => {
             state.markLeave = false;
         },
+        setTotalSessionsForMarkLeave: (state, action) => {
+            state.totalSessionsForMarkLeave = action.payload;
+        },
         openCreatedSlots: (state, action) => {
             state.createdSlots = true;
         },
@@ -214,6 +217,7 @@ export const {
     openSelectBatches,
     closeSelectBatches,
     openMarkLeaveDate,
+    setTotalSessionsForMarkLeave,
     closeMarkLeaveDate,
     openCreatedSlots,
     closeCreatedSlots,
