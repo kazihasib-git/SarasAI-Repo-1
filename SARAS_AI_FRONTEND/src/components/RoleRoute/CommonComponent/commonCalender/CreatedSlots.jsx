@@ -8,6 +8,7 @@ import {
     closeCreatedSlots,
     openCreatedSessions,
     openSessionPopup,
+    setTotalSessionsForMarkLeave,
 } from '../../../../redux/features/commonCalender/commonCalender';
 import ReusableDialog from '../../../CustomFields/ReusableDialog';
 import CustomButton from '../../../CustomFields/CustomButton';
@@ -19,11 +20,13 @@ const slotsConfig = {
         sliceName: 'taMenu',
         getSessionFromSlotsApi: getTaMenuSessionForLeave,
         sessionBySlotsState: 'slotsBetweenDates',
+        sessionsInAllSlotsState: 'sessionBySlots',
     },
     COACHMENU: {
         sliceName: 'coachMenu',
         getSessionFromSlotsApi: getCoachMenuSessionForLeave,
         sessionBySlotsState: 'coachSlotsForLeave',
+        sessionsInAllSlotsState: 'coachSessionsForLeave',
     },
 };
 
@@ -32,13 +35,14 @@ const CreatedSlots = ({ componentName, timezone }) => {
     const [selectedSlots, setSelectedSlots] = useState([]);
     const [slots, setSlots] = useState([]);
 
-    const { sliceName, getSessionFromSlotsApi, sessionBySlotsState } =
+    const { sliceName, getSessionFromSlotsApi, sessionBySlotsState,sessionsInAllSlotsState } =
         slotsConfig[componentName];
 
     const selectState = useSelector(state => state[sliceName]);
     const { createdSlots } = useSelector(state => state.commonCalender);
 
     const { [sessionBySlotsState]: sessionsData } = selectState;
+    const { [sessionsInAllSlotsState]: sessionInAllSlots } = selectState;
 
     const formatTime = time => {
         const [hours, minutes] = time.split(':');
@@ -123,6 +127,8 @@ const CreatedSlots = ({ componentName, timezone }) => {
                 dispatch(closeCreatedSlots());
                 dispatch(openCreatedSessions(requestBody));
             });
+            console.log('sessionInAllSlots', sessionInAllSlots);
+            dispatch(setTotalSessionsForMarkLeave(sessionInAllSlots.length));
         }
     };
 
