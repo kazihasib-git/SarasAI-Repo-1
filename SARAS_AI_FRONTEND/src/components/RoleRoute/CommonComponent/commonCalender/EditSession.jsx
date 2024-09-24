@@ -233,9 +233,11 @@ const EditSession = ({ role, componentName }) => {
             }
         }
 
+        let inputDate = new Date(formData.fromDate);
+
         // Check if 'fromDate' is provided
-        if (!formData.fromDate) {
-            toast.error('Please select  from date');
+        if (!formData.fromDate || isNaN(inputDate.getTime())) {
+            toast.error('Please select from date');
             return false;
         }
 

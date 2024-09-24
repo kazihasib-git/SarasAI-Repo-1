@@ -327,7 +327,9 @@ const Schedule = ({ componentName, timezoneID }) => {
 
     const validate = formData => {
         // Ensure all required fields are filled in
-        if (!fromDate) {
+        let inputDate = new Date(fromDate);
+        let inputToDate = new Date(toDate); 
+        if (!fromDate || isNaN(inputDate.getTime())) {
             toast.error('Please select from Date');
             return false;
         }
@@ -343,6 +345,10 @@ const Schedule = ({ componentName, timezoneID }) => {
         }
 
         if (repeat === 'recurring') {
+            if (!toDate || isNaN(inputToDate.getTime())) {
+                toast.error('Please select To Date');
+                return false;
+            }
             if (!toTime) {
                 toast.error('Please select a To Time');
                 return false;

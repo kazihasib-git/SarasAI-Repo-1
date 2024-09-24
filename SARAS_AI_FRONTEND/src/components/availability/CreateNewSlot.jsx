@@ -102,6 +102,7 @@ const CreateNewSlot = ({ id, name, componentName, timezone }) => {
     const validate = () => {
         let currentDate = new Date();
         let inputDate = new Date(fromDate);
+        let inputToDate = new Date(toDate); 
 
         let sameDate = false;
 
@@ -113,7 +114,7 @@ const CreateNewSlot = ({ id, name, componentName, timezone }) => {
             sameDate = true;
         }
 
-        if (!fromDate) {
+        if (!fromDate || isNaN(inputDate.getTime())){
             toast.error('Please select From Date');
             return false;
         }
@@ -126,13 +127,15 @@ const CreateNewSlot = ({ id, name, componentName, timezone }) => {
             return false;
         }
 
-        if (repeat === 'recurring' && !toDate) {
-            toast.error('Please select To Date');
-            return false;
-        }
-        if (repeat === 'recurring' && selectedDays.length === 0) {
-            toast.error('Please select at least one day');
-            return false;
+        if (repeat === 'recurring') {
+            if (!toDate || isNaN(inputToDate.getTime())) {
+                toast.error('Please select To Date');
+                return false;
+            }
+            if (selectedDays.length === 0) {
+                toast.error('Please select at least one day');
+                return false;
+            }
         }
 
         // if(sameDate && isHourLessOrEqual(fromTime)){
@@ -380,7 +383,7 @@ const CreateNewSlot = ({ id, name, componentName, timezone }) => {
                                     sx={{ pt: 3 }}
                                     justifyContent="center"
                                 >
-                                    <CustomDateField
+                                    <CustomFutureDateField
                                         label="To Date"
                                         value={toDate}
                                         onChange={date => setToDate(date)}

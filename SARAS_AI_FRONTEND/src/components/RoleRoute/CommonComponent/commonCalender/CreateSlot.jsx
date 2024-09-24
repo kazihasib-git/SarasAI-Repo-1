@@ -78,7 +78,9 @@ const CreateSlot = ({ componentName, timezone }) => {
     const validate = formData => {
         let validationErrors = {};
 
-        if (!formData.fromDate) {
+        let inputDate = new Date(formData.fromDate);
+
+        if (!formData.fromDate || isNaN(inputDate.getTime())) {
             validationErrors.fromDate = '';
             toast.error('Please select From Date');
             return;
@@ -93,7 +95,10 @@ const CreateSlot = ({ componentName, timezone }) => {
             toast.error('Please select To Time');
             return;
         }
-        if (formData.repeat === 'recurring' && !formData.toDate) {
+
+        let inputToDate = new Date(formData.toDate); // Convert the toDate string to Date object
+
+        if (formData.repeat === 'recurring' && (!formData.toDate || isNaN(inputToDate.getTime()))) {
             validationErrors.toDate = 'Please select To Date';
             toast.error('Please select To Date');
             return;
@@ -336,7 +341,7 @@ const CreateSlot = ({ componentName, timezone }) => {
                                     sx={{ pt: 3 }}
                                     justifyContent="center"
                                 >
-                                    <CustomDateField
+                                    <CustomFutureDateField
                                         label="To Date"
                                         value={formData.toDate}
                                         onChange={date =>

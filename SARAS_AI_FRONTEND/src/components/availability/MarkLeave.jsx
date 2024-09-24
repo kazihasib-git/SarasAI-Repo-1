@@ -56,7 +56,11 @@ const MarkLeave = ({ id, name, componentName, timezone }) => {
     const { [scheduleSessionOpenKey]: markLeaveOpen } = schedulingState;
 
     const validateDates = () => {
-        if (!fromDate || !toDate) {
+
+        let inputDate = new Date(fromDate);
+        let inputToDate = new Date(toDate); 
+
+        if (!fromDate || !toDate || isNaN(inputDate.getTime()) || isNaN(inputToDate.getTime())) {
             toast.error('Please select dates');
             return false;
         } else if (fromDate > toDate) {
