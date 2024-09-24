@@ -572,6 +572,10 @@ function AddEditCoach({ data }) {
                                     )}
                                     rules={{
                                         required: 'Date of Birth is required',
+                                        validate: value => {
+                                            const inputDate = new Date(value);
+                                            return !isNaN(inputDate.getTime()) || 'please enter valid date';
+                                        },
                                     }}
                                 />
                             </Grid>
