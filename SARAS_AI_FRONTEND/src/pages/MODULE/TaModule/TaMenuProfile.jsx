@@ -291,9 +291,9 @@ const TaMenuProfile = () => {
                                     validation={{
                                         required: 'Username is required',
                                         minLength: {
-                                            value: 3,
+                                            value: 5,
                                             message:
-                                                'Username must be at least 3 characters long',
+                                                'Username must be at least 5 characters long',
                                         },
                                         maxLength: {
                                             value: 20,
@@ -301,9 +301,9 @@ const TaMenuProfile = () => {
                                                 'Username cannot exceed 20 characters',
                                         },
                                         pattern: {
-                                            value: /^[A-Za-z\s]+$/,
+                                            value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$#&_]{5,}$/,
                                             message:
-                                                'Username can only contain letters, numbers, and underscores',
+                                                'Username Must contain letters, numbers, and may include @$#&_',
                                         },
                                     }}
                                     errors={errors}
