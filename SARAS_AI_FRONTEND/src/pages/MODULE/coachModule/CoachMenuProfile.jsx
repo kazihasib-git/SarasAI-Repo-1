@@ -167,7 +167,7 @@ const CoachMenuProfile = () => {
 
     const onSubmit = async formData => {
         const { email, ...updatedFormData } = formData;
-        setIsEditing(false);
+        // setIsEditing(false);
 
         updatedFormData.date_of_birth = dateOfBirth;
 
@@ -181,9 +181,8 @@ const CoachMenuProfile = () => {
 
         try {
             await dispatch(updateCoachmenuprofile(updatedFormData)).unwrap();
-
-            dispatch(getCoachMenuProfile());
             setIsEditing(false);
+            dispatch(getCoachMenuProfile());
         } catch (error) {
             console.error('Update failed:', error);
         }

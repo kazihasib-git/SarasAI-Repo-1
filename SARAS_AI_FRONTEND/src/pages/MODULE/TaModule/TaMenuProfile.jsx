@@ -175,7 +175,7 @@ const TaMenuProfile = () => {
         const { email, ...updatedFormData } = formData;
 
         updatedFormData.date_of_birth = dateOfBirth;
-        setIsEditing(false); // Disable edit mode after submit
+        // setIsEditing(false); // Disable edit mode after submit
 
         if (selectedImage && selectedImage.startsWith('data:image/')) {
             const base64Data = selectedImage.replace(
@@ -187,9 +187,8 @@ const TaMenuProfile = () => {
 
         try {
             await dispatch(updateTaMenuProfile(updatedFormData)).unwrap();
-
-            dispatch(getTaMenuProfile());
             setIsEditing(false);
+            dispatch(getTaMenuProfile());
         } catch (error) {
             console.error('Update failed:', error);
         }

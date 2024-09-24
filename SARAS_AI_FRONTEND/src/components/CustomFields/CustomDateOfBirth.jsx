@@ -6,6 +6,7 @@ const CustomDateOfBirth = ({ label, name, value, onChange, ...props }) => {
     const handleDateChange = date => {
         const today = moment().endOf('day');
         if (date && moment(date).isAfter(today)) {
+            onChange('');
             return;
         }
         onChange(date);
