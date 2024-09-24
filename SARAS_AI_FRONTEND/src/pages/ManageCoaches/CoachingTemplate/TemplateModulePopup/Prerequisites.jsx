@@ -140,7 +140,8 @@ const PrerequisitesPopup = ({
     }, [watch('module'), coachTemplatesId]);
 
     const validate = data => {
-        if (!data.lockUntil && !fromTime && !activityDependence) {
+        let inputDate = new Date(data.lockUntil);
+        if ((!data.lockUntil || isNaN(inputDate.getTime())) && !fromTime && !activityDependence) {
             toast.error(
                 'Please select either Lock Until and Time, or Activity Dependence.'
             );

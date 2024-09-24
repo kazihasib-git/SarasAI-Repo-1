@@ -175,7 +175,7 @@ const TaMenuProfile = () => {
         const { email, ...updatedFormData } = formData;
 
         updatedFormData.date_of_birth = dateOfBirth;
-        setIsEditing(false); // Disable edit mode after submit
+        // setIsEditing(false); // Disable edit mode after submit
 
         if (selectedImage && selectedImage.startsWith('data:image/')) {
             const base64Data = selectedImage.replace(
@@ -187,9 +187,8 @@ const TaMenuProfile = () => {
 
         try {
             await dispatch(updateTaMenuProfile(updatedFormData)).unwrap();
-
-            dispatch(getTaMenuProfile());
             setIsEditing(false);
+            dispatch(getTaMenuProfile());
         } catch (error) {
             console.error('Update failed:', error);
         }
@@ -291,9 +290,9 @@ const TaMenuProfile = () => {
                                     validation={{
                                         required: 'Username is required',
                                         minLength: {
-                                            value: 3,
+                                            value: 5,
                                             message:
-                                                'Username must be at least 3 characters long',
+                                                'Username must be at least 5 characters long',
                                         },
                                         maxLength: {
                                             value: 20,
@@ -301,9 +300,9 @@ const TaMenuProfile = () => {
                                                 'Username cannot exceed 20 characters',
                                         },
                                         pattern: {
-                                            value: /^[A-Za-z\s]+$/,
+                                            value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$#&_]{5,}$/,
                                             message:
-                                                'Username can only contain letters, numbers, and underscores',
+                                                'Username Must contain letters, numbers, and may include @$#&_',
                                         },
                                     }}
                                     errors={errors}
@@ -573,6 +572,10 @@ const TaMenuProfile = () => {
                                     )}
                                     rules={{
                                         required: 'Date of Birth is required',
+                                        validate: value => {
+                                            const inputDate = new Date(value);
+                                            return !isNaN(inputDate.getTime()) || 'please enter valid date';
+                                        },
                                     }}
                                 />
                             </Grid>

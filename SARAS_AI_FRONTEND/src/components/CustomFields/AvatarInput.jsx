@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
 import { Avatar, IconButton, Box } from '@mui/material';
 import { PhotoCamera } from '@mui/icons-material';
+import { toast } from 'react-toastify';
 
 const AvatarInput = ({ selectedImage, setSelectedImage, disabled }) => {
     const handleFileChange = e => {
         const file = e.target.files[0];
         const reader = new FileReader();
+
+        if (file.type !== 'image/jpeg' && 
+            file.type !== 'image/png' && 
+            file.type !== 'image/jpg') {
+            toast.error('Please upload a valid image file.');
+            return;
+        }
 
         reader.onloadend = () => {
             setSelectedImage(reader.result);

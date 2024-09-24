@@ -196,7 +196,9 @@ const RescheduleCreatedSession = ({ componentName, timezone }) => {
     };
 
     const validate = () => {
-        if (!selectDate) {
+        let inputDate = new Date(selectDate);
+
+        if (!selectDate || isNaN(inputDate.getTime())) {
             toast.error('Please Select The Date');
             return false;
         }

@@ -375,7 +375,7 @@ const AddEditTA = ({ data }) => {
                                 validation={{
                                     required: 'Username is required',
                                     minLength: {
-                                        value: 3,
+                                        value: 5,
                                         message:
                                             'Username must be at least 3 characters long',
                                     },
@@ -385,9 +385,9 @@ const AddEditTA = ({ data }) => {
                                             'Username cannot exceed 20 characters',
                                     },
                                     pattern: {
-                                        value: /^[A-Za-z0-9_]+$/,
-                                        message:
-                                            'Username can only contain letters, numbers, and underscores',
+                                        value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$#&_]{5,}$/,
+                                            message:
+                                                'Username Must contain letters, numbers, and may include @$#&_',
                                     },
                                 }}
                                 errors={errors}
@@ -570,6 +570,10 @@ const AddEditTA = ({ data }) => {
                                 )}
                                 rules={{
                                     required: 'Date of Birth is required',
+                                    validate: value => {
+                                        const inputDate = new Date(value);
+                                        return !isNaN(inputDate.getTime()) || 'please enter valid date';
+                                    },
                                 }}
                             />
                         </Grid>

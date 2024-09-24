@@ -377,7 +377,7 @@ function AddEditCoach({ data }) {
                                     validation={{
                                         required: 'Username is required',
                                         minLength: {
-                                            value: 3,
+                                            value: 5,
                                             message:
                                                 'Username must be at least 3 characters long',
                                         },
@@ -387,9 +387,9 @@ function AddEditCoach({ data }) {
                                                 'Username cannot exceed 20 characters',
                                         },
                                         pattern: {
-                                            value: /^[A-Za-z0-9_]+$/,
+                                            value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$#&_]{5,}$/,
                                             message:
-                                                'Username can only contain letters, numbers, and underscores',
+                                                'Username Must contain letters, numbers, and may include @$#&_',
                                         },
                                     }}
                                     errors={errors}
@@ -572,6 +572,10 @@ function AddEditCoach({ data }) {
                                     )}
                                     rules={{
                                         required: 'Date of Birth is required',
+                                        validate: value => {
+                                            const inputDate = new Date(value);
+                                            return !isNaN(inputDate.getTime()) || 'please enter valid date';
+                                        },
                                     }}
                                 />
                             </Grid>

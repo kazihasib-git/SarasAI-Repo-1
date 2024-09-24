@@ -113,7 +113,13 @@ const AddActivity = () => {
                 <Controller
                     name="dueDate"
                     control={control}
-                    rules={{ required: 'Due Date is required' }}
+                    rules={{
+                        required: 'Due Date is required',
+                        validate: value => {
+                            const inputDate = new Date(value);
+                            return !isNaN(inputDate.getTime()) || 'please enter valid date'; // Check if the date is valid
+                        },
+                    }}
                     render={({ field }) => (
                         <CustomFutureDateField
                             label="Due Date"

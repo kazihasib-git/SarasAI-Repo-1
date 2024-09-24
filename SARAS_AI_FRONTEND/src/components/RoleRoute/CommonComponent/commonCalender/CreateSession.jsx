@@ -183,8 +183,10 @@ const CreateSession = ({ role, componentName }) => {
         }
 
         // Check if 'fromDate' is provided
-        if (!formData.fromDate) {
-            toast.error('Please select  from date');
+        let inputDate = new Date(formData.fromDate);
+
+        if (!formData.fromDate || isNaN(inputDate.getTime())) {
+            toast.error('Please Select from date');
             return false;
         }
 
