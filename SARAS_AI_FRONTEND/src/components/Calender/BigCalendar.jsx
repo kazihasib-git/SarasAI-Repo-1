@@ -42,31 +42,48 @@ const CustomEvent = ({ event }) => {
                 color: 'white',
                 padding: '5px',
                 display: 'flex',
+                flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 fontSize: '0.8em',
                 width: '100%',
+                height: '100%',
                 boxSizing: 'border-box',
             }}
         >
             <div
                 style={{
                     fontSize: '0.9em',
-                    height: '28px',
-                    maxWidth: 'calc(100% - 70px)',
+                    maxWidth: 'calc(100% - 50px)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
+                    fontFamily: 'DM Sans',
+                    fontWeight: '500',
+                    overflow: 'hidden',     
+                    textOverflow: 'ellipsis',
+                    wordWrap: 'break-word',
+                    whiteSpace: 'normal',
+                    maxHeight: '96%',
+                    marginRight: '4px',
                 }}
             >
-                {event.meetingName}
+                <span
+                    style={{
+                        marginTop: '5px',
+                    }}
+                >
+                    {event.meetingName}
+                </span>
             </div>
             <div
                 style={{
                     fontSize: '0.9em',
+                    fontFamily: 'DM Sans',
+                    fontWeight: '600',
                     color: '#28a745',
                     backgroundColor: 'white',
-                    borderRadius: '5px',
+                    borderRadius: '18px',
                     height: '28px',
                     maxWidth: '200px',
                     display: 'flex',
@@ -74,7 +91,7 @@ const CustomEvent = ({ event }) => {
                     justifyContent: 'center',
                     padding: '2px 5px',
                     flexShrink: 0,
-                    minWidth: '35px',
+                    minWidth: '50px',
                     maxWidth: 'calc(100% - 70px)',
                 }}
             >
@@ -130,7 +147,11 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
                 width: '95%',
                 left: '6%',
                 bottom: '0%',
-            },
+                borderWidth: '1px 0px 1px 0px',  // Setting specific border widths
+                borderStyle: 'solid',             // Solid border style
+                borderColor: '#00C95C',           // Green border color
+                boxShadow: '0px 6px 20px 0px #00C95C4D' // Adding box shadow
+            }
         };
     };
 
@@ -188,7 +209,7 @@ const CalendarComponent = ({ eventsList, slotData, componentName }) => {
                 } else {
                     return {
                         style: {
-                            backgroundColor: '#B0FC38',
+                            backgroundColor: '#74f798',
                             opacity: 0.5,
                             border: 'none',
                         },
