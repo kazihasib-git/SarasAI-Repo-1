@@ -240,7 +240,7 @@ export const approveCallRequest = createAsyncThunk(
 //ta deny call
 export const denyCallRequest = createAsyncThunk(
     'taMenu/denyCallRequest',
-    async (id, reason) => {
+    async ({id, reason}) => {
         const response = await axiosInstance.put(
             `${baseUrl}/ta/call-request/denie-call-request/${id}`,
             {

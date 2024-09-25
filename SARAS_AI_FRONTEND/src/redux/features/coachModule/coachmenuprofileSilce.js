@@ -302,12 +302,12 @@ export const approveCallRequest = createAsyncThunk(
 //deny call request
 export const denyCallRequest = createAsyncThunk(
     'coachMenu/denyCallRequest',
-    async (id, message) => {
+    async ({id, reason}) => {
         const response = await axiosInstance.put(
             `${baseUrl}/coach/call-request/denie-call-request/${id}`,
             {
                 // 'reject_reason': message,
-                reject_reason: message,
+                reject_reason: reason,
             }
         );
         return response.data;

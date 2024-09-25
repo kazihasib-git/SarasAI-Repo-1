@@ -65,9 +65,12 @@ const DenyDialog = ({ open, handleClose, handleDenySubmit, denyRequestId }) => {
                 sx={{
                     color: '#1A1E3D',
                     textAlign: 'center',
+                    fontSize: '25px',
+                    fontFamily: 'Medium',
+                    marginBottom: '50px',
                 }}
             >
-                <h1>Are you sure you want to deny the call?</h1>
+                <span>Are you sure you want to deny the call?</span>
             </DialogContentText>
 
             <CustomTextField

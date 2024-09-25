@@ -114,7 +114,7 @@ const CoachCallRequest = () => {
     };
 
     const handleDenySubmit = (id, reason) => {
-        dispatch(denyCallRequest(id, reason));
+        dispatch(denyCallRequest({id, reason}));
         setOpen(false);
     };
 

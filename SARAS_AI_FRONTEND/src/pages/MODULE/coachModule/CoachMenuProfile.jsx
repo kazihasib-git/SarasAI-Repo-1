@@ -5,7 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Box, Button, Typography, Grid, Divider } from '@mui/material';
 import CustomFormControl from '../../../components/CustomFields/CustomFromControl';
 import CustomTextField from '../../../components/CustomFields/CustomTextField';
-import CustomDateField from '../../../components/CustomFields/CustomDateField';
+import CustomDateOfBirth from '../../../components/CustomFields/CustomDateOfBirth';
 import AvatarInput from '../../../components/CustomFields/AvatarInput';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
@@ -494,13 +494,14 @@ const CoachMenuProfile = () => {
                                     control={control}
                                     name="date_of_birth"
                                     render={({ field }) => (
-                                        <CustomDateField
+                                        <CustomDateOfBirth
                                             label="Date of Birth"
                                             name="date_of_birth"
                                             value={dateOfBirth}
                                             onChange={date =>
                                                 handleDateChange(date, field)
                                             }
+                                            disableFutureDates={true}
                                             error={!!errors.date_of_birth}
                                             helperText={
                                                 errors.date_of_birth?.message
