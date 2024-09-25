@@ -20,6 +20,7 @@ import {
     Card,
     CardContent,
     IconButton,
+    Popover,
 } from '@mui/material';
 import calender from '../../../assets/calender.svg';
 import VideoUploadDialog from '../../../components/integrations/videoUpload';
@@ -31,6 +32,8 @@ import {
 import { convertFromUTC } from '../../../utils/dateAndtimeConversion';
 import CustomButton from '../../../components/CustomFields/CustomButton';
 import { useGetTimezonesQuery } from '../../../redux/services/timezones/timezonesApi';
+import { DateCalendar, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 
 const CoachCallRecord = () => {
     const dispatch = useDispatch();
@@ -43,6 +46,7 @@ const CoachCallRecord = () => {
     const [idVideo, setIdVideo] = useState(null);
     const [processedCalls, setProcessedCalls] = useState([]);
     const [timezoneDetails, setTimezoneDetails] = useState();
+    const [anchorEl, setAnchorEl] = useState(null);
 
     const { timezoneId } = useSelector(state => state.auth);
     const calls = useSelector(state => state.coachMenu.coachCallRecords);
@@ -172,6 +176,32 @@ const CoachCallRecord = () => {
         setVideoDialogOpen(true);
     };
 
+    const handleDateChange = newDate => {
+        const today = moment().startOf('day');
+        const formattedDate = newDate ? moment(newDate).format('YYYY-MM-DD') : '';
+
+        if(formattedDate && moment(formattedDate).isAfter(today)) {
+            setDate(moment());
+            handleCalendarClose();
+        }
+        
+        if (newDate && newDate.isValid()) {
+            setDate(newDate);
+            handleCalendarClose();
+        }
+    };
+
+    const handleCalendarOpen = event => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleCalendarClose = () => {
+        setAnchorEl(null);
+    };
+
+    const openCal = Boolean(anchorEl);
+    const id = openCal ? 'calendar-popover' : undefined;
+
     return (
         <div>
             <CoachMenu />
@@ -195,7 +225,7 @@ const CoachCallRecord = () => {
                         Call Records
                     </Typography>
                 </Box>
-
+            <LocalizationProvider dateAdapter={AdapterMoment}>
                 <Box display="flex" alignItems="center" mb="20px">
                     <Typography variant="h6" mx="20px">
                         <img
@@ -204,7 +234,9 @@ const CoachCallRecord = () => {
                                 width: '32px',
                                 height: '32px',
                                 marginRight: '10px',
+                                cursor: 'pointer',
                             }}
+                            onClick={handleCalendarOpen}
                         />
                         {date.format('D MMMM, YYYY')}
                     </Typography>
@@ -217,8 +249,27 @@ const CoachCallRecord = () => {
                     >
                         <ArrowForwardIosIcon />
                     </IconButton>
+                    <Popover
+                        id={id}
+                        open={openCal}
+                        anchorEl={anchorEl}
+                        onClose={handleCalendarClose}
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'left',
+                        }}
+                        transformOrigin={{
+                            vertical: 'top',
+                            horizontal: 'left',
+                        }}
+                    >
+                        <DateCalendar 
+                        date={date}
+                        disableFuture = {true} 
+                        onChange={handleDateChange} />
+                    </Popover>
                 </Box>
-
+            </LocalizationProvider>
                 <Box
                     display="flex"
                     flexWrap="wrap"

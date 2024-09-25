@@ -377,7 +377,7 @@ const AddEditTA = ({ data }) => {
                                     minLength: {
                                         value: 5,
                                         message:
-                                            'Username must be at least 3 characters long',
+                                            'Username must be at least 5 characters long',
                                     },
                                     maxLength: {
                                         value: 20,
