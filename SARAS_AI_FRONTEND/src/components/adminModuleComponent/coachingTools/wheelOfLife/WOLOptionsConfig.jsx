@@ -207,14 +207,21 @@ const WOLOptionsConfig = () => {
     const handleImageChange = (e, index) => {
         const file = e.target.files[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onload = () => {
+            if (file.type !== 'image/jpeg' && 
+                file.type !== 'image/png' && 
+                file.type !== 'image/jpg') {
+                toast.error('Please upload a valid image file.');
+                return;
+            }else{
+                const reader = new FileReader();
+                reader.onload = () => {
                 const updatedDetails = formValues.details.map((detail, i) =>
                     i === index ? { ...detail, icon: reader.result } : detail
                 );
                 setFormValues({ ...formValues, details: updatedDetails });
-            };
-            reader.readAsDataURL(file);
+                };
+                reader.readAsDataURL(file);
+            }    
         }
     };
 
