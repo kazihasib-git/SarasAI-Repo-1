@@ -241,6 +241,13 @@ const EditSession = ({ role, componentName }) => {
             return false;
         }
 
+        const today = moment().startOf('day');
+
+        if (moment(inputDate).isBefore(today)) {
+            // toast.error('The date must be today or a future date.');
+            return false;
+        }
+
         // Check if 'fromTime' is provided
         if (!formData.fromTime) {
             toast.error('Please add from time');

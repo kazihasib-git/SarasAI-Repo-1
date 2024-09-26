@@ -33,6 +33,7 @@ import CustomButton from '../../../CustomFields/CustomButton';
 import { useGetHostsQuery } from '../../../../redux/services/hosts/hostsApi';
 import { useGetPlatformsQuery } from '../../../../redux/services/platforms/platformsApi';
 import { useGetTimezonesQuery } from '../../../../redux/services/timezones/timezonesApi';
+import moment from 'moment';
 
 const headers = ['S. No.', 'Slots Available', 'Select'];
 
@@ -200,6 +201,12 @@ const RescheduleCreatedSession = ({ componentName, timezone }) => {
 
         if (!selectDate || isNaN(inputDate.getTime())) {
             toast.error('Please Select The Date');
+            return false;
+        }
+        const today = moment().startOf('day');
+
+        if (moment(inputDate).isBefore(today)) {
+            // toast.error('The date must be today or a future date.');
             return false;
         }
         if (!selectedSlots[0]) {

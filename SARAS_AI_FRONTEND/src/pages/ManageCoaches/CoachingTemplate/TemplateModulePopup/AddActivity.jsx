@@ -12,6 +12,7 @@ import {
     getCoachTemplateModuleId,
 } from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
 import CustomFutureDateField from '../../../../components/CustomFields/CustomFutureDateField';
+import moment from 'moment';
 
 // Custom button component for consistent styling
 const CustomButton = ({
@@ -117,7 +118,8 @@ const AddActivity = () => {
                         required: 'Due Date is required',
                         validate: value => {
                             const inputDate = new Date(value);
-                            return !isNaN(inputDate.getTime()) || 'please enter valid date'; // Check if the date is valid
+                            const today = moment().startOf('day');
+                            return (!isNaN(inputDate.getTime()) && !moment(inputDate).isBefore(today)) || 'please enter valid date';
                         },
                     }}
                     render={({ field }) => (

@@ -22,6 +22,7 @@ const CustomFutureDateField = ({
         const formattedDate = date ? moment(date).format('YYYY-MM-DD') : '';
 
         // Check if the entered date is in the past
+        onChange(formattedDate);
         if (formattedDate && moment(formattedDate).isBefore(today)) {
             setLocalError('The date must be today or a future date.'); // Set error message
             return;

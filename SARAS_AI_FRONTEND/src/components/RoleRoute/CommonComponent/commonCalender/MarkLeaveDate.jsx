@@ -10,6 +10,7 @@ import {
 import ReusableDialog from '../../../CustomFields/ReusableDialog';
 import CustomButton from '../../../CustomFields/CustomButton';
 import CustomFutureDateField from '../../../CustomFields/CustomFutureDateField';
+import moment from 'moment';
 
 const markLeaveConfig = {
     TAMENU: {
@@ -39,7 +40,9 @@ const MarkLeaveDate = ({ componentName, timezone }) => {
         const newErrors = {};
 
         let inputDate = new Date(formData.fromDate);
-        let inputToDate = new Date(formData.toDate); 
+        let inputToDate = new Date(formData.toDate);
+        
+        const today = moment().startOf('day');
 
         if (!formData.fromDate || isNaN(inputDate.getTime())) newErrors.fromDate = 'From Date is required';
         if (!formData.toDate || isNaN(inputToDate.getTime())) newErrors.toDate = 'To Date is required';
@@ -49,6 +52,12 @@ const MarkLeaveDate = ({ componentName, timezone }) => {
             formData.fromDate > formData.toDate
         ) {
             newErrors.toDate = 'From Date should be earlier than To Date';
+        }
+        if (moment(inputDate).isBefore(today)) {
+            newErrors.fromDate = 'The date must be today or a future date.';
+        }
+        if(moment(inputToDate).isBefore(today)){
+            newErrors.toDate = 'The date must be today or a future date.';
         }
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;

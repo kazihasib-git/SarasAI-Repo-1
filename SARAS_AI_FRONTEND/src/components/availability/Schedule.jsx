@@ -1027,7 +1027,7 @@ const Schedule = ({ componentName, timezoneID }) => {
                                                                 display="flex"
                                                                 justifyContent="center"
                                                             >
-                                                                <CustomDateField
+                                                                <CustomFutureDateField
                                                                     label="To Date"
                                                                     value={
                                                                         toDate

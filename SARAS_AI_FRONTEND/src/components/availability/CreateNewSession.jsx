@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import moment from 'moment';
 import CustomTextField from '../CustomFields/CustomTextField';
 import CustomTimeField from '../CustomFields/CustomTimeField';
 import CustomDateField from '../CustomFields/CustomDateField';
@@ -194,16 +195,25 @@ const CreateNewSession = ({ id, name, componentName, timezone }) => {
 
     const handleDateSubmit = () => {
         if (fromDate) {
-            dispatch(
-                getAvailableSlotsAction({
-                    admin_user_id: adminUserID,
-                    date: fromDate,
-                    timezone_name: timezoneName,
-                })
-            ).then(() => {
-                setSelectedSlot(null);
-                setDateSelected(true);
-            });
+            const today = moment().startOf('day');
+            let inputDate = new Date(fromDate);
+
+            if (moment(inputDate).isBefore(today)) {
+                // toast.error('The date must be today or a future date.');
+                setDateSelected(false);
+                return;
+            }else{
+                dispatch(
+                    getAvailableSlotsAction({
+                        admin_user_id: adminUserID,
+                        date: fromDate,
+                        timezone_name: timezoneName,
+                    })
+                ).then(() => {
+                    setSelectedSlot(null);
+                    setDateSelected(true);
+                });
+            }
         } else {
             toast.error('Please Select From Date');
             return;
@@ -353,6 +363,10 @@ const CreateNewSession = ({ id, name, componentName, timezone }) => {
         if (repeat === 'recurring') {
             if (!toDate || isNaN(inputToDate.getTime())) {
                 toast.error('Please select To Date');
+                return false;
+            }
+            if (moment(inputToDate).isBefore(inputDate)) {
+                toast.error('To Date should be greater than From Date');
                 return false;
             }
             if (!toTime) {
@@ -1021,15 +1035,13 @@ const CreateNewSession = ({ id, name, componentName, timezone }) => {
                                                                 display="flex"
                                                                 justifyContent="center"
                                                             >
-                                                                <CustomDateField
+                                                                <CustomFutureDateField
                                                                     label="To Date"
-                                                                    value={
-                                                                        toDate
-                                                                    }
-                                                                    onChange={
-                                                                        setToDate
-                                                                    }
-                                                                    name="end_date"
+                                                                     name="end_date"
+                                                                    value={toDate}
+                                
+                                                                    onChange={setToDate}
+        
                                                                     register={
                                                                         register
                                                                     }
@@ -1040,6 +1052,7 @@ const CreateNewSession = ({ id, name, componentName, timezone }) => {
                                                                     sx={{
                                                                         width: '100%',
                                                                     }}
+                                                                    errors={errors}
                                                                 />
                                                             </Grid>
                                                         </>
