@@ -28,6 +28,7 @@ import { toast } from 'react-toastify';
 import CustomFutureDateField from '../../../CustomFields/CustomFutureDateField';
 import { GLOBAL_CONSTANTS } from '../../../../constants/globalConstants';
 import { useGetTimezonesQuery } from '../../../../redux/services/timezones/timezonesApi';
+import moment from 'moment';
 
 const slotConfig = {
     TAMENU: {
@@ -79,12 +80,21 @@ const CreateSlot = ({ componentName, timezone }) => {
         let validationErrors = {};
 
         let inputDate = new Date(formData.fromDate);
+        const today = moment().startOf('day');
 
         if (!formData.fromDate || isNaN(inputDate.getTime())) {
             validationErrors.fromDate = '';
             toast.error('Please select From Date');
             return;
         }
+
+        if (moment(inputDate).isBefore(today)) {
+            // validationErrors.fromDate = 'The date must be today or a future date.';
+            // toast.error('The date must be today or a future date.');
+            return;
+        }
+
+
         if (!formData.fromTime) {
             validationErrors.fromTime = 'Please select From Time';
             toast.error('Please select From Time');

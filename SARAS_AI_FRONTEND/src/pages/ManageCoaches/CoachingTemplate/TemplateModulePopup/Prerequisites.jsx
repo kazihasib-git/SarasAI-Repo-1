@@ -25,6 +25,7 @@ import CustomModuleFormControl from '../../../../components/CustomFields/CustomM
 import CustomActivityFormControl from '../../../../components/CustomFields/CustomActivityFormControl';
 import { toast } from 'react-toastify';
 import CustomFutureDateField from '../../../../components/CustomFields/CustomFutureDateField';
+import moment from 'moment';
 
 const CustomButton = ({
     onClick,
@@ -141,6 +142,7 @@ const PrerequisitesPopup = ({
 
     const validate = data => {
         let inputDate = new Date(data.lockUntil);
+        const today = moment().startOf('day');
         if ((!data.lockUntil || isNaN(inputDate.getTime())) && !fromTime && !activityDependence) {
             toast.error(
                 'Please select either Lock Until and Time, or Activity Dependence.'
@@ -161,6 +163,11 @@ const PrerequisitesPopup = ({
                 );
                 return false;
             }
+        }
+
+        if (data.lockUntil && moment(data.lockUntil).isBefore(today)) {
+            toast.error('Lock Until Date must be today or a future date.');
+            return false;
         }
 
         if (data.lockUntil && !fromTime) {
