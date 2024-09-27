@@ -306,7 +306,7 @@ const TaMenuProfile = () => {
                                         },
                                     }}
                                     errors={errors}
-                                    disabled={!isEditing}
+                                    disabled={true}
                                 />
                             </Grid>
 

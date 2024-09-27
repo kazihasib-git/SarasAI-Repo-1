@@ -41,7 +41,7 @@ body {
     max-height: 400px;
     overflow-y: auto;
     overflow-x: hidden;
-    scrollbar-width: none;
+    scrollbar-width: thin;
 }
 
 .dropdown-menu .dropdown-header,

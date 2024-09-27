@@ -300,7 +300,7 @@ const CoachMenuProfile = () => {
                                         },
                                     }}
                                     errors={errors}
-                                    disabled={!isEditing}
+                                    disabled={true}
                                 />
                             </Grid>
 

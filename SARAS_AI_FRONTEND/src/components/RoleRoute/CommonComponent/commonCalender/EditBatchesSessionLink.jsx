@@ -91,23 +91,21 @@ const EditBatchesSessionLink = ({ componentName, timezone }) => {
                 Branch: batch.batch.branch.name,
                 id: batch.batch.id,
             }));
-
+    
             const filtered = transformedData.filter(batch => {
                 const matchesBranch = selectedBranch
-                    ? (batch.Branch = selectedBranch)
+                    ? batch.Branch === selectedBranch
                     : true;
                 const matchesQuery = searchQuery
-                    ? batch['Batch Name']
-                          .toLowerCase()
-                          .includes(searchQuery.toLowerCase())
+                    ? batch['Batch Name'].toLowerCase().includes(searchQuery.toLowerCase())
                     : true;
                 return matchesBranch && matchesQuery;
             });
             setFilteredBatches(filtered);
         } else {
-            setFilteredBatches();
+            setFilteredBatches([]);
         }
-    }, [batchesData, selectedBatch, searchQuery]);
+    }, [batchesData, selectedBranch, searchQuery]);    
 
     const batchOptions =
         batchesData && batchesData.length > 0
@@ -129,18 +127,29 @@ const EditBatchesSessionLink = ({ componentName, timezone }) => {
     const handleBranchChange = e => {
         const selectedBranchValue = e.target.value;
         setSelectedBranch(selectedBranchValue);
-
+ 
         if (!selectedBranchValue) {
-            setFilteredBatches(
-                batchesData.map((batch, index) => ({
-                    'S. No.': index + 1,
+            // If no branch is selected, show all batches
+            setFilteredBatches(batchesData.map((batch, index) => ({
+                'S. No': index + 1,
+                'Batch Name': batch.batch.name,
+                Branch: batch.batch.branch.name,
+                id: batch.batch.id,
+            })));
+        } else {
+            // Filter batches by selected branch
+            const filtered = batchesData
+                .filter(batch => batch.batch.branch.name === selectedBranchValue)
+                .map((batch, index) => ({
+                    'S. No': index + 1,
                     'Batch Name': batch.batch.name,
                     Branch: batch.batch.branch.name,
-                    id: batch.id,
-                }))
-            );
+                    id: batch.batch.id,
+                }));
+            setFilteredBatches(filtered);
         }
     };
+    
 
     const validate = () => {
         if (selectedBatch.length === 0) {
