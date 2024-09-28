@@ -426,6 +426,7 @@ const EditSession = ({ role, componentName }) => {
                                                 }
                                                 options={hosts.users}
                                                 errors={!!error.host_email_id}
+                                                disabled={true}
                                             />
                                         </Grid>
                                         <Grid
@@ -448,6 +449,7 @@ const EditSession = ({ role, componentName }) => {
                                                     GLOBAL_CONSTANTS.MEETING_TYPES
                                                 }
                                                 errors={!!error.meeting_name}
+                                                disabled={true}
                                             />
                                         </Grid>
                                     </>

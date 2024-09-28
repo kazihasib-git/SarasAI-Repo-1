@@ -13,6 +13,7 @@ import {
 } from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
 import CustomFutureDateField from '../../../../components/CustomFields/CustomFutureDateField';
 import moment from 'moment';
+import { toast } from 'react-toastify';
 
 // Custom button component for consistent styling
 const CustomButton = ({
@@ -197,6 +198,35 @@ const AddActivity = () => {
         </Grid>
     );
 
+    const validate = formData => {
+        if (formData.activity_name === '') {
+            // toast.error('Activity Name is required');
+            return false;
+        }
+        let inputDate = new Date(formData.due_date);
+        if (!formData.due_date || isNaN(inputDate.getTime())) {
+            // toast.error('Due Date is required');
+            return false;
+        }
+
+        const today = moment().startOf('day');
+
+        if (moment(inputDate).isBefore(today)) {
+            // toast.error('The date must be today or a future date.');
+            return;
+        }
+
+        if (formData.points === '') {
+            // toast.error('Points are required');
+            return false;
+        }
+        if (formData.after_due_date === '') {
+            // toast.error('After Due Date is required');
+            return false;
+        }
+        return true;
+    };
+
     const onSubmit = data => {
         const formData = {
             module_id: moduleID?.id,
@@ -205,6 +235,10 @@ const AddActivity = () => {
             points: data.points,
             after_due_date: data.afterDueDate,
         };
+
+        if (!validate(formData)) {
+            return;
+        }
 
         dispatch(createCoachTemplateActivity(formData))
             .unwrap()
