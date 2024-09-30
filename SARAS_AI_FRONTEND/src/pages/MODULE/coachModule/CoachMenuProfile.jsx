@@ -461,9 +461,9 @@ const CoachMenuProfile = () => {
                                                 'PIN Code must be at least 3 digits long',
                                         },
                                         maxLength: {
-                                            value: 6,
+                                            value: 10,
                                             message:
-                                                'PIN Code cannot exceed 6 digits',
+                                                'PIN Code cannot exceed 10 characters',
                                         },
                                     }}
                                     errors={errors}
