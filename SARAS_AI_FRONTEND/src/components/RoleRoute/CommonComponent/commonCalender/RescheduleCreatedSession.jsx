@@ -46,6 +46,7 @@ const rescheduleConfig = {
         fetchAvailableSlotsApi: getTaMenuSlotsByDate,
         availableSlotState: 'taSlotsByDate',
         getSessionsBySlotsApi: getTaMenuSessionForLeave,
+        loadingState: 'loading',
     },
     COACHMENU: {
         sliceName: 'coachMenu',
@@ -55,6 +56,7 @@ const rescheduleConfig = {
         fetchAvailableSlotsApi: getCoachMenuSlotsByData,
         availableSlotState: 'coachSlotsByDate',
         getSessionsBySlotsApi: getCoachMenuSessionForLeave,
+        loadingState: 'loading',
     },
 };
 
@@ -105,11 +107,14 @@ const RescheduleCreatedSession = ({ componentName, timezone }) => {
         fetchAvailableSlotsApi,
         availableSlotState,
         getSessionsBySlotsApi,
+        loadingState,
     } = rescheduleConfig[componentName];
 
     const selectorState = useSelector(state => state[sliceName]);
 
-    const { [availableSlotState]: availableSlotsData } = selectorState;
+    const { [availableSlotState]: availableSlotsData,
+            [loadingState]: isApiLoading,
+     } = selectorState;
 
     useEffect(() => {
         if (selectDate) {
@@ -410,6 +415,7 @@ const RescheduleCreatedSession = ({ componentName, timezone }) => {
                 color: '#FFFFFF',
                 textTransform: 'none',
             }}
+            disabled={isApiLoading}
         >
             Submit
         </CustomButton>

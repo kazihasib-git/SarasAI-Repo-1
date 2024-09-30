@@ -16,10 +16,12 @@ const markLeaveConfig = {
     TAMENU: {
         sliceName: 'taMenu',
         getSlotsByDateApi: getTaMenuSlotsForLeave,
+        loadingState: 'loading',
     },
     COACHMENU: {
         sliceName: 'coachMenu',
         getSlotsByDateApi: getCoachMenuSlotsForLeave,
+        loadingState: 'loading',
     },
 };
 
@@ -31,9 +33,12 @@ const MarkLeaveDate = ({ componentName, timezone }) => {
     });
     const [errors, setErrors] = useState({}); // Error state
 
-    const { sliceName, getSlotsByDateApi } = markLeaveConfig[componentName];
+    const { sliceName, getSlotsByDateApi, loadingState } = markLeaveConfig[componentName];
 
     const stateSelector = useSelector(state => state[sliceName]);
+
+    const { [loadingState]: isApiLoading } = stateSelector;
+
     const { markLeave } = useSelector(state => state.commonCalender);
 
     const validate = () => {
@@ -146,6 +151,7 @@ const MarkLeaveDate = ({ componentName, timezone }) => {
             color="#FFFFFF"
             textTransform="none"
             fontFamily="Bold"
+            disabled={isApiLoading}
         >
             Submit
         </CustomButton>

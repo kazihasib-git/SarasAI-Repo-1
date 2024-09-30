@@ -25,12 +25,14 @@ const leaveConfig = {
         reasonForLeaveApi: reasonForTaMenuLeave,
         getSlotsApi: getTaMenuSlots,
         getSessionApi: getTaMenuSessions,
+        loadingState: 'loading',
     },
     COACHMENU: {
         sliceName: 'coachMenu',
         reasonForLeaveApi: reasonForCoachMenuLeave,
         getSlotsApi: getCoachMenuSlots,
         getSessionApi: getCoachMenuSessions,
+        loadingState: 'loading',
     },
 };
 
@@ -41,11 +43,13 @@ const LeaveReason = ({ componentName, timezone }) => {
         state => state.commonCalender
     );
 
-    const { sliceName, reasonForLeaveApi, getSlotsApi, getSessionApi } =
+    const { sliceName, reasonForLeaveApi, getSlotsApi, getSessionApi ,loadingState } =
         leaveConfig[componentName];
 
     const selectState = useSelector(state => state[sliceName]);
     const { totalSessionsForMarkLeave } = useSelector(state => state.commonCalender);
+
+    const {[loadingState]: isApiLoading } = selectState;
 
     const handleSubmit = () => {
         if (!reasonOfLeave) {
@@ -99,6 +103,7 @@ const LeaveReason = ({ componentName, timezone }) => {
             borderColor="#F56D3B"
             color="#FFFFFF"
             style={{ textTransform: 'none' }}
+            disabled={isApiLoading}
         >
             Submit
         </CustomButton>
