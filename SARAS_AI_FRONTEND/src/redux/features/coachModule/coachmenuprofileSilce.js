@@ -290,12 +290,20 @@ export const getCoachCallRequests = createAsyncThunk(
 // approve call request
 export const approveCallRequest = createAsyncThunk(
     'coachMenu/approveCallRequest',
-    async ({ id, hostEmail }) => {
-        const response = await axiosInstance.post(
-            `${baseUrl}/coach/call-request/approve-call-request/${id}`,
-            hostEmail
-        );
-        return response.data;
+    async ({ id, hostEmail }, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.post(
+                `${baseUrl}/coach/call-request/approve-call-request/${id}`,
+                hostEmail
+            );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue('An Error Occurred While Approving Call');
+            }
+        }
     }
 );
 
@@ -971,6 +979,7 @@ export const coachMenuSlice = createSlice({
         builder.addCase(approveCallRequest.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            toast.error(action.payload || 'Failed to approve call request');
         });
 
         //deny Call Request

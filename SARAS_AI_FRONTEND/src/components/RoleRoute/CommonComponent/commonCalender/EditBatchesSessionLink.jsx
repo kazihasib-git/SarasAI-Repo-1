@@ -66,6 +66,7 @@ const EditBatchesSessionLink = ({ componentName, timezone }) => {
         assignedBatchesState,
         updateBatchesApi,
         getSessionApi,
+        loadingState,
     } = editBatchesConfig[componentName];
 
     const stateSelector = useSelector(state => state[sliceName]);
