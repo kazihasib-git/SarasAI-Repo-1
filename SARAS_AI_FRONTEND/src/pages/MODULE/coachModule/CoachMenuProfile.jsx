@@ -445,25 +445,22 @@ const CoachMenuProfile = () => {
                                 <CustomTextField
                                     label="PIN Code"
                                     name="pincode"
-                                    type="number"
+                                    type="text"
                                     placeholder="Enter PIN Code"
                                     register={register}
                                     validation={{
                                         required: 'PIN Code is required',
                                         pattern: {
-                                            value: /^[a-zA-Z0-9-]*$/,
-                                            message:
-                                                'PIN Code must be alphanumeric',
+                                            value: /^[a-zA-Z0-9\s\-]*$/,  // allows alphanumeric, spaces, and hyphens
+                                            message: 'PIN Code must be alphanumeric and can contain spaces or hyphens',
                                         },
                                         minLength: {
                                             value: 3,
-                                            message:
-                                                'PIN Code must be at least 3 digits long',
+                                            message: 'PIN Code must be at least 3 characters long',
                                         },
                                         maxLength: {
                                             value: 10,
-                                            message:
-                                                'PIN Code cannot exceed 10 characters',
+                                            message: 'PIN Code cannot exceed 10 characters',
                                         },
                                     }}
                                     errors={errors}

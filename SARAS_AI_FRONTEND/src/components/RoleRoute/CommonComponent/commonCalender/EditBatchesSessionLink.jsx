@@ -36,6 +36,7 @@ const editBatchesConfig = {
         assignedBatchesState: 'taScheduleBatches',
         updateBatchesApi: updateBatchesInTaSession,
         getSessionApi: getTaMenuSessions,
+        loadingState: 'loading',
     },
     COACHMENU: {
         sliceName: 'coachMenu',
@@ -45,6 +46,7 @@ const editBatchesConfig = {
         assignedBatchesState: 'coachScheduleBatches',
         updateBatchesApi: updateBatchesInCoachSession,
         getSessionApi: getCoachMenuSessions,
+        loadingState: 'loading',
     },
 };
 
@@ -71,6 +73,7 @@ const EditBatchesSessionLink = ({ componentName, timezone }) => {
     const {
         [batchesDataState]: batchesData,
         [assignedBatchesState]: sessionBatches,
+        [loadingState]: isLoading,
     } = stateSelector;
 
     const { meetingId, sessionEventData, openEditBatchesPopup } = useSelector(
@@ -237,6 +240,7 @@ const EditBatchesSessionLink = ({ componentName, timezone }) => {
                 color: '#FFFFFF',
                 textTransform: 'none',
             }}
+            disabled={isLoading}
         >
             Submit
         </CustomButton>

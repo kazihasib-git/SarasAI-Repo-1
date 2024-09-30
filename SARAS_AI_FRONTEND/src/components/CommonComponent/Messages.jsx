@@ -106,6 +106,7 @@ const Messages = ({ role }) => {
     const [isPaused, setIsPaused] = useState(false);
     //const [recordingText, setRecordingText] = useState('');
     const [recordingName, setRecordingName] = useState('');
+    const [isApiLoading, setIsApiLoading] = useState(false);
 
     const {
         coachProfileData,
@@ -113,6 +114,7 @@ const Messages = ({ role }) => {
         taCoachAllChatData,
         chatRecordsbychatId,
         createdChatId,
+        loading,
     } = useSelector(state => state.coachMenu);
 
     const { taProfileData, assignedTaStudents } = useSelector(
@@ -498,11 +500,15 @@ const Messages = ({ role }) => {
 
     const handleKeyPress = event => {
         if (event.key === 'Enter') {
-            event.preventDefault(); // Prevents the default behavior
-            handleSendMessageAndFile(); // Calls the function to send the message and file
+            event.preventDefault();
+
+            if (loading || (!newMessage.trim() && !selectedFile && !recordedUrl)) {
+                return;
+            }
+            
+            handleSendMessageAndFile();
         }
     };
-
     return (
         <div className="container">
             <Box mt={0}>
@@ -949,12 +955,14 @@ const Messages = ({ role }) => {
                                         <IconButton
                                             className="input-icon"
                                             onClick={startRecording}
+                                            disabled={loading}
                                         >
                                             <MicNoneIcon />
                                         </IconButton>
                                         <IconButton
                                             className="input-icon"
                                             onClick={handleSendMessageAndFile}
+                                            disabled={loading || (!newMessage.trim() && !selectedFile && !recordedUrl)}
                                         >
                                             <img
                                                 src={SendButtonIcon}
