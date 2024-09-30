@@ -56,12 +56,14 @@ const scheduleCallConfig = {
         getScheduledCallsApi: getTaScheduledCalls,
         getScheduledCallsState: 'taScheduledCalls',
         cancelSessionApi: cancelTaScheduledSessionForLeave,
+        loadingState: 'loading',
     },
     Coach: {
         sliceName: 'coachMenu',
         getScheduledCallsApi: getCoachScheduledCalls,
         getScheduledCallsState: 'coachScheduledCalls',
         cancelSessionApi: cancelScheduledSessionForLeave,
+        loadingState: 'loading',
     },
 };
 
@@ -86,10 +88,12 @@ const ScheduledCall = ({ role }) => {
         getScheduledCallsApi,
         getScheduledCallsState,
         cancelSessionApi,
+        loadingState,
     } = scheduleCallConfig[role];
 
     const stateSelector = useSelector(state => state[sliceName]);
     const { [getScheduledCallsState]: scheduledCallsData } = stateSelector;
+    const { [loadingState]: isApiLoading } = stateSelector;
 
     const {
         scheduleNewSessionPopup,
@@ -297,6 +301,7 @@ const ScheduledCall = ({ role }) => {
                     borderColor="#F56D3B"
                     style={{ textTransform: 'none' }}
                     onClick={handleCreateNewSession}
+                    disabled={isApiLoading}
                 >
                     <AddCircleOutlineIcon />
                     Create New Session
@@ -441,6 +446,8 @@ const ScheduledCall = ({ role }) => {
                                                 onClick={() =>
                                                     handleClickJoinSession(call)
                                                 }
+                                                disabled={isApiLoading}
+                                                
                                             >
                                                 Join Session
                                             </CustomButton>
@@ -460,6 +467,7 @@ const ScheduledCall = ({ role }) => {
                                                             call
                                                         )
                                                     }
+                                                    disabled={isApiLoading}
                                                 >
                                                     Cancel Session
                                                 </CustomButton>

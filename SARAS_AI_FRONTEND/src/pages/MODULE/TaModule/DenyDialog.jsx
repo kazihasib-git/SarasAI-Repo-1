@@ -10,6 +10,7 @@ import ReusableDialog from '../../../components/CustomFields/ReusableDialog';
 
 import CustomTextField from '../../../components/CustomFields/CustomTextField';
 import { blue } from '@mui/material/colors';
+import { useSelector } from 'react-redux';
 
 const CustomButton = ({
     onClick,
@@ -17,6 +18,7 @@ const CustomButton = ({
     color = '#FFFFFF',
     backgroundColor = '#4E18A5',
     borderColor = '#FFFFFF',
+    disabled = false,
     sx,
     ...props
 }) => {
@@ -39,6 +41,7 @@ const CustomButton = ({
                 },
                 ...sx,
             }}
+            disabled={disabled}
             {...props}
         >
             {children}
@@ -48,6 +51,8 @@ const CustomButton = ({
 
 const DenyDialog = ({ open, handleClose, handleDenySubmit, denyRequestId }) => {
     const [message, setMessage] = useState('');
+
+    const { loading } = useSelector(state => state.taMenu);
 
     const handleDenyDialogClose = () => {
         setMessage('');
@@ -103,6 +108,7 @@ const DenyDialog = ({ open, handleClose, handleDenySubmit, denyRequestId }) => {
                 borderColor="#F56D3B"
                 color="#FFFFFF"
                 style={{ textTransform: 'none' }}
+                disabled = {loading}
             >
                 Submit
             </CustomButton>

@@ -7,6 +7,7 @@ const CustomButton = ({
     color = '#FFFFFF',
     backgroundColor = '#4E18A5',
     borderColor = '#FFFFFF',
+    disabled = false,
     sx,
     ...props
 }) => {
@@ -31,6 +32,7 @@ const CustomButton = ({
                 },
                 ...sx,
             }}
+            disabled={disabled}
             {...props}
         >
             {children}

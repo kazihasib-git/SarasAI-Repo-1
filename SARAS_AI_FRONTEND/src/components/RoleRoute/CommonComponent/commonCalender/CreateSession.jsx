@@ -53,6 +53,7 @@ const sessionConfig = {
         getStudentsState: 'assignedTaStudents',
         getBatchesApi: getTaMenuAssignedBatches,
         getBatchesState: 'assignedTaBatches',
+        loadingState: 'loading',
     },
     COACHMENU: {
         sliceName: 'coachMenu',
@@ -63,6 +64,7 @@ const sessionConfig = {
         getStudentsState: 'assignedCoachStudents',
         getBatchesApi: getCoachMenuAssignedBatches,
         getBatchesState: 'assignedCoachBatches',
+        loadingState: 'loading',
     },
 };
 
@@ -78,6 +80,7 @@ const CreateSession = ({ role, componentName }) => {
         getStudentsState,
         getBatchesApi,
         getBatchesState,
+        loadingState,
     } = sessionConfig[componentName];
 
     const { timezoneId, name } = useSelector(state => state.auth);
@@ -114,6 +117,7 @@ const CreateSession = ({ role, componentName }) => {
     const {
         [getStudentsState]: assignedStudents,
         [getBatchesState]: assignedBatches,
+        [loadingState]: isApiLoading,
     } = stateSelector;
 
     const { selectedStudents, selectedBatches, openBatches, openStudents } =
@@ -551,6 +555,7 @@ const CreateSession = ({ role, componentName }) => {
                                                 backgroundColor: '#FEEBE3',
                                             },
                                         }}
+                                        disabled={isApiLoading}
                                     >
                                         Select Students
                                     </Button>
@@ -574,6 +579,7 @@ const CreateSession = ({ role, componentName }) => {
                                                 border: '2px solid #F56D3B',
                                             },
                                         }}
+                                        disabled={isApiLoading}
                                     >
                                         Select Batches
                                     </Button>
@@ -597,6 +603,7 @@ const CreateSession = ({ role, componentName }) => {
                 fontFamily: 'Bold',
                 textTransform: 'none',
             }}
+            disabled={isApiLoading}
         >
             Submit
         </CustomButton>

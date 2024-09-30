@@ -50,7 +50,7 @@ const CallRequest = () => {
 
     const [open, setOpen] = useState(false);
     const { timezoneId } = useSelector(state => state.auth);
-    const { taCallRequests } = useSelector(state => state.taMenu);
+    const { taCallRequests,loading} = useSelector(state => state.taMenu);
     const [callRequests, setCallRequests] = useState([]);
     const [denyRequestId, setDenyRequestId] = useState(null);
     const [hostEmail, setHostEmail] = useState();
@@ -299,6 +299,7 @@ const CallRequest = () => {
                                                             '#F56D3B',
                                                     },
                                                 }}
+                                                disabled={loading}
                                             >
                                                 Approve
                                             </Button>
@@ -321,6 +322,7 @@ const CallRequest = () => {
                                                         color: 'white',
                                                     },
                                                 }}
+                                                disabled={loading}
                                             >
                                                 Deny
                                             </Button>

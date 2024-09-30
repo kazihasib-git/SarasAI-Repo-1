@@ -1127,6 +1127,19 @@ export const coachMenuSlice = createSlice({
             state.error = action.error.message;
         });
 
+        // Sent Message
+
+        builder.addCase(sentMessage.pending, state => {
+            state.loading = true;
+        });
+        builder.addCase(sentMessage.fulfilled, (state, action) => {
+            state.loading = false;
+        });
+        builder.addCase(sentMessage.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+        });
+
         // get Coach my students
         builder.addCase(getCoachMyStudents.pending, state => {
             state.loading = true;

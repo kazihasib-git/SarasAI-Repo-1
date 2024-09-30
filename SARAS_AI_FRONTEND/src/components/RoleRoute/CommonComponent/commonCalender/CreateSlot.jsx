@@ -34,15 +34,19 @@ const slotConfig = {
     TAMENU: {
         createSlotApi: createTaMenuSlots,
         getSlotsApi: getTaMenuSlots,
+        isApiLoading: state => state.taMenu.loading,
     },
     COACHMENU: {
         createSlotApi: createCoachMenuSlot,
         getSlotsApi: getCoachMenuSlots,
+        isApiLoading: state => state.coachMenu.loading,
     },
 };
 
 const CreateSlot = ({ componentName, timezone }) => {
     const { createSlotApi, getSlotsApi } = slotConfig[componentName];
+
+    const isApiLoading = useSelector(slotConfig[componentName].isApiLoading);
 
     const dispatch = useDispatch();
     const [errors, setErrors] = useState({});
@@ -397,6 +401,7 @@ const CreateSlot = ({ componentName, timezone }) => {
                     textTransform: 'none',
                     fontFamily: 'Bold',
                 }}
+                disabled={isApiLoading}
             >
                 Submit
             </CustomButton>

@@ -153,6 +153,7 @@ const AddActivity = () => {
                         <CustomTextField
                             label="Points"
                             variant="outlined"
+                            type="number"
                             value={field.value}
                             onChange={field.onChange}
                             placeholder="Enter Points"
@@ -216,10 +217,16 @@ const AddActivity = () => {
             return;
         }
 
-        if (formData.points === '') {
-            // toast.error('Points are required');
+        // if (formData.points === '') {
+        //     // toast.error('Points are required');
+        //     return false;
+        // }
+
+        if (formData.points === undefined || formData.points < 0) {
+            toast.error('Points must be greater than 0');
             return false;
         }
+
         if (formData.after_due_date === '') {
             // toast.error('After Due Date is required');
             return false;
