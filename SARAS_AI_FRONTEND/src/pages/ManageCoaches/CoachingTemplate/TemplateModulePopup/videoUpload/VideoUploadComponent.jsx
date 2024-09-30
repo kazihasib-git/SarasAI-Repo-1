@@ -173,14 +173,14 @@ const VideoUploadComponent = ({ onUploadComplete }) => {
             {file && (
                 <div>
                     <Typography>{file.name}</Typography>
-                    <Button
+                    {/* <Button
                         onClick={uploadVideoToVimeo}
                         variant="contained"
                         color="primary"
                         sx={{ textTransform: 'none' }} // Add this line
                     >
                         Upload
-                    </Button>
+                    </Button> */}
                     {uploadProgress > 0 && uploadProgress < 100 && (
                         <LinearProgress
                             variant="determinate"

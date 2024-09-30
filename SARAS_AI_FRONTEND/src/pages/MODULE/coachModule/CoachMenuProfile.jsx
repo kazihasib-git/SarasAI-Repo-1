@@ -46,7 +46,7 @@ const CoachMenuProfile = () => {
         },
     });
 
-    const { coachProfileData } = useSelector(state => state.coachMenu);
+    const { coachProfileData,loading } = useSelector(state => state.coachMenu);
     const {
         data: timezones,
         error: timezoneError,
@@ -574,6 +574,7 @@ const CoachMenuProfile = () => {
                                     text: '#FFFFFF',
                                     textTransform: 'none',
                                 }}
+                                disabled={loading}
                             >
                                 Submit
                             </Button>

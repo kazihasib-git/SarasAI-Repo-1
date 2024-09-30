@@ -52,7 +52,7 @@ const TaMenuProfile = () => {
         },
     });
 
-    const { taProfileData } = useSelector(state => state.taMenu);
+    const { taProfileData ,loading } = useSelector(state => state.taMenu);
     const [isEditing, setIsEditing] = useState(false);
 
     const toggleEdit = () => {
@@ -636,6 +636,7 @@ const TaMenuProfile = () => {
                                     text: '#FFFFFF',
                                     textTransform: 'none',
                                 }}
+                                disabled={loading}
                             >
                                 Submit
                             </Button>

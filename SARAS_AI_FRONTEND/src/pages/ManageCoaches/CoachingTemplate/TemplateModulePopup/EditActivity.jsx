@@ -141,6 +141,7 @@ const AddEditActivity = () => {
                 <CustomTextField
                     label="Points"
                     variant="outlined"
+                    type="number"
                     value={points}
                     onChange={e => setPoints(e.target.value)}
                     placeholder="Enter Points"
@@ -226,11 +227,12 @@ const AddEditActivity = () => {
             // toast.error('The date must be today or a future date.');
             return;
         }
-
-        if (data.points === '') {
-            toast.error('Points are required');
+        
+        if (data.points === undefined || data.points < 0) {
+            toast.error('Points must be greater than 0');
             return false;
         }
+
         if (data.after_due_date === '') {
             toast.error('After Due Date is required');
             return false;
