@@ -228,12 +228,20 @@ export const getTaCallRequests = createAsyncThunk(
 // ta approve call request
 export const approveCallRequest = createAsyncThunk(
     'taMenu/approveCallRequest',
-    async ({ id, hostEmail }) => {
-        const response = await axiosInstance.post(
-            `${baseUrl}/ta/call-request/approve-call-request/${id}`,
-            hostEmail
-        );
-        return response.data;
+    async ({ id, hostEmail }, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.post(
+                `${baseUrl}/ta/call-request/approve-call-request/${id}`,
+                hostEmail
+            );
+            return response.data;
+        } catch (error) {
+            if (error.response && error.response.data) {
+                return rejectWithValue(error.response.data.message);
+            } else {
+                return rejectWithValue('An Error Occurred While Approving Call');
+            }
+        }
     }
 );
 
@@ -786,6 +794,7 @@ export const taMenuSlice = createSlice({
         builder.addCase(approveCallRequest.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+            toast.error(action.payload || 'Failed to approve call request');
         });
 
         //deny Call Request
