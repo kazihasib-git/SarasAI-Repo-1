@@ -115,6 +115,7 @@ const CreateNewSession = ({ id, name, componentName, timezone }) => {
     const [availableSlotsOptions, setAvailableSlotsOptions] = useState([]);
     const [dateSelected, setDateSelected] = useState(false);
     const [meetingname, setMeetingName] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const { data : timezones, error : timezoneError , isLoading : timezonesLoading } = useGetTimezonesQuery();
     const { data : platforms, error : platformError, isLoading : platformLoading } = useGetPlatformsQuery();
@@ -361,6 +362,25 @@ const CreateNewSession = ({ id, name, componentName, timezone }) => {
             return false;
         }
 
+        console.log('formData.platform_id in validation===>', formData.platform_id);
+
+        if (!formData.platform_id || formData.platform_id === null || formData.platform_id === '') {
+            toast.error('Please select Platform');
+            return false;
+        }
+        
+        if (formData.platform_id === 1) {
+            if (!formData.host_email_id) {
+                toast.error('Please provide a valid  Host Name.');
+                return false;
+            }
+
+            if (!formData.meeting_type) {
+                toast.error('Please select Meeting Type.');
+                return false;
+            }
+        }
+
         if (repeat === 'recurring') {
             if (!toDate || isNaN(inputToDate.getTime())) {
                 toast.error('Please select To Date');
@@ -374,11 +394,6 @@ const CreateNewSession = ({ id, name, componentName, timezone }) => {
                 toast.error('Please select a To Time');
                 return false;
             }
-        }
-
-        if (!formData.platform_id) {
-            toast.error('Please select Platform');
-            return false;
         }
 
         // Validate "To Time" is greater than "From Time"
@@ -399,18 +414,6 @@ const CreateNewSession = ({ id, name, componentName, timezone }) => {
         //     return false;
         // }
 
-        if (formData.platform_id === 1) {
-            if (!formData.host_email_id) {
-                toast.error('Please provide a valid  Host Name.');
-                return false;
-            }
-
-            if (!formData.meeting_type) {
-                toast.error('Please select Meeting Type.');
-                return false;
-            }
-        }
-
         // Check if 'timezone_id' is provided
         if (!formData.timezone_id) {
             toast.error('Please select a timezone');
@@ -422,7 +425,13 @@ const CreateNewSession = ({ id, name, componentName, timezone }) => {
 
     const onSubmit = formData => {
         // Perform validation
-        if (!validate(formData)) return;
+        console.log('formData.platform_id in onSubmit===>', formData.platform_id);
+        if (isSubmitting) return; // Prevent multiple submissions
+        setIsSubmitting(true);  // Disable the submit button
+        if (!validate(formData)) {
+            setIsSubmitting(false);  // Re-enable submit button if validation fails
+            return;
+        }
 
         const studentId = selectedStudents.map(student => student);
         const batchId = selectedBatches.map(batch => batch);
@@ -459,7 +468,11 @@ const CreateNewSession = ({ id, name, componentName, timezone }) => {
             })
             .catch(error => {
                 console.error('Error:', error);
+            })
+            .finally(() => {
+                setIsSubmitting(false); // Re-enable submit button after the process finishes
             });
+
         reset();
     };
 
