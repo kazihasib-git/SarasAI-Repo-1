@@ -36,6 +36,7 @@ const editBatchesConfig = {
         assignedBatchesState: 'taScheduleBatches',
         updateBatchesApi: updateBatchesInTaSession,
         getSessionApi: getTaMenuSessions,
+        loadingState: 'loading',
     },
     COACHMENU: {
         sliceName: 'coachMenu',
@@ -45,6 +46,7 @@ const editBatchesConfig = {
         assignedBatchesState: 'coachScheduleBatches',
         updateBatchesApi: updateBatchesInCoachSession,
         getSessionApi: getCoachMenuSessions,
+        loadingState: 'loading',
     },
 };
 
@@ -64,6 +66,7 @@ const EditBatchesSessionLink = ({ componentName, timezone }) => {
         assignedBatchesState,
         updateBatchesApi,
         getSessionApi,
+        loadingState,
     } = editBatchesConfig[componentName];
 
     const stateSelector = useSelector(state => state[sliceName]);
@@ -71,6 +74,7 @@ const EditBatchesSessionLink = ({ componentName, timezone }) => {
     const {
         [batchesDataState]: batchesData,
         [assignedBatchesState]: sessionBatches,
+        [loadingState]: isLoading,
     } = stateSelector;
 
     const { meetingId, sessionEventData, openEditBatchesPopup } = useSelector(
@@ -91,23 +95,21 @@ const EditBatchesSessionLink = ({ componentName, timezone }) => {
                 Branch: batch.batch.branch.name,
                 id: batch.batch.id,
             }));
-
+    
             const filtered = transformedData.filter(batch => {
                 const matchesBranch = selectedBranch
-                    ? (batch.Branch = selectedBranch)
+                    ? batch.Branch === selectedBranch
                     : true;
                 const matchesQuery = searchQuery
-                    ? batch['Batch Name']
-                          .toLowerCase()
-                          .includes(searchQuery.toLowerCase())
+                    ? batch['Batch Name'].toLowerCase().includes(searchQuery.toLowerCase())
                     : true;
                 return matchesBranch && matchesQuery;
             });
             setFilteredBatches(filtered);
         } else {
-            setFilteredBatches();
+            setFilteredBatches([]);
         }
-    }, [batchesData, selectedBatch, searchQuery]);
+    }, [batchesData, selectedBranch, searchQuery]);    
 
     const batchOptions =
         batchesData && batchesData.length > 0
@@ -129,18 +131,29 @@ const EditBatchesSessionLink = ({ componentName, timezone }) => {
     const handleBranchChange = e => {
         const selectedBranchValue = e.target.value;
         setSelectedBranch(selectedBranchValue);
-
+ 
         if (!selectedBranchValue) {
-            setFilteredBatches(
-                batchesData.map((batch, index) => ({
-                    'S. No.': index + 1,
+            // If no branch is selected, show all batches
+            setFilteredBatches(batchesData.map((batch, index) => ({
+                'S. No': index + 1,
+                'Batch Name': batch.batch.name,
+                Branch: batch.batch.branch.name,
+                id: batch.batch.id,
+            })));
+        } else {
+            // Filter batches by selected branch
+            const filtered = batchesData
+                .filter(batch => batch.batch.branch.name === selectedBranchValue)
+                .map((batch, index) => ({
+                    'S. No': index + 1,
                     'Batch Name': batch.batch.name,
                     Branch: batch.batch.branch.name,
-                    id: batch.id,
-                }))
-            );
+                    id: batch.batch.id,
+                }));
+            setFilteredBatches(filtered);
         }
     };
+    
 
     const validate = () => {
         if (selectedBatch.length === 0) {
@@ -228,6 +241,7 @@ const EditBatchesSessionLink = ({ componentName, timezone }) => {
                 color: '#FFFFFF',
                 textTransform: 'none',
             }}
+            disabled={isLoading}
         >
             Submit
         </CustomButton>

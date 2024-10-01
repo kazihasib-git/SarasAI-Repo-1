@@ -180,6 +180,17 @@ const EditBatches = ({ componentname }) => {
                     id: batch.batch.id,
                 }))
             );
+        }else {
+            // Filter batches by selected branch
+            const filtered = assignedBatches
+                .filter(batch => batch.batch.branch.name === selectedBranchValue)
+                .map((batch, index) => ({
+                    'S. No': index + 1,
+                    'Batch Name': batch.batch.name,
+                    Branch: batch.batch.branch.name,
+                    id: batch.batch.id,
+                }));
+            setFilteredBatches(filtered);
         }
     };
 

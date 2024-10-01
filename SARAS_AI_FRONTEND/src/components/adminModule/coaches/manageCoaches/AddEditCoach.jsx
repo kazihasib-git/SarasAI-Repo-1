@@ -377,9 +377,9 @@ function AddEditCoach({ data }) {
                                     validation={{
                                         required: 'Username is required',
                                         minLength: {
-                                            value: 3,
+                                            value: 5,
                                             message:
-                                                'Username must be at least 3 characters long',
+                                                'Username must be at least 5 characters long',
                                         },
                                         maxLength: {
                                             value: 20,
@@ -387,9 +387,9 @@ function AddEditCoach({ data }) {
                                                 'Username cannot exceed 20 characters',
                                         },
                                         pattern: {
-                                            value: /^[A-Za-z0-9_]+$/,
+                                            value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$#&_]{5,}$/,
                                             message:
-                                                'Username can only contain letters, numbers, and underscores',
+                                                'Username Must contain letters, numbers, and may include @$#&_',
                                         },
                                     }}
                                     errors={errors}
@@ -490,25 +490,22 @@ function AddEditCoach({ data }) {
                                 <CustomTextField
                                     label="PIN Code"
                                     name="pincode"
-                                    type="number"
+                                    type="text"
                                     placeholder="Enter PIN Code"
                                     register={register}
                                     validation={{
                                         required: 'PIN Code is required',
                                         pattern: {
-                                            value: /^[a-zA-Z0-9-]*$/,
-                                            message:
-                                                'PIN Code must be alphanumeric',
+                                            value: /^[a-zA-Z0-9\s\-]*$/,  // allows alphanumeric, spaces, and hyphens
+                                            message: 'PIN Code must be alphanumeric and can contain spaces or hyphens',
                                         },
                                         minLength: {
                                             value: 3,
-                                            message:
-                                                'PIN Code must be at least 3 characters long',
+                                            message: 'PIN Code must be at least 3 characters long',
                                         },
                                         maxLength: {
                                             value: 10,
-                                            message:
-                                                'PIN Code cannot exceed 10 characters',
+                                            message: 'PIN Code cannot exceed 10 characters',
                                         },
                                     }}
                                     errors={errors}
@@ -572,6 +569,10 @@ function AddEditCoach({ data }) {
                                     )}
                                     rules={{
                                         required: 'Date of Birth is required',
+                                        validate: value => {
+                                            const inputDate = new Date(value);
+                                            return !isNaN(inputDate.getTime()) || 'please enter valid date';
+                                        },
                                     }}
                                 />
                             </Grid>

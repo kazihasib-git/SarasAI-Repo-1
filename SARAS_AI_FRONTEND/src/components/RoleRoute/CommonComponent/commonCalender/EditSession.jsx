@@ -233,9 +233,18 @@ const EditSession = ({ role, componentName }) => {
             }
         }
 
+        let inputDate = new Date(formData.fromDate);
+
         // Check if 'fromDate' is provided
-        if (!formData.fromDate) {
-            toast.error('Please select  from date');
+        if (!formData.fromDate || isNaN(inputDate.getTime())) {
+            toast.error('Please select from date');
+            return false;
+        }
+
+        const today = moment().startOf('day');
+
+        if (moment(inputDate).isBefore(today)) {
+            // toast.error('The date must be today or a future date.');
             return false;
         }
 
@@ -417,6 +426,7 @@ const EditSession = ({ role, componentName }) => {
                                                 }
                                                 options={hosts.users}
                                                 errors={!!error.host_email_id}
+                                                disabled={true}
                                             />
                                         </Grid>
                                         <Grid
@@ -439,6 +449,7 @@ const EditSession = ({ role, componentName }) => {
                                                     GLOBAL_CONSTANTS.MEETING_TYPES
                                                 }
                                                 errors={!!error.meeting_name}
+                                                disabled={true}
                                             />
                                         </Grid>
                                     </>

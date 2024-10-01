@@ -9,7 +9,9 @@ import {
     FormControl,
 } from '@mui/material';
 import CustomTextField from '../../../../components/CustomFields/CustomTextField';
+import CustomFutureDateField from '../../../../components/CustomFields/CustomFutureDateField';
 import { useDispatch, useSelector } from 'react-redux';
+import { Controller } from 'react-hook-form';
 import {
     createCoachTemplateActivity,
     getCoachTemplateModuleId,
@@ -18,6 +20,8 @@ import {
     getAllCoachTemplateModules,
     getAllCoachTemplates,
 } from '../../../../redux/features/adminModule/coach/coachTemplateSlice';
+import moment from 'moment';
+import { toast } from 'react-toastify';
 
 const CustomButton = ({
     onClick,
@@ -117,15 +121,15 @@ const AddEditActivity = () => {
                 md={6}
                 style={{ margin: '10px 0px', width: '80%' }}
             >
-                <CustomTextField
+                <CustomFutureDateField
                     label="Due Date"
-                    type="date"
-                    variant="outlined"
-                    value={dueDate}
-                    onChange={e => setDueDate(e.target.value)}
-                    placeholder="Enter Due Date"
                     name="dueDate"
+                    value={dueDate}
+                    onChange={setDueDate}
+                    disableFutureDates={false} // Adjust this as needed
+                    sx={{ width: '100%' }}
                 />
+                
             </Grid>
             <Grid
                 item
@@ -137,6 +141,7 @@ const AddEditActivity = () => {
                 <CustomTextField
                     label="Points"
                     variant="outlined"
+                    type="number"
                     value={points}
                     onChange={e => setPoints(e.target.value)}
                     placeholder="Enter Points"
@@ -205,6 +210,36 @@ const AddEditActivity = () => {
         </Grid>
     );
 
+    const validate = data => {
+        if (data.activity_name === '') {
+            toast.error('Activity Name is required');
+            return false;
+        }
+        let inputDate = new Date(data.due_date);
+        if (!data.due_date || isNaN(inputDate.getTime())) {
+            toast.error('Due Date is required');
+            return false;
+        }
+
+        const today = moment().startOf('day');
+
+        if (moment(inputDate).isBefore(today)) {
+            // toast.error('The date must be today or a future date.');
+            return;
+        }
+        
+        if (data.points === undefined || data.points < 0) {
+            toast.error('Points must be greater than 0');
+            return false;
+        }
+
+        if (data.after_due_date === '') {
+            toast.error('After Due Date is required');
+            return false;
+        }
+        return true;
+    };
+
     const handleSubmit = () => {
         const data = {
             module_id: moduleID?.id,
@@ -213,6 +248,10 @@ const AddEditActivity = () => {
             points: points,
             after_due_date: afterDueDate,
         };
+
+        if (!validate(data)) {
+            return;
+        }
 
         if (editActivityData) {
             // Update activity

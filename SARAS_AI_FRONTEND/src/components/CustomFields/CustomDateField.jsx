@@ -14,7 +14,15 @@ const CustomDateField = ({
     ...props
 }) => {
     const handleDateChange = date => {
+        const today = moment().endOf('day'); // Get today's date
         const formattedDate = date ? moment(date).format('YYYY-MM-DD') : '';
+
+        // Check if the future dates are disabled and entered date is in the future
+        if (disableFutureDates && date && moment(date).isAfter(today)) {
+            onChange(''); // Clear the field if future date is entered
+            return;
+        }
+
         onChange(formattedDate);
     };
     return (

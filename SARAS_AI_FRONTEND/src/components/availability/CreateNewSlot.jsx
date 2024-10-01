@@ -10,6 +10,7 @@ import {
     Box,
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
+import moment from 'moment';
 import CustomDateField from '../CustomFields/CustomDateField';
 import CustomTimeField from '../CustomFields/CustomTimeField';
 import ReusableDialog from '../CustomFields/ReusableDialog';
@@ -102,6 +103,7 @@ const CreateNewSlot = ({ id, name, componentName, timezone }) => {
     const validate = () => {
         let currentDate = new Date();
         let inputDate = new Date(fromDate);
+        let inputToDate = new Date(toDate); 
 
         let sameDate = false;
 
@@ -113,7 +115,7 @@ const CreateNewSlot = ({ id, name, componentName, timezone }) => {
             sameDate = true;
         }
 
-        if (!fromDate) {
+        if (!fromDate || isNaN(inputDate.getTime())){
             toast.error('Please select From Date');
             return false;
         }
@@ -126,13 +128,24 @@ const CreateNewSlot = ({ id, name, componentName, timezone }) => {
             return false;
         }
 
-        if (repeat === 'recurring' && !toDate) {
-            toast.error('Please select To Date');
-            return false;
-        }
-        if (repeat === 'recurring' && selectedDays.length === 0) {
-            toast.error('Please select at least one day');
-            return false;
+        if (repeat === 'recurring') {
+            if (selectedDays.length === 0) {
+                toast.error('Please select at least one day');
+                return false;
+            }
+            const today = moment().startOf('day');
+            if (!toDate || isNaN(inputToDate.getTime())) {
+                toast.error('Please select To Date');
+                return false;
+            }
+            if (moment(toDate).isBefore(today)) {
+                toast.error('To Date should be greater than today');
+                return false;
+            }
+            if (moment(toDate).isBefore(fromDate)) {
+                toast.error('To Date should be greater than From Date');
+                return false;
+            }
         }
 
         // if(sameDate && isHourLessOrEqual(fromTime)){
@@ -380,7 +393,7 @@ const CreateNewSlot = ({ id, name, componentName, timezone }) => {
                                     sx={{ pt: 3 }}
                                     justifyContent="center"
                                 >
-                                    <CustomDateField
+                                    <CustomFutureDateField
                                         label="To Date"
                                         value={toDate}
                                         onChange={date => setToDate(date)}
@@ -390,6 +403,7 @@ const CreateNewSlot = ({ id, name, componentName, timezone }) => {
                                             required: 'To Date is required',
                                         }}
                                         sx={{ width: '100%' }}
+                                        errors={errors}
                                     />
                                 </Grid>
                             </>

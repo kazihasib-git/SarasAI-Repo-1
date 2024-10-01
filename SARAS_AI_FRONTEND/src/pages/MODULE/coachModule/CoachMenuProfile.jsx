@@ -5,7 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Box, Button, Typography, Grid, Divider } from '@mui/material';
 import CustomFormControl from '../../../components/CustomFields/CustomFromControl';
 import CustomTextField from '../../../components/CustomFields/CustomTextField';
-import CustomDateField from '../../../components/CustomFields/CustomDateField';
+import CustomDateOfBirth from '../../../components/CustomFields/CustomDateOfBirth';
 import AvatarInput from '../../../components/CustomFields/AvatarInput';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
@@ -46,7 +46,7 @@ const CoachMenuProfile = () => {
         },
     });
 
-    const { coachProfileData } = useSelector(state => state.coachMenu);
+    const { coachProfileData,loading } = useSelector(state => state.coachMenu);
     const {
         data: timezones,
         error: timezoneError,
@@ -167,7 +167,7 @@ const CoachMenuProfile = () => {
 
     const onSubmit = async formData => {
         const { email, ...updatedFormData } = formData;
-        setIsEditing(false);
+        // setIsEditing(false);
 
         updatedFormData.date_of_birth = dateOfBirth;
 
@@ -181,9 +181,8 @@ const CoachMenuProfile = () => {
 
         try {
             await dispatch(updateCoachmenuprofile(updatedFormData)).unwrap();
-
-            dispatch(getCoachMenuProfile());
             setIsEditing(false);
+            dispatch(getCoachMenuProfile());
         } catch (error) {
             console.error('Update failed:', error);
         }
@@ -285,9 +284,9 @@ const CoachMenuProfile = () => {
                                     validation={{
                                         required: 'Username is required',
                                         minLength: {
-                                            value: 3,
+                                            value: 5,
                                             message:
-                                                'Username must be at least 3 characters long',
+                                                'Username must be at least 5 characters long',
                                         },
                                         maxLength: {
                                             value: 20,
@@ -295,17 +294,17 @@ const CoachMenuProfile = () => {
                                                 'Username cannot exceed 20 characters',
                                         },
                                         pattern: {
-                                            value: /^[A-Za-z\s]+$/,
+                                            value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$#&_]{5,}$/,
                                             message:
-                                                'Username can only contain letters, numbers, and underscores',
+                                                'Username Must contain letters, numbers, and may include @$#&_',
                                         },
                                     }}
                                     errors={errors}
-                                    disabled={!isEditing}
+                                    disabled={true}
                                 />
                             </Grid>
 
-                            <Grid item xs={12} sm={6} md={4}>
+                            {/* <Grid item xs={12} sm={6} md={4}>
                                 <CustomTextField
                                     label="Email Address"
                                     name="email"
@@ -378,7 +377,7 @@ const CoachMenuProfile = () => {
                                         {errors.phone.message}
                                     </Typography>
                                 )}
-                            </Grid>
+                            </Grid> */}
 
                             <Grid item xs={12} sm={6} md={4}>
                                 <Controller
@@ -446,25 +445,22 @@ const CoachMenuProfile = () => {
                                 <CustomTextField
                                     label="PIN Code"
                                     name="pincode"
-                                    type="number"
+                                    type="text"
                                     placeholder="Enter PIN Code"
                                     register={register}
                                     validation={{
                                         required: 'PIN Code is required',
                                         pattern: {
-                                            value: /^[a-zA-Z0-9-]*$/,
-                                            message:
-                                                'PIN Code must be alphanumeric',
+                                            value: /^[a-zA-Z0-9\s\-]*$/,  // allows alphanumeric, spaces, and hyphens
+                                            message: 'PIN Code must be alphanumeric and can contain spaces or hyphens',
                                         },
                                         minLength: {
                                             value: 3,
-                                            message:
-                                                'PIN Code must be at least 3 digits long',
+                                            message: 'PIN Code must be at least 3 characters long',
                                         },
                                         maxLength: {
-                                            value: 6,
-                                            message:
-                                                'PIN Code cannot exceed 6 digits',
+                                            value: 10,
+                                            message: 'PIN Code cannot exceed 10 characters',
                                         },
                                     }}
                                     errors={errors}
@@ -495,13 +491,14 @@ const CoachMenuProfile = () => {
                                     control={control}
                                     name="date_of_birth"
                                     render={({ field }) => (
-                                        <CustomDateField
+                                        <CustomDateOfBirth
                                             label="Date of Birth"
                                             name="date_of_birth"
                                             value={dateOfBirth}
                                             onChange={date =>
                                                 handleDateChange(date, field)
                                             }
+                                            disableFutureDates={true}
                                             error={!!errors.date_of_birth}
                                             helperText={
                                                 errors.date_of_birth?.message
@@ -511,6 +508,10 @@ const CoachMenuProfile = () => {
                                     )}
                                     rules={{
                                         required: 'Date of Birth is required',
+                                        validate: value => {
+                                            const inputDate = new Date(value);
+                                            return !isNaN(inputDate.getTime()) || 'please enter valid date';
+                                        },
                                     }}
                                 />
                             </Grid>
@@ -573,6 +574,7 @@ const CoachMenuProfile = () => {
                                     text: '#FFFFFF',
                                     textTransform: 'none',
                                 }}
+                                disabled={loading}
                             >
                                 Submit
                             </Button>

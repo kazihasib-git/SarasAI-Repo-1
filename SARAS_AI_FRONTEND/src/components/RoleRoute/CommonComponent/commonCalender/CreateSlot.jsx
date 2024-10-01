@@ -28,20 +28,25 @@ import { toast } from 'react-toastify';
 import CustomFutureDateField from '../../../CustomFields/CustomFutureDateField';
 import { GLOBAL_CONSTANTS } from '../../../../constants/globalConstants';
 import { useGetTimezonesQuery } from '../../../../redux/services/timezones/timezonesApi';
+import moment from 'moment';
 
 const slotConfig = {
     TAMENU: {
         createSlotApi: createTaMenuSlots,
         getSlotsApi: getTaMenuSlots,
+        isApiLoading: state => state.taMenu.loading,
     },
     COACHMENU: {
         createSlotApi: createCoachMenuSlot,
         getSlotsApi: getCoachMenuSlots,
+        isApiLoading: state => state.coachMenu.loading,
     },
 };
 
 const CreateSlot = ({ componentName, timezone }) => {
     const { createSlotApi, getSlotsApi } = slotConfig[componentName];
+
+    const isApiLoading = useSelector(slotConfig[componentName].isApiLoading);
 
     const dispatch = useDispatch();
     const [errors, setErrors] = useState({});
@@ -78,11 +83,22 @@ const CreateSlot = ({ componentName, timezone }) => {
     const validate = formData => {
         let validationErrors = {};
 
-        if (!formData.fromDate) {
+        let inputDate = new Date(formData.fromDate);
+        const today = moment().startOf('day');
+
+        if (!formData.fromDate || isNaN(inputDate.getTime())) {
             validationErrors.fromDate = '';
             toast.error('Please select From Date');
             return;
         }
+
+        if (moment(inputDate).isBefore(today)) {
+            // validationErrors.fromDate = 'The date must be today or a future date.';
+            // toast.error('The date must be today or a future date.');
+            return;
+        }
+
+
         if (!formData.fromTime) {
             validationErrors.fromTime = 'Please select From Time';
             toast.error('Please select From Time');
@@ -93,7 +109,10 @@ const CreateSlot = ({ componentName, timezone }) => {
             toast.error('Please select To Time');
             return;
         }
-        if (formData.repeat === 'recurring' && !formData.toDate) {
+
+        let inputToDate = new Date(formData.toDate); // Convert the toDate string to Date object
+
+        if (formData.repeat === 'recurring' && (!formData.toDate || isNaN(inputToDate.getTime()))) {
             validationErrors.toDate = 'Please select To Date';
             toast.error('Please select To Date');
             return;
@@ -336,7 +355,7 @@ const CreateSlot = ({ componentName, timezone }) => {
                                     sx={{ pt: 3 }}
                                     justifyContent="center"
                                 >
-                                    <CustomDateField
+                                    <CustomFutureDateField
                                         label="To Date"
                                         value={formData.toDate}
                                         onChange={date =>
@@ -382,6 +401,7 @@ const CreateSlot = ({ componentName, timezone }) => {
                     textTransform: 'none',
                     fontFamily: 'Bold',
                 }}
+                disabled={isApiLoading}
             >
                 Submit
             </CustomButton>

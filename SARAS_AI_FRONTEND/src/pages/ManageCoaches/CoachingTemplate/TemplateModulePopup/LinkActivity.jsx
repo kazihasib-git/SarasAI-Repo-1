@@ -151,7 +151,8 @@ const LinkActivityPopup = ({
                 toast.error('Please select a coach');
                 return;
             }
-            if (!fromDate) {
+            let inputDate = new Date(fromDate);
+            if (!fromDate || isNaN(inputDate.getTime())) {
                 toast.error('Please select the date');
                 return;
             }

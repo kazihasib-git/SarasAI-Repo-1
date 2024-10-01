@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import moment from 'moment';
 import CustomTextField from '../CustomFields/CustomTextField';
 import CustomTimeField from '../CustomFields/CustomTimeField';
 import CustomDateField from '../CustomFields/CustomDateField';
@@ -113,6 +114,8 @@ const CreateNewSession = ({ id, name, componentName, timezone }) => {
     const [selectedSlot, setSelectedSlot] = useState(null);
     const [availableSlotsOptions, setAvailableSlotsOptions] = useState([]);
     const [dateSelected, setDateSelected] = useState(false);
+    const [meetingname, setMeetingName] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const { data : timezones, error : timezoneError , isLoading : timezonesLoading } = useGetTimezonesQuery();
     const { data : platforms, error : platformError, isLoading : platformLoading } = useGetPlatformsQuery();
@@ -194,16 +197,25 @@ const CreateNewSession = ({ id, name, componentName, timezone }) => {
 
     const handleDateSubmit = () => {
         if (fromDate) {
-            dispatch(
-                getAvailableSlotsAction({
-                    admin_user_id: adminUserID,
-                    date: fromDate,
-                    timezone_name: timezoneName,
-                })
-            ).then(() => {
-                setSelectedSlot(null);
-                setDateSelected(true);
-            });
+            const today = moment().startOf('day');
+            let inputDate = new Date(fromDate);
+
+            if (moment(inputDate).isBefore(today)) {
+                // toast.error('The date must be today or a future date.');
+                setDateSelected(false);
+                return;
+            }else{
+                dispatch(
+                    getAvailableSlotsAction({
+                        admin_user_id: adminUserID,
+                        date: fromDate,
+                        timezone_name: timezoneName,
+                    })
+                ).then(() => {
+                    setSelectedSlot(null);
+                    setDateSelected(true);
+                });
+            }
         } else {
             toast.error('Please Select From Date');
             return;
@@ -332,7 +344,10 @@ const CreateNewSession = ({ id, name, componentName, timezone }) => {
 
     const validate = formData => {
         // Ensure all required fields are filled in
-        if (!fromDate) {
+        let inputDate = new Date(fromDate);
+        let inputToDate = new Date(toDate); 
+        
+        if (!fromDate || isNaN(inputDate.getTime())) {
             toast.error('Please select from Date');
             return false;
         }
@@ -347,16 +362,36 @@ const CreateNewSession = ({ id, name, componentName, timezone }) => {
             return false;
         }
 
-        if (repeat === 'recurring') {
-            if (!toTime) {
-                toast.error('Please select a To Time');
+        if (!formData.platform_id || formData.platform_id === null || formData.platform_id === '') {
+            toast.error('Please select Platform');
+            return false;
+        }
+        
+        if (formData.platform_id === 1) {
+            if (!formData.host_email_id) {
+                toast.error('Please provide a valid  Host Name.');
+                return false;
+            }
+
+            if (!formData.meeting_type) {
+                toast.error('Please select Meeting Type.');
                 return false;
             }
         }
 
-        if (!formData.platform_id) {
-            toast.error('Please select Platform');
-            return false;
+        if (repeat === 'recurring') {
+            if (!toDate || isNaN(inputToDate.getTime())) {
+                toast.error('Please select To Date');
+                return false;
+            }
+            if (moment(inputToDate).isBefore(inputDate)) {
+                toast.error('To Date should be greater than From Date');
+                return false;
+            }
+            if (!toTime) {
+                toast.error('Please select a To Time');
+                return false;
+            }
         }
 
         // Validate "To Time" is greater than "From Time"
@@ -377,18 +412,6 @@ const CreateNewSession = ({ id, name, componentName, timezone }) => {
         //     return false;
         // }
 
-        if (formData.platform_id === 1) {
-            if (!formData.host_email_id) {
-                toast.error('Please provide a valid  Host Name.');
-                return false;
-            }
-
-            if (!formData.meeting_type) {
-                toast.error('Please select Meeting Type.');
-                return false;
-            }
-        }
-
         // Check if 'timezone_id' is provided
         if (!formData.timezone_id) {
             toast.error('Please select a timezone');
@@ -400,7 +423,12 @@ const CreateNewSession = ({ id, name, componentName, timezone }) => {
 
     const onSubmit = formData => {
         // Perform validation
-        if (!validate(formData)) return;
+        if (isSubmitting) return; // Prevent multiple submissions
+        setIsSubmitting(true);  // Disable the submit button
+        if (!validate(formData)) {
+            setIsSubmitting(false);  // Re-enable submit button if validation fails
+            return;
+        }
 
         const studentId = selectedStudents.map(student => student);
         const batchId = selectedBatches.map(batch => batch);
@@ -437,7 +465,11 @@ const CreateNewSession = ({ id, name, componentName, timezone }) => {
             })
             .catch(error => {
                 console.error('Error:', error);
+            })
+            .finally(() => {
+                setIsSubmitting(false); // Re-enable submit button after the process finishes
             });
+
         reset();
     };
 
@@ -536,10 +568,12 @@ const CreateNewSession = ({ id, name, componentName, timezone }) => {
                                                             name="meeting_name"
                                                             placeholder="Enter Meeting Name"
                                                             register={register}
+                                                            value={meetingname}
                                                             validation={{
                                                                 required:
                                                                     'Meeting Name is required',
                                                             }}
+                                                            onChange={e => setMeetingName(e.target.value)}
                                                             errors={errors}
                                                         />
                                                     </Grid>
@@ -1014,15 +1048,13 @@ const CreateNewSession = ({ id, name, componentName, timezone }) => {
                                                                 display="flex"
                                                                 justifyContent="center"
                                                             >
-                                                                <CustomDateField
+                                                                <CustomFutureDateField
                                                                     label="To Date"
-                                                                    value={
-                                                                        toDate
-                                                                    }
-                                                                    onChange={
-                                                                        setToDate
-                                                                    }
-                                                                    name="end_date"
+                                                                     name="end_date"
+                                                                    value={toDate}
+                                
+                                                                    onChange={setToDate}
+        
                                                                     register={
                                                                         register
                                                                     }
@@ -1033,6 +1065,7 @@ const CreateNewSession = ({ id, name, componentName, timezone }) => {
                                                                     sx={{
                                                                         width: '100%',
                                                                     }}
+                                                                    errors={errors}
                                                                 />
                                                             </Grid>
                                                         </>

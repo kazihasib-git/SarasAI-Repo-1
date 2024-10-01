@@ -28,7 +28,7 @@ import CustomHostNameForm from '../../../components/CustomFields/CustomHostNameF
 
 const CoachCallRequest = () => {
     const dispatch = useDispatch();
-    const { coachCallRequests } = useSelector(state => state.coachMenu);
+    const { coachCallRequests , loading } = useSelector(state => state.coachMenu);
     const { timezoneId } = useSelector(state => state.auth);
 
     const [open, setOpen] = useState(false);
@@ -114,7 +114,7 @@ const CoachCallRequest = () => {
     };
 
     const handleDenySubmit = (id, reason) => {
-        dispatch(denyCallRequest(id, reason));
+        dispatch(denyCallRequest({id, reason}));
         setOpen(false);
     };
 
@@ -286,6 +286,7 @@ const CoachCallRequest = () => {
                                                             '#F56D3B',
                                                     },
                                                 }}
+                                                disabled={loading}
                                             >
                                                 Approve
                                             </Button>
@@ -308,6 +309,7 @@ const CoachCallRequest = () => {
                                                         color: 'white',
                                                     },
                                                 }}
+                                                disabled={loading}
                                             >
                                                 Deny
                                             </Button>

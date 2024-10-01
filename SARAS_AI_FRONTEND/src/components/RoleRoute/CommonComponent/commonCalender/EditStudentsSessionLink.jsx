@@ -32,6 +32,7 @@ const editStudentsConfig = {
         assignedStudentsState: 'assignedTaStudents',
         editStudentsApi: updateStudentsInTaSession,
         getSessionApi: getTaMenuSessions,
+        loadingState: 'loading',
     },
     COACHMENU: {
         sliceName: 'coachMenu',
@@ -41,6 +42,7 @@ const editStudentsConfig = {
         assignedStudentsState: 'assignedCoachStudents',
         editStudentsApi: updateStudentsInCoachSession,
         getSessionApi: getCoachMenuSessions,
+        loadingState: 'loading',
     },
 };
 
@@ -61,6 +63,7 @@ const EditStudentsSessionLink = ({ componentName, timezone }) => {
         assignedStudentsState,
         editStudentsApi,
         getSessionApi,
+        loadingState,
     } = editStudentsConfig[componentName];
 
     const stateSelector = useSelector(state => state[sliceName]);
@@ -68,6 +71,7 @@ const EditStudentsSessionLink = ({ componentName, timezone }) => {
     const {
         [assignedStudentsState]: students,
         [getAssignedSelectedStudentsState]: sessionStudents,
+        [loadingState]: isLoading,
     } = stateSelector;
 
     const { meetingId, sessionEventData, openEditStudentsPopup } = useSelector(
@@ -277,6 +281,7 @@ const EditStudentsSessionLink = ({ componentName, timezone }) => {
                 color: '#FFFFFF',
                 textTransform: 'none',
             }}
+            disabled={isLoading}
         >
             Submit
         </CustomButton>

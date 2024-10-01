@@ -63,7 +63,9 @@ const AddEditWOLQuestions = () => {
 
     const WOLCategoriesOptions =
         wolCategoryData && wolCategoryData.length > 0
-            ? wolCategoryData.map(item => ({
+            ? wolCategoryData
+            .filter(item => item.is_active === 1)
+            .map(item => ({
                   value: item.id,
                   label: item.name,
               }))

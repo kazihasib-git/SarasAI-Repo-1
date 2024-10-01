@@ -41,6 +41,7 @@ import SelectStudents from '../../../students/SelectStudents';
 import { useGetHostsQuery } from '../../../../redux/services/hosts/hostsApi';
 import { useGetPlatformsQuery } from '../../../../redux/services/platforms/platformsApi';
 import { useGetTimezonesQuery } from '../../../../redux/services/timezones/timezonesApi';
+import moment from 'moment';
 
 const sessionConfig = {
     TAMENU: {
@@ -52,6 +53,7 @@ const sessionConfig = {
         getStudentsState: 'assignedTaStudents',
         getBatchesApi: getTaMenuAssignedBatches,
         getBatchesState: 'assignedTaBatches',
+        loadingState: 'loading',
     },
     COACHMENU: {
         sliceName: 'coachMenu',
@@ -62,6 +64,7 @@ const sessionConfig = {
         getStudentsState: 'assignedCoachStudents',
         getBatchesApi: getCoachMenuAssignedBatches,
         getBatchesState: 'assignedCoachBatches',
+        loadingState: 'loading',
     },
 };
 
@@ -77,6 +80,7 @@ const CreateSession = ({ role, componentName }) => {
         getStudentsState,
         getBatchesApi,
         getBatchesState,
+        loadingState,
     } = sessionConfig[componentName];
 
     const { timezoneId, name } = useSelector(state => state.auth);
@@ -113,6 +117,7 @@ const CreateSession = ({ role, componentName }) => {
     const {
         [getStudentsState]: assignedStudents,
         [getBatchesState]: assignedBatches,
+        [loadingState]: isApiLoading,
     } = stateSelector;
 
     const { selectedStudents, selectedBatches, openBatches, openStudents } =
@@ -183,8 +188,16 @@ const CreateSession = ({ role, componentName }) => {
         }
 
         // Check if 'fromDate' is provided
-        if (!formData.fromDate) {
-            toast.error('Please select  from date');
+        let inputDate = new Date(formData.fromDate);
+
+        if (!formData.fromDate || isNaN(inputDate.getTime())) {
+            toast.error('Please Select from date');
+            return false;
+        }
+
+        const today = moment().startOf('day');
+
+        if (moment(inputDate).isBefore(today)) {
             return false;
         }
 
@@ -542,6 +555,7 @@ const CreateSession = ({ role, componentName }) => {
                                                 backgroundColor: '#FEEBE3',
                                             },
                                         }}
+                                        disabled={isApiLoading}
                                     >
                                         Select Students
                                     </Button>
@@ -565,6 +579,7 @@ const CreateSession = ({ role, componentName }) => {
                                                 border: '2px solid #F56D3B',
                                             },
                                         }}
+                                        disabled={isApiLoading}
                                     >
                                         Select Batches
                                     </Button>
@@ -588,6 +603,7 @@ const CreateSession = ({ role, componentName }) => {
                 fontFamily: 'Bold',
                 textTransform: 'none',
             }}
+            disabled={isApiLoading}
         >
             Submit
         </CustomButton>

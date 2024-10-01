@@ -52,7 +52,7 @@ const TaMenuProfile = () => {
         },
     });
 
-    const { taProfileData } = useSelector(state => state.taMenu);
+    const { taProfileData ,loading } = useSelector(state => state.taMenu);
     const [isEditing, setIsEditing] = useState(false);
 
     const toggleEdit = () => {
@@ -175,7 +175,7 @@ const TaMenuProfile = () => {
         const { email, ...updatedFormData } = formData;
 
         updatedFormData.date_of_birth = dateOfBirth;
-        setIsEditing(false); // Disable edit mode after submit
+        // setIsEditing(false); // Disable edit mode after submit
 
         if (selectedImage && selectedImage.startsWith('data:image/')) {
             const base64Data = selectedImage.replace(
@@ -187,9 +187,8 @@ const TaMenuProfile = () => {
 
         try {
             await dispatch(updateTaMenuProfile(updatedFormData)).unwrap();
-
-            dispatch(getTaMenuProfile());
             setIsEditing(false);
+            dispatch(getTaMenuProfile());
         } catch (error) {
             console.error('Update failed:', error);
         }
@@ -291,9 +290,9 @@ const TaMenuProfile = () => {
                                     validation={{
                                         required: 'Username is required',
                                         minLength: {
-                                            value: 3,
+                                            value: 5,
                                             message:
-                                                'Username must be at least 3 characters long',
+                                                'Username must be at least 5 characters long',
                                         },
                                         maxLength: {
                                             value: 20,
@@ -301,13 +300,13 @@ const TaMenuProfile = () => {
                                                 'Username cannot exceed 20 characters',
                                         },
                                         pattern: {
-                                            value: /^[A-Za-z\s]+$/,
+                                            value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$#&_]{5,}$/,
                                             message:
-                                                'Username can only contain letters, numbers, and underscores',
+                                                'Username Must contain letters, numbers, and may include @$#&_',
                                         },
                                     }}
                                     errors={errors}
-                                    disabled={!isEditing}
+                                    disabled={true}
                                 />
                             </Grid>
 
@@ -484,31 +483,29 @@ const TaMenuProfile = () => {
                                 <CustomTextField
                                     label="PIN Code"
                                     name="pincode"
-                                    type="number"
+                                    type="text"  // change to text to allow letters, numbers, and special characters
                                     placeholder="Enter PIN Code"
                                     register={register}
                                     validation={{
                                         required: 'PIN Code is required',
                                         pattern: {
-                                            value: /^[a-zA-Z0-9-]*$/,
-                                            message:
-                                                'PIN Code must be alphanumeric',
+                                            value: /^[a-zA-Z0-9\s\-]*$/,  // allows alphanumeric, spaces, and hyphens
+                                            message: 'PIN Code must be alphanumeric and can contain spaces or hyphens',
                                         },
                                         minLength: {
                                             value: 3,
-                                            message:
-                                                'PIN Code must be at least 3 characters long',
+                                            message: 'PIN Code must be at least 3 characters long',
                                         },
                                         maxLength: {
                                             value: 10,
-                                            message:
-                                                'PIN Code cannot exceed 10 characters',
+                                            message: 'PIN Code cannot exceed 10 characters',
                                         },
                                     }}
                                     errors={errors}
                                     disabled={!isEditing}
                                 />
                             </Grid>
+
 
                             {/* <Grid item xs={12} sm={6} md={4}>
                                 <Controller
@@ -573,6 +570,10 @@ const TaMenuProfile = () => {
                                     )}
                                     rules={{
                                         required: 'Date of Birth is required',
+                                        validate: value => {
+                                            const inputDate = new Date(value);
+                                            return !isNaN(inputDate.getTime()) || 'please enter valid date';
+                                        },
                                     }}
                                 />
                             </Grid>
@@ -635,6 +636,7 @@ const TaMenuProfile = () => {
                                     text: '#FFFFFF',
                                     textTransform: 'none',
                                 }}
+                                disabled={loading}
                             >
                                 Submit
                             </Button>

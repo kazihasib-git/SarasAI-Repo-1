@@ -4,7 +4,9 @@ import { Grid } from '@mui/material';
 import CustomTextField from '../../../CustomFields/CustomTextField';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomButton from '../../../CustomFields/CustomButton';
-import { closeReasonForLeavePopup } from '../../../../redux/features/commonCalender/commonCalender';
+import { closeReasonForLeavePopup,
+    setTotalSessionsForMarkLeave,
+ } from '../../../../redux/features/commonCalender/commonCalender';
 import { toast } from 'react-toastify';
 import {
     getCoachMenuSessions,
@@ -23,12 +25,14 @@ const leaveConfig = {
         reasonForLeaveApi: reasonForTaMenuLeave,
         getSlotsApi: getTaMenuSlots,
         getSessionApi: getTaMenuSessions,
+        loadingState: 'loading',
     },
     COACHMENU: {
         sliceName: 'coachMenu',
         reasonForLeaveApi: reasonForCoachMenuLeave,
         getSlotsApi: getCoachMenuSlots,
         getSessionApi: getCoachMenuSessions,
+        loadingState: 'loading',
     },
 };
 
@@ -39,10 +43,13 @@ const LeaveReason = ({ componentName, timezone }) => {
         state => state.commonCalender
     );
 
-    const { sliceName, reasonForLeaveApi, getSlotsApi, getSessionApi } =
+    const { sliceName, reasonForLeaveApi, getSlotsApi, getSessionApi ,loadingState } =
         leaveConfig[componentName];
 
     const selectState = useSelector(state => state[sliceName]);
+    const { totalSessionsForMarkLeave } = useSelector(state => state.commonCalender);
+
+    const {[loadingState]: isApiLoading } = selectState;
 
     const handleSubmit = () => {
         if (!reasonOfLeave) {
@@ -60,6 +67,7 @@ const LeaveReason = ({ componentName, timezone }) => {
                 approve_status: null,
                 leave_type: null,
                 reason: reasonOfLeave,
+                total_sessions: totalSessionsForMarkLeave,
                 data: slots,
             };
 
@@ -95,6 +103,7 @@ const LeaveReason = ({ componentName, timezone }) => {
             borderColor="#F56D3B"
             color="#FFFFFF"
             style={{ textTransform: 'none' }}
+            disabled={isApiLoading}
         >
             Submit
         </CustomButton>

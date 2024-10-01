@@ -8,6 +8,7 @@ import {
     closeCreatedSlots,
     openCreatedSessions,
     openSessionPopup,
+    setTotalSessionsForMarkLeave,
 } from '../../../../redux/features/commonCalender/commonCalender';
 import ReusableDialog from '../../../CustomFields/ReusableDialog';
 import CustomButton from '../../../CustomFields/CustomButton';
@@ -19,11 +20,15 @@ const slotsConfig = {
         sliceName: 'taMenu',
         getSessionFromSlotsApi: getTaMenuSessionForLeave,
         sessionBySlotsState: 'slotsBetweenDates',
+        sessionsInAllSlotsState: 'sessionBySlots',
+        loadingState: 'loading',
     },
     COACHMENU: {
         sliceName: 'coachMenu',
         getSessionFromSlotsApi: getCoachMenuSessionForLeave,
         sessionBySlotsState: 'coachSlotsForLeave',
+        sessionsInAllSlotsState: 'coachSessionsForLeave',
+        loadingState: 'loading',
     },
 };
 
@@ -32,13 +37,20 @@ const CreatedSlots = ({ componentName, timezone }) => {
     const [selectedSlots, setSelectedSlots] = useState([]);
     const [slots, setSlots] = useState([]);
 
-    const { sliceName, getSessionFromSlotsApi, sessionBySlotsState } =
+    const { sliceName, getSessionFromSlotsApi, 
+        sessionBySlotsState,
+        sessionsInAllSlotsState, 
+        loadingState,
+        } =
         slotsConfig[componentName];
 
     const selectState = useSelector(state => state[sliceName]);
     const { createdSlots } = useSelector(state => state.commonCalender);
 
     const { [sessionBySlotsState]: sessionsData } = selectState;
+    const { [sessionsInAllSlotsState]: sessionInAllSlots,
+            [loadingState]: isApiLoading,
+     } = selectState;
 
     const formatTime = time => {
         const [hours, minutes] = time.split(':');
@@ -123,6 +135,8 @@ const CreatedSlots = ({ componentName, timezone }) => {
                 dispatch(closeCreatedSlots());
                 dispatch(openCreatedSessions(requestBody));
             });
+            console.log('sessionInAllSlots', sessionInAllSlots);
+            dispatch(setTotalSessionsForMarkLeave(sessionInAllSlots.length));
         }
     };
 
@@ -142,6 +156,7 @@ const CreatedSlots = ({ componentName, timezone }) => {
             borderColor="#F56D3B"
             color="#FFFFFF"
             style={{ textTransform: 'none' }}
+            disabled={isApiLoading}
         >
             Submit
         </CustomButton>

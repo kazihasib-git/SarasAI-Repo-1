@@ -33,6 +33,7 @@ const cancelSessionConfig = {
         getSessionsApi: getTaMenuSessionForLeave,
         getAllSlotsAPi: getTaMenuSlots,
         getAllSessionsApi: getTaMenuSessions,
+        loadingState: 'loading',
     },
     COACHMENU: {
         sliceName: 'coachMenu',
@@ -40,6 +41,7 @@ const cancelSessionConfig = {
         getSessionsApi: getCoachMenuSessionForLeave,
         getAllSlotsAPi: getCoachMenuSlots,
         getAllSessionsApi: getCoachMenuSessions,
+        loadingState: 'loading',
     },
 };
 
@@ -52,9 +54,12 @@ const CancelSession = ({ componentName, timezone }) => {
         getSessionsApi,
         getAllSlotsAPi,
         getAllSessionsApi,
+        loadingState,
     } = cancelSessionConfig[componentName];
 
     const selectState = useSelector(state => state[sliceName]);
+
+    const { [loadingState]: isApiLoading } = selectState;
 
     const { openCancelSession, sessionCancelData, slotsLeaveData } =
         useSelector(state => state.commonCalender);
@@ -79,6 +84,7 @@ const CancelSession = ({ componentName, timezone }) => {
                 borderColor="#F56D38"
                 color="#F56D38"
                 sx={{ mr: 2 }}
+                disabled={isApiLoading}
             >
                 Yes
             </CustomButton>
@@ -90,6 +96,7 @@ const CancelSession = ({ componentName, timezone }) => {
                 backgroundColor="#F56D38"
                 borderColor="#F56D38"
                 color="#FFFFFF"
+                disabled={isApiLoading}
             >
                 No
             </CustomButton>

@@ -10,15 +10,18 @@ import {
 import ReusableDialog from '../../../CustomFields/ReusableDialog';
 import CustomButton from '../../../CustomFields/CustomButton';
 import CustomFutureDateField from '../../../CustomFields/CustomFutureDateField';
+import moment from 'moment';
 
 const markLeaveConfig = {
     TAMENU: {
         sliceName: 'taMenu',
         getSlotsByDateApi: getTaMenuSlotsForLeave,
+        loadingState: 'loading',
     },
     COACHMENU: {
         sliceName: 'coachMenu',
         getSlotsByDateApi: getCoachMenuSlotsForLeave,
+        loadingState: 'loading',
     },
 };
 
@@ -30,21 +33,36 @@ const MarkLeaveDate = ({ componentName, timezone }) => {
     });
     const [errors, setErrors] = useState({}); // Error state
 
-    const { sliceName, getSlotsByDateApi } = markLeaveConfig[componentName];
+    const { sliceName, getSlotsByDateApi, loadingState } = markLeaveConfig[componentName];
 
     const stateSelector = useSelector(state => state[sliceName]);
+
+    const { [loadingState]: isApiLoading } = stateSelector;
+
     const { markLeave } = useSelector(state => state.commonCalender);
 
     const validate = () => {
         const newErrors = {};
-        if (!formData.fromDate) newErrors.fromDate = 'From Date is required';
-        if (!formData.toDate) newErrors.toDate = 'To Date is required';
+
+        let inputDate = new Date(formData.fromDate);
+        let inputToDate = new Date(formData.toDate);
+        
+        const today = moment().startOf('day');
+
+        if (!formData.fromDate || isNaN(inputDate.getTime())) newErrors.fromDate = 'From Date is required';
+        if (!formData.toDate || isNaN(inputToDate.getTime())) newErrors.toDate = 'To Date is required';
         if (
             formData.fromDate &&
             formData.toDate &&
             formData.fromDate > formData.toDate
         ) {
             newErrors.toDate = 'From Date should be earlier than To Date';
+        }
+        if (moment(inputDate).isBefore(today)) {
+            newErrors.fromDate = 'The date must be today or a future date.';
+        }
+        if(moment(inputToDate).isBefore(today)){
+            newErrors.toDate = 'The date must be today or a future date.';
         }
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -133,6 +151,7 @@ const MarkLeaveDate = ({ componentName, timezone }) => {
             color="#FFFFFF"
             textTransform="none"
             fontFamily="Bold"
+            disabled={isApiLoading}
         >
             Submit
         </CustomButton>
