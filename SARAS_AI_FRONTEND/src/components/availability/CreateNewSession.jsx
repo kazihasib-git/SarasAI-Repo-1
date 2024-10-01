@@ -362,8 +362,6 @@ const CreateNewSession = ({ id, name, componentName, timezone }) => {
             return false;
         }
 
-        console.log('formData.platform_id in validation===>', formData.platform_id);
-
         if (!formData.platform_id || formData.platform_id === null || formData.platform_id === '') {
             toast.error('Please select Platform');
             return false;
@@ -425,7 +423,6 @@ const CreateNewSession = ({ id, name, componentName, timezone }) => {
 
     const onSubmit = formData => {
         // Perform validation
-        console.log('formData.platform_id in onSubmit===>', formData.platform_id);
         if (isSubmitting) return; // Prevent multiple submissions
         setIsSubmitting(true);  // Disable the submit button
         if (!validate(formData)) {
