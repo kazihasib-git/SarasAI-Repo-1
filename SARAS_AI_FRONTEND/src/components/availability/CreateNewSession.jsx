@@ -114,6 +114,7 @@ const CreateNewSession = ({ id, name, componentName, timezone }) => {
     const [selectedSlot, setSelectedSlot] = useState(null);
     const [availableSlotsOptions, setAvailableSlotsOptions] = useState([]);
     const [dateSelected, setDateSelected] = useState(false);
+    const [meetingname, setMeetingName] = useState('');
 
     const { data : timezones, error : timezoneError , isLoading : timezonesLoading } = useGetTimezonesQuery();
     const { data : platforms, error : platformError, isLoading : platformLoading } = useGetPlatformsQuery();
@@ -557,10 +558,12 @@ const CreateNewSession = ({ id, name, componentName, timezone }) => {
                                                             name="meeting_name"
                                                             placeholder="Enter Meeting Name"
                                                             register={register}
+                                                            value={meetingname}
                                                             validation={{
                                                                 required:
                                                                     'Meeting Name is required',
                                                             }}
+                                                            onChange={e => setMeetingName(e.target.value)}
                                                             errors={errors}
                                                         />
                                                     </Grid>
